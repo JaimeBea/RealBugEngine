@@ -5,6 +5,7 @@
 #include "Module.h"
 
 class ModuleRender;
+class ModuleCamera;
 class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
@@ -23,6 +24,7 @@ public:
 
 public:
 	ModuleRender* renderer = nullptr;
+	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 
