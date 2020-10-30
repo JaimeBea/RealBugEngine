@@ -33,11 +33,20 @@ bool ModuleInput::Init()
 }
 
 // Called every draw update
-update_status ModuleInput::Update()
+update_status ModuleInput::PreUpdate()
 {
 	SDL_Event event;
 
 	mouse_motion = { 0, 0 };
+	mouse_wheel_motion = 0;
+
+	int mouse_x;
+	int mouse_y;
+	SDL_GetMouseState(&mouse_x, &mouse_y);
+	mouse_motion.x = mouse_x - mouse.x;
+	mouse_motion.y = mouse_y - mouse.y;
+	mouse.x = mouse_x;
+	mouse.y = mouse_y;
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
@@ -86,19 +95,23 @@ update_status ModuleInput::Update()
 			}
 			break;
 
+		case SDL_MOUSEWHEEL:
+			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
+			{
+				mouse_wheel_motion = event.wheel.x;
+			}
+			else
+			{
+				mouse_wheel_motion = event.wheel.y;
+			}
+			break;
+
 		case SDL_MOUSEBUTTONDOWN:
 			mouse_buttons[event.button.button - 1] = KEY_DOWN;
 			break;
 
 		case SDL_MOUSEBUTTONUP:
 			mouse_buttons[event.button.button - 1] = KEY_UP;
-			break;
-
-		case SDL_MOUSEMOTION:
-			mouse_motion.x = event.motion.xrel;
-			mouse_motion.y = event.motion.yrel;
-			mouse.x = event.motion.x;
-			mouse.y = event.motion.y;
 			break;
 		}
 	}

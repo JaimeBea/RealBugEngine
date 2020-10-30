@@ -31,7 +31,7 @@ public:
 
 private:
 	Frustum frustum;
-	float movement_speed = 10.0f;
+	float movement_speed = 4.0f;
 	float rotation_speed = 90.0f;
 };
 
