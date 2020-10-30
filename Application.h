@@ -1,8 +1,9 @@
 #pragma once
 
-#include<list>
+#include <list>
 #include "Globals.h"
 #include "Module.h"
+#include "SDL/include/SDL.h"
 
 class ModuleRender;
 class ModuleCamera;
@@ -22,6 +23,8 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	float GetDeltaTime();
+
 public:
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
@@ -29,6 +32,8 @@ public:
 	ModuleInput* input = nullptr;
 
 private:
+	float delta_time = 0.0f;
+	Uint32 previous_time = 0;
 
 	std::list<Module*> modules;
 

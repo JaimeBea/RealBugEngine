@@ -26,6 +26,8 @@ Application::~Application()
 
 bool Application::Init()
 {
+	previous_time = SDL_GetTicks();
+
 	bool ret = true;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
@@ -38,14 +40,21 @@ update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PreUpdate();
+	Uint32 now_time = SDL_GetTicks();
+	if (SDL_TICKS_PASSED(now_time, previous_time))
+	{
+		delta_time = (now_time - previous_time) / 1000.0f;
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->Update();
+		for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->PreUpdate();
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PostUpdate();
+		for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->Update();
+
+		for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+			ret = (*it)->PostUpdate();
+	}
+	previous_time = now_time;
 
 	return ret;
 }
@@ -58,4 +67,9 @@ bool Application::CleanUp()
 		ret = (*it)->CleanUp();
 
 	return ret;
+}
+
+float Application::GetDeltaTime()
+{
+	return delta_time;
 }
