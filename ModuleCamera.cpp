@@ -1,6 +1,7 @@
 #include "ModuleCamera.h"
 #include "GL/glew.h"
 #include "Math/float3x3.h"
+#include "Math/Quat.h"
 
 ModuleCamera::ModuleCamera()
 {
@@ -60,26 +61,39 @@ void ModuleCamera::WindowResized(unsigned width, unsigned height)
 
 void ModuleCamera::SetFOV(float h_fov)
 {
+    frustum.SetHorizontalFovAndAspectRatio(h_fov, frustum.AspectRatio());
 }
 
-void ModuleCamera::SetAspectRation(float aspect_ratio)
+void ModuleCamera::SetAspectRatio(float aspect_ratio)
 {
+    frustum.SetHorizontalFovAndAspectRatio(frustum.HorizontalFov(), aspect_ratio);
 }
 
 void ModuleCamera::SetPlaneDistances(float near_plane, float far_plane)
 {
+    frustum.SetViewPlaneDistances(near_plane, far_plane);
 }
 
-void ModuleCamera::Position(float x, float y, float z)
+void ModuleCamera::SetPosition(float x, float y, float z)
 {
+    frustum.SetPos(vec(x, y, z));
 }
 
-void ModuleCamera::Orientation(float x, float y, float z)
+void ModuleCamera::SetOrientation(float x, float y, float z)
 {
+    frustum.SetFront(float3::unitZ);
+    frustum.SetUp(float3::unitY);
+    Rotate(x, y, z);
+}
+
+void ModuleCamera::Rotate(float x, float y, float z)
+{
+    frustum.Transform(Quat::FromEulerXYZ(x, y, z));
 }
 
 void ModuleCamera::LookAt(float x, float y, float z)
 {
+    frustum.Transform(Quat::LookAt(frustum.Front(), float3(x, y, z), frustum.Up(), float3::unitY));
 }
 
 float4x4 ModuleCamera::GetProjectionMatrix()
