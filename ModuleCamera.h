@@ -23,13 +23,15 @@ public:
 	void SetPlaneDistances(float near_plane, float far_plane);
 	void SetPosition(float x, float y, float z);
 	void SetOrientation(float x, float y, float z);
-	void Rotate(float x, float y, float z);
-	void Rotate(Quat rotation);
+	void Translate(vec translation);
+	void Rotate(float3x3 rotationMatrix);
 	void LookAt(float x, float y, float z);
 	float4x4 GetProjectionMatrix();
 	float4x4 GetViewMatrix();
 
 private:
 	Frustum frustum;
+	float movement_speed = 10.0f;
+	float rotation_speed = 90.0f;
 };
 

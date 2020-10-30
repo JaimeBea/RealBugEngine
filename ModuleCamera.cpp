@@ -27,19 +27,6 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::PreUpdate()
 {
-
-    return UPDATE_CONTINUE;
-}
-
-update_status ModuleCamera::Update()
-{
-    Rotate(20 * DEGTORAD * App->GetDeltaTime(), 0, 0);
-
-    return UPDATE_CONTINUE;
-}
-
-update_status ModuleCamera::PostUpdate()
-{
     float4x4 projectionGL = GetProjectionMatrix();
 
     //Send the frustum projection matrix to OpenGL
@@ -52,6 +39,51 @@ update_status ModuleCamera::PostUpdate()
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(*viewGL.v);
 
+    return UPDATE_CONTINUE;
+}
+
+update_status ModuleCamera::Update()
+{
+    float delta_time = App->GetDeltaTime();
+    if (App->input->GetKey(SDL_SCANCODE_W))
+    {
+        Translate(frustum.Front().Normalized() * movement_speed * delta_time);
+    }
+    if (App->input->GetKey(SDL_SCANCODE_S))
+    {
+        Translate(frustum.Front().Normalized() * -movement_speed * delta_time);
+    }
+    if (App->input->GetKey(SDL_SCANCODE_A))
+    {
+        Translate(frustum.WorldRight().Normalized() * -movement_speed * delta_time);
+    }
+    if (App->input->GetKey(SDL_SCANCODE_D))
+    {
+        Translate(frustum.WorldRight().Normalized() * movement_speed * delta_time);
+    }
+
+    if (App->input->GetKey(SDL_SCANCODE_UP))
+    {
+        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), rotation_speed * DEGTORAD * delta_time));
+    }
+    if (App->input->GetKey(SDL_SCANCODE_DOWN))
+    {
+        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -rotation_speed * DEGTORAD * delta_time));
+    }
+    if (App->input->GetKey(SDL_SCANCODE_LEFT))
+    {
+        Rotate(float3x3::RotateY(rotation_speed * DEGTORAD * delta_time));
+    }
+    if (App->input->GetKey(SDL_SCANCODE_RIGHT))
+    {
+        Rotate(float3x3::RotateY(-rotation_speed * DEGTORAD * delta_time));
+    }
+
+    return UPDATE_CONTINUE;
+}
+
+update_status ModuleCamera::PostUpdate()
+{
     return UPDATE_CONTINUE;
 }
 
@@ -87,38 +119,29 @@ void ModuleCamera::SetPosition(float x, float y, float z)
 
 void ModuleCamera::SetOrientation(float x, float y, float z)
 {
-    frustum.SetFront(float3::unitZ);
-    frustum.SetUp(float3::unitY);
-    Rotate(x, y, z);
+    float3x3 rotationMatrix = float3x3::FromEulerXYZ(x, y, z);
+    frustum.SetFront(rotationMatrix * float3::unitZ);
+    frustum.SetUp(rotationMatrix * float3::unitY);
 }
 
-void ModuleCamera::Rotate(float x, float y, float z)
+void ModuleCamera::Translate(vec translation)
 {
-    Rotate(Quat::FromEulerXYZ(x, y, z));
+    frustum.SetPos(frustum.Pos() + translation);
 }
 
-void ModuleCamera::Rotate(Quat rotation)
+void ModuleCamera::Rotate(float3x3 rotationMatrix)
 {
-    Quat irotation = rotation.Inverted();
-    vec up = frustum.Up();
-    vec front = frustum.Front();
-    Quat qup = Quat(up.x, up.y, up.z, 0);
-    Quat qfront = Quat(front.x, front.y, front.z, 0);
-    Quat nqup = rotation * qup * irotation;
-    Quat nqfront = rotation * qfront * irotation;
-    vec nup = vec(nqup.x, nqup.y, nqup.z);
-    vec nfront = vec(nqfront.x, nqfront.y, nqfront.z);
-    nup.Normalize();
-    nfront.Normalize();
-    frustum.SetUp(nup);
-    frustum.SetFront(nfront);
+    vec oldFront = frustum.Front().Normalized();
+    vec oldUp = frustum.Up().Normalized();
+    frustum.SetFront(rotationMatrix * oldFront);
+    frustum.SetUp(rotationMatrix * oldUp);
 }
 
 void ModuleCamera::LookAt(float x, float y, float z)
 {
     vec direction = vec(x, y, z) - frustum.Pos();
     direction.Normalize();
-    Rotate(Quat::LookAt(frustum.Front(), direction, frustum.Up(), float3::unitY));
+    Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), float3::unitY));
 }
 
 float4x4 ModuleCamera::GetProjectionMatrix()
