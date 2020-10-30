@@ -1,5 +1,6 @@
 #include "Application.h"
 #include "ModuleCamera.h"
+#include "ModuleInput.h"
 #include "GL/glew.h"
 #include "Math/float3x3.h"
 #include "Math/Quat.h"
@@ -26,13 +27,26 @@ bool ModuleCamera::Init()
 
 update_status ModuleCamera::PreUpdate()
 {
-    float4x4 projectionGL = GetProjectionMatrix(); //<-- Important to transpose!
+
+    return UPDATE_CONTINUE;
+}
+
+update_status ModuleCamera::Update()
+{
+    Rotate(20 * DEGTORAD * App->GetDeltaTime(), 0, 0);
+
+    return UPDATE_CONTINUE;
+}
+
+update_status ModuleCamera::PostUpdate()
+{
+    float4x4 projectionGL = GetProjectionMatrix();
 
     //Send the frustum projection matrix to OpenGL
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(*projectionGL.v);
 
-    float4x4 viewGL = GetViewMatrix(); //<-- Important to transpose!
+    float4x4 viewGL = GetViewMatrix();
 
     //Send the frustum view matrix to OpenGL
     glMatrixMode(GL_MODELVIEW);
@@ -41,23 +55,14 @@ update_status ModuleCamera::PreUpdate()
     return UPDATE_CONTINUE;
 }
 
-update_status ModuleCamera::Update()
-{
-    return UPDATE_CONTINUE;
-}
-
-update_status ModuleCamera::PostUpdate()
-{
-    return UPDATE_CONTINUE;
-}
-
 bool ModuleCamera::CleanUp()
 {
     return true;
 }
 
-void ModuleCamera::WindowResized(unsigned width, unsigned height)
+void ModuleCamera::WindowResized(Sint32 width, Sint32 height)
 {
+    SetAspectRatio(width / (float) height);
 }
 
 void ModuleCamera::SetFOV(float h_fov)

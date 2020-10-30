@@ -1,11 +1,16 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
+#include "ModuleWindow.h"
 #include "ModuleRender.h"
-#include "SDL/include/SDL.h"
+#include "ModuleCamera.h"
+#include "SDL.h"
 
 ModuleInput::ModuleInput()
-{}
+{
+	memset(keyboard, KEY_IDLE, sizeof(KeyState) * NUM_KEYS);
+	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
+}
 
 // Destructor
 ModuleInput::~ModuleInput()
@@ -30,22 +35,76 @@ bool ModuleInput::Init()
 // Called every draw update
 update_status ModuleInput::Update()
 {
-    SDL_Event sdlEvent;
+	SDL_Event event;
 
-    while (SDL_PollEvent(&sdlEvent) != 0)
-    {
-        switch (sdlEvent.type)
-        {
-            case SDL_QUIT:
-                return UPDATE_STOP;
-            case SDL_WINDOWEVENT:
-                if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-                    App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-                break;
-        }
-    }
+	mouse_motion = { 0, 0 };
 
-    keyboard = SDL_GetKeyboardState(NULL);
+	const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+	for (int i = 0; i < NUM_KEYS; ++i)
+	{
+		if (keys[i] == 1)
+		{
+			if (keyboard[i] == KEY_IDLE)
+				keyboard[i] = KEY_DOWN;
+			else
+				keyboard[i] = KEY_REPEAT;
+		}
+		else
+		{
+			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
+				keyboard[i] = KEY_UP;
+			else
+				keyboard[i] = KEY_IDLE;
+		}
+	}
+
+	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
+	{
+		if (mouse_buttons[i] == KEY_DOWN)
+			mouse_buttons[i] = KEY_REPEAT;
+
+		if (mouse_buttons[i] == KEY_UP)
+			mouse_buttons[i] = KEY_IDLE;
+	}
+
+	while (SDL_PollEvent(&event) != 0)
+	{
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			return UPDATE_STOP;
+
+		case SDL_WINDOWEVENT:
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_RESIZED:
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				App->renderer->WindowResized(event.window.data1, event.window.data2);
+				App->camera->WindowResized(event.window.data1, event.window.data2);
+				break;
+			}
+			break;
+
+		case SDL_MOUSEBUTTONDOWN:
+			mouse_buttons[event.button.button - 1] = KEY_DOWN;
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			mouse_buttons[event.button.button - 1] = KEY_UP;
+			break;
+
+		case SDL_MOUSEMOTION:
+			mouse_motion.x = event.motion.xrel;
+			mouse_motion.y = event.motion.yrel;
+			mouse.x = event.motion.x;
+			mouse.y = event.motion.y;
+			break;
+		}
+	}
+
+    if (GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+        return UPDATE_STOP;
 
     return UPDATE_CONTINUE;
 }

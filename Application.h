@@ -3,7 +3,6 @@
 #include <list>
 #include "Globals.h"
 #include "Module.h"
-#include "SDL/include/SDL.h"
 
 class ModuleRender;
 class ModuleCamera;

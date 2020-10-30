@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Geometry/Frustum.h"
 #include "Math/float4x4.h"
+#include "SDL_types.h"
 
 class ModuleCamera : public Module
 {
@@ -15,7 +16,7 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-	void WindowResized(unsigned width, unsigned height);
+	void WindowResized(Sint32 width, Sint32 height);
 
 	void SetFOV(float h_fov);
 	void SetAspectRatio(float aspect_ratio);

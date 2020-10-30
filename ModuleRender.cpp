@@ -115,7 +115,7 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::WindowResized(unsigned width, unsigned height)
+void ModuleRender::WindowResized(Sint32 width, Sint32 height)
 {
 }
 
