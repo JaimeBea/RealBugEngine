@@ -23,6 +23,7 @@ public:
 	void SetPosition(float x, float y, float z);
 	void SetOrientation(float x, float y, float z);
 	void Rotate(float x, float y, float z);
+	void Rotate(Quat rotation);
 	void LookAt(float x, float y, float z);
 	float4x4 GetProjectionMatrix();
 	float4x4 GetViewMatrix();

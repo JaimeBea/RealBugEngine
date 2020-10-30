@@ -1,3 +1,4 @@
+#include "Application.h"
 #include "ModuleCamera.h"
 #include "GL/glew.h"
 #include "Math/float3x3.h"
@@ -88,12 +89,31 @@ void ModuleCamera::SetOrientation(float x, float y, float z)
 
 void ModuleCamera::Rotate(float x, float y, float z)
 {
-    frustum.Transform(Quat::FromEulerXYZ(x, y, z));
+    Rotate(Quat::FromEulerXYZ(x, y, z));
+}
+
+void ModuleCamera::Rotate(Quat rotation)
+{
+    Quat irotation = rotation.Inverted();
+    vec up = frustum.Up();
+    vec front = frustum.Front();
+    Quat qup = Quat(up.x, up.y, up.z, 0);
+    Quat qfront = Quat(front.x, front.y, front.z, 0);
+    Quat nqup = rotation * qup * irotation;
+    Quat nqfront = rotation * qfront * irotation;
+    vec nup = vec(nqup.x, nqup.y, nqup.z);
+    vec nfront = vec(nqfront.x, nqfront.y, nqfront.z);
+    nup.Normalize();
+    nfront.Normalize();
+    frustum.SetUp(nup);
+    frustum.SetFront(nfront);
 }
 
 void ModuleCamera::LookAt(float x, float y, float z)
 {
-    frustum.Transform(Quat::LookAt(frustum.Front(), float3(x, y, z), frustum.Up(), float3::unitY));
+    vec direction = vec(x, y, z) - frustum.Pos();
+    direction.Normalize();
+    Rotate(Quat::LookAt(frustum.Front(), direction, frustum.Up(), float3::unitY));
 }
 
 float4x4 ModuleCamera::GetProjectionMatrix()
