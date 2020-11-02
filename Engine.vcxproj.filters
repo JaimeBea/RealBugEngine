@@ -134,6 +134,8 @@
     <ClCompile Include="MathGeoLib\Time\Clock.cpp">
       <Filter>MathGeoLib</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleRenderExercise.cpp" />
+    <ClCompile Include="ModuleProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -371,10 +373,15 @@
     <ClInclude Include="MathGeoLib\Time\Clock.h">
       <Filter>MathGeoLib</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleRenderExercise.h" />
+    <ClInclude Include="ModuleProgram.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MathGeoLib">
       <UniqueIdentifier>{1e89a13f-23de-4385-8e81-8634b2e02088}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{79b8a595-ed5e-49e8-950c-67ec1eb55f5a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +405,12 @@
     </None>
     <None Include="MathGeoLib\Math\Matrix.inl">
       <Filter>MathGeoLib</Filter>
+    </None>
+    <None Include="Game\fragment.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Game\vertex.vert">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
