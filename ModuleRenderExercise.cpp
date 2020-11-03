@@ -102,7 +102,6 @@ bool ModuleRenderExercise::Init()
 #endif
 
 	triangle = CreateTriangleVBO();
-	default_program = App->program->CreateProgram("vertex.vert", "fragment.frag");
 
 	return true;
 }
@@ -121,7 +120,7 @@ update_status ModuleRenderExercise::PreUpdate()
 
 update_status ModuleRenderExercise::Update()
 {
-	RenderVBO(triangle, default_program);
+	RenderVBO(triangle, App->program->program);
 
 	return UPDATE_CONTINUE;
 }

@@ -1,7 +1,8 @@
 #include "ModuleProgram.h"
 #include "GL/glew.h"
+#include <string.h>
 
-static char* ReadFile(const char* file_name)
+static char* LoadShader(const char* file_name)
 {
 	char* data = nullptr;
 	FILE* file = fopen(file_name, "rb");
@@ -18,14 +19,14 @@ static char* ReadFile(const char* file_name)
 	}
 	else
 	{
-		LOG("Error opening file %s (%s).\n", file_name, std::strerror(errno));
+		LOG("Error opening file %s (%s).\n", file_name, strerror(errno));
 	}
 	return data;
 }
 
 static unsigned CreateShader(unsigned type, const char* file_name)
 {
-	char* source = ReadFile(file_name);
+	char* source = LoadShader(file_name);
 	unsigned shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &source, 0);
 	glCompileShader(shader_id);
@@ -48,17 +49,7 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 	return shader_id;
 }
 
-ModuleProgram::ModuleProgram()
-{
-	programs.reserve(1);
-}
-
-ModuleProgram::~ModuleProgram()
-{
-	CleanUp();
-}
-
-unsigned ModuleProgram::CreateProgram(const char* vertex_shader_file_name, const char* fragment_shader_file_name)
+static unsigned CreateProgram(const char* vertex_shader_file_name, const char* fragment_shader_file_name)
 {
 	// Compile the shaders
 	unsigned vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_shader_file_name);
@@ -89,16 +80,27 @@ unsigned ModuleProgram::CreateProgram(const char* vertex_shader_file_name, const
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
 
-	programs.push_back(program_id);
 	return program_id;
+}
+
+ModuleProgram::ModuleProgram()
+{
+}
+
+ModuleProgram::~ModuleProgram()
+{
+}
+
+bool ModuleProgram::Init()
+{
+	program = CreateProgram("vertex.vert", "fragment.frag");
+
+	return true;
 }
 
 bool ModuleProgram::CleanUp()
 {
-	for (unsigned program : programs)
-	{
-		glDeleteProgram(program);
-	}
-	programs.clear();
+	glDeleteProgram(program);
+
 	return true;
 }

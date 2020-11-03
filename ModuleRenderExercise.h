@@ -18,5 +18,4 @@ private:
 	void* context;
 
 	unsigned triangle = 0;
-	unsigned default_program = 0;
 };
