@@ -1,5 +1,5 @@
-#include "Application.h"
 #include "ModuleRenderExercise.h"
+#include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleProgram.h"
 #include "GL/glew.h"

@@ -1,7 +1,7 @@
 #pragma once
+
 #include "Module.h"
-#include "Globals.h"
-#include "Math/vec2d.h"
+#include "Math/float2.h"
 #include "SDL_scancode.h"
 #include "SDL_mouse.h"
 

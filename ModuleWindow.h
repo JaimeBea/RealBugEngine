@@ -1,10 +1,9 @@
-#ifndef __ModuleWindow_H__
-#define __ModuleWindow_H__
+#pragma once
 
 #include "Module.h"
-#include "SDL.h"
 
-class Application;
+class SDL_Window;
+class SDL_Surface;
 
 class ModuleWindow : public Module
 {
@@ -28,5 +27,3 @@ public:
 	//The surface contained by the window
 	SDL_Surface* screen_surface = NULL;
 };
-
-#endif // __ModuleWindow_H__

@@ -2,8 +2,8 @@
 
 #include <list>
 #include "Globals.h"
-#include "Module.h"
 
+class Module;
 class ModuleRender;
 class ModuleCamera;
 class ModuleWindow;
@@ -35,7 +35,7 @@ public:
 
 private:
 	float delta_time = 0.0f;
-	Uint32 previous_time = 0;
+	unsigned previous_time = 0;
 
 	std::list<Module*> modules;
 

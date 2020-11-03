@@ -1,4 +1,3 @@
-#pragma once
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -6,6 +5,7 @@
 #include "ModuleCamera.h"
 #include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
+#include "SDL_timer.h"
 
 using namespace std;
 
@@ -44,7 +44,7 @@ update_status Application::Update()
 {
 	update_status ret = UPDATE_CONTINUE;
 
-	Uint32 now_time = SDL_GetTicks();
+	unsigned now_time = SDL_GetTicks();
 	if (SDL_TICKS_PASSED(now_time, previous_time))
 	{
 		delta_time = (now_time - previous_time) / 1000.0f;

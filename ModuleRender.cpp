@@ -1,6 +1,5 @@
-#include "Globals.h"
-#include "Application.h"
 #include "ModuleRender.h"
+#include "Application.h"
 #include "ModuleWindow.h"
 #include "SDL.h"
 #include "GL/glew.h"
@@ -115,7 +114,7 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::WindowResized(Sint32 width, Sint32 height)
+void ModuleRender::WindowResized(int width, int height)
 {
 }
 

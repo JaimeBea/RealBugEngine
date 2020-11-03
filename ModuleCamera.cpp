@@ -1,10 +1,9 @@
-#include "Application.h"
 #include "ModuleCamera.h"
+#include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "GL/glew.h"
 #include "Math/float3x3.h"
-#include "Math/Quat.h"
 
 ModuleCamera::ModuleCamera()
 {
@@ -125,7 +124,7 @@ bool ModuleCamera::CleanUp()
     return true;
 }
 
-void ModuleCamera::WindowResized(Sint32 width, Sint32 height)
+void ModuleCamera::WindowResized(int width, int height)
 {
     SetAspectRatio(width / (float) height);
 }
