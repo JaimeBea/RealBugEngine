@@ -16,9 +16,7 @@ ModuleCamera::ModuleCamera()
     frustum.SetUp(float3::unitY);
 }
 
-ModuleCamera::~ModuleCamera()
-{
-}
+ModuleCamera::~ModuleCamera() {}
 
 bool ModuleCamera::Init()
 {
@@ -96,13 +94,13 @@ update_status ModuleCamera::PreUpdate()
 
     float4x4 projectionGL = GetProjectionMatrix();
 
-    //Send the frustum projection matrix to OpenGL
+    // Send the frustum projection matrix to OpenGL
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(*projectionGL.v);
 
     float4x4 viewGL = GetViewMatrix();
 
-    //Send the frustum view matrix to OpenGL
+    // Send the frustum view matrix to OpenGL
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(*viewGL.v);
 

@@ -32,4 +32,3 @@ private:
 	float movement_speed = 4.0f;
 	float rotation_speed = 90.0f;
 };
-

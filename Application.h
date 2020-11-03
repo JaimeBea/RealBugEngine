@@ -15,7 +15,6 @@ class ModuleProgram;
 class Application
 {
 public:
-
 	Application();
 	~Application();
 
@@ -38,7 +37,6 @@ private:
 	unsigned previous_time = 0;
 
 	std::list<Module*> modules;
-
 };
 
 extern Application* App;

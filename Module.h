@@ -5,10 +5,7 @@
 class Module
 {
 public:
-
-	Module()
-	{
-	}
+	Module() {}
 
 	virtual bool Init() 
 	{

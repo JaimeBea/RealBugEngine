@@ -42,11 +42,12 @@ static unsigned CreateTriangleVBO()
 	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
 	unsigned vbo;
 	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
 
 	return vbo;
 }
+
 // This function must be called one time at destruction of vertex buffer
 static void DestroyVBO(unsigned vbo)
 {
@@ -65,13 +66,9 @@ static void RenderVBO(unsigned vbo, unsigned program)
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
-ModuleRenderExercise::ModuleRenderExercise()
-{
-}
+ModuleRenderExercise::ModuleRenderExercise() {}
 
-ModuleRenderExercise::~ModuleRenderExercise()
-{
-}
+ModuleRenderExercise::~ModuleRenderExercise() {}
 
 bool ModuleRenderExercise::Init()
 {
@@ -81,18 +78,18 @@ bool ModuleRenderExercise::Init()
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // we want a double buffer
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // we want to have a depth buffer with 24 bits
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); // we want to have a stencil buffer with 8 bits
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	context = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit();
 	LOG("Using Glew %s", glewGetString(GLEW_VERSION));
 
-	glEnable(GL_DEPTH_TEST); // Enable depth test
-	glEnable(GL_CULL_FACE); // Enable cull backward faces
-	glFrontFace(GL_CCW); // Front faces will be counter clockwise
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
 
 #ifdef _DEBUG
 	glEnable(GL_DEBUG_OUTPUT);

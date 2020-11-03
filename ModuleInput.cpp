@@ -11,11 +11,8 @@ ModuleInput::ModuleInput()
 	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 }
 
-// Destructor
-ModuleInput::~ModuleInput()
-{}
+ModuleInput::~ModuleInput() {}
 
-// Called before render is available
 bool ModuleInput::Init()
 {
 	LOG("Init SDL input event system");
@@ -31,7 +28,6 @@ bool ModuleInput::Init()
 	return ret;
 }
 
-// Called every draw update
 update_status ModuleInput::PreUpdate()
 {
 	SDL_Event event;

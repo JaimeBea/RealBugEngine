@@ -16,6 +16,5 @@ public:
 
 private:
 	void* context;
-
 	unsigned triangle = 0;
 };

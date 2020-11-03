@@ -1,16 +1,10 @@
 #include "ModuleWindow.h"
 #include "SDL.h"
 
-ModuleWindow::ModuleWindow()
-{
-}
+ModuleWindow::ModuleWindow() {}
 
-// Destructor
-ModuleWindow::~ModuleWindow()
-{
-}
+ModuleWindow::~ModuleWindow() {}
 
-// Called before render is available
 bool ModuleWindow::Init()
 {
 	LOG("Init SDL window & surface");
@@ -23,7 +17,8 @@ bool ModuleWindow::Init()
 	}
 	else
 	{
-		//Create window
+		// Create window
+
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
 		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
@@ -42,8 +37,6 @@ bool ModuleWindow::Init()
 		}
 		else
 		{
-			//Get window surface
-			
 			screen_surface = SDL_GetWindowSurface(window);
 		}
 	}
@@ -51,18 +44,15 @@ bool ModuleWindow::Init()
 	return ret;
 }
 
-// Called before quitting
 bool ModuleWindow::CleanUp()
 {
 	LOG("Destroying SDL window and quitting all SDL systems");
 
-	//Destroy window
 	if(window != NULL)
 	{
 		SDL_DestroyWindow(window);
 	}
 
-	//Quit SDL subsystems
 	SDL_Quit();
 	return true;
 }

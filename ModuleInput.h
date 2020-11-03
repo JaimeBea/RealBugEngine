@@ -19,7 +19,6 @@ enum KeyState
 class ModuleInput : public Module
 {
 public:
-	
 	ModuleInput();
 	~ModuleInput();
 
