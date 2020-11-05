@@ -31,7 +31,7 @@ public:
 		return keyboard[scancode];
 	}
 
-	KeyState GetMouseButtonDown(int button) const
+	KeyState GetMouseButton(int button) const
 	{
 		return mouse_buttons[button - 1];
 	}

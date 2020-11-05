@@ -41,12 +41,33 @@ update_status ModuleCamera::PreUpdate()
 
     float2 mouse_position = App->input->GetMousePosition();
     float2 mouse_motion = App->input->GetMouseMotion();
-    if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT))
+    KeyState left_mouse_button = App->input->GetMouseButton(SDL_BUTTON_LEFT);
+    KeyState right_mouse_button = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
+    KeyState alt_key = App->input->GetKey(SDL_SCANCODE_LALT);
+    if (left_mouse_button)
     {
+        if (left_mouse_button == KEY_DOWN)
+        {
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else if (left_mouse_button == KEY_UP)
+        {
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
+
         Translate((frustum.Up().Normalized() * mouse_motion.y / 20.0f) + (frustum.WorldRight().Normalized() * -mouse_motion.x / 20.0f));
     }
-    else if (App->input->GetKey(SDL_SCANCODE_LALT) && App->input->GetMouseButtonDown(SDL_BUTTON_RIGHT))
+    else if (alt_key && right_mouse_button)
     {
+        if (right_mouse_button == KEY_DOWN || alt_key == KEY_DOWN)
+        {
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else if (right_mouse_button == KEY_UP || alt_key == KEY_UP)
+        {
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
+
         Translate(frustum.Front().Normalized() * mouse_motion.y / 20.0f);
     }
 

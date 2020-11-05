@@ -38,10 +38,10 @@ update_status ModuleInput::PreUpdate()
 	int mouse_x;
 	int mouse_y;
 	SDL_GetMouseState(&mouse_x, &mouse_y);
-	mouse_motion.x = mouse_x - mouse.x;
-	mouse_motion.y = mouse_y - mouse.y;
 	mouse.x = mouse_x;
 	mouse.y = mouse_y;
+	mouse_motion.x = 0;
+	mouse_motion.y = 0;
 
 	const Uint8* keys = SDL_GetKeyboardState(NULL);
 
@@ -88,6 +88,11 @@ update_status ModuleInput::PreUpdate()
 				App->camera->WindowResized(event.window.data1, event.window.data2);
 				break;
 			}
+			break;
+
+		case SDL_MOUSEMOTION:
+			mouse_motion.x += event.motion.xrel;
+			mouse_motion.y += event.motion.yrel;
 			break;
 
 		case SDL_MOUSEWHEEL:
