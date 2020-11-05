@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleEditor.h"
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
 #include "ModuleRenderExercise.h"
@@ -14,6 +15,7 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(camera = new ModuleCamera());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(editor = new ModuleEditor());
 	//modules.push_back(renderer_exercise = new ModuleRenderExercise());
 	//modules.push_back(program = new ModuleProgram());
 }

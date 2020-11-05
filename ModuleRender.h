@@ -15,6 +15,6 @@ public:
 	bool CleanUp();
 	void WindowResized(int width, int height);
 
-private:
+public:
 	void* context;
 };

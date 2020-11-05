@@ -39,7 +39,6 @@ update_status ModuleCamera::PreUpdate()
         Translate(frustum.Front().Normalized() * mouse_wheel_motion * 10 * final_movement_speed * delta_time);
     }
 
-    float2 mouse_position = App->input->GetMousePosition();
     float2 mouse_motion = App->input->GetMouseMotion();
     KeyState left_mouse_button = App->input->GetMouseButton(SDL_BUTTON_LEFT);
     KeyState right_mouse_button = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
