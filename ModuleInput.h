@@ -3,9 +3,7 @@
 #include "Module.h"
 #include "Math/float2.h"
 #include "SDL_scancode.h"
-#include "SDL_mouse.h"
 
-#define NUM_KEYS 300
 #define NUM_MOUSE_BUTTONS 5
 
 enum KeyState
@@ -52,7 +50,7 @@ public:
 	}
 
 private:
-	KeyState keyboard[NUM_KEYS];
+	KeyState keyboard[SDL_NUM_SCANCODES];
 	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
 	float mouse_wheel_motion = 0;
 	float2 mouse_motion = { 0, 0 };

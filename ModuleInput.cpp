@@ -8,7 +8,7 @@
 
 ModuleInput::ModuleInput()
 {
-	memset(keyboard, KEY_IDLE, sizeof(KeyState) * NUM_KEYS);
+	memset(keyboard, KEY_IDLE, sizeof(KeyState) * SDL_NUM_SCANCODES);
 	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
 }
 
@@ -31,7 +31,7 @@ bool ModuleInput::Init()
 
 update_status ModuleInput::PreUpdate()
 {
-	SDL_Event event;
+	ImGuiIO& io = ImGui::GetIO();
 
 	mouse_motion = { 0, 0 };
 	mouse_wheel_motion = 0;
@@ -44,24 +44,18 @@ update_status ModuleInput::PreUpdate()
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
 
-	const Uint8* keys = SDL_GetKeyboardState(NULL);
+	int window_id = SDL_GetWindowID(App->window->window);
 
-	for (int i = 0; i < NUM_KEYS; ++i)
+	for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
 	{
-		if (keys[i] == 1)
-		{
-			if (keyboard[i] == KEY_IDLE)
-				keyboard[i] = KEY_DOWN;
-			else
-				keyboard[i] = KEY_REPEAT;
-		}
-		else
-		{
-			if (keyboard[i] == KEY_REPEAT || keyboard[i] == KEY_DOWN)
-				keyboard[i] = KEY_UP;
-			else
-				keyboard[i] = KEY_IDLE;
-		}
+		if (keyboard[i] == KEY_DOWN)
+			keyboard[i] = KEY_REPEAT;
+
+		if (keyboard[i] == KEY_UP)
+			keyboard[i] = KEY_IDLE;
+
+		if (io.WantCaptureKeyboard)
+			keyboard[i] = KEY_IDLE;
 	}
 
 	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
@@ -71,53 +65,85 @@ update_status ModuleInput::PreUpdate()
 
 		if (mouse_buttons[i] == KEY_UP)
 			mouse_buttons[i] = KEY_IDLE;
+
+		if (io.WantCaptureMouse)
+			keyboard[i] = KEY_IDLE;
 	}
 
+	SDL_Event event;
 	while (SDL_PollEvent(&event) != 0)
 	{
-		if (ImGui_ImplSDL2_ProcessEvent(&event))
-		{
-			continue;
-		}
-
+		ImGui_ImplSDL2_ProcessEvent(&event);
+		
 		switch (event.type)
 		{
 		case SDL_QUIT:
 			return UPDATE_STOP;
 
 		case SDL_WINDOWEVENT:
-			switch (event.window.event)
+			if (event.window.windowID == window_id)
 			{
-			case SDL_WINDOWEVENT_RESIZED:
-			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				App->renderer->WindowResized(event.window.data1, event.window.data2);
-				App->camera->WindowResized(event.window.data1, event.window.data2);
-				break;
+				switch (event.window.event)
+				{
+				case SDL_WINDOWEVENT_CLOSE:
+					return UPDATE_STOP;
+
+				case SDL_WINDOWEVENT_RESIZED:
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					App->renderer->WindowResized(event.window.data1, event.window.data2);
+					App->camera->WindowResized(event.window.data1, event.window.data2);
+					break;
+				}
 			}
 			break;
-
 		case SDL_MOUSEMOTION:
-			mouse_motion.x += event.motion.xrel;
-			mouse_motion.y += event.motion.yrel;
+			if (!io.WantCaptureMouse)
+			{
+				mouse_motion.x += event.motion.xrel;
+				mouse_motion.y += event.motion.yrel;
+			}
 			break;
 
 		case SDL_MOUSEWHEEL:
-			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
+			if (!io.WantCaptureMouse)
 			{
-				mouse_wheel_motion = event.wheel.x;
-			}
-			else
-			{
-				mouse_wheel_motion = event.wheel.y;
+				if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
+				{
+					mouse_wheel_motion = event.wheel.x;
+				}
+				else
+				{
+					mouse_wheel_motion = event.wheel.y;
+				}
 			}
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
-			mouse_buttons[event.button.button - 1] = KEY_DOWN;
+			if (!io.WantCaptureMouse)
+			{
+				mouse_buttons[event.button.button - 1] = KEY_DOWN;
+			}
 			break;
 
 		case SDL_MOUSEBUTTONUP:
-			mouse_buttons[event.button.button - 1] = KEY_UP;
+			if (!io.WantCaptureMouse)
+			{
+				mouse_buttons[event.button.button - 1] = KEY_UP;
+			}
+			break;
+
+		case SDL_KEYDOWN:
+			if (!io.WantCaptureKeyboard)
+			{
+				keyboard[event.key.keysym.scancode] = KEY_DOWN;
+			}
+			break;
+
+		case SDL_KEYUP:
+			if (!io.WantCaptureKeyboard)
+			{
+				keyboard[event.key.keysym.scancode] = KEY_UP;
+			}
 			break;
 		}
 	}

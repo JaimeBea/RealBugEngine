@@ -4,6 +4,8 @@
 #include "ModuleInput.h"
 #include "GL/glew.h"
 #include "Math/float3x3.h"
+#include "SDL_mouse.h"
+#include "SDL_scancode.h"
 
 ModuleCamera::ModuleCamera()
 {
