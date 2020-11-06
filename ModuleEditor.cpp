@@ -21,6 +21,12 @@ bool ModuleEditor::Init()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+    return true;
+}
+
+bool ModuleEditor::PostInit()
+{
     ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
     ImGui_ImplOpenGL3_Init();
 
@@ -40,6 +46,11 @@ update_status ModuleEditor::Update()
 {
     ImGui::ShowDemoWindow();
 
+    return UPDATE_CONTINUE;
+}
+
+update_status ModuleEditor::PostUpdate()
+{
     // Render main window
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -51,11 +62,6 @@ update_status ModuleEditor::Update()
     ImGui::RenderPlatformWindowsDefault();
     SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 
-    return UPDATE_CONTINUE;
-}
-
-update_status ModuleEditor::PostUpdate()
-{
     return UPDATE_CONTINUE;
 }
 

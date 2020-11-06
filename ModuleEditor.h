@@ -10,6 +10,7 @@ public:
 	virtual ~ModuleEditor();
 
 	bool Init();
+	bool PostInit();
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();

@@ -1,9 +1,9 @@
 #include "Application.h"
-#include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "ModuleEditor.h"
 #include "ModuleInput.h"
+#include "ModuleWindow.h"
+#include "ModuleEditor.h"
 #include "ModuleCamera.h"
+#include "ModuleRender.h"
 #include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
 #include "SDL_timer.h"
@@ -13,9 +13,11 @@ Application::Application()
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
-	modules.push_back(camera = new ModuleCamera());
-	modules.push_back(renderer = new ModuleRender());
+
 	modules.push_back(editor = new ModuleEditor());
+	modules.push_back(camera = new ModuleCamera());
+
+	modules.push_back(renderer = new ModuleRender());
 	//modules.push_back(renderer_exercise = new ModuleRenderExercise());
 	//modules.push_back(program = new ModuleProgram());
 }
@@ -34,8 +36,14 @@ bool Application::Init()
 
 	bool ret = true;
 
+	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+		ret = (*it)->PreInit();
+
 	for(std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Init();
+
+	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+		ret = (*it)->PostInit();
 
 	return ret;
 }
