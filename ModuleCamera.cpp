@@ -32,15 +32,16 @@ update_status ModuleCamera::PreUpdate()
     float final_movement_speed = movement_speed;
     if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT))
     {
-        final_movement_speed *= 3;
+        final_movement_speed *= 2;
     }
 
     float mouse_wheel_motion = App->input->GetMouseWheelMotion();
     if (mouse_wheel_motion < -FLT_EPSILON || mouse_wheel_motion > FLT_EPSILON)
     {
-        Translate(frustum.Front().Normalized() * mouse_wheel_motion * 10 * final_movement_speed * delta_time);
+        Translate(frustum.Front().Normalized() * mouse_wheel_motion * 10 * zoom_speed * delta_time);
     }
 
+    // TODO: Make mouse speed depend on screen size
     float2 mouse_motion = App->input->GetMouseMotion();
     KeyState left_mouse_button = App->input->GetMouseButton(SDL_BUTTON_LEFT);
     KeyState right_mouse_button = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
@@ -56,7 +57,6 @@ update_status ModuleCamera::PreUpdate()
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }
 
-        // TODO: Make mouse speed depend on screen size
         Translate((frustum.Up().Normalized() * mouse_motion.y / 150.0f) + (frustum.WorldRight().Normalized() * -mouse_motion.x / 150.0f));
     }
     else if (alt_key && right_mouse_button)
@@ -70,7 +70,7 @@ update_status ModuleCamera::PreUpdate()
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }
 
-        Translate(frustum.Front().Normalized() * mouse_motion.y / 20.0f);
+        Translate(frustum.Front().Normalized() * mouse_motion.y / 150.0f);
     }
 
     if (App->input->GetKey(SDL_SCANCODE_Q))
@@ -165,9 +165,19 @@ void ModuleCamera::SetPlaneDistances(float near_plane, float far_plane)
     frustum.SetViewPlaneDistances(near_plane, far_plane);
 }
 
+void ModuleCamera::SetPosition(vec position)
+{
+    frustum.SetPos(position);
+}
+
 void ModuleCamera::SetPosition(float x, float y, float z)
 {
-    frustum.SetPos(vec(x, y, z));
+    SetPosition(vec(x, y, z));
+}
+
+void ModuleCamera::SetOrientation(float3 orientaton)
+{
+    SetOrientation(orientaton.x, orientaton.y, orientaton.z);
 }
 
 void ModuleCamera::SetOrientation(float x, float y, float z)
@@ -197,12 +207,52 @@ void ModuleCamera::LookAt(float x, float y, float z)
     Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), float3::unitY));
 }
 
-float4x4 ModuleCamera::GetProjectionMatrix()
+vec ModuleCamera::GetFront() const
+{
+    return frustum.Front();
+}
+
+vec ModuleCamera::GetUp() const
+{
+    return frustum.Up();
+}
+
+vec ModuleCamera::GetPosition() const
+{
+    return frustum.Pos();
+}
+
+float3 ModuleCamera::GetOrientation() const
+{
+    return frustum.ViewMatrix().RotatePart().ToEulerXYZ();
+}
+
+float ModuleCamera::GetNearPlane() const
+{
+    return frustum.NearPlaneDistance();
+}
+
+float ModuleCamera::GetFarPlane() const
+{
+    return frustum.FarPlaneDistance();
+}
+
+float ModuleCamera::GetFOV() const
+{
+    return frustum.VerticalFov();
+}
+
+float ModuleCamera::GetAspectRatio() const
+{
+    return frustum.AspectRatio();
+}
+
+float4x4 ModuleCamera::GetProjectionMatrix() const
 {
     return frustum.ProjectionMatrix().Transposed();
 }
 
-float4x4 ModuleCamera::GetViewMatrix()
+float4x4 ModuleCamera::GetViewMatrix() const
 {
     return float4x4(frustum.ViewMatrix()).Transposed();
 }

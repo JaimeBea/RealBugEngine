@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleConfig.h"
 #include "ModuleWindow.h"
+#include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -215,9 +216,68 @@ update_status ModuleEditor::Update()
             ImGui::SameLine();
             ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_reserved_mb);
         }
+
+        // Camera
+        if (ImGui::CollapsingHeader("Camera"))
+        {
+            vec front = App->camera->GetFront();
+            vec up = App->camera->GetUp();
+            ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+            ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+            vec position = App->camera->GetPosition();
+            if (ImGui::InputFloat3("Position", position.ptr()))
+            {
+                App->camera->SetPosition(position);
+            }
+            ImGui::InputFloat("Mov Speed", &App->camera->movement_speed);
+            ImGui::InputFloat("Rot Speed", &App->camera->rotation_speed);
+            ImGui::InputFloat("Zoom Speed", &App->camera->zoom_speed);
+            float near_plane = App->camera->GetNearPlane();
+            float far_plane = App->camera->GetFarPlane();
+            if (ImGui::InputFloat("Near Plane", &near_plane))
+            {
+                App->camera->SetPlaneDistances(near_plane, far_plane);
+            }
+            if (ImGui::InputFloat("Far Plane", &far_plane))
+            {
+                App->camera->SetPlaneDistances(near_plane, far_plane);
+            }
+            float fov = App->camera->GetFOV();
+            if (ImGui::InputFloat("Field of View", &fov))
+            {
+                App->camera->SetFOV(fov);
+            }
+            float aspect_ratio = App->camera->GetAspectRatio();
+            if (ImGui::InputFloat("Aspect Ratio", &aspect_ratio))
+            {
+                App->camera->SetAspectRatio(aspect_ratio);
+            }
+            ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
+        }
     }
     ImGui::End();
 
+    // About
+    ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
+    if (ImGui::Begin("About"))
+    {
+        ImGui::Text("Engine Name:");
+        ImGui::SameLine();
+        ImGui::TextColored(yellow, App->config->engine_name);
+        ImGui::Text("Description:");
+        ImGui::SameLine();
+        ImGui::TextColored(yellow, App->config->engine_description);
+        ImGui::Text("Authors:");
+        ImGui::SameLine();
+        ImGui::TextColored(yellow, App->config->engine_authors);
+        ImGui::Text("Libraries:");
+        ImGui::SameLine();
+        ImGui::TextColored(yellow, App->config->engine_libraries);
+        ImGui::Text("License:");
+        ImGui::SameLine();
+        ImGui::TextColored(yellow, App->config->engine_license);
+    }
+    ImGui::End();
     return UPDATE_CONTINUE;
 }
 

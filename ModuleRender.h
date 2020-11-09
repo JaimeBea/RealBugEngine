@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Module.h"
+#include "Math/float3.h"
 
 class ModuleRender : public Module
 {
@@ -19,4 +20,5 @@ public:
 
 public:
 	void* context;
+	float3 clear_color = { 0.1f, 0.1f, 0.1f };
 };
