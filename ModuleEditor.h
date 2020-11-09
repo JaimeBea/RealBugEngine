@@ -15,5 +15,10 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
+
+private:
+	bool show_console = true;
+	bool show_config = true;
+	bool show_about = false;
 };
 
