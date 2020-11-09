@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Module.h"
-#include "imgui_impl_sdl.h" // This is neccessary for some reason. Putting it in the .cpp file makes the linker fail
 
 class ModuleEditor : public Module
 {

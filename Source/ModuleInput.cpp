@@ -39,8 +39,8 @@ update_status ModuleInput::PreUpdate()
 	int mouse_x;
 	int mouse_y;
 	SDL_GetMouseState(&mouse_x, &mouse_y);
-	mouse.x = mouse_x;
-	mouse.y = mouse_y;
+	mouse.x = (float) mouse_x;
+	mouse.y = (float) mouse_y;
 	mouse_motion.x = 0;
 	mouse_motion.y = 0;
 
@@ -109,11 +109,11 @@ update_status ModuleInput::PreUpdate()
 			{
 				if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
 				{
-					mouse_wheel_motion = event.wheel.x;
+					mouse_wheel_motion = (float) event.wheel.x;
 				}
 				else
 				{
-					mouse_wheel_motion = event.wheel.y;
+					mouse_wheel_motion = (float) event.wheel.y;
 				}
 			}
 			break;
