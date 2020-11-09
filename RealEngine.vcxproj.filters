@@ -1,36 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\Debug.cpp" />
-    <ClCompile Include="Source\Globals.cpp" />
-    <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\ModuleCamera.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleConfig.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleDebugDraw.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleEditor.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleInput.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleProgram.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleRender.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleRenderExercise.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\ModuleWindow.cpp">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Libs\MathGeoLib\Algorithm\GJK.cpp">
       <Filter>Libraries\MathGeoLib</Filter>
@@ -176,6 +172,18 @@
     <ClCompile Include="Libs\imgui\imgui_widgets.cpp">
       <Filter>Libraries\ImGUI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Application.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Debug.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Globals.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="debugdraw.h">
@@ -184,40 +192,35 @@
     <ClInclude Include="debug_draw.hpp">
       <Filter>Libraries\DebugDraw</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Application.h" />
-    <ClInclude Include="Source\Debug.h" />
-    <ClInclude Include="Source\Globals.h" />
-    <ClInclude Include="Source\Module.h" />
-    <ClInclude Include="Source\ShortString.h" />
     <ClInclude Include="Source\ModuleWindow.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleCamera.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleConfig.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleDebugDraw.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleEditor.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleInput.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleProgram.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleRender.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleRenderExercise.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModuleDummy.h">
-      <Filter>Modules</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Libs\MathGeoLib\Algorithm\GJK.h">
       <Filter>Libraries\MathGeoLib</Filter>
@@ -471,12 +474,30 @@
     <ClInclude Include="Libs\imgui\imstb_truetype.h">
       <Filter>Libraries\ImGUI</Filter>
     </ClInclude>
+    <ClInclude Include="Source\ShortString.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Application.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Debug.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Globals.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Module.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">
       <UniqueIdentifier>{79b8a595-ed5e-49e8-950c-67ec1eb55f5a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Modules">
+    <Filter Include="Source">
+      <UniqueIdentifier>{41a9c95d-c7f8-41aa-b8c6-00de5e1c96d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Modules">
       <UniqueIdentifier>{7e98c0cd-558f-4cbb-b8e3-858a97ca859e}</UniqueIdentifier>
       <Extensions>
       </Extensions>
