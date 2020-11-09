@@ -21,14 +21,27 @@ bool ModuleWindow::Init()
 
 		int width = SCREEN_WIDTH;
 		int height = SCREEN_HEIGHT;
-		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
+		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
-		if(FULLSCREEN == true)
+		if (RESIZABLE)
 		{
-			flags |= SDL_WINDOW_FULLSCREEN;
+			flags |= SDL_WINDOW_RESIZABLE;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		switch (SCREEN_MODE)
+		{
+		case SM_BORDERLESS:
+			flags |= SDL_WINDOW_BORDERLESS;
+			break;
+		case SM_FULLSCREEN:
+			flags |= SDL_WINDOW_FULLSCREEN;
+			break;
+		case SM_FULLSCREEN_DESKTOP:
+			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+			break;
+		}
+
+		window = SDL_CreateWindow(APP_NAME.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
 		{
@@ -57,3 +70,45 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
+void ModuleWindow::SetScreenMode(int mode)
+{
+	switch (mode)
+	{
+	case SM_WINDOWED:
+		SDL_SetWindowFullscreen(window, SDL_FALSE);
+		SDL_SetWindowBordered(window, SDL_TRUE);
+		break;
+	case SM_BORDERLESS:
+		SDL_SetWindowFullscreen(window, SDL_FALSE);
+		SDL_SetWindowBordered(window, SDL_FALSE);
+		break;
+	case SM_FULLSCREEN:
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+		break;
+	case SM_FULLSCREEN_DESKTOP:
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		break;
+	}
+}
+
+void ModuleWindow::SetResizable(bool resizable)
+{
+	if (resizable)
+	{
+		SDL_SetWindowResizable(window, SDL_TRUE);
+	}
+	else
+	{
+		SDL_SetWindowResizable(window, SDL_FALSE);
+	}
+}
+
+void ModuleWindow::SetSize(int width, int height)
+{
+	SDL_SetWindowSize(window, width, height);
+}
+
+void ModuleWindow::SetBrightness(float brightness)
+{
+	SDL_SetWindowBrightness(window, brightness);
+}

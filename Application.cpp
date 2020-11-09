@@ -7,6 +7,7 @@
 #include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
 #include "SDL_timer.h"
+#include <windows.h>
 
 Application::Application()
 {
@@ -55,7 +56,9 @@ update_status Application::Update()
 	unsigned now_time = SDL_GetTicks();
 	if (SDL_TICKS_PASSED(now_time, previous_time))
 	{
-		delta_time = (now_time - previous_time) / 1000.0f;
+		unsigned delta_ms = now_time - previous_time;
+		log_delta_ms(delta_ms);
+		delta_time = delta_ms / 1000.0f;
 
 		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 			ret = (*it)->PreUpdate();
@@ -68,6 +71,15 @@ update_status Application::Update()
 	}
 	previous_time = now_time;
 
+	if (LIMIT_FRAMERATE)
+	{
+		now_time = SDL_GetTicks();
+		unsigned frame_ms = now_time - previous_time;
+		unsigned min_ms = 1000 / MAX_FPS;
+		if (frame_ms < min_ms) {
+			SDL_Delay(min_ms - frame_ms);
+		}
+	}
 	return ret;
 }
 
@@ -84,4 +96,9 @@ bool Application::CleanUp()
 float Application::GetDeltaTime()
 {
 	return delta_time;
+}
+
+void Application::RequestBrowser(char* url)
+{
+	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }

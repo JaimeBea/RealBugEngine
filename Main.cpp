@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "Application.h"
+#include <vector>
 
 #include "SDL.h"
 #pragma comment( lib, "SDL/lib/x86/SDL2.lib" )
@@ -13,7 +14,6 @@ enum main_states
 	MAIN_FINISH,
 	MAIN_EXIT
 };
-
 Application* App = NULL;
 
 int main(int argc, char ** argv)
@@ -83,5 +83,10 @@ int main(int argc, char ** argv)
 
 	delete App;
 	LOG("Bye :)\n");
+
+	for (char* log_line : log_lines)
+	{
+		delete[] log_line;
+	}
 	return main_return;
 }

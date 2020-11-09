@@ -56,7 +56,8 @@ update_status ModuleCamera::PreUpdate()
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }
 
-        Translate((frustum.Up().Normalized() * mouse_motion.y / 20.0f) + (frustum.WorldRight().Normalized() * -mouse_motion.x / 20.0f));
+        // TODO: Make mouse speed depend on screen size
+        Translate((frustum.Up().Normalized() * mouse_motion.y / 150.0f) + (frustum.WorldRight().Normalized() * -mouse_motion.x / 150.0f));
     }
     else if (alt_key && right_mouse_button)
     {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <list>
 #include "Globals.h"
+#include <list>
 
 class Module;
 class ModuleRender;
@@ -24,6 +24,7 @@ public:
 	bool CleanUp();
 
 	float GetDeltaTime();
+	void RequestBrowser(char* url);
 
 public:
 	ModuleRender* renderer = nullptr;

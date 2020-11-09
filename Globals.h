@@ -1,11 +1,7 @@
 #pragma once
 
-#include <windows.h>
-#include <stdio.h>
-
-#define LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
-
-void log(const char file[], int line, const char* format, ...);
+#include "Debug.h"
+#include "ShortString.h"
 
 enum update_status
 {
@@ -14,13 +10,27 @@ enum update_status
 	UPDATE_ERROR
 };
 
+enum screen_mode
+{
+	SM_WINDOWED,
+	SM_BORDERLESS,
+	SM_FULLSCREEN,
+	SM_FULLSCREEN_DESKTOP
+};
+
 // Constants -----------
 #define DEGTORAD 0.01745329251f
 
 // Configuration -----------
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-#define FULLSCREEN false
-#define VSYNC true
-#define TITLE "Super Awesome Engine"
 #define GLSL_VERSION "#version 460"
+
+extern ShortString<20> APP_NAME;
+extern ShortString<20> ORGANIZATION_NAME;
+extern int MAX_FPS;
+extern bool LIMIT_FRAMERATE;
+extern bool VSYNC;
+extern int SCREEN_MODE;
+extern bool RESIZABLE;
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
+extern float BRIGHTNESS;

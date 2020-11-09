@@ -1,15 +1,12 @@
 #include "Globals.h"
 
-void log(const char file[], int line, const char* format, ...)
-{
-	static char tmp_string[4096];
-	static char tmp_string2[4096];
-	static va_list  ap;
-
-	// Construct the string from variable arguments
-	va_start(ap, format);
-	vsprintf_s(tmp_string, 4096, format, ap);
-	va_end(ap);
-	sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
-	OutputDebugString(tmp_string2);
-}
+ShortString<20> APP_NAME = "Real Engine";
+ShortString<20> ORGANIZATION_NAME = "Jaime Bea";
+int MAX_FPS = 60;
+bool LIMIT_FRAMERATE = true;
+bool VSYNC = true;
+int SCREEN_MODE = SM_WINDOWED;
+bool RESIZABLE = true;
+int SCREEN_WIDTH = 640;
+int SCREEN_HEIGHT = 480;
+float BRIGHTNESS = 1.0f;
