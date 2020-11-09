@@ -1,5 +1,6 @@
 #include "ModuleRender.h"
 #include "Application.h"
+#include "ModuleConfig.h"
 #include "ModuleWindow.h"
 #include "SDL.h"
 #include "GL/glew.h"
@@ -12,7 +13,7 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 
-	SDL_GL_SetSwapInterval(VSYNC);
+	SetVSync(App->config->vsync);
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -108,3 +109,8 @@ bool ModuleRender::CleanUp()
 }
 
 void ModuleRender::WindowResized(int width, int height) {}
+
+void ModuleRender::SetVSync(bool vsync)
+{
+	SDL_GL_SetSwapInterval(vsync);
+}

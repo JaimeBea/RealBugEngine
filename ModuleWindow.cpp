@@ -1,4 +1,6 @@
 #include "ModuleWindow.h"
+#include "Application.h"
+#include "ModuleConfig.h"
 #include "SDL.h"
 
 ModuleWindow::ModuleWindow() {}
@@ -19,16 +21,16 @@ bool ModuleWindow::Init()
 	{
 		// Create window
 
-		int width = SCREEN_WIDTH;
-		int height = SCREEN_HEIGHT;
+		int width = App->config->screen_width;
+		int height = App->config->screen_height;
 		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
-		if (RESIZABLE)
+		if (App->config->resizable)
 		{
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
 
-		switch (SCREEN_MODE)
+		switch (App->config->screen_mode)
 		{
 		case SM_BORDERLESS:
 			flags |= SDL_WINDOW_BORDERLESS;
@@ -41,7 +43,7 @@ bool ModuleWindow::Init()
 			break;
 		}
 
-		window = SDL_CreateWindow(APP_NAME.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow(App->config->app_name.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
 		{
@@ -111,4 +113,9 @@ void ModuleWindow::SetSize(int width, int height)
 void ModuleWindow::SetBrightness(float brightness)
 {
 	SDL_SetWindowBrightness(window, brightness);
+}
+
+void ModuleWindow::SetTitle(const char* title)
+{
+
 }

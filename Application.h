@@ -4,6 +4,7 @@
 #include <list>
 
 class Module;
+class ModuleConfig;
 class ModuleRender;
 class ModuleEditor;
 class ModuleCamera;
@@ -27,6 +28,7 @@ public:
 	void RequestBrowser(char* url);
 
 public:
+	ModuleConfig* config = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;

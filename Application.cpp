@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "ModuleConfig.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
 #include "ModuleEditor.h"
@@ -12,6 +13,8 @@
 Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
+	modules.push_back(config = new ModuleConfig());
+
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
 
@@ -71,11 +74,11 @@ update_status Application::Update()
 	}
 	previous_time = now_time;
 
-	if (LIMIT_FRAMERATE)
+	if (config->limit_framerate)
 	{
 		now_time = SDL_GetTicks();
 		unsigned frame_ms = now_time - previous_time;
-		unsigned min_ms = 1000 / MAX_FPS;
+		unsigned min_ms = 1000 / config->max_fps;
 		if (frame_ms < min_ms) {
 			SDL_Delay(min_ms - frame_ms);
 		}

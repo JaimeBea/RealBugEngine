@@ -170,6 +170,9 @@
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleConfig.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -452,6 +455,9 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="ShortString.h" />
+    <ClInclude Include="ModuleConfig.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Shaders">

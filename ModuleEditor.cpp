@@ -1,11 +1,14 @@
 #include "ModuleEditor.h"
 #include "Application.h"
+#include "ModuleConfig.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
-#include "SDL.h"
+#include "SDL_video.h"
+
+static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 ModuleEditor::ModuleEditor()
 {
@@ -83,19 +86,16 @@ update_status ModuleEditor::Update()
         // Application
         if (ImGui::CollapsingHeader("Application"))
         {
-            if (ImGui::InputText("App name", APP_NAME.GetChars(), APP_NAME.GetMaxSize()))
+            if (ImGui::InputText("App name", App->config->app_name.GetChars(), App->config->app_name.GetMaxSize()))
             {
-                SDL_SetWindowTitle(App->window->window, APP_NAME.GetChars());
+                App->window->SetTitle(App->config->app_name.GetChars());
             }
-            if (ImGui::InputText("Organization", ORGANIZATION_NAME.GetChars(), ORGANIZATION_NAME.GetMaxSize()))
+            ImGui::InputText("Organization", App->config->organization.GetChars(), App->config->organization.GetMaxSize());
+            ImGui::SliderInt("Max FPS", &App->config->max_fps, 1, 240);
+            ImGui::Checkbox("Limit framerate", &App->config->limit_framerate);
+            if (ImGui::Checkbox("VSync", &App->config->vsync))
             {
-                SDL_SetWindowTitle(App->window->window, ORGANIZATION_NAME.GetChars());
-            }
-            ImGui::SliderInt("Max FPS", &MAX_FPS, 1, 240);
-            ImGui::Checkbox("Limit framerate", &LIMIT_FRAMERATE);
-            if (ImGui::Checkbox("VSync", &VSYNC))
-            {
-                SDL_GL_SetSwapInterval(VSYNC);
+                App->renderer->SetVSync(App->config->vsync);
             }
 
             // FPS Graph
@@ -111,7 +111,7 @@ update_status ModuleEditor::Update()
         {
             // Screen mode combo box
             const char* items[] = { "Windowed", "Borderless", "Fullscreen", "Fullscreen desktop" };
-            const char* item_current = items[SCREEN_MODE];
+            const char* item_current = items[App->config->screen_mode];
             if (ImGui::BeginCombo("Screen mode", item_current))
             {
                 for (int n = 0; n < IM_ARRAYSIZE(items); ++n)
@@ -119,8 +119,8 @@ update_status ModuleEditor::Update()
                     bool is_selected = (item_current == items[n]);
                     if (ImGui::Selectable(items[n], is_selected))
                     {
-                        SCREEN_MODE = n;
-                        App->window->SetScreenMode(SCREEN_MODE);
+                        App->config->screen_mode = n;
+                        App->window->SetScreenMode(App->config->screen_mode);
                     }
                     if (is_selected)
                     {
@@ -130,29 +130,90 @@ update_status ModuleEditor::Update()
                 ImGui::EndCombo();
             }
 
-            if (ImGui::SliderFloat("Brightness", &BRIGHTNESS, 0.25f, 1.0f))
+            if (ImGui::SliderFloat("Brightness", &App->config->brightness, 0.25f, 1.0f))
             {
-                App->window->SetBrightness(BRIGHTNESS);
+                App->window->SetBrightness(App->config->brightness);
             }
 
-            if (SCREEN_MODE != SM_FULLSCREEN_DESKTOP)
+            if (App->config->screen_mode != SM_FULLSCREEN_DESKTOP)
             {
-                if (ImGui::Checkbox("Resizable", &RESIZABLE))
+                if (ImGui::Checkbox("Resizable", &App->config->resizable))
                 {
-                    App->window->SetResizable(RESIZABLE);
+                    App->window->SetResizable(App->config->resizable);
                 }
-                if (RESIZABLE)
+                if (App->config->resizable)
                 {
-                    if (ImGui::SliderInt("Width", &SCREEN_WIDTH, 640, 4096))
+                    if (ImGui::SliderInt("Width", &App->config->screen_width, 640, 4096))
                     {
-                        App->window->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+                        App->window->SetSize(App->config->screen_width, App->config->screen_height);
                     }
-                    if (ImGui::SliderInt("Height", &SCREEN_HEIGHT, 480, 2160))
+                    if (ImGui::SliderInt("Height", &App->config->screen_height, 480, 2160))
                     {
-                        App->window->SetSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+                        App->window->SetSize(App->config->screen_width, App->config->screen_height);
                     }
                 }
             }
+        }
+
+        // Hardware
+        if (ImGui::CollapsingHeader("Hardware"))
+        {
+            ImGui::Text("SDL version:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, App->config->sdl_version.GetChars());
+
+            ImGui::Separator();
+
+            ImGui::Text("CPUs:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%i (Cache: %i kb)", App->config->cpu_count, App->config->cache_size_kb);
+            ImGui::Text("System RAM:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%.1f Gb", App->config->ram_gb);
+            ImGui::Text("Caps:");
+            const char* items[] =
+            {
+                "3DNow", "ARMSIMD", "AVX", "AVX2", "AVX512F", "AltiVec", "MMX",
+                "NEON", "RDTSC", "SSE", "SSE2", "SSE3", "SSE41", "SSE42"
+            };
+            for (int i = 0; i < IM_ARRAYSIZE(items); ++i)
+            {
+                if (App->config->caps[i])
+                {
+                    ImGui::SameLine();
+                    ImGui::TextColored(yellow, items[i]);
+                }
+
+                // Line break to avoid too many items in the same line
+                if (i == 6)
+                {
+                    ImGui::Text("");
+                }
+            }
+
+            ImGui::Separator();
+
+            ImGui::Text("GPU Vendor:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%s", App->config->gpu_vendor);
+            ImGui::Text("GPU Renderer:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%s", App->config->gpu_renderer);
+            ImGui::Text("GPU OpenGL Version:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%s", App->config->gpu_opengl_version);
+            ImGui::Text("VRAM Budget:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_budget_mb);
+            ImGui::Text("VRAM Usage:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_usage_mb);
+            ImGui::Text("VRAM Available:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_available_mb);
+            ImGui::Text("VRAM Reserved:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_reserved_mb);
         }
     }
     ImGui::End();

@@ -15,6 +15,8 @@ public:
 	bool CleanUp();
 	void WindowResized(int width, int height);
 
+	void SetVSync(bool vsync);
+
 public:
 	void* context;
 };
