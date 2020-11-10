@@ -115,13 +115,13 @@ UpdateStatus ModuleCamera::PreUpdate()
         Rotate(float3x3::RotateY(-rotation_speed * DEGTORAD * delta_time));
     }
 
-    float4x4 projectionGL = GetProjectionMatrix();
+    float4x4 projectionGL = GetProjectionMatrix().Transposed();
 
     // Send the frustum projection matrix to OpenGL
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(*projectionGL.v);
 
-    float4x4 viewGL = GetViewMatrix();
+    float4x4 viewGL = GetViewMatrix().Transposed();
 
     // Send the frustum view matrix to OpenGL
     glMatrixMode(GL_MODELVIEW);
@@ -249,10 +249,10 @@ float ModuleCamera::GetAspectRatio() const
 
 float4x4 ModuleCamera::GetProjectionMatrix() const
 {
-    return frustum.ProjectionMatrix().Transposed();
+    return frustum.ProjectionMatrix();
 }
 
 float4x4 ModuleCamera::GetViewMatrix() const
 {
-    return float4x4(frustum.ViewMatrix()).Transposed();
+    return frustum.ViewMatrix();
 }

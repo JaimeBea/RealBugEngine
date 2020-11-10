@@ -7,6 +7,7 @@
 #include "ModuleRender.h"
 #include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
+#include "ModuleDebugDraw.h"
 #include "SDL_timer.h"
 #include <windows.h>
 
@@ -24,6 +25,7 @@ Application::Application()
 	//modules.push_back(renderer = new ModuleRender());
 	modules.push_back(renderer = new ModuleRenderExercise());
 	modules.push_back(program = new ModuleProgram());
+	modules.push_back(debug_draw = new ModuleDebugDraw());
 }
 
 Application::~Application()

@@ -1,6 +1,8 @@
 #include "ModuleRenderExercise.h"
 #include "Application.h"
 #include "ModuleWindow.h"
+#include "ModuleCamera.h"
+#include "ModuleDebugDraw.h"
 #include "ModuleProgram.h"
 #include "GL/glew.h"
 #include "SDL.h"
@@ -117,7 +119,11 @@ UpdateStatus ModuleRenderExercise::PreUpdate()
 
 UpdateStatus ModuleRenderExercise::Update()
 {
-	RenderVBO(triangle, App->program->program);
+	GLsizei screen_width, screen_height;
+	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
+	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), screen_width, screen_height);
+
+	//RenderVBO(triangle, App->program->program);
 
 	return UpdateStatus::CONTINUE;
 }

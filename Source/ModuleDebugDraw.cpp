@@ -1,10 +1,8 @@
-#include "Globals.h"
 #include "ModuleDebugDraw.h"
+#include "GL/glew.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "DebugDraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
-
-#include "GL/glew.h"
 
 class DDRenderInterfaceCoreGL final
     : public dd::RenderInterface
@@ -613,6 +611,9 @@ UpdateStatus  ModuleDebugDraw::Update()
 
 void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height)
 {
+    dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
+    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+
     implementation->width     = width;
     implementation->height    = height;
     implementation->mvpMatrix = proj * view;

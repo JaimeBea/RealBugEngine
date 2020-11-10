@@ -10,7 +10,6 @@ class ModuleDebugDraw : public Module
 {
 
 public:
-
     ModuleDebugDraw();
     ~ModuleDebugDraw();
 
