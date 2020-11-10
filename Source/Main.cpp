@@ -2,77 +2,75 @@
 #include "Application.h"
 #include "SDL.h"
 
-enum main_states
+enum class MainState
 {
-	MAIN_CREATION,
-	MAIN_START,
-	MAIN_UPDATE,
-	MAIN_FINISH,
-	MAIN_EXIT
+	CREATION,
+	START,
+	UPDATE,
+	FINISH,
+	EXIT
 };
-Application* App = NULL;
+
+Application* App = nullptr;
 
 int main(int argc, char ** argv)
 {
 	int main_return = EXIT_FAILURE;
-	main_states state = MAIN_CREATION;
+	MainState state = MainState::CREATION;
 
-	while (state != MAIN_EXIT)
+	while (state != MainState::EXIT)
 	{
 		switch (state)
 		{
-		case MAIN_CREATION:
-
+		case MainState::CREATION:
 			LOG("Application Creation --------------");
 			App = new Application();
-			state = MAIN_START;
+			state = MainState::START;
 			break;
 
-		case MAIN_START:
-
+		case MainState::START:
 			LOG("Application Init --------------");
 			if (App->Init() == false)
 			{
 				LOG("Application Init exits with error -----");
-				state = MAIN_EXIT;
+				state = MainState::EXIT;
 			}
 			else
 			{
-				state = MAIN_UPDATE;
+				state = MainState::UPDATE;
 				LOG("Application Update --------------");
 			}
-
 			break;
 
-		case MAIN_UPDATE:
+		case MainState::UPDATE:
 		{
-			int update_return = App->Update();
+			UpdateStatus update_return = App->Update();
 
-			if (update_return == UPDATE_ERROR)
+			if (update_return == UpdateStatus::ERROR)
 			{
 				LOG("Application Update exits with error -----");
-				state = MAIN_EXIT;
+				state = MainState::EXIT;
 			}
 
-			if (update_return == UPDATE_STOP)
-				state = MAIN_FINISH;
-		}
+			if (update_return == UpdateStatus::STOP)
+			{
+				state = MainState::FINISH;
+			}
 			break;
+		}
 
-		case MAIN_FINISH:
-
+		case MainState::FINISH:
 			LOG("Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
 				LOG("Application CleanUp exits with error -----");
 			}
 			else
+			{
 				main_return = EXIT_SUCCESS;
-
-			state = MAIN_EXIT;
-
+			}
+			state = MainState::EXIT;
 			break;
-
 		}
 
 	}

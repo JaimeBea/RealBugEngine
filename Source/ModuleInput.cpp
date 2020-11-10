@@ -29,7 +29,7 @@ bool ModuleInput::Init()
 	return ret;
 }
 
-update_status ModuleInput::PreUpdate()
+UpdateStatus ModuleInput::PreUpdate()
 {
 	ImGuiIO& io = ImGui::GetIO();
 
@@ -78,7 +78,7 @@ update_status ModuleInput::PreUpdate()
 		switch (event.type)
 		{
 		case SDL_QUIT:
-			return UPDATE_STOP;
+			return UpdateStatus::STOP;
 
 		case SDL_WINDOWEVENT:
 			if (event.window.windowID == window_id)
@@ -86,7 +86,7 @@ update_status ModuleInput::PreUpdate()
 				switch (event.window.event)
 				{
 				case SDL_WINDOWEVENT_CLOSE:
-					return UPDATE_STOP;
+					return UpdateStatus::STOP;
 
 				case SDL_WINDOWEVENT_RESIZED:
 				case SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -96,6 +96,7 @@ update_status ModuleInput::PreUpdate()
 				}
 			}
 			break;
+
 		case SDL_MOUSEMOTION:
 			if (!io.WantCaptureMouse)
 			{
@@ -148,10 +149,12 @@ update_status ModuleInput::PreUpdate()
 		}
 	}
 
-    if (GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-        return UPDATE_STOP;
+	if (GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		return UpdateStatus::STOP;
+	}
 
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
 // Called before quitting

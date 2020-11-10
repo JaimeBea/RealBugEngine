@@ -13,9 +13,9 @@ ModuleCamera::ModuleCamera()
     frustum.SetViewPlaneDistances(0.1f, 200.0f);
     frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 
-    frustum.SetPos(float3(0, 1, -2));
-    frustum.SetFront(float3::unitZ);
-    frustum.SetUp(float3::unitY);
+    frustum.SetPos(vec(0, 1, -2));
+    frustum.SetFront(vec::unitZ);
+    frustum.SetUp(vec::unitY);
 }
 
 ModuleCamera::~ModuleCamera() {}
@@ -25,7 +25,7 @@ bool ModuleCamera::Init()
     return true;
 }
 
-update_status ModuleCamera::PreUpdate()
+UpdateStatus ModuleCamera::PreUpdate()
 {
     float delta_time = App->GetDeltaTime();
 
@@ -127,17 +127,17 @@ update_status ModuleCamera::PreUpdate()
     glMatrixMode(GL_MODELVIEW);
     glLoadMatrixf(*viewGL.v);
 
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleCamera::Update()
+UpdateStatus ModuleCamera::Update()
 {
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleCamera::PostUpdate()
+UpdateStatus ModuleCamera::PostUpdate()
 {
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
 bool ModuleCamera::CleanUp()
@@ -204,7 +204,7 @@ void ModuleCamera::LookAt(float x, float y, float z)
 {
     vec direction = vec(x, y, z) - frustum.Pos();
     direction.Normalize();
-    Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), float3::unitY));
+    Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), vec::unitY));
 }
 
 vec ModuleCamera::GetFront() const

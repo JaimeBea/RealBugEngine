@@ -37,16 +37,16 @@ bool ModuleEditor::PostInit()
     return true;
 }
 
-update_status ModuleEditor::PreUpdate()
+UpdateStatus ModuleEditor::PreUpdate()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(App->window->window);
     ImGui::NewFrame();
 
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleEditor::Update()
+UpdateStatus ModuleEditor::Update()
 {
     // Main menu bar
     ImGui::BeginMainMenuBar();
@@ -291,10 +291,10 @@ update_status ModuleEditor::Update()
         }
         ImGui::End();
     }
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleEditor::PostUpdate()
+UpdateStatus ModuleEditor::PostUpdate()
 {
     // Render main window
     ImGui::Render();
@@ -307,7 +307,7 @@ update_status ModuleEditor::PostUpdate()
     ImGui::RenderPlatformWindowsDefault();
     SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
 bool ModuleEditor::CleanUp()

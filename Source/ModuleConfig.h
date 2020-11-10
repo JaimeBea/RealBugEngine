@@ -20,7 +20,7 @@ public:
 	~ModuleConfig();
 
 	bool PostInit();
-	update_status Update();
+	UpdateStatus Update();
 	bool CleanUp();
 
 public:

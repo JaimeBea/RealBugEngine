@@ -9,12 +9,12 @@ public:
 	~ModuleRenderExercise();
 
 	bool Init();
-	update_status PreUpdate();
-	update_status Update();
-	update_status PostUpdate();
+	UpdateStatus PreUpdate();
+	UpdateStatus Update();
+	UpdateStatus PostUpdate();
 	bool CleanUp();
 
 private:
-	void* context;
+	void* context = nullptr;
 	unsigned triangle = 0;
 };

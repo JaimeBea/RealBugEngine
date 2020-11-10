@@ -52,9 +52,9 @@ bool Application::Init()
 	return ret;
 }
 
-update_status Application::Update()
+UpdateStatus Application::Update()
 {
-	update_status ret = UPDATE_CONTINUE;
+	UpdateStatus ret = UpdateStatus::CONTINUE;
 
 	unsigned now_time = SDL_GetTicks();
 	if (SDL_TICKS_PASSED(now_time, previous_time))
@@ -63,13 +63,13 @@ update_status Application::Update()
 		log_delta_ms(delta_ms);
 		delta_time = delta_ms / 1000.0f;
 
-		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 			ret = (*it)->PreUpdate();
 
-		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 			ret = (*it)->Update();
 
-		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
+		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 			ret = (*it)->PostUpdate();
 	}
 	previous_time = now_time;

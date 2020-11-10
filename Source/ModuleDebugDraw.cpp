@@ -606,9 +606,9 @@ bool ModuleDebugDraw::CleanUp()
     return true;
 }
 
-update_status  ModuleDebugDraw::Update()
+UpdateStatus  ModuleDebugDraw::Update()
 {
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
 void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height)

@@ -103,7 +103,7 @@ bool ModuleRenderExercise::Init()
 	return true;
 }
 
-update_status ModuleRenderExercise::PreUpdate()
+UpdateStatus ModuleRenderExercise::PreUpdate()
 {
 	GLsizei screen_width, screen_height;
 	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
@@ -112,21 +112,21 @@ update_status ModuleRenderExercise::PreUpdate()
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleRenderExercise::Update()
+UpdateStatus ModuleRenderExercise::Update()
 {
 	RenderVBO(triangle, App->program->program);
 
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleRenderExercise::PostUpdate()
+UpdateStatus ModuleRenderExercise::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
 
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
 bool ModuleRenderExercise::CleanUp()

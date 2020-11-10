@@ -9,10 +9,10 @@ static char* LoadShader(const char* file_name)
 	if (file)
 	{
 		fseek(file, 0, SEEK_END);
-		long size = ftell(file);
+		size_t size = ftell(file);
 		rewind(file);
 
-		data = (char*)malloc(size + 1);
+		data = new char[size + 1];
 		fread(data, 1, size, file);
 		data[size] = '\0';
 		fclose(file);
@@ -39,13 +39,13 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 		if (len > 0)
 		{
 			int written = 0;
-			char* info = (char*)malloc(len);
+			char* info = new char[len];
 			glGetShaderInfoLog(shader_id, len, &written, info);
 			LOG("Log Info: %s", info);
-			free(info);
+			delete[] info;
 		}
 	}
-	free(source);
+	delete[] source;
 	return shader_id;
 }
 
@@ -69,10 +69,10 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 		if (len > 0)
 		{
 			int written = 0;
-			char* info = (char*)malloc(len);
+			char* info = new char[len];
 			glGetProgramInfoLog(program_id, len, &written, info);
 			LOG("Program Log Info: %s", info);
-			free(info);
+			delete[] info;
 		}
 	}
 

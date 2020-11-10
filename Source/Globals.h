@@ -2,11 +2,11 @@
 
 #include "Debug.h"
 
-enum update_status
+enum class UpdateStatus
 {
-	UPDATE_CONTINUE = 1,
-	UPDATE_STOP,
-	UPDATE_ERROR
+	CONTINUE = 1,
+	STOP,
+	ERROR
 };
 
 // Constants -----------

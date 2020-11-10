@@ -35,7 +35,7 @@ bool ModuleRender::Init()
 	return true;
 }
 
-update_status ModuleRender::PreUpdate()
+UpdateStatus ModuleRender::PreUpdate()
 {
 	GLsizei screen_width, screen_height;
 	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
@@ -44,10 +44,10 @@ update_status ModuleRender::PreUpdate()
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleRender::Update()
+UpdateStatus ModuleRender::Update()
 {
 	glLineWidth(1.0f);
 	glBegin(GL_LINES);
@@ -89,14 +89,14 @@ update_status ModuleRender::Update()
 	glEnd();
 	glLineWidth(1.0f);
 
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
-update_status ModuleRender::PostUpdate()
+UpdateStatus ModuleRender::PostUpdate()
 {
 	SDL_GL_SwapWindow(App->window->window);
 
-	return UPDATE_CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
 bool ModuleRender::CleanUp()

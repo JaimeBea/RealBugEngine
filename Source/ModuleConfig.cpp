@@ -43,7 +43,7 @@ bool ModuleConfig::PostInit()
     return true;
 }
 
-update_status ModuleConfig::Update()
+UpdateStatus ModuleConfig::Update()
 {
     int vram_budget_kb;
     int vram_available_kb;
@@ -53,7 +53,7 @@ update_status ModuleConfig::Update()
     vram_available_mb = vram_available_kb / 1000.0f;
     vram_usage_mb = vram_budget_mb - vram_available_mb;
 
-    return UPDATE_CONTINUE;
+    return UpdateStatus::CONTINUE;
 }
 
 bool ModuleConfig::CleanUp()

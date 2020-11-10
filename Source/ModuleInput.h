@@ -21,7 +21,7 @@ public:
 	~ModuleInput();
 
 	bool Init();
-	update_status PreUpdate();
+	UpdateStatus PreUpdate();
 	bool CleanUp();
 
 	KeyState GetKey(int scancode) const

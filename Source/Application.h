@@ -21,7 +21,7 @@ public:
 	~Application();
 
 	bool Init();
-	update_status Update();
+	UpdateStatus Update();
 	bool CleanUp();
 
 	float GetDeltaTime();
