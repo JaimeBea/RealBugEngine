@@ -20,9 +20,9 @@ public:
 	ModuleInput();
 	~ModuleInput();
 
-	bool Init();
-	UpdateStatus PreUpdate();
-	bool CleanUp();
+	bool Init() override;
+	UpdateStatus PreUpdate() override;
+	bool CleanUp() override;
 
 	KeyState GetKey(int scancode) const
 	{

@@ -8,8 +8,8 @@ public:
 	ModuleProgram();
 	~ModuleProgram();
 
-	bool Init();
-	bool CleanUp();
+	bool Init() override;
+	bool CleanUp() override;
 
 public:
 	unsigned program = NULL;

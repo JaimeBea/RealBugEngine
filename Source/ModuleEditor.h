@@ -8,12 +8,12 @@ public:
 	ModuleEditor();
 	virtual ~ModuleEditor();
 
-	bool Init();
-	bool PostInit();
-	UpdateStatus PreUpdate();
-	UpdateStatus Update();
-	UpdateStatus PostUpdate();
-	bool CleanUp();
+	bool Init() override;
+	bool PostInit() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
 
 private:
 	bool show_console = true;

@@ -9,11 +9,12 @@ public:
 	ModuleCamera();
 	~ModuleCamera();
 
-	bool Init();
-	UpdateStatus PreUpdate();
-	UpdateStatus Update();
-	UpdateStatus PostUpdate();
-	bool CleanUp();
+	bool Init() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
+
 	void WindowResized(int width, int height);
 
 	void SetFOV(float h_fov);

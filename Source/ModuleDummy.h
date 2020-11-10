@@ -4,13 +4,13 @@
 
 class ModuleDummy : public Module
 {
-	bool Init()
+	bool Init() override
 	{
 		LOG("Dummy Init!");
 		return true;
 	}
 
-	bool CleanUp()
+	bool CleanUp() override
 	{
 		LOG("Dummy CleanUp!");
 		return true;

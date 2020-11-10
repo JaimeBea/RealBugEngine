@@ -19,9 +19,9 @@ public:
 	ModuleConfig();
 	~ModuleConfig();
 
-	bool PostInit();
-	UpdateStatus Update();
-	bool CleanUp();
+	bool PostInit() override;
+	UpdateStatus Update() override;
+	bool CleanUp() override;
 
 public:
 	// Configuration

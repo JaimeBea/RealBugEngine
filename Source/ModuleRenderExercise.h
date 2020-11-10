@@ -1,20 +1,19 @@
 #pragma once
 
-#include "Module.h"
+#include "ModuleRender.h"
 
-class ModuleRenderExercise : public Module
+class ModuleRenderExercise : public ModuleRender
 {
 public:
 	ModuleRenderExercise();
 	~ModuleRenderExercise();
 
-	bool Init();
-	UpdateStatus PreUpdate();
-	UpdateStatus Update();
-	UpdateStatus PostUpdate();
-	bool CleanUp();
+	bool Init() override;
+	UpdateStatus PreUpdate() override;
+	UpdateStatus Update() override;
+	UpdateStatus PostUpdate() override;
+	bool CleanUp() override;
 
 private:
-	void* context = nullptr;
 	unsigned triangle = 0;
 };

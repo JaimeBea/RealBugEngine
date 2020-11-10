@@ -11,8 +11,8 @@ public:
 	ModuleWindow();
 	virtual ~ModuleWindow();
 
-	bool Init();
-	bool CleanUp();
+	bool Init() override;
+	bool CleanUp() override;
 
 	void SetScreenMode(int mode);
 	void SetResizable(bool resizable);
