@@ -41,13 +41,19 @@ bool Application::Init()
 	bool ret = true;
 
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+	{
 		ret = (*it)->PreInit();
-
-	for(std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
-		ret = (*it)->Init();
+	}
 
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+	{
+		ret = (*it)->Init();
+	}
+
+	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+	{
 		ret = (*it)->PostInit();
+	}
 
 	return ret;
 }
@@ -64,13 +70,19 @@ UpdateStatus Application::Update()
 		delta_time = delta_ms / 1000.0f;
 
 		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+		{
 			ret = (*it)->PreUpdate();
+		}
 
 		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+		{
 			ret = (*it)->Update();
+		}
 
 		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+		{
 			ret = (*it)->PostUpdate();
+		}
 	}
 	previous_time = now_time;
 
@@ -79,7 +91,8 @@ UpdateStatus Application::Update()
 		now_time = SDL_GetTicks();
 		unsigned frame_ms = now_time - previous_time;
 		unsigned min_ms = 1000 / config->max_fps;
-		if (frame_ms < min_ms) {
+		if (frame_ms < min_ms)
+		{
 			SDL_Delay(min_ms - frame_ms);
 		}
 	}
@@ -90,8 +103,10 @@ bool Application::CleanUp()
 {
 	bool ret = true;
 
-	for(std::list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
+	for (std::list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
+	{
 		ret = (*it)->CleanUp();
+	}
 
 	return ret;
 }
