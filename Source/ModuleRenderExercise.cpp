@@ -60,10 +60,21 @@ static void RenderVBO(unsigned vbo, unsigned program)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
+
+	float4x4 model = float4x4::FromTRS(float3(2.0f, 0.0f, 0.0f), float4x4::RotateZ(pi / 4.0f), float3(2.0f, 1.0f, 0.0f));
+	float4x4 view = App->camera->GetViewMatrix();
+	float4x4 projection = App->camera->GetProjectionMatrix();
+
 	// size = 3 float per vertex
 	// stride = 0 is equivalent to stride = sizeof(float)*3
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
 	glUseProgram(program);
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projection.ptr());
+
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
@@ -111,7 +122,7 @@ UpdateStatus ModuleRenderExercise::PreUpdate()
 	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
 	glViewport(0, 0, screen_width, screen_height);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UpdateStatus::CONTINUE;
@@ -123,7 +134,7 @@ UpdateStatus ModuleRenderExercise::Update()
 	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
 	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), screen_width, screen_height);
 
-	//RenderVBO(triangle, App->program->program);
+	RenderVBO(triangle, App->program->program);
 
 	return UpdateStatus::CONTINUE;
 }

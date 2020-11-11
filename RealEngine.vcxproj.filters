@@ -487,7 +487,7 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\Module.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

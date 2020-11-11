@@ -262,7 +262,7 @@ UpdateStatus ModuleEditor::Update()
                 {
                     App->camera->SetAspectRatio(aspect_ratio);
                 }
-                ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
+                ImGui::ColorPicker3("Background", App->renderer->clear_color.ptr());
             }
         }
         ImGui::End();
@@ -301,11 +301,9 @@ UpdateStatus ModuleEditor::PostUpdate()
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     // Handle and render other windows
-    SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-    SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
     ImGui::UpdatePlatformWindows();
     ImGui::RenderPlatformWindowsDefault();
-    SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+    SDL_GL_MakeCurrent(App->window->window, App->renderer->context);
 
     return UpdateStatus::CONTINUE;
 }
