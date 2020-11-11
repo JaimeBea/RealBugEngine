@@ -51,10 +51,10 @@ static unsigned CreateVBO()
 		 -1.0f, 1.0f, 0.0f, // v1 pos
 		 1.0f, -1.0f, 0.0f, // v2 pos
 		 1.0f, 1.0f, 0.0f, // v3 pos
-		 0.0f, 0.0f, // v0 texcoord
-		 1.0f, 0.0f, // v1 texcoord
-		 0.0f, 1.0f, // v2 texcoord
-		 1.0f, 1.0f // v3 texcoord
+		 -1.0f, -1.0f, // v0 texcoord
+		 2.0f, -1.0f, // v1 texcoord
+		 -1.0f, 2.0f, // v2 texcoord
+		 2.0f, 2.0f // v3 texcoord
 	};
 	unsigned vbo;
 	glGenBuffers(1, &vbo);

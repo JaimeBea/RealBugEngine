@@ -1,18 +1,11 @@
 #pragma once
 
 #include "Module.h"
+#include "Globals.h"
 
 #include "ShortString.h"
 
 struct SDL_version;
-
-enum WindowMode
-{
-	WM_WINDOWED,
-	WM_BORDERLESS,
-	WM_FULLSCREEN,
-	WM_FULLSCREEN_DESKTOP
-};
 
 class ModuleConfig : public Module
 {
@@ -32,11 +25,14 @@ public:
 	int max_fps = 60;
 	bool limit_framerate = true;
 	bool vsync = true;
-	int window_mode = WM_WINDOWED;
+	WindowMode window_mode = WindowMode::WINDOWED;
 	bool resizable = true;
 	int screen_width = 640;
 	int screen_height = 480;
 	float brightness = 1.0f;
+	TextureFilter min_filter = TextureFilter::NEAREST_MIPMAP_LINEAR;
+	TextureFilter mag_filter = TextureFilter::LINEAR;
+	TextureWrap texture_wrap = TextureWrap::REPEAT;
 
 	// Information
 

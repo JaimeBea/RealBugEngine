@@ -7,6 +7,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
+#include "ModuleTextures.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -122,7 +123,7 @@ UpdateStatus ModuleEditor::Update()
             {
                 // Window mode combo box
                 const char* items[] = { "Windowed", "Borderless", "Fullscreen", "Fullscreen desktop" };
-                const char* item_current = items[App->config->window_mode];
+                const char* item_current = items[int(App->config->window_mode)];
                 if (ImGui::BeginCombo("Window mode", item_current))
                 {
                     for (int n = 0; n < IM_ARRAYSIZE(items); ++n)
@@ -130,7 +131,7 @@ UpdateStatus ModuleEditor::Update()
                         bool is_selected = (item_current == items[n]);
                         if (ImGui::Selectable(items[n], is_selected))
                         {
-                            App->config->window_mode = n;
+                            App->config->window_mode = WindowMode(n);
                             App->window->SetWindowMode(App->config->window_mode);
                         }
                         if (is_selected)
@@ -146,7 +147,7 @@ UpdateStatus ModuleEditor::Update()
                     App->window->SetBrightness(App->config->brightness);
                 }
 
-                if (App->config->window_mode != WM_FULLSCREEN_DESKTOP)
+                if (App->config->window_mode != WindowMode::FULLSCREEN_DESKTOP)
                 {
                     if (ImGui::Checkbox("Resizable", &App->config->resizable))
                     {
@@ -263,6 +264,73 @@ UpdateStatus ModuleEditor::Update()
                     App->camera->SetAspectRatio(aspect_ratio);
                 }
                 ImGui::ColorPicker3("Background", App->renderer->clear_color.ptr());
+            }
+
+            // Textures
+            if (ImGui::CollapsingHeader("Textures"))
+            {
+                // Min filter combo box
+                const char* min_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
+                const char* min_filter_item_current = min_filter_items[int(App->config->min_filter)];
+                if (ImGui::BeginCombo("Min filter", min_filter_item_current))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
+                    {
+                        bool is_selected = (min_filter_item_current == min_filter_items[n]);
+                        if (ImGui::Selectable(min_filter_items[n], is_selected))
+                        {
+                            App->config->min_filter = TextureFilter(n);
+                            App->textures->SetMinFilter(App->config->min_filter);
+                        }
+                        if (is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                // Mag filter combo box
+                const char* mag_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
+                const char* mag_filter_item_current = mag_filter_items[int(App->config->mag_filter)];
+                if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
+                    {
+                        bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
+                        if (ImGui::Selectable(mag_filter_items[n], is_selected))
+                        {
+                            App->config->mag_filter = TextureFilter(n);
+                            App->textures->SetMagFilter(App->config->mag_filter);
+                        }
+                        if (is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                // Texture wrap combo box
+                const char* wrap_items[] = { "Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge" };
+                const char* wrap_item_current = wrap_items[int(App->config->texture_wrap)];
+                if (ImGui::BeginCombo("Wrap", wrap_item_current))
+                {
+                    for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
+                    {
+                        bool is_selected = (wrap_item_current == wrap_items[n]);
+                        if (ImGui::Selectable(wrap_items[n], is_selected))
+                        {
+                            App->config->texture_wrap = TextureWrap(n);
+                            App->textures->SetWrap(App->config->texture_wrap);
+                        }
+                        if (is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
             }
         }
         ImGui::End();

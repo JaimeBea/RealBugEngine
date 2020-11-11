@@ -76,11 +76,11 @@ UpdateStatus ModuleCamera::PreUpdate()
 
     if (App->input->GetKey(SDL_SCANCODE_Q))
     {
-        Translate(vec::unitY * final_movement_speed * delta_time);
+        Translate(vec::unitY * -final_movement_speed * delta_time);
     }
     if (App->input->GetKey(SDL_SCANCODE_E))
     {
-        Translate(vec::unitY * -final_movement_speed * delta_time);
+        Translate(vec::unitY * final_movement_speed * delta_time);
     }
     if (App->input->GetKey(SDL_SCANCODE_W))
     {

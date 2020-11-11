@@ -36,13 +36,13 @@ bool ModuleWindow::Init()
 
 		switch (App->config->window_mode)
 		{
-		case WM_BORDERLESS:
+		case WindowMode::BORDERLESS:
 			flags |= SDL_WINDOW_BORDERLESS;
 			break;
-		case WM_FULLSCREEN:
+		case WindowMode::FULLSCREEN:
 			flags |= SDL_WINDOW_FULLSCREEN;
 			break;
-		case WM_FULLSCREEN_DESKTOP:
+		case WindowMode::FULLSCREEN_DESKTOP:
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 			break;
 		}
@@ -76,22 +76,22 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
-void ModuleWindow::SetWindowMode(int mode)
+void ModuleWindow::SetWindowMode(WindowMode mode)
 {
 	switch (mode)
 	{
-	case WM_WINDOWED:
+	case WindowMode::WINDOWED:
 		SDL_SetWindowFullscreen(window, SDL_FALSE);
 		SDL_SetWindowBordered(window, SDL_TRUE);
 		break;
-	case WM_BORDERLESS:
+	case WindowMode::BORDERLESS:
 		SDL_SetWindowFullscreen(window, SDL_FALSE);
 		SDL_SetWindowBordered(window, SDL_FALSE);
 		break;
-	case WM_FULLSCREEN:
+	case WindowMode::FULLSCREEN:
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 		break;
-	case WM_FULLSCREEN_DESKTOP:
+	case WindowMode::FULLSCREEN_DESKTOP:
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		break;
 	}
