@@ -9,9 +9,6 @@ struct SDL_Surface;
 class ModuleWindow : public Module
 {
 public:
-	ModuleWindow();
-	~ModuleWindow();
-
 	bool Init() override;
 	bool CleanUp() override;
 

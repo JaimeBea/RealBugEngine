@@ -3,9 +3,6 @@
 template<size_t S>
 class ShortString
 {
-	size_t length;
-	char chars[S];
-
 public:
 	ShortString() : chars{ '\0' }, length(0) {}
 
@@ -72,4 +69,8 @@ public:
 	{
 		return S;
 	}
+
+private:
+	size_t length;
+	char chars[S];
 };

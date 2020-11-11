@@ -101,10 +101,6 @@ static void RenderQuad(unsigned vbo, unsigned texture, unsigned program)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-ModuleRenderExercise::ModuleRenderExercise() {}
-
-ModuleRenderExercise::~ModuleRenderExercise() {}
-
 bool ModuleRenderExercise::Init()
 {
 	LOG("Creating Renderer context");

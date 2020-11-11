@@ -10,9 +10,6 @@ struct SDL_version;
 class ModuleConfig : public Module
 {
 public:
-	ModuleConfig();
-	~ModuleConfig();
-
 	bool PostInit() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;

@@ -18,9 +18,6 @@ enum KeyState
 class ModuleInput : public Module
 {
 public:
-	ModuleInput();
-	~ModuleInput();
-
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	bool CleanUp() override;

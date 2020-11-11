@@ -7,9 +7,6 @@
 class ModuleCamera : public Module
 {
 public:
-	ModuleCamera();
-	~ModuleCamera();
-
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;

@@ -9,10 +9,6 @@
 #include "SDL.h"
 #include "GL/glew.h"
 
-ModuleRender::ModuleRender() {}
-
-ModuleRender::~ModuleRender() {}
-
 bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");

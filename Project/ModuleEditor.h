@@ -5,9 +5,6 @@
 class ModuleEditor : public Module
 {
 public:
-	ModuleEditor();
-	virtual ~ModuleEditor();
-
 	bool Init() override;
 	bool PostInit() override;
 	UpdateStatus PreUpdate() override;

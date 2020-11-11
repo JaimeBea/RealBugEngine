@@ -8,7 +8,7 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 
-ModuleCamera::ModuleCamera()
+bool ModuleCamera::Init()
 {
     frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
     frustum.SetViewPlaneDistances(0.1f, 200.0f);
@@ -17,12 +17,7 @@ ModuleCamera::ModuleCamera()
     frustum.SetPos(vec(0, 1, -2));
     frustum.SetFront(vec::unitZ);
     frustum.SetUp(vec::unitY);
-}
 
-ModuleCamera::~ModuleCamera() {}
-
-bool ModuleCamera::Init()
-{
     return true;
 }
 

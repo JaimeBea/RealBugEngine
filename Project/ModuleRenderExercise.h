@@ -5,9 +5,6 @@
 class ModuleRenderExercise : public ModuleRender
 {
 public:
-	ModuleRenderExercise();
-	~ModuleRenderExercise();
-
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;

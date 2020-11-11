@@ -2,8 +2,6 @@
 
 #include "Globals.h"
 
-Module::Module() {}
-
 bool Module::PreInit()
 {
 	return true;

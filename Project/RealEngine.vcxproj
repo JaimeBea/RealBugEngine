@@ -12,10 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Logging.h" />
-    <ClInclude Include="Globals.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
+    <ClInclude Include="Logging.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="Libs\imgui\imconfig.h" />
     <ClInclude Include="Libs\imgui\imgui.h" />
     <ClInclude Include="Libs\imgui\imgui_impl_opengl3.h" />

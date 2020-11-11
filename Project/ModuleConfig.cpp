@@ -8,10 +8,6 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 
-ModuleConfig::ModuleConfig() {}
-
-ModuleConfig::~ModuleConfig() {}
-
 bool ModuleConfig::PostInit()
 {
     SDL_version sdl_version_struct;

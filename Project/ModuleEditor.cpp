@@ -16,10 +16,6 @@
 
 static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
-ModuleEditor::ModuleEditor() {}
-
-ModuleEditor::~ModuleEditor() {}
-
 bool ModuleEditor::Init()
 {
     ImGui::CreateContext();

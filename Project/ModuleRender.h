@@ -7,9 +7,6 @@
 class ModuleRender : public Module
 {
 public:
-	ModuleRender();
-	~ModuleRender();
-
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;

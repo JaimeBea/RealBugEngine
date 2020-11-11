@@ -8,10 +8,6 @@
 #include "IL/il.h"
 #include "GL/glew.h"
 
-ModuleTextures::ModuleTextures() {}
-
-ModuleTextures::~ModuleTextures() {}
-
 bool ModuleTextures::PostInit()
 {
 	ilInit();

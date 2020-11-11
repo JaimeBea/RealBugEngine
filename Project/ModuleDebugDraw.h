@@ -10,9 +10,6 @@ class Camera;
 class ModuleDebugDraw : public Module
 {
 public:
-    ModuleDebugDraw();
-    ~ModuleDebugDraw();
-
 	bool Init() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;

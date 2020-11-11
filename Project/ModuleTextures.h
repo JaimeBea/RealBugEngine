@@ -8,9 +8,6 @@ enum class TextureWrap;
 class ModuleTextures : public Module
 {
 public:
-	ModuleTextures();
-	~ModuleTextures();
-
 	bool PostInit() override;
 	bool CleanUp() override;
 

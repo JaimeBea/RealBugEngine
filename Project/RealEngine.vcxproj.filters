@@ -22,16 +22,10 @@
       <UniqueIdentifier>{3de8cd6e-65eb-47b5-8b04-a4a8cfd8b254}</UniqueIdentifier>
     </Filter>
     <Filter Include="Libraries\DebugDraw">
-      <UniqueIdentifier>{11b914a2-f091-4148-a1fe-cb771db96ae9}</UniqueIdentifier>
+      <UniqueIdentifier>{b4c25d6d-23f2-4e70-93b5-642eeab731b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Libs\DebugDraw\debug_draw.hpp">
-      <Filter>Libraries\DebugDraw</Filter>
-    </ClInclude>
-    <ClInclude Include="Libs\DebugDraw\debugdraw.h">
-      <Filter>Libraries\DebugDraw</Filter>
-    </ClInclude>
     <ClInclude Include="Libs\imgui\imconfig.h">
       <Filter>Libraries\ImGUI</Filter>
     </ClInclude>
@@ -328,6 +322,12 @@
     </ClInclude>
     <ClInclude Include="ModuleTextures.h">
       <Filter>Source\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\DebugDraw\debug_draw.hpp">
+      <Filter>Libraries\DebugDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\DebugDraw\debugdraw.h">
+      <Filter>Libraries\DebugDraw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

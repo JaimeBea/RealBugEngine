@@ -10,10 +10,6 @@
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 
-ModuleInput::ModuleInput() {}
-
-ModuleInput::~ModuleInput() {}
-
 bool ModuleInput::Init()
 {
 	LOG("Init SDL input event system");
