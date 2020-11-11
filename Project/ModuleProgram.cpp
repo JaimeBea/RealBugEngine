@@ -9,7 +9,10 @@
 static char* LoadShader(const char* file_name)
 {
 	char* data = nullptr;
+
 	FILE* file = fopen(file_name, "rb");
+	DEFER{ if (file) fclose(file); };
+
 	if (file)
 	{
 		fseek(file, 0, SEEK_END);
@@ -19,7 +22,6 @@ static char* LoadShader(const char* file_name)
 		data = new char[size + 1];
 		fread(data, 1, size, file);
 		data[size] = '\0';
-		fclose(file);
 	}
 	else
 	{
@@ -31,9 +33,13 @@ static char* LoadShader(const char* file_name)
 static unsigned CreateShader(unsigned type, const char* file_name)
 {
 	char* source = LoadShader(file_name);
+	DEFER{ RELEASE_ARRAY(source); };
+
 	unsigned shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &source, 0);
+
 	glCompileShader(shader_id);
+
 	int res = GL_FALSE;
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
 	if (res == GL_FALSE)
@@ -44,20 +50,23 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 		{
 			int written = 0;
 			char* info = new char[len];
+			DEFER{ RELEASE_ARRAY(info); };
+
 			glGetShaderInfoLog(shader_id, len, &written, info);
+
 			LOG("Log Info: %s", info);
-			delete[] info;
 		}
 	}
-	delete[] source;
 	return shader_id;
 }
 
 static unsigned CreateProgram(const char* vertex_shader_file_name, const char* fragment_shader_file_name)
 {
-	// Compile the shaders
+	// Compile the shaders and delete them at the end
 	unsigned vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_shader_file_name);
+	DEFER{ glDeleteShader(vertex_shader); };
 	unsigned fragment_shader = CreateShader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
+	DEFER{ glDeleteShader(fragment_shader); };
 
 	// Link the program
 	unsigned program_id = glCreateProgram();
@@ -74,15 +83,13 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 		{
 			int written = 0;
 			char* info = new char[len];
+			DEFER{ RELEASE_ARRAY(info); };
+
 			glGetProgramInfoLog(program_id, len, &written, info);
+
 			LOG("Program Log Info: %s", info);
-			delete[] info;
 		}
 	}
-
-	// Release the individual shaders
-	glDeleteShader(vertex_shader);
-	glDeleteShader(fragment_shader);
 
 	return program_id;
 }

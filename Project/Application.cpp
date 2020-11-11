@@ -34,9 +34,9 @@ Application::Application()
 
 Application::~Application()
 {
-	for(std::list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
+	for(Module* module : modules)
     {
-        delete *it;
+        delete module;
     }
 }
 

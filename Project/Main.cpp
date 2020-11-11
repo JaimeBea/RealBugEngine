@@ -72,18 +72,20 @@ int main(int argc, char ** argv)
 			{
 				main_return = EXIT_SUCCESS;
 			}
+			delete App;
 			state = MainState::EXIT;
 			break;
 		}
 
 	}
 
-	delete App;
 	LOG("Bye :)\n");
 
+	// Clear log at the end
 	for (char* log_line : log_lines)
 	{
 		delete[] log_line;
 	}
+
 	return main_return;
 }
