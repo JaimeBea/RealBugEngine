@@ -4,7 +4,6 @@
 #include "Application.h"
 #include "ModuleInput.h"
 
-#include "GL/glew.h"
 #include "Math/float3x3.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
@@ -116,18 +115,6 @@ UpdateStatus ModuleCamera::PreUpdate()
     {
         Rotate(float3x3::RotateY(-rotation_speed * DEGTORAD * delta_time));
     }
-
-    float4x4 projectionGL = GetProjectionMatrix().Transposed();
-
-    // Send the frustum projection matrix to OpenGL
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(*projectionGL.v);
-
-    float4x4 viewGL = GetViewMatrix().Transposed();
-
-    // Send the frustum view matrix to OpenGL
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixf(*viewGL.v);
 
     return UpdateStatus::CONTINUE;
 }
