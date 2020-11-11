@@ -8,25 +8,22 @@
 
 static char* LoadShader(const char* file_name)
 {
-	char* data = nullptr;
-
 	FILE* file = fopen(file_name, "rb");
-	DEFER{ if (file) fclose(file); };
-
-	if (file)
-	{
-		fseek(file, 0, SEEK_END);
-		size_t size = ftell(file);
-		rewind(file);
-
-		data = new char[size + 1];
-		fread(data, 1, size, file);
-		data[size] = '\0';
-	}
-	else
+	if (!file)
 	{
 		LOG("Error opening file %s (%s).\n", file_name, strerror(errno));
+		return nullptr;
 	}
+	DEFER{ fclose(file); };
+
+	fseek(file, 0, SEEK_END);
+	size_t size = ftell(file);
+	rewind(file);
+
+	char* data = new char[size + 1];
+	fread(data, 1, size, file);
+	data[size] = '\0';
+
 	return data;
 }
 

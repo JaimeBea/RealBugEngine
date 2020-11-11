@@ -202,7 +202,7 @@ public:
 			the specified point. This pointer may be null. */
 	bool Intersects(const Plane &plane, float *d) const;
 	/** @param intersectionPoint [out] If specified, receives the point of intersection. This pointer may be null. */
-	bool Intersects(const Triangle &triangle, float *d, vec *intersectionPoint) const;
+	bool Intersects(const Triangle &lenna_vbo, float *d, vec *intersectionPoint) const;
 	/** @param intersectionNormal [out] If specified, receives the normal vector of the other object at the point of intersection.
 			This pointer may be null. */
 	bool Intersects(const Sphere &s, vec *intersectionPoint = 0, vec *intersectionNormal = 0, float *d = 0) const;

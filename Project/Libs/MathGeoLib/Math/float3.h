@@ -493,7 +493,7 @@ public:
 	float Distance(const Ray &ray) const;
 	float Distance(const LineSegment &lineSegment) const;
 	float Distance(const Plane &plane) const;
-	float Distance(const Triangle &triangle) const;
+	float Distance(const Triangle &lenna_vbo) const;
 	float Distance(const AABB &aabb) const;
 	float Distance(const OBB &obb) const;
 	float Distance(const Sphere &sphere) const;

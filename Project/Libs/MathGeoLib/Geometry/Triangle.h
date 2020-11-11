@@ -258,7 +258,7 @@ public:
 		@todo Add Triangle::Contains(Circle) and Triangle::Contains(Disc). */
 	bool Contains(const vec &point, float triangleThicknessSq = 1e-5f) const;
 	bool Contains(const LineSegment &lineSegment, float triangleThickness = 1e-3f) const;
-	bool Contains(const Triangle &triangle, float triangleThickness = 1e-3f) const;
+	bool Contains(const Triangle &lenna_vbo, float triangleThickness = 1e-3f) const;
 
 	/// Computes the distance between this triangle and the given object.
 	/** This function finds the nearest pair of points on this and the given object, and computes their distance.
@@ -295,7 +295,7 @@ public:
 	/** @param outLine [out] If specified, receives the line segment of the common points shared by the two
 			intersecting triangles. If the two triangles do not intersect, this pointer is not written to.
 			This pointer may be null. */
-	bool Intersects(const Triangle &triangle, LineSegment *outLine = 0) const;
+	bool Intersects(const Triangle &lenna_vbo, LineSegment *outLine = 0) const;
 	bool Intersects(const AABB &aabb) const;
 	bool Intersects(const OBB &obb) const;
 	bool Intersects(const Polygon &polygon) const;
@@ -337,7 +337,7 @@ public:
 		@todo Add ClosestPoint(Ray/Plane/Polygon/Circle/Disk/AABB/OBB/Sphere/Capsule/Frustum/Polyhedron).
 		@see Distance(), Contains(), Intersects(), ClosestPointToTriangleEdge(), Line::GetPoint. */
 	vec ClosestPoint(const Line &line, vec *otherPt = 0) const;
-	vec ClosestPoint(const Triangle &triangle, vec *otherPt = 0) const;
+	vec ClosestPoint(const Triangle &lenna_vbo, vec *otherPt = 0) const;
 
 	/// Computes the closest point on the edge of this triangle to the given object.
 	/** @param outU [out] If specified, receives the barycentric U coordinate of the returned point (in the UV convention).
@@ -410,7 +410,7 @@ struct Triangle_storage
 #define TRIANGLE(x) (*(Triangle*)&x)
 
 #ifdef MATH_ENABLE_STL_SUPPORT
-std::ostream &operator <<(std::ostream &o, const Triangle &triangle);
+std::ostream &operator <<(std::ostream &o, const Triangle &lenna_vbo);
 #endif
 
 bool LineSegment2DLineSegment2DIntersect(const float2 &p0, const float2 &dir0, const float2 &p1, const float2 &dir1, float &s, float &t);

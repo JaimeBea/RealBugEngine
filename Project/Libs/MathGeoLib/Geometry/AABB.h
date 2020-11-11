@@ -387,7 +387,7 @@ public:
 	bool Contains(const AABB &aabb) const { return Contains(aabb.minPoint, aabb.maxPoint); }
 	bool Contains(const OBB &obb) const;
 	bool Contains(const Sphere &sphere) const;
-	bool Contains(const Triangle &triangle) const;
+	bool Contains(const Triangle &lenna_vbo) const;
 	bool Contains(const Polygon &polygon) const;
 	bool Contains(const Frustum &frustum) const;
 	bool Contains(const Polyhedron &polyhedron) const;
@@ -421,7 +421,7 @@ public:
 			may be null. */
 	bool Intersects(const Sphere &sphere, vec *closestPointOnAABB = 0) const;
 	bool Intersects(const Capsule &capsule) const;
-	bool Intersects(const Triangle &triangle) const;
+	bool Intersects(const Triangle &lenna_vbo) const;
 	bool Intersects(const Polygon &polygon) const;
 	bool Intersects(const Frustum &frustum) const;
 	bool Intersects(const Polyhedron &polyhedron) const;
@@ -445,7 +445,7 @@ public:
 	void Enclose(const AABB &aabb) { Enclose(aabb.minPoint, aabb.maxPoint); }
 	void Enclose(const OBB &obb);
 	void Enclose(const Sphere &sphere);
-	void Enclose(const Triangle &triangle);
+	void Enclose(const Triangle &lenna_vbo);
 	void Enclose(const Capsule &capsule);
 	void Enclose(const Frustum &frustum);
 	void Enclose(const Polygon &polygon);

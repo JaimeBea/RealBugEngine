@@ -147,7 +147,7 @@ public:
 	bool Contains(const vec &point) const;
 	bool Contains(const vec &point, float epsilon) const;
 	bool Contains(const LineSegment &lineSegment) const;
-	bool Contains(const Triangle &triangle) const;
+	bool Contains(const Triangle &lenna_vbo) const;
 	bool Contains(const Polygon &polygon) const;
 	bool Contains(const AABB &aabb) const;
 	bool Contains(const OBB &obb) const;
@@ -243,7 +243,7 @@ public:
 	float Distance(const AABB &aabb) const;
 	float Distance(const OBB &obb) const;
 	float Distance(const Plane &plane) const;
-	float Distance(const Triangle &triangle) const;
+	float Distance(const Triangle &lenna_vbo) const;
 	float Distance(const Ray &ray) const;
 	float Distance(const Line &line) const;
 	float Distance(const LineSegment &lineSegment) const;
@@ -275,7 +275,7 @@ public:
 	bool Intersects(const Plane &plane) const;
 	bool Intersects(const AABB &aabb, vec *closestPointOnAABB = 0) const;
 	bool Intersects(const OBB &obb, vec *closestPointOnOBB = 0) const;
-	bool Intersects(const Triangle &triangle, vec *closestPointOnTriangle = 0) const;
+	bool Intersects(const Triangle &lenna_vbo, vec *closestPointOnTriangle = 0) const;
 	bool Intersects(const Capsule &capsule) const;
 	bool Intersects(const Polygon &polygon) const;
 	bool Intersects(const Frustum &frustum) const;
@@ -299,7 +299,7 @@ public:
 	void Enclose(const AABB &aabb);
 	void Enclose(const OBB &obb);
 	void Enclose(const Sphere &sphere);
-	void Enclose(const Triangle &triangle);
+	void Enclose(const Triangle &lenna_vbo);
 	void Enclose(const Polygon &polygon);
 	void Enclose(const Polyhedron &polyhedron);
 	void Enclose(const Frustum &frustum);

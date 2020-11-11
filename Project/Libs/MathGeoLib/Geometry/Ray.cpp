@@ -255,15 +255,15 @@ vec Ray::ClosestPoint(const LineSegment &other, float &d, float &d2) const
 		return GetPoint(d);
 }
 
-bool Ray::Intersects(const Triangle &triangle, float *d, vec *intersectionPoint) const
+bool Ray::Intersects(const Triangle &lenna_vbo, float *d, vec *intersectionPoint) const
 {
-	return triangle.Intersects(*this, d, intersectionPoint);
+	return lenna_vbo.Intersects(*this, d, intersectionPoint);
 }
 
-bool Ray::Intersects(const Triangle &triangle) const
+bool Ray::Intersects(const Triangle &lenna_vbo) const
 {
 	float u, v;
-	float t = Triangle::IntersectLineTri(pos, dir, triangle.a, triangle.b, triangle.c, u, v);
+	float t = Triangle::IntersectLineTri(pos, dir, lenna_vbo.a, lenna_vbo.b, lenna_vbo.c, u, v);
 	if (t < 0.f || t == FLOAT_INF)
 		return false;
 	return true;

@@ -1671,23 +1671,23 @@ vec2d Triangle2D::RandomPointOnEdge(LCG &rng) const
 	return c + (a-c) * r / ca;
 }
 
-Triangle2D operator *(const float3x3 &transform, const Triangle2D &triangle)
+Triangle2D operator *(const float3x3 &transform, const Triangle2D &lenna_vbo)
 {
-	Triangle2D t(triangle);
+	Triangle2D t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
 
-Triangle2D operator *(const float3x4 &transform, const Triangle2D &triangle)
+Triangle2D operator *(const float3x4 &transform, const Triangle2D &lenna_vbo)
 {
-	Triangle2D t(triangle);
+	Triangle2D t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
 
-Triangle2D operator *(const float4x4 &transform, const Triangle2D &triangle)
+Triangle2D operator *(const float4x4 &transform, const Triangle2D &lenna_vbo)
 {
-	Triangle2D t(triangle);
+	Triangle2D t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
@@ -1723,9 +1723,9 @@ StringT Triangle2D::SerializeToCodeString() const
 
 #if defined(MATH_ENABLE_STL_SUPPORT)
 
-std::ostream &operator <<(std::ostream &o, const Triangle2D &triangle)
+std::ostream &operator <<(std::ostream &o, const Triangle2D &lenna_vbo)
 {
-	o << triangle.ToString();
+	o << lenna_vbo.ToString();
 	return o;
 }
 

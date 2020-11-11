@@ -152,8 +152,8 @@ public:
 			may be null.
 		@return True if an intersection occurs or one of the objects is contained inside the other, false otherwise.
 		@see Contains(), Distance(), ClosestPoint(), GetPoint(). */
-	bool Intersects(const Triangle &triangle, float *d, vec *intersectionPoint) const;
-	bool Intersects(const Triangle &triangle) const;
+	bool Intersects(const Triangle &lenna_vbo, float *d, vec *intersectionPoint) const;
+	bool Intersects(const Triangle &lenna_vbo) const;
 	bool Intersects(const Plane &plane, float *d) const;
 	bool Intersects(const Plane &plane) const;
 	/** @param intersectionNormal [out] If specified, receives the surface normal of the other object at

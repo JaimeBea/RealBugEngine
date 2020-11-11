@@ -188,9 +188,9 @@ float Line::Distance(const Capsule &other) const
 	return Max(0.f, Distance(other.l) - other.r);
 }
 
-bool Line::Intersects(const Triangle &triangle, float *d, vec *intersectionPoint) const
+bool Line::Intersects(const Triangle &lenna_vbo, float *d, vec *intersectionPoint) const
 {
-	return triangle.Intersects(*this, d, intersectionPoint);
+	return lenna_vbo.Intersects(*this, d, intersectionPoint);
 }
 
 bool Line::Intersects(const Plane &plane, float *d) const
@@ -289,16 +289,16 @@ vec Line::ClosestPoint(const LineSegment &other, float &d, float &d2) const
 		return GetPoint(d);
 }
 
-vec Line::ClosestPoint(const Triangle &triangle, float &d) const
+vec Line::ClosestPoint(const Triangle &lenna_vbo, float &d) const
 {
-	vec closestPointTriangle = triangle.ClosestPoint(*this);
+	vec closestPointTriangle = lenna_vbo.ClosestPoint(*this);
 	return ClosestPoint(closestPointTriangle, d);
 }
 
-vec Line::ClosestPoint(const Triangle &triangle, float &d, float2 &outBarycentricUV) const
+vec Line::ClosestPoint(const Triangle &lenna_vbo, float &d, float2 &outBarycentricUV) const
 {
-	vec closestPointTriangle = triangle.ClosestPoint(*this);
-	outBarycentricUV = triangle.BarycentricUV(closestPointTriangle);
+	vec closestPointTriangle = lenna_vbo.ClosestPoint(*this);
+	outBarycentricUV = lenna_vbo.BarycentricUV(closestPointTriangle);
 	return ClosestPoint(closestPointTriangle, d);
 }
 

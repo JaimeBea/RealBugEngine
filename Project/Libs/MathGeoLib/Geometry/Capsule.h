@@ -252,7 +252,7 @@ public:
 		@see Distance(), Intersects(), ClosestPoint(). */
 	bool Contains(const vec &point) const;
 	bool Contains(const LineSegment &lineSegment) const;
-	bool Contains(const Triangle &triangle) const;
+	bool Contains(const Triangle &lenna_vbo) const;
 	bool Contains(const Polygon &polygon) const;
 	bool Contains(const AABB &aabb) const;
 	bool Contains(const OBB &obb) const;
@@ -274,7 +274,7 @@ public:
 	bool Intersects(const Capsule &capsule) const;
 	bool Intersects(const AABB &aabb) const;
 	bool Intersects(const OBB &obb) const;
-	bool Intersects(const Triangle &triangle) const;
+	bool Intersects(const Triangle &lenna_vbo) const;
 	bool Intersects(const Polygon &polygon) const;
 	bool Intersects(const Frustum &frustum) const;
 	bool Intersects(const Polyhedron &polyhedron) const;

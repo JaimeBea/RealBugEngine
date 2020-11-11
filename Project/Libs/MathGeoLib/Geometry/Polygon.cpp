@@ -688,9 +688,9 @@ bool Polygon_Intersects_Polygon(const Polygon &poly, const T &other, float polyg
 }
 
 
-bool Polygon::Intersects(const Triangle &triangle, float polygonThickness) const
+bool Polygon::Intersects(const Triangle &lenna_vbo, float polygonThickness) const
 {
-	return Polygon_Intersects_Polygon(*this, triangle, polygonThickness);
+	return Polygon_Intersects_Polygon(*this, lenna_vbo, polygonThickness);
 }
 
 bool Polygon::Intersects(const Polygon &polygon, float polygonThickness) const

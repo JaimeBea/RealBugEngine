@@ -146,9 +146,9 @@ public:
 	/** @param outBarycentricUV [out] If specified, receives the barycentric UV coordinates (in two-coordinate barycentric UV convention)
 			representing the closest point on the triangle to this line.
 		@see Contains(), Distance(), Intersects(), GetPoint(), Triangle::Point(float u, float v). */
-	vec ClosestPoint(const Triangle &triangle) const { float d; return ClosestPoint(triangle, d); }
-	vec ClosestPoint(const Triangle &triangle, float &d) const;
-	vec ClosestPoint(const Triangle &triangle, float &d, float2 &outBarycentricUV) const;
+	vec ClosestPoint(const Triangle &lenna_vbo) const { float d; return ClosestPoint(lenna_vbo, d); }
+	vec ClosestPoint(const Triangle &lenna_vbo, float &d) const;
+	vec ClosestPoint(const Triangle &lenna_vbo, float &d, float2 &outBarycentricUV) const;
 
 	/// Tests whether this line and the given object intersect.	
 	/** Both objects are treated as "solid", meaning that if one of the objects is fully contained inside
@@ -160,7 +160,7 @@ public:
 			may be null.
 		@return True if an intersection occurs or one of the objects is contained inside the other, false otherwise.
 		@see Contains(), Distance(), ClosestPoint(), GetPoint(). */
-	bool Intersects(const Triangle &triangle, float *d, vec *intersectionPoint) const;
+	bool Intersects(const Triangle &lenna_vbo, float *d, vec *intersectionPoint) const;
 	bool Intersects(const Plane &plane, float *d) const;
 	/** @param intersectionNormal [out] If specified, receives the surface normal of the other object at
 		the point of intersection. This pointer may be null. */

@@ -343,10 +343,10 @@ bool Triangle::Contains(const LineSegment &lineSegment, float triangleThickness)
 	return Contains(lineSegment.a, triangleThickness) && Contains(lineSegment.b, triangleThickness);
 }
 
-bool Triangle::Contains(const Triangle &triangle, float triangleThickness) const
+bool Triangle::Contains(const Triangle &lenna_vbo, float triangleThickness) const
 {
-	return Contains(triangle.a, triangleThickness) && Contains(triangle.b, triangleThickness)
-	  && Contains(triangle.c, triangleThickness);
+	return Contains(lenna_vbo.a, triangleThickness) && Contains(lenna_vbo.b, triangleThickness)
+	  && Contains(lenna_vbo.c, triangleThickness);
 }
 
 /*
@@ -1921,30 +1921,30 @@ vec Triangle::RandomPointOnEdge(LCG &rng) const
 	return c + (a-c) * r / ca;
 }
 
-Triangle operator *(const float3x3 &transform, const Triangle &triangle)
+Triangle operator *(const float3x3 &transform, const Triangle &lenna_vbo)
 {
-	Triangle t(triangle);
+	Triangle t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
 
-Triangle operator *(const float3x4 &transform, const Triangle &triangle)
+Triangle operator *(const float3x4 &transform, const Triangle &lenna_vbo)
 {
-	Triangle t(triangle);
+	Triangle t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
 
-Triangle operator *(const float4x4 &transform, const Triangle &triangle)
+Triangle operator *(const float4x4 &transform, const Triangle &lenna_vbo)
 {
-	Triangle t(triangle);
+	Triangle t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
 
-Triangle operator *(const Quat &transform, const Triangle &triangle)
+Triangle operator *(const Quat &transform, const Triangle &lenna_vbo)
 {
-	Triangle t(triangle);
+	Triangle t(lenna_vbo);
 	t.Transform(transform);
 	return t;
 }
@@ -1983,9 +1983,9 @@ StringT Triangle::SerializeToCodeString() const
 
 #if defined(MATH_ENABLE_STL_SUPPORT)
 
-std::ostream &operator <<(std::ostream &o, const Triangle &triangle)
+std::ostream &operator <<(std::ostream &o, const Triangle &lenna_vbo)
 {
-	o << triangle.ToString();
+	o << lenna_vbo.ToString();
 	return o;
 }
 

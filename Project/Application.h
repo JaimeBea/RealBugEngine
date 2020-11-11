@@ -30,6 +30,7 @@ public:
 
 public:
 	ModuleConfig* config = nullptr;
+	ModuleTextures* textures = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;

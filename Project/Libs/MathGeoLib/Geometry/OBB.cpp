@@ -2443,9 +2443,9 @@ bool OBB::Contains(const OBB &obb) const
 	return true;
 }
 
-bool OBB::Contains(const Triangle &triangle) const
+bool OBB::Contains(const Triangle &lenna_vbo) const
 {
-	return Contains(triangle.a) && Contains(triangle.b) && Contains(triangle.c);
+	return Contains(lenna_vbo.a) && Contains(lenna_vbo.b) && Contains(lenna_vbo.c);
 }
 
 bool OBB::Contains(const Polygon &polygon) const
@@ -2781,10 +2781,10 @@ bool OBB::Intersects(const Capsule &capsule) const
 	return capsule.Intersects(*this);
 }
 
-bool OBB::Intersects(const Triangle &triangle) const
+bool OBB::Intersects(const Triangle &lenna_vbo) const
 {
 	AABB aabb(POINT_VEC_SCALAR(0.f), Size());
-	Triangle t = WorldToLocal() * triangle;
+	Triangle t = WorldToLocal() * lenna_vbo;
 	return t.Intersects(aabb);
 }
 

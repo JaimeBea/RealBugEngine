@@ -326,6 +326,9 @@
     <ClInclude Include="Logging.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleTextures.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -512,6 +515,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Module.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleTextures.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>

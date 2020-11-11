@@ -189,9 +189,9 @@ bool Sphere::Contains(const LineSegment &lineSegment) const
 	return Contains(lineSegment.a) && Contains(lineSegment.b);
 }
 
-bool Sphere::Contains(const Triangle &triangle) const
+bool Sphere::Contains(const Triangle &lenna_vbo) const
 {
-	return Contains(triangle.a) && Contains(triangle.b) && Contains(triangle.c);
+	return Contains(lenna_vbo.a) && Contains(lenna_vbo.b) && Contains(lenna_vbo.c);
 }
 
 bool Sphere::Contains(const Polygon &polygon) const
@@ -414,9 +414,9 @@ float Sphere::Distance(const Plane &plane) const
 	return plane.Distance(*this);
 }
 
-float Sphere::Distance(const Triangle &triangle) const
+float Sphere::Distance(const Triangle &lenna_vbo) const
 {
-	return triangle.Distance(*this);
+	return lenna_vbo.Distance(*this);
 }
 
 float Sphere::Distance(const Ray &ray) const
@@ -626,9 +626,9 @@ bool Sphere::Intersects(const OBB &obb, vec *closestPointOnOBB) const
 	return obb.Intersects(*this, closestPointOnOBB);
 }
 
-bool Sphere::Intersects(const Triangle &triangle, vec *closestPointOnTriangle) const
+bool Sphere::Intersects(const Triangle &lenna_vbo, vec *closestPointOnTriangle) const
 {
-	return triangle.Intersects(*this, closestPointOnTriangle);
+	return lenna_vbo.Intersects(*this, closestPointOnTriangle);
 }
 
 bool Sphere::Intersects(const Polygon &polygon) const
@@ -773,9 +773,9 @@ void Sphere::Enclose(const vec *pointArray, int numPoints)
 	Sphere_Enclose_pts(*this, pointArray, numPoints);
 }
 
-void Sphere::Enclose(const Triangle &triangle)
+void Sphere::Enclose(const Triangle &lenna_vbo)
 {
-	Sphere_Enclose<Triangle, 3>(*this, triangle);
+	Sphere_Enclose<Triangle, 3>(*this, lenna_vbo);
 }
 
 void Sphere::Enclose(const Polygon &polygon)

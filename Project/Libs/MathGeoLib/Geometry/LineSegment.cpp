@@ -359,9 +359,9 @@ bool LineSegment::Intersects(const Plane &plane, float *d) const
 	return plane.Intersects(*this, d);
 }
 
-bool LineSegment::Intersects(const Triangle &triangle, float *d, vec *intersectionPoint) const
+bool LineSegment::Intersects(const Triangle &lenna_vbo, float *d, vec *intersectionPoint) const
 {
-	return triangle.Intersects(*this, d, intersectionPoint);
+	return lenna_vbo.Intersects(*this, d, intersectionPoint);
 }
 
 bool LineSegment::Intersects(const Sphere &s, vec *intersectionPoint, vec *intersectionNormal, float *d) const

@@ -653,9 +653,9 @@ bool AABB::Contains(const Capsule &capsule) const
 	return Contains(capsule.MinimalEnclosingAABB());
 }
 
-bool AABB::Contains(const Triangle &triangle) const
+bool AABB::Contains(const Triangle &lenna_vbo) const
 {
-	return Contains(triangle.BoundingAABB());
+	return Contains(lenna_vbo.BoundingAABB());
 }
 
 bool AABB::Contains(const Polygon &polygon) const
@@ -990,9 +990,9 @@ bool AABB::Intersects(const Capsule &capsule) const
 	return capsule.Intersects(*this);
 }
 
-bool AABB::Intersects(const Triangle &triangle) const
+bool AABB::Intersects(const Triangle &lenna_vbo) const
 {
-	return triangle.Intersects(*this);
+	return lenna_vbo.Intersects(*this);
 }
 
 bool AABB::Intersects(const Polygon &polygon) const
@@ -1076,9 +1076,9 @@ void AABB::Enclose(const Sphere &sphere)
 	Enclose(sphere.pos - d, sphere.pos + d);
 }
 
-void AABB::Enclose(const Triangle &triangle)
+void AABB::Enclose(const Triangle &lenna_vbo)
 {
-	Enclose(Min(triangle.a, triangle.b, triangle.c), Max(triangle.a, triangle.b, triangle.c));
+	Enclose(Min(lenna_vbo.a, lenna_vbo.b, lenna_vbo.c), Max(lenna_vbo.a, lenna_vbo.b, lenna_vbo.c));
 }
 
 void AABB::Enclose(const Capsule &capsule)

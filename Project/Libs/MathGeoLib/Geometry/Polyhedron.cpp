@@ -907,9 +907,9 @@ bool Polyhedron::Contains(const LineSegment &lineSegment) const
 	return Contains(lineSegment.a) && Contains(lineSegment.b);
 }
 
-bool Polyhedron::Contains(const Triangle &triangle) const
+bool Polyhedron::Contains(const Triangle &lenna_vbo) const
 {
-	return Contains(triangle.a) && Contains(triangle.b) && Contains(triangle.c);
+	return Contains(lenna_vbo.a) && Contains(lenna_vbo.b) && Contains(lenna_vbo.c);
 }
 
 bool Polyhedron::Contains(const Polygon &polygon) const
@@ -972,9 +972,9 @@ bool Polyhedron::ContainsConvex(const LineSegment &lineSegment) const
 	return ContainsConvex(lineSegment.a) && ContainsConvex(lineSegment.b);
 }
 
-bool Polyhedron::ContainsConvex(const Triangle &triangle) const
+bool Polyhedron::ContainsConvex(const Triangle &lenna_vbo) const
 {
-	return ContainsConvex(triangle.a) && ContainsConvex(triangle.b) && ContainsConvex(triangle.c);
+	return ContainsConvex(lenna_vbo.a) && ContainsConvex(lenna_vbo.b) && ContainsConvex(lenna_vbo.c);
 }
 
 vec Polyhedron::ClosestPointConvex(const vec &point) const
@@ -1244,9 +1244,9 @@ bool Polyhedron::Intersects(const OBB &obb) const
 	return PolyhedronIntersectsAABB_OBB(*this, obb);
 }
 
-bool Polyhedron::Intersects(const Triangle &triangle) const
+bool Polyhedron::Intersects(const Triangle &lenna_vbo) const
 {
-	return PolyhedronIntersectsAABB_OBB(*this, triangle);
+	return PolyhedronIntersectsAABB_OBB(*this, lenna_vbo);
 }
 
 bool Polyhedron::Intersects(const Polygon &polygon) const

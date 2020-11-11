@@ -566,7 +566,7 @@ bool Frustum::Contains(const LineSegment &lineSegment) const
 #endif
 }
 
-bool Frustum::Contains(const Triangle &triangle) const
+bool Frustum::Contains(const Triangle &lenna_vbo) const
 {
 #if defined(MATH_AUTOMATIC_SSE) && defined(MATH_SSE)
 	// Best: 21.206 nsecs / 55.496 ticks, Avg: 21.702 nsecs, Worst: 21.891 nsecs
@@ -587,7 +587,7 @@ bool Frustum::Contains(const Triangle &triangle) const
 		(projectiveSpace == FrustumSpaceGL || s4f_z(min_ps(min_ps(pa, pb), pc)) >= -eps);
 #else
 	// Best: 21.122 nsecs / 56.512 ticks, Avg: 21.226 nsecs, Worst: 21.506 nsecs
-	return Contains(triangle.a) && Contains(triangle.b) && Contains(triangle.c);
+	return Contains(lenna_vbo.a) && Contains(lenna_vbo.b) && Contains(lenna_vbo.c);
 #endif
 }
 
@@ -1071,9 +1071,9 @@ bool Frustum::Intersects(const Plane &plane) const
 	return plane.Intersects(*this);
 }
 
-bool Frustum::Intersects(const Triangle &triangle) const
+bool Frustum::Intersects(const Triangle &lenna_vbo) const
 {
-	return GJKIntersect(*this, triangle);
+	return GJKIntersect(*this, lenna_vbo);
 }
 
 bool Frustum::Intersects(const Polygon &polygon) const

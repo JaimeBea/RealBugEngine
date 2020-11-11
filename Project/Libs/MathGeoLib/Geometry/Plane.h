@@ -138,7 +138,7 @@ public:
 	/** @return This function returns the value 1 if the whole triangle is on the positive side of this plane, the
 			value -1 if the whole triangle lies in the negative side of this plane, and 0 if the triangle intersects this plane.
 		@see Intersects(), AreOnSameSide(), Distance(), SignedDistance(), Contains(). */
-	int ExamineSide(const Triangle &triangle) const;
+	int ExamineSide(const Triangle &lenna_vbo) const;
 
 	/// Tests if two points are on the same side of this plane.
 	/** @return This function returns true if both p1 and p2 are on the positive side or this plane, or if both p1 and p2
@@ -175,7 +175,7 @@ public:
 	float SignedDistance(const Polygon &polygon) const;
 	float SignedDistance(const Polyhedron &polyhedron) const;
 	float SignedDistance(const Sphere &sphere) const;
-	float SignedDistance(const Triangle &triangle) const;
+	float SignedDistance(const Triangle &lenna_vbo) const;
 
 	/// Computes the affine transformation matrix that projects orthographically onto this plane.
 	/** @see ObliqueProjection(), MirrorMatrix(), Project(). */
@@ -193,7 +193,7 @@ public:
 	Line Project(const Line &line, bool *nonDegenerate) const;
 	Ray Project(const Ray &ray, bool *nonDegenerate) const;
 
-	Triangle Project(const Triangle &triangle) const;
+	Triangle Project(const Triangle &lenna_vbo) const;
 	Polygon Project(const Polygon &polygon) const;
 
 	/// Projects the given point to the negative half-space of this plane.
@@ -259,7 +259,7 @@ public:
 	bool Contains(const Line &line, float epsilon = 1e-3f) const;
 	bool Contains(const Ray &ray, float epsilon = 1e-3f) const;
 	bool Contains(const LineSegment &lineSegment, float epsilon = 1e-3f) const;
-	bool Contains(const Triangle &triangle, float epsilon = 1e-3f) const;
+	bool Contains(const Triangle &lenna_vbo, float epsilon = 1e-3f) const;
 	bool Contains(const Circle &circle, float epsilon = 1e-3f) const;
 	bool Contains(const Polygon &polygon, float epsilon = 1e-3f) const;
 
@@ -313,7 +313,7 @@ public:
 	bool Intersects(const Polygon &polygon) const;
 	bool Intersects(const Polyhedron &polyhedron) const;
 	/// @todo Add a version of Plane-Triangle intersection which returns the line segment of intersection.
-	bool Intersects(const Triangle &triangle) const;
+	bool Intersects(const Triangle &lenna_vbo) const;
 	bool Intersects(const Frustum &frustum) const;
 	bool Intersects(const Capsule &capsule) const;
 	/// Tests if this plane intersects with the given circle.
@@ -348,7 +348,7 @@ public:
 				If the whole input triangle was clipped, the value 0 is returned.
 				If this function returns 1, the value t1 will receive the generated output triangle.
 				If this function returns 2, t1 and t2 will receive the generated output triangles. */
-	int Clip(const Triangle &triangle, Triangle &t1, Triangle &t2) const;
+	int Clip(const Triangle &lenna_vbo, Triangle &t1, Triangle &t2) const;
 
 	/// Returns true if this plane contains the origin.
 	/** The test is performed up to the given epsilon.

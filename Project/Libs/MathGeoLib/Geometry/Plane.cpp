@@ -181,11 +181,11 @@ bool Plane::IsOnPositiveSide(const vec &point) const
 	return SignedDistance(point) >= 0.f;
 }
 
-int Plane::ExamineSide(const Triangle &triangle) const
+int Plane::ExamineSide(const Triangle &lenna_vbo) const
 {
-	float a = SignedDistance(triangle.a);
-	float b = SignedDistance(triangle.b);
-	float c = SignedDistance(triangle.c);
+	float a = SignedDistance(lenna_vbo.a);
+	float b = SignedDistance(lenna_vbo.b);
+	float c = SignedDistance(lenna_vbo.c);
 	const float epsilon = 1e-4f; // Allow a small epsilon amount for tests for floating point inaccuracies.
 	if (a >= -epsilon && b >= -epsilon && c >= -epsilon)
 		return 1;
@@ -253,7 +253,7 @@ float Plane::SignedDistance(const Ray &ray) const { return Plane_SignedDistance(
 float Plane::SignedDistance(const Polygon &polygon) const { return Plane_SignedDistance(*this, polygon); }
 float Plane::SignedDistance(const Polyhedron &polyhedron) const { return Plane_SignedDistance(*this, polyhedron); }
 float Plane::SignedDistance(const Sphere &sphere) const { return Plane_SignedDistance(*this, sphere); }
-float Plane::SignedDistance(const Triangle &triangle) const { return Plane_SignedDistance(*this, triangle); }
+float Plane::SignedDistance(const Triangle &lenna_vbo) const { return Plane_SignedDistance(*this, lenna_vbo); }
 
 float3x4 Plane::OrthoProjection() const
 {
@@ -338,12 +338,12 @@ Ray Plane::Project(const Ray &ray, bool *nonDegenerate) const
 	return r;
 }
 
-Triangle Plane::Project(const Triangle &triangle) const
+Triangle Plane::Project(const Triangle &lenna_vbo) const
 {
 	Triangle t;
-	t.a = Project(triangle.a);
-	t.b = Project(triangle.b);
-	t.c = Project(triangle.c);
+	t.a = Project(lenna_vbo.a);
+	t.b = Project(lenna_vbo.b);
+	t.c = Project(lenna_vbo.c);
 	return t;
 }
 
@@ -444,9 +444,9 @@ bool Plane::Contains(const LineSegment &lineSegment, float epsilon) const
 	return Contains(lineSegment.a, epsilon) && Contains(lineSegment.b, epsilon);
 }
 
-bool Plane::Contains(const Triangle &triangle, float epsilon) const
+bool Plane::Contains(const Triangle &lenna_vbo, float epsilon) const
 {
-	return Contains(triangle.a, epsilon) && Contains(triangle.b, epsilon) && Contains(triangle.c, epsilon);
+	return Contains(lenna_vbo.a, epsilon) && Contains(lenna_vbo.b, epsilon) && Contains(lenna_vbo.c, epsilon);
 }
 
 bool Plane::Contains(const Circle &circle, float epsilon) const
@@ -691,11 +691,11 @@ bool Plane::Intersects(const OBB &obb) const
 	return obb.Intersects(*this);
 }
 
-bool Plane::Intersects(const Triangle &triangle) const
+bool Plane::Intersects(const Triangle &lenna_vbo) const
 {
-	float a = SignedDistance(triangle.a);
-	float b = SignedDistance(triangle.b);
-	float c = SignedDistance(triangle.c);
+	float a = SignedDistance(lenna_vbo.a);
+	float b = SignedDistance(lenna_vbo.b);
+	float c = SignedDistance(lenna_vbo.c);
 	return (a*b <= 0.f || a*c <= 0.f);
 }
 
@@ -793,17 +793,17 @@ int Plane::Clip(const Line &line, Ray &outRay) const
 	return 1; // Clipping resulted in a ray being generated.
 }
 
-int Plane::Clip(const Triangle &triangle, Triangle &t1, Triangle &t2) const
+int Plane::Clip(const Triangle &lenna_vbo, Triangle &t1, Triangle &t2) const
 {
 	bool side[3];
-	side[0] = IsOnPositiveSide(triangle.a);
-	side[1] = IsOnPositiveSide(triangle.b);
-	side[2] = IsOnPositiveSide(triangle.c);
+	side[0] = IsOnPositiveSide(lenna_vbo.a);
+	side[1] = IsOnPositiveSide(lenna_vbo.b);
+	side[2] = IsOnPositiveSide(lenna_vbo.c);
 	int nPos = (side[0] ? 1 : 0) + (side[1] ? 1 : 0) + (side[2] ? 1 : 0);
 	if (nPos == 0) // Everything should be clipped?
 		return 0;
 	// We will output at least one triangle, so copy the input to t1 for processing.
-	t1 = triangle;
+	t1 = lenna_vbo;
 
 	if (nPos == 3) // All vertices of the triangle are in positive side?
 		return 1;

@@ -334,9 +334,9 @@ bool Capsule::Contains(const LineSegment &lineSegment) const
 	return Contains(lineSegment.a) && Contains(lineSegment.b);
 }
 
-bool Capsule::Contains(const Triangle &triangle) const
+bool Capsule::Contains(const Triangle &lenna_vbo) const
 {
-	return Contains(triangle.a) && Contains(triangle.b) && Contains(triangle.c);
+	return Contains(lenna_vbo.a) && Contains(lenna_vbo.b) && Contains(lenna_vbo.c);
 }
 
 bool Capsule::Contains(const Polygon &polygon) const
@@ -428,10 +428,10 @@ bool Capsule::Intersects(const Capsule &capsule) const
 	return l.DistanceSq(capsule.l) <= R*R;
 }
 
-bool Capsule::Intersects(const Triangle &triangle) const
+bool Capsule::Intersects(const Triangle &lenna_vbo) const
 {
 	vec thisPoint;
-	vec trianglePoint = triangle.ClosestPoint(l, &thisPoint);
+	vec trianglePoint = lenna_vbo.ClosestPoint(l, &thisPoint);
 	return thisPoint.DistanceSq(trianglePoint) <= r*r;
 }
 

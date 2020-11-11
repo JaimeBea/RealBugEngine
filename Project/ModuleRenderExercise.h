@@ -15,5 +15,5 @@ public:
 	bool CleanUp() override;
 
 private:
-	unsigned triangle = 0;
+	unsigned lenna_vbo = 0;
 };

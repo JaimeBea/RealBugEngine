@@ -277,7 +277,7 @@ public:
 		@todo Add Contains(Circle/Disc). */
 	bool Contains(const vec &point, float polygonThicknessSq = 1e-5f) const;
 	bool Contains(const LineSegment &lineSegment, float polygonThickness = 1e-3f) const;
-	bool Contains(const Triangle &triangle, float polygonThickness = 1e-3f) const;
+	bool Contains(const Triangle &lenna_vbo, float polygonThickness = 1e-3f) const;
 	bool Contains(const Polygon &polygon, float polygonThickness = 1e-3f) const;
 	//todo Add RTCD, p. 202.
 	//bool ContainsConvex(const vec &worldSpacePoint, float polygonThickness = 1e-3f) const;
@@ -313,7 +313,7 @@ public:
 	bool Intersects(const Plane &plane) const;
 	bool Intersects(const AABB &aabb) const;
 	bool Intersects(const OBB &obb) const;
-	bool Intersects(const Triangle &triangle, float polygonThickness = 1e-3f) const;
+	bool Intersects(const Triangle &lenna_vbo, float polygonThickness = 1e-3f) const;
 	bool Intersects(const Polygon &polygon, float polygonThickness = 1e-3f) const;
 	bool Intersects(const Frustum &frustum) const;
 	bool Intersects(const Polyhedron &polyhedron) const;

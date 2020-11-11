@@ -375,7 +375,7 @@ struct Triangle2D_storage
 #define TRIANGLE(x) (*(Triangle2D*)&x)
 
 #ifdef MATH_ENABLE_STL_SUPPORT
-std::ostream &operator <<(std::ostream &o, const Triangle2D &triangle);
+std::ostream &operator <<(std::ostream &o, const Triangle2D &lenna_vbo);
 #endif
 
 bool LineSegment2DLineSegment2DIntersect(const float2 &p0, const float2 &dir0, const float2 &p1, const float2 &dir1, float &s, float &t);
