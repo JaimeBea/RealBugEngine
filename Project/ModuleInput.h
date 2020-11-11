@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Module.h"
+
 #include "Math/float2.h"
 #include "SDL_scancode.h"
 
@@ -8,10 +9,10 @@
 
 enum KeyState
 {
-	KEY_IDLE = 0,
-	KEY_DOWN,
-	KEY_REPEAT,
-	KEY_UP
+	KS_IDLE = 0,
+	KS_DOWN,
+	KS_REPEAT,
+	KS_UP
 };
 
 class ModuleInput : public Module
@@ -50,8 +51,8 @@ public:
 	}
 
 private:
-	KeyState keyboard[SDL_NUM_SCANCODES];
-	KeyState mouse_buttons[NUM_MOUSE_BUTTONS];
+	KeyState keyboard[SDL_NUM_SCANCODES] = { KS_IDLE };
+	KeyState mouse_buttons[NUM_MOUSE_BUTTONS] = { KS_IDLE };
 	float mouse_wheel_motion = 0;
 	float2 mouse_motion = { 0, 0 };
 	float2 mouse = { 0, 0 };

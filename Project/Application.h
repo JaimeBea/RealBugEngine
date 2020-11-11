@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Globals.h"
 #include <list>
+
+enum class UpdateStatus;
 
 class Module;
 class ModuleConfig;

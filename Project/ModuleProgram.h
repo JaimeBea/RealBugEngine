@@ -12,5 +12,5 @@ public:
 	bool CleanUp() override;
 
 public:
-	unsigned program = NULL;
+	unsigned program = 0;
 };

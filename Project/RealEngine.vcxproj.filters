@@ -290,9 +290,6 @@
     <ClInclude Include="Application.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="Debug.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -306,9 +303,6 @@
       <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleDebugDraw.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleDummy.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleEditor.h">
@@ -328,6 +322,9 @@
     </ClInclude>
     <ClInclude Include="ModuleWindow.h">
       <Filter>Source\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -478,9 +475,6 @@
     <ClCompile Include="Application.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Globals.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -512,6 +506,12 @@
       <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleWindow.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Module.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>

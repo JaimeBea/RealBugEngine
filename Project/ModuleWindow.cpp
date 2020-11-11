@@ -1,6 +1,10 @@
 #include "ModuleWindow.h"
+
+#include "Globals.h"
 #include "Application.h"
+#include "Logging.h"
 #include "ModuleConfig.h"
+
 #include "SDL.h"
 
 ModuleWindow::ModuleWindow() {}
@@ -30,15 +34,15 @@ bool ModuleWindow::Init()
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
 
-		switch (App->config->screen_mode)
+		switch (App->config->window_mode)
 		{
-		case SM_BORDERLESS:
+		case WM_BORDERLESS:
 			flags |= SDL_WINDOW_BORDERLESS;
 			break;
-		case SM_FULLSCREEN:
+		case WM_FULLSCREEN:
 			flags |= SDL_WINDOW_FULLSCREEN;
 			break;
-		case SM_FULLSCREEN_DESKTOP:
+		case WM_FULLSCREEN_DESKTOP:
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 			break;
 		}
@@ -72,22 +76,22 @@ bool ModuleWindow::CleanUp()
 	return true;
 }
 
-void ModuleWindow::SetScreenMode(int mode)
+void ModuleWindow::SetWindowMode(int mode)
 {
 	switch (mode)
 	{
-	case SM_WINDOWED:
+	case WM_WINDOWED:
 		SDL_SetWindowFullscreen(window, SDL_FALSE);
 		SDL_SetWindowBordered(window, SDL_TRUE);
 		break;
-	case SM_BORDERLESS:
+	case WM_BORDERLESS:
 		SDL_SetWindowFullscreen(window, SDL_FALSE);
 		SDL_SetWindowBordered(window, SDL_FALSE);
 		break;
-	case SM_FULLSCREEN:
+	case WM_FULLSCREEN:
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 		break;
-	case SM_FULLSCREEN_DESKTOP:
+	case WM_FULLSCREEN_DESKTOP:
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		break;
 	}

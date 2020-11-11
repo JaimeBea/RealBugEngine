@@ -1,7 +1,9 @@
 #include "ModuleCamera.h"
+
+#include "Globals.h"
 #include "Application.h"
-#include "ModuleWindow.h"
 #include "ModuleInput.h"
+
 #include "GL/glew.h"
 #include "Math/float3x3.h"
 #include "SDL_mouse.h"
@@ -48,11 +50,11 @@ UpdateStatus ModuleCamera::PreUpdate()
     KeyState alt_key = App->input->GetKey(SDL_SCANCODE_LALT);
     if (left_mouse_button)
     {
-        if (left_mouse_button == KEY_DOWN)
+        if (left_mouse_button == KS_DOWN)
         {
             SDL_SetRelativeMouseMode(SDL_TRUE);
         }
-        else if (left_mouse_button == KEY_UP)
+        else if (left_mouse_button == KS_UP)
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }
@@ -61,11 +63,11 @@ UpdateStatus ModuleCamera::PreUpdate()
     }
     else if (alt_key && right_mouse_button)
     {
-        if (right_mouse_button == KEY_DOWN || alt_key == KEY_DOWN)
+        if (right_mouse_button == KS_DOWN || alt_key == KS_DOWN)
         {
             SDL_SetRelativeMouseMode(SDL_TRUE);
         }
-        else if (right_mouse_button == KEY_UP || alt_key == KEY_UP)
+        else if (right_mouse_button == KS_UP || alt_key == KS_UP)
         {
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }

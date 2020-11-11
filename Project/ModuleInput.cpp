@@ -1,16 +1,16 @@
 #include "ModuleInput.h"
+
+#include "Globals.h"
 #include "Application.h"
+#include "Logging.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
+
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 
-ModuleInput::ModuleInput()
-{
-	memset(keyboard, KEY_IDLE, sizeof(KeyState) * SDL_NUM_SCANCODES);
-	memset(mouse_buttons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
-}
+ModuleInput::ModuleInput() {}
 
 ModuleInput::~ModuleInput() {}
 
@@ -48,26 +48,26 @@ UpdateStatus ModuleInput::PreUpdate()
 
 	for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
 	{
-		if (keyboard[i] == KEY_DOWN)
-			keyboard[i] = KEY_REPEAT;
+		if (keyboard[i] == KS_DOWN)
+			keyboard[i] = KS_REPEAT;
 
-		if (keyboard[i] == KEY_UP)
-			keyboard[i] = KEY_IDLE;
+		if (keyboard[i] == KS_UP)
+			keyboard[i] = KS_IDLE;
 
 		if (io.WantCaptureKeyboard)
-			keyboard[i] = KEY_IDLE;
+			keyboard[i] = KS_IDLE;
 	}
 
 	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
 	{
-		if (mouse_buttons[i] == KEY_DOWN)
-			mouse_buttons[i] = KEY_REPEAT;
+		if (mouse_buttons[i] == KS_DOWN)
+			mouse_buttons[i] = KS_REPEAT;
 
-		if (mouse_buttons[i] == KEY_UP)
-			mouse_buttons[i] = KEY_IDLE;
+		if (mouse_buttons[i] == KS_UP)
+			mouse_buttons[i] = KS_IDLE;
 
 		if (io.WantCaptureMouse)
-			keyboard[i] = KEY_IDLE;
+			keyboard[i] = KS_IDLE;
 	}
 
 	SDL_Event event;
@@ -122,34 +122,34 @@ UpdateStatus ModuleInput::PreUpdate()
 		case SDL_MOUSEBUTTONDOWN:
 			if (!io.WantCaptureMouse)
 			{
-				mouse_buttons[event.button.button - 1] = KEY_DOWN;
+				mouse_buttons[event.button.button - 1] = KS_DOWN;
 			}
 			break;
 
 		case SDL_MOUSEBUTTONUP:
 			if (!io.WantCaptureMouse)
 			{
-				mouse_buttons[event.button.button - 1] = KEY_UP;
+				mouse_buttons[event.button.button - 1] = KS_UP;
 			}
 			break;
 
 		case SDL_KEYDOWN:
 			if (!io.WantCaptureKeyboard)
 			{
-				keyboard[event.key.keysym.scancode] = KEY_DOWN;
+				keyboard[event.key.keysym.scancode] = KS_DOWN;
 			}
 			break;
 
 		case SDL_KEYUP:
 			if (!io.WantCaptureKeyboard)
 			{
-				keyboard[event.key.keysym.scancode] = KEY_UP;
+				keyboard[event.key.keysym.scancode] = KS_UP;
 			}
 			break;
 		}
 	}
 
-	if (GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	if (GetKey(SDL_SCANCODE_ESCAPE) == KS_DOWN)
 	{
 		return UpdateStatus::STOP;
 	}

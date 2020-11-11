@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Debug.h"
-
 enum class UpdateStatus
 {
-	CONTINUE = 1,
+	CONTINUE,
 	STOP,
 	ERROR
 };
@@ -14,3 +12,7 @@ enum class UpdateStatus
 
 // Configuration -----------
 #define GLSL_VERSION "#version 460"
+
+// Delete helpers
+#define RELEASE( x ) { if( x != nullptr ) { delete x; x = nullptr; } }
+#define RELEASE_ARRAY( x ) { if( x != nullptr ) { delete[] x; x = nullptr; } }

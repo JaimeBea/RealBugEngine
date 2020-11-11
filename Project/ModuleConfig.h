@@ -1,16 +1,17 @@
 #pragma once
 
 #include "Module.h"
+
 #include "ShortString.h"
 
 struct SDL_version;
 
-enum ScreenMode
+enum WindowMode
 {
-	SM_WINDOWED,
-	SM_BORDERLESS,
-	SM_FULLSCREEN,
-	SM_FULLSCREEN_DESKTOP
+	WM_WINDOWED,
+	WM_BORDERLESS,
+	WM_FULLSCREEN,
+	WM_FULLSCREEN_DESKTOP
 };
 
 class ModuleConfig : public Module
@@ -31,7 +32,7 @@ public:
 	int max_fps = 60;
 	bool limit_framerate = true;
 	bool vsync = true;
-	int screen_mode = SM_WINDOWED;
+	int window_mode = WM_WINDOWED;
 	bool resizable = true;
 	int screen_width = 640;
 	int screen_height = 480;

@@ -1,16 +1,16 @@
 #include "ModuleConfig.h"
+
+#include "Globals.h"
+#include "Application.h"
+
 #include "SDL_version.h"
 #include "SDL_cpuinfo.h"
 #include "GL/glew.h"
 #include "SDL_video.h"
 
-ModuleConfig::ModuleConfig()
-{
-}
+ModuleConfig::ModuleConfig() {}
 
-ModuleConfig::~ModuleConfig()
-{
-}
+ModuleConfig::~ModuleConfig() {}
 
 bool ModuleConfig::PostInit()
 {

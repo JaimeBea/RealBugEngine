@@ -9,12 +9,12 @@ class ModuleWindow : public Module
 {
 public:
 	ModuleWindow();
-	virtual ~ModuleWindow();
+	~ModuleWindow();
 
 	bool Init() override;
 	bool CleanUp() override;
 
-	void SetScreenMode(int mode);
+	void SetWindowMode(int mode);
 	void SetResizable(bool resizable);
 	void SetSize(int width, int height);
 	void SetBrightness(float brightness);

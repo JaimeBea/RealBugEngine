@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Debug.h" />
+    <ClInclude Include="Logging.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
@@ -104,7 +104,6 @@
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleConfig.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
-    <ClInclude Include="ModuleDummy.h" />
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleProgram.h" />
@@ -115,7 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Libs\imgui\imgui.cpp" />
     <ClCompile Include="Libs\imgui\imgui_demo.cpp" />
@@ -166,6 +165,7 @@
     <ClCompile Include="Libs\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleConfig.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />

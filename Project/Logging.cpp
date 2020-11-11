@@ -1,4 +1,5 @@
-#include "Debug.h"
+#include "Logging.h"
+
 #include <string.h>
 #include <windows.h>
 #include <stdio.h>
@@ -35,7 +36,6 @@ void log_delta_ms(unsigned delta_ms)
 }
 
 std::vector<char*> log_lines;
-
 int fps_log_index = FPS_LOG_SIZE - 1;
 float fps_log[FPS_LOG_SIZE] = { 0 };
 float ms_log[FPS_LOG_SIZE] = { 0 };

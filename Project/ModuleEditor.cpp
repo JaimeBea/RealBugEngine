@@ -1,9 +1,13 @@
 #include "ModuleEditor.h"
+
+#include "Globals.h"
 #include "Application.h"
+#include "Logging.h"
 #include "ModuleConfig.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
+
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
@@ -11,13 +15,9 @@
 
 static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
-ModuleEditor::ModuleEditor()
-{
-}
+ModuleEditor::ModuleEditor() {}
 
-ModuleEditor::~ModuleEditor()
-{
-}
+ModuleEditor::~ModuleEditor() {}
 
 bool ModuleEditor::Init()
 {
@@ -120,18 +120,18 @@ UpdateStatus ModuleEditor::Update()
             // Window
             if (ImGui::CollapsingHeader("Window"))
             {
-                // Screen mode combo box
+                // Window mode combo box
                 const char* items[] = { "Windowed", "Borderless", "Fullscreen", "Fullscreen desktop" };
-                const char* item_current = items[App->config->screen_mode];
-                if (ImGui::BeginCombo("Screen mode", item_current))
+                const char* item_current = items[App->config->window_mode];
+                if (ImGui::BeginCombo("Window mode", item_current))
                 {
                     for (int n = 0; n < IM_ARRAYSIZE(items); ++n)
                     {
                         bool is_selected = (item_current == items[n]);
                         if (ImGui::Selectable(items[n], is_selected))
                         {
-                            App->config->screen_mode = n;
-                            App->window->SetScreenMode(App->config->screen_mode);
+                            App->config->window_mode = n;
+                            App->window->SetWindowMode(App->config->window_mode);
                         }
                         if (is_selected)
                         {
@@ -146,7 +146,7 @@ UpdateStatus ModuleEditor::Update()
                     App->window->SetBrightness(App->config->brightness);
                 }
 
-                if (App->config->screen_mode != SM_FULLSCREEN_DESKTOP)
+                if (App->config->window_mode != WM_FULLSCREEN_DESKTOP)
                 {
                     if (ImGui::Checkbox("Resizable", &App->config->resizable))
                     {

@@ -1,44 +1,17 @@
 #pragma once
 
-#include "Globals.h"
+enum class UpdateStatus;
 
 class Module
 {
 public:
-	Module() {}
+	Module();
 
-	virtual bool PreInit()
-	{
-		return true;
-	}
-
-	virtual bool Init() 
-	{
-		return true; 
-	}
-
-	virtual bool PostInit()
-	{
-		return true;
-	}
-
-	virtual UpdateStatus PreUpdate()
-	{
-		return UpdateStatus::CONTINUE;
-	}
-
-	virtual UpdateStatus Update()
-	{
-		return UpdateStatus::CONTINUE;
-	}
-
-	virtual UpdateStatus PostUpdate()
-	{
-		return UpdateStatus::CONTINUE;
-	}
-
-	virtual bool CleanUp() 
-	{ 
-		return true; 
-	}
+	virtual bool PreInit();
+	virtual bool Init();
+	virtual bool PostInit();
+	virtual UpdateStatus PreUpdate();
+	virtual UpdateStatus Update();
+	virtual UpdateStatus PostUpdate();
+	virtual bool CleanUp();
 };

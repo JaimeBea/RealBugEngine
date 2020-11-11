@@ -1,7 +1,11 @@
 #include "ModuleRender.h"
+
+#include "Globals.h"
 #include "Application.h"
+#include "Logging.h"
 #include "ModuleConfig.h"
 #include "ModuleWindow.h"
+
 #include "SDL.h"
 #include "GL/glew.h"
 

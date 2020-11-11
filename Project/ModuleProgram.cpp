@@ -1,4 +1,8 @@
 #include "ModuleProgram.h"
+
+#include "Globals.h"
+#include "Logging.h"
+
 #include "GL/glew.h"
 #include <string.h>
 

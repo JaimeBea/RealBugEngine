@@ -1,4 +1,7 @@
 #include "Application.h"
+
+#include "Globals.h"
+#include "Logging.h"
 #include "ModuleConfig.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
@@ -8,6 +11,7 @@
 #include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
 #include "ModuleDebugDraw.h"
+
 #include "SDL_timer.h"
 #include <windows.h>
 

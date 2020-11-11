@@ -1,9 +1,13 @@
 #include "ModuleRenderExercise.h"
+
+#include "Globals.h"
 #include "Application.h"
+#include "Logging.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleProgram.h"
+
 #include "GL/glew.h"
 #include "SDL.h"
 

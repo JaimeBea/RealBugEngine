@@ -1,6 +1,9 @@
-#include <stdlib.h>
+#include "Globals.h"
 #include "Application.h"
+#include "Logging.h"
+
 #include "SDL.h"
+#include <stdlib.h>
 
 enum class MainState
 {
