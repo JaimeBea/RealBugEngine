@@ -8,6 +8,9 @@
 class ModuleModels : public Module
 {
 public:
+	bool Init() override;
+	bool CleanUp() override;
+
 	unsigned LoadModel(const char* file_name);
 	void ReleaseModel(unsigned model);
 
