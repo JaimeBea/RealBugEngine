@@ -100,6 +100,8 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleConfig.h" />
@@ -108,7 +110,6 @@
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleProgram.h" />
     <ClInclude Include="ModuleRender.h" />
-    <ClInclude Include="ModuleRenderExercise.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="ShortString.h" />
@@ -166,6 +167,8 @@
     <ClCompile Include="Libs\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleConfig.cpp" />
@@ -174,7 +177,6 @@
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleProgram.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
-    <ClCompile Include="ModuleRenderExercise.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
   </ItemGroup>
@@ -226,14 +228,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/assimp/include; $(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)/Libs/DeviL/lib/x86/Release; $(ProjectDir)/Libs/SDL/lib/x86; $(ProjectDir)/Libs/glew-2.1.0/lib/Release/Win32;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DeviL.lib; ILU.lib; ILUT.lib; SDL2.lib; SDL2main.lib; glew32.lib; opengl32.lib; kernel32.lib; user32.lib; gdi32.lib; winspool.lib; comdlg32.lib; advapi32.lib; shell32.lib; ole32.lib; oleaut32.lib; uuid.lib; odbc32.lib; odbccp32.lib; %(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)/Libs/assimp/lib/x86; $(ProjectDir)/Libs/DeviL/lib/x86/Release; $(ProjectDir)/Libs/SDL/lib/x86; $(ProjectDir)/Libs/glew-2.1.0/lib/Release/Win32;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc141-mt.lib; DeviL.lib; ILU.lib; ILUT.lib; SDL2.lib; SDL2main.lib; glew32.lib; opengl32.lib; kernel32.lib; user32.lib; gdi32.lib; winspool.lib; comdlg32.lib; advapi32.lib; shell32.lib; ole32.lib; oleaut32.lib; uuid.lib; odbc32.lib; odbccp32.lib; %(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -244,7 +246,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/assimp/include; $(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -252,8 +254,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)/Libs/DeviL/lib/x86/Release; $(ProjectDir)/Libs/SDL/lib/x86; $(ProjectDir)/Libs/glew-2.1.0/lib/Release/Win32;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>DeviL.lib; ILU.lib; ILUT.lib; SDL2.lib; SDL2main.lib; glew32.lib; opengl32.lib; kernel32.lib; user32.lib; gdi32.lib; winspool.lib; comdlg32.lib; advapi32.lib; shell32.lib; ole32.lib; oleaut32.lib; uuid.lib; odbc32.lib; odbccp32.lib; %(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)/Libs/assimp/lib/x86; $(ProjectDir)/Libs/DeviL/lib/x86/Release; $(ProjectDir)/Libs/SDL/lib/x86; $(ProjectDir)/Libs/glew-2.1.0/lib/Release/Win32;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc141-mt.lib; DeviL.lib; ILU.lib; ILUT.lib; SDL2.lib; SDL2main.lib; glew32.lib; opengl32.lib; kernel32.lib; user32.lib; gdi32.lib; winspool.lib; comdlg32.lib; advapi32.lib; shell32.lib; ole32.lib; oleaut32.lib; uuid.lib; odbc32.lib; odbccp32.lib; %(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

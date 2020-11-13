@@ -2,12 +2,15 @@
 
 #include "Module.h"
 
+#include "Model.h"
+
 #include "Math/float3.h"
 
 class ModuleRender : public Module
 {
 public:
 	bool Init() override;
+	bool PostInit() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
@@ -20,4 +23,7 @@ public:
 public:
 	void* context = nullptr;
 	float3 clear_color = { 0.1f, 0.1f, 0.1f };
+
+private:
+	Model house_model;
 };

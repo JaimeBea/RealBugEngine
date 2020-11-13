@@ -10,7 +10,7 @@ class Camera;
 class ModuleDebugDraw : public Module
 {
 public:
-	bool Init() override;
+	bool PostInit() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 

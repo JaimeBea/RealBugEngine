@@ -5,7 +5,7 @@
 class ModuleProgram : public Module
 {
 public:
-	bool Init() override;
+	bool PostInit() override;
 	bool CleanUp() override;
 
 public:

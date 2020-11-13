@@ -8,7 +8,6 @@
 #include "ModuleEditor.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
-#include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleTextures.h"
@@ -21,6 +20,8 @@ Application::Application()
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(config = new ModuleConfig());
 	modules.push_back(textures = new ModuleTextures());
+	modules.push_back(program = new ModuleProgram());
+	modules.push_back(debug_draw = new ModuleDebugDraw());
 
 	modules.push_back(input = new ModuleInput());
 	modules.push_back(window = new ModuleWindow());
@@ -28,10 +29,7 @@ Application::Application()
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(camera = new ModuleCamera());
 
-	//modules.push_back(renderer = new ModuleRender());
-	modules.push_back(renderer = new ModuleRenderExercise());
-	modules.push_back(program = new ModuleProgram());
-	modules.push_back(debug_draw = new ModuleDebugDraw());
+	modules.push_back(renderer = new ModuleRender());
 }
 
 Application::~Application()

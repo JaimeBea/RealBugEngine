@@ -581,7 +581,7 @@ const char * DDRenderInterfaceCoreGL::textFragShaderSrc = "\n"
 
 DDRenderInterfaceCoreGL* ModuleDebugDraw::implementation = 0;
 
-bool ModuleDebugDraw::Init()
+bool ModuleDebugDraw::PostInit()
 {
     implementation = new DDRenderInterfaceCoreGL;
     dd::initialize(implementation);

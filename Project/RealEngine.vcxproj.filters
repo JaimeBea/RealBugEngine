@@ -308,12 +308,6 @@
     <ClInclude Include="ModuleProgram.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleRender.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleRenderExercise.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleWindow.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
@@ -328,6 +322,15 @@
     </ClInclude>
     <ClInclude Include="Libs\DebugDraw\debugdraw.h">
       <Filter>Libraries\DebugDraw</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleRender.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -502,12 +505,6 @@
     <ClCompile Include="ModuleProgram.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleRender.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleRenderExercise.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -519,6 +516,15 @@
     </ClCompile>
     <ClCompile Include="ModuleTextures.cpp">
       <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleRender.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

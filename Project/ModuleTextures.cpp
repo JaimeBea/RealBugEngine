@@ -6,50 +6,92 @@
 #include "ModuleConfig.h"
 
 #include "IL/il.h"
+#include "IL/ilu.h"
 #include "GL/glew.h"
 
-bool ModuleTextures::PostInit()
+bool ModuleTextures::Init()
 {
 	ilInit();
-
-	unsigned image;
-	ilGenImages(1, &image);
-	DEFER{ ilDeleteImages(1, &image); };
-
-	ilBindImage(image);
-	bool success = ilLoadImage("Lenna.png");
-	if (!success)
-	{
-		LOG("Failed to load image.");
-		return false;
-	}
-	success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-	if (!success)
-	{
-		LOG("Failed to convert image.");
-		return false;
-	}
-
-	glGenTextures(1, &lenna); /* Texture name generation */
-	glBindTexture(GL_TEXTURE_2D, lenna); /* Binding of texture name */
-
-	SetWrap(App->config->texture_wrap);
-	SetMinFilter(App->config->min_filter);
-	SetMagFilter(App->config->mag_filter);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
-		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
-		ilGetData()); /* Texture specification */
-
-	glGenerateMipmap(GL_TEXTURE_2D);
+	iluInit();
 
 	return true;
 }
 
 bool ModuleTextures::CleanUp()
 {
-	glDeleteTextures(1, &lenna);
+	glDeleteTextures(textures.size(), textures.data());
+
 	return true;
+}
+
+unsigned ModuleTextures::LoadTexture(const char* file_name)
+{
+	unsigned image;
+	ilGenImages(1, &image);
+	DEFER{ ilDeleteImages(1, &image); };
+
+	ilBindImage(image);
+	bool image_loaded = ilLoadImage(file_name);
+	if (!image_loaded)
+	{
+		LOG("Failed to load image \"%s\".", file_name);
+		return 0;
+	}
+	bool image_converted = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+	if (!image_converted)
+	{
+		LOG("Failed to convert image.");
+		return 0;
+	}
+
+	unsigned texture;
+	glGenTextures(1, &texture); /* Texture name generation */
+	glBindTexture(GL_TEXTURE_2D, texture); /* Binding of texture name */
+
+	SetWrap(App->config->texture_wrap);
+	SetMinFilter(App->config->min_filter);
+	SetMagFilter(App->config->mag_filter);
+
+	// Flip image if neccessary
+	ILinfo info;
+	iluGetImageInfo(&info);
+	if (info.Origin == IL_ORIGIN_UPPER_LEFT)
+	{
+		iluFlipImage();
+	}
+
+	// Generate texture from image
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
+		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
+		ilGetData()); /* Texture specification */
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	textures.push_back(texture);
+
+	return texture;
+}
+
+void ModuleTextures::ReleaseTexture(unsigned texture)
+{
+	bool found = false;
+	for (std::vector<unsigned>::iterator it = textures.begin(); it != textures.end(); ++it)
+	{
+		if (*it == texture)
+		{
+			textures.erase(it);
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+	{
+		LOG("Tried to release non-existent texture (%i).", texture);
+		return;
+	}
+
+	glDeleteTextures(1, &texture);
 }
 
 void ModuleTextures::SetMinFilter(TextureFilter filter)
