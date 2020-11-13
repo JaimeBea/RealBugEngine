@@ -8,6 +8,7 @@
 #include "ModuleDebugDraw.h"
 #include "ModuleProgram.h"
 #include "ModuleTextures.h"
+#include "ModuleModels.h"
 
 #include "GL/glew.h"
 #include "SDL.h"
@@ -80,7 +81,7 @@ bool ModuleRender::Init()
 
 bool ModuleRender::PostInit()
 {
-	house_model.Load("BakerHouse.fbx");
+	house_model = App->models->LoadModel("BakerHouse.fbx");
 
 	return true;
 }
@@ -103,7 +104,7 @@ UpdateStatus ModuleRender::Update()
 	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
 	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), screen_width, screen_height);
 
-	house_model.Draw();
+	App->models->models[house_model].Draw();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -117,7 +118,7 @@ UpdateStatus ModuleRender::PostUpdate()
 
 bool ModuleRender::CleanUp()
 {
-	house_model.Release();
+	App->models->ReleaseModel(house_model);
 
 	return true;
 }

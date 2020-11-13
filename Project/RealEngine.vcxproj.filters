@@ -332,6 +332,9 @@
     <ClInclude Include="Mesh.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleModels.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -525,6 +528,9 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleModels.cpp">
+      <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

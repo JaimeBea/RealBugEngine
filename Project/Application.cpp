@@ -11,6 +11,7 @@
 #include "ModuleProgram.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleTextures.h"
+#include "ModuleModels.h"
 
 #include "SDL_timer.h"
 #include <windows.h>
@@ -20,6 +21,7 @@ Application::Application()
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(config = new ModuleConfig());
 	modules.push_back(textures = new ModuleTextures());
+	modules.push_back(models = new ModuleModels());
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(debug_draw = new ModuleDebugDraw());
 

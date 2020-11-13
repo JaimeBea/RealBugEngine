@@ -8,12 +8,11 @@ class Mesh
 {
 public:
 	void Load(const aiMesh* mesh);
-
 	void Release();
 
 	void Draw(const std::vector<unsigned>& materials) const;
 
-private:
+public:
 	unsigned vbo = 0;
 	unsigned ebo = 0;
 	unsigned vao = 0;

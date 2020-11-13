@@ -25,5 +25,5 @@ public:
 	float3 clear_color = { 0.1f, 0.1f, 0.1f };
 
 private:
-	Model house_model;
+	unsigned house_model;
 };

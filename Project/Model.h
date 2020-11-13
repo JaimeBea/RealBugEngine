@@ -4,8 +4,6 @@
 
 #include <vector>
 
-struct aiScene;
-
 class Model
 {
 public:
@@ -14,7 +12,7 @@ public:
 
 	void Draw() const;
 
-private:
+public:
 	std::vector<unsigned> materials;
 	std::vector<Mesh> meshes;
 };

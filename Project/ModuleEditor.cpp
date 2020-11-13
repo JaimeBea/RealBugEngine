@@ -8,6 +8,7 @@
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "ModuleTextures.h"
+#include "ModuleModels.h"
 
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -326,6 +327,58 @@ UpdateStatus ModuleEditor::Update()
                         }
                     }
                     ImGui::EndCombo();
+                }
+
+                // Texture images
+                for (unsigned texture : App->textures->textures)
+                {
+                    char texture_name[128];
+                    sprintf(texture_name, "Texture %i", texture);
+                    if (ImGui::TreeNode(texture_name))
+                    {
+                        ImGui::Image((void*)texture, ImVec2(200, 200));
+
+                        ImGui::TreePop();
+                    }
+                }
+            }
+
+            // Models
+            if (ImGui::CollapsingHeader("Models"))
+            {
+                unsigned model_index = 0;
+                for (Model& model : App->models->models)
+                {
+                    char model_name[128];
+                    sprintf(model_name, "Model %i", model_index);
+                    if (ImGui::TreeNode(model_name))
+                    {
+                        unsigned mesh_index = 0;
+                        for (Mesh& mesh : model.meshes)
+                        {
+                            char mesh_name[128];
+                            sprintf(mesh_name, "Mesh %i", mesh_index);
+                            if (ImGui::TreeNode(mesh_name))
+                            {
+                                ImGui::Text("Vertices:");
+                                ImGui::SameLine();
+                                ImGui::TextColored(yellow, "%i", mesh.num_vertices);
+                                ImGui::Text("Triangles:");
+                                ImGui::SameLine();
+                                ImGui::TextColored(yellow, "%i", mesh.num_indices / 3);
+
+                                ImGui::TreePop();
+                            }
+
+                            mesh_index += 1;
+                        }
+                        ImGui::Text("Diffuse:");
+                        ImGui::Image((void*)model.materials[0], ImVec2(200, 200));
+
+                        ImGui::TreePop();
+                    }
+
+                    model_index += 1;
                 }
             }
         }
