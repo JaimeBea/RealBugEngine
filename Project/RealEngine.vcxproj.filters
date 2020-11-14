@@ -335,6 +335,9 @@
     <ClInclude Include="ModuleModels.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="Pool.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">

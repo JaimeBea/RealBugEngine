@@ -113,6 +113,7 @@
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="Pool.h" />
     <ClInclude Include="ShortString.h" />
   </ItemGroup>
   <ItemGroup>

@@ -81,11 +81,5 @@ int main(int argc, char ** argv)
 
 	LOG("Bye :)\n");
 
-	// Clear log at the end
-	for (char* log_line : log_lines)
-	{
-		delete[] log_line;
-	}
-
 	return main_return;
 }

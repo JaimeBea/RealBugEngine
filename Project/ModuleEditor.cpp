@@ -79,10 +79,7 @@ UpdateStatus ModuleEditor::Update()
         ImGui::SetNextWindowSize(ImVec2(600, 200), ImGuiCond_FirstUseEver);
         if (ImGui::Begin("Console", &show_console))
         {
-            for (char* log_line : log_lines)
-            {
-                ImGui::TextUnformatted(log_line);
-            }
+            ImGui::TextUnformatted(log_string.c_str());
         }
         ImGui::End();
     }
@@ -347,14 +344,14 @@ UpdateStatus ModuleEditor::Update()
             if (ImGui::CollapsingHeader("Models"))
             {
                 unsigned model_index = 0;
-                for (Model& model : App->models->models)
+                for (const Model& model : App->models->models)
                 {
                     char model_name[128];
                     sprintf(model_name, "Model %i", model_index);
                     if (ImGui::TreeNode(model_name))
                     {
                         unsigned mesh_index = 0;
-                        for (Mesh& mesh : model.meshes)
+                        for (const Mesh& mesh : model.meshes)
                         {
                             char mesh_name[128];
                             sprintf(mesh_name, "Mesh %i", mesh_index);

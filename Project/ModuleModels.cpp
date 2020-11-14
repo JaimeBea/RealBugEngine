@@ -2,7 +2,7 @@
 
 bool ModuleModels::Init()
 {
-    models.reserve(10);
+    models.Reserve(10);
 
     return true;
 }
@@ -13,21 +13,19 @@ bool ModuleModels::CleanUp()
     {
         model.Release();
     }
+    models.Clear();
 
     return true;
 }
 
 unsigned ModuleModels::LoadModel(const char* file_name)
 {
-    Model model;
+    Model model = Model();
     model.Load(file_name);
-    unsigned id = models.size();
-    models.push_back(model);
-    return id;
+    return models.Offer(std::move(model));
 }
 
 void ModuleModels::ReleaseModel(unsigned model)
 {
-    models[model].Release();
-    models.erase(models.begin() + model);
+    models.Remove(model);
 }

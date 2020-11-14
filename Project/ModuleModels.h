@@ -3,7 +3,7 @@
 #include "Module.h"
 #include "Model.h"
 
-#include <vector>
+#include "Pool.h"
 
 class ModuleModels : public Module
 {
@@ -15,6 +15,6 @@ public:
 	void ReleaseModel(unsigned model);
 
 public:
-	std::vector<Model> models;
+	Pool<Model> models;
 };
 

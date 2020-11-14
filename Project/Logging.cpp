@@ -17,9 +17,7 @@ void log(const char file[], int line, const char* format, ...)
 	sprintf_s(tmp_string2, 4096, "\n%s(%d) : %s", file, line, tmp_string);
 	OutputDebugString(tmp_string2);
 
-	char* log_line = new char[strlen(tmp_string2) + 1];
-	strcpy(log_line, tmp_string);
-	log_lines.emplace_back(log_line);
+	log_string.append(tmp_string2);
 }
 
 void log_delta_ms(unsigned delta_ms)
@@ -35,7 +33,7 @@ void log_delta_ms(unsigned delta_ms)
 	ms_log[fps_log_index] = ms;
 }
 
-std::vector<char*> log_lines;
+std::string log_string;
 int fps_log_index = FPS_LOG_SIZE - 1;
 float fps_log[FPS_LOG_SIZE] = { 0 };
 float ms_log[FPS_LOG_SIZE] = { 0 };

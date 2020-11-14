@@ -45,25 +45,37 @@ UpdateStatus ModuleInput::PreUpdate()
 	for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
 	{
 		if (keyboard[i] == KS_DOWN)
+		{
 			keyboard[i] = KS_REPEAT;
+		}
 
 		if (keyboard[i] == KS_UP)
+		{
 			keyboard[i] = KS_IDLE;
+		}
 
 		if (io.WantCaptureKeyboard)
+		{
 			keyboard[i] = KS_IDLE;
+		}
 	}
 
 	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
 	{
 		if (mouse_buttons[i] == KS_DOWN)
+		{
 			mouse_buttons[i] = KS_REPEAT;
+		}
 
 		if (mouse_buttons[i] == KS_UP)
+		{
 			mouse_buttons[i] = KS_IDLE;
+		}
 
 		if (io.WantCaptureMouse)
+		{
 			keyboard[i] = KS_IDLE;
+		}
 	}
 
 	SDL_Event event;
