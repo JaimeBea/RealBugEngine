@@ -18,12 +18,12 @@ public:
 	void SetFOV(float h_fov);
 	void SetAspectRatio(float aspect_ratio);
 	void SetPlaneDistances(float near_plane, float far_plane);
-	void SetPosition(vec position);
+	void SetPosition(const vec& position);
 	void SetPosition(float x, float y, float z);
-	void SetOrientation(float3 orientation);
+	void SetOrientation(const float3& orientation);
 	void SetOrientation(float x, float y, float z);
-	void Translate(vec translation);
-	void Rotate(float3x3 rotationMatrix);
+	void Translate(const vec& translation);
+	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
 
 	vec GetFront() const;

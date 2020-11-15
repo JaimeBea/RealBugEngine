@@ -36,7 +36,7 @@ void Mesh::Load(const aiMesh* mesh)
 
 	// Load VBO
 	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, nullptr, GL_STATIC_DRAW);
-	float* vertex_buffer = (float*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+	float* vertex_buffer = (float*)glMapBufferRange(GL_ARRAY_BUFFER, 0, vertex_buffer_size, GL_MAP_WRITE_BIT);
 	for (unsigned i = 0; i < mesh->mNumVertices; ++i)
 	{
 		*(vertex_buffer++) = mesh->mVertices[i].x;
@@ -49,7 +49,7 @@ void Mesh::Load(const aiMesh* mesh)
 
 	// Load EBO
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, nullptr, GL_STATIC_DRAW);
-	unsigned* index_buffer = (unsigned*)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY);
+	unsigned* index_buffer = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, index_buffer_size, GL_MAP_WRITE_BIT);
 	for (unsigned i = 0; i < mesh->mNumFaces; ++i)
 	{
 		// Assume triangles = 3 indices per face

@@ -149,7 +149,7 @@ void ModuleCamera::SetPlaneDistances(float near_plane, float far_plane)
     frustum.SetViewPlaneDistances(near_plane, far_plane);
 }
 
-void ModuleCamera::SetPosition(vec position)
+void ModuleCamera::SetPosition(const vec& position)
 {
     frustum.SetPos(position);
 }
@@ -159,7 +159,7 @@ void ModuleCamera::SetPosition(float x, float y, float z)
     SetPosition(vec(x, y, z));
 }
 
-void ModuleCamera::SetOrientation(float3 orientaton)
+void ModuleCamera::SetOrientation(const float3& orientaton)
 {
     SetOrientation(orientaton.x, orientaton.y, orientaton.z);
 }
@@ -171,12 +171,12 @@ void ModuleCamera::SetOrientation(float x, float y, float z)
     frustum.SetUp(rotationMatrix * float3::unitY);
 }
 
-void ModuleCamera::Translate(vec translation)
+void ModuleCamera::Translate(const vec& translation)
 {
     frustum.SetPos(frustum.Pos() + translation);
 }
 
-void ModuleCamera::Rotate(float3x3 rotationMatrix)
+void ModuleCamera::Rotate(const float3x3& rotationMatrix)
 {
     vec oldFront = frustum.Front().Normalized();
     vec oldUp = frustum.Up().Normalized();
