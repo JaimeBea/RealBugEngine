@@ -3,6 +3,11 @@
 #include <vector>
 #include <unordered_map>
 
+// Map optimized for iteration.
+// Add: O(1) best case
+// Remove: O(1) best case
+// Access: O(1) best case
+// Iteration: O(n) with contiguous memory
 template<typename T>
 class Pool
 {
@@ -10,6 +15,7 @@ public:
 	void Reserve(unsigned amount)
 	{
 		id_to_index_map.reserve(amount);
+		index_to_id_map.reserve(amount);
 		objects.reserve(amount);
 	}
 
@@ -19,6 +25,7 @@ public:
 		size_t index = objects.size();
 
 		id_to_index_map[id] = index;
+		index_to_id_map[index] = id;
 		objects.push_back(object);
 
 		next_id += 1;
@@ -30,10 +37,14 @@ public:
 	{
 		size_t index = id_to_index_map[id];
 		size_t last_index = objects.size() - 1;
+		unsigned last_id = index_to_id_map[last_index];
 
+		id_to_index_map[last_id] = index;
+		index_to_id_map[index] = last_id;
 		std::swap(objects[index], objects[last_index]);
 
 		id_to_index_map.erase(id);
+		index_to_id_map.erase(last_index);
 		objects.erase(objects.end() - 1);
 	}
 
@@ -41,6 +52,7 @@ public:
 	{
 		next_id = 0;
 		id_to_index_map.clear();
+		index_to_id_map.clear();
 		objects.clear();
 	}
 
@@ -91,5 +103,6 @@ public:
 private:
 	unsigned next_id = 0;
 	std::unordered_map<unsigned, size_t> id_to_index_map;
+	std::unordered_map<size_t, unsigned> index_to_id_map;
 	std::vector<T> objects;
 };
