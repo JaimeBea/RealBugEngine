@@ -7,7 +7,7 @@
 
 static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
-PanelAbout::PanelAbout() : Panel("About", 200, 300, false) {}
+PanelAbout::PanelAbout() : Panel("About", 400, 200, false) {}
 
 void PanelAbout::Update()
 {
