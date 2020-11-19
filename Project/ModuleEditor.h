@@ -2,6 +2,13 @@
 
 #include "Module.h"
 
+#include "Panel.h"
+#include "PanelConsole.h"
+#include "PanelConfiguration.h"
+#include "PanelAbout.h"
+
+#include <vector>
+
 class ModuleEditor : public Module
 {
 public:
@@ -13,8 +20,10 @@ public:
 	bool CleanUp() override;
 
 private:
-	bool show_console = true;
-	bool show_config = true;
-	bool show_about = false;
+	std::vector<Panel*> panels;
+
+	PanelConsole panel_console;
+	PanelConfiguration panel_configuration;
+	PanelAbout panel_about;
 };
 

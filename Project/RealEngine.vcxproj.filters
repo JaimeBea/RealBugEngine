@@ -24,6 +24,9 @@
     <Filter Include="Libraries\DebugDraw">
       <UniqueIdentifier>{b4c25d6d-23f2-4e70-93b5-642eeab731b0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Panels">
+      <UniqueIdentifier>{bcd7b9b1-e7a5-474b-899d-6d1a5cf157b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\imconfig.h">
@@ -338,6 +341,18 @@
     <ClInclude Include="Pool.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Panel.h">
+      <Filter>Source\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelConsole.h">
+      <Filter>Source\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelConfiguration.h">
+      <Filter>Source\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelAbout.h">
+      <Filter>Source\Panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -534,6 +549,18 @@
     </ClCompile>
     <ClCompile Include="ModuleModels.cpp">
       <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Panel.cpp">
+      <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelConsole.cpp">
+      <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelConfiguration.cpp">
+      <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelAbout.cpp">
+      <Filter>Source\Panels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
