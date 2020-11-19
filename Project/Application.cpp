@@ -50,17 +50,19 @@ bool Application::Init()
 
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 	{
-		ret = (*it)->PreInit();
-	}
-
-	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
-	{
 		ret = (*it)->Init();
 	}
 
+	return ret;
+}
+
+bool Application::Start()
+{
+	bool ret = true;
+
 	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 	{
-		ret = (*it)->PostInit();
+		ret = (*it)->Start();
 	}
 
 	return ret;

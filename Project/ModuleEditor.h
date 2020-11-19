@@ -6,7 +6,7 @@ class ModuleEditor : public Module
 {
 public:
 	bool Init() override;
-	bool PostInit() override;
+	bool Start() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;

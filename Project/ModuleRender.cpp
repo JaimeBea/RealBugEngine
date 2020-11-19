@@ -42,7 +42,7 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
 	};
 
-	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
+	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>", tmp_source, tmp_type, tmp_severity, id, message);
 }
 
 bool ModuleRender::Init()
@@ -76,7 +76,7 @@ bool ModuleRender::Init()
 	return true;
 }
 
-bool ModuleRender::PostInit()
+bool ModuleRender::Start()
 {
 	house_model = App->models->LoadModel("BakerHouse.fbx");
 

@@ -23,6 +23,7 @@ public:
 	~Application();
 
 	bool Init();
+	bool Start();
 	UpdateStatus Update();
 	bool CleanUp();
 

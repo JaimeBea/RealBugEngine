@@ -91,7 +91,7 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 	return program_id;
 }
 
-bool ModuleProgram::PostInit()
+bool ModuleProgram::Start()
 {
 	program = CreateProgram("vertex.vert", "fragment.frag");
 

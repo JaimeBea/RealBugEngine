@@ -8,7 +8,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 
-bool ModuleConfig::PostInit()
+bool ModuleConfig::Start()
 {
     SDL_version sdl_version_struct;
     SDL_VERSION(&sdl_version_struct);

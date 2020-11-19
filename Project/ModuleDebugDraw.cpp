@@ -7,8 +7,7 @@
 
 #include "GL/glew.h"
 
-class DDRenderInterfaceCoreGL final
-    : public dd::RenderInterface
+class DDRenderInterfaceCoreGL final : public dd::RenderInterface
 {
 public:
 
@@ -581,7 +580,7 @@ const char * DDRenderInterfaceCoreGL::textFragShaderSrc = "\n"
 
 DDRenderInterfaceCoreGL* ModuleDebugDraw::implementation = 0;
 
-bool ModuleDebugDraw::PostInit()
+bool ModuleDebugDraw::Start()
 {
     implementation = new DDRenderInterfaceCoreGL;
     dd::initialize(implementation);
@@ -599,7 +598,7 @@ bool ModuleDebugDraw::CleanUp()
     return true;
 }
 
-UpdateStatus  ModuleDebugDraw::Update()
+UpdateStatus ModuleDebugDraw::Update()
 {
 	return UpdateStatus::CONTINUE;
 }

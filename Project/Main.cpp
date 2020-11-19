@@ -8,6 +8,7 @@
 enum class MainState
 {
 	CREATION,
+	INIT,
 	START,
 	UPDATE,
 	FINISH,
@@ -28,14 +29,27 @@ int main(int argc, char ** argv)
 		case MainState::CREATION:
 			LOG("Application Creation --------------");
 			App = new Application();
-			state = MainState::START;
+			state = MainState::INIT;
 			break;
 
-		case MainState::START:
+		case MainState::INIT:
 			LOG("Application Init --------------");
 			if (App->Init() == false)
 			{
 				LOG("Application Init exits with error -----");
+				state = MainState::EXIT;
+			}
+			else
+			{
+				state = MainState::START;
+			}
+			break;
+
+		case MainState::START:
+			LOG("Application Start --------------");
+			if (App->Start() == false)
+			{
+				LOG("Application Start exits with error -----");
 				state = MainState::EXIT;
 			}
 			else

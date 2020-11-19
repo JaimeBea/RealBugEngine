@@ -27,7 +27,7 @@ bool ModuleEditor::Init()
     return true;
 }
 
-bool ModuleEditor::PostInit()
+bool ModuleEditor::Start()
 {
     ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
     ImGui_ImplOpenGL3_Init(GLSL_VERSION);

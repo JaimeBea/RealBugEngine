@@ -2,17 +2,12 @@
 
 #include "Globals.h"
 
-bool Module::PreInit()
-{
-	return true;
-}
-
 bool Module::Init()
 {
 	return true;
 }
 
-bool Module::PostInit()
+bool Module::Start()
 {
 	return true;
 }
