@@ -79,7 +79,6 @@ bool ModuleRender::Init()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 #endif
 
-	// Create framebuffer to render to a texture
 	glGenFramebuffers(1, &framebuffer);
 	glGenRenderbuffers(1, &depth_renderbuffer);
 	glGenTextures(1, &render_texture);
@@ -151,6 +150,11 @@ void ModuleRender::ViewportResized(int width, int height)
 	glBindRenderbuffer(GL_RENDERBUFFER, depth_renderbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_renderbuffer);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		LOG("ERROR: Framebuffer is not complete!");
+	}
 }
 
 void ModuleRender::SetVSync(bool vsync)

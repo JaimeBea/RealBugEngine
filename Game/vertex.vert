@@ -1,4 +1,4 @@
-#version 460
+#version 330
 
 uniform mat4 proj;
 uniform mat4 view;

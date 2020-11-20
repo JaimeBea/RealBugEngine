@@ -100,6 +100,10 @@ UpdateStatus ModuleEditor::PostUpdate()
 {
     // Draw to default frame buffer (main window)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glEnable(GL_DEPTH_TEST);
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     // Render main window
     ImGui::Render();

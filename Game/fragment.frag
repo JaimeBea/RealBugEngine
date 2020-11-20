@@ -1,4 +1,4 @@
-#version 460
+#version 330
 
 uniform sampler2D diffuse;
 

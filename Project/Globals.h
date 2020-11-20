@@ -39,7 +39,7 @@ enum class TextureWrap
 #define DEGTORAD 0.01745329251f
 
 // Configuration -----------
-#define GLSL_VERSION "#version 460"
+#define GLSL_VERSION "#version 330"
 
 // Delete helpers
 #define RELEASE( x ) { if( x != nullptr ) { delete x; x = nullptr; } }
