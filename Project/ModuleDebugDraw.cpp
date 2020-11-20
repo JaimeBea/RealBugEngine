@@ -600,14 +600,14 @@ bool ModuleDebugDraw::CleanUp()
 
 UpdateStatus ModuleDebugDraw::Update()
 {
+    dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
+    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+
 	return UpdateStatus::CONTINUE;
 }
 
 void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height)
 {
-    dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
-    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
-
     implementation->width     = width;
     implementation->height    = height;
     implementation->mvpMatrix = proj * view;

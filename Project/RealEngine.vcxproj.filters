@@ -353,6 +353,9 @@
     <ClInclude Include="PanelAbout.h">
       <Filter>Source\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="PanelScene.h">
+      <Filter>Source\Panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -560,6 +563,9 @@
       <Filter>Source\Panels</Filter>
     </ClCompile>
     <ClCompile Include="PanelAbout.cpp">
+      <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelScene.cpp">
       <Filter>Source\Panels</Filter>
     </ClCompile>
   </ItemGroup>

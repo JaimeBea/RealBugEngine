@@ -8,6 +8,7 @@
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
+#include "GL/glew.h"
 #include "SDL_video.h"
 
 bool ModuleEditor::Init()
@@ -16,6 +17,7 @@ bool ModuleEditor::Init()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigWindowsMoveFromTitleBarOnly = true;
 
     return true;
 }
@@ -25,6 +27,7 @@ bool ModuleEditor::Start()
     ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
     ImGui_ImplOpenGL3_Init(GLSL_VERSION);
 
+    panels.push_back(&panel_scene);
     panels.push_back(&panel_console);
     panels.push_back(&panel_configuration);
     panels.push_back(&panel_about);
@@ -43,10 +46,13 @@ UpdateStatus ModuleEditor::PreUpdate()
 
 UpdateStatus ModuleEditor::Update()
 {
+    ImGui::CaptureMouseFromApp(true);
+    ImGui::CaptureKeyboardFromApp(true);
+
     // Main menu bar
     ImGui::BeginMainMenuBar();
-    if (ImGui::BeginMenu("View"))
-    {
+    if (ImGui::BeginMenu("View")) {
+        ImGui::MenuItem(panel_scene.name, "", &panel_scene.enabled);
         ImGui::MenuItem(panel_console.name, "", &panel_console.enabled);
         ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
         ImGui::EndMenu();
@@ -70,6 +76,11 @@ UpdateStatus ModuleEditor::Update()
     }
     ImGui::EndMainMenuBar();
 
+    ImGui::ShowDemoWindow();
+
+    // Docking
+    ImGui::DockSpaceOverViewport();
+
     // Panels
     for (Panel* panel : panels)
     {
@@ -89,6 +100,9 @@ UpdateStatus ModuleEditor::Update()
 
 UpdateStatus ModuleEditor::PostUpdate()
 {
+    // Draw to default frame buffer (main window)
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     // Render main window
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

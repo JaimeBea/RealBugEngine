@@ -1,6 +1,6 @@
 #include "Logging.h"
 
-#include <string.h>
+#include <sstream>
 #include <windows.h>
 #include <stdio.h>
 

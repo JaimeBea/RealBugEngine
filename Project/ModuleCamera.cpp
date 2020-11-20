@@ -21,7 +21,7 @@ bool ModuleCamera::Init()
     return true;
 }
 
-UpdateStatus ModuleCamera::PreUpdate()
+UpdateStatus ModuleCamera::Update()
 {
     float delta_time = App->GetDeltaTime();
 
@@ -44,28 +44,10 @@ UpdateStatus ModuleCamera::PreUpdate()
     KeyState alt_key = App->input->GetKey(SDL_SCANCODE_LALT);
     if (left_mouse_button)
     {
-        if (left_mouse_button == KS_DOWN)
-        {
-            SDL_SetRelativeMouseMode(SDL_TRUE);
-        }
-        else if (left_mouse_button == KS_UP)
-        {
-            SDL_SetRelativeMouseMode(SDL_FALSE);
-        }
-
         Translate((frustum.Up().Normalized() * mouse_motion.y / 150.0f) + (frustum.WorldRight().Normalized() * -mouse_motion.x / 150.0f));
     }
     else if (alt_key && right_mouse_button)
     {
-        if (right_mouse_button == KS_DOWN || alt_key == KS_DOWN)
-        {
-            SDL_SetRelativeMouseMode(SDL_TRUE);
-        }
-        else if (right_mouse_button == KS_UP || alt_key == KS_UP)
-        {
-            SDL_SetRelativeMouseMode(SDL_FALSE);
-        }
-
         Translate(frustum.Front().Normalized() * mouse_motion.y / 150.0f);
     }
 
@@ -114,22 +96,12 @@ UpdateStatus ModuleCamera::PreUpdate()
     return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus ModuleCamera::Update()
-{
-    return UpdateStatus::CONTINUE;
-}
-
-UpdateStatus ModuleCamera::PostUpdate()
-{
-    return UpdateStatus::CONTINUE;
-}
-
 bool ModuleCamera::CleanUp()
 {
     return true;
 }
 
-void ModuleCamera::WindowResized(int width, int height)
+void ModuleCamera::ViewportResized(int width, int height)
 {
     SetAspectRatio(width / (float) height);
 }
@@ -199,6 +171,11 @@ vec ModuleCamera::GetFront() const
 vec ModuleCamera::GetUp() const
 {
     return frustum.Up();
+}
+
+vec ModuleCamera::GetWorldRight() const
+{
+    return frustum.WorldRight();
 }
 
 vec ModuleCamera::GetPosition() const

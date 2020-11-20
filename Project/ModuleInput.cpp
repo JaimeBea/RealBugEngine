@@ -8,6 +8,7 @@
 #include "ModuleCamera.h"
 
 #include "imgui_impl_sdl.h"
+#include "imgui_impl_sdl.h"
 #include "SDL.h"
 
 bool ModuleInput::Init()
@@ -32,14 +33,6 @@ UpdateStatus ModuleInput::PreUpdate()
 	mouse_motion = { 0, 0 };
 	mouse_wheel_motion = 0;
 
-	int mouse_x;
-	int mouse_y;
-	SDL_GetMouseState(&mouse_x, &mouse_y);
-	mouse.x = (float) mouse_x;
-	mouse.y = (float) mouse_y;
-	mouse_motion.x = 0;
-	mouse_motion.y = 0;
-
 	int window_id = SDL_GetWindowID(App->window->window);
 
 	for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
@@ -50,11 +43,6 @@ UpdateStatus ModuleInput::PreUpdate()
 		}
 
 		if (keyboard[i] == KS_UP)
-		{
-			keyboard[i] = KS_IDLE;
-		}
-
-		if (io.WantCaptureKeyboard)
 		{
 			keyboard[i] = KS_IDLE;
 		}
@@ -70,11 +58,6 @@ UpdateStatus ModuleInput::PreUpdate()
 		if (mouse_buttons[i] == KS_UP)
 		{
 			mouse_buttons[i] = KS_IDLE;
-		}
-
-		if (io.WantCaptureMouse)
-		{
-			keyboard[i] = KS_IDLE;
 		}
 	}
 
@@ -95,66 +78,67 @@ UpdateStatus ModuleInput::PreUpdate()
 				{
 				case SDL_WINDOWEVENT_CLOSE:
 					return UpdateStatus::STOP;
-
-				case SDL_WINDOWEVENT_RESIZED:
-				case SDL_WINDOWEVENT_SIZE_CHANGED:
-					App->renderer->WindowResized(event.window.data1, event.window.data2);
-					App->camera->WindowResized(event.window.data1, event.window.data2);
-					break;
 				}
-			}
-			break;
-
-		case SDL_MOUSEMOTION:
-			if (!io.WantCaptureMouse)
-			{
-				mouse_motion.x += event.motion.xrel;
-				mouse_motion.y += event.motion.yrel;
 			}
 			break;
 
 		case SDL_MOUSEWHEEL:
-			if (!io.WantCaptureMouse)
+			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
 			{
-				if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
-				{
-					mouse_wheel_motion = (float) event.wheel.x;
-				}
-				else
-				{
-					mouse_wheel_motion = (float) event.wheel.y;
-				}
+				mouse_wheel_motion = (float) event.wheel.x;
+			}
+			else
+			{
+				mouse_wheel_motion = (float) event.wheel.y;
 			}
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
-			if (!io.WantCaptureMouse)
-			{
-				mouse_buttons[event.button.button - 1] = KS_DOWN;
-			}
+			mouse_buttons[event.button.button - 1] = KS_DOWN;
 			break;
 
 		case SDL_MOUSEBUTTONUP:
-			if (!io.WantCaptureMouse)
-			{
-				mouse_buttons[event.button.button - 1] = KS_UP;
-			}
+			mouse_buttons[event.button.button - 1] = KS_UP;
 			break;
 
 		case SDL_KEYDOWN:
-			if (!io.WantCaptureKeyboard)
-			{
-				keyboard[event.key.keysym.scancode] = KS_DOWN;
-			}
+			keyboard[event.key.keysym.scancode] = KS_DOWN;
 			break;
 
 		case SDL_KEYUP:
-			if (!io.WantCaptureKeyboard)
-			{
-				keyboard[event.key.keysym.scancode] = KS_UP;
-			}
+			keyboard[event.key.keysym.scancode] = KS_UP;
 			break;
 		}
+	}
+
+	if (io.WantCaptureKeyboard)
+	{
+		for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
+		{
+			keyboard[i] = KS_IDLE;
+		}
+	}
+
+	if (io.WantCaptureMouse)
+	{
+		mouse_wheel_motion = 0;
+		mouse_motion.x = 0;
+		mouse_motion.y = 0;
+
+		for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
+		{
+			mouse_buttons[i] = KS_IDLE;
+		}
+	}
+	else
+	{
+		int mouse_x;
+		int mouse_y;
+		SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
+		mouse_motion.x = mouse_x - mouse.x;
+		mouse_motion.y = mouse_y - mouse.y;
+		mouse.x = (float)mouse_x;
+		mouse.y = (float)mouse_y;
 	}
 
 	if (GetKey(SDL_SCANCODE_ESCAPE) == KS_DOWN)

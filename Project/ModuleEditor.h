@@ -3,6 +3,7 @@
 #include "Module.h"
 
 #include "Panel.h"
+#include "PanelScene.h"
 #include "PanelConsole.h"
 #include "PanelConfiguration.h"
 #include "PanelAbout.h"
@@ -22,6 +23,7 @@ public:
 private:
 	std::vector<Panel*> panels;
 
+	PanelScene panel_scene;
 	PanelConsole panel_console;
 	PanelConfiguration panel_configuration;
 	PanelAbout panel_about;

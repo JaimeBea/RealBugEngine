@@ -8,12 +8,10 @@ class ModuleCamera : public Module
 {
 public:
 	bool Init() override;
-	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
-	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
 
-	void WindowResized(int width, int height);
+	void ViewportResized(int width, int height);
 
 	void SetFOV(float h_fov);
 	void SetAspectRatio(float aspect_ratio);
@@ -28,6 +26,7 @@ public:
 
 	vec GetFront() const;
 	vec GetUp() const;
+	vec GetWorldRight() const;
 	vec GetPosition() const;
 	float3 GetOrientation() const;
 	float GetNearPlane() const;

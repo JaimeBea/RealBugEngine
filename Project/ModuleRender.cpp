@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
+#include "ModuleConfig.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"
@@ -42,6 +43,11 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
 	};
 
+	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+	{
+		return;
+	}
+
 	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>", tmp_source, tmp_type, tmp_severity, id, message);
 }
 
@@ -73,6 +79,13 @@ bool ModuleRender::Init()
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 #endif
 
+	// Create framebuffer to render to a texture
+	glGenFramebuffers(1, &framebuffer);
+	glGenRenderbuffers(1, &depth_renderbuffer);
+	glGenTextures(1, &render_texture);
+
+	ViewportResized(App->config->screen_width, App->config->screen_height);
+
 	return true;
 }
 
@@ -85,9 +98,8 @@ bool ModuleRender::Start()
 
 UpdateStatus ModuleRender::PreUpdate()
 {
-	GLsizei screen_width, screen_height;
-	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
-	glViewport(0, 0, screen_width, screen_height);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glViewport(0, 0, viewport_width, viewport_height);
 
 	glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -97,9 +109,7 @@ UpdateStatus ModuleRender::PreUpdate()
 
 UpdateStatus ModuleRender::Update()
 {
-	GLsizei screen_width, screen_height;
-	SDL_GetWindowSize(App->window->window, &screen_width, &screen_height);
-	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), screen_width, screen_height);
+	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewport_width, viewport_height);
 
 	App->models->models[house_model].Draw();
 
@@ -117,10 +127,31 @@ bool ModuleRender::CleanUp()
 {
 	App->models->ReleaseModel(house_model);
 
+	glDeleteTextures(1, &render_texture);
+	glDeleteRenderbuffers(1, &depth_renderbuffer);
+	glDeleteFramebuffers(1, &framebuffer);
+
 	return true;
 }
 
-void ModuleRender::WindowResized(int width, int height) {}
+void ModuleRender::ViewportResized(int width, int height)
+{
+	viewport_width = width;
+	viewport_height = height;
+
+	// Framebuffer calculations
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+	glBindTexture(GL_TEXTURE_2D, render_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_texture, 0);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, depth_renderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_renderbuffer);
+}
 
 void ModuleRender::SetVSync(bool vsync)
 {

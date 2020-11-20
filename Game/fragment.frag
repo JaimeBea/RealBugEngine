@@ -4,9 +4,9 @@ uniform sampler2D diffuse;
 
 in vec2 uv0;
 
-out vec4 color;
+layout(location = 0) out vec3 color;
 
 void main()
 {
-	color = texture2D(diffuse, uv0);
+	color = texture(diffuse, uv0).xyz;
 }
