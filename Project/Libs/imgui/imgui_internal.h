@@ -684,8 +684,9 @@ enum ImGuiSeparatorFlags_
 
 enum ImGuiTextFlags_
 {
-    ImGuiTextFlags_None = 0,
-    ImGuiTextFlags_NoWidthForLargeClippedText = 1 << 0
+    ImGuiTextFlags_None                         = 0,
+    ImGuiTextFlags_NoWidthForLargeClippedText   = 1 << 0,
+    ImGuiTextFlags_ColorMarkdown                = 1 << 1 // Color markdown allows text to include a color at the start of each line in the format '$RRGGBBAA '
 };
 
 enum ImGuiTooltipFlags_

@@ -76,8 +76,6 @@ UpdateStatus ModuleEditor::Update()
     }
     ImGui::EndMainMenuBar();
 
-    ImGui::ShowDemoWindow();
-
     // Docking
     ImGui::DockSpaceOverViewport();
 

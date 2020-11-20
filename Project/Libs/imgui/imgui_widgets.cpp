@@ -151,7 +151,7 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
     const ImVec2 text_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
     const float wrap_pos_x = window->DC.TextWrapPos;
     const bool wrap_enabled = (wrap_pos_x >= 0.0f);
-    if (text_end - text > 2000 && !wrap_enabled)
+    if ((text_end - text > 2000 || (flags & ImGuiTextFlags_ColorMarkdown) != 0) && !wrap_enabled)
     {
         // Long text!
         // Perform manual coarse clipping to optimize for long multi-line text
@@ -197,7 +197,24 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
                 if (!line_end)
                     line_end = text_end;
                 text_size.x = ImMax(text_size.x, CalcTextSize(line, line_end).x);
-                RenderText(pos, line, line_end, false);
+                if ((flags & ImGuiTextFlags_ColorMarkdown) != 0 && *line == '$')
+                {
+                    // Read color
+                    line += 1;
+                    char* color_end;
+                    ImU32 inverted_col_uint = strtoul(line, &color_end, 16);
+                    ImVec4 inverted_col = ColorConvertU32ToFloat4(inverted_col_uint);
+                    ImVec4 col = ImVec4(inverted_col.w, inverted_col.z, inverted_col.y, inverted_col.x);
+                    line = color_end + 1;
+
+                    PushStyleColor(ImGuiCol_Text, col);
+                    RenderText(pos, line, line_end, false);
+                    PopStyleColor();
+                }
+                else
+                {
+                    RenderText(pos, line, line_end, false);
+                }
                 line = line_end + 1;
                 line_rect.Min.y += line_height;
                 line_rect.Max.y += line_height;
@@ -242,6 +259,11 @@ void ImGui::TextEx(const char* text, const char* text_end, ImGuiTextFlags flags)
 void ImGui::TextUnformatted(const char* text, const char* text_end)
 {
     TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText);
+}
+
+void ImGui::TextUnformattedWithColorMD(const char* text, const char* text_end)
+{
+    TextEx(text, text_end, ImGuiTextFlags_NoWidthForLargeClippedText | ImGuiTextFlags_ColorMarkdown);
 }
 
 void ImGui::Text(const char* fmt, ...)
