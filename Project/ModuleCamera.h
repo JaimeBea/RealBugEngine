@@ -38,8 +38,9 @@ public:
 
 public:
 	float movement_speed = 4.0f;
-	float rotation_speed = 90.0f;
-	float zoom_speed = 4.0f;
+	float rotation_speed = 10.0f;
+	float zoom_speed = 0.5f;
+	float shift_multiplier = 5.0f;
 
 private:
 	Frustum frustum;

@@ -166,6 +166,7 @@ void PanelConfiguration::Update()
         ImGui::InputFloat("Mov Speed", &App->camera->movement_speed);
         ImGui::InputFloat("Rot Speed", &App->camera->rotation_speed);
         ImGui::InputFloat("Zoom Speed", &App->camera->zoom_speed);
+        ImGui::InputFloat("Shift Multiplier", &App->camera->shift_multiplier);
         float near_plane = App->camera->GetNearPlane();
         float far_plane = App->camera->GetFarPlane();
         if (ImGui::InputFloat("Near Plane", &near_plane))
@@ -180,11 +181,6 @@ void PanelConfiguration::Update()
         if (ImGui::InputFloat("Field of View", &fov))
         {
             App->camera->SetFOV(fov);
-        }
-        float aspect_ratio = App->camera->GetAspectRatio();
-        if (ImGui::InputFloat("Aspect Ratio", &aspect_ratio))
-        {
-            App->camera->SetAspectRatio(aspect_ratio);
         }
         ImGui::ColorPicker3("Background", App->renderer->clear_color.ptr());
     }

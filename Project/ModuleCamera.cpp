@@ -3,20 +3,50 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleInput.h"
+#include "ModuleWindow.h"
 
 #include "Math/float3x3.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
+#include "SDL_video.h"
+
+static void WarpMouseOnEdges()
+{
+    const float2& mouse_position = App->input->GetMousePosition();
+
+    SDL_DisplayMode display_mode;
+    SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(App->window->window), &display_mode);
+    int screen_width = display_mode.w;
+    int screen_height = display_mode.h;
+
+    if (mouse_position.x < 20)
+    {
+        App->input->WarpMouse(screen_width - 22, mouse_position.y);
+    }
+    if (mouse_position.y < 20)
+    {
+        App->input->WarpMouse(mouse_position.x, screen_height - 22);
+    }
+    if (mouse_position.x > screen_width - 20)
+    {
+        App->input->WarpMouse(22, mouse_position.y);
+    }
+    if (mouse_position.y > screen_height - 20)
+    {
+        App->input->WarpMouse(mouse_position.x, 22);
+    }
+}
 
 bool ModuleCamera::Init()
 {
     frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
     frustum.SetViewPlaneDistances(0.1f, 2000.0f);
     frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
-
-    frustum.SetPos(vec(0, 1, -2));
     frustum.SetFront(vec::unitZ);
     frustum.SetUp(vec::unitY);
+
+    SetPosition(vec(2, 3, -5));
+    LookAt(0, 0, 0);
 
     return true;
 }
@@ -25,72 +55,100 @@ UpdateStatus ModuleCamera::Update()
 {
     float delta_time = App->GetDeltaTime();
 
+    const float2& mouse_motion = App->input->GetMouseMotion();
+
+    // Increase zoom and movement speed with shift
     float final_movement_speed = movement_speed;
+    float final_zoom_speed = zoom_speed;
     if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT))
     {
-        final_movement_speed *= 10;
+        final_movement_speed *= shift_multiplier;
+        final_zoom_speed *= shift_multiplier;
     }
 
+    // Zoom with mouse wheel
     float mouse_wheel_motion = App->input->GetMouseWheelMotion();
     if (mouse_wheel_motion < -FLT_EPSILON || mouse_wheel_motion > FLT_EPSILON)
     {
-        Translate(frustum.Front().Normalized() * mouse_wheel_motion * 10 * zoom_speed * delta_time);
+        Translate(frustum.Front().Normalized() * mouse_wheel_motion * 20 * delta_time);
     }
 
-    // TODO: Make mouse speed depend on screen size
-    float2 mouse_motion = App->input->GetMouseMotion();
-    KeyState left_mouse_button = App->input->GetMouseButton(SDL_BUTTON_LEFT);
-    KeyState right_mouse_button = App->input->GetMouseButton(SDL_BUTTON_RIGHT);
-    KeyState alt_key = App->input->GetKey(SDL_SCANCODE_LALT);
-    if (left_mouse_button)
+    if (App->input->GetKey(SDL_SCANCODE_LALT))
     {
-        Translate((frustum.Up().Normalized() * mouse_motion.y / 150.0f) + (frustum.WorldRight().Normalized() * -mouse_motion.x / 150.0f));
-    }
-    else if (alt_key && right_mouse_button)
-    {
-        Translate(frustum.Front().Normalized() * mouse_motion.y / 150.0f);
-    }
+        if (App->input->GetMouseButton(SDL_BUTTON_LEFT))
+        {
+            WarpMouseOnEdges();
 
-    if (App->input->GetKey(SDL_SCANCODE_Q))
-    {
-        Translate(vec::unitY * -final_movement_speed * delta_time);
-    }
-    if (App->input->GetKey(SDL_SCANCODE_E))
-    {
-        Translate(vec::unitY * final_movement_speed * delta_time);
-    }
-    if (App->input->GetKey(SDL_SCANCODE_W))
-    {
-        Translate(frustum.Front().Normalized() * final_movement_speed * delta_time);
-    }
-    if (App->input->GetKey(SDL_SCANCODE_S))
-    {
-        Translate(frustum.Front().Normalized() * -final_movement_speed * delta_time);
-    }
-    if (App->input->GetKey(SDL_SCANCODE_A))
-    {
-        Translate(frustum.WorldRight().Normalized() * -final_movement_speed * delta_time);
-    }
-    if (App->input->GetKey(SDL_SCANCODE_D))
-    {
-        Translate(frustum.WorldRight().Normalized() * final_movement_speed * delta_time);
-    }
+            // Orbit with alt + left mouse button
+        }
+        else if (App->input->GetMouseButton(SDL_BUTTON_RIGHT))
+        {
+            WarpMouseOnEdges();
 
-    if (App->input->GetKey(SDL_SCANCODE_UP))
-    {
-        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), rotation_speed * DEGTORAD * delta_time));
+            // Zoom with alt + right mouse button
+            Translate(frustum.Front().Normalized() * mouse_motion.y * final_zoom_speed * delta_time);
+        }
     }
-    if (App->input->GetKey(SDL_SCANCODE_DOWN))
+    else if (App->input->GetMouseButton(SDL_BUTTON_RIGHT))
     {
-        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -rotation_speed * DEGTORAD * delta_time));
+        WarpMouseOnEdges();
+
+        // Rotate with mouse motion
+        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -mouse_motion.y * rotation_speed * DEGTORAD * delta_time));
+        Rotate(float3x3::RotateY(-mouse_motion.x * rotation_speed * DEGTORAD * delta_time));
+
+        // Move with WASD + QE
+        if (App->input->GetKey(SDL_SCANCODE_Q))
+        {
+            Translate(frustum.Up().Normalized() * -final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_E))
+        {
+            Translate(frustum.Up().Normalized() * final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_W))
+        {
+            Translate(frustum.Front().Normalized() * final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_S))
+        {
+            Translate(frustum.Front().Normalized() * -final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_A))
+        {
+            Translate(frustum.WorldRight().Normalized() * -final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_D))
+        {
+            Translate(frustum.WorldRight().Normalized() * final_movement_speed * delta_time);
+        }
     }
-    if (App->input->GetKey(SDL_SCANCODE_LEFT))
+    else
     {
-        Rotate(float3x3::RotateY(rotation_speed * DEGTORAD * delta_time));
-    }
-    if (App->input->GetKey(SDL_SCANCODE_RIGHT))
-    {
-        Rotate(float3x3::RotateY(-rotation_speed * DEGTORAD * delta_time));
+        // Reset camera with f key
+        if (App->input->GetKey(SDL_SCANCODE_F))
+        {
+            SetPosition(vec(2, 3, -5));
+            LookAt(0, 0, 0);
+        }
+
+        // Move with arrow keys
+        if (App->input->GetKey(SDL_SCANCODE_UP))
+        {
+            Translate(frustum.Front().Normalized() * final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_DOWN))
+        {
+            Translate(frustum.Front().Normalized() * -final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_LEFT))
+        {
+            Translate(frustum.WorldRight().Normalized() * -final_movement_speed * delta_time);
+        }
+        if (App->input->GetKey(SDL_SCANCODE_RIGHT))
+        {
+            Translate(frustum.WorldRight().Normalized() * final_movement_speed * delta_time);
+        }
     }
 
     return UpdateStatus::CONTINUE;

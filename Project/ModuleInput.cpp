@@ -141,8 +141,15 @@ UpdateStatus ModuleInput::PreUpdate()
 		int mouse_x;
 		int mouse_y;
 		SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
-		mouse_motion.x = mouse_x - mouse.x;
-		mouse_motion.y = mouse_y - mouse.y;
+		if (!mouse_warped)
+		{
+			mouse_motion.x = mouse_x - mouse.x;
+			mouse_motion.y = mouse_y - mouse.y;
+		}
+		else
+		{
+			mouse_warped = false;
+		}
 		mouse.x = (float)mouse_x;
 		mouse.y = (float)mouse_y;
 	}
@@ -171,4 +178,10 @@ void ModuleInput::ReleaseDroppedFileName()
 		SDL_free(dropped_file_name);
 		dropped_file_name = nullptr;
 	}
+}
+
+void ModuleInput::WarpMouse(int mouse_x, int mouse_y)
+{
+	SDL_WarpMouseGlobal(mouse_x, mouse_y);
+	mouse_warped = true;
 }

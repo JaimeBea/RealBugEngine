@@ -24,6 +24,8 @@ public:
 
 	void ReleaseDroppedFileName();
 
+	void WarpMouse(int mouse_x, int mouse_y);
+
 	const char* GetDroppedFileName() const
 	{
 		return dropped_file_name;
@@ -61,4 +63,5 @@ private:
 	float mouse_wheel_motion = 0;
 	float2 mouse_motion = { 0, 0 };
 	float2 mouse = { 0, 0 };
+	bool mouse_warped = false;
 };
