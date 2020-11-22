@@ -41,7 +41,7 @@ public:
 
 		id_to_index_map[last_id] = index;
 		index_to_id_map[index] = last_id;
-		std::swap(objects[index], objects[last_index]);
+		objects[index] = objects[last_index];
 
 		id_to_index_map.erase(id);
 		index_to_id_map.erase(last_index);
@@ -68,13 +68,13 @@ public:
 
 	T& operator[](unsigned id)
 	{
-		unsigned index = id_to_index_map[index];
+		unsigned index = id_to_index_map[id];
 		return objects[index];
 	}
 
 	const T& operator[](unsigned id) const
 	{
-		unsigned index = id_to_index_map[index];
+		unsigned index = id_to_index_map[id];
 		return objects[index];
 	}
 
@@ -101,7 +101,7 @@ public:
 	}
 
 private:
-	unsigned next_id = 0;
+	unsigned next_id = 1;
 	std::unordered_map<unsigned, size_t> id_to_index_map;
 	std::unordered_map<size_t, unsigned> index_to_id_map;
 	std::vector<T> objects;

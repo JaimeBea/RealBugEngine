@@ -273,14 +273,14 @@ void PanelConfiguration::Update()
     if (ImGui::CollapsingHeader("Models"))
     {
         unsigned model_index = 0;
-        for (const Model& model : App->models->models)
+        for (const Model& current_model : App->models->models)
         {
             char model_name[128];
             sprintf(model_name, "Model %i", model_index);
             if (ImGui::TreeNode(model_name))
             {
                 unsigned mesh_index = 0;
-                for (const Mesh& mesh : model.meshes)
+                for (const Mesh& mesh : current_model.meshes)
                 {
                     char mesh_name[128];
                     sprintf(mesh_name, "Mesh %i", mesh_index);
@@ -292,14 +292,24 @@ void PanelConfiguration::Update()
                         ImGui::Text("Triangles:");
                         ImGui::SameLine();
                         ImGui::TextColored(yellow, "%i", mesh.num_indices / 3);
+                        ImGui::Text("Material:");
+                        ImGui::SameLine();
+                        ImGui::TextColored(yellow, "%i", mesh.material_index);
 
                         ImGui::TreePop();
                     }
 
                     mesh_index += 1;
                 }
-                ImGui::Text("Diffuse:");
-                ImGui::Image((void*)model.materials[0], ImVec2(200, 200));
+
+                unsigned material_index = 0;
+                for (unsigned material : current_model.materials)
+                {
+                    ImGui::Text("Material %i:", material_index);
+                    ImGui::Image((void*)current_model.materials[material_index], ImVec2(200, 200));
+
+                    material_index += 1;
+                }
 
                 ImGui::TreePop();
             }

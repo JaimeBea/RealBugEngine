@@ -1,5 +1,7 @@
 #include "ModuleModels.h"
 
+#include "Globals.h"
+
 bool ModuleModels::Init()
 {
     models.Reserve(10);
@@ -9,9 +11,9 @@ bool ModuleModels::Init()
 
 bool ModuleModels::CleanUp()
 {
-    for (Model& model : models)
+    for (Model& current_model : models)
     {
-        model.Release();
+        current_model.Release();
     }
     models.Clear();
 
@@ -20,12 +22,18 @@ bool ModuleModels::CleanUp()
 
 unsigned ModuleModels::LoadModel(const char* file_name)
 {
-    Model model = Model();
-    model.Load(file_name);
-    return models.Offer(std::move(model));
+    Model current_model = Model();
+
+    if (!current_model.Load(file_name))
+    {
+        return 0;
+    }
+
+    return models.Offer(std::move(current_model));
 }
 
-void ModuleModels::ReleaseModel(unsigned model)
+void ModuleModels::ReleaseModel(unsigned current_model)
 {
-    models.Remove(model);
+    models[current_model].Release();
+    models.Remove(current_model);
 }

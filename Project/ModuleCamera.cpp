@@ -11,7 +11,7 @@
 bool ModuleCamera::Init()
 {
     frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-    frustum.SetViewPlaneDistances(0.1f, 200.0f);
+    frustum.SetViewPlaneDistances(0.1f, 2000.0f);
     frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 
     frustum.SetPos(vec(0, 1, -2));
@@ -28,7 +28,7 @@ UpdateStatus ModuleCamera::Update()
     float final_movement_speed = movement_speed;
     if (App->input->GetKey(SDL_SCANCODE_LSHIFT) || App->input->GetKey(SDL_SCANCODE_RSHIFT))
     {
-        final_movement_speed *= 2;
+        final_movement_speed *= 10;
     }
 
     float mouse_wheel_motion = App->input->GetMouseWheelMotion();

@@ -22,6 +22,13 @@ public:
 	UpdateStatus PreUpdate() override;
 	bool CleanUp() override;
 
+	void ReleaseDroppedFileName();
+
+	const char* GetDroppedFileName() const
+	{
+		return dropped_file_name;
+	}
+
 	KeyState GetKey(int scancode) const
 	{
 		return keyboard[scancode];
@@ -32,7 +39,7 @@ public:
 		return mouse_buttons[button - 1];
 	}
 
-	const float GetMouseWheelMotion() const
+	float GetMouseWheelMotion() const
 	{
 		return mouse_wheel_motion;
 	}
@@ -48,6 +55,7 @@ public:
 	}
 
 private:
+	char* dropped_file_name = nullptr;
 	KeyState keyboard[SDL_NUM_SCANCODES] = { KS_IDLE };
 	KeyState mouse_buttons[NUM_MOUSE_BUTTONS] = { KS_IDLE };
 	float mouse_wheel_motion = 0;

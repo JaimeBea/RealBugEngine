@@ -13,7 +13,7 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleModels;
 class ModuleInput;
-class ModuleProgram;
+class ModulePrograms;
 class ModuleDebugDraw;
 
 class Application
@@ -39,7 +39,7 @@ public:
 	ModuleWindow* window = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleEditor* editor = nullptr;
-	ModuleProgram* program = nullptr;
+	ModulePrograms* programs = nullptr;
 	ModuleDebugDraw* debug_draw = nullptr;
 
 private:

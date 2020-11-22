@@ -3,11 +3,11 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
+#include "ModuleInput.h"
 #include "ModuleConfig.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"
-#include "ModuleProgram.h"
 #include "ModuleTextures.h"
 #include "ModuleModels.h"
 
@@ -90,7 +90,7 @@ bool ModuleRender::Init()
 
 bool ModuleRender::Start()
 {
-	house_model = App->models->LoadModel("BakerHouse.fbx");
+	current_model = App->models->LoadModel("Assets/BakerHouse/BakerHouse.fbx");
 
 	return true;
 }
@@ -110,7 +110,21 @@ UpdateStatus ModuleRender::Update()
 {
 	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewport_width, viewport_height);
 
-	App->models->models[house_model].Draw();
+	// Load the model if it gets dropped
+	const char* dropped_file_name = App->input->GetDroppedFileName();
+	if (dropped_file_name != nullptr)
+	{
+		unsigned loaded_model = App->models->LoadModel(dropped_file_name);
+		if (loaded_model)
+		{
+			App->models->ReleaseModel(current_model);
+			current_model = loaded_model;
+		}
+		App->input->ReleaseDroppedFileName();
+	}
+
+	// Draw the model
+	App->models->models[current_model].Draw();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -124,7 +138,7 @@ UpdateStatus ModuleRender::PostUpdate()
 
 bool ModuleRender::CleanUp()
 {
-	App->models->ReleaseModel(house_model);
+	App->models->ReleaseModel(current_model);
 
 	glDeleteTextures(1, &render_texture);
 	glDeleteRenderbuffers(1, &depth_renderbuffer);

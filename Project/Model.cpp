@@ -4,32 +4,87 @@
 #include "Logging.h"
 #include "ModuleTextures.h"
 
+#include "Math/myassert.h"
 #include "assimp/cimport.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
+#include <string>
 
-void Model::Load(const char* file_name)
+bool Model::Load(const char* file_name)
 {
 	// Load model
+	LOG("Loading model from path: \"%s\".", file_name);
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (!scene)
 	{
-		LOG("Error loading %s: %s", file_name, aiGetErrorString());
-		return;
+		LOG("Error loading model: %s", file_name, aiGetErrorString());
+		return false;
 	}
 
 	// Load materials
+	LOG("Loading %i materials...", scene->mNumMaterials);
 	materials.reserve(scene->mNumMaterials);
 	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
 	{
-		aiString material_file_name;
-		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_name) == AI_SUCCESS)
+		LOG("Loading material %i...", i);
+		aiString material_file_dir;
+		aiTextureMapping mapping;
+		unsigned uv_index;
+		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_dir, &mapping, &uv_index) == AI_SUCCESS)
 		{
-			materials.push_back(App->textures->LoadTexture(material_file_name.data));
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uv_index == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to load texture...");
+			unsigned texture = App->textures->LoadTexture(material_file_dir.C_Str());
+
+			// Try to load relative to the model folder
+			if (texture == 0)
+			{
+				LOG("Trying to load texture relative to model folder...");
+				std::string model_file_dir = file_name;
+				size_t last_slash = model_file_dir.find_last_of('\\');
+				if (last_slash == std::string::npos)
+				{
+					last_slash = model_file_dir.find_last_of('/');
+				}
+				std::string model_folder_dir = model_file_dir.substr(0, last_slash + 1);
+				std::string model_folder_material_file_dir = model_folder_dir + material_file_dir.C_Str();
+				texture = App->textures->LoadTexture(model_folder_material_file_dir.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (texture == 0)
+			{
+				LOG("Trying to load texture relative to textures folder...");
+				std::string textures_folder_dir = "Textures\\";
+				std::string textures_folder_material_file_dir = textures_folder_dir + material_file_dir.C_Str();
+				texture = App->textures->LoadTexture(textures_folder_material_file_dir.c_str());
+			}
+
+			if (texture == 0)
+			{
+				LOG("Unable to find texture file.");
+			}
+			else
+			{
+				LOG("Texture loaded successfuly.");
+			}
+
+			materials.push_back(texture);
 		}
+		else
+		{
+			LOG("Diffuse texture not found.");
+		}
+
+		LOG("Material loaded.");
 	}
 
 	// Load meshes
+	LOG("Loading %i meshes...", scene->mNumMeshes);
 	meshes.reserve(scene->mNumMeshes);
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i)
 	{
@@ -37,6 +92,9 @@ void Model::Load(const char* file_name)
 		mesh.Load(scene->mMeshes[i]);
 		meshes.push_back(mesh);
 	}
+
+	LOG("Model loaded.");
+	return true;
 }
 
 void Model::Release()

@@ -463,19 +463,19 @@ public:
         }
     }
 
-    static void linkProgram(const GLuint program)
+    static void linkProgram(const GLuint programs)
     {
-        glLinkProgram(program);
+        glLinkProgram(programs);
         checkGLError(__FILE__, __LINE__);
 
         GLint status;
-        glGetProgramiv(program, GL_LINK_STATUS, &status);
+        glGetProgramiv(programs, GL_LINK_STATUS, &status);
         checkGLError(__FILE__, __LINE__);
 
         if (status == GL_FALSE)
         {
             GLchar strInfoLog[1024] = {0};
-            glGetProgramInfoLog(program, sizeof(strInfoLog) - 1, nullptr, strInfoLog);
+            glGetProgramInfoLog(programs, sizeof(strInfoLog) - 1, nullptr, strInfoLog);
             //errorF("\n>>> Program linker errors:\n%s", strInfoLog);
         }
     }

@@ -7,7 +7,7 @@
 class Model
 {
 public:
-	void Load(const char* file_name);
+	bool Load(const char* file_name);
 	void Release();
 
 	void Draw() const;

@@ -308,9 +308,6 @@
     <ClInclude Include="ModuleInput.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleProgram.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleWindow.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
@@ -355,6 +352,9 @@
     </ClInclude>
     <ClInclude Include="PanelScene.h">
       <Filter>Source\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="ModulePrograms.h">
+      <Filter>Source\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -526,9 +526,6 @@
     <ClCompile Include="ModuleInput.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleProgram.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -568,6 +565,9 @@
     <ClCompile Include="PanelScene.cpp">
       <Filter>Source\Panels</Filter>
     </ClCompile>
+    <ClCompile Include="ModulePrograms.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl">
@@ -591,10 +591,10 @@
     <None Include="Libs\MathGeoLib\Math\Matrix.inl">
       <Filter>Libraries\MathGeoLib</Filter>
     </None>
-    <None Include="..\Game\fragment.frag">
+    <None Include="..\Game\Shaders\fragment.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="..\Game\vertex.vert">
+    <None Include="..\Game\Shaders\vertex.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

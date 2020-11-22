@@ -109,7 +109,7 @@
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleInput.h" />
     <ClInclude Include="ModuleModels.h" />
-    <ClInclude Include="ModuleProgram.h" />
+    <ClInclude Include="ModulePrograms.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleWindow.h" />
@@ -183,7 +183,7 @@
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
     <ClCompile Include="ModuleModels.cpp" />
-    <ClCompile Include="ModuleProgram.cpp" />
+    <ClCompile Include="ModulePrograms.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
@@ -194,8 +194,8 @@
     <ClCompile Include="PanelScene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Game\fragment.frag" />
-    <None Include="..\Game\vertex.vert" />
+    <None Include="..\Game\Shaders\fragment.frag" />
+    <None Include="..\Game\Shaders\vertex.vert" />
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\QuadTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_AVX.inl" />

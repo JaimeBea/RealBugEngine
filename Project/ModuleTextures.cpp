@@ -26,6 +26,8 @@ bool ModuleTextures::CleanUp()
 
 unsigned ModuleTextures::LoadTexture(const char* file_name)
 {
+	LOG("Loading texture from path: \"%s\".", file_name);
+
 	unsigned image;
 	ilGenImages(1, &image);
 	DEFER{ ilDeleteImages(1, &image); };
@@ -34,7 +36,7 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 	bool image_loaded = ilLoadImage(file_name);
 	if (!image_loaded)
 	{
-		LOG("Failed to load image \"%s\".", file_name);
+		LOG("Failed to load image.");
 		return 0;
 	}
 	bool image_converted = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
@@ -68,6 +70,8 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	textures.push_back(texture);
+
+	LOG("Texture loaded successfuly.");
 
 	return texture;
 }

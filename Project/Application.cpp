@@ -8,7 +8,7 @@
 #include "ModuleEditor.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
-#include "ModuleProgram.h"
+#include "ModulePrograms.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleTextures.h"
 #include "ModuleModels.h"
@@ -23,7 +23,7 @@ Application::Application()
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(models = new ModuleModels());
-	modules.push_back(program = new ModuleProgram());
+	modules.push_back(programs = new ModulePrograms());
 
 	modules.push_back(input = new ModuleInput());
 

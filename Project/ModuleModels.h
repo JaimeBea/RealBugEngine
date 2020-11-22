@@ -12,7 +12,7 @@ public:
 	bool CleanUp() override;
 
 	unsigned LoadModel(const char* file_name);
-	void ReleaseModel(unsigned model);
+	void ReleaseModel(unsigned current_model);
 
 public:
 	Pool<Model> models;

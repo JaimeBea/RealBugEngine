@@ -82,6 +82,12 @@ UpdateStatus ModuleInput::PreUpdate()
 			}
 			break;
 
+		case SDL_DROPFILE:
+			ReleaseDroppedFileName();
+			dropped_file_name = event.drop.file;
+			LOG("File dropped: %s", dropped_file_name);
+			break;
+
 		case SDL_MOUSEWHEEL:
 			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
 			{
@@ -152,7 +158,17 @@ UpdateStatus ModuleInput::PreUpdate()
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
+	ReleaseDroppedFileName();
 	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+void ModuleInput::ReleaseDroppedFileName()
+{
+	if (dropped_file_name != nullptr)
+	{
+		SDL_free(dropped_file_name);
+		dropped_file_name = nullptr;
+	}
 }

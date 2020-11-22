@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
-#include "ModuleProgram.h"
+#include "ModulePrograms.h"
 #include "ModuleCamera.h"
 
 #include "assimp/mesh.h"
@@ -14,6 +14,9 @@ void Mesh::Load(const aiMesh* mesh)
 {
 	num_vertices = mesh->mNumVertices;
 	num_indices = mesh->mNumFaces * 3;
+	material_index = mesh->mMaterialIndex;
+
+	LOG("Loading %i vertices...", num_vertices);
 
 	unsigned position_size = sizeof(float) * 3;
 	unsigned uv_size = sizeof(float) * 2;
@@ -39,11 +42,14 @@ void Mesh::Load(const aiMesh* mesh)
 	float* vertex_buffer = (float*)glMapBufferRange(GL_ARRAY_BUFFER, 0, vertex_buffer_size, GL_MAP_WRITE_BIT);
 	for (unsigned i = 0; i < mesh->mNumVertices; ++i)
 	{
-		*(vertex_buffer++) = mesh->mVertices[i].x;
-		*(vertex_buffer++) = mesh->mVertices[i].y;
-		*(vertex_buffer++) = mesh->mVertices[i].z;
-		*(vertex_buffer++) = mesh->mTextureCoords[0][i].x;
-		*(vertex_buffer++) = mesh->mTextureCoords[0][i].y;
+		aiVector3D& vertex = mesh->mVertices[i];
+		aiVector3D* texture_coords = mesh->mTextureCoords[0];
+
+		*(vertex_buffer++) = vertex.x;
+		*(vertex_buffer++) = vertex.y;
+		*(vertex_buffer++) = vertex.z;
+		*(vertex_buffer++) = texture_coords != nullptr ? texture_coords[i].x : 0;
+		*(vertex_buffer++) = texture_coords != nullptr ? texture_coords[i].y : 0;
 	}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 
@@ -52,12 +58,14 @@ void Mesh::Load(const aiMesh* mesh)
 	unsigned* index_buffer = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, index_buffer_size, GL_MAP_WRITE_BIT);
 	for (unsigned i = 0; i < mesh->mNumFaces; ++i)
 	{
-		// Assume triangles = 3 indices per face
-		assert(mesh->mFaces[i].mNumIndices == 3);
+		aiFace& face = mesh->mFaces[i];
 
-		*(index_buffer++) = mesh->mFaces[i].mIndices[0];
-		*(index_buffer++) = mesh->mFaces[i].mIndices[1];
-		*(index_buffer++) = mesh->mFaces[i].mIndices[2];
+		// Assume triangles = 3 indices per face
+		assert(face.mNumIndices == 3);
+
+		*(index_buffer++) = face.mIndices[0];
+		*(index_buffer++) = face.mIndices[1];
+		*(index_buffer++) = face.mIndices[2];
 	}
 	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
@@ -81,19 +89,20 @@ void Mesh::Release()
 
 void Mesh::Draw(const std::vector<unsigned>& materials) const
 {
-	unsigned program = App->program->program;
+	unsigned program = App->programs->default_program;
 	float4x4 view = App->camera->GetViewMatrix();
 	float4x4 proj = App->camera->GetProjectionMatrix();
-	float4x4 model = float4x4::identity;
+	float4x4 current_model = float4x4::identity;
+	unsigned texture = materials.size() > material_index ? materials[material_index] : 0;
 
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, current_model.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj.ptr());
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, materials[material_index]);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 
 	glBindVertexArray(vao);
