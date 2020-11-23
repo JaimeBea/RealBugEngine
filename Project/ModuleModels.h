@@ -9,6 +9,7 @@ class ModuleModels : public Module
 {
 public:
 	bool Init() override;
+	bool Start() override;
 	bool CleanUp() override;
 
 	unsigned LoadModel(const char* file_name);
@@ -16,5 +17,7 @@ public:
 
 public:
 	Pool<Model> models;
+
+	unsigned current_model;
 };
 

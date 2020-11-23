@@ -50,9 +50,9 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 	glGenTextures(1, &texture); /* Texture name generation */
 	glBindTexture(GL_TEXTURE_2D, texture); /* Binding of texture name */
 
-	SetWrap(App->config->texture_wrap);
-	SetMinFilter(App->config->min_filter);
-	SetMagFilter(App->config->mag_filter);
+	SetWrap(texture_wrap);
+	SetMinFilter(min_filter);
+	SetMagFilter(mag_filter);
 
 	// Flip image if neccessary
 	ILinfo info;
@@ -121,6 +121,8 @@ void ModuleTextures::SetMinFilter(TextureFilter filter)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		break;
 	}
+
+	min_filter = filter;
 }
 
 void ModuleTextures::SetMagFilter(TextureFilter filter)
@@ -146,6 +148,8 @@ void ModuleTextures::SetMagFilter(TextureFilter filter)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		break;
 	}
+
+	mag_filter = filter;
 }
 
 void ModuleTextures::SetWrap(TextureWrap wrap)
@@ -173,4 +177,21 @@ void ModuleTextures::SetWrap(TextureWrap wrap)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE);
 		break;
 	}
+
+	texture_wrap = wrap;
+}
+
+TextureFilter ModuleTextures::GetMinFilter() const
+{
+	return min_filter;
+}
+
+TextureFilter ModuleTextures::GetMagFilter() const
+{
+	return mag_filter;
+}
+
+TextureWrap ModuleTextures::GetWrap() const
+{
+	return texture_wrap;
 }

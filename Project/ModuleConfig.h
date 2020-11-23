@@ -22,14 +22,6 @@ public:
 	int max_fps = 60;
 	bool limit_framerate = true;
 	bool vsync = true;
-	WindowMode window_mode = WindowMode::WINDOWED;
-	bool resizable = true;
-	int screen_width = 640;
-	int screen_height = 480;
-	float brightness = 1.0f;
-	TextureFilter min_filter = TextureFilter::NEAREST_MIPMAP_LINEAR;
-	TextureFilter mag_filter = TextureFilter::LINEAR;
-	TextureWrap texture_wrap = TextureWrap::REPEAT;
 
 	// Information
 

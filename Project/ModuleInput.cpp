@@ -154,11 +154,6 @@ UpdateStatus ModuleInput::PreUpdate()
 		mouse.y = (float)mouse_y;
 	}
 
-	if (GetKey(SDL_SCANCODE_ESCAPE) == KS_DOWN)
-	{
-		return UpdateStatus::STOP;
-	}
-
     return UpdateStatus::CONTINUE;
 }
 

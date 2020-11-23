@@ -21,19 +21,19 @@ static void WarpMouseOnEdges()
 
     if (mouse_position.x < 20)
     {
-        App->input->WarpMouse(screen_width - 22, mouse_position.y);
+        App->input->WarpMouse(screen_width - 22, (int)mouse_position.y);
     }
     if (mouse_position.y < 20)
     {
-        App->input->WarpMouse(mouse_position.x, screen_height - 22);
+        App->input->WarpMouse((int)mouse_position.x, screen_height - 22);
     }
     if (mouse_position.x > screen_width - 20)
     {
-        App->input->WarpMouse(22, mouse_position.y);
+        App->input->WarpMouse(22, (int)mouse_position.y);
     }
     if (mouse_position.y > screen_height - 20)
     {
-        App->input->WarpMouse(mouse_position.x, 22);
+        App->input->WarpMouse((int)mouse_position.x, 22);
     }
 }
 

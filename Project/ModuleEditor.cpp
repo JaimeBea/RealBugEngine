@@ -32,6 +32,11 @@ bool ModuleEditor::Start()
     panels.push_back(&panel_configuration);
     panels.push_back(&panel_about);
 
+    for (Panel* panel : panels)
+    {
+        panel->Start();
+    }
+
     return true;
 }
 
@@ -51,7 +56,16 @@ UpdateStatus ModuleEditor::Update()
 
     // Main menu bar
     ImGui::BeginMainMenuBar();
-    if (ImGui::BeginMenu("View")) {
+    if (ImGui::BeginMenu("File"))
+    {
+        if (ImGui::MenuItem("Quit"))
+        {
+            return UpdateStatus::STOP;
+        }
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("View"))
+    {
         ImGui::MenuItem(panel_scene.name, "", &panel_scene.enabled);
         ImGui::MenuItem(panel_console.name, "", &panel_console.enabled);
         ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
@@ -84,7 +98,7 @@ UpdateStatus ModuleEditor::Update()
     {
         if (panel->enabled)
         {
-            ImGui::SetNextWindowSize(ImVec2(panel->width, panel->height), ImGuiCond_FirstUseEver);
+            ImGui::SetNextWindowSize(ImVec2((float)panel->width, (float)panel->height), ImGuiCond_FirstUseEver);
             if (ImGui::Begin(panel->name, &panel->enabled))
             {
                 panel->Update();

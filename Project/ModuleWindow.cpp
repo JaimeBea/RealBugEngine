@@ -10,53 +10,39 @@
 bool ModuleWindow::Init()
 {
 	LOG("Init SDL window & surface");
-	bool ret = true;
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
-		ret = false;
+		return false;
 	}
-	else
+
+	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+	SDL_DisplayMode desktop_display_mode;
+	SDL_GetDesktopDisplayMode(0, &desktop_display_mode);
+	window = SDL_CreateWindow(App->config->app_name.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w, desktop_display_mode.h, flags);
+	if(window == NULL)
 	{
-		// Create window
-
-		int width = App->config->screen_width;
-		int height = App->config->screen_height;
-		Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-
-		if (App->config->resizable)
-		{
-			flags |= SDL_WINDOW_RESIZABLE;
-		}
-
-		switch (App->config->window_mode)
-		{
-		case WindowMode::BORDERLESS:
-			flags |= SDL_WINDOW_BORDERLESS;
-			break;
-		case WindowMode::FULLSCREEN:
-			flags |= SDL_WINDOW_FULLSCREEN;
-			break;
-		case WindowMode::FULLSCREEN_DESKTOP:
-			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-			break;
-		}
-
-		window = SDL_CreateWindow(App->config->app_name.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
-
-		if(window == NULL)
-		{
-			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-			ret = false;
-		}
-		else
-		{
-			surface = SDL_GetWindowSurface(window);
-		}
+		LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+		return false;
 	}
 
-	return ret;
+	surface = SDL_GetWindowSurface(window);
+
+	// Create a list with all the available display modes
+	int display_mode_num = SDL_GetNumDisplayModes(SDL_GetWindowDisplayIndex(window));
+	for (int i = 0; i < display_mode_num; ++i)
+	{
+		SDL_DisplayMode display_mode;
+		SDL_GetDisplayMode(SDL_GetWindowDisplayIndex(window), i, &display_mode);
+		display_modes.push_back(display_mode);
+	}
+
+	// Set the current display mode to the first one
+	SDL_SetWindowDisplayMode(window, &display_modes[current_display_mode]);
+
+	return true;
 }
 
 bool ModuleWindow::CleanUp()
@@ -85,12 +71,15 @@ void ModuleWindow::SetWindowMode(WindowMode mode)
 		SDL_SetWindowBordered(window, SDL_FALSE);
 		break;
 	case WindowMode::FULLSCREEN:
+		SDL_SetWindowDisplayMode(window, &display_modes[current_display_mode]);
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 		break;
 	case WindowMode::FULLSCREEN_DESKTOP:
+		SDL_SetWindowDisplayMode(window, &display_modes[current_display_mode]);
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		break;
 	}
+	window_mode = mode;
 }
 
 void ModuleWindow::SetResizable(bool resizable)
@@ -105,9 +94,17 @@ void ModuleWindow::SetResizable(bool resizable)
 	}
 }
 
+void ModuleWindow::SetCurrentDisplayMode(int index)
+{
+	SDL_SetWindowDisplayMode(window, &display_modes[index]);
+	current_display_mode = index;
+}
+
 void ModuleWindow::SetSize(int width, int height)
 {
+	int display_index = SDL_GetWindowDisplayIndex(window);
 	SDL_SetWindowSize(window, width, height);
+	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(display_index), SDL_WINDOWPOS_CENTERED_DISPLAY(display_index));
 }
 
 void ModuleWindow::SetBrightness(float brightness)
@@ -117,5 +114,51 @@ void ModuleWindow::SetBrightness(float brightness)
 
 void ModuleWindow::SetTitle(const char* title)
 {
+	SDL_SetWindowTitle(window, title);
+}
 
+WindowMode ModuleWindow::GetWindowMode() const
+{
+	return window_mode;
+}
+
+bool ModuleWindow::GetMaximized() const
+{
+	return (SDL_GetWindowFlags(window) & SDL_WINDOW_MAXIMIZED) != 0;
+}
+
+bool ModuleWindow::GetResizable() const
+{
+	return (SDL_GetWindowFlags(window) & SDL_WINDOW_RESIZABLE) != 0;
+}
+
+int ModuleWindow::GetCurrentDisplayMode() const
+{
+	return current_display_mode;
+}
+
+int ModuleWindow::GetWidth() const
+{
+	int width;
+	int height;
+	SDL_GetWindowSize(window, &width, &height);
+	return width;
+}
+
+int ModuleWindow::GetHeight() const
+{
+	int width;
+	int height;
+	SDL_GetWindowSize(window, &width, &height);
+	return height;
+}
+
+float ModuleWindow::GetBrightness() const
+{
+	return SDL_GetWindowBrightness(window);
+}
+
+const char* ModuleWindow::GetTitle() const
+{
+	return SDL_GetWindowTitle(window);
 }

@@ -18,8 +18,8 @@ void PanelScene::Update()
 	ImVec2 size = ImGui::GetContentRegionAvail();
 	if (App->renderer->viewport_width != size.x || App->renderer->viewport_height != size.y)
 	{
-		App->camera->ViewportResized(size.x, size.y);
-		App->renderer->ViewportResized(size.x, size.y);
+		App->camera->ViewportResized((int)size.x, (int)size.y);
+		App->renderer->ViewportResized((int)size.x, (int)size.y);
 	}
 
 	// Draw
@@ -34,7 +34,4 @@ void PanelScene::Update()
 			ImGui::CaptureMouseFromApp(false);
 		}
 	}
-
-	// Drag and drop
-	//if (ImGui::DragDRop)
 }

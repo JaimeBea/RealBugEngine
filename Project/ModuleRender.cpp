@@ -83,14 +83,7 @@ bool ModuleRender::Init()
 	glGenRenderbuffers(1, &depth_renderbuffer);
 	glGenTextures(1, &render_texture);
 
-	ViewportResized(App->config->screen_width, App->config->screen_height);
-
-	return true;
-}
-
-bool ModuleRender::Start()
-{
-	current_model = App->models->LoadModel("Assets/BakerHouse/BakerHouse.fbx");
+	ViewportResized(200, 200);
 
 	return true;
 }
@@ -117,14 +110,14 @@ UpdateStatus ModuleRender::Update()
 		unsigned loaded_model = App->models->LoadModel(dropped_file_name);
 		if (loaded_model)
 		{
-			App->models->ReleaseModel(current_model);
-			current_model = loaded_model;
+			App->models->ReleaseModel(App->models->current_model);
+			App->models->current_model = loaded_model;
 		}
 		App->input->ReleaseDroppedFileName();
 	}
 
 	// Draw the model
-	App->models->models[current_model].Draw();
+	App->models->models[App->models->current_model].Draw();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -138,8 +131,6 @@ UpdateStatus ModuleRender::PostUpdate()
 
 bool ModuleRender::CleanUp()
 {
-	App->models->ReleaseModel(current_model);
-
 	glDeleteTextures(1, &render_texture);
 	glDeleteRenderbuffers(1, &depth_renderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);

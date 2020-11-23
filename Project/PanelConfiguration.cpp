@@ -15,9 +15,12 @@ static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 PanelConfiguration::PanelConfiguration() : Panel("Configuration", 520, 600) {}
 
+void PanelConfiguration::Start()
+{
+}
+
 void PanelConfiguration::Update()
 {
-
     // Application
     if (ImGui::CollapsingHeader("Application"))
     {
@@ -39,55 +42,6 @@ void PanelConfiguration::Update()
         ImGui::PlotHistogram("##framerate", &fps_log[0], FPS_LOG_SIZE, fps_log_index, title, 0.0f, 100.0f, ImVec2(310, 100));
         sprintf_s(title, 25, "Milliseconds %0.1f", ms_log[fps_log_index]);
         ImGui::PlotHistogram("##milliseconds", &ms_log[0], FPS_LOG_SIZE, fps_log_index, title, 0.0f, 40.0f, ImVec2(310, 100));
-    }
-
-    // Window
-    if (ImGui::CollapsingHeader("Window"))
-    {
-        // Window mode combo box
-        const char* items[] = { "Windowed", "Borderless", "Fullscreen", "Fullscreen desktop" };
-        const char* item_current = items[int(App->config->window_mode)];
-        if (ImGui::BeginCombo("Window mode", item_current))
-        {
-            for (int n = 0; n < IM_ARRAYSIZE(items); ++n)
-            {
-                bool is_selected = (item_current == items[n]);
-                if (ImGui::Selectable(items[n], is_selected))
-                {
-                    App->config->window_mode = WindowMode(n);
-                    App->window->SetWindowMode(App->config->window_mode);
-                }
-                if (is_selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-        if (ImGui::SliderFloat("Brightness", &App->config->brightness, 0.25f, 1.0f))
-        {
-            App->window->SetBrightness(App->config->brightness);
-        }
-
-        if (App->config->window_mode != WindowMode::FULLSCREEN_DESKTOP)
-        {
-            if (ImGui::Checkbox("Resizable", &App->config->resizable))
-            {
-                App->window->SetResizable(App->config->resizable);
-            }
-            if (App->config->resizable)
-            {
-                if (ImGui::SliderInt("Width", &App->config->screen_width, 640, 4096))
-                {
-                    App->window->SetSize(App->config->screen_width, App->config->screen_height);
-                }
-                if (ImGui::SliderInt("Height", &App->config->screen_height, 480, 2160))
-                {
-                    App->window->SetSize(App->config->screen_width, App->config->screen_height);
-                }
-            }
-        }
     }
 
     // Hardware
@@ -151,6 +105,104 @@ void PanelConfiguration::Update()
         ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_reserved_mb);
     }
 
+    // Window
+    if (ImGui::CollapsingHeader("Window"))
+    {
+        // Window mode combo box
+        const char* items[] = { "Windowed", "Borderless", "Fullscreen", "Fullscreen desktop" };
+        const char* item_current = items[int(App->window->GetWindowMode())];
+        if (ImGui::BeginCombo("Window mode", item_current))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(items); ++n)
+            {
+                bool is_selected = (item_current == items[n]);
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    App->window->SetWindowMode(WindowMode(n));
+                }
+                if (is_selected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        float brightness = App->window->GetBrightness();
+        if (ImGui::SliderFloat("Brightness", &brightness, 0.25f, 1.0f))
+        {
+            App->window->SetBrightness(brightness);
+        }
+
+        if (App->window->GetWindowMode() == WindowMode::BORDERLESS || App->window->GetWindowMode() == WindowMode::WINDOWED)
+        {
+            bool resizable = App->window->GetResizable();
+            if (ImGui::Checkbox("Resizable", &resizable))
+            {
+                App->window->SetResizable(resizable);
+            }
+            if (resizable)
+            {
+                bool size_changed = false;
+                bool size_changing = false;
+                ImGui::SliderInt("Width", &window_width, 640, 4096);
+                if (ImGui::IsItemDeactivatedAfterEdit())
+                {
+                    size_changed = true;
+                }
+                if (ImGui::IsItemActive())
+                {
+                    size_changing = true;
+                }
+                ImGui::SliderInt("Height", &window_height, 480, 2160);
+                if (ImGui::IsItemDeactivatedAfterEdit())
+                {
+                    size_changed = true;
+                }
+                if (ImGui::IsItemActive())
+                {
+                    size_changing = true;
+                }
+
+                if (size_changed)
+                {
+                    App->window->SetSize(window_width, window_height);
+                }
+                else if (!size_changing)
+                {
+                    window_width = App->window->GetWidth();
+                    window_height = App->window->GetHeight();
+                }
+            }
+        }
+        else
+        {
+            int current_display_mode_index = App->window->GetCurrentDisplayMode();
+            const SDL_DisplayMode& current_display_mode = App->window->display_modes[current_display_mode_index];
+            char current_display_mode_label[40];
+            sprintf_s(current_display_mode_label, " %i bpp\t%i x %i @ %iHz", SDL_BITSPERPIXEL(current_display_mode.format), current_display_mode.w, current_display_mode.h, current_display_mode.refresh_rate);
+            
+            if (ImGui::BeginCombo("Display Modes", current_display_mode_label))
+            {
+                int display_mode_index = 0;
+                for (const SDL_DisplayMode& display_mode : App->window->display_modes)
+                {
+                    bool is_selected = (current_display_mode_index == display_mode_index);
+                    char display_mode_label[40];
+                    sprintf_s(display_mode_label, " %i bpp\t%i x %i @ %iHz", SDL_BITSPERPIXEL(display_mode.format), display_mode.w, display_mode.h, display_mode.refresh_rate);
+
+                    if (ImGui::Selectable(display_mode_label, is_selected))
+                    {
+                        App->window->SetCurrentDisplayMode(display_mode_index);
+                    }
+
+                    display_mode_index += 1;
+                }
+                ImGui::EndCombo();
+            }
+        }
+    }
+
     // Camera
     if (ImGui::CollapsingHeader("Camera"))
     {
@@ -182,7 +234,7 @@ void PanelConfiguration::Update()
         {
             App->camera->SetFOV(fov);
         }
-        ImGui::ColorPicker3("Background", App->renderer->clear_color.ptr());
+        ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
     }
 
     // Textures
@@ -190,7 +242,7 @@ void PanelConfiguration::Update()
     {
         // Min filter combo box
         const char* min_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
-        const char* min_filter_item_current = min_filter_items[int(App->config->min_filter)];
+        const char* min_filter_item_current = min_filter_items[int(App->textures->GetMinFilter())];
         if (ImGui::BeginCombo("Min filter", min_filter_item_current))
         {
             for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
@@ -198,8 +250,7 @@ void PanelConfiguration::Update()
                 bool is_selected = (min_filter_item_current == min_filter_items[n]);
                 if (ImGui::Selectable(min_filter_items[n], is_selected))
                 {
-                    App->config->min_filter = TextureFilter(n);
-                    App->textures->SetMinFilter(App->config->min_filter);
+                    App->textures->SetMinFilter(TextureFilter(n));
                 }
                 if (is_selected)
                 {
@@ -211,7 +262,7 @@ void PanelConfiguration::Update()
 
         // Mag filter combo box
         const char* mag_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
-        const char* mag_filter_item_current = mag_filter_items[int(App->config->mag_filter)];
+        const char* mag_filter_item_current = mag_filter_items[int(App->textures->GetMagFilter())];
         if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
         {
             for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
@@ -219,8 +270,7 @@ void PanelConfiguration::Update()
                 bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
                 if (ImGui::Selectable(mag_filter_items[n], is_selected))
                 {
-                    App->config->mag_filter = TextureFilter(n);
-                    App->textures->SetMagFilter(App->config->mag_filter);
+                    App->textures->SetMagFilter(TextureFilter(n));
                 }
                 if (is_selected)
                 {
@@ -232,7 +282,7 @@ void PanelConfiguration::Update()
 
         // Texture wrap combo box
         const char* wrap_items[] = { "Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge" };
-        const char* wrap_item_current = wrap_items[int(App->config->texture_wrap)];
+        const char* wrap_item_current = wrap_items[int(App->textures->GetWrap())];
         if (ImGui::BeginCombo("Wrap", wrap_item_current))
         {
             for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
@@ -240,8 +290,7 @@ void PanelConfiguration::Update()
                 bool is_selected = (wrap_item_current == wrap_items[n]);
                 if (ImGui::Selectable(wrap_items[n], is_selected))
                 {
-                    App->config->texture_wrap = TextureWrap(n);
-                    App->textures->SetWrap(App->config->texture_wrap);
+                    App->textures->SetWrap(TextureWrap(n));
                 }
                 if (is_selected)
                 {

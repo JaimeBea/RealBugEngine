@@ -9,11 +9,18 @@ bool ModuleModels::Init()
     return true;
 }
 
+bool ModuleModels::Start()
+{
+    current_model = LoadModel("Assets/BakerHouse/BakerHouse.fbx");
+
+    return true;
+}
+
 bool ModuleModels::CleanUp()
 {
-    for (Model& current_model : models)
+    for (Model& model : models)
     {
-        current_model.Release();
+        model.Release();
     }
     models.Clear();
 
@@ -22,14 +29,14 @@ bool ModuleModels::CleanUp()
 
 unsigned ModuleModels::LoadModel(const char* file_name)
 {
-    Model current_model = Model();
+    Model model = Model();
 
-    if (!current_model.Load(file_name))
+    if (!model.Load(file_name))
     {
         return 0;
     }
 
-    return models.Offer(std::move(current_model));
+    return models.Offer(std::move(model));
 }
 
 void ModuleModels::ReleaseModel(unsigned current_model)

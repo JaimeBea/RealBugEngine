@@ -8,33 +8,6 @@ enum class UpdateStatus
 	ERROR
 };
 
-enum class WindowMode
-{
-	WINDOWED,
-	BORDERLESS,
-	FULLSCREEN,
-	FULLSCREEN_DESKTOP
-};
-
-enum class TextureFilter
-{
-	NEAREST,
-	LINEAR,
-	NEAREST_MIPMAP_NEAREST,
-	LINEAR_MIPMAP_NEAREST,
-	NEAREST_MIPMAP_LINEAR,
-	LINEAR_MIPMAP_LINEAR
-};
-
-enum class TextureWrap
-{
-	REPEAT,
-	CLAMP_TO_EDGE,
-	CLAMP_TO_BORDER,
-	MIRROR_REPEAT,
-	MIRROR_CLAMP_TO_EDGE
-};
-
 // Constants -----------
 #define DEGTORAD 0.01745329251f
 
