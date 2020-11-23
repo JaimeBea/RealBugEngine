@@ -3,6 +3,8 @@
 #include "Module.h"
 #include "Model.h"
 
+#include "assimp/cimport.h"
+
 #include "Pool.h"
 
 class ModuleModels : public Module
@@ -19,5 +21,8 @@ public:
 	Pool<Model> models;
 
 	unsigned current_model;
+
+private:
+	aiLogStream log_stream;
 };
 
