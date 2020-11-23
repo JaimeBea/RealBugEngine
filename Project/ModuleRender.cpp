@@ -4,7 +4,6 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModuleInput.h"
-#include "ModuleConfig.h"
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"

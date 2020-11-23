@@ -3,7 +3,6 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
-#include "ModuleConfig.h"
 
 #include "SDL.h"
 
@@ -21,7 +20,7 @@ bool ModuleWindow::Init()
 
 	SDL_DisplayMode desktop_display_mode;
 	SDL_GetDesktopDisplayMode(0, &desktop_display_mode);
-	window = SDL_CreateWindow(App->config->app_name.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w, desktop_display_mode.h, flags);
+	window = SDL_CreateWindow(App->app_name.GetChars(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w, desktop_display_mode.h, flags);
 	if(window == NULL)
 	{
 		LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());

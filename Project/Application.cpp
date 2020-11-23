@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include "Logging.h"
-#include "ModuleConfig.h"
+#include "ModuleHardwareInfo.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
 #include "ModuleEditor.h"
@@ -19,7 +19,7 @@
 Application::Application()
 {
 	// Order matters: they will Init/start/update in this order
-	modules.push_back(config = new ModuleConfig());
+	modules.push_back(hardware = new ModuleHardwareInfo());
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(models = new ModuleModels());
@@ -96,11 +96,11 @@ UpdateStatus Application::Update()
 	}
 	previous_time = now_time;
 
-	if (config->limit_framerate)
+	if (limit_framerate)
 	{
 		now_time = SDL_GetTicks();
 		unsigned frame_ms = now_time - previous_time;
-		unsigned min_ms = 1000 / config->max_fps;
+		unsigned min_ms = 1000 / max_fps;
 		if (frame_ms < min_ms)
 		{
 			SDL_Delay(min_ms - frame_ms);

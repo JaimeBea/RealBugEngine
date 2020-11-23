@@ -104,7 +104,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCamera.h" />
-    <ClInclude Include="ModuleConfig.h" />
+    <ClInclude Include="ModuleHardwareInfo.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleInput.h" />
@@ -178,7 +178,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
-    <ClCompile Include="ModuleConfig.cpp" />
+    <ClCompile Include="ModuleHardwareInfo.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleInput.cpp" />

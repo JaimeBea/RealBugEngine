@@ -1,4 +1,4 @@
-#include "ModuleConfig.h"
+#include "ModuleHardwareInfo.h"
 
 #include "Globals.h"
 #include "Application.h"
@@ -8,7 +8,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 
-bool ModuleConfig::Start()
+bool ModuleHardwareInfo::Start()
 {
     SDL_version sdl_version_struct;
     SDL_VERSION(&sdl_version_struct);
@@ -39,7 +39,7 @@ bool ModuleConfig::Start()
     return true;
 }
 
-UpdateStatus ModuleConfig::Update()
+UpdateStatus ModuleHardwareInfo::Update()
 {
     int vram_budget_kb;
     int vram_available_kb;
@@ -52,7 +52,7 @@ UpdateStatus ModuleConfig::Update()
     return UpdateStatus::CONTINUE;
 }
 
-bool ModuleConfig::CleanUp()
+bool ModuleHardwareInfo::CleanUp()
 {
     return true;
 }

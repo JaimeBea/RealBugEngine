@@ -7,7 +7,7 @@
 
 struct SDL_version;
 
-class ModuleConfig : public Module
+class ModuleHardwareInfo : public Module
 {
 public:
 	bool Start() override;
@@ -15,22 +15,6 @@ public:
 	bool CleanUp() override;
 
 public:
-	// Configuration
-
-	ShortString<20> app_name = "Real Engine";
-	ShortString<20> organization = "";
-	int max_fps = 60;
-	bool limit_framerate = true;
-	bool vsync = true;
-
-	// Information
-
-	const char* engine_name = "Real Engine";
-	const char* engine_description = "Simple AAA game engine";
-	const char* engine_authors = "Jaime Bea";
-	const char* engine_libraries = "SDL2, MathGeoLib, Dear ImGUI";
-	const char* engine_license = "MIT";
-
 	ShortString<20> sdl_version = "Not available";
 	int cpu_count = 0;
 	int cache_size_kb = 0;

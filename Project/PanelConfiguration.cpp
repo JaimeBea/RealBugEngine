@@ -2,7 +2,7 @@
 
 #include "Application.h"
 #include "Logging.h"
-#include "ModuleConfig.h"
+#include "ModuleHardwareInfo.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
@@ -24,16 +24,16 @@ void PanelConfiguration::Update()
     // Application
     if (ImGui::CollapsingHeader("Application"))
     {
-        if (ImGui::InputText("App name", App->config->app_name.GetChars(), App->config->app_name.GetMaxSize()))
+        if (ImGui::InputText("App name", App->app_name.GetChars(), App->app_name.GetMaxSize()))
         {
-            App->window->SetTitle(App->config->app_name.GetChars());
+            App->window->SetTitle(App->app_name.GetChars());
         }
-        ImGui::InputText("Organization", App->config->organization.GetChars(), App->config->organization.GetMaxSize());
-        ImGui::SliderInt("Max FPS", &App->config->max_fps, 1, 240);
-        ImGui::Checkbox("Limit framerate", &App->config->limit_framerate);
-        if (ImGui::Checkbox("VSync", &App->config->vsync))
+        ImGui::InputText("Organization", App->organization.GetChars(), App->organization.GetMaxSize());
+        ImGui::SliderInt("Max FPS", &App->max_fps, 1, 240);
+        ImGui::Checkbox("Limit framerate", &App->limit_framerate);
+        if (ImGui::Checkbox("VSync", &App->vsync))
         {
-            App->renderer->SetVSync(App->config->vsync);
+            App->renderer->SetVSync(App->vsync);
         }
 
         // FPS Graph
@@ -49,16 +49,16 @@ void PanelConfiguration::Update()
     {
         ImGui::Text("SDL version:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, App->config->sdl_version.GetChars());
+        ImGui::TextColored(yellow, App->hardware->sdl_version.GetChars());
 
         ImGui::Separator();
 
         ImGui::Text("CPUs:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%i (Cache: %i kb)", App->config->cpu_count, App->config->cache_size_kb);
+        ImGui::TextColored(yellow, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
         ImGui::Text("System RAM:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%.1f Gb", App->config->ram_gb);
+        ImGui::TextColored(yellow, "%.1f Gb", App->hardware->ram_gb);
         ImGui::Text("Caps:");
         const char* items[] =
         {
@@ -67,7 +67,7 @@ void PanelConfiguration::Update()
         };
         for (int i = 0; i < IM_ARRAYSIZE(items); ++i)
         {
-            if (App->config->caps[i])
+            if (App->hardware->caps[i])
             {
                 ImGui::SameLine();
                 ImGui::TextColored(yellow, items[i]);
@@ -84,25 +84,25 @@ void PanelConfiguration::Update()
 
         ImGui::Text("GPU Vendor:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%s", App->config->gpu_vendor);
+        ImGui::TextColored(yellow, "%s", App->hardware->gpu_vendor);
         ImGui::Text("GPU Renderer:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%s", App->config->gpu_renderer);
+        ImGui::TextColored(yellow, "%s", App->hardware->gpu_renderer);
         ImGui::Text("GPU OpenGL Version:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%s", App->config->gpu_opengl_version);
+        ImGui::TextColored(yellow, "%s", App->hardware->gpu_opengl_version);
         ImGui::Text("VRAM Budget:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_budget_mb);
+        ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_budget_mb);
         ImGui::Text("VRAM Usage:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_usage_mb);
+        ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_usage_mb);
         ImGui::Text("VRAM Available:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_available_mb);
+        ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_available_mb);
         ImGui::Text("VRAM Reserved:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, "%.1f Mb", App->config->vram_reserved_mb);
+        ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_reserved_mb);
     }
 
     // Window

@@ -296,9 +296,6 @@
     <ClInclude Include="ModuleCamera.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleConfig.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleDebugDraw.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
@@ -354,6 +351,9 @@
       <Filter>Source\Panels</Filter>
     </ClInclude>
     <ClInclude Include="ModulePrograms.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleHardwareInfo.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
   </ItemGroup>
@@ -514,9 +514,6 @@
     <ClCompile Include="ModuleCamera.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleConfig.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleDebugDraw.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -566,6 +563,9 @@
       <Filter>Source\Panels</Filter>
     </ClCompile>
     <ClCompile Include="ModulePrograms.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleHardwareInfo.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>

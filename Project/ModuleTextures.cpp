@@ -3,7 +3,6 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
-#include "ModuleConfig.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
