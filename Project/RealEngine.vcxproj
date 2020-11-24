@@ -117,6 +117,7 @@
     <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelConfiguration.h" />
     <ClInclude Include="PanelConsole.h" />
+    <ClInclude Include="PanelProperties.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="Pool.h" />
   </ItemGroup>
@@ -190,6 +191,7 @@
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelConfiguration.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
+    <ClCompile Include="PanelProperties.cpp" />
     <ClCompile Include="PanelScene.cpp" />
   </ItemGroup>
   <ItemGroup>

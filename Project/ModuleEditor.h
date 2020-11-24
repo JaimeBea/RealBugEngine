@@ -6,6 +6,7 @@
 #include "PanelScene.h"
 #include "PanelConsole.h"
 #include "PanelConfiguration.h"
+#include "PanelProperties.h"
 #include "PanelAbout.h"
 
 #include <vector>
@@ -26,6 +27,7 @@ private:
 	PanelScene panel_scene;
 	PanelConsole panel_console;
 	PanelConfiguration panel_configuration;
+	PanelProperties panel_properties;
 	PanelAbout panel_about;
 };
 

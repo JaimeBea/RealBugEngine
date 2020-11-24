@@ -353,6 +353,9 @@
     <ClInclude Include="Pool.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="PanelProperties.h">
+      <Filter>Source\Panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -564,6 +567,9 @@
     </ClCompile>
     <ClCompile Include="ModuleHardwareInfo.cpp">
       <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelProperties.cpp">
+      <Filter>Source\Panels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

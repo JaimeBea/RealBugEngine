@@ -3,14 +3,12 @@
 class Panel
 {
 public:
-	Panel(const char* name, unsigned width, unsigned height, bool enabled = true);
+	Panel(const char* name, bool enabled);
 
 	virtual void Update();
 
 public:
 	const char* name = "";
-	unsigned height = 0;
-	unsigned width = 0;
 	bool enabled = true;
 };
 

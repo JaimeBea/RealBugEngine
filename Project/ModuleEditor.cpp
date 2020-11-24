@@ -30,6 +30,7 @@ bool ModuleEditor::Start()
     panels.push_back(&panel_scene);
     panels.push_back(&panel_console);
     panels.push_back(&panel_configuration);
+    panels.push_back(&panel_properties);
     panels.push_back(&panel_about);
 
     return true;
@@ -63,6 +64,7 @@ UpdateStatus ModuleEditor::Update()
     {
         ImGui::MenuItem(panel_scene.name, "", &panel_scene.enabled);
         ImGui::MenuItem(panel_console.name, "", &panel_console.enabled);
+        ImGui::MenuItem(panel_properties.name, "", &panel_properties.enabled);
         ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
         ImGui::EndMenu();
     }
@@ -93,12 +95,7 @@ UpdateStatus ModuleEditor::Update()
     {
         if (panel->enabled)
         {
-            ImGui::SetNextWindowSize(ImVec2((float)panel->width, (float)panel->height), ImGuiCond_FirstUseEver);
-            if (ImGui::Begin(panel->name, &panel->enabled))
-            {
-                panel->Update();
-            }
-            ImGui::End();
+            panel->Update();
         }
     }
 
