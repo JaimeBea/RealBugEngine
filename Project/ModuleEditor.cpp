@@ -32,11 +32,6 @@ bool ModuleEditor::Start()
     panels.push_back(&panel_configuration);
     panels.push_back(&panel_about);
 
-    for (Panel* panel : panels)
-    {
-        panel->Start();
-    }
-
     return true;
 }
 

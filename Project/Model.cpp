@@ -24,7 +24,7 @@ bool Model::Load(const char* file_name)
 	// Load materials
 	LOG("Loading %i materials...", scene->mNumMaterials);
 	materials.reserve(scene->mNumMaterials);
-	for (unsigned i = 0; i < scene->mNumMaterials; ++i)
+	for (int i = 0; i < scene->mNumMaterials; ++i)
 	{
 		LOG("Loading material %i...", i);
 		aiString material_file_dir;
@@ -86,7 +86,7 @@ bool Model::Load(const char* file_name)
 	// Load meshes
 	LOG("Loading %i meshes...", scene->mNumMeshes);
 	meshes.reserve(scene->mNumMeshes);
-	for (unsigned i = 0; i < scene->mNumMeshes; ++i)
+	for (int i = 0; i < scene->mNumMeshes; ++i)
 	{
 		Mesh mesh;
 		mesh.Load(scene->mMeshes[i]);
@@ -107,17 +107,17 @@ void Model::Release()
 	meshes.clear();
 
 	// Release materials
-	for (unsigned material : materials)
+	for (int material : materials)
 	{
 		App->textures->ReleaseTexture(material);
 	}
 	materials.clear();
 }
 
-void Model::Draw() const
+void Model::Draw(const float4x4& model_matrix) const
 {
 	for (const Mesh& mesh : meshes)
 	{
-		mesh.Draw(materials);
+		mesh.Draw(materials, model_matrix);
 	}
 }

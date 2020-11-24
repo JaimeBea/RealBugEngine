@@ -15,20 +15,16 @@ static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 PanelConfiguration::PanelConfiguration() : Panel("Configuration", 520, 600) {}
 
-void PanelConfiguration::Start()
-{
-}
-
 void PanelConfiguration::Update()
 {
     // Application
     if (ImGui::CollapsingHeader("Application"))
     {
-        if (ImGui::InputText("App name", App->app_name.GetChars(), App->app_name.GetMaxSize()))
+        if (ImGui::InputText("App name", App->app_name, IM_ARRAYSIZE(App->app_name)))
         {
-            App->window->SetTitle(App->app_name.GetChars());
+            App->window->SetTitle(App->app_name);
         }
-        ImGui::InputText("Organization", App->organization.GetChars(), App->organization.GetMaxSize());
+        ImGui::InputText("Organization", App->organization, IM_ARRAYSIZE(App->organization));
         ImGui::SliderInt("Max FPS", &App->max_fps, 1, 240);
         ImGui::Checkbox("Limit framerate", &App->limit_framerate);
         if (ImGui::Checkbox("VSync", &App->vsync))
@@ -49,7 +45,7 @@ void PanelConfiguration::Update()
     {
         ImGui::Text("SDL version:");
         ImGui::SameLine();
-        ImGui::TextColored(yellow, App->hardware->sdl_version.GetChars());
+        ImGui::TextColored(yellow, App->hardware->sdl_version);
 
         ImGui::Separator();
 

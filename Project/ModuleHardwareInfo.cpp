@@ -12,7 +12,7 @@ bool ModuleHardwareInfo::Start()
 {
     SDL_version sdl_version_struct;
     SDL_VERSION(&sdl_version_struct);
-    sprintf_s(sdl_version.GetChars(), sdl_version.GetMaxSize(), "%i.%i.%i", sdl_version_struct.major, sdl_version_struct.minor, sdl_version_struct.patch);
+    sprintf_s(sdl_version, "%i.%i.%i", sdl_version_struct.major, sdl_version_struct.minor, sdl_version_struct.patch);
 
     cpu_count = SDL_GetCPUCount();
     cache_size_kb = SDL_GetCPUCacheLineSize();

@@ -119,7 +119,6 @@
     <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="Pool.h" />
-    <ClInclude Include="ShortString.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />

@@ -2,14 +2,16 @@
 
 #include "Module.h"
 
-#include "Model.h"
-
 #include "Math/float3.h"
+#include "Math/float4x4.h"
+
+class Model;
 
 class ModuleRender : public Module
 {
 public:
 	bool Init() override;
+	bool Start() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
@@ -29,4 +31,7 @@ public:
 	unsigned viewport_height = 0;
 
 	float3 clear_color = { 0.1f, 0.1f, 0.1f };
+
+	Model* current_model = 0;
+	float4x4 current_model_model_matrix = float4x4::identity;
 };

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ShortString.h"
 #include <list>
 
 enum class UpdateStatus;
@@ -45,8 +44,8 @@ public:
 
 	// Application Configuration
 
-	ShortString<20> app_name = "Real Engine";
-	ShortString<20> organization = "";
+	char app_name[20] = "Real Engine";
+	char organization[20] = "";
 	int max_fps = 60;
 	bool limit_framerate = true;
 	bool vsync = true;

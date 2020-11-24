@@ -281,9 +281,6 @@
     <ClInclude Include="Libs\MathGeoLib\MathGeoLibFwd.h">
       <Filter>Libraries\MathGeoLib</Filter>
     </ClInclude>
-    <ClInclude Include="ShortString.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -332,9 +329,6 @@
     <ClInclude Include="ModuleModels.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="Pool.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Panel.h">
       <Filter>Source\Panels</Filter>
     </ClInclude>
@@ -355,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="ModuleHardwareInfo.h">
       <Filter>Source\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Pool.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

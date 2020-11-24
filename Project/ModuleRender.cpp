@@ -87,6 +87,13 @@ bool ModuleRender::Init()
 	return true;
 }
 
+bool ModuleRender::Start()
+{
+	current_model = App->models->LoadModel("Assets/BakerHouse/BakerHouse.fbx");
+
+	return true;
+}
+
 UpdateStatus ModuleRender::PreUpdate()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -106,17 +113,17 @@ UpdateStatus ModuleRender::Update()
 	const char* dropped_file_name = App->input->GetDroppedFileName();
 	if (dropped_file_name != nullptr)
 	{
-		unsigned loaded_model = App->models->LoadModel(dropped_file_name);
+		Model* loaded_model = App->models->LoadModel(dropped_file_name);
 		if (loaded_model)
 		{
-			App->models->ReleaseModel(App->models->current_model);
-			App->models->current_model = loaded_model;
+			App->models->ReleaseModel(current_model);
+			current_model = loaded_model;
 		}
 		App->input->ReleaseDroppedFileName();
 	}
 
 	// Draw the model
-	App->models->models[App->models->current_model].Draw();
+	current_model->Draw(current_model_model_matrix);
 
 	return UpdateStatus::CONTINUE;
 }
@@ -133,6 +140,8 @@ bool ModuleRender::CleanUp()
 	glDeleteTextures(1, &render_texture);
 	glDeleteRenderbuffers(1, &depth_renderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);
+
+	App->models->ReleaseModel(current_model);
 
 	return true;
 }

@@ -7,7 +7,6 @@
 #include "ModuleCamera.h"
 
 #include "assimp/mesh.h"
-#include "Math/float4x4.h"
 #include "GL/glew.h"
 
 void Mesh::Load(const aiMesh* mesh)
@@ -87,19 +86,18 @@ void Mesh::Release()
 	glDeleteBuffers(1, &ebo);
 }
 
-void Mesh::Draw(const std::vector<unsigned>& materials) const
+void Mesh::Draw(const std::vector<unsigned>& materials, const float4x4& model_matrix) const
 {
 	unsigned program = App->programs->default_program;
-	float4x4 view = App->camera->GetViewMatrix();
-	float4x4 proj = App->camera->GetProjectionMatrix();
-	float4x4 current_model = float4x4::identity;
+	float4x4 view_matrix = App->camera->GetViewMatrix();
+	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
 	unsigned texture = materials.size() > material_index ? materials[material_index] : 0;
 
 	glUseProgram(program);
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, current_model.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_matrix.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view_matrix.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj_matrix.ptr());
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);

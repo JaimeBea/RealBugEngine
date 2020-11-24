@@ -3,8 +3,6 @@
 #include "Module.h"
 #include "Globals.h"
 
-#include "ShortString.h"
-
 struct SDL_version;
 
 class ModuleHardwareInfo : public Module
@@ -15,7 +13,7 @@ public:
 	bool CleanUp() override;
 
 public:
-	ShortString<20> sdl_version = "Not available";
+	char sdl_version[20] = "Not available";
 	int cpu_count = 0;
 	int cache_size_kb = 0;
 	float ram_gb = 0;

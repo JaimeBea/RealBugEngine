@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Math/float4x4.h"
 #include <vector>
 
 struct aiMesh;
@@ -10,7 +11,7 @@ public:
 	void Load(const aiMesh* mesh);
 	void Release();
 
-	void Draw(const std::vector<unsigned>& materials) const;
+	void Draw(const std::vector<unsigned>& materials, const float4x4& model_matrix) const;
 
 public:
 	unsigned vbo = 0;

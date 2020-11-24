@@ -13,19 +13,12 @@ static void AssimpLogCallback(const char* message, char* user)
 
 bool ModuleModels::Init()
 {
-    models.Reserve(10);
+    models.Allocate(10);
 
 #ifdef _DEBUG
     log_stream.callback = AssimpLogCallback;
     aiAttachLogStream(&log_stream);
 #endif
-
-    return true;
-}
-
-bool ModuleModels::Start()
-{
-    current_model = LoadModel("Assets/BakerHouse/BakerHouse.fbx");
 
     return true;
 }
@@ -41,20 +34,18 @@ bool ModuleModels::CleanUp()
     return true;
 }
 
-unsigned ModuleModels::LoadModel(const char* file_name)
+Model* ModuleModels::LoadModel(const char* file_name)
 {
-    Model model = Model();
-
-    if (!model.Load(file_name))
+    Model* model = models.Obtain();
+    if (!model->Load(file_name))
     {
-        return 0;
+        return nullptr;
     }
-
-    return models.Offer(std::move(model));
+    return model;
 }
 
-void ModuleModels::ReleaseModel(unsigned current_model)
+void ModuleModels::ReleaseModel(Model* model)
 {
-    models[current_model].Release();
-    models.Remove(current_model);
+    model->Release();
+    models.Release(model);
 }

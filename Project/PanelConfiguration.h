@@ -7,7 +7,6 @@ class PanelConfiguration : public Panel
 public:
 	PanelConfiguration();
 
-	void Start() override;
 	void Update() override;
 
 private:
