@@ -86,7 +86,7 @@ public:
 		const Iterator& operator++()
 		{
 			index += 1;
-			while (pool->next_free[index] != nullptr)
+			while (index < pool->size && pool->next_free[index] != nullptr)
 			{
 				index += 1;
 			}
