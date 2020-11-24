@@ -1,6 +1,7 @@
 #include "PanelProperties.h"
 
 #include "Application.h"
+#include "ModuleEditor.h"
 #include "ModuleRender.h"
 #include "Model.h"
 
@@ -17,7 +18,7 @@ PanelProperties::PanelProperties() : Panel("Properties", true) {}
 
 void PanelProperties::Update()
 {
-	ImGui::SetNextWindowSize(ImVec2(400.0f, 600.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
 	{
 		// Transformation
@@ -39,7 +40,7 @@ void PanelProperties::Update()
             unsigned mesh_index = 0;
             for (const Mesh& mesh : model.meshes)
             {
-                char mesh_name[128];
+                char mesh_name[32];
                 sprintf(mesh_name, "Mesh %i", mesh_index);
                 if (ImGui::TreeNode(mesh_name))
                 {
@@ -67,7 +68,7 @@ void PanelProperties::Update()
             unsigned material_index = 0;
             for (unsigned material : model.materials)
             {
-                char material_name[128];
+                char material_name[32];
                 sprintf(material_name, "Material %i", material_index);
                 if (ImGui::TreeNode(material_name))
                 {

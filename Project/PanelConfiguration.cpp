@@ -2,6 +2,7 @@
 
 #include "Application.h"
 #include "Logging.h"
+#include "ModuleEditor.h"
 #include "ModuleHardwareInfo.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -18,7 +19,7 @@ PanelConfiguration::PanelConfiguration() : Panel("Configuration", true) {}
 
 void PanelConfiguration::Update()
 {
-    ImGui::SetNextWindowSize(ImVec2(520.0f, 600.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
     if (ImGui::Begin(name, &enabled))
     {
         // Application
@@ -303,7 +304,7 @@ void PanelConfiguration::Update()
             // Texture images
             for (unsigned texture : App->textures->textures)
             {
-                char texture_name[128];
+                char texture_name[32];
                 sprintf(texture_name, "Texture %i", texture);
                 if (ImGui::TreeNode(texture_name))
                 {
@@ -331,7 +332,7 @@ void PanelConfiguration::Update()
             unsigned model_index = 0;
             for (const Model& current_model : App->models->models)
             {
-                char model_name[128];
+                char model_name[32];
                 sprintf(model_name, "Model %i", model_index);
                 if (ImGui::TreeNode(model_name))
                 {
@@ -361,7 +362,7 @@ void PanelConfiguration::Update()
                     unsigned material_index = 0;
                     for (unsigned material : current_model.materials)
                     {
-                        char material_name[128];
+                        char material_name[32];
                         sprintf(material_name, "Material %i", material_index);
                         if (ImGui::TreeNode(material_name))
                         {
@@ -377,6 +378,8 @@ void PanelConfiguration::Update()
                             ImGui::SameLine();
                             ImGui::TextColored(yellow, "%i", height);
                             ImGui::Image((void*)current_model.materials[material_index], ImVec2(200, 200));
+
+                            ImGui::TreePop();
                         }
 
                         material_index += 1;

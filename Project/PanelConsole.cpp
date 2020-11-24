@@ -1,6 +1,8 @@
 #include "PanelConsole.h"
 
+#include "Application.h"
 #include "Logging.h"
+#include "ModuleEditor.h"
 
 #include "imgui.h"
 
@@ -13,7 +15,7 @@ PanelConsole::PanelConsole() : Panel("Console", true) {}
 
 void PanelConsole::Update()
 {
-    ImGui::SetNextWindowSize(ImVec2(600.0f, 200.0f), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowDockID(App->editor->dock_down_id, ImGuiCond_FirstUseEver);
     if (ImGui::Begin(name, &enabled))
     {
         // Output

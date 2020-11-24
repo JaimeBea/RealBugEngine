@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "ModuleEditor.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 
@@ -14,7 +15,7 @@ PanelScene::PanelScene() : Panel("Scene", true) {}
 
 void PanelScene::Update()
 {
-	ImGui::SetNextWindowSize(ImVec2(800.0f, 600.0f), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowDockID(App->editor->dock_main_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
 	{
 		// Update viewport size

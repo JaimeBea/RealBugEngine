@@ -21,6 +21,12 @@ public:
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
 
+public:
+	unsigned dock_space_id = 0;
+	unsigned dock_main_id = 0;
+	unsigned dock_right_id = 0;
+	unsigned dock_down_id = 0;
+
 private:
 	std::vector<Panel*> panels;
 

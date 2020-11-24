@@ -6,6 +6,7 @@
 #include "ModuleRender.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
@@ -88,7 +89,32 @@ UpdateStatus ModuleEditor::Update()
     ImGui::EndMainMenuBar();
 
     // Docking
-    ImGui::DockSpaceOverViewport();
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGuiID dock_space_id = ImGui::GetID("DockSpace");
+
+    if (!ImGui::DockBuilderGetNode(dock_space_id)) {
+        ImGui::DockBuilderAddNode(dock_space_id);
+        ImGui::DockBuilderSetNodeSize(dock_space_id, viewport->GetWorkSize());
+
+        dock_main_id = dock_space_id;
+        dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.25f, nullptr, &dock_main_id);
+        dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.3f, nullptr, &dock_main_id);
+    }
+
+    ImGui::SetNextWindowPos(viewport->GetWorkPos());
+    ImGui::SetNextWindowSize(viewport->GetWorkSize());
+
+    ImGuiWindowFlags dock_space_window_flags = 0;
+    dock_space_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+    dock_space_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("DockSpace", nullptr, dock_space_window_flags);
+    ImGui::PopStyleVar(3);
+    ImGui::DockSpace(dock_space_id);
+    ImGui::End();
 
     // Panels
     for (Panel* panel : panels)
