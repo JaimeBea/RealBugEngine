@@ -14,6 +14,8 @@ bool ModuleHardwareInfo::Start()
 {
     SDL_version sdl_version_struct;
     SDL_VERSION(&sdl_version_struct);
+
+    sprintf_s(glew_version, "%i.%i.%i", GLEW_VERSION_MAJOR, GLEW_VERSION_MINOR, GLEW_VERSION_MICRO);
     sprintf_s(sdl_version, "%i.%i.%i", sdl_version_struct.major, sdl_version_struct.minor, sdl_version_struct.patch);
     sprintf_s(assimp_version, "%i.%i.%i", aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
     sprintf_s(devil_version, "%i.%i.%i", IL_VERSION / 100, (IL_VERSION % 100) / 10, IL_VERSION % 10);

@@ -13,6 +13,7 @@ public:
 	bool CleanUp() override;
 
 public:
+	char glew_version[20] = "Not available";
 	char sdl_version[20] = "Not available";
 	char assimp_version[20] = "Not available";
 	char devil_version[20] = "Not available";
