@@ -59,6 +59,11 @@ void PanelProperties::Update()
 
                 mesh_index += 1;
             }
+
+            vec center = model.bounding_sphere.pos;
+            float radius = model.bounding_sphere.r;
+            ImGui::InputFloat3("Bounding Sphere Pos", center.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+            ImGui::InputFloat("Bounding Sphere radius", &radius, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
 		}
 
 		// Textures

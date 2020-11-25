@@ -3,6 +3,7 @@
 #include "Mesh.h"
 
 #include "Math/float4x4.h"
+#include "Geometry/Sphere.h"
 #include <vector>
 
 class Model
@@ -16,5 +17,6 @@ public:
 public:
 	std::vector<unsigned> materials;
 	std::vector<Mesh> meshes;
+	Sphere bounding_sphere;
 };
 

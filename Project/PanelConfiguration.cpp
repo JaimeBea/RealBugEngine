@@ -330,14 +330,14 @@ void PanelConfiguration::Update()
         if (ImGui::CollapsingHeader("Models"))
         {
             unsigned model_index = 0;
-            for (const Model& current_model : App->models->models)
+            for (const Model& model : App->models->models)
             {
                 char model_name[32];
                 sprintf(model_name, "Model %i", model_index);
                 if (ImGui::TreeNode(model_name))
                 {
                     unsigned mesh_index = 0;
-                    for (const Mesh& mesh : current_model.meshes)
+                    for (const Mesh& mesh : model.meshes)
                     {
                         char mesh_name[128];
                         sprintf(mesh_name, "Mesh %i", mesh_index);
@@ -360,7 +360,7 @@ void PanelConfiguration::Update()
                     }
 
                     unsigned material_index = 0;
-                    for (unsigned material : current_model.materials)
+                    for (unsigned material : model.materials)
                     {
                         char material_name[32];
                         sprintf(material_name, "Material %i", material_index);
@@ -368,8 +368,8 @@ void PanelConfiguration::Update()
                         {
                             int width;
                             int height;
-                            glGetTextureLevelParameteriv(current_model.materials[material_index], 0, GL_TEXTURE_WIDTH, &width);
-                            glGetTextureLevelParameteriv(current_model.materials[material_index], 0, GL_TEXTURE_HEIGHT, &height);
+                            glGetTextureLevelParameteriv(model.materials[material_index], 0, GL_TEXTURE_WIDTH, &width);
+                            glGetTextureLevelParameteriv(model.materials[material_index], 0, GL_TEXTURE_HEIGHT, &height);
 
                             ImGui::Text("Width: ");
                             ImGui::SameLine();
@@ -377,13 +377,18 @@ void PanelConfiguration::Update()
                             ImGui::Text("Height: ");
                             ImGui::SameLine();
                             ImGui::TextColored(yellow, "%i", height);
-                            ImGui::Image((void*)current_model.materials[material_index], ImVec2(200, 200));
+                            ImGui::Image((void*)model.materials[material_index], ImVec2(200, 200));
 
                             ImGui::TreePop();
                         }
 
                         material_index += 1;
                     }
+
+                    vec center = model.bounding_sphere.pos;
+                    float radius = model.bounding_sphere.r;
+                    ImGui::InputFloat3("Bounding Sphere Pos", center.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+                    ImGui::InputFloat("Bounding Sphere radius", &radius, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
 
                     ImGui::TreePop();
                 }

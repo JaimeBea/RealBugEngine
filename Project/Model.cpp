@@ -8,6 +8,7 @@
 #include "assimp/cimport.h"
 #include "assimp/postprocess.h"
 #include "assimp/scene.h"
+#include <vector>
 #include <string>
 
 bool Model::Load(const char* file_name)
@@ -83,15 +84,36 @@ bool Model::Load(const char* file_name)
 		LOG("Material loaded.");
 	}
 
+	// Create an auxiliary vertex array
+	std::vector<vec> vertices;
+	int num_vertices = 0;
+	for (int i = 0; i < scene->mNumMeshes; ++i)
+	{
+		num_vertices += scene->mMeshes[i]->mNumVertices;
+	}
+	vertices.reserve(num_vertices);
+
 	// Load meshes
 	LOG("Loading %i meshes...", scene->mNumMeshes);
 	meshes.reserve(scene->mNumMeshes);
 	for (int i = 0; i < scene->mNumMeshes; ++i)
 	{
+		const aiMesh* ai_mesh = scene->mMeshes[i];
+
 		Mesh mesh;
-		mesh.Load(scene->mMeshes[i]);
+		mesh.Load(ai_mesh);
 		meshes.push_back(mesh);
+
+		// Add vertices to auxiliary vertex array
+		for (int j = 0; j < ai_mesh->mNumVertices; ++j)
+		{
+			const aiVector3D& ai_vertex = ai_mesh->mVertices[j];
+			vertices.push_back(vec(ai_vertex.x, ai_vertex.y, ai_vertex.z));
+		}
 	}
+
+	// Calculate bounding sphere with auxiliary vertex array
+	bounding_sphere = Sphere::OptimalEnclosingSphere(vertices.data(), vertices.size());
 
 	LOG("Model loaded.");
 	return true;

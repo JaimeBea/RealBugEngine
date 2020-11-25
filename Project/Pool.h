@@ -33,9 +33,9 @@ public:
 	void Clear()
 	{
 		// Destroy objects
-		for (T& object : *this)
+		for (int i = 0; i < size; ++i)
 		{
-			object.~T();
+			data[i].~T();
 		}
 
 		// Release
@@ -60,15 +60,13 @@ public:
 		size_t index = (object - data) / sizeof(T);
 		first_free = next_free[index];
 		next_free[index] = nullptr;
+
 		return object;
 	}
 
 	void Release(T* object)
 	{
 		assert(object >= data && object < &data[size]);
-
-		// Destroy the object
-		object->~T();
 
 		// Release the object
 		size_t index = (object - data) / sizeof(T);

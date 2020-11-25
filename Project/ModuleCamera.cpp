@@ -4,8 +4,12 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
+#include "ModuleRender.h"
+#include "Model.h"
 
+#include "Math/float3.h"
 #include "Math/float3x3.h"
+#include "Geometry/Sphere.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include "SDL_video.h"
@@ -125,11 +129,17 @@ UpdateStatus ModuleCamera::Update()
     }
     else
     {
-        // Reset camera with f key
+        // Focus camera around geometry with f key
         if (App->input->GetKey(SDL_SCANCODE_F))
         {
-            SetPosition(vec(2, 3, -5));
-            LookAt(0, 0, 0);
+            Model* model = App->renderer->current_model;
+            float min_half_angle = Min(frustum.HorizontalFov(), frustum.VerticalFov()) * 0.5f;
+            float relative_distance = model->bounding_sphere.r / Sin(min_half_angle);
+            vec camera_direction = -frustum.Front().Normalized();
+            vec camera_position = model->bounding_sphere.pos + (camera_direction * relative_distance);
+            vec model_center = model->bounding_sphere.pos;
+            SetPosition(camera_position);
+            LookAt(model_center.x, model_center.y, model_center.z);
         }
 
         // Move with arrow keys
