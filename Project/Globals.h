@@ -10,6 +10,7 @@ enum class UpdateStatus
 
 // Constants -----------
 #define DEGTORAD 0.01745329251f
+#define RADTODEG 1.0f / DEGTORAD
 
 // Configuration -----------
 #define GLSL_VERSION "#version 330"

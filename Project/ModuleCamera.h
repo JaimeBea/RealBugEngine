@@ -20,8 +20,7 @@ public:
 	void SetPlaneDistances(float near_plane, float far_plane);
 	void SetPosition(const vec& position);
 	void SetPosition(float x, float y, float z);
-	void SetOrientation(const float3& orientation);
-	void SetOrientation(float x, float y, float z);
+	void SetOrientation(const float3x3& rotationMatrix);
 	void Translate(const vec& translation);
 	void Zoom(float amount);
 	void Rotate(const float3x3& rotationMatrix);

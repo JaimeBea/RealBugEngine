@@ -51,6 +51,12 @@ void PanelConfiguration::Update()
             ImGui::Text("SDL version:");
             ImGui::SameLine();
             ImGui::TextColored(yellow, App->hardware->sdl_version);
+            ImGui::Text("Assimp version:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, App->hardware->assimp_version);
+            ImGui::Text("DeviL version:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, App->hardware->devil_version);
 
             ImGui::Separator();
 

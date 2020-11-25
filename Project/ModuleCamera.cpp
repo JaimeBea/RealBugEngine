@@ -197,14 +197,8 @@ void ModuleCamera::SetPosition(float x, float y, float z)
     SetPosition(vec(x, y, z));
 }
 
-void ModuleCamera::SetOrientation(const float3& orientaton)
+void ModuleCamera::SetOrientation(const float3x3& rotationMatrix)
 {
-    SetOrientation(orientaton.x, orientaton.y, orientaton.z);
-}
-
-void ModuleCamera::SetOrientation(float x, float y, float z)
-{
-    float3x3 rotationMatrix = float3x3::FromEulerXYZ(x, y, z);
     frustum.SetFront(rotationMatrix * float3::unitZ);
     frustum.SetUp(rotationMatrix * float3::unitY);
 }

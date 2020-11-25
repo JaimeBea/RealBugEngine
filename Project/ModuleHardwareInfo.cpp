@@ -5,14 +5,18 @@
 
 #include "SDL_version.h"
 #include "SDL_cpuinfo.h"
-#include "GL/glew.h"
 #include "SDL_video.h"
+#include "GL/glew.h"
+#include "IL/il.h"
+#include "assimp/version.h"
 
 bool ModuleHardwareInfo::Start()
 {
     SDL_version sdl_version_struct;
     SDL_VERSION(&sdl_version_struct);
     sprintf_s(sdl_version, "%i.%i.%i", sdl_version_struct.major, sdl_version_struct.minor, sdl_version_struct.patch);
+    sprintf_s(assimp_version, "%i.%i.%i", aiGetVersionMajor(), aiGetVersionMinor(), aiGetVersionRevision());
+    sprintf_s(devil_version, "%i.%i.%i", IL_VERSION / 100, (IL_VERSION % 100) / 10, IL_VERSION % 10);
 
     cpu_count = SDL_GetCPUCount();
     cache_size_kb = SDL_GetCPUCacheLineSize();

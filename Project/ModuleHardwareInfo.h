@@ -14,6 +14,8 @@ public:
 
 public:
 	char sdl_version[20] = "Not available";
+	char assimp_version[20] = "Not available";
+	char devil_version[20] = "Not available";
 	int cpu_count = 0;
 	int cache_size_kb = 0;
 	float ram_gb = 0;
