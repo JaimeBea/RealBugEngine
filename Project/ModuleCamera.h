@@ -42,9 +42,9 @@ public:
 	float4x4 GetViewMatrix() const;
 
 public:
-	float movement_speed = 4.0f;
+	float movement_speed = 0.4f;
 	float rotation_speed = 10.0f;
-	float zoom_speed = 0.5f;
+	float zoom_speed = 0.05f;
 	float shift_multiplier = 5.0f;
 
 private:

@@ -74,7 +74,7 @@ UpdateStatus ModuleCamera::Update()
     float mouse_wheel_motion = App->input->GetMouseWheelMotion();
     if (mouse_wheel_motion < -FLT_EPSILON || mouse_wheel_motion > FLT_EPSILON)
     {
-        Zoom(mouse_wheel_motion * 20 * delta_time);
+        Zoom(mouse_wheel_motion * 5 * focus_distance * delta_time);
     }
 
     if (App->input->GetKey(SDL_SCANCODE_LALT))
@@ -95,7 +95,7 @@ UpdateStatus ModuleCamera::Update()
             WarpMouseOnEdges();
 
             // Zoom with alt + right mouse button
-            Zoom(mouse_motion.y * final_zoom_speed * delta_time);
+            Zoom(mouse_motion.y * final_zoom_speed * focus_distance * delta_time);
         }
     }
     else if (App->input->GetMouseButton(SDL_BUTTON_RIGHT))
@@ -109,27 +109,27 @@ UpdateStatus ModuleCamera::Update()
         // Move with WASD + QE
         if (App->input->GetKey(SDL_SCANCODE_Q))
         {
-            Translate(frustum.Up().Normalized() * -final_movement_speed * delta_time);
+            Translate(frustum.Up().Normalized() * -final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_E))
         {
-            Translate(frustum.Up().Normalized() * final_movement_speed * delta_time);
+            Translate(frustum.Up().Normalized() * final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_W))
         {
-            Translate(frustum.Front().Normalized() * final_movement_speed * delta_time);
+            Translate(frustum.Front().Normalized() * final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_S))
         {
-            Translate(frustum.Front().Normalized() * -final_movement_speed * delta_time);
+            Translate(frustum.Front().Normalized() * -final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_A))
         {
-            Translate(frustum.WorldRight().Normalized() * -final_movement_speed * delta_time);
+            Translate(frustum.WorldRight().Normalized() * -final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_D))
         {
-            Translate(frustum.WorldRight().Normalized() * final_movement_speed * delta_time);
+            Translate(frustum.WorldRight().Normalized() * final_movement_speed * focus_distance * delta_time);
         }
     }
     else
@@ -143,19 +143,19 @@ UpdateStatus ModuleCamera::Update()
         // Move with arrow keys
         if (App->input->GetKey(SDL_SCANCODE_UP))
         {
-            Translate(frustum.Front().Normalized() * final_movement_speed * delta_time);
+            Translate(frustum.Front().Normalized() * final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_DOWN))
         {
-            Translate(frustum.Front().Normalized() * -final_movement_speed * delta_time);
+            Translate(frustum.Front().Normalized() * -final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_LEFT))
         {
-            Translate(frustum.WorldRight().Normalized() * -final_movement_speed * delta_time);
+            Translate(frustum.WorldRight().Normalized() * -final_movement_speed * focus_distance * delta_time);
         }
         if (App->input->GetKey(SDL_SCANCODE_RIGHT))
         {
-            Translate(frustum.WorldRight().Normalized() * final_movement_speed * delta_time);
+            Translate(frustum.WorldRight().Normalized() * final_movement_speed * focus_distance * delta_time);
         }
     }
 
