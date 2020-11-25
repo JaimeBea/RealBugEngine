@@ -48,6 +48,9 @@ void PanelConfiguration::Update()
         // Hardware
         if (ImGui::CollapsingHeader("Hardware"))
         {
+            ImGui::Text("GLEW version:");
+            ImGui::SameLine();
+            ImGui::TextColored(yellow, App->hardware->glew_version);
             ImGui::Text("SDL version:");
             ImGui::SameLine();
             ImGui::TextColored(yellow, App->hardware->sdl_version);
