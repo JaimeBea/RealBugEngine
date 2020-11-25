@@ -4,6 +4,8 @@
 
 #include "Geometry/Frustum.h"
 
+class Model;
+
 class ModuleCamera : public Module
 {
 public:
@@ -23,6 +25,7 @@ public:
 	void Translate(const vec& translation);
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
+	void Focus(Model* model);
 
 	vec GetFront() const;
 	vec GetUp() const;

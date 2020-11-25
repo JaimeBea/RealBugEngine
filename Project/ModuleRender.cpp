@@ -118,6 +118,7 @@ UpdateStatus ModuleRender::Update()
 		{
 			App->models->ReleaseModel(current_model);
 			current_model = loaded_model;
+			App->camera->Focus(current_model);
 		}
 		App->input->ReleaseDroppedFileName();
 	}

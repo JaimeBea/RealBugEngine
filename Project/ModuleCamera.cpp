@@ -132,14 +132,7 @@ UpdateStatus ModuleCamera::Update()
         // Focus camera around geometry with f key
         if (App->input->GetKey(SDL_SCANCODE_F))
         {
-            Model* model = App->renderer->current_model;
-            float min_half_angle = Min(frustum.HorizontalFov(), frustum.VerticalFov()) * 0.5f;
-            float relative_distance = model->bounding_sphere.r / Sin(min_half_angle);
-            vec camera_direction = -frustum.Front().Normalized();
-            vec camera_position = model->bounding_sphere.pos + (camera_direction * relative_distance);
-            vec model_center = model->bounding_sphere.pos;
-            SetPosition(camera_position);
-            LookAt(model_center.x, model_center.y, model_center.z);
+            Focus(App->renderer->current_model);
         }
 
         // Move with arrow keys
@@ -229,6 +222,17 @@ void ModuleCamera::LookAt(float x, float y, float z)
     vec direction = vec(x, y, z) - frustum.Pos();
     direction.Normalize();
     Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), vec::unitY));
+}
+
+void ModuleCamera::Focus(Model* model)
+{
+    float min_half_angle = Min(frustum.HorizontalFov(), frustum.VerticalFov()) * 0.5f;
+    float relative_distance = model->bounding_sphere.r / Sin(min_half_angle);
+    vec camera_direction = -frustum.Front().Normalized();
+    vec camera_position = model->bounding_sphere.pos + (camera_direction * relative_distance);
+    vec model_center = model->bounding_sphere.pos;
+    SetPosition(camera_position);
+    LookAt(model_center.x, model_center.y, model_center.z);
 }
 
 vec ModuleCamera::GetFront() const
