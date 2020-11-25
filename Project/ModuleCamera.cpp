@@ -74,7 +74,7 @@ UpdateStatus ModuleCamera::Update()
     float mouse_wheel_motion = App->input->GetMouseWheelMotion();
     if (mouse_wheel_motion < -FLT_EPSILON || mouse_wheel_motion > FLT_EPSILON)
     {
-        Translate(frustum.Front().Normalized() * mouse_wheel_motion * 20 * delta_time);
+        Zoom(mouse_wheel_motion * 20 * delta_time);
     }
 
     if (App->input->GetKey(SDL_SCANCODE_LALT))
@@ -84,13 +84,18 @@ UpdateStatus ModuleCamera::Update()
             WarpMouseOnEdges();
 
             // Orbit with alt + left mouse button
+            vec old_focus = frustum.Pos() + frustum.Front().Normalized() * focus_distance;
+            Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -mouse_motion.y * rotation_speed * DEGTORAD * delta_time));
+            Rotate(float3x3::RotateY(-mouse_motion.x * rotation_speed * DEGTORAD * delta_time));
+            vec new_focus = frustum.Pos() + frustum.Front().Normalized() * focus_distance;
+            Translate(old_focus - new_focus);
         }
         else if (App->input->GetMouseButton(SDL_BUTTON_RIGHT))
         {
             WarpMouseOnEdges();
 
             // Zoom with alt + right mouse button
-            Translate(frustum.Front().Normalized() * mouse_motion.y * final_zoom_speed * delta_time);
+            Zoom(mouse_motion.y * final_zoom_speed * delta_time);
         }
     }
     else if (App->input->GetMouseButton(SDL_BUTTON_RIGHT))
@@ -209,6 +214,16 @@ void ModuleCamera::Translate(const vec& translation)
     frustum.SetPos(frustum.Pos() + translation);
 }
 
+void ModuleCamera::Zoom(float amount)
+{
+    Translate(frustum.Front().Normalized() * amount);
+    focus_distance -= amount;
+    if (focus_distance < 0.0f)
+    {
+        focus_distance = 0.0f;
+    }
+}
+
 void ModuleCamera::Rotate(const float3x3& rotationMatrix)
 {
     vec oldFront = frustum.Front().Normalized();
@@ -220,6 +235,7 @@ void ModuleCamera::Rotate(const float3x3& rotationMatrix)
 void ModuleCamera::LookAt(float x, float y, float z)
 {
     vec direction = vec(x, y, z) - frustum.Pos();
+    focus_distance = direction.Length();
     direction.Normalize();
     Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), vec::unitY));
 }
@@ -258,6 +274,11 @@ vec ModuleCamera::GetPosition() const
 float3 ModuleCamera::GetOrientation() const
 {
     return frustum.ViewMatrix().RotatePart().ToEulerXYZ();
+}
+
+float ModuleCamera::GetFocusDistance() const
+{
+    return focus_distance;
 }
 
 float ModuleCamera::GetNearPlane() const

@@ -23,6 +23,7 @@ public:
 	void SetOrientation(const float3& orientation);
 	void SetOrientation(float x, float y, float z);
 	void Translate(const vec& translation);
+	void Zoom(float amount);
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
 	void Focus(Model* model);
@@ -32,6 +33,7 @@ public:
 	vec GetWorldRight() const;
 	vec GetPosition() const;
 	float3 GetOrientation() const;
+	float GetFocusDistance() const;
 	float GetNearPlane() const;
 	float GetFarPlane() const;
 	float GetFOV() const;
@@ -47,4 +49,5 @@ public:
 
 private:
 	Frustum frustum;
+	float focus_distance = 0.0f;
 };
