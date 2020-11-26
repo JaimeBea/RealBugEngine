@@ -356,6 +356,12 @@
     <ClInclude Include="PanelProperties.h">
       <Filter>Source\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="MSTimer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="PerformanceTimer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -505,9 +511,6 @@
     <ClCompile Include="Application.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="Globals.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -570,6 +573,12 @@
     </ClCompile>
     <ClCompile Include="PanelProperties.cpp">
       <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="MSTimer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceTimer.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

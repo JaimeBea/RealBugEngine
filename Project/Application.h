@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MSTimer.h"
+
 #include <list>
 
 enum class UpdateStatus;
@@ -59,8 +61,9 @@ public:
 	const char* engine_license = "MIT";
 
 private:
+	MSTimer timer;
+
 	float delta_time = 0.0f;
-	unsigned previous_time = 0;
 
 	std::list<Module*> modules;
 };

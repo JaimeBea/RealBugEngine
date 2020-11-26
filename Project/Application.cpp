@@ -44,7 +44,7 @@ Application::~Application()
 
 bool Application::Init()
 {
-	previous_time = SDL_GetTicks();
+	timer.Start();
 
 	bool ret = true;
 
@@ -72,10 +72,11 @@ UpdateStatus Application::Update()
 {
 	UpdateStatus ret = UpdateStatus::CONTINUE;
 
-	unsigned now_time = SDL_GetTicks();
-	if (SDL_TICKS_PASSED(now_time, previous_time))
+	unsigned int delta_ms = timer.Read();
+	timer.Start();
+
+	if (delta_ms > 0)
 	{
-		unsigned delta_ms = now_time - previous_time;
 		log_delta_ms(delta_ms);
 		delta_time = delta_ms / 1000.0f;
 
@@ -94,13 +95,11 @@ UpdateStatus Application::Update()
 			ret = (*it)->PostUpdate();
 		}
 	}
-	previous_time = now_time;
 
 	if (limit_framerate)
 	{
-		now_time = SDL_GetTicks();
-		unsigned frame_ms = now_time - previous_time;
-		unsigned min_ms = 1000 / max_fps;
+		unsigned int frame_ms = timer.Read();
+		unsigned int min_ms = 1000 / max_fps;
 		if (frame_ms < min_ms)
 		{
 			SDL_Delay(min_ms - frame_ms);
