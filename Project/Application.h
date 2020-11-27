@@ -2,7 +2,7 @@
 
 #include "MSTimer.h"
 
-#include <list>
+#include <vector>
 
 enum class UpdateStatus;
 
@@ -65,7 +65,7 @@ private:
 
 	float delta_time = 0.0f;
 
-	std::list<Module*> modules;
+	std::vector<Module*> modules;
 };
 
 extern Application* App;

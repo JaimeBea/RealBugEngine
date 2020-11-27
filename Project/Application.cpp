@@ -50,7 +50,7 @@ bool Application::Init()
 
 	bool ret = true;
 
-	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 	{
 		ret = (*it)->Init();
 	}
@@ -62,7 +62,7 @@ bool Application::Start()
 {
 	bool ret = true;
 
-	for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 	{
 		ret = (*it)->Start();
 	}
@@ -82,17 +82,17 @@ UpdateStatus Application::Update()
 		log_delta_ms((float)delta_ms);
 		delta_time = delta_ms / 1000.0f;
 
-		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 		{
 			ret = (*it)->PreUpdate();
 		}
 
-		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 		{
 			ret = (*it)->Update();
 		}
 
-		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 		{
 			ret = (*it)->PostUpdate();
 		}
@@ -107,6 +107,7 @@ UpdateStatus Application::Update()
 			SDL_Delay(min_ms - frame_ms);
 		}
 	}
+
 	return ret;
 }
 
@@ -114,7 +115,7 @@ bool Application::CleanUp()
 {
 	bool ret = true;
 
-	for (std::list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
+	for (std::vector<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 	{
 		ret = (*it)->CleanUp();
 	}
