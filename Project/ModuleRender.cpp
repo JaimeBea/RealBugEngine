@@ -109,7 +109,7 @@ UpdateStatus ModuleRender::Update()
 {
 	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewport_width, viewport_height);
 
-	// Load the model if it gets dropped
+	// Load model or texture if one gets dropped
 	const char* dropped_file_name = App->input->GetDroppedFileName();
 	if (dropped_file_name != nullptr)
 	{
@@ -119,6 +119,23 @@ UpdateStatus ModuleRender::Update()
 			App->models->ReleaseModel(current_model);
 			current_model = loaded_model;
 			App->camera->Focus(current_model);
+		}
+		else
+		{
+			unsigned loaded_texture = App->textures->LoadTexture(dropped_file_name);
+			if (loaded_texture)
+			{
+				for (unsigned material : current_model->materials)
+				{
+					App->textures->ReleaseTexture(material);
+				}
+				current_model->materials.clear();
+				current_model->materials.push_back(loaded_texture);
+				for (Mesh& mesh : current_model->meshes)
+				{
+					mesh.material_index = 0;
+				}
+			}
 		}
 		App->input->ReleaseDroppedFileName();
 	}
