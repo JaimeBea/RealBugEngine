@@ -9,7 +9,7 @@ static void AssimpLogCallback(const char* message, char* user)
 {
     std::string message_str = message;
     std::string final_message_str = message_str.substr(0, message_str.find_last_of('\n'));
-    //LOG(final_message_str.c_str());
+    LOG(final_message_str.c_str());
 }
 
 bool ModuleModels::Init()
