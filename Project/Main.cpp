@@ -26,12 +26,12 @@ static void DumpLeaks()
 
 int main(int argc, char ** argv)
 {
-	int main_return = EXIT_FAILURE;
-	MainState state = MainState::CREATION;
-
 #ifdef _DEBUG
 	atexit(DumpLeaks);
 #endif
+
+	int main_return = EXIT_FAILURE;
+	MainState state = MainState::CREATION;
 
 	while (state != MainState::EXIT)
 	{
@@ -95,6 +95,7 @@ int main(int argc, char ** argv)
 			}
 			else
 			{
+				LOG("Application CleanUp completed successfuly -----");
 				main_return = EXIT_SUCCESS;
 			}
 			delete App;

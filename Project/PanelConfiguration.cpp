@@ -262,7 +262,7 @@ void PanelConfiguration::Update()
                     bool is_selected = (min_filter_item_current == min_filter_items[n]);
                     if (ImGui::Selectable(min_filter_items[n], is_selected))
                     {
-                        App->textures->SetMinFilter(TextureFilter(n));
+                        App->textures->SetMinFilter(TextureMinFilter(n));
                     }
                     if (is_selected)
                     {
@@ -273,7 +273,7 @@ void PanelConfiguration::Update()
             }
 
             // Mag filter combo box
-            const char* mag_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
+            const char* mag_filter_items[] = { "Nearest", "Linear" };
             const char* mag_filter_item_current = mag_filter_items[int(App->textures->GetMagFilter())];
             if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
             {
@@ -282,7 +282,7 @@ void PanelConfiguration::Update()
                     bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
                     if (ImGui::Selectable(mag_filter_items[n], is_selected))
                     {
-                        App->textures->SetMagFilter(TextureFilter(n));
+                        App->textures->SetMagFilter(TextureMagFilter(n));
                     }
                     if (is_selected)
                     {

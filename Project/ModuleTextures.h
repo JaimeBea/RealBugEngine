@@ -4,7 +4,7 @@
 
 #include <vector>
 
-enum class TextureFilter
+enum class TextureMinFilter
 {
 	NEAREST,
 	LINEAR,
@@ -12,6 +12,12 @@ enum class TextureFilter
 	LINEAR_MIPMAP_NEAREST,
 	NEAREST_MIPMAP_LINEAR,
 	LINEAR_MIPMAP_LINEAR
+};
+
+enum class TextureMagFilter
+{
+	NEAREST,
+	LINEAR
 };
 
 enum class TextureWrap
@@ -32,20 +38,20 @@ public:
 	unsigned LoadTexture(const char* file_name);
 	void ReleaseTexture(unsigned texture);
 
-	void SetMinFilter(TextureFilter filter);
-	void SetMagFilter(TextureFilter filter);
+	void SetMinFilter(TextureMinFilter filter);
+	void SetMagFilter(TextureMagFilter filter);
 	void SetWrap(TextureWrap wrap);
 
-	TextureFilter GetMinFilter() const;
-	TextureFilter GetMagFilter() const;
+	TextureMinFilter GetMinFilter() const;
+	TextureMagFilter GetMagFilter() const;
 	TextureWrap GetWrap() const;
 
 public:
 	std::vector<unsigned> textures;
 
 private:
-	TextureFilter min_filter = TextureFilter::NEAREST_MIPMAP_LINEAR;
-	TextureFilter mag_filter = TextureFilter::LINEAR;
+	TextureMinFilter min_filter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;
+	TextureMagFilter mag_filter = TextureMagFilter::LINEAR;
 	TextureWrap texture_wrap = TextureWrap::REPEAT;
 };
 

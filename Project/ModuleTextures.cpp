@@ -47,14 +47,6 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 		return 0;
 	}
 
-	unsigned texture;
-	glGenTextures(1, &texture); /* Texture name generation */
-	glBindTexture(GL_TEXTURE_2D, texture); /* Binding of texture name */
-
-	SetWrap(texture_wrap);
-	SetMinFilter(min_filter);
-	SetMagFilter(mag_filter);
-
 	// Flip image if neccessary
 	ILinfo info;
 	iluGetImageInfo(&info);
@@ -63,14 +55,22 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 		iluFlipImage();
 	}
 
+	// Create texture
+	unsigned texture;
+	glGenTextures(1, &texture);
+	textures.push_back(texture);
+
 	// Generate texture from image
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
 		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
-		ilGetData()); /* Texture specification */
+		ilGetData());
 
+	// Generate mipmaps and set filtering and wrapping
 	glGenerateMipmap(GL_TEXTURE_2D);
-
-	textures.push_back(texture);
+	SetWrap(texture_wrap);
+	SetMinFilter(min_filter);
+	SetMagFilter(mag_filter);
 
 	LOG("Texture loaded successfuly.");
 
@@ -99,55 +99,51 @@ void ModuleTextures::ReleaseTexture(unsigned texture)
 	glDeleteTextures(1, &texture);
 }
 
-void ModuleTextures::SetMinFilter(TextureFilter filter)
+void ModuleTextures::SetMinFilter(TextureMinFilter filter)
 {
-	switch (filter)
+	for (unsigned texture : textures)
 	{
-	case TextureFilter::NEAREST:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		break;
-	case TextureFilter::LINEAR:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		break;
-	case TextureFilter::NEAREST_MIPMAP_NEAREST:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-		break;
-	case TextureFilter::LINEAR_MIPMAP_NEAREST:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		break;
-	case TextureFilter::NEAREST_MIPMAP_LINEAR:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		break;
-	case TextureFilter::LINEAR_MIPMAP_LINEAR:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		break;
+		glBindTexture(GL_TEXTURE_2D, texture);
+		switch (filter)
+		{
+		case TextureMinFilter::NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			break;
+		case TextureMinFilter::LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			break;
+		case TextureMinFilter::NEAREST_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+			break;
+		case TextureMinFilter::LINEAR_MIPMAP_NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			break;
+		case TextureMinFilter::NEAREST_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+			break;
+		case TextureMinFilter::LINEAR_MIPMAP_LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			break;
+		}
 	}
 
 	min_filter = filter;
 }
 
-void ModuleTextures::SetMagFilter(TextureFilter filter)
+void ModuleTextures::SetMagFilter(TextureMagFilter filter)
 {
-	switch (filter)
+	for (unsigned texture : textures)
 	{
-	case TextureFilter::NEAREST:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		break;
-	case TextureFilter::LINEAR:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		break;
-	case TextureFilter::NEAREST_MIPMAP_NEAREST:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-		break;
-	case TextureFilter::LINEAR_MIPMAP_NEAREST:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-		break;
-	case TextureFilter::NEAREST_MIPMAP_LINEAR:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-		break;
-	case TextureFilter::LINEAR_MIPMAP_LINEAR:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		break;
+		glBindTexture(GL_TEXTURE_2D, texture);
+		switch (filter)
+		{
+		case TextureMagFilter::NEAREST:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			break;
+		case TextureMagFilter::LINEAR:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			break;
+		}
 	}
 
 	mag_filter = filter;
@@ -155,39 +151,43 @@ void ModuleTextures::SetMagFilter(TextureFilter filter)
 
 void ModuleTextures::SetWrap(TextureWrap wrap)
 {
-	switch (wrap)
+	for (unsigned texture : textures)
 	{
-	case TextureWrap::REPEAT:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		break;
-	case TextureWrap::CLAMP_TO_EDGE:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		break;
-	case TextureWrap::CLAMP_TO_BORDER:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		break;
-	case TextureWrap::MIRROR_REPEAT:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-		break;
-	case TextureWrap::MIRROR_CLAMP_TO_EDGE:
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE);
-		break;
+		glBindTexture(GL_TEXTURE_2D, texture);
+		switch (wrap)
+		{
+		case TextureWrap::REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			break;
+		case TextureWrap::CLAMP_TO_EDGE:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			break;
+		case TextureWrap::CLAMP_TO_BORDER:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+			break;
+		case TextureWrap::MIRROR_REPEAT:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+			break;
+		case TextureWrap::MIRROR_CLAMP_TO_EDGE:
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRROR_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRROR_CLAMP_TO_EDGE);
+			break;
+		}
 	}
 
 	texture_wrap = wrap;
 }
 
-TextureFilter ModuleTextures::GetMinFilter() const
+TextureMinFilter ModuleTextures::GetMinFilter() const
 {
 	return min_filter;
 }
 
-TextureFilter ModuleTextures::GetMagFilter() const
+TextureMagFilter ModuleTextures::GetMagFilter() const
 {
 	return mag_filter;
 }
