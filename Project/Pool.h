@@ -26,7 +26,7 @@ public:
 		// Initialize free list
 		for (int i = 0; i < amount; ++i)
 		{
-			next_free[i] = &data[i + 1];
+			next_free[i] = data + (i + 1) * sizeof(T);
 		}
 	}
 
@@ -50,7 +50,7 @@ public:
 		assert(first_free != nullptr);
 
 		// Check for pool overflow
-		if (first_free == &data[size])
+		if (first_free == data + size * sizeof(T))
 		{
 			return nullptr;
 		}
@@ -66,7 +66,7 @@ public:
 
 	void Release(T* object)
 	{
-		assert(object >= data && object < &data[size]);
+		assert(object >= data && object < data + size * sizeof(T));
 
 		// Release the object
 		size_t index = (object - data) / sizeof(T);
