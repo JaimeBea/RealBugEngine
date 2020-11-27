@@ -4,6 +4,8 @@
 
 #include "imgui.h"
 
+#include "Leaks.h"
+
 static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 PanelAbout::PanelAbout() : Panel("About", false) {}

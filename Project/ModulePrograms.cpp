@@ -6,6 +6,8 @@
 #include "GL/glew.h"
 #include <string.h>
 
+#include "Leaks.h"
+
 static char* LoadShader(const char* file_name)
 {
 	FILE* file = fopen(file_name, "rb");

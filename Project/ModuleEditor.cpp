@@ -12,6 +12,8 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 
+#include "Leaks.h"
+
 bool ModuleEditor::Init()
 {
     ImGui::CreateContext();

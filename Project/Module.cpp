@@ -2,6 +2,8 @@
 
 #include "Globals.h"
 
+#include "Leaks.h"
+
 bool Module::Init()
 {
 	return true;

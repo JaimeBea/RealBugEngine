@@ -7,6 +7,8 @@
 
 #include "GL/glew.h"
 
+#include "Leaks.h"
+
 class DDRenderInterfaceCoreGL final : public dd::RenderInterface
 {
 public:

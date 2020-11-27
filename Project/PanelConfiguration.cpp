@@ -13,6 +13,8 @@
 #include "GL/glew.h"
 #include "imgui.h"
 
+#include "Leaks.h"
+
 static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
 
 PanelConfiguration::PanelConfiguration() : Panel("Configuration", true) {}

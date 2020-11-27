@@ -5,6 +5,8 @@
 #include "SDL.h"
 #include <stdlib.h>
 
+#include "Leaks.h"
+
 enum class MainState
 {
 	CREATION,
@@ -17,10 +19,19 @@ enum class MainState
 
 Application* App = nullptr;
 
+static void DumpLeaks()
+{
+	_CrtDumpMemoryLeaks();
+}
+
 int main(int argc, char ** argv)
 {
 	int main_return = EXIT_FAILURE;
 	MainState state = MainState::CREATION;
+
+#ifdef _DEBUG
+	atexit(DumpLeaks);
+#endif
 
 	while (state != MainState::EXIT)
 	{

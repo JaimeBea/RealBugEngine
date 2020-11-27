@@ -11,6 +11,8 @@
 #include <vector>
 #include <string>
 
+#include "Leaks.h"
+
 bool Model::Load(const char* file_name)
 {
 	// Load model

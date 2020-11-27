@@ -10,6 +10,8 @@
 #include "IL/il.h"
 #include "assimp/version.h"
 
+#include "Leaks.h"
+
 bool ModuleHardwareInfo::Start()
 {
     SDL_version sdl_version_struct;

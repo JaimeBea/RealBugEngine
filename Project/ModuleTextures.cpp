@@ -8,6 +8,8 @@
 #include "IL/ilu.h"
 #include "GL/glew.h"
 
+#include "Leaks.h"
+
 bool ModuleTextures::Init()
 {
 	ilInit();

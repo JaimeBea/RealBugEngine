@@ -6,6 +6,8 @@
 
 #include "SDL.h"
 
+#include "Leaks.h"
+
 bool ModuleWindow::Init()
 {
 	LOG("Init SDL window & surface");

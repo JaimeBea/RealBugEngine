@@ -9,6 +9,8 @@
 #include "assimp/mesh.h"
 #include "GL/glew.h"
 
+#include "Leaks.h"
+
 void Mesh::Load(const aiMesh* mesh)
 {
 	num_vertices = mesh->mNumVertices;

@@ -14,6 +14,8 @@
 #include "SDL_scancode.h"
 #include "SDL_video.h"
 
+#include "Leaks.h"
+
 static void WarpMouseOnEdges()
 {
     const float2& mouse_position = App->input->GetMousePosition();

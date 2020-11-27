@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Leaks.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
     <ClInclude Include="Logging.h" />

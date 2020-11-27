@@ -362,6 +362,9 @@
     <ClInclude Include="PerformanceTimer.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="Leaks.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">

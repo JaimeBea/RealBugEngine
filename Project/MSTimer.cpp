@@ -4,6 +4,8 @@
 
 #include "SDL_timer.h"
 
+#include "Leaks.h"
+
 void MSTimer::Start()
 {
 	start_time = SDL_GetTicks();

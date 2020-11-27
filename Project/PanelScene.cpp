@@ -11,6 +11,8 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 
+#include "Leaks.h"
+
 PanelScene::PanelScene() : Panel("Scene", true) {}
 
 void PanelScene::Update()

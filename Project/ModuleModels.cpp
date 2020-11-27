@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include "Leaks.h"
+
 static void AssimpLogCallback(const char* message, char* user)
 {
     std::string message_str = message;

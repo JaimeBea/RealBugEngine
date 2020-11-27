@@ -16,6 +16,8 @@
 #include "SDL_timer.h"
 #include <windows.h>
 
+#include "Leaks.h"
+
 Application::Application()
 {
 	// Order matters: they will Init/start/update in this order

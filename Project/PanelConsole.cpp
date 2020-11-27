@@ -6,6 +6,8 @@
 
 #include "imgui.h"
 
+#include "Leaks.h"
+
 static int ExecuteCommand(ImGuiInputTextCallbackData* data)
 {
     return 0;

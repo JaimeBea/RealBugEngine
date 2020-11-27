@@ -4,6 +4,8 @@
 
 #include "SDL_timer.h"
 
+#include "Leaks.h"
+
 void PerformanceTimer::Start()
 {
 	start_count = SDL_GetPerformanceCounter();

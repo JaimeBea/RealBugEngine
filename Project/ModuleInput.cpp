@@ -11,6 +11,8 @@
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 
+#include "Leaks.h"
+
 bool ModuleInput::Init()
 {
 	LOG("Init SDL input event system");
