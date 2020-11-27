@@ -44,6 +44,7 @@ Model* ModuleModels::LoadModel(const char* file_name)
     Model* model = models.Obtain();
     if (!model->Load(file_name))
     {
+        models.Release(model);
         return nullptr;
     }
     return model;
