@@ -113,7 +113,7 @@ bool Model::Load(const char* file_name)
 	}
 
 	// Calculate bounding sphere with auxiliary vertex array
-	bounding_sphere = Sphere::OptimalEnclosingSphere(vertices.data(), vertices.size());
+	bounding_sphere = Sphere::FastEnclosingSphere(vertices.data(), vertices.size());
 
 	LOG("Model loaded.");
 	return true;

@@ -89,7 +89,7 @@ bool ModuleRender::Init()
 
 bool ModuleRender::Start()
 {
-	current_model = App->models->LoadModel("Assets/BakerHouse/BakerHouse.fbx");
+	current_model = App->models->LoadModel("Assets/BakerHouse.fbx");
 
 	return true;
 }
