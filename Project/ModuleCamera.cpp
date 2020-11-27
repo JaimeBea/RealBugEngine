@@ -231,7 +231,15 @@ void ModuleCamera::LookAt(float x, float y, float z)
     vec direction = vec(x, y, z) - frustum.Pos();
     focus_distance = direction.Length();
     direction.Normalize();
-    Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), vec::unitY));
+    vec up = vec::unitY;
+
+    // Special case for when looking straight up
+    if (direction.Cross(up).IsZero())
+    {
+        up = vec::unitZ;
+    }
+
+    Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), up));
 }
 
 void ModuleCamera::Focus(Model* model)
