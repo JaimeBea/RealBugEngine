@@ -15,10 +15,11 @@ enum class UpdateStatus
 // Configuration -----------
 #define GLSL_VERSION "#version 330"
 
-// Delete helpers
+// Delete helpers -----------
 #define RELEASE( x ) { if( x != nullptr ) { delete x; x = nullptr; } }
 #define RELEASE_ARRAY( x ) { if( x != nullptr ) { delete[] x; x = nullptr; } }
 
+// Defer -----------
 // Defer calls the given code at the end of the scope. Useful for freeing resources.
 // Important: End of scope is not end of function. Be careful when using it inside loops.
 // Usage: DEFER{ statements; };

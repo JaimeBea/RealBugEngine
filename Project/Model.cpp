@@ -25,7 +25,7 @@ bool Model::Load(const char* file_name)
 	// Load materials
 	LOG("Loading %i materials...", scene->mNumMaterials);
 	materials.reserve(scene->mNumMaterials);
-	for (int i = 0; i < scene->mNumMaterials; ++i)
+	for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
 	{
 		LOG("Loading material %i...", i);
 		aiString material_file_dir;
@@ -87,7 +87,7 @@ bool Model::Load(const char* file_name)
 	// Create an auxiliary vertex array
 	std::vector<vec> vertices;
 	int num_vertices = 0;
-	for (int i = 0; i < scene->mNumMeshes; ++i)
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
 		num_vertices += scene->mMeshes[i]->mNumVertices;
 	}
@@ -96,7 +96,7 @@ bool Model::Load(const char* file_name)
 	// Load meshes
 	LOG("Loading %i meshes...", scene->mNumMeshes);
 	meshes.reserve(scene->mNumMeshes);
-	for (int i = 0; i < scene->mNumMeshes; ++i)
+	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
 	{
 		const aiMesh* ai_mesh = scene->mMeshes[i];
 
@@ -105,7 +105,7 @@ bool Model::Load(const char* file_name)
 		meshes.push_back(mesh);
 
 		// Add vertices to auxiliary vertex array
-		for (int j = 0; j < ai_mesh->mNumVertices; ++j)
+		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
 		{
 			const aiVector3D& ai_vertex = ai_mesh->mVertices[j];
 			vertices.push_back(vec(ai_vertex.x, ai_vertex.y, ai_vertex.z));

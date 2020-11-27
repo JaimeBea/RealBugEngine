@@ -24,7 +24,7 @@ public:
 		first_free = data;
 
 		// Initialize free list
-		for (int i = 0; i < amount; ++i)
+		for (size_t i = 0; i < amount; ++i)
 		{
 			next_free[i] = data + (i + 1) * sizeof(T);
 		}
@@ -33,7 +33,7 @@ public:
 	void Clear()
 	{
 		// Destroy objects
-		for (int i = 0; i < size; ++i)
+		for (size_t i = 0; i < size; ++i)
 		{
 			data[i].~T();
 		}

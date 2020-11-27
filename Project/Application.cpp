@@ -77,7 +77,7 @@ UpdateStatus Application::Update()
 
 	if (delta_ms > 0)
 	{
-		log_delta_ms(delta_ms);
+		log_delta_ms((float)delta_ms);
 		delta_time = delta_ms / 1000.0f;
 
 		for (std::list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
