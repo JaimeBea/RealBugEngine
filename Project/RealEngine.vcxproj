@@ -201,6 +201,7 @@
   <ItemGroup>
     <None Include="..\Game\Shaders\fragment.frag" />
     <None Include="..\Game\Shaders\vertex.vert" />
+    <None Include="..\README.md" />
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\QuadTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_AVX.inl" />

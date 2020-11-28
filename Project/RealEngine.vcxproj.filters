@@ -612,5 +612,6 @@
     <None Include="..\Game\Shaders\vertex.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\README.md" />
   </ItemGroup>
 </Project>
