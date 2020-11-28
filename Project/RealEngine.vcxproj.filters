@@ -613,5 +613,8 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\README.md" />
+    <None Include="..\LICENSE" />
+    <None Include="..\PackageEngine.ps1" />
+    <None Include="..\PackageEngine.bat" />
   </ItemGroup>
 </Project>
