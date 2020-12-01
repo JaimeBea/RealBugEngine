@@ -1,4 +1,4 @@
-# RealEngine
+# RealBugEngine
 
 Basic engine created for UPC's Master in Advanced Programming for AAA Videogames.
 
@@ -113,10 +113,11 @@ There are no commands currently available.
 ## Authors
 
 _Jaime Bea Pérez-Zubizarreta_ (https://github.com/JaimeBea)
+_Lowy Solé Franquesa_ (http://github.com/lowysole)
 
 ## Github
 
-https://github.com/JaimeBea/UPCMasterEngine
+https://github.com/JaimeBea/RealBugEngine
 
 ## License
 
