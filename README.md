@@ -113,6 +113,7 @@ There are no commands currently available.
 ## Authors
 
 _Jaime Bea Pérez-Zubizarreta_ (https://github.com/JaimeBea)
+
 _Lowy Solé Franquesa_ (http://github.com/lowysole)
 
 ## Github
