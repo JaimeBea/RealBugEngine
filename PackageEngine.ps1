@@ -1,4 +1,4 @@
-${EngineName} = "RealEngine"
+${EngineName} = "RealBugEngine"
 ${Version} = "0.0.1"
 
 ${ReleaseDir} = "Build/Release"
