@@ -19,6 +19,7 @@ public:
 
 		// Allocate
 		size = amount;
+		count = 0;
 		data = new T[amount];
 		next_free = new T*[amount];
 		first_free = data;
@@ -40,6 +41,7 @@ public:
 
 		// Release
 		size = 0;
+		count = 0;
 		RELEASE_ARRAY(data);
 		RELEASE_ARRAY(next_free);
 		first_free = nullptr;
@@ -72,6 +74,11 @@ public:
 		size_t index = (object - data) / sizeof(T);
 		next_free[index] = first_free;
 		first_free = object;
+	}
+
+	size_t Count()
+	{
+		return count;
 	}
 
 	// Iteration
@@ -137,8 +144,9 @@ public:
 	}
 
 private:
-	size_t size; // Max number of objects in the pool.
-	T* data; // Data storage.
-	T** next_free; // Linked list of free objects. Null pointers mean that the object isn't free. Last item points to the end of the data.
-	T* first_free; // First free object in the linked list.
+	size_t size = 0; // Max number of objects in the pool.
+	size_t count = 0; // Current number of objects in the pool.
+	T* data = nullptr; // Data storage.
+	T** next_free = nullptr; // Linked list of free objects. Null pointers mean that the object isn't free. Last item points to the end of the data.
+	T* first_free = nullptr; // First free object in the linked list.
 };
