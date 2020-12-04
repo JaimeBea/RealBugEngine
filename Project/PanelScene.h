@@ -8,8 +8,5 @@ public:
 	PanelScene();
 
 	void Update() override;
-
-private:
-
 };
 

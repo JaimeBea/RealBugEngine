@@ -4,6 +4,8 @@
 
 #include "Leaks.h"
 
+Module::~Module() {}
+
 bool Module::Init()
 {
 	return true;

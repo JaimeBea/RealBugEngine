@@ -19,20 +19,19 @@ enum class MainState
 
 Application* App = nullptr;
 
-static void DumpLeaks()
-{
-	_CrtDumpMemoryLeaks();
-}
-
 int main(int argc, char ** argv)
 {
 #ifdef _DEBUG
-	atexit(DumpLeaks);
+	_CrtMemState mem_state;
+	_CrtMemCheckpoint(&mem_state);
 #endif
 
+	// Initialize logging
+	log_string = new std::string();
+
+	// Game loop
 	int main_return = EXIT_FAILURE;
 	MainState state = MainState::CREATION;
-
 	while (state != MainState::EXIT)
 	{
 		switch (state)
@@ -98,7 +97,6 @@ int main(int argc, char ** argv)
 				LOG("Application CleanUp completed successfuly -----");
 				main_return = EXIT_SUCCESS;
 			}
-			delete App;
 			state = MainState::EXIT;
 			break;
 		}
@@ -106,6 +104,13 @@ int main(int argc, char ** argv)
 	}
 
 	LOG("Bye :)\n");
+
+	RELEASE(App);
+	RELEASE(log_string);
+
+#ifdef _DEBUG
+	_CrtMemDumpAllObjectsSince(&mem_state);
+#endif
 
 	return main_return;
 }
