@@ -19,15 +19,11 @@ enum class MainState
 
 Application* App = nullptr;
 
-static void DumpLeaks()
-{
-	_CrtDumpMemoryLeaks();
-}
-
 int main(int argc, char ** argv)
 {
 #ifdef _DEBUG
-	atexit(DumpLeaks);
+	_CrtMemState mem_state;
+	_CrtMemCheckpoint(&mem_state);
 #endif
 
 	int main_return = EXIT_FAILURE;
@@ -98,7 +94,6 @@ int main(int argc, char ** argv)
 				LOG("Application CleanUp completed successfuly -----");
 				main_return = EXIT_SUCCESS;
 			}
-			delete App;
 			state = MainState::EXIT;
 			break;
 		}
@@ -106,6 +101,12 @@ int main(int argc, char ** argv)
 	}
 
 	LOG("Bye :)\n");
+
+	RELEASE(App);
+
+#ifdef _DEBUG
+	_CrtMemDumpAllObjectsSince(&mem_state);
+#endif
 
 	return main_return;
 }
