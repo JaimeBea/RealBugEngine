@@ -8,7 +8,10 @@
 #include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleTextures.h"
-#include "ModuleModels.h"
+#include "ModuleScene.h"
+#include "ComponentMesh.h"
+#include "ComponentTransform.h"
+#include "ComponentMaterial.h"
 
 #include "GL/glew.h"
 #include "SDL.h"
@@ -44,7 +47,7 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
 	};
 
-	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
+	if (severity != GL_DEBUG_SEVERITY_HIGH)
 	{
 		return;
 	}
@@ -89,13 +92,6 @@ bool ModuleRender::Init()
 	return true;
 }
 
-bool ModuleRender::Start()
-{
-	current_model = App->models->LoadModel("Assets/BakerHouse.fbx");
-
-	return true;
-}
-
 UpdateStatus ModuleRender::PreUpdate()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -115,15 +111,10 @@ UpdateStatus ModuleRender::Update()
 	const char* dropped_file_name = App->input->GetDroppedFileName();
 	if (dropped_file_name != nullptr)
 	{
-		Model* loaded_model = App->models->LoadModel(dropped_file_name);
-		if (loaded_model)
+		bool loaded_scene = App->scene->Load(dropped_file_name);
+		if (!loaded_scene)
 		{
-			App->models->ReleaseModel(current_model);
-			current_model = loaded_model;
-			App->camera->Focus(current_model);
-		}
-		else
-		{
+			/* TODO: Load textures
 			unsigned loaded_texture = App->textures->LoadTexture(dropped_file_name);
 			if (loaded_texture)
 			{
@@ -138,12 +129,20 @@ UpdateStatus ModuleRender::Update()
 					mesh.material_index = 0;
 				}
 			}
+			*/
 		}
 		App->input->ReleaseDroppedFileName();
 	}
 
-	// Draw the model
-	current_model->Draw(current_model_model_matrix);
+	// Draw the scene
+	GameObject* root = App->scene->root;
+	if (root != nullptr)
+	{
+		ComponentTransform* transform = root->GetComponent<ComponentTransform>();
+		transform->InvalidateHierarchy();
+
+		DrawGameObject(App->scene->root);
+	}
 
 	return UpdateStatus::CONTINUE;
 }
@@ -160,8 +159,6 @@ bool ModuleRender::CleanUp()
 	glDeleteTextures(1, &render_texture);
 	glDeleteRenderbuffers(1, &depth_renderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);
-
-	App->models->ReleaseModel(current_model);
 
 	return true;
 }
@@ -193,4 +190,23 @@ void ModuleRender::ViewportResized(int width, int height)
 void ModuleRender::SetVSync(bool vsync)
 {
 	SDL_GL_SetSwapInterval(vsync);
+}
+
+void ModuleRender::DrawGameObject(GameObject* game_object)
+{
+	ComponentTransform* transform = game_object->GetComponent<ComponentTransform>();
+	std::vector<ComponentMesh*> meshes = game_object->GetComponents<ComponentMesh>();
+	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
+
+	transform->CalculateGlobalMatrix();
+
+	for (ComponentMesh* mesh : meshes)
+	{
+		mesh->Draw(materials, transform->GetGlobalMatrix());
+	}
+
+	for (GameObject* child : game_object->GetChildren())
+	{
+		DrawGameObject(child);
+	}
 }

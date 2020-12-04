@@ -12,6 +12,8 @@
 
 bool ModuleTextures::Init()
 {
+	textures.Allocate(100);
+
 	ilInit();
 	iluInit();
 
@@ -20,12 +22,15 @@ bool ModuleTextures::Init()
 
 bool ModuleTextures::CleanUp()
 {
-	glDeleteTextures(textures.size(), textures.data());
+	for (Texture& texture : textures)
+	{
+		glDeleteTextures(1, &texture);
+	}
 
 	return true;
 }
 
-unsigned ModuleTextures::LoadTexture(const char* file_name)
+Texture* ModuleTextures::LoadTexture(const char* file_name)
 {
 	LOG("Loading texture from path: \"%s\".", file_name);
 
@@ -38,13 +43,13 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 	if (!image_loaded)
 	{
 		LOG("Failed to load image.");
-		return 0;
+		return nullptr;
 	}
 	bool image_converted = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
 	if (!image_converted)
 	{
 		LOG("Failed to convert image.");
-		return 0;
+		return nullptr;
 	}
 
 	// Flip image if neccessary
@@ -56,12 +61,11 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 	}
 
 	// Create texture
-	unsigned texture;
-	glGenTextures(1, &texture);
-	textures.push_back(texture);
+	Texture* texture = textures.Obtain();
+	glGenTextures(1, texture);
 
 	// Generate texture from image
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, *texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
 		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
 		ilGetData());
@@ -77,26 +81,10 @@ unsigned ModuleTextures::LoadTexture(const char* file_name)
 	return texture;
 }
 
-void ModuleTextures::ReleaseTexture(unsigned texture)
+void ModuleTextures::ReleaseTexture(Texture* texture)
 {
-	bool found = false;
-	for (std::vector<unsigned>::iterator it = textures.begin(); it != textures.end(); ++it)
-	{
-		if (*it == texture)
-		{
-			textures.erase(it);
-			found = true;
-			break;
-		}
-	}
-
-	if (!found)
-	{
-		LOG("Tried to release non-existent texture (%i).", texture);
-		return;
-	}
-
-	glDeleteTextures(1, &texture);
+	textures.Release(texture);
+	glDeleteTextures(1, texture);
 }
 
 void ModuleTextures::SetMinFilter(TextureMinFilter filter)

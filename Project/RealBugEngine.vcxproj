@@ -12,6 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentBoundingSphere.h" />
+    <ClInclude Include="ComponentMaterial.h" />
+    <ClInclude Include="ComponentMesh.h" />
+    <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Leaks.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
@@ -101,17 +107,15 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleHardwareInfo.h" />
     <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="ModuleInput.h" />
-    <ClInclude Include="ModuleModels.h" />
     <ClInclude Include="ModulePrograms.h" />
     <ClInclude Include="ModuleRender.h" />
+    <ClInclude Include="ModuleScene.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="MSTimer.h" />
@@ -119,6 +123,7 @@
     <ClInclude Include="PanelAbout.h" />
     <ClInclude Include="PanelConfiguration.h" />
     <ClInclude Include="PanelConsole.h" />
+    <ClInclude Include="PanelHierarchy.h" />
     <ClInclude Include="PanelProperties.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PerformanceTimer.h" />
@@ -126,6 +131,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ComponentBoundingSphere.cpp" />
+    <ClCompile Include="ComponentMaterial.cpp" />
+    <ClCompile Include="ComponentMesh.cpp" />
+    <ClCompile Include="ComponentTransform.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Libs\imgui\imgui.cpp" />
     <ClCompile Include="Libs\imgui\imgui_demo.cpp" />
@@ -176,17 +187,15 @@
     <ClCompile Include="Libs\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleHardwareInfo.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="ModuleInput.cpp" />
-    <ClCompile Include="ModuleModels.cpp" />
     <ClCompile Include="ModulePrograms.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
+    <ClCompile Include="ModuleScene.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="MSTimer.cpp" />
@@ -194,6 +203,7 @@
     <ClCompile Include="PanelAbout.cpp" />
     <ClCompile Include="PanelConfiguration.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
+    <ClCompile Include="PanelHierarchy.cpp" />
     <ClCompile Include="PanelProperties.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PerformanceTimer.cpp" />
