@@ -5,7 +5,8 @@
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
-#include "Model.h"
+#include "GameObject.h"
+#include "ComponentBoundingSphere.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -139,7 +140,8 @@ UpdateStatus ModuleCamera::Update()
         // Focus camera around geometry with f key
         if (App->input->GetKey(SDL_SCANCODE_F))
         {
-            Focus(App->renderer->current_model);
+            // TODO: Focus on current node. Currently focuses an arbitrary sphere.
+            Focus(Sphere(vec(0, 0, 0), 10.0f));
         }
 
         // Move with arrow keys
@@ -244,13 +246,13 @@ void ModuleCamera::LookAt(float x, float y, float z)
     Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), up));
 }
 
-void ModuleCamera::Focus(Model* model)
+void ModuleCamera::Focus(const Sphere& bounding_sphere)
 {
     float min_half_angle = Min(frustum.HorizontalFov(), frustum.VerticalFov()) * 0.5f;
-    float relative_distance = model->bounding_sphere.r / Sin(min_half_angle);
+    float relative_distance = bounding_sphere.r / Sin(min_half_angle);
     vec camera_direction = -frustum.Front().Normalized();
-    vec camera_position = model->bounding_sphere.pos + (camera_direction * relative_distance);
-    vec model_center = model->bounding_sphere.pos;
+    vec camera_position = bounding_sphere.pos + (camera_direction * relative_distance);
+    vec model_center = bounding_sphere.pos;
     SetPosition(camera_position);
     LookAt(model_center.x, model_center.y, model_center.z);
 }

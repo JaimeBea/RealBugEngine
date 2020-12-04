@@ -8,7 +8,6 @@
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
 #include "ModuleTextures.h"
-#include "ModuleModels.h"
 
 #include "GL/glew.h"
 #include "imgui.h"
@@ -313,7 +312,7 @@ void PanelConfiguration::Update()
             }
 
             // Texture images
-            for (unsigned texture : App->textures->textures)
+            for (Texture& texture : App->textures->textures)
             {
                 char texture_name[32];
                 sprintf(texture_name, "Texture %i", texture);
@@ -334,77 +333,6 @@ void PanelConfiguration::Update()
 
                     ImGui::TreePop();
                 }
-            }
-        }
-
-        // Models
-        if (ImGui::CollapsingHeader("Models"))
-        {
-            unsigned model_index = 0;
-            for (const Model& model : App->models->models)
-            {
-                char model_name[32];
-                sprintf(model_name, "Model %i", model_index);
-                if (ImGui::TreeNode(model_name))
-                {
-                    unsigned mesh_index = 0;
-                    for (const Mesh& mesh : model.meshes)
-                    {
-                        char mesh_name[128];
-                        sprintf(mesh_name, "Mesh %i", mesh_index);
-                        if (ImGui::TreeNode(mesh_name))
-                        {
-                            ImGui::Text("Vertices:");
-                            ImGui::SameLine();
-                            ImGui::TextColored(yellow, "%i", mesh.num_vertices);
-                            ImGui::Text("Triangles:");
-                            ImGui::SameLine();
-                            ImGui::TextColored(yellow, "%i", mesh.num_indices / 3);
-                            ImGui::Text("Material:");
-                            ImGui::SameLine();
-                            ImGui::TextColored(yellow, "%i", mesh.material_index);
-
-                            ImGui::TreePop();
-                        }
-
-                        mesh_index += 1;
-                    }
-
-                    unsigned material_index = 0;
-                    for (unsigned material : model.materials)
-                    {
-                        char material_name[32];
-                        sprintf(material_name, "Material %i", material_index);
-                        if (ImGui::TreeNode(material_name))
-                        {
-                            int width;
-                            int height;
-                            glGetTextureLevelParameteriv(model.materials[material_index], 0, GL_TEXTURE_WIDTH, &width);
-                            glGetTextureLevelParameteriv(model.materials[material_index], 0, GL_TEXTURE_HEIGHT, &height);
-
-                            ImGui::Text("Width: ");
-                            ImGui::SameLine();
-                            ImGui::TextColored(yellow, "%i", width);
-                            ImGui::Text("Height: ");
-                            ImGui::SameLine();
-                            ImGui::TextColored(yellow, "%i", height);
-                            ImGui::Image((void*)model.materials[material_index], ImVec2(200, 200));
-
-                            ImGui::TreePop();
-                        }
-
-                        material_index += 1;
-                    }
-
-                    vec center = model.bounding_sphere.pos;
-                    float radius = model.bounding_sphere.r;
-                    ImGui::InputFloat3("Bounding Sphere Pos", center.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-                    ImGui::InputFloat("Bounding Sphere radius", &radius, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
-
-                    ImGui::TreePop();
-                }
-
-                model_index += 1;
             }
         }
     }

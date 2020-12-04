@@ -3,7 +3,6 @@
 #include "Application.h"
 #include "ModuleEditor.h"
 #include "ModuleRender.h"
-#include "Model.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -23,6 +22,8 @@ void PanelProperties::Update()
     ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
 	{
+        /* TODO: Make properties based on current selected node and it's components
+        
 		// Transformation
 		if (ImGui::CollapsingHeader("Transformation"))
 		{
@@ -98,6 +99,7 @@ void PanelProperties::Update()
                 material_index += 1;
             }
 		}
+        */
 	}
 	ImGui::End();
 }

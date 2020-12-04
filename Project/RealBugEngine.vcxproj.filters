@@ -27,6 +27,9 @@
     <Filter Include="Source\Panels">
       <UniqueIdentifier>{bcd7b9b1-e7a5-474b-899d-6d1a5cf157b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Components">
+      <UniqueIdentifier>{39661246-1d23-450e-ba54-492b4367ef9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\imconfig.h">
@@ -317,16 +320,7 @@
     <ClInclude Include="Libs\DebugDraw\debugdraw.h">
       <Filter>Libraries\DebugDraw</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleRender.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="ModuleModels.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="Panel.h">
@@ -364,6 +358,30 @@
     </ClInclude>
     <ClInclude Include="Leaks.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleScene.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMesh.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentMaterial.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTransform.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentBoundingSphere.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelHierarchy.h">
+      <Filter>Source\Panels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -541,16 +559,7 @@
     <ClCompile Include="ModuleTextures.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleRender.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleModels.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="Panel.cpp">
@@ -582,6 +591,30 @@
     </ClCompile>
     <ClCompile Include="PerformanceTimer.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleScene.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMesh.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentMaterial.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentTransform.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBoundingSphere.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelHierarchy.cpp">
+      <Filter>Source\Panels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

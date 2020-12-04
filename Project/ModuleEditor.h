@@ -7,6 +7,7 @@
 #include "PanelConsole.h"
 #include "PanelConfiguration.h"
 #include "PanelProperties.h"
+#include "PanelHierarchy.h"
 #include "PanelAbout.h"
 
 #include <vector>
@@ -24,6 +25,7 @@ public:
 public:
 	unsigned dock_space_id = 0;
 	unsigned dock_main_id = 0;
+	unsigned dock_left_id = 0;
 	unsigned dock_right_id = 0;
 	unsigned dock_down_id = 0;
 
@@ -34,6 +36,7 @@ private:
 	PanelConsole panel_console;
 	PanelConfiguration panel_configuration;
 	PanelProperties panel_properties;
+	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
 };
 

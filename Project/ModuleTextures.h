@@ -2,7 +2,7 @@
 
 #include "Module.h"
 
-#include <vector>
+#include "Pool.h"
 
 enum class TextureMinFilter
 {
@@ -29,14 +29,16 @@ enum class TextureWrap
 	MIRROR_CLAMP_TO_EDGE
 };
 
+typedef unsigned int Texture;
+
 class ModuleTextures : public Module
 {
 public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	unsigned LoadTexture(const char* file_name);
-	void ReleaseTexture(unsigned texture);
+	Texture* LoadTexture(const char* file_name);
+	void ReleaseTexture(Texture* texture);
 
 	void SetMinFilter(TextureMinFilter filter);
 	void SetMagFilter(TextureMagFilter filter);
@@ -47,7 +49,7 @@ public:
 	TextureWrap GetWrap() const;
 
 public:
-	std::vector<unsigned> textures;
+	Pool<Texture> textures;
 
 private:
 	TextureMinFilter min_filter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;

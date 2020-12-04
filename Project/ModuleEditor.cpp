@@ -34,6 +34,7 @@ bool ModuleEditor::Start()
     panels.push_back(&panel_console);
     panels.push_back(&panel_configuration);
     panels.push_back(&panel_properties);
+    panels.push_back(&panel_hierarchy);
     panels.push_back(&panel_about);
 
     return true;
@@ -68,6 +69,7 @@ UpdateStatus ModuleEditor::Update()
         ImGui::MenuItem(panel_scene.name, "", &panel_scene.enabled);
         ImGui::MenuItem(panel_console.name, "", &panel_console.enabled);
         ImGui::MenuItem(panel_properties.name, "", &panel_properties.enabled);
+        ImGui::MenuItem(panel_hierarchy.name, "", &panel_hierarchy.enabled);
         ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
         ImGui::EndMenu();
     }
@@ -99,7 +101,8 @@ UpdateStatus ModuleEditor::Update()
         ImGui::DockBuilderSetNodeSize(dock_space_id, viewport->GetWorkSize());
 
         dock_main_id = dock_space_id;
-        dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.25f, nullptr, &dock_main_id);
+        dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.25f, nullptr, &dock_main_id);
+        dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.33f, nullptr, &dock_main_id);
         dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.3f, nullptr, &dock_main_id);
     }
 

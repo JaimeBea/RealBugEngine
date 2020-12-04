@@ -13,10 +13,10 @@ class ModuleEditor;
 class ModuleCamera;
 class ModuleWindow;
 class ModuleTextures;
-class ModuleModels;
 class ModuleInput;
 class ModulePrograms;
 class ModuleDebugDraw;
+class ModuleScene;
 
 class Application
 {
@@ -35,7 +35,6 @@ public:
 public:
 	ModuleHardwareInfo* hardware = nullptr;
 	ModuleTextures* textures = nullptr;
-	ModuleModels* models = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;
@@ -43,6 +42,7 @@ public:
 	ModuleEditor* editor = nullptr;
 	ModulePrograms* programs = nullptr;
 	ModuleDebugDraw* debug_draw = nullptr;
+	ModuleScene* scene = nullptr;
 
 	// Application Configuration
 

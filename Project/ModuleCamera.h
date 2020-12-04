@@ -2,6 +2,9 @@
 
 #include "Module.h"
 
+#include "MathGeoLibFwd.h"
+#include "Math/float4x4.h"
+#include "Math/float3.h"
 #include "Geometry/Frustum.h"
 
 class Model;
@@ -25,7 +28,7 @@ public:
 	void Zoom(float amount);
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
-	void Focus(Model* model);
+	void Focus(const Sphere& bounding_sphere);
 
 	vec GetFront() const;
 	vec GetUp() const;
@@ -47,6 +50,6 @@ public:
 	float shift_multiplier = 5.0f;
 
 private:
-	Frustum frustum;
+	Frustum frustum = Frustum();
 	float focus_distance = 0.0f;
 };
