@@ -33,13 +33,6 @@ public:
 
 	void Clear()
 	{
-		// Destroy objects
-		for (size_t i = 0; i < size; ++i)
-		{
-			data[i].~T();
-		}
-
-		// Release
 		size = 0;
 		count = 0;
 		RELEASE_ARRAY(data);
