@@ -123,7 +123,7 @@ public:
 		{
 			index += 1;
 		}
-		return Pool<const T>::Iterator(*this, index);
+		return Pool<const T>::Iterator((Pool<const T>&)*this, index);
 	}
 
 	typename Pool<T>::Iterator end()
@@ -133,7 +133,7 @@ public:
 
 	typename Pool<const T>::Iterator end() const
 	{
-		return Pool<const T>::Iterator(*this, size);
+		return Pool<const T>::Iterator((Pool<const T>&) *this, size);
 	}
 
 private:
