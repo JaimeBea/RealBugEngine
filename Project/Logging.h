@@ -10,7 +10,7 @@
 void log(const char file[], int line, const char* format, ...);
 void log_delta_ms(float delta_ms);
 
-extern std::string log_string;
+extern std::string* log_string;
 extern int fps_log_index;
 extern float fps_log[];
 extern float ms_log[];
