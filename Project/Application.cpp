@@ -12,6 +12,7 @@
 #include "ModuleDebugDraw.h"
 #include "ModuleTextures.h"
 #include "ModuleScene.h"
+#include "ModuleTime.h"
 
 #include "SDL_timer.h"
 #include <windows.h>
@@ -26,6 +27,7 @@ Application::Application()
 	modules.push_back(textures = new ModuleTextures());
 	modules.push_back(programs = new ModulePrograms());
 
+	modules.push_back(time = new ModuleTime());
 	modules.push_back(input = new ModuleInput());
 
 	modules.push_back(scene = new ModuleScene());
@@ -46,8 +48,6 @@ Application::~Application()
 
 bool Application::Init()
 {
-	timer.Start();
-
 	bool ret = true;
 
 	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
@@ -74,39 +74,22 @@ UpdateStatus Application::Update()
 {
 	UpdateStatus ret = UpdateStatus::CONTINUE;
 
-	unsigned int delta_ms = timer.Read();
-	timer.Start();
-
-	if (delta_ms > 0)
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 	{
-		log_delta_ms((float)delta_ms);
-		delta_time = delta_ms / 1000.0f;
-
-		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
-		{
-			ret = (*it)->PreUpdate();
-		}
-
-		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
-		{
-			ret = (*it)->Update();
-		}
-
-		for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
-		{
-			ret = (*it)->PostUpdate();
-		}
+		ret = (*it)->PreUpdate();
 	}
 
-	if (limit_framerate)
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
 	{
-		unsigned int frame_ms = timer.Read();
-		unsigned int min_ms = 1000 / max_fps;
-		if (frame_ms < min_ms)
-		{
-			SDL_Delay(min_ms - frame_ms);
-		}
+		ret = (*it)->Update();
 	}
+
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
+	{
+		ret = (*it)->PostUpdate();
+	}
+
+	time->WaitForEndOfFrame();
 
 	return ret;
 }
@@ -121,11 +104,6 @@ bool Application::CleanUp()
 	}
 
 	return ret;
-}
-
-float Application::GetDeltaTime()
-{
-	return delta_time;
 }
 
 void Application::RequestBrowser(char* url)

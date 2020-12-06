@@ -17,6 +17,7 @@ class ModuleInput;
 class ModulePrograms;
 class ModuleDebugDraw;
 class ModuleScene;
+class ModuleTime;
 
 class Application
 {
@@ -29,7 +30,6 @@ public:
 	UpdateStatus Update();
 	bool CleanUp();
 
-	float GetDeltaTime();
 	void RequestBrowser(char* url);
 
 public:
@@ -43,14 +43,12 @@ public:
 	ModulePrograms* programs = nullptr;
 	ModuleDebugDraw* debug_draw = nullptr;
 	ModuleScene* scene = nullptr;
+	ModuleTime* time = nullptr;
 
 	// Application Configuration
 
 	char app_name[20] = "Real Engine";
 	char organization[20] = "";
-	int max_fps = 60;
-	bool limit_framerate = true;
-	bool vsync = true;
 
 	// Engine Information
 
@@ -61,10 +59,6 @@ public:
 	const char* engine_license = "MIT";
 
 private:
-	MSTimer timer;
-
-	float delta_time = 0.0f;
-
 	std::vector<Module*> modules;
 };
 

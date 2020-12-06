@@ -5,6 +5,7 @@
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleTime.h"
 #include "GameObject.h"
 #include "ComponentBoundingSphere.h"
 
@@ -60,7 +61,7 @@ bool ModuleCamera::Init()
 
 UpdateStatus ModuleCamera::Update()
 {
-    float delta_time = App->GetDeltaTime();
+    float delta_time = App->time->GetRealTimeDeltaTime();
 
     const float2& mouse_motion = App->input->GetMouseMotion();
 
@@ -77,7 +78,7 @@ UpdateStatus ModuleCamera::Update()
     float mouse_wheel_motion = App->input->GetMouseWheelMotion();
     if (mouse_wheel_motion < -FLT_EPSILON || mouse_wheel_motion > FLT_EPSILON)
     {
-        Zoom(mouse_wheel_motion * 5 * focus_distance * delta_time);
+        Zoom(mouse_wheel_motion * 0.1f * focus_distance);
     }
 
     if (App->input->GetKey(SDL_SCANCODE_LALT))
@@ -88,8 +89,8 @@ UpdateStatus ModuleCamera::Update()
 
             // Orbit with alt + left mouse button
             vec old_focus = frustum.Pos() + frustum.Front().Normalized() * focus_distance;
-            Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -mouse_motion.y * rotation_speed * DEGTORAD * delta_time));
-            Rotate(float3x3::RotateY(-mouse_motion.x * rotation_speed * DEGTORAD * delta_time));
+            Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -mouse_motion.y * rotation_speed * DEGTORAD));
+            Rotate(float3x3::RotateY(-mouse_motion.x * rotation_speed * DEGTORAD));
             vec new_focus = frustum.Pos() + frustum.Front().Normalized() * focus_distance;
             Translate(old_focus - new_focus);
         }
@@ -98,7 +99,7 @@ UpdateStatus ModuleCamera::Update()
             WarpMouseOnEdges();
 
             // Zoom with alt + right mouse button
-            Zoom(mouse_motion.y * final_zoom_speed * focus_distance * delta_time);
+            Zoom(mouse_motion.y * final_zoom_speed * focus_distance);
         }
     }
     else if (App->input->GetMouseButton(SDL_BUTTON_RIGHT))
@@ -106,8 +107,8 @@ UpdateStatus ModuleCamera::Update()
         WarpMouseOnEdges();
 
         // Rotate with mouse motion
-        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -mouse_motion.y * rotation_speed * DEGTORAD * delta_time));
-        Rotate(float3x3::RotateY(-mouse_motion.x * rotation_speed * DEGTORAD * delta_time));
+        Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), -mouse_motion.y * rotation_speed * DEGTORAD));
+        Rotate(float3x3::RotateY(-mouse_motion.x * rotation_speed * DEGTORAD));
 
         // Move with WASD + QE
         if (App->input->GetKey(SDL_SCANCODE_Q))
