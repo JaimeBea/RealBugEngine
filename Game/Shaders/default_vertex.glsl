@@ -5,7 +5,8 @@ uniform mat4 view;
 uniform mat4 model;
 
 layout(location=0) in vec3 vertex_position;
-layout(location=1) in vec2 vertex_uv0;
+layout(location=1) in vec3 vertex_normals;
+layout(location=2) in vec2 vertex_uv0;
 
 out vec2 uv0;
 

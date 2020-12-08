@@ -2,6 +2,12 @@
 
 #include "Component.h"
 
+enum class MaterialType
+{
+	NORMAL,
+	SPECULAR
+};
+
 class ComponentMaterial : public Component
 {
 public:
@@ -11,5 +17,6 @@ public:
 
 public:
 	unsigned texture = 0;
+	MaterialType material_type = MaterialType::SPECULAR;
 };
 
