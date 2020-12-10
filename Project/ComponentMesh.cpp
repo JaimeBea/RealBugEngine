@@ -24,10 +24,11 @@ void ComponentMesh::Load(const aiMesh* mesh)
 	LOG("Loading %i vertices...", num_vertices);
 
 	unsigned position_size = sizeof(float) * 3;
+	unsigned normal_size = sizeof(float) * 3;
 	unsigned uv_size = sizeof(float) * 2;
 	unsigned index_size = sizeof(unsigned);
 
-	unsigned vertex_size = position_size * 2 + uv_size;  // Pos + Normal + UV
+	unsigned vertex_size = position_size + normal_size + uv_size;
 	unsigned vertex_buffer_size = vertex_size * num_vertices;
 	unsigned index_buffer_size = index_size * num_indices;
 
@@ -87,7 +88,7 @@ void ComponentMesh::Load(const aiMesh* mesh)
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*)position_size);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*)(position_size * 2));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*)(position_size  + normal_size));
 
 	// Unbind VAO
 	glBindVertexArray(0);
@@ -102,7 +103,8 @@ void ComponentMesh::Release()
 
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const
 {
-	unsigned program;
+	unsigned program = App->programs->default_program;
+
 	float4x4 view_matrix = App->camera->GetViewMatrix();
 	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
 	unsigned texture = materials.size() > material_index ? materials[material_index]->texture : 0;
@@ -112,7 +114,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	float3 light_direction = float3(1.0f, -1.0f, 1.0f);
 	float3 ambient_color = float3(1.0f, 0.0f, 0.0f);
 
-	if (materials[material_index]->material_type == MaterialType::SPECULAR) 
+	if (materials[material_index]->material_type == ShaderType::PHONG) 
 	{
 		program = App->programs->phong_program;
 		glUseProgram(program);
@@ -124,20 +126,19 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		glUniform3fv(glGetUniformLocation(program, "light_direction"), 1, light_direction.ptr());
 		glUniform3fv(glGetUniformLocation(program, "light_color"), 1, light_color.ptr());
 		glUniform3fv(glGetUniformLocation(program, "camera_direction"), 1, App->camera->GetFront().ptr());
-
 	}
-	else {
-		program = App->programs->default_program;
+	else 
+	{
 		glUseProgram(program);
 	}
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_matrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view_matrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj_matrix.ptr());
+	glUniform1i(glGetUniformLocation(program, "diffuse_texture"), 0);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glUniform1i(glGetUniformLocation(program, "diffuse_texture"), 0);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);

@@ -54,8 +54,6 @@ UpdateStatus ModuleEditor::Update()
     ImGui::CaptureMouseFromApp(true);
     ImGui::CaptureKeyboardFromApp(true);
 
-    ImGui::ShowDemoWindow();
-
     // Main menu bar
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu("File"))

@@ -1,4 +1,4 @@
-#version 440
+#version 460
 
 in layout(location=0) vec3 pos;
 in layout(location=1) vec3 normal;
@@ -13,7 +13,7 @@ out vec2 uv;
 
 void main()
 {
- gl_Position = proj * view * model * vec4(pos, 1.0);
- frag_normal = transpose(inverse(mat3(model)))*normal;
- uv = uvs;
+	gl_Position = proj * view * model * vec4(pos, 1.0);
+	frag_normal = transpose(inverse(mat3(model)))*normal;
+	uv = uvs;
 }

@@ -1,4 +1,4 @@
-#version 330
+#version 460
 
 uniform mat4 proj;
 uniform mat4 view;
@@ -12,6 +12,6 @@ out vec2 uv0;
 
 void main()
 {
-	gl_Position = proj * view * model * vec4(vertex_position, 1.0);
-	uv0 = vertex_uv0;
+    gl_Position = proj * view * model * vec4(vertex_position, 1.0);
+    uv0 = vertex_uv0;
 }

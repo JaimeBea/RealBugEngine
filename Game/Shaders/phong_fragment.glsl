@@ -1,4 +1,4 @@
-#version 440
+#version 460
 
 in vec3 frag_normal;
 in vec2 uv;
@@ -21,11 +21,11 @@ void main()
     vec3 light_n = normalize(-light_direction);
     vec3 view_n = normalize(camera_direction); 
 		
-    //diffuse
+    // diffuse
     float NL = max(dot(frag_n, light_n),0); 
     vec3 diffuse = Kd * diffuse_color * light_color * NL;
 
-    //specular
+    // specular
     vec3 reflection = reflect(light_n, frag_n);
     float VR = max(dot(view_n, reflection),0);
     vec3 specular = Ks * light_color * pow(VR,n);

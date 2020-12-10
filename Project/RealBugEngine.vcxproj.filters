@@ -347,9 +347,6 @@
     <ClInclude Include="ModuleHardwareInfo.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="PanelProperties.h">
-      <Filter>Source\Panels</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleScene.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
@@ -388,6 +385,9 @@
     </ClInclude>
     <ClInclude Include="Leaks.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelInspector.h">
+      <Filter>Source\Panels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -589,9 +589,6 @@
     <ClCompile Include="ModuleHardwareInfo.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="PanelProperties.cpp">
-      <Filter>Source\Panels</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleScene.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -625,6 +622,9 @@
     <ClCompile Include="PerformanceTimer.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="PanelInspector.cpp">
+      <Filter>Source\Panels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl">
@@ -648,15 +648,21 @@
     <None Include="Libs\MathGeoLib\Math\Matrix.inl">
       <Filter>Libraries\MathGeoLib</Filter>
     </None>
-    <None Include="..\Game\Shaders\fragment.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="..\Game\Shaders\vertex.vert">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="..\README.md" />
     <None Include="..\LICENSE" />
     <None Include="..\PackageEngine.ps1" />
     <None Include="..\PackageEngine.bat" />
+    <None Include="..\Game\Shaders\default_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Game\Shaders\default_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Game\Shaders\phong_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Game\Shaders\phong_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

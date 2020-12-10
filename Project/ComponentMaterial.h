@@ -2,10 +2,10 @@
 
 #include "Component.h"
 
-enum class MaterialType
+enum class ShaderType
 {
 	STANDARD,
-	SPECULAR
+	PHONG
 };
 
 class ComponentMaterial : public Component
@@ -17,9 +17,9 @@ public:
 
 public:
 	unsigned texture = 0;
-	MaterialType material_type = MaterialType::SPECULAR;
+	ShaderType material_type = ShaderType::PHONG;
 
-	//Specular
+	// Phong
 	float Kd = 1;
 	float Ks = 0;
 	int n = 1;

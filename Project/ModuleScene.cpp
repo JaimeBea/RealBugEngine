@@ -40,7 +40,7 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
-	Load("C:\\Users\\lowys\\Documents\\Master\\Programming\\Assignment_01\\baker_house\\BakerHouse.fbx");
+	Load("Assets/Street_Environment/Street_environment_V01.FBX");
 
 	return true;
 }

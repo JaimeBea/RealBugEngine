@@ -10,6 +10,7 @@ public:
 	PanelHierarchy();
 
 	void Update() override;
+	void UpdateHierarchyNode(GameObject* game_object);
 	GameObject* selected_object = nullptr;
 
 private:

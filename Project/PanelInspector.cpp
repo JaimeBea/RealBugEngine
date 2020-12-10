@@ -27,11 +27,12 @@ PanelInspector::PanelInspector() : Panel("Inspector", true) {}
 
 void PanelInspector::Update()
 {
-    ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
 	{
 		GameObject* selected = App->editor->panel_hierarchy.selected_object;
-		if (selected == nullptr) {
+		if (selected == nullptr) 
+		{
 			ImGui::End();
 			return;
 		}
@@ -42,9 +43,9 @@ void PanelInspector::Update()
 			selected->name = name;
 		}
 		bool enable = true;
-		if (ImGui::Checkbox("Enable", &enable)) 
+		if (ImGui::Checkbox("Enable", &enable))
 		{
-			//TODO: Add enable option to game Objects
+			// TODO: Add enable option to game Objects
 		}
 
 		ImGui::Separator();
@@ -55,40 +56,44 @@ void PanelInspector::Update()
 		float scale[] = { scale3[0], scale3[1], scale3[2] };
 		float3 rotation3 = transform->GetRotation().ToEulerXYZ() * RADTODEG;
 		float rotation[] = { rotation3[0], rotation3[1], rotation3[2] };
-		//Clamp Values
+
+		// Clamp Values
 		if (rotation[1] >= 180) rotation[1] = rotation[1] - 360;
 		if (rotation[1] <= -180) rotation[1] = rotation[1] + 360;
 		if (rotation[0] == -0.0f || rotation[0] == -180.0f || rotation[0] == 180.0f) rotation[0] = 0.0f;
 		if (rotation[2] == -0.0f || rotation[2] == -180.0f || rotation[2] == 180.0f) rotation[2] = 0.0f;
 
-		if (ImGui::CollapsingHeader("Transformation")) {
-
+		if (ImGui::CollapsingHeader("Transformation")) 
+		{
 			ImGui::TextColored(color, "Transformation (X,Y,Z)");
-			if (ImGui::DragFloat3("Position", pos, drag_speed2f, -inf, inf)) {
-				transform->SetPosition(float3(pos[0],pos[1], pos[2]));
+			if (ImGui::DragFloat3("Position", pos, drag_speed2f, -inf, inf))
+			{
+				transform->SetPosition(float3(pos[0], pos[1], pos[2]));
 			}
-			if (ImGui::DragFloat3("Scale", scale, drag_speed2f, 0 , inf)) {
+			if (ImGui::DragFloat3("Scale", scale, drag_speed2f, 0, inf))
+			{
 				transform->SetScale(float3(scale[0], scale[1], scale[2]));
 			}
-			if (ImGui::DragFloat3("Rotation", rotation, drag_speed2f, -inf, inf)) {
+			if (ImGui::DragFloat3("Rotation", rotation, drag_speed2f, -inf, inf))
+			{
 				transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
 			}
 		}
 
 		std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
-		for (std::vector<ComponentMesh*>::iterator it = meshes.begin(); it != meshes.end(); it++) 
+		for (std::vector<ComponentMesh*>::iterator it = meshes.begin(); it != meshes.end(); it++)
 		{
 			int count = 1;
 			char name[50];
 			sprintf_s(name, 50, "Mesh Information %d", count);
-			if (*it != nullptr) 
+			if (*it != nullptr)
 			{
 				// Show only # when multiple
-				if (meshes.size() == 1) 
+				if (meshes.size() == 1)
 				{
 					sprintf_s(name, 50, "Mesh Information");
 				}
-				if (ImGui::CollapsingHeader(name)) 
+				if (ImGui::CollapsingHeader(name))
 				{
 					ImGui::TextColored(color, "Geometry");
 					ImGui::TextWrapped("Num Vertices: ");
@@ -115,11 +120,12 @@ void PanelInspector::Update()
 				{
 					sprintf_s(name, 50, "Material Information");
 				}
-				if (ImGui::CollapsingHeader(name)) {
-					ImGui::TextColored(color, "Material Type");
+				if (ImGui::CollapsingHeader(name))
+				{
+					ImGui::TextColored(color, "Shader");
 
-					//Material types
-					const char* material_types[] = { "Standard", "Specular"};
+					// Material types
+					const char* material_types[] = { "Standard", "Phong" };
 					const char* material_types_current = material_types[int((*it)->material_type)];
 					if (ImGui::BeginCombo("Type", material_types_current))
 					{
@@ -128,7 +134,7 @@ void PanelInspector::Update()
 							bool is_selected = (material_types_current == material_types[n]);
 							if (ImGui::Selectable(material_types[n], is_selected))
 							{
-								(*it)->material_type = MaterialType(n);
+								(*it)->material_type = ShaderType(n);
 							}
 							if (is_selected)
 							{
@@ -137,13 +143,15 @@ void PanelInspector::Update()
 						}
 						ImGui::EndCombo();
 					}
-					if ((*it)->material_type == MaterialType::SPECULAR) {
+					if ((*it)->material_type == ShaderType::PHONG) 
+					{
 						ImGui::DragFloat("Kd", &(*it)->Kd, drag_speed3f, 0.0f, 1.0f);
 						ImGui::DragFloat("Ks", &(*it)->Ks, drag_speed3f, 0.0f, 1.0f);
 						ImGui::DragInt("n", &(*it)->n, 0.05f, 1, 1000);
 					}
 					ImGui::Separator();
 					ImGui::TextColored(color, "Filters");
+
 					// Min filter combo box
 					const char* min_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
 					const char* min_filter_item_current = min_filter_items[int(App->textures->GetMinFilter())];

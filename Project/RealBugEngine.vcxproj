@@ -211,8 +211,10 @@
     <ClCompile Include="PerformanceTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Game\Shaders\fragment.frag" />
-    <None Include="..\Game\Shaders\vertex.vert" />
+    <None Include="..\Game\Shaders\default_fragment.glsl" />
+    <None Include="..\Game\Shaders\default_vertex.glsl" />
+    <None Include="..\Game\Shaders\phong_fragment.glsl" />
+    <None Include="..\Game\Shaders\phong_vertex.glsl" />
     <None Include="..\LICENSE" />
     <None Include="..\PackageEngine.bat" />
     <None Include="..\PackageEngine.ps1" />
