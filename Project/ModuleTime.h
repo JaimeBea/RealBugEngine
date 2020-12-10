@@ -15,8 +15,8 @@ public:
 	float GetDeltaTime() const;
 	float GetRealTimeDeltaTime() const;
 
-	float GetTimeSinceStartup();
-	float GetRealTimeSinceStartup();
+	float GetTimeSinceStartup() const;
+	float GetRealTimeSinceStartup() const;
 
 	float GetTimeScale() const;
 	void SetTimeScale(float time_scale);

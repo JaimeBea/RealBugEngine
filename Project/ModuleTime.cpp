@@ -68,12 +68,12 @@ float ModuleTime::GetRealTimeDeltaTime() const
 	return real_time_delta_ms / 1000.0f;
 }
 
-float ModuleTime::GetTimeSinceStartup()
+float ModuleTime::GetTimeSinceStartup() const
 {
 	return time_last_ms / 1000.0f;
 }
 
-float ModuleTime::GetRealTimeSinceStartup()
+float ModuleTime::GetRealTimeSinceStartup() const
 {
 	return real_time_last_ms / 1000.0f;
 }
