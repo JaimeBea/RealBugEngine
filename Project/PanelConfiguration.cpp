@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModuleEditor.h"
+#include "ModuleTime.h"
 #include "ModuleHardwareInfo.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
@@ -31,12 +32,18 @@ void PanelConfiguration::Update()
                 App->window->SetTitle(App->app_name);
             }
             ImGui::InputText("Organization", App->organization, IM_ARRAYSIZE(App->organization));
-            ImGui::SliderInt("Max FPS", &App->max_fps, 1, 240);
-            ImGui::Checkbox("Limit framerate", &App->limit_framerate);
-            if (ImGui::Checkbox("VSync", &App->vsync))
+        }
+
+        // Time
+        if (ImGui::CollapsingHeader("Time"))
+        {
+            ImGui::SliderInt("Max FPS", &App->time->max_fps, 1, 240);
+            ImGui::Checkbox("Limit framerate", &App->time->limit_framerate);
+            if (ImGui::Checkbox("VSync", &App->time->vsync))
             {
-                App->renderer->SetVSync(App->vsync);
+                App->renderer->SetVSync(App->time->vsync);
             }
+            ImGui::SliderInt("Step delta time (MS)", &App->time->step_delta_time_ms, 1, 1000);
 
             // FPS Graph
             char title[25];

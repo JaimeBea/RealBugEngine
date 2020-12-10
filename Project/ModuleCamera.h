@@ -45,8 +45,8 @@ public:
 
 public:
 	float movement_speed = 0.4f;
-	float rotation_speed = 10.0f;
-	float zoom_speed = 0.05f;
+	float rotation_speed = 0.2f;
+	float zoom_speed = 0.001f;
 	float shift_multiplier = 5.0f;
 
 private:

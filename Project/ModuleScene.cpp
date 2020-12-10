@@ -209,7 +209,7 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 	vertices.reserve(num_vertices);
 
 	// Load meshes
-	for (int i = 0; i < node->mNumMeshes; ++i)
+	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 	{
 		LOG("Loading mesh %i", i);
 		aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
@@ -253,7 +253,7 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 	bounding_sphere->bounding_sphere = Sphere::FastEnclosingSphere(vertices.data(), vertices.size());
 
 	// Load children nodes
-	for (int i = 0; i < node->mNumChildren; ++i)
+	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
 		GameObject* child = LoadNode(scene, materials, node->mChildren[i], game_object);
 	}
