@@ -14,7 +14,7 @@
 
 #include "Leaks.h"
 
-static ImVec4 yellow = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+static ImVec4 color = ImVec4(0.35f, 0.69f, 0.87f, 1.0f);
 
 PanelConfiguration::PanelConfiguration() : Panel("Configuration", true) {}
 
@@ -51,25 +51,25 @@ void PanelConfiguration::Update()
         {
             ImGui::Text("GLEW version:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, App->hardware->glew_version);
+            ImGui::TextColored(color, App->hardware->glew_version);
             ImGui::Text("SDL version:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, App->hardware->sdl_version);
+            ImGui::TextColored(color, App->hardware->sdl_version);
             ImGui::Text("Assimp version:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, App->hardware->assimp_version);
+            ImGui::TextColored(color, App->hardware->assimp_version);
             ImGui::Text("DeviL version:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, App->hardware->devil_version);
+            ImGui::TextColored(color, App->hardware->devil_version);
 
             ImGui::Separator();
 
             ImGui::Text("CPUs:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
+            ImGui::TextColored(color, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
             ImGui::Text("System RAM:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%.1f Gb", App->hardware->ram_gb);
+            ImGui::TextColored(color, "%.1f Gb", App->hardware->ram_gb);
             ImGui::Text("Caps:");
             const char* items[] =
             {
@@ -81,7 +81,7 @@ void PanelConfiguration::Update()
                 if (App->hardware->caps[i])
                 {
                     ImGui::SameLine();
-                    ImGui::TextColored(yellow, items[i]);
+                    ImGui::TextColored(color, items[i]);
                 }
 
                 // Line break to avoid too many items in the same line
@@ -95,25 +95,25 @@ void PanelConfiguration::Update()
 
             ImGui::Text("GPU Vendor:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%s", App->hardware->gpu_vendor);
+            ImGui::TextColored(color, "%s", App->hardware->gpu_vendor);
             ImGui::Text("GPU Renderer:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%s", App->hardware->gpu_renderer);
+            ImGui::TextColored(color, "%s", App->hardware->gpu_renderer);
             ImGui::Text("GPU OpenGL Version:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%s", App->hardware->gpu_opengl_version);
+            ImGui::TextColored(color, "%s", App->hardware->gpu_opengl_version);
             ImGui::Text("VRAM Budget:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_budget_mb);
+            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_budget_mb);
             ImGui::Text("VRAM Usage:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_usage_mb);
+            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_usage_mb);
             ImGui::Text("VRAM Available:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_available_mb);
+            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_available_mb);
             ImGui::Text("VRAM Reserved:");
             ImGui::SameLine();
-            ImGui::TextColored(yellow, "%.1f Mb", App->hardware->vram_reserved_mb);
+            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_reserved_mb);
         }
 
         // Window
@@ -246,94 +246,7 @@ void PanelConfiguration::Update()
                 App->camera->SetFOV(fov);
             }
             ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
-        }
-
-        // Textures
-        if (ImGui::CollapsingHeader("Textures"))
-        {
-            // Min filter combo box
-            const char* min_filter_items[] = { "Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear" };
-            const char* min_filter_item_current = min_filter_items[int(App->textures->GetMinFilter())];
-            if (ImGui::BeginCombo("Min filter", min_filter_item_current))
-            {
-                for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
-                {
-                    bool is_selected = (min_filter_item_current == min_filter_items[n]);
-                    if (ImGui::Selectable(min_filter_items[n], is_selected))
-                    {
-                        App->textures->SetMinFilter(TextureMinFilter(n));
-                    }
-                    if (is_selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-
-            // Mag filter combo box
-            const char* mag_filter_items[] = { "Nearest", "Linear" };
-            const char* mag_filter_item_current = mag_filter_items[int(App->textures->GetMagFilter())];
-            if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
-            {
-                for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
-                {
-                    bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
-                    if (ImGui::Selectable(mag_filter_items[n], is_selected))
-                    {
-                        App->textures->SetMagFilter(TextureMagFilter(n));
-                    }
-                    if (is_selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-
-            // Texture wrap combo box
-            const char* wrap_items[] = { "Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge" };
-            const char* wrap_item_current = wrap_items[int(App->textures->GetWrap())];
-            if (ImGui::BeginCombo("Wrap", wrap_item_current))
-            {
-                for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
-                {
-                    bool is_selected = (wrap_item_current == wrap_items[n]);
-                    if (ImGui::Selectable(wrap_items[n], is_selected))
-                    {
-                        App->textures->SetWrap(TextureWrap(n));
-                    }
-                    if (is_selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-                ImGui::EndCombo();
-            }
-
-            // Texture images
-            for (Texture& texture : App->textures->textures)
-            {
-                char texture_name[32];
-                sprintf(texture_name, "Texture %i", texture);
-                if (ImGui::TreeNode(texture_name))
-                {
-                    int width;
-                    int height;
-                    glGetTextureLevelParameteriv(texture, 0, GL_TEXTURE_WIDTH, &width);
-                    glGetTextureLevelParameteriv(texture, 0, GL_TEXTURE_HEIGHT, &height);
-
-                    ImGui::Text("Width: ");
-                    ImGui::SameLine();
-                    ImGui::TextColored(yellow, "%i", width);
-                    ImGui::Text("Height: ");
-                    ImGui::SameLine();
-                    ImGui::TextColored(yellow, "%i", height);
-                    ImGui::Image((void*)texture, ImVec2(200, 200));
-
-                    ImGui::TreePop();
-                }
-            }
+            ImGui::ColorEdit3("Ambient Color", App->renderer->ambient_color.ptr());
         }
     }
     ImGui::End();

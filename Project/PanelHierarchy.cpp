@@ -9,11 +9,15 @@
 
 #include "Leaks.h"
 
-static void UpdateHierarchyNode(GameObject* game_object)
+static GameObject* UpdateHierarchyNode(GameObject* game_object, GameObject* selected_object)
 {
+    static std::string selected = "-1";
     char label[160];
     sprintf_s(label, "%s##%p", game_object->name.c_str(), game_object);
-
+    if (ImGui::Selectable(label, selected == game_object->name.c_str())) {
+        selected_object = game_object;
+        selected = game_object->name.c_str();
+    }
     std::vector<GameObject*> children = game_object->GetChildren();
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
     if (children.empty()) flags |= ImGuiTreeNodeFlags_Leaf;
@@ -21,10 +25,11 @@ static void UpdateHierarchyNode(GameObject* game_object)
     {
         for (GameObject* child : children)
         {
-            UpdateHierarchyNode(child);
+            selected_object = UpdateHierarchyNode(child, selected_object);
         }
         ImGui::TreePop();
     }
+    return selected_object;
 }
 
 PanelHierarchy::PanelHierarchy() : Panel("Hierarchy", true) {}
@@ -35,9 +40,12 @@ void PanelHierarchy::Update()
     if (ImGui::Begin(name, &enabled))
     {
         GameObject* root = App->scene->root;
+        if (selected_object == nullptr) {
+            selected_object = root;
+        }
         if (root != nullptr)
         {
-            UpdateHierarchyNode(root);
+            selected_object = UpdateHierarchyNode(root, selected_object);
         }
     }
     ImGui::End();

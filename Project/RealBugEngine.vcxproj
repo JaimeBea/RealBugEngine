@@ -124,7 +124,7 @@
     <ClInclude Include="PanelConfiguration.h" />
     <ClInclude Include="PanelConsole.h" />
     <ClInclude Include="PanelHierarchy.h" />
-    <ClInclude Include="PanelProperties.h" />
+    <ClInclude Include="PanelInspector.h" />
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
@@ -204,7 +204,7 @@
     <ClCompile Include="PanelConfiguration.cpp" />
     <ClCompile Include="PanelConsole.cpp" />
     <ClCompile Include="PanelHierarchy.cpp" />
-    <ClCompile Include="PanelProperties.cpp" />
+    <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PerformanceTimer.cpp" />
   </ItemGroup>

@@ -4,7 +4,7 @@
 
 enum class MaterialType
 {
-	NORMAL,
+	STANDARD,
 	SPECULAR
 };
 
@@ -18,5 +18,12 @@ public:
 public:
 	unsigned texture = 0;
 	MaterialType material_type = MaterialType::SPECULAR;
+
+	//Specular
+	float Kd = 1;
+	float Ks = 0;
+	int n = 1;
+
+
 };
 

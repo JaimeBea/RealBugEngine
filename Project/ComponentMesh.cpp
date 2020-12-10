@@ -110,22 +110,16 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	// TODO : Move to Component Light
 	float3 light_color = float3(1.0f, 1.0f, 1.0f);
 	float3 light_direction = float3(1.0f, -1.0f, 1.0f);
-	float3 camera_direction = float3(1.0f, -1.0f, 1.0f);
 	float3 ambient_color = float3(1.0f, 0.0f, 0.0f);
-
-	// TODO: Move to Component Material
-	float Ks = 0.1;
-	float Kd = 1;
-	int n = 100;
 
 	if (materials[material_index]->material_type == MaterialType::SPECULAR) 
 	{
 		program = App->programs->phong_program;
 		glUseProgram(program);
 
-		glUniform1f(glGetUniformLocation(program, "Kd"), Kd);
-		glUniform1f(glGetUniformLocation(program, "Ks"), Ks);
-		glUniform1i(glGetUniformLocation(program, "n"), n);
+		glUniform1f(glGetUniformLocation(program, "Kd"), materials[material_index]->Kd);
+		glUniform1f(glGetUniformLocation(program, "Ks"), materials[material_index]->Ks);
+		glUniform1i(glGetUniformLocation(program, "n"), materials[material_index]->n);
 		glUniform3fv(glGetUniformLocation(program, "ambient_color"), 1, App->renderer->ambient_color.ptr());
 		glUniform3fv(glGetUniformLocation(program, "light_direction"), 1, light_direction.ptr());
 		glUniform3fv(glGetUniformLocation(program, "light_color"), 1, light_color.ptr());
