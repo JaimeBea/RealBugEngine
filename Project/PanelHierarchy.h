@@ -11,6 +11,8 @@ public:
 
 	void Update() override;
 	void UpdateHierarchyNode(GameObject* game_object);
+
+public:
 	GameObject* selected_object = nullptr;
 
 private:

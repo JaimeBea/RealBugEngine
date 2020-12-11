@@ -33,6 +33,6 @@ void main()
     // ambient
     vec3 ambient = ambient_color * diffuse_color;
 	
-    color.rgb  = ambient + diffuse + specular; 
+    color.rgb = ambient + diffuse + specular; 
     color.a = 1.0;
 }

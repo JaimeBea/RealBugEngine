@@ -14,6 +14,6 @@ out vec2 uv;
 void main()
 {
 	gl_Position = proj * view * model * vec4(pos, 1.0);
-	frag_normal = transpose(inverse(mat3(model)))*normal;
+	frag_normal = transpose(inverse(mat3(model))) * normal;
 	uv = uvs;
 }
