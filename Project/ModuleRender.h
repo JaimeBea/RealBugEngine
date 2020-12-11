@@ -30,6 +30,7 @@ public:
 	unsigned viewport_height = 0;
 
 	float3 clear_color = { 0.1f, 0.1f, 0.1f };
+	float3 ambient_color = { 0.0f, 0.0f, 0.0f };
 
 private:
 	void DrawGameObject(GameObject* game_object);

@@ -10,4 +10,5 @@ public:
 
 public:
 	unsigned default_program = 0;
+	unsigned phong_program = 0;
 };

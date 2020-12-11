@@ -2,10 +2,10 @@
 
 #include "Panel.h"
 
-class PanelProperties : public Panel
+class PanelInspector : public Panel
 {
 public:
-	PanelProperties();
+	PanelInspector();
 
 	void Update() override;
 };

@@ -2,16 +2,24 @@
 
 #include "Panel.h"
 
+class GameObject;
+
 class PanelHierarchy : public Panel
 {
 public:
 	PanelHierarchy();
 
 	void Update() override;
+	void UpdateHierarchyNode(GameObject* game_object);
+
+public:
+	GameObject* selected_object = nullptr;
 
 private:
 	int window_width = 0;
 	int window_height = 0;
+
+
 };
 
 

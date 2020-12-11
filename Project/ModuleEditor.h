@@ -6,7 +6,7 @@
 #include "PanelScene.h"
 #include "PanelConsole.h"
 #include "PanelConfiguration.h"
-#include "PanelProperties.h"
+#include "PanelInspector.h"
 #include "PanelHierarchy.h"
 #include "PanelAbout.h"
 
@@ -29,13 +29,12 @@ public:
 	unsigned dock_right_id = 0;
 	unsigned dock_down_id = 0;
 
-private:
 	std::vector<Panel*> panels;
 
 	PanelScene panel_scene;
 	PanelConsole panel_console;
 	PanelConfiguration panel_configuration;
-	PanelProperties panel_properties;
+	PanelInspector panel_inspector;
 	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
 };
