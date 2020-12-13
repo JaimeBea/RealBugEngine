@@ -129,6 +129,7 @@
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
+    <ClInclude Include="Quadtree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
