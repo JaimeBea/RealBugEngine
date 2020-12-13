@@ -6,8 +6,10 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleTime.h"
+#include "ModuleEditor.h"
+#include "PanelHierarchy.h"
 #include "GameObject.h"
-#include "ComponentBoundingSphere.h"
+#include "ComponentBoundingBox.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -141,8 +143,7 @@ UpdateStatus ModuleCamera::Update()
         // Focus camera around geometry with f key
         if (App->input->GetKey(SDL_SCANCODE_F))
         {
-            // TODO: Focus on current node. Currently focuses an arbitrary sphere.
-            Focus(Sphere(vec(0, 0, 0), 10.0f));
+            Focus(App->editor->panel_hierarchy.selected_object);
         }
 
         // Move with arrow keys
@@ -247,8 +248,15 @@ void ModuleCamera::LookAt(float x, float y, float z)
     Rotate(float3x3::LookAt(frustum.Front().Normalized(), direction, frustum.Up().Normalized(), up));
 }
 
-void ModuleCamera::Focus(const Sphere& bounding_sphere)
+void ModuleCamera::Focus(const GameObject* game_object)
 {
+    if (game_object == nullptr) return;
+    
+    ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
+    const AABB& world_bounding_box = bounding_box->GetWorldBoundingBox();
+    if (!world_bounding_box.IsFinite()) return;
+
+    Sphere bounding_sphere = world_bounding_box.MinimalEnclosingSphere();
     float min_half_angle = Min(frustum.HorizontalFov(), frustum.VerticalFov()) * 0.5f;
     float relative_distance = bounding_sphere.r / Sin(min_half_angle);
     vec camera_direction = -frustum.Front().Normalized();

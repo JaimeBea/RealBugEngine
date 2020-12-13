@@ -365,9 +365,6 @@
     <ClInclude Include="ComponentTransform.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentBoundingSphere.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
     <ClInclude Include="PanelHierarchy.h">
       <Filter>Source\Panels</Filter>
     </ClInclude>
@@ -388,6 +385,9 @@
     </ClInclude>
     <ClInclude Include="PanelInspector.h">
       <Filter>Source\Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentBoundingBox.h">
+      <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -607,9 +607,6 @@
     <ClCompile Include="ComponentTransform.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentBoundingSphere.cpp">
-      <Filter>Source\Components</Filter>
-    </ClCompile>
     <ClCompile Include="PanelHierarchy.cpp">
       <Filter>Source\Panels</Filter>
     </ClCompile>
@@ -624,6 +621,9 @@
     </ClCompile>
     <ClCompile Include="PanelInspector.cpp">
       <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBoundingBox.cpp">
+      <Filter>Source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
