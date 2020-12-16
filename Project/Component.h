@@ -7,7 +7,7 @@ enum class ComponentType
 	TRANSFORM,
 	MESH,
 	MATERIAL,
-	BOUNDING_SPHERE,
+	BOUNDING_BOX,
 	UNKNOWN
 };
 

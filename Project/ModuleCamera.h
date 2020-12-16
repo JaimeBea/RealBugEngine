@@ -8,6 +8,7 @@
 #include "Geometry/Frustum.h"
 
 class Model;
+class GameObject;
 
 class ModuleCamera : public Module
 {
@@ -28,7 +29,7 @@ public:
 	void Zoom(float amount);
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
-	void Focus(const Sphere& bounding_sphere);
+	void Focus(const GameObject* game_object);
 
 	vec GetFront() const;
 	vec GetUp() const;

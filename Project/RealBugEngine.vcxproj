@@ -13,7 +13,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="ComponentBoundingSphere.h" />
+    <ClInclude Include="ComponentBoundingBox.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
@@ -129,11 +129,12 @@
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
+    <ClInclude Include="Quadtree.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Component.cpp" />
-    <ClCompile Include="ComponentBoundingSphere.cpp" />
+    <ClCompile Include="ComponentBoundingBox.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
