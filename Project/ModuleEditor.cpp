@@ -11,6 +11,7 @@
 #include "imgui_impl_opengl3.h"
 #include "GL/glew.h"
 #include "SDL_video.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -42,6 +43,8 @@ bool ModuleEditor::Start()
 
 UpdateStatus ModuleEditor::PreUpdate()
 {
+    BROFILER_CATEGORY("ModuleEditor - PreUpdate", Profiler::Color::Azure)
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(App->window->window);
     ImGui::NewFrame();
@@ -51,6 +54,8 @@ UpdateStatus ModuleEditor::PreUpdate()
 
 UpdateStatus ModuleEditor::Update()
 {
+    BROFILER_CATEGORY("ModuleEditor - Update", Profiler::Color::Azure)
+
     ImGui::CaptureMouseFromApp(true);
     ImGui::CaptureKeyboardFromApp(true);
 
@@ -135,6 +140,8 @@ UpdateStatus ModuleEditor::Update()
 
 UpdateStatus ModuleEditor::PostUpdate()
 {
+    BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
+
     // Draw to default frame buffer (main window)
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glEnable(GL_DEPTH_TEST);
