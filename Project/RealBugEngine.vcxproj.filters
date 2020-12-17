@@ -7,11 +7,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{41a9c95d-c7f8-41aa-b8c6-00de5e1c96d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Modules">
-      <UniqueIdentifier>{7e98c0cd-558f-4cbb-b8e3-858a97ca859e}</UniqueIdentifier>
-      <Extensions>
-      </Extensions>
-    </Filter>
     <Filter Include="Libraries">
       <UniqueIdentifier>{82e06375-f960-4178-b3b0-6fd3fe66fbe3}</UniqueIdentifier>
     </Filter>
@@ -24,14 +19,17 @@
     <Filter Include="Libraries\DebugDraw">
       <UniqueIdentifier>{b4c25d6d-23f2-4e70-93b5-642eeab731b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Panels">
-      <UniqueIdentifier>{bcd7b9b1-e7a5-474b-899d-6d1a5cf157b4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Components">
       <UniqueIdentifier>{39661246-1d23-450e-ba54-492b4367ef9a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils">
-      <UniqueIdentifier>{ddd1489a-182c-4e6b-9097-5d5e7f118dc9}</UniqueIdentifier>
+    <Filter Include="Source\Modules">
+      <UniqueIdentifier>{7e98c0cd-558f-4cbb-b8e3-858a97ca859e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Panels">
+      <UniqueIdentifier>{bcd7b9b1-e7a5-474b-899d-6d1a5cf157b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\DataStructures">
+      <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -287,12 +285,6 @@
     <ClInclude Include="Libs\MathGeoLib\MathGeoLibFwd.h">
       <Filter>Libraries\MathGeoLib</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="Globals.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Module.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
@@ -310,9 +302,6 @@
     </ClInclude>
     <ClInclude Include="ModuleWindow.h">
       <Filter>Source\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="Logging.h">
-      <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="ModuleTextures.h">
       <Filter>Source\Modules</Filter>
@@ -350,9 +339,6 @@
     <ClInclude Include="ModuleScene.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
@@ -365,29 +351,47 @@
     <ClInclude Include="ComponentTransform.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentBoundingSphere.h">
-      <Filter>Source\Components</Filter>
-    </ClInclude>
     <ClInclude Include="PanelHierarchy.h">
       <Filter>Source\Panels</Filter>
     </ClInclude>
     <ClInclude Include="ModuleTime.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="MSTimer.h">
-      <Filter>Source\Utils</Filter>
+    <ClInclude Include="PanelInspector.h">
+      <Filter>Source\Panels</Filter>
     </ClInclude>
-    <ClInclude Include="PerformanceTimer.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Pool.h">
-      <Filter>Source\Utils</Filter>
+    <ClInclude Include="ComponentBoundingBox.h">
+      <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="Leaks.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="PanelInspector.h">
-      <Filter>Source\Panels</Filter>
+    <ClInclude Include="Globals.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Logging.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Source\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="MSTimer.h">
+      <Filter>Source\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="PerformanceTimer.h">
+      <Filter>Source\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Pool.h">
+      <Filter>Source\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadtree.h">
+      <Filter>Source\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="UID.h">
+      <Filter>Source\DataStructures</Filter>
     </ClInclude>
     <ClInclude Include="ComponentLight.h">
       <Filter>Source\Components</Filter>
@@ -538,9 +542,6 @@
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp">
       <Filter>Libraries\MathGeoLib</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -558,9 +559,6 @@
     </ClCompile>
     <ClCompile Include="ModuleWindow.cpp">
       <Filter>Source\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="Logging.cpp">
-      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Module.cpp">
       <Filter>Source\Modules</Filter>
@@ -595,9 +593,6 @@
     <ClCompile Include="ModuleScene.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
@@ -610,23 +605,35 @@
     <ClCompile Include="ComponentTransform.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentBoundingSphere.cpp">
-      <Filter>Source\Components</Filter>
-    </ClCompile>
     <ClCompile Include="PanelHierarchy.cpp">
       <Filter>Source\Panels</Filter>
     </ClCompile>
     <ClCompile Include="ModuleTime.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="MSTimer.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="PerformanceTimer.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="PanelInspector.cpp">
       <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentBoundingBox.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source\DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="MSTimer.cpp">
+      <Filter>Source\DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceTimer.cpp">
+      <Filter>Source\DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="UID.cpp">
+      <Filter>Source\DataStructures</Filter>
     </ClCompile>
     <ClCompile Include="ComponentLight.cpp">
       <Filter>Source\Components</Filter>

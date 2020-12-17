@@ -9,7 +9,7 @@
 class ComponentTransform : public Component
 {
 public:
-	static const ComponentType static_type = ComponentType::TRANSFORM;
+	REGISTER_COMPONENT(ComponentType::TRANSFORM);
 
 	ComponentTransform(GameObject& owner);
 	void OnEditor() override;

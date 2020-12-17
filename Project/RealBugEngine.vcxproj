@@ -13,8 +13,8 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Component.h" />
-    <ClInclude Include="ComponentBoundingSphere.h" />
     <ClInclude Include="ComponentLight.h" />
+    <ClInclude Include="ComponentBoundingBox.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
@@ -130,12 +130,14 @@
     <ClInclude Include="PanelScene.h" />
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
+    <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="UID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Component.cpp" />
-    <ClCompile Include="ComponentBoundingSphere.cpp" />
     <ClCompile Include="ComponentLight.cpp" />
+    <ClCompile Include="ComponentBoundingBox.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
@@ -211,6 +213,7 @@
     <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PerformanceTimer.cpp" />
+    <ClCompile Include="UID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Game\Shaders\default_fragment.glsl" />

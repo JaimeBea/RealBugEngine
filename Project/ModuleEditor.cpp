@@ -83,7 +83,7 @@ UpdateStatus ModuleEditor::Update()
     {
         if (ImGui::MenuItem("Repository"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine/wiki");
         }
         if (ImGui::MenuItem("Download latest"))
         {

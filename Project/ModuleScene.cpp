@@ -8,7 +8,7 @@
 #include "ComponentLight.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
-#include "ComponentBoundingSphere.h"
+#include "ComponentBoundingBox.h"
 
 #include "Math/myassert.h"
 #include "assimp/cimport.h"
@@ -212,14 +212,9 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 	transform->CalculateGlobalMatrix();
 	LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
 
-	// Create an auxiliary vertex array
-	std::vector<vec> vertices;
-	int num_vertices = 0;
-	for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
-	{
-		num_vertices += scene->mMeshes[i]->mNumVertices;
-	}
-	vertices.reserve(num_vertices);
+	// Save min and max points
+	vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
+	vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
 
 	// Load meshes
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
@@ -252,18 +247,23 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 			}
 		}
 
-		// Add vertices to auxiliary vertex array
+		// Update min and max points
 		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
 		{
-			vec vertex = *(vec*)&ai_mesh->mVertices[j];
-			vertex = transform->GetGlobalMatrix().TransformPos(vertex);
-			vertices.push_back(vertex);
+			aiVector3D vertex = ai_mesh->mVertices[j];
+			if (vertex.x < min_point.x) min_point.x = vertex.x;
+			if (vertex.y < min_point.y) min_point.y = vertex.y;
+			if (vertex.z < min_point.z) min_point.z = vertex.z;
+			if (vertex.x > max_point.x) max_point.x = vertex.x;
+			if (vertex.y > max_point.y) max_point.y = vertex.y;
+			if (vertex.z > max_point.z) max_point.z = vertex.z;
 		}
 	}
 
-	// Create bounding sphere
-	ComponentBoundingSphere* bounding_sphere = game_object->CreateComponent<ComponentBoundingSphere>();
-	bounding_sphere->bounding_sphere = Sphere::FastEnclosingSphere(vertices.data(), vertices.size());
+	// Create bounding box
+	ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
+	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
+	bounding_box->CalculateWorldBoundingBox();
 
 	// Load children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
