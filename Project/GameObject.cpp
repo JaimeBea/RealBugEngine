@@ -6,6 +6,10 @@
 
 #include "Leaks.h"
 
+GameObject::GameObject() : id(GenerateUID()) {}
+
+GameObject::GameObject(UID id_) : id(id_) {}
+
 void GameObject::Init() {}
 
 void GameObject::Update()
@@ -34,6 +38,11 @@ void GameObject::CleanUp()
 		delete component;
 	}
 	components.clear();
+}
+
+UID GameObject::GetID()
+{
+	return id;
 }
 
 void GameObject::SetParent(GameObject* game_object)
