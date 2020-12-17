@@ -22,6 +22,7 @@ public:
 	bool Load(const char* file_name);
 
 	GameObject* CreateGameObject(GameObject* parent);
+	GameObject* DuplicateGameObject(GameObject* parent);
 	void DestroyGameObject(GameObject* game_object);
 
 public:

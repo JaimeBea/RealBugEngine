@@ -23,6 +23,20 @@ void PanelHierarchy::Update()
 		{
 			if (ImGui::TreeNode("%d", root->name.c_str())) 
 			{
+				if (ImGui::BeginPopupContextItem())
+				{
+					if (ImGui::Selectable("Create Empty"))
+					{
+						GameObject* new_object = App->scene->CreateGameObject(root);
+						new_object->name = "Game Object";
+						ComponentTransform* transform = new_object->CreateComponent<ComponentTransform>();
+						transform->SetPosition(float3(0, 0, 0));
+						transform->SetRotation(Quat::identity);
+						transform->SetScale(float3(1, 1, 1));
+						transform->CalculateGlobalMatrix();
+					}
+					ImGui::EndPopup();
+				}
 				UpdateHierarchyNode(root);
 				ImGui::TreePop();
 			}
@@ -38,7 +52,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	for (int i = 0; i < children.size(); i++)
 	{
 		char label[160];
-		sprintf_s(label, "%s###%p", children[i]->name.c_str(), children[i]);
+		sprintf_s(label, "%s###%p", children[i]->name.c_str(), children[i]->GetID());
 		ImGuiTreeNodeFlags flags = base_flags;
 		if (children[i]->GetChildren().empty()) flags |= ImGuiTreeNodeFlags_Leaf;
 
@@ -48,20 +62,27 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		{
 			if (ImGui::Selectable("Delete"))
 			{
-				GameObject* parent = selected_object->GetParent();
-				parent->RemoveChild(selected_object);
+				App->scene->DestroyGameObject(selected_object);
 				selected_object = nullptr;
 			}
 			if (ImGui::Selectable("Duplicate"))
 			{
-				GameObject* parent = selected_object->GetParent();
-				parent->AddChild(selected_object);
+				//GameObject* new_object = App->scene->DuplicateGameObject(selected_object);
+				//transform->SetPosition(float3(0, 0, 0));
+				//transform->SetRotation(Quat::identity);
+				//transform->SetScale(float3(1, 1, 1));
+				//transform->CalculateGlobalMatrix();
 			}
 			ImGui::Separator();
 			if (ImGui::Selectable("Create Empty"))
 			{
-				GameObject* new_object = new GameObject;
-				selected_object->AddChild(new_object);
+				GameObject* new_object = App->scene->CreateGameObject(selected_object);
+				new_object->name = "Game Object";
+				ComponentTransform* transform = new_object->CreateComponent<ComponentTransform>();
+				transform->SetPosition(float3(0, 0, 0));
+				transform->SetRotation(Quat::identity);
+				transform->SetScale(float3(1, 1, 1));
+				transform->CalculateGlobalMatrix();
 			}
 			ImGui::Separator();
 			ImGui::EndPopup();

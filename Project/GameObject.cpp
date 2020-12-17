@@ -10,6 +10,8 @@ GameObject::GameObject() : id(GenerateUID()) {}
 
 GameObject::GameObject(UID id_) : id(id_) {}
 
+GameObject::GameObject(const GameObject& other) : name(other.name), id(GenerateUID()), parent(nullptr) {}
+
 void GameObject::Init() {}
 
 void GameObject::Update()

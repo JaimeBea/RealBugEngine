@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModuleTextures.h"
+#include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentLight.h"
 #include "ComponentMesh.h"
@@ -169,6 +170,19 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 	GameObject* game_object = game_objects.Obtain();
 	game_object->SetParent(parent);
 	game_object->Init();
+	return game_object;
+}
+
+GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
+{
+	//GameObject* parent = game_object->GetParent();
+	//GameObject* new_object = game_object;
+	//for (Component* component : game_object->components) {
+
+	//}
+	//GameObject* game_object = game_objects.Obtain();
+	//game_object->SetParent(parent);
+	//game_object->Init();
 	return game_object;
 }
 

@@ -29,7 +29,7 @@ void PanelInspector::Update()
 		{
 			ImGui::TextUnformatted("Id:");
 			ImGui::SameLine();
-			ImGui::TextColored(color, "%llu", selected->GetID());
+			ImGui::TextColored(text_color, "%llu", selected->GetID());
 
 			char name[100];
 			sprintf_s(name, 100, "%s", selected->name.c_str());

@@ -14,6 +14,8 @@ public:
 	GameObject();
 	GameObject(UID id);
 
+	GameObject(const GameObject &other);
+
 	void Init();
 	void Update();
 	void CleanUp();
