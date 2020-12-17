@@ -77,15 +77,15 @@ UpdateStatus ModuleEditor::Update()
     {
         if (ImGui::MenuItem("Documentation"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/UPCMasterEngine/wiki");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine/wiki");
         }
         if (ImGui::MenuItem("Download latest"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/UPCMasterEngine/releases");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine/releases");
         }
         if (ImGui::MenuItem("Report a bug"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/UPCMasterEngine/issues");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine/issues");
         }
         ImGui::MenuItem(panel_about.name, "", &panel_about.enabled);
         ImGui::EndMenu();
