@@ -274,14 +274,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/assimp/include; $(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/brofiler/include;$(ProjectDir)/Libs/assimp/include; $(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalLibraryDirectories>$(ProjectDir)/Libs/assimp/lib; $(ProjectDir)/Libs/DeviL/lib; $(ProjectDir)/Libs/SDL/lib; $(ProjectDir)/Libs/glew-2.1.0/lib;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc141-mt.lib; DeviL.lib; ILU.lib; ILUT.lib; SDL2.lib; SDL2main.lib; glew32.lib; opengl32.lib; kernel32.lib; user32.lib; gdi32.lib; winspool.lib; comdlg32.lib; advapi32.lib; shell32.lib; ole32.lib; oleaut32.lib; uuid.lib; odbc32.lib; odbccp32.lib; %(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)/Libs/assimp/lib; $(ProjectDir)/Libs/DeviL/lib; $(ProjectDir)/Libs/SDL/lib; $(ProjectDir)/Libs/glew-2.1.0/lib; $(ProjectDir)/Libs/brofiler/lib;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>ProfilerCore32.lib;assimp-vc141-mt.lib; DeviL.lib; ILU.lib; ILUT.lib; SDL2.lib; SDL2main.lib; glew32.lib; opengl32.lib; kernel32.lib; user32.lib; gdi32.lib; winspool.lib; comdlg32.lib; advapi32.lib; shell32.lib; ole32.lib; oleaut32.lib; uuid.lib; odbc32.lib; odbccp32.lib; %(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

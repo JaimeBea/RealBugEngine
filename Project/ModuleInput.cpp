@@ -10,6 +10,7 @@
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -30,6 +31,8 @@ bool ModuleInput::Init()
 
 UpdateStatus ModuleInput::PreUpdate()
 {
+	BROFILER_CATEGORY("ModuleInput - PreUpdate", Profiler::Color::AntiqueWhite)
+
 	ImGuiIO& io = ImGui::GetIO();
 
 	mouse_motion = { 0, 0 };

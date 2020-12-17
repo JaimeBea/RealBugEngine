@@ -15,8 +15,10 @@
 
 #include "GL/glew.h"
 #include "SDL.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
+
 
 static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -94,6 +96,8 @@ bool ModuleRender::Init()
 
 UpdateStatus ModuleRender::PreUpdate()
 {
+	BROFILER_CATEGORY("ModuleRender - PreUpdate", Profiler::Color::Green)
+
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glViewport(0, 0, viewport_width, viewport_height);
 
@@ -105,6 +109,8 @@ UpdateStatus ModuleRender::PreUpdate()
 
 UpdateStatus ModuleRender::Update()
 {
+	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
+
 	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewport_width, viewport_height);
 
 	// Load model or texture if one gets dropped
@@ -149,6 +155,8 @@ UpdateStatus ModuleRender::Update()
 
 UpdateStatus ModuleRender::PostUpdate()
 {
+	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
+
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UpdateStatus::CONTINUE;

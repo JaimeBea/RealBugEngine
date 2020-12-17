@@ -17,6 +17,7 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include "SDL_video.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -63,6 +64,8 @@ bool ModuleCamera::Init()
 
 UpdateStatus ModuleCamera::Update()
 {
+    BROFILER_CATEGORY("ModuleCamera - Update", Profiler::Color::Blue)
+
     float delta_time = App->time->GetRealTimeDeltaTime();
 
     const float2& mouse_motion = App->input->GetMouseMotion();

@@ -6,6 +6,7 @@
 #include "ModuleScene.h"
 
 #include "SDL_timer.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -16,6 +17,8 @@ ModuleTime::ModuleTime()
 
 UpdateStatus ModuleTime::PreUpdate()
 {
+	BROFILER_CATEGORY("ModuleTime - PreUpdate", Profiler::Color::Black)
+
 	frame_count += 1;
 
 	unsigned int real_time = timer.Read();
@@ -46,6 +49,7 @@ UpdateStatus ModuleTime::PreUpdate()
 
 void ModuleTime::WaitForEndOfFrame()
 {
+	BROFILER_CATEGORY("ModuleTime - WaitForEndOfFrame", Profiler::Color::Black)
 	if (limit_framerate)
 	{
 		unsigned int real_time_ms = timer.Read();

@@ -9,6 +9,7 @@
 #include "GL/glew.h"
 #include "IL/il.h"
 #include "assimp/version.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -49,6 +50,8 @@ bool ModuleHardwareInfo::Start()
 
 UpdateStatus ModuleHardwareInfo::Update()
 {
+    BROFILER_CATEGORY("ModuleHardwareInfo - PreUpdate", Profiler::Color::Orange)
+
     int vram_budget_kb;
     int vram_available_kb;
     glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &vram_budget_kb);
