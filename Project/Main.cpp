@@ -4,6 +4,7 @@
 
 #include "SDL.h"
 #include <stdlib.h>
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -34,6 +35,7 @@ int main(int argc, char ** argv)
 	MainState state = MainState::CREATION;
 	while (state != MainState::EXIT)
 	{
+		BROFILER_FRAME("Main");
 		switch (state)
 		{
 		case MainState::CREATION:

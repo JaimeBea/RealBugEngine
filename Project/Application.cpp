@@ -16,6 +16,7 @@
 
 #include "SDL_timer.h"
 #include <windows.h>
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -72,6 +73,8 @@ bool Application::Start()
 
 UpdateStatus Application::Update()
 {
+	BROFILER_CATEGORY("App - Update", Profiler::Color::Red)
+
 	UpdateStatus ret = UpdateStatus::CONTINUE;
 
 	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)

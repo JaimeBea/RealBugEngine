@@ -6,6 +6,7 @@
 #include "debugdraw.h" // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
 
 #include "GL/glew.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -602,6 +603,8 @@ bool ModuleDebugDraw::CleanUp()
 
 UpdateStatus ModuleDebugDraw::Update()
 {
+    BROFILER_CATEGORY("ModuleDebugDraw - Update", Profiler::Color::Purple)
+
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
 
