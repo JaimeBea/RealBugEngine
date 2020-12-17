@@ -5,6 +5,7 @@
 #include "Logging.h"
 #include "ModuleTextures.h"
 #include "ComponentTransform.h"
+#include "ComponentLight.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentBoundingSphere.h"
@@ -35,12 +36,32 @@ bool ModuleScene::Init()
 	aiAttachLogStream(&log_stream);
 #endif
 
+	// Create Scene
+	root = CreateGameObject(nullptr);
+	root->name = "Scene";
+	ComponentTransform* transform = root->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(0, 0, 0));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1, 1, 1));
+	transform->CalculateGlobalMatrix();
+
 	return true;
 }
 
 bool ModuleScene::Start()
 {
-	Load("Assets/Street_Environment/Street_environment_V01.FBX");
+	Load("Assets/BakerHouse.fbx");
+
+	// Create Directional Light
+	GameObject* game_object = CreateGameObject(root);
+	game_object->name = "Directional Light";
+
+	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(0,0,0));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1,1,1));
+	transform->CalculateGlobalMatrix();
+	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
 
 	return true;
 }
@@ -59,14 +80,6 @@ bool ModuleScene::CleanUp()
 
 bool ModuleScene::Load(const char* file_name)
 {
-	// Unload previous scene
-	DestroyGameObject(root);
-	assert(game_objects.Count() == 0);
-	for (Texture& texture : App->textures->textures)
-	{
-		App->textures->ReleaseTexture(&texture);
-	}
-
 	// Load scene
 	LOG("Loading scene from path: \"%s\".", file_name);
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
@@ -144,7 +157,7 @@ bool ModuleScene::Load(const char* file_name)
 
 	// Create scene tree
 	LOG("Loading scene tree.");
-	root = LoadNode(scene, materials, scene->mRootNode, nullptr);
+	GameObject* game_object = LoadNode(scene, materials, scene->mRootNode, root);
 
 	LOG("Scene loaded.");
 	return true;

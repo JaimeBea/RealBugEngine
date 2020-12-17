@@ -14,6 +14,7 @@ public:
 	static const ComponentType static_type = ComponentType::MATERIAL;
 
 	ComponentMaterial(GameObject& owner);
+	void OnEditor() override;
 
 public:
 	unsigned texture = 0;
@@ -23,7 +24,6 @@ public:
 	float Kd = 1;
 	float Ks = 0;
 	int n = 1;
-
-
+	GameObject* light = nullptr;
 };
 

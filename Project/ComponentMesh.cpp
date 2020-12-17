@@ -1,5 +1,6 @@
 #include "ComponentMesh.h"
 
+#include "GameObject.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
@@ -7,9 +8,14 @@
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "ComponentMaterial.h"
+#include "ComponentLight.h"
+#include "ModuleEditor.h"
+#include "PanelHierarchy.h"
+#include "PanelInspector.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
+#include "imgui.h"
 
 #include "Leaks.h"
 
@@ -101,46 +107,114 @@ void ComponentMesh::Release()
 	glDeleteBuffers(1, &ebo);
 }
 
+void ComponentMesh::OnEditor() 
+{
+	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
+	for (ComponentMesh* mesh : meshes)
+	{
+		int count = 1;
+		char name[50];
+		sprintf_s(name, 50, "Mesh %d", count);
+		if (mesh != nullptr)
+		{
+			// Show only # when multiple
+			if (meshes.size() == 1)
+			{
+				sprintf_s(name, 50, "Mesh");
+			}
+			if (ImGui::CollapsingHeader(name))
+			{
+				bool active = this->IsActive();
+				if (ImGui::Checkbox("Active##mesh", &active))
+				{
+					if (active)
+					{
+						this->Enable();
+					}
+					else
+					{
+						this->Disable();
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Remove##mesh")) {
+					// TODO: Add delete Component tool
+				}
+				ImGui::Separator();
+
+				ImGui::TextColored(title_color, "Geometry");
+				ImGui::TextWrapped("Num Vertices: ");
+				ImGui::SameLine();
+				ImGui::TextColored(text_color, "%d", mesh->num_vertices);
+				ImGui::TextWrapped("Num Triangles: ");
+				ImGui::SameLine();
+				ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
+				ImGui::Separator();
+			}
+			count++;
+		}
+	}
+}
+
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const
 {
-	unsigned program = App->programs->default_program;
+	if (this->IsActive()) {
+		unsigned program = App->programs->default_program;
 
-	float4x4 view_matrix = App->camera->GetViewMatrix();
-	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
-	unsigned texture = materials.size() > material_index ? materials[material_index]->texture : 0;
+		float4x4 view_matrix = App->camera->GetViewMatrix();
+		float4x4 proj_matrix = App->camera->GetProjectionMatrix();
+		unsigned texture = 0;
+		ComponentLight* light;
+		if (materials.size() > material_index) 
+		{
+			if(materials[material_index]->IsActive())
+			{
+				texture = materials[material_index]->texture;
+			}
+		}
 
-	// TODO : Move to Component Light
-	float3 light_color = float3(1.0f, 1.0f, 1.0f);
-	float3 light_direction = float3(1.0f, -1.0f, 1.0f);
-	float3 ambient_color = float3(1.0f, 0.0f, 0.0f);
+		if (materials[material_index]->material_type == ShaderType::PHONG)
+		{
+			float3 light_color = float3(0, 0, 0);
+			float3 light_direction = float3(0, 0, 0);
 
-	if (materials[material_index]->material_type == ShaderType::PHONG) 
-	{
-		program = App->programs->phong_program;
-		glUseProgram(program);
+			// TODO: Improve after Light class
+			for (GameObject* object : App->scene->root->GetChildren()) {
+				light = object->GetComponent<ComponentLight>();
+				if (light != nullptr)
+				{
+					light_color = light->light_color;
+					light_direction = light->light_direction;
+					break;
+				}
+			}
+			program = App->programs->phong_program;
+			glUseProgram(program);
 
-		glUniform1f(glGetUniformLocation(program, "Kd"), materials[material_index]->Kd);
-		glUniform1f(glGetUniformLocation(program, "Ks"), materials[material_index]->Ks);
-		glUniform1i(glGetUniformLocation(program, "n"), materials[material_index]->n);
-		glUniform3fv(glGetUniformLocation(program, "ambient_color"), 1, App->renderer->ambient_color.ptr());
-		glUniform3fv(glGetUniformLocation(program, "light_direction"), 1, light_direction.ptr());
-		glUniform3fv(glGetUniformLocation(program, "light_color"), 1, light_color.ptr());
-		glUniform3fv(glGetUniformLocation(program, "camera_direction"), 1, App->camera->GetFront().ptr());
+			glUniform1f(glGetUniformLocation(program, "Kd"), materials[material_index]->Kd);
+			glUniform1f(glGetUniformLocation(program, "Ks"), materials[material_index]->Ks);
+			glUniform1i(glGetUniformLocation(program, "n"), materials[material_index]->n);
+			glUniform3fv(glGetUniformLocation(program, "ambient_color"), 1, App->renderer->ambient_color.ptr());
+			glUniform3fv(glGetUniformLocation(program, "light_direction"), 1, light_direction.ptr());
+			glUniform3fv(glGetUniformLocation(program, "light_color"), 1, light_color.ptr());
+			glUniform3fv(glGetUniformLocation(program, "camera_direction"), 1, App->camera->GetFront().ptr());
+		}
+		else
+		{
+			glUseProgram(program);
+		}
+
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_matrix.ptr());
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view_matrix.ptr());
+		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj_matrix.ptr());
+		glUniform1i(glGetUniformLocation(program, "diffuse_texture"), 0);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glBindVertexArray(vao);
+		glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
+		glBindVertexArray(0);
 	}
-	else 
-	{
-		glUseProgram(program);
-	}
-
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_matrix.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view_matrix.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj_matrix.ptr());
-	glUniform1i(glGetUniformLocation(program, "diffuse_texture"), 0);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
-	glBindVertexArray(0);
 }

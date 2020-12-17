@@ -389,6 +389,9 @@
     <ClInclude Include="PanelInspector.h">
       <Filter>Source\Panels</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentLight.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -624,6 +627,9 @@
     </ClCompile>
     <ClCompile Include="PanelInspector.cpp">
       <Filter>Source\Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

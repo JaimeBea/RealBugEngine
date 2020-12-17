@@ -12,6 +12,7 @@ public:
 	static const ComponentType static_type = ComponentType::TRANSFORM;
 
 	ComponentTransform(GameObject& owner);
+	void OnEditor() override;
 
 	void InvalidateHierarchy();
 	void Invalidate();

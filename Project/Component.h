@@ -8,6 +8,7 @@ enum class ComponentType
 	MESH,
 	MATERIAL,
 	BOUNDING_SPHERE,
+	LIGHT,
 	UNKNOWN
 };
 
@@ -17,6 +18,7 @@ public:
 	Component(ComponentType type, GameObject& owner, bool active = true);
 
 	virtual void Update();
+	virtual void OnEditor();
 
 	void Enable();
 	void Disable();

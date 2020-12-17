@@ -4,6 +4,7 @@
 #include "ModuleEditor.h"
 #include "ModuleScene.h"
 #include "GameObject.h"
+#include "ComponentTransform.h"
 
 #include "imgui.h"
 
@@ -18,13 +19,13 @@ void PanelHierarchy::Update()
 	if (ImGui::Begin(name, &enabled))
 	{
 		GameObject* root = App->scene->root;
-		if (selected_object == nullptr) 
-		{
-			selected_object = root;
-		}
 		if (root != nullptr)
 		{
-			UpdateHierarchyNode(root);
+			if (ImGui::TreeNode("%d", root->name.c_str())) 
+			{
+				UpdateHierarchyNode(root);
+				ImGui::TreePop();
+			}
 		}
 	}
 	ImGui::End();
@@ -32,23 +33,70 @@ void PanelHierarchy::Update()
 
 void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 {
-	static std::string selected = "-1";
-	char label[160];
-	sprintf_s(label, "%s##%p", game_object->name.c_str(), game_object);
-	if (ImGui::Selectable(label, selected == game_object->name.c_str()))
-	{
-		selected_object = game_object;
-		selected = game_object->name.c_str();
-	}
+	ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_OpenOnArrow;
 	std::vector<GameObject*> children = game_object->GetChildren();
-	ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_DefaultOpen;
-	if (children.empty()) flags |= ImGuiTreeNodeFlags_Leaf;
-	if (ImGui::TreeNodeEx(label, flags))
+	for (int i = 0; i < children.size(); i++)
 	{
-		for (GameObject* child : children)
+		char label[160];
+		sprintf_s(label, "%s###%p", children[i]->name.c_str(), children[i]);
+		ImGuiTreeNodeFlags flags = base_flags;
+		if (children[i]->GetChildren().empty()) flags |= ImGuiTreeNodeFlags_Leaf;
+
+		bool open = ImGui::TreeNodeEx(label, flags);
+
+		if (ImGui::BeginPopupContextItem("Options"))
 		{
-			UpdateHierarchyNode(child);
+			if (ImGui::Selectable("Delete"))
+			{
+				GameObject* parent = selected_object->GetParent();
+				parent->RemoveChild(selected_object);
+				selected_object = nullptr;
+			}
+			if (ImGui::Selectable("Duplicate"))
+			{
+				GameObject* parent = selected_object->GetParent();
+				parent->AddChild(selected_object);
+			}
+			ImGui::Separator();
+			if (ImGui::Selectable("Create Empty"))
+			{
+				GameObject* new_object = new GameObject;
+				selected_object->AddChild(new_object);
+			}
+			ImGui::Separator();
+			ImGui::EndPopup();
 		}
-		ImGui::TreePop();
+
+		if (ImGui::IsItemClicked())
+		{
+			selected_object = children[i];
+		}
+		// Drag & Drop
+		if (ImGui::BeginDragDropSource()) 
+		{
+			ImGui::SetDragDropPayload("_HIERARCHY", &children[i], sizeof(GameObject*));
+			ImGui::Text("This is a drag and drop source");
+			ImGui::EndDragDropSource();
+		}
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
+			{
+				IM_ASSERT(payload->DataSize == sizeof(GameObject*));
+				GameObject* payload_n = (GameObject*)payload->Data;
+				payload_n->SetParent(game_object);
+				ComponentTransform* transform = payload_n->GetComponent<ComponentTransform>();
+				transform->InvalidateHierarchy();
+				transform->CalculateGlobalMatrix();
+			}
+			ImGui::EndDragDropTarget();
+		}
+		if (open)
+		{
+			UpdateHierarchyNode(children[i]);
+			ImGui::TreePop();
+		}
+
 	}
 }
+

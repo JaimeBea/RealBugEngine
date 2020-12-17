@@ -18,11 +18,19 @@ bool ModuleWindow::Init()
 		return false;
 	}
 
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
 	SDL_DisplayMode desktop_display_mode;
 	SDL_GetDesktopDisplayMode(0, &desktop_display_mode);
-	window = SDL_CreateWindow(App->app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w, desktop_display_mode.h, flags);
+	window = SDL_CreateWindow(App->app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w - 100,  desktop_display_mode.h -100, flags);
 	if(window == NULL)
 	{
 		LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());

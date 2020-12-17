@@ -36,6 +36,21 @@ void GameObject::CleanUp()
 	components.clear();
 }
 
+void GameObject::Enable()
+{
+	active = true;
+}
+
+void GameObject::Disable()
+{
+	active = false;
+}
+
+bool GameObject::IsActive() const
+{
+	return active;
+}
+
 void GameObject::SetParent(GameObject* game_object)
 {
 	if (parent != nullptr)

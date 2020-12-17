@@ -47,16 +47,8 @@ public:
 
 	// Application Configuration
 
-	char app_name[20] = "Real Engine";
+	char app_name[20] = "RealBug Engine";
 	char organization[20] = "";
-
-	// Engine Information
-
-	const char* engine_name = "Real Engine";
-	const char* engine_description = "Simple AAA game engine";
-	const char* engine_authors = "Jaime Bea";
-	const char* engine_libraries = "GLEW, SDL2, MathGeoLib, Dear ImGUI, DeviL, assimp";
-	const char* engine_license = "MIT";
 
 private:
 	std::vector<Module*> modules;

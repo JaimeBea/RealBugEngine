@@ -13,8 +13,12 @@ public:
 	void Init();
 	void Update();
 	void CleanUp();
+	void Enable();
+	void Disable();
+	bool IsActive() const;
 
 	template <class T> T* CreateComponent();
+	template <class T> void RemoveComponent(T* component);
 	template <class T> T* GetComponent() const;
 	template <class T> std::vector<T*> GetComponents() const;
 
@@ -27,10 +31,10 @@ public:
 
 public:
 	std::string name = "GameObject";
-
-private:
+	bool active = true;
 	std::vector<Component*> components;
 
+private:
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> children;
 };
@@ -41,6 +45,18 @@ inline T* GameObject::CreateComponent()
 	T* component = new T(*this);
 	components.push_back(component);
 	return component;
+}
+
+template <class T>
+inline void GameObject::RemoveComponent(T* to_remove)
+{
+	for (Component* component : components) 
+	{
+		if (component == to_remove) 
+		{
+			components.erase(std::remove(components.begin(), components.end(), to_remove), components.end());
+		}
+	}
 }
 
 template<class T>

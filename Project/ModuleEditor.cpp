@@ -30,6 +30,10 @@ bool ModuleEditor::Start()
     ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
     ImGui_ImplOpenGL3_Init(GLSL_VERSION);
 
+    //Define Color Style
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 1.0f, 1.0f, 0.10f));
+    ImGui::PushStyleColor(ImGuiCol_PlotHistogram, (ImVec4)ImColor(0.54f, 0.43f, 0.12f, 0.97f));
+
     panels.push_back(&panel_scene);
     panels.push_back(&panel_console);
     panels.push_back(&panel_configuration);
@@ -54,6 +58,8 @@ UpdateStatus ModuleEditor::Update()
     ImGui::CaptureMouseFromApp(true);
     ImGui::CaptureKeyboardFromApp(true);
 
+    ImGui::ShowDemoWindow();
+
     // Main menu bar
     ImGui::BeginMainMenuBar();
     if (ImGui::BeginMenu("File"))
@@ -75,17 +81,17 @@ UpdateStatus ModuleEditor::Update()
     }
     if (ImGui::BeginMenu("Help"))
     {
-        if (ImGui::MenuItem("Documentation"))
+        if (ImGui::MenuItem("Repository"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/UPCMasterEngine/wiki");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine");
         }
         if (ImGui::MenuItem("Download latest"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/UPCMasterEngine/releases");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine/releases");
         }
         if (ImGui::MenuItem("Report a bug"))
         {
-            App->RequestBrowser("https://github.com/JaimeBea/UPCMasterEngine/issues");
+            App->RequestBrowser("https://github.com/JaimeBea/RealBugEngine/issues");
         }
         ImGui::MenuItem(panel_about.name, "", &panel_about.enabled);
         ImGui::EndMenu();
