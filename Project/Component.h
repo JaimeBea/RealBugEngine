@@ -2,6 +2,8 @@
 
 class GameObject;
 
+#define REGISTER_COMPONENT(component_type) static const ComponentType static_type = component_type
+
 enum class ComponentType
 {
 	TRANSFORM,

@@ -12,7 +12,7 @@ struct aiMesh;
 class ComponentMesh : public Component
 {
 public:
-	static const ComponentType static_type = ComponentType::MESH;
+	REGISTER_COMPONENT(ComponentType::MESH);
 
 	ComponentMesh(GameObject& owner);
 
