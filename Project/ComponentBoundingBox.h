@@ -7,7 +7,7 @@
 class ComponentBoundingBox : public Component
 {
 public:
-	static const ComponentType static_type = ComponentType::BOUNDING_BOX;
+	REGISTER_COMPONENT(ComponentType::BOUNDING_BOX);
 
 	ComponentBoundingBox(GameObject& owner);
 

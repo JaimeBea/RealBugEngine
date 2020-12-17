@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleScene.h"
 #include "Component.h"
+#include "UID.h"
 
 #include <vector>
 #include <string>
@@ -10,9 +11,14 @@
 class GameObject
 {
 public:
+	GameObject();
+	GameObject(UID id);
+
 	void Init();
 	void Update();
 	void CleanUp();
+
+	UID GetID();
 
 	template <class T> T* CreateComponent();
 	template <class T> T* GetComponent() const;
@@ -29,6 +35,8 @@ public:
 	std::string name = "GameObject";
 
 private:
+	UID id = 0;
+
 	std::vector<Component*> components;
 
 	GameObject* parent = nullptr;

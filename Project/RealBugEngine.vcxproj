@@ -130,6 +130,7 @@
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="UID.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -210,6 +211,7 @@
     <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PerformanceTimer.cpp" />
+    <ClCompile Include="UID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Game\Shaders\default_fragment.glsl" />

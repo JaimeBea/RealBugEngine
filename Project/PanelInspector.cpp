@@ -33,6 +33,10 @@ void PanelInspector::Update()
 		GameObject* selected = App->editor->panel_hierarchy.selected_object;
 		if (selected != nullptr)
 		{
+			ImGui::TextUnformatted("Id:");
+			ImGui::SameLine();
+			ImGui::TextColored(color, "%llu", selected->GetID());
+
 			char name[100];
 			sprintf_s(name, 100, "%s", selected->name.c_str());
 			if (ImGui::InputText("Name", name, 100))
