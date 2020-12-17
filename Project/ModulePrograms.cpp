@@ -2,38 +2,18 @@
 
 #include "Globals.h"
 #include "Logging.h"
+#include "Application.h"
+#include "ModuleFiles.h"
 
 #include "GL/glew.h"
-#include <string.h>
 
 #include "Leaks.h"
-
-static char* LoadShader(const char* file_name)
-{
-	FILE* file = fopen(file_name, "rb");
-	if (!file)
-	{
-		LOG("Error opening file %s (%s).\n", file_name, strerror(errno));
-		return nullptr;
-	}
-	DEFER{ fclose(file); };
-
-	fseek(file, 0, SEEK_END);
-	size_t size = ftell(file);
-	rewind(file);
-
-	char* data = new char[size + 1];
-	fread(data, 1, size, file);
-	data[size] = '\0';
-
-	return data;
-}
 
 static unsigned CreateShader(unsigned type, const char* file_name)
 {
 	LOG("Creating shader from file: \"%s\"...", file_name);
 
-	char* source = LoadShader(file_name);
+	char* source = App->files->Load(file_name);
 	DEFER{ RELEASE_ARRAY(source); };
 
 	unsigned shader_id = glCreateShader(type);

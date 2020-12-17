@@ -393,6 +393,9 @@
     <ClInclude Include="UID.h">
       <Filter>Source\DataStructures</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleFiles.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -631,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="UID.cpp">
       <Filter>Source\DataStructures</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleFiles.cpp">
+      <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
