@@ -32,6 +32,8 @@ void ComponentTransform::OnEditorUpdate(){
 		{
 			transform->SetScale(float3(scale[0], scale[1], scale[2]));
 		}
+
+		// TODO: Fix Quaternion Angles
 		if (ImGui::DragFloat3("Rotation", rotation, drag_speed2f, -inf, inf))
 		{
 			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));

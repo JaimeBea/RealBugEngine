@@ -21,6 +21,57 @@
 
 ComponentMesh::ComponentMesh(GameObject& owner) : Component(static_type, owner) {}
 
+void ComponentMesh::OnEditorUpdate()
+{
+	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
+	for (ComponentMesh* mesh : meshes)
+	{
+		int count = 1;
+		char name[50];
+		sprintf_s(name, 50, "Mesh %d", count);
+		if (mesh != nullptr)
+		{
+			// Show only # when multiple
+			if (meshes.size() == 1)
+			{
+				sprintf_s(name, 50, "Mesh");
+			}
+			if (ImGui::CollapsingHeader(name))
+			{
+				bool active = this->IsActive();
+				if (ImGui::Checkbox("Active##mesh", &active))
+				{
+					if (active)
+					{
+						this->Enable();
+					}
+					else
+					{
+						this->Disable();
+					}
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Remove##mesh"))
+				{
+					// TODO: Add delete Component tool
+				}
+				ImGui::Separator();
+
+				ImGui::TextColored(title_color, "Geometry");
+				ImGui::TextWrapped("Num Vertices: ");
+				ImGui::SameLine();
+				ImGui::TextColored(text_color, "%d", mesh->num_vertices);
+				ImGui::TextWrapped("Num Triangles: ");
+				ImGui::SameLine();
+				ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
+				ImGui::Separator();
+			}
+			count++;
+		}
+	}
+}
+
 void ComponentMesh::Load(const aiMesh* mesh)
 {
 	num_vertices = mesh->mNumVertices;
@@ -94,7 +145,7 @@ void ComponentMesh::Load(const aiMesh* mesh)
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*)position_size);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*)(position_size  + normal_size));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*)(position_size + normal_size));
 
 	// Unbind VAO
 	glBindVertexArray(0);
@@ -107,56 +158,6 @@ void ComponentMesh::Release()
 	glDeleteBuffers(1, &ebo);
 }
 
-void ComponentMesh::OnEditorUpdate() 
-{
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
-	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
-	for (ComponentMesh* mesh : meshes)
-	{
-		int count = 1;
-		char name[50];
-		sprintf_s(name, 50, "Mesh %d", count);
-		if (mesh != nullptr)
-		{
-			// Show only # when multiple
-			if (meshes.size() == 1)
-			{
-				sprintf_s(name, 50, "Mesh");
-			}
-			if (ImGui::CollapsingHeader(name))
-			{
-				bool active = this->IsActive();
-				if (ImGui::Checkbox("Active##mesh", &active))
-				{
-					if (active)
-					{
-						this->Enable();
-					}
-					else
-					{
-						this->Disable();
-					}
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Remove##mesh")) {
-					// TODO: Add delete Component tool
-				}
-				ImGui::Separator();
-
-				ImGui::TextColored(title_color, "Geometry");
-				ImGui::TextWrapped("Num Vertices: ");
-				ImGui::SameLine();
-				ImGui::TextColored(text_color, "%d", mesh->num_vertices);
-				ImGui::TextWrapped("Num Triangles: ");
-				ImGui::SameLine();
-				ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
-				ImGui::Separator();
-			}
-			count++;
-		}
-	}
-}
-
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const
 {
 	if (this->IsActive()) {
@@ -166,9 +167,9 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		float4x4 proj_matrix = App->camera->GetProjectionMatrix();
 		unsigned texture = 0;
 		ComponentLight* light;
-		if (materials.size() > material_index) 
+		if (materials.size() > material_index)
 		{
-			if(materials[material_index]->IsActive())
+			if (materials[material_index]->IsActive())
 			{
 				texture = materials[material_index]->texture;
 			}
@@ -184,7 +185,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 				light = object->GetComponent<ComponentLight>();
 				if (light != nullptr)
 				{
-					if (light->IsActive()) 
+					if (light->IsActive())
 					{
 						light_color = light->light_color;
 					}

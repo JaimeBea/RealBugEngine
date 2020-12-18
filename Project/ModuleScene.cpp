@@ -58,9 +58,9 @@ bool ModuleScene::Start()
 	game_object->name = "Directional Light";
 
 	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(0,0,0));
+	transform->SetPosition(float3(0, 0, 0));
 	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1,1,1));
+	transform->SetScale(float3(1, 1, 1));
 	transform->CalculateGlobalMatrix();
 	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
 
@@ -175,14 +175,7 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 
 GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
 {
-	//GameObject* parent = game_object->GetParent();
-	//GameObject* new_object = game_object;
-	//for (Component* component : game_object->components) {
-
-	//}
-	//GameObject* game_object = game_objects.Obtain();
-	//game_object->SetParent(parent);
-	//game_object->Init();
+	// NTH: Duplicate Game Objects
 	return game_object;
 }
 

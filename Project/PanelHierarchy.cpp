@@ -23,7 +23,7 @@ void PanelHierarchy::Update()
 		GameObject* root = App->scene->root;
 		if (root != nullptr)
 		{
-			if (ImGui::TreeNode("%d", root->name.c_str())) 
+			if (ImGui::TreeNode("%d", root->name.c_str()))
 			{
 				if (ImGui::BeginPopupContextItem())
 				{
@@ -106,7 +106,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 			selected_id = children[i]->GetID();
 		}
 
-		if (ImGui::BeginDragDropSource()) 
+		if (ImGui::BeginDragDropSource())
 		{
 			ImGui::SetDragDropPayload("_HIERARCHY", children[i], sizeof(GameObject*));
 			ImGui::EndDragDropSource();
@@ -115,7 +115,8 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
 			{
-				if (!children[i]->IsParent(selected_object)) {
+				if (!children[i]->IsParent(selected_object)) 
+				{
 					selected_object->SetParent(children[i]);
 					ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
 					transform->InvalidateHierarchy();

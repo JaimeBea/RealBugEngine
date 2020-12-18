@@ -14,7 +14,7 @@ public:
 	GameObject();
 	GameObject(UID id);
 
-	GameObject(const GameObject &other);
+	GameObject(const GameObject& other);
 
 	void Init();
 	void Update();
@@ -60,9 +60,9 @@ inline T* GameObject::CreateComponent()
 template <class T>
 inline void GameObject::RemoveComponent(T* to_remove)
 {
-	for (Component* component : components) 
+	for (Component* component : components)
 	{
-		if (component == to_remove) 
+		if (component == to_remove)
 		{
 			components.erase(std::remove(components.begin(), components.end(), to_remove), components.end());
 		}

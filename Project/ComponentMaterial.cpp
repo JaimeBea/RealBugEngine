@@ -45,7 +45,7 @@ void ComponentMaterial::OnEditorUpdate() {
 					}
 				}
 				ImGui::SameLine();
-				if (ImGui::Button("Remove##material")) 
+				if (ImGui::Button("Remove##material"))
 				{
 					// TODO: Fix me
 					//selected->RemoveComponent(material);

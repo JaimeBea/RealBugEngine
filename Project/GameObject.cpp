@@ -105,12 +105,13 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-bool GameObject::IsParent(GameObject* game_object) {
+bool GameObject::IsParent(GameObject* game_object) 
+{
 	if (this->GetParent() == game_object)
 	{
 		return true;
 	}
-	if (this->GetParent() == nullptr) 
+	if (this->GetParent() == nullptr)
 	{
 		return false;
 	}
@@ -118,5 +119,4 @@ bool GameObject::IsParent(GameObject* game_object) {
 	{
 		return this->GetParent()->IsParent(game_object);
 	}
-	
 }

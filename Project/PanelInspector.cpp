@@ -15,8 +15,6 @@
 
 #include "Leaks.h"
 
-
-
 PanelInspector::PanelInspector() : Panel("Inspector", true) {}
 
 void PanelInspector::Update()
@@ -54,7 +52,8 @@ void PanelInspector::Update()
 
 			ImGui::Separator();
 
-			for (Component* component : selected->components) {
+			for (Component* component : selected->components)
+			{
 				component->OnEditorUpdate();
 			}
 		}
