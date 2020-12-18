@@ -10,7 +10,7 @@
 
 ComponentTransform::ComponentTransform(GameObject& owner) : Component(static_type, owner) {}
 
-void ComponentTransform::OnEditor(){
+void ComponentTransform::OnEditorUpdate(){
 
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
 	ComponentTransform* transform = selected->GetComponent<ComponentTransform>();

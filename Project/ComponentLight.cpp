@@ -11,7 +11,7 @@
 
 ComponentLight::ComponentLight(GameObject& owner) : Component(static_type, owner) {}
 
-void ComponentLight::OnEditor() {
+void ComponentLight::OnEditorUpdate() {
 
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
 	std::vector < ComponentLight*> lights = selected->GetComponents<ComponentLight>();

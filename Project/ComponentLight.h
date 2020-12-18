@@ -7,10 +7,10 @@
 class ComponentLight : public Component
 {
 public:
-	static const ComponentType static_type = ComponentType::LIGHT;
+	REGISTER_COMPONENT(ComponentType::LIGHT);
 
 	ComponentLight(GameObject& owner);
-	void OnEditor() override;
+	void OnEditorUpdate() override;
 
 public:
 

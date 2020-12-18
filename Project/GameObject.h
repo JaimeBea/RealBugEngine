@@ -36,6 +36,7 @@ public:
 	void AddChild(GameObject* game_object);
 	void RemoveChild(GameObject* game_object);
 	const std::vector<GameObject*>& GetChildren() const;
+	bool IsParent(GameObject* game_object);
 
 public:
 	std::string name = "GameObject";

@@ -107,7 +107,7 @@ void ComponentMesh::Release()
 	glDeleteBuffers(1, &ebo);
 }
 
-void ComponentMesh::OnEditor() 
+void ComponentMesh::OnEditorUpdate() 
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
 	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
@@ -184,7 +184,10 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 				light = object->GetComponent<ComponentLight>();
 				if (light != nullptr)
 				{
-					light_color = light->light_color;
+					if (light->IsActive()) 
+					{
+						light_color = light->light_color;
+					}
 					light_direction = light->light_direction;
 					break;
 				}

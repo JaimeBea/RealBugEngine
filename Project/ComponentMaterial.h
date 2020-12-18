@@ -14,7 +14,7 @@ public:
 	REGISTER_COMPONENT(ComponentType::MATERIAL);
 
 	ComponentMaterial(GameObject& owner);
-	void OnEditor() override;
+	void OnEditorUpdate() override;
 
 public:
 	unsigned texture = 0;

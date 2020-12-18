@@ -5,8 +5,10 @@
 #include "ModuleScene.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
+#include "Logging.h"
 
 #include "imgui.h"
+
 
 #include "Leaks.h"
 
@@ -37,6 +39,17 @@ void PanelHierarchy::Update()
 					}
 					ImGui::EndPopup();
 				}
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
+					{
+						selected_object->SetParent(root);
+						ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
+						transform->InvalidateHierarchy();
+						transform->CalculateGlobalMatrix();
+					}
+					ImGui::EndDragDropTarget();
+				}
 				UpdateHierarchyNode(root);
 				ImGui::TreePop();
 			}
@@ -52,10 +65,14 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	for (int i = 0; i < children.size(); i++)
 	{
 		char label[160];
-		sprintf_s(label, "%s###%p", children[i]->name.c_str(), children[i]->GetID());
+		sprintf_s(label, "%s###%p", children[i]->name.c_str(), children[i]);
 		ImGuiTreeNodeFlags flags = base_flags;
 		if (children[i]->GetChildren().empty()) flags |= ImGuiTreeNodeFlags_Leaf;
-
+		bool is_selected = (selected_id == children[i]->GetID());
+		if (is_selected)
+		{
+			flags |= ImGuiTreeNodeFlags_Selected;
+		}
 		bool open = ImGui::TreeNodeEx(label, flags);
 
 		if (ImGui::BeginPopupContextItem("Options"))
@@ -65,14 +82,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 				App->scene->DestroyGameObject(selected_object);
 				selected_object = nullptr;
 			}
-			if (ImGui::Selectable("Duplicate"))
-			{
-				//GameObject* new_object = App->scene->DuplicateGameObject(selected_object);
-				//transform->SetPosition(float3(0, 0, 0));
-				//transform->SetRotation(Quat::identity);
-				//transform->SetScale(float3(1, 1, 1));
-				//transform->CalculateGlobalMatrix();
-			}
+			ImGui::Selectable("Duplicate"); ImGui::SameLine(); HelpMarker("To implement");
+			// NTH: Tool to duplicate Objects
+
 			ImGui::Separator();
 			if (ImGui::Selectable("Create Empty"))
 			{
@@ -91,24 +103,24 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		if (ImGui::IsItemClicked())
 		{
 			selected_object = children[i];
+			selected_id = children[i]->GetID();
 		}
-		// Drag & Drop
+
 		if (ImGui::BeginDragDropSource()) 
 		{
-			ImGui::SetDragDropPayload("_HIERARCHY", &children[i], sizeof(GameObject*));
-			ImGui::Text("This is a drag and drop source");
+			ImGui::SetDragDropPayload("_HIERARCHY", children[i], sizeof(GameObject*));
 			ImGui::EndDragDropSource();
 		}
 		if (ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
 			{
-				IM_ASSERT(payload->DataSize == sizeof(GameObject*));
-				GameObject* payload_n = (GameObject*)payload->Data;
-				payload_n->SetParent(game_object);
-				ComponentTransform* transform = payload_n->GetComponent<ComponentTransform>();
-				transform->InvalidateHierarchy();
-				transform->CalculateGlobalMatrix();
+				if (!children[i]->IsParent(selected_object)) {
+					selected_object->SetParent(children[i]);
+					ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
+					transform->InvalidateHierarchy();
+					transform->CalculateGlobalMatrix();
+				}
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -117,7 +129,6 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 			UpdateHierarchyNode(children[i]);
 			ImGui::TreePop();
 		}
-
 	}
 }
 

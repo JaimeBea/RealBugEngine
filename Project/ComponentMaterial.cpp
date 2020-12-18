@@ -14,7 +14,7 @@
 
 ComponentMaterial::ComponentMaterial(GameObject& owner) : Component(static_type, owner) {}
 
-void ComponentMaterial::OnEditor() {
+void ComponentMaterial::OnEditorUpdate() {
 
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
 	std::vector<ComponentMaterial*> materials = selected->GetComponents<ComponentMaterial>();

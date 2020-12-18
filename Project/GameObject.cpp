@@ -104,3 +104,19 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 {
 	return children;
 }
+
+bool GameObject::IsParent(GameObject* game_object) {
+	if (this->GetParent() == game_object)
+	{
+		return true;
+	}
+	if (this->GetParent() == nullptr) 
+	{
+		return false;
+	}
+	else
+	{
+		return this->GetParent()->IsParent(game_object);
+	}
+	
+}

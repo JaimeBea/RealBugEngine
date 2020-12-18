@@ -49,10 +49,13 @@ void PanelInspector::Update()
 					selected->Disable();
 				}
 			}
+			// TODO: Fix Me
+			ImGui::SameLine(); HelpMarker("To Fix it.");
+
 			ImGui::Separator();
 
 			for (Component* component : selected->components) {
-				component->OnEditor();
+				component->OnEditorUpdate();
 			}
 		}
 	}

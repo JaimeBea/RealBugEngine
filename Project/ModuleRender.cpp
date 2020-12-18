@@ -198,16 +198,13 @@ void ModuleRender::DrawGameObject(GameObject* game_object)
 	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
 
 	transform->CalculateGlobalMatrix();
-	if (game_object->IsActive())
+	for (ComponentMesh* mesh : meshes)
 	{
-		for (ComponentMesh* mesh : meshes)
-		{
-			mesh->Draw(materials, transform->GetGlobalMatrix());
-		}
+		mesh->Draw(materials, transform->GetGlobalMatrix());
+	}
 
-		for (GameObject* child : game_object->GetChildren())
-		{
-			DrawGameObject(child);
-		}
+	for (GameObject* child : game_object->GetChildren())
+	{
+		DrawGameObject(child);
 	}
 }

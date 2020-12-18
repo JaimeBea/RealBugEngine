@@ -20,7 +20,7 @@ public:
 	Component(ComponentType type, GameObject& owner, bool active = true);
 
 	virtual void Update();
-	virtual void OnEditor();
+	virtual void OnEditorUpdate();
 
 	void Enable();
 	void Disable();

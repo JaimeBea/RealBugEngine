@@ -26,7 +26,7 @@ bool ModuleWindow::Init()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
 	SDL_DisplayMode desktop_display_mode;
 	SDL_GetDesktopDisplayMode(0, &desktop_display_mode);

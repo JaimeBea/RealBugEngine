@@ -19,7 +19,7 @@ public:
 
 	void Load(const aiMesh* mesh);
 	void Release();
-	void OnEditor() override;
+	void OnEditorUpdate() override;
 
 	void Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const;
 
