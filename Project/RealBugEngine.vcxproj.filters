@@ -671,5 +671,6 @@
     <None Include="..\Game\Shaders\phong_vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include=".clang-format" />
   </ItemGroup>
 </Project>

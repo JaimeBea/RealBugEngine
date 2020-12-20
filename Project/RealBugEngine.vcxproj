@@ -222,6 +222,7 @@
     <None Include="..\PackageEngine.bat" />
     <None Include="..\PackageEngine.ps1" />
     <None Include="..\README.md" />
+    <None Include=".clang-format" />
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\QuadTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_AVX.inl" />
