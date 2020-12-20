@@ -8,5 +8,7 @@ public:
 	PanelAbout();
 
 	void Update() override;
-};
 
+private:
+	bool showLibrary = false;
+};

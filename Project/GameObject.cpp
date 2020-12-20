@@ -6,11 +6,16 @@
 
 #include "Leaks.h"
 
-GameObject::GameObject() : id(GenerateUID()) {}
+GameObject::GameObject()
+	: id(GenerateUID()) {}
 
-GameObject::GameObject(UID id_) : id(id_) {}
+GameObject::GameObject(UID id_)
+	: id(id_) {}
 
-GameObject::GameObject(const GameObject& other) : name(other.name), id(GenerateUID()), parent(nullptr) {}
+GameObject::GameObject(const GameObject& other)
+	: name(other.name)
+	, id(GenerateUID())
+	, parent(nullptr) {}
 
 void GameObject::Init() {}
 
@@ -105,18 +110,9 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-bool GameObject::IsParent(GameObject* game_object) 
+bool GameObject::IsParent(GameObject* game_object)
 {
-	if (this->GetParent() == game_object)
-	{
-		return true;
-	}
-	if (this->GetParent() == nullptr)
-	{
-		return false;
-	}
-	else
-	{
-		return this->GetParent()->IsParent(game_object);
-	}
+	if (this->GetParent() == game_object) return true;
+	if (this->GetParent() == nullptr) return false;
+	return this->GetParent()->IsParent(game_object);
 }

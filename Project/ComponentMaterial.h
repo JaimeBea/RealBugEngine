@@ -26,4 +26,3 @@ public:
 	int n = 1;
 	GameObject* light = nullptr;
 };
-

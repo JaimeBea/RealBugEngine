@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Panel.h"
+#include "UID.h"
 
 class GameObject;
 
@@ -14,13 +15,9 @@ public:
 
 public:
 	GameObject* selected_object = nullptr;
-	unsigned long long selected_id = -1;
+	UID selected_id = -1;
 
 private:
 	int window_width = 0;
 	int window_height = 0;
-
-
 };
-
-

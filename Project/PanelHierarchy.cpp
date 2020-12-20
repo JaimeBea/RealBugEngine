@@ -9,11 +9,10 @@
 
 #include "imgui.h"
 
-
 #include "Leaks.h"
 
-
-PanelHierarchy::PanelHierarchy() : Panel("Hierarchy", true) {}
+PanelHierarchy::PanelHierarchy()
+	: Panel("Hierarchy", true) {}
 
 void PanelHierarchy::Update()
 {
@@ -66,13 +65,12 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	{
 		char label[160];
 		sprintf_s(label, "%s###%p", children[i]->name.c_str(), children[i]);
+
 		ImGuiTreeNodeFlags flags = base_flags;
 		if (children[i]->GetChildren().empty()) flags |= ImGuiTreeNodeFlags_Leaf;
 		bool is_selected = (selected_id == children[i]->GetID());
-		if (is_selected)
-		{
-			flags |= ImGuiTreeNodeFlags_Selected;
-		}
+		if (is_selected) flags |= ImGuiTreeNodeFlags_Selected;
+
 		bool open = ImGui::TreeNodeEx(label, flags);
 
 		if (ImGui::BeginPopupContextItem("Options"))
@@ -82,7 +80,10 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 				App->scene->DestroyGameObject(selected_object);
 				selected_object = nullptr;
 			}
-			ImGui::Selectable("Duplicate"); ImGui::SameLine(); HelpMarker("To implement");
+
+			ImGui::Selectable("Duplicate");
+			ImGui::SameLine();
+			HelpMarker("To implement");
 			// NTH: Tool to duplicate Objects
 
 			ImGui::Separator();
@@ -115,7 +116,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
 			{
-				if (!children[i]->IsParent(selected_object)) 
+				if (!children[i]->IsParent(selected_object))
 				{
 					selected_object->SetParent(children[i]);
 					ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
@@ -132,4 +133,3 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		}
 	}
 }
-

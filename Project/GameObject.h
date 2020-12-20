@@ -25,10 +25,14 @@ public:
 
 	UID GetID();
 
-	template <class T> T* CreateComponent();
-	template <class T> void RemoveComponent(T* component);
-	template <class T> T* GetComponent() const;
-	template <class T> std::vector<T*> GetComponents() const;
+	template<class T>
+	T* CreateComponent();
+	template<class T>
+	void RemoveComponent(T* component);
+	template<class T>
+	T* GetComponent() const;
+	template<class T>
+	std::vector<T*> GetComponents() const;
 
 	void SetParent(GameObject* game_object);
 	GameObject* GetParent() const;
@@ -40,16 +44,16 @@ public:
 
 public:
 	std::string name = "GameObject";
-	bool active = true;
 	UID id = 0;
 	std::vector<Component*> components;
 
 private:
+	bool active = true;
 	GameObject* parent = nullptr;
 	std::vector<GameObject*> children;
 };
 
-template <class T>
+template<class T>
 inline T* GameObject::CreateComponent()
 {
 	T* component = new T(*this);
@@ -57,7 +61,7 @@ inline T* GameObject::CreateComponent()
 	return component;
 }
 
-template <class T>
+template<class T>
 inline void GameObject::RemoveComponent(T* to_remove)
 {
 	for (Component* component : components)
@@ -76,7 +80,7 @@ inline T* GameObject::GetComponent() const
 	{
 		if (component->GetType() == T::static_type)
 		{
-			return (T*)component;
+			return (T*) component;
 		}
 	}
 
@@ -92,7 +96,7 @@ inline std::vector<T*> GameObject::GetComponents() const
 	{
 		if (component->GetType() == T::static_type)
 		{
-			aux_components.push_back((T*)component);
+			aux_components.push_back((T*) component);
 		}
 	}
 

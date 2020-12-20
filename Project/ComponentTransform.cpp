@@ -8,33 +8,31 @@
 
 #include "imgui.h"
 
-ComponentTransform::ComponentTransform(GameObject& owner) : Component(static_type, owner) {}
+ComponentTransform::ComponentTransform(GameObject& owner)
+	: Component(static_type, owner) {}
 
-void ComponentTransform::OnEditorUpdate(){
-
+void ComponentTransform::OnEditorUpdate()
+{
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
 	ComponentTransform* transform = selected->GetComponent<ComponentTransform>();
-	float3 pos3 = transform->GetPosition();
-	float pos[] = { pos3[0], pos3[1], pos3[2] };
-	float3 scale3 = transform->GetScale();
-	float scale[] = { scale3[0], scale3[1], scale3[2] };
-	float3 rotation3 = transform->GetRotation().ToEulerXYZ() * RADTODEG;
-	float rotation[] = { rotation3[0], rotation3[1], rotation3[2] };
+	float3 pos = transform->GetPosition();
+	float3 scale = transform->GetScale();
+	float3 rotation = transform->GetRotation().ToEulerXYZ() * RADTODEG;
 
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos, drag_speed2f, -inf, inf))
+		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
-			transform->SetPosition(float3(pos[0], pos[1], pos[2]));
+			transform->SetPosition(pos);
 		}
-		if (ImGui::DragFloat3("Scale", scale, drag_speed2f, 0, inf))
+		if (ImGui::DragFloat3("Scale", scale.ptr(), drag_speed2f, 0, inf))
 		{
-			transform->SetScale(float3(scale[0], scale[1], scale[2]));
+			transform->SetScale(scale);
 		}
 
 		// TODO: Fix Quaternion Angles
-		if (ImGui::DragFloat3("Rotation", rotation, drag_speed2f, -inf, inf))
+		if (ImGui::DragFloat3("Rotation", rotation.ptr(), drag_speed2f, -inf, inf))
 		{
 			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
 		}
@@ -81,7 +79,7 @@ void ComponentTransform::SetScale(float3 scale_)
 
 void ComponentTransform::CalculateGlobalMatrix(bool force)
 {
-	if (force || dirty  || true)
+	if (force || dirty || true)
 	{
 		local_matrix = float4x4::FromTRS(position, rotation, scale);
 
