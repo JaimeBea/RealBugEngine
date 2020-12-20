@@ -36,7 +36,7 @@ void ComponentMaterial::OnEditorUpdate()
 
 		if (ImGui::CollapsingHeader(name))
 		{
-			bool active = this->IsActive();
+			bool active = IsActive();
 			if (ImGui::Checkbox("Active##material", &active))
 			{
 				active ? Enable() : Disable();

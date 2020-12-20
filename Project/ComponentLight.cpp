@@ -33,7 +33,7 @@ void ComponentLight::OnEditorUpdate()
 
 		if (ImGui::CollapsingHeader(name))
 		{
-			bool active = this->IsActive();
+			bool active = IsActive();
 			if (ImGui::Checkbox("Active##light", &active))
 			{
 				active ? Enable() : Disable();

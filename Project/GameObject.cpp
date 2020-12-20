@@ -123,7 +123,7 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 
 bool GameObject::IsDescendantOf(GameObject* game_object)
 {
-	if (this->GetParent() == nullptr) return false;
-	if (this->GetParent() == game_object) return true;
-	return this->GetParent()->IsDescendantOf(game_object);
+	if (GetParent() == nullptr) return false;
+	if (GetParent() == game_object) return true;
+	return GetParent()->IsDescendantOf(game_object);
 }

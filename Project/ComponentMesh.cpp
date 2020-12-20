@@ -43,7 +43,7 @@ void ComponentMesh::OnEditorUpdate()
 
 		if (ImGui::CollapsingHeader(name))
 		{
-			bool active = this->IsActive();
+			bool active = IsActive();
 			if (ImGui::Checkbox("Active##mesh", &active))
 			{
 				active ? Enable() : Disable();
@@ -156,7 +156,7 @@ void ComponentMesh::Release()
 
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const
 {
-	if (!this->IsActive()) return;
+	if (!IsActive()) return;
 
 	unsigned program = App->programs->default_program;
 
