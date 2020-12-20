@@ -31,6 +31,9 @@
     <Filter Include="Source\DataStructures">
       <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Filesystem">
+      <UniqueIdentifier>{088e0050-ec8c-4f44-9bfe-b0faf713a3ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\imconfig.h">
@@ -396,6 +399,12 @@
     <ClInclude Include="ModuleFiles.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="InputStream.h">
+      <Filter>Source\Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputStream.h">
+      <Filter>Source\Filesystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -637,6 +646,12 @@
     </ClCompile>
     <ClCompile Include="ModuleFiles.cpp">
       <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="InputStream.cpp">
+      <Filter>Source\Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="OutputStream.cpp">
+      <Filter>Source\Filesystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
