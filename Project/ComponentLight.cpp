@@ -36,14 +36,7 @@ void ComponentLight::OnEditorUpdate()
 			bool active = this->IsActive();
 			if (ImGui::Checkbox("Active##light", &active))
 			{
-				if (active)
-				{
-					this->Enable();
-				}
-				else
-				{
-					this->Disable();
-				}
+				active ? Enable() : Disable();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Remove##light"))

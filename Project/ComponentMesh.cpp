@@ -46,14 +46,7 @@ void ComponentMesh::OnEditorUpdate()
 			bool active = this->IsActive();
 			if (ImGui::Checkbox("Active##mesh", &active))
 			{
-				if (active)
-				{
-					this->Enable();
-				}
-				else
-				{
-					this->Disable();
-				}
+				active ? Enable() : Disable();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Remove##mesh"))

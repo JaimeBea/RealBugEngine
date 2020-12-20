@@ -121,9 +121,9 @@ const std::vector<GameObject*>& GameObject::GetChildren() const
 	return children;
 }
 
-bool GameObject::IsParent(GameObject* game_object)
+bool GameObject::IsDescendantOf(GameObject* game_object)
 {
-	if (this->GetParent() == game_object) return true;
 	if (this->GetParent() == nullptr) return false;
-	return this->GetParent()->IsParent(game_object);
+	if (this->GetParent() == game_object) return true;
+	return this->GetParent()->IsDescendantOf(game_object);
 }

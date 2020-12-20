@@ -39,21 +39,14 @@ void ComponentMaterial::OnEditorUpdate()
 			bool active = this->IsActive();
 			if (ImGui::Checkbox("Active##material", &active))
 			{
-				if (active)
-				{
-					this->Enable();
-				}
-				else
-				{
-					this->Disable();
-				}
+				active ? Enable() : Disable();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Remove##material"))
 			{
 				// TODO: Fix me
-				//selected->RemoveComponent(material);
-				//continue;
+				// selected->RemoveComponent(material);
+				// continue;
 			}
 			ImGui::Separator();
 

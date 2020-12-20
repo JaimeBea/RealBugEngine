@@ -31,9 +31,9 @@ bool ModuleEditor::Start()
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(GLSL_VERSION);
 
-	//Define Color Style
+	// Define Color Style
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 1.0f, 1.0f, 0.10f));
-	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, (ImVec4)ImColor(0.54f, 0.43f, 0.12f, 0.97f));
+	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, (ImVec4) ImColor(0.54f, 0.43f, 0.12f, 0.97f));
 
 	panels.push_back(&panel_scene);
 	panels.push_back(&panel_console);
@@ -107,7 +107,8 @@ UpdateStatus ModuleEditor::Update()
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGuiID dock_space_id = ImGui::GetID("DockSpace");
 
-	if (!ImGui::DockBuilderGetNode(dock_space_id)) {
+	if (!ImGui::DockBuilderGetNode(dock_space_id))
+	{
 		ImGui::DockBuilderAddNode(dock_space_id);
 		ImGui::DockBuilderSetNodeSize(dock_space_id, viewport->GetWorkSize());
 

@@ -12,7 +12,7 @@ bool ModuleWindow::Init()
 {
 	LOG("Init SDL window & surface");
 
-	if(SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -30,8 +30,8 @@ bool ModuleWindow::Init()
 
 	SDL_DisplayMode desktop_display_mode;
 	SDL_GetDesktopDisplayMode(0, &desktop_display_mode);
-	window = SDL_CreateWindow(App->app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w - 100,  desktop_display_mode.h -100, flags);
-	if(window == NULL)
+	window = SDL_CreateWindow(App->app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w - 100, desktop_display_mode.h - 100, flags);
+	if (window == NULL)
 	{
 		LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -58,7 +58,7 @@ bool ModuleWindow::CleanUp()
 {
 	LOG("Destroying SDL window and quitting all SDL systems");
 
-	if(window != NULL)
+	if (window != NULL)
 	{
 		SDL_DestroyWindow(window);
 	}

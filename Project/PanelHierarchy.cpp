@@ -116,7 +116,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
 			{
-				if (!children[i]->IsParent(selected_object))
+				if (!children[i]->IsDescendantOf(selected_object))
 				{
 					selected_object->SetParent(children[i]);
 					ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
