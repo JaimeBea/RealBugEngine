@@ -23,8 +23,8 @@ void PanelAbout::Update()
 
 		ImVec2 child_size = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 6);
 
-		ImGui::Checkbox("Libraries", &showLibrary);
-		if (showLibrary)
+		ImGui::Checkbox("Libraries", &show_library);
+		if (show_library)
 		{
 			ImGui::BeginChildFrame(ImGui::GetID("cfg_infos"), child_size);
 			ImGui::Text("MathGeoLib v1.5 ");

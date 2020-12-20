@@ -10,5 +10,5 @@ public:
 	void Update() override;
 
 private:
-	bool showLibrary = false;
+	bool show_library = false;
 };

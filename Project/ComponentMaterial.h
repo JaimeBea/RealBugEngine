@@ -14,6 +14,7 @@ public:
 	REGISTER_COMPONENT(ComponentType::MATERIAL);
 
 	ComponentMaterial(GameObject& owner);
+
 	void OnEditorUpdate() override;
 
 public:

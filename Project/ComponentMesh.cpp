@@ -26,50 +26,52 @@ void ComponentMesh::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
 	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
+	int count = 1;
+
 	for (ComponentMesh* mesh : meshes)
 	{
-		int count = 1;
+		// Show only # when multiple
 		char name[50];
-		sprintf_s(name, 50, "Mesh %d", count);
-		if (mesh != nullptr)
+		if (meshes.size() == 1)
 		{
-			// Show only # when multiple
-			if (meshes.size() == 1)
-			{
-				sprintf_s(name, 50, "Mesh");
-			}
-			if (ImGui::CollapsingHeader(name))
-			{
-				bool active = this->IsActive();
-				if (ImGui::Checkbox("Active##mesh", &active))
-				{
-					if (active)
-					{
-						this->Enable();
-					}
-					else
-					{
-						this->Disable();
-					}
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Remove##mesh"))
-				{
-					// TODO: Add delete Component tool
-				}
-				ImGui::Separator();
-
-				ImGui::TextColored(title_color, "Geometry");
-				ImGui::TextWrapped("Num Vertices: ");
-				ImGui::SameLine();
-				ImGui::TextColored(text_color, "%d", mesh->num_vertices);
-				ImGui::TextWrapped("Num Triangles: ");
-				ImGui::SameLine();
-				ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
-				ImGui::Separator();
-			}
-			count++;
+			sprintf_s(name, 50, "Mesh");
 		}
+		else
+		{
+			sprintf_s(name, 50, "Mesh %d", count);
+		}
+
+		if (ImGui::CollapsingHeader(name))
+		{
+			bool active = this->IsActive();
+			if (ImGui::Checkbox("Active##mesh", &active))
+			{
+				if (active)
+				{
+					this->Enable();
+				}
+				else
+				{
+					this->Disable();
+				}
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Remove##mesh"))
+			{
+				// TODO: Add delete Component tool
+			}
+			ImGui::Separator();
+
+			ImGui::TextColored(title_color, "Geometry");
+			ImGui::TextWrapped("Num Vertices: ");
+			ImGui::SameLine();
+			ImGui::TextColored(text_color, "%d", mesh->num_vertices);
+			ImGui::TextWrapped("Num Triangles: ");
+			ImGui::SameLine();
+			ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
+			ImGui::Separator();
+		}
+		count++;
 	}
 }
 

@@ -67,6 +67,17 @@ UID GameObject::GetID()
 	return id;
 }
 
+void GameObject::RemoveComponent(Component* to_remove)
+{
+	for (Component* component : components)
+	{
+		if (component == to_remove)
+		{
+			components.erase(std::remove(components.begin(), components.end(), to_remove), components.end());
+		}
+	}
+}
+
 void GameObject::SetParent(GameObject* game_object)
 {
 	if (parent != nullptr)
@@ -90,6 +101,11 @@ void GameObject::SetParent(GameObject* game_object)
 	}
 }
 
+GameObject* GameObject::GetParent() const
+{
+	return parent;
+}
+
 void GameObject::AddChild(GameObject* game_object)
 {
 	game_object->SetParent(this);
@@ -98,11 +114,6 @@ void GameObject::AddChild(GameObject* game_object)
 void GameObject::RemoveChild(GameObject* game_object)
 {
 	game_object->SetParent(nullptr);
-}
-
-GameObject* GameObject::GetParent() const
-{
-	return parent;
 }
 
 const std::vector<GameObject*>& GameObject::GetChildren() const

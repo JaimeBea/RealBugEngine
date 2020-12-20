@@ -12,6 +12,7 @@ public:
 	REGISTER_COMPONENT(ComponentType::TRANSFORM);
 
 	ComponentTransform(GameObject& owner);
+
 	void OnEditorUpdate() override;
 
 	void InvalidateHierarchy();
