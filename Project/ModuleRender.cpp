@@ -61,14 +61,6 @@ bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
 	context = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit();
@@ -137,7 +129,6 @@ UpdateStatus ModuleRender::Update()
 			}
 			*/
 		}
-		App->input->ReleaseDroppedFileName();
 	}
 
 	// Draw the scene
@@ -207,7 +198,6 @@ void ModuleRender::DrawGameObject(GameObject* game_object)
 	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
 
 	transform->CalculateGlobalMatrix();
-
 	for (ComponentMesh* mesh : meshes)
 	{
 		mesh->Draw(materials, transform->GetGlobalMatrix());

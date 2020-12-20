@@ -6,9 +6,16 @@
 
 #include "Leaks.h"
 
-GameObject::GameObject() : id(GenerateUID()) {}
+GameObject::GameObject()
+	: id(GenerateUID()) {}
 
-GameObject::GameObject(UID id_) : id(id_) {}
+GameObject::GameObject(UID id_)
+	: id(id_) {}
+
+GameObject::GameObject(const GameObject& other)
+	: name(other.name)
+	, id(GenerateUID())
+	, parent(nullptr) {}
 
 void GameObject::Init() {}
 
@@ -40,9 +47,35 @@ void GameObject::CleanUp()
 	components.clear();
 }
 
+void GameObject::Enable()
+{
+	active = true;
+}
+
+void GameObject::Disable()
+{
+	active = false;
+}
+
+bool GameObject::IsActive() const
+{
+	return active;
+}
+
 UID GameObject::GetID()
 {
 	return id;
+}
+
+void GameObject::RemoveComponent(Component* to_remove)
+{
+	for (Component* component : components)
+	{
+		if (component == to_remove)
+		{
+			components.erase(std::remove(components.begin(), components.end(), to_remove), components.end());
+		}
+	}
 }
 
 void GameObject::SetParent(GameObject* game_object)
@@ -68,6 +101,11 @@ void GameObject::SetParent(GameObject* game_object)
 	}
 }
 
+GameObject* GameObject::GetParent() const
+{
+	return parent;
+}
+
 void GameObject::AddChild(GameObject* game_object)
 {
 	game_object->SetParent(this);
@@ -78,12 +116,14 @@ void GameObject::RemoveChild(GameObject* game_object)
 	game_object->SetParent(nullptr);
 }
 
-GameObject* GameObject::GetParent() const
-{
-	return parent;
-}
-
 const std::vector<GameObject*>& GameObject::GetChildren() const
 {
 	return children;
+}
+
+bool GameObject::IsDescendantOf(GameObject* game_object)
+{
+	if (GetParent() == nullptr) return false;
+	if (GetParent() == game_object) return true;
+	return GetParent()->IsDescendantOf(game_object);
 }

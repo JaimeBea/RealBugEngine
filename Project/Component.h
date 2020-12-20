@@ -9,6 +9,7 @@ enum class ComponentType
 	TRANSFORM,
 	MESH,
 	MATERIAL,
+	LIGHT,
 	BOUNDING_BOX,
 	UNKNOWN
 };
@@ -19,6 +20,7 @@ public:
 	Component(ComponentType type, GameObject& owner, bool active = true);
 
 	virtual void Update();
+	virtual void OnEditorUpdate();
 
 	void Enable();
 	void Disable();

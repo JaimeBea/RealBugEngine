@@ -1,5 +1,6 @@
 #include "ComponentMesh.h"
 
+#include "GameObject.h"
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
@@ -7,13 +8,65 @@
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "ComponentMaterial.h"
+#include "ComponentLight.h"
+#include "ModuleEditor.h"
+#include "PanelHierarchy.h"
+#include "PanelInspector.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
+#include "imgui.h"
 
 #include "Leaks.h"
 
-ComponentMesh::ComponentMesh(GameObject& owner) : Component(static_type, owner) {}
+ComponentMesh::ComponentMesh(GameObject& owner)
+	: Component(static_type, owner) {}
+
+void ComponentMesh::OnEditorUpdate()
+{
+	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
+	int count = 1;
+
+	for (ComponentMesh* mesh : meshes)
+	{
+		// Show only # when multiple
+		char name[50];
+		if (meshes.size() == 1)
+		{
+			sprintf_s(name, 50, "Mesh");
+		}
+		else
+		{
+			sprintf_s(name, 50, "Mesh %d", count);
+		}
+
+		if (ImGui::CollapsingHeader(name))
+		{
+			bool active = IsActive();
+			if (ImGui::Checkbox("Active##mesh", &active))
+			{
+				active ? Enable() : Disable();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Remove##mesh"))
+			{
+				// TODO: Add delete Component tool
+			}
+			ImGui::Separator();
+
+			ImGui::TextColored(title_color, "Geometry");
+			ImGui::TextWrapped("Num Vertices: ");
+			ImGui::SameLine();
+			ImGui::TextColored(text_color, "%d", mesh->num_vertices);
+			ImGui::TextWrapped("Num Triangles: ");
+			ImGui::SameLine();
+			ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
+			ImGui::Separator();
+		}
+		count++;
+	}
+}
 
 void ComponentMesh::Load(const aiMesh* mesh)
 {
@@ -43,7 +96,7 @@ void ComponentMesh::Load(const aiMesh* mesh)
 
 	// Load VBO
 	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, nullptr, GL_STATIC_DRAW);
-	float* vertex_buffer = (float*)glMapBufferRange(GL_ARRAY_BUFFER, 0, vertex_buffer_size, GL_MAP_WRITE_BIT);
+	float* vertex_buffer = (float*) glMapBufferRange(GL_ARRAY_BUFFER, 0, vertex_buffer_size, GL_MAP_WRITE_BIT);
 	for (unsigned i = 0; i < mesh->mNumVertices; ++i)
 	{
 		aiVector3D& vertex = mesh->mVertices[i];
@@ -63,7 +116,7 @@ void ComponentMesh::Load(const aiMesh* mesh)
 
 	// Load EBO
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, nullptr, GL_STATIC_DRAW);
-	unsigned* index_buffer = (unsigned*)glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, index_buffer_size, GL_MAP_WRITE_BIT);
+	unsigned* index_buffer = (unsigned*) glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, index_buffer_size, GL_MAP_WRITE_BIT);
 	for (unsigned i = 0; i < mesh->mNumFaces; ++i)
 	{
 		aiFace& face = mesh->mFaces[i];
@@ -86,9 +139,9 @@ void ComponentMesh::Load(const aiMesh* mesh)
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*)position_size);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*)(position_size  + normal_size));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) position_size);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*) (position_size + normal_size));
 
 	// Unbind VAO
 	glBindVertexArray(0);
@@ -103,19 +156,41 @@ void ComponentMesh::Release()
 
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const
 {
+	if (!IsActive()) return;
+
 	unsigned program = App->programs->default_program;
 
 	float4x4 view_matrix = App->camera->GetViewMatrix();
 	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
-	unsigned texture = materials.size() > material_index ? materials[material_index]->texture : 0;
-
-	// TODO : Move to Component Light
-	float3 light_color = float3(1.0f, 1.0f, 1.0f);
-	float3 light_direction = float3(1.0f, -1.0f, 1.0f);
-	float3 ambient_color = float3(1.0f, 0.0f, 0.0f);
-
-	if (materials[material_index]->material_type == ShaderType::PHONG) 
+	unsigned texture = 0;
+	ComponentLight* light;
+	if (materials.size() > material_index)
 	{
+		if (materials[material_index]->IsActive())
+		{
+			texture = materials[material_index]->texture;
+		}
+	}
+
+	if (materials[material_index]->material_type == ShaderType::PHONG)
+	{
+		float3 light_color = float3(0, 0, 0);
+		float3 light_direction = float3(0, 0, 0);
+
+		// TODO: Improve after Light class
+		for (GameObject* object : App->scene->root->GetChildren())
+		{
+			light = object->GetComponent<ComponentLight>();
+			if (light != nullptr)
+			{
+				if (light->IsActive())
+				{
+					light_color = light->light_color;
+				}
+				light_direction = light->light_direction;
+				break;
+			}
+		}
 		program = App->programs->phong_program;
 		glUseProgram(program);
 
@@ -127,7 +202,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		glUniform3fv(glGetUniformLocation(program, "light_color"), 1, light_color.ptr());
 		glUniform3fv(glGetUniformLocation(program, "camera_direction"), 1, App->camera->GetFront().ptr());
 	}
-	else 
+	else
 	{
 		glUseProgram(program);
 	}

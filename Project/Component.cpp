@@ -4,6 +4,8 @@ Component::Component(ComponentType type_, GameObject& owner_, bool active_) : ty
 
 void Component::Update() {}
 
+void Component::OnEditorUpdate() {} 
+
 void Component::Enable()
 {
 	active = true;

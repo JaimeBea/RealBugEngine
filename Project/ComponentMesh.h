@@ -16,9 +16,10 @@ public:
 
 	ComponentMesh(GameObject& owner);
 
+	void OnEditorUpdate() override;
+
 	void Load(const aiMesh* mesh);
 	void Release();
-
 	void Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const;
 
 public:
@@ -29,4 +30,3 @@ public:
 	unsigned num_indices = 0;
 	unsigned material_index = 0;
 };
-

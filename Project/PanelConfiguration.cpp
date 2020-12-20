@@ -15,8 +15,6 @@
 
 #include "Leaks.h"
 
-static ImVec4 color = ImVec4(0.35f, 0.69f, 0.87f, 1.0f);
-
 PanelConfiguration::PanelConfiguration() : Panel("Configuration", true) {}
 
 void PanelConfiguration::Update()
@@ -58,25 +56,25 @@ void PanelConfiguration::Update()
         {
             ImGui::Text("GLEW version:");
             ImGui::SameLine();
-            ImGui::TextColored(color, App->hardware->glew_version);
+            ImGui::TextColored(text_color, App->hardware->glew_version);
             ImGui::Text("SDL version:");
             ImGui::SameLine();
-            ImGui::TextColored(color, App->hardware->sdl_version);
+            ImGui::TextColored(text_color, App->hardware->sdl_version);
             ImGui::Text("Assimp version:");
             ImGui::SameLine();
-            ImGui::TextColored(color, App->hardware->assimp_version);
+            ImGui::TextColored(text_color, App->hardware->assimp_version);
             ImGui::Text("DeviL version:");
             ImGui::SameLine();
-            ImGui::TextColored(color, App->hardware->devil_version);
+            ImGui::TextColored(text_color, App->hardware->devil_version);
 
             ImGui::Separator();
 
             ImGui::Text("CPUs:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
+            ImGui::TextColored(text_color, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
             ImGui::Text("System RAM:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%.1f Gb", App->hardware->ram_gb);
+            ImGui::TextColored(text_color, "%.1f Gb", App->hardware->ram_gb);
             ImGui::Text("Caps:");
             const char* items[] =
             {
@@ -88,7 +86,7 @@ void PanelConfiguration::Update()
                 if (App->hardware->caps[i])
                 {
                     ImGui::SameLine();
-                    ImGui::TextColored(color, items[i]);
+                    ImGui::TextColored(text_color, items[i]);
                 }
 
                 // Line break to avoid too many items in the same line
@@ -102,25 +100,25 @@ void PanelConfiguration::Update()
 
             ImGui::Text("GPU Vendor:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%s", App->hardware->gpu_vendor);
+            ImGui::TextColored(text_color, "%s", App->hardware->gpu_vendor);
             ImGui::Text("GPU Renderer:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%s", App->hardware->gpu_renderer);
+            ImGui::TextColored(text_color, "%s", App->hardware->gpu_renderer);
             ImGui::Text("GPU OpenGL Version:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%s", App->hardware->gpu_opengl_version);
+            ImGui::TextColored(text_color, "%s", App->hardware->gpu_opengl_version);
             ImGui::Text("VRAM Budget:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_budget_mb);
+            ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_budget_mb);
             ImGui::Text("VRAM Usage:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_usage_mb);
+            ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_usage_mb);
             ImGui::Text("VRAM Available:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_available_mb);
+            ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_available_mb);
             ImGui::Text("VRAM Reserved:");
             ImGui::SameLine();
-            ImGui::TextColored(color, "%.1f Mb", App->hardware->vram_reserved_mb);
+            ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_reserved_mb);
         }
 
         // Window
