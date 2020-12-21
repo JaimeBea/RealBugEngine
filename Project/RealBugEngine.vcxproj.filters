@@ -31,9 +31,6 @@
     <Filter Include="Source\DataStructures">
       <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Utils">
-      <UniqueIdentifier>{5da723cc-4936-4088-adc4-4a4de16e71cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Filesystem">
       <UniqueIdentifier>{088e0050-ec8c-4f44-9bfe-b0faf713a3ae}</UniqueIdentifier>
     </Filter>
@@ -403,13 +400,13 @@
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="Logging.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Leaks.h">
-      <Filter>Source\Utils</Filter>
+      <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
-      <Filter>Source\Utils</Filter>
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Leaks.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -650,9 +647,6 @@
     <ClCompile Include="ComponentLight.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Logging.cpp">
-      <Filter>Source\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleFiles.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -661,6 +655,9 @@
     </ClCompile>
     <ClCompile Include="OutputStream.cpp">
       <Filter>Source\Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Logging.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
