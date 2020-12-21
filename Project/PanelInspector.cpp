@@ -15,7 +15,8 @@
 
 #include "Leaks.h"
 
-PanelInspector::PanelInspector() : Panel("Inspector", true) {}
+PanelInspector::PanelInspector()
+	: Panel("Inspector", true) {}
 
 void PanelInspector::Update()
 {
@@ -48,7 +49,8 @@ void PanelInspector::Update()
 				}
 			}
 			// TODO: Fix Me
-			ImGui::SameLine(); HelpMarker("To Fix it.");
+			ImGui::SameLine();
+			HelpMarker("To Fix it.");
 
 			ImGui::Separator();
 

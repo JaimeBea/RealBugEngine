@@ -42,9 +42,9 @@ UpdateStatus ModuleTime::PreUpdate()
 		time_delta_ms = 0;
 	}
 
-	log_delta_ms((float)real_time_delta_ms);
+	log_delta_ms((float) real_time_delta_ms);
 
-    return UpdateStatus::CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
 void ModuleTime::WaitForEndOfFrame()
@@ -105,7 +105,7 @@ bool ModuleTime::IsGameRunning() const
 void ModuleTime::StartGame()
 {
 	if (game_started) return;
-	
+
 	game_started = true;
 	game_running = true;
 }

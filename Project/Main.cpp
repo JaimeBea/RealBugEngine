@@ -20,7 +20,7 @@ enum class MainState
 
 Application* App = nullptr;
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 #ifdef _DEBUG
 	_CrtMemState mem_state;
@@ -102,7 +102,6 @@ int main(int argc, char ** argv)
 			state = MainState::EXIT;
 			break;
 		}
-
 	}
 
 	LOG("Bye :)\n");

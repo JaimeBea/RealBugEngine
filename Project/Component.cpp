@@ -1,10 +1,13 @@
 #include "Component.h"
 
-Component::Component(ComponentType type_, GameObject& owner_, bool active_) : type(type_), owner(owner_), active(active_) {}
+Component::Component(ComponentType type_, GameObject& owner_, bool active_)
+	: type(type_)
+	, owner(owner_)
+	, active(active_) {}
 
 void Component::Update() {}
 
-void Component::OnEditorUpdate() {} 
+void Component::OnEditorUpdate() {}
 
 void Component::Enable()
 {

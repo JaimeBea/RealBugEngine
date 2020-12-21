@@ -21,4 +21,3 @@ private:
 	AABB local_bounding_box = AABB(vec(0, 0, 0), vec(0, 0, 0));
 	AABB world_bounding_box = AABB(vec(0, 0, 0), vec(0, 0, 0));
 };
-

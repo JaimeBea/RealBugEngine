@@ -25,12 +25,9 @@ public:
 
 	UID GetID();
 
-	template<class T>
-	T* CreateComponent();
-	template<class T>
-	T* GetComponent() const;
-	template<class T>
-	std::vector<T*> GetComponents() const;
+	template<class T> T* CreateComponent();
+	template<class T> T* GetComponent() const;
+	template<class T> std::vector<T*> GetComponents() const;
 
 	void RemoveComponent(Component* component);
 

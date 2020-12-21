@@ -10,5 +10,5 @@ static std::uniform_int_distribution<UID> distribution;
 
 UID GenerateUID()
 {
-    return distribution(mersenne_twister);
+	return distribution(mersenne_twister);
 }

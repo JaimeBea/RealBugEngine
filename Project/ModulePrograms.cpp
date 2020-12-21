@@ -16,7 +16,10 @@ static char* LoadShader(const char* file_name)
 		LOG("Error opening file %s (%s).\n", file_name, strerror(errno));
 		return nullptr;
 	}
-	DEFER{ fclose(file); };
+	DEFER
+	{
+		fclose(file);
+	};
 
 	fseek(file, 0, SEEK_END);
 	size_t size = ftell(file);
@@ -34,7 +37,10 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 	LOG("Creating shader from file: \"%s\"...", file_name);
 
 	char* source = LoadShader(file_name);
-	DEFER{ RELEASE_ARRAY(source); };
+	DEFER
+	{
+		RELEASE_ARRAY(source);
+	};
 
 	unsigned shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &source, 0);
@@ -51,7 +57,10 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 		{
 			int written = 0;
 			char* info = new char[len];
-			DEFER{ RELEASE_ARRAY(info); };
+			DEFER
+			{
+				RELEASE_ARRAY(info);
+			};
 
 			glGetShaderInfoLog(shader_id, len, &written, info);
 
@@ -70,10 +79,15 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 	// Compile the shaders and delete them at the end
 	LOG("Compiling shaders...");
 	unsigned vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_shader_file_name);
-	DEFER{ glDeleteShader(vertex_shader); };
+	DEFER
+	{
+		glDeleteShader(vertex_shader);
+	};
 	unsigned fragment_shader = CreateShader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
-	DEFER{ glDeleteShader(fragment_shader); };
-
+	DEFER
+	{
+		glDeleteShader(fragment_shader);
+	};
 
 	// Link the program
 	LOG("Linking program...");
@@ -91,7 +105,10 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 		{
 			int written = 0;
 			char* info = new char[len];
-			DEFER{ RELEASE_ARRAY(info); };
+			DEFER
+			{
+				RELEASE_ARRAY(info);
+			};
 
 			glGetProgramInfoLog(program_id, len, &written, info);
 
@@ -111,7 +128,7 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 bool ModulePrograms::Start()
 {
 	default_program = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
-	phong_program  = CreateProgram("Shaders/phong_vertex.glsl", "Shaders/phong_fragment.glsl");
+	phong_program = CreateProgram("Shaders/phong_vertex.glsl", "Shaders/phong_fragment.glsl");
 
 	return true;
 }

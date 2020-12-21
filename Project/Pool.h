@@ -79,7 +79,9 @@ public:
 	class Iterator
 	{
 	public:
-		Iterator(const Pool<T>& pool__, size_t index__) : pool(&pool__), index(index__) {}
+		Iterator(const Pool<T>& pool__, size_t index__)
+			: pool(&pool__)
+			, index(index__) {}
 
 		const Iterator& operator++()
 		{
@@ -123,7 +125,7 @@ public:
 		{
 			index += 1;
 		}
-		return Pool<const T>::Iterator((Pool<const T>&)*this, index);
+		return Pool<const T>::Iterator((Pool<const T>&) *this, index);
 	}
 
 	typename Pool<T>::Iterator end()

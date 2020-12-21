@@ -12,4 +12,3 @@ public:
 	unsigned long long start_count = 0;
 	unsigned long long delta_time = 0;
 };
-

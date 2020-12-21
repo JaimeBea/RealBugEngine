@@ -84,7 +84,10 @@ bool ModuleScene::Load(const char* file_name)
 	// Load scene
 	LOG("Loading scene from path: \"%s\".", file_name);
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
-	DEFER{ aiReleaseImport(scene); };
+	DEFER
+	{
+		aiReleaseImport(scene);
+	};
 	if (!scene)
 	{
 		LOG("Error loading scene: %s", file_name, aiGetErrorString());
@@ -164,7 +167,6 @@ bool ModuleScene::Load(const char* file_name)
 	return true;
 }
 
-
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 {
 	GameObject* game_object = game_objects.Obtain();
@@ -208,7 +210,7 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 
 	// Load transform
 	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	const float4x4& matrix = *(float4x4*)&node->mTransformation;
+	const float4x4& matrix = *(float4x4*) &node->mTransformation;
 	float3 position;
 	Quat rotation;
 	float3 scale;

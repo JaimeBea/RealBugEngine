@@ -20,4 +20,3 @@ public:
 	const char* name = "";
 	bool enabled = true;
 };
-

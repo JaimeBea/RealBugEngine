@@ -38,4 +38,3 @@ public:
 	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
 };
-

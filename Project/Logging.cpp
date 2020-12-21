@@ -10,7 +10,7 @@ void log(const char file[], int line, const char* format, ...)
 {
 	static char tmp_string[4096];
 	static char tmp_string2[4096];
-	static va_list  ap;
+	static va_list ap;
 
 	// Construct the string from variable arguments
 	va_start(ap, format);
@@ -36,5 +36,5 @@ void log_delta_ms(float delta_ms)
 
 std::string* log_string = nullptr;
 int fps_log_index = FPS_LOG_SIZE - 1;
-float fps_log[FPS_LOG_SIZE] = { 0 };
-float ms_log[FPS_LOG_SIZE] = { 0 };
+float fps_log[FPS_LOG_SIZE] = {0};
+float ms_log[FPS_LOG_SIZE] = {0};

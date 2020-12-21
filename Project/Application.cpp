@@ -41,10 +41,10 @@ Application::Application()
 
 Application::~Application()
 {
-	for(Module* module : modules)
-    {
-        delete module;
-    }
+	for (Module* module : modules)
+	{
+		delete module;
+	}
 }
 
 bool Application::Init()

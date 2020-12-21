@@ -20,7 +20,7 @@ public:
 	int cpu_count = 0;
 	int cache_size_kb = 0;
 	float ram_gb = 0;
-	bool caps[14] = { false };
+	bool caps[14] = {false};
 	const char* gpu_vendor = "Not available";
 	const char* gpu_renderer = "Not available";
 	const char* gpu_opengl_version = "Not available";
@@ -29,5 +29,3 @@ public:
 	float vram_usage_mb = 0;
 	float vram_reserved_mb = 0;
 };
-
-

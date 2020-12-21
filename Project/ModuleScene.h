@@ -34,5 +34,5 @@ private:
 	GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent);
 
 private:
-	aiLogStream log_stream = { nullptr, nullptr };
+	aiLogStream log_stream = {nullptr, nullptr};
 };

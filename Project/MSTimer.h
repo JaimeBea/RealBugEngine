@@ -12,4 +12,3 @@ public:
 	unsigned int start_time = 0;
 	unsigned int delta_time = 0;
 };
-
