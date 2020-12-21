@@ -9,4 +9,3 @@ public:
 
 	void Update() override;
 };
-

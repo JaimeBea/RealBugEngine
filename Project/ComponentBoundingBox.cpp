@@ -5,7 +5,8 @@
 
 #include "Geometry/OBB.h"
 
-ComponentBoundingBox::ComponentBoundingBox(GameObject& owner) : Component(static_type, owner) {}
+ComponentBoundingBox::ComponentBoundingBox(GameObject& owner)
+	: Component(static_type, owner) {}
 
 void ComponentBoundingBox::SetLocalBoundingBox(const AABB& bounding_box)
 {

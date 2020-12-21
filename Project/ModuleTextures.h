@@ -56,4 +56,3 @@ private:
 	TextureMagFilter mag_filter = TextureMagFilter::LINEAR;
 	TextureWrap texture_wrap = TextureWrap::REPEAT;
 };
-

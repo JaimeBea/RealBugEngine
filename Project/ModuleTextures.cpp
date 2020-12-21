@@ -36,7 +36,10 @@ Texture* ModuleTextures::LoadTexture(const char* file_name)
 
 	unsigned image;
 	ilGenImages(1, &image);
-	DEFER{ ilDeleteImages(1, &image); };
+	DEFER
+	{
+		ilDeleteImages(1, &image);
+	};
 
 	ilBindImage(image);
 	bool image_loaded = ilLoadImage(file_name);
@@ -66,9 +69,7 @@ Texture* ModuleTextures::LoadTexture(const char* file_name)
 
 	// Generate texture from image
 	glBindTexture(GL_TEXTURE_2D, *texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH),
-		ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE,
-		ilGetData());
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
 
 	// Generate mipmaps and set filtering and wrapping
 	glGenerateMipmap(GL_TEXTURE_2D);

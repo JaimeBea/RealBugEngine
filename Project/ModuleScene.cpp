@@ -4,7 +4,9 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModuleTextures.h"
+#include "Component.h"
 #include "ComponentTransform.h"
+#include "ComponentLight.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
@@ -35,12 +37,32 @@ bool ModuleScene::Init()
 	aiAttachLogStream(&log_stream);
 #endif
 
+	// Create Scene
+	root = CreateGameObject(nullptr);
+	root->name = "Scene";
+	ComponentTransform* transform = root->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(0, 0, 0));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1, 1, 1));
+	transform->CalculateGlobalMatrix();
+
 	return true;
 }
 
 bool ModuleScene::Start()
 {
-	Load("Assets/Street_Environment/Street_environment_V01.FBX");
+	Load("Assets/BakerHouse.fbx");
+
+	// Create Directional Light
+	GameObject* game_object = CreateGameObject(root);
+	game_object->name = "Directional Light";
+
+	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(0, 0, 0));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1, 1, 1));
+	transform->CalculateGlobalMatrix();
+	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
 
 	return true;
 }
@@ -59,18 +81,13 @@ bool ModuleScene::CleanUp()
 
 bool ModuleScene::Load(const char* file_name)
 {
-	// Unload previous scene
-	DestroyGameObject(root);
-	assert(game_objects.Count() == 0);
-	for (Texture& texture : App->textures->textures)
-	{
-		App->textures->ReleaseTexture(&texture);
-	}
-
 	// Load scene
 	LOG("Loading scene from path: \"%s\".", file_name);
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
-	DEFER{ aiReleaseImport(scene); };
+	DEFER
+	{
+		aiReleaseImport(scene);
+	};
 	if (!scene)
 	{
 		LOG("Error loading scene: %s", file_name, aiGetErrorString());
@@ -144,18 +161,23 @@ bool ModuleScene::Load(const char* file_name)
 
 	// Create scene tree
 	LOG("Loading scene tree.");
-	root = LoadNode(scene, materials, scene->mRootNode, nullptr);
+	GameObject* game_object = LoadNode(scene, materials, scene->mRootNode, root);
 
 	LOG("Scene loaded.");
 	return true;
 }
-
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 {
 	GameObject* game_object = game_objects.Obtain();
 	game_object->SetParent(parent);
 	game_object->Init();
+	return game_object;
+}
+
+GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
+{
+	// NTH: Duplicate Game Objects
 	return game_object;
 }
 
@@ -188,7 +210,7 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 
 	// Load transform
 	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	const float4x4& matrix = *(float4x4*)&node->mTransformation;
+	const float4x4& matrix = *(float4x4*) &node->mTransformation;
 	float3 position;
 	Quat rotation;
 	float3 scale;

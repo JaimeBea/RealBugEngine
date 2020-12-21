@@ -58,10 +58,10 @@ public:
 
 private:
 	char* dropped_file_name = nullptr;
-	KeyState keyboard[SDL_NUM_SCANCODES] = { KS_IDLE };
-	KeyState mouse_buttons[NUM_MOUSE_BUTTONS] = { KS_IDLE };
+	KeyState keyboard[SDL_NUM_SCANCODES] = {KS_IDLE};
+	KeyState mouse_buttons[NUM_MOUSE_BUTTONS] = {KS_IDLE};
 	float mouse_wheel_motion = 0;
-	float2 mouse_motion = { 0, 0 };
-	float2 mouse = { 0, 0 };
+	float2 mouse_motion = {0, 0};
+	float2 mouse = {0, 0};
 	bool mouse_warped = false;
 };

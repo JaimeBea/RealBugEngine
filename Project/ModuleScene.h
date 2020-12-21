@@ -22,6 +22,7 @@ public:
 	bool Load(const char* file_name);
 
 	GameObject* CreateGameObject(GameObject* parent);
+	GameObject* DuplicateGameObject(GameObject* parent);
 	void DestroyGameObject(GameObject* game_object);
 
 public:
@@ -33,5 +34,5 @@ private:
 	GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent);
 
 private:
-	aiLogStream log_stream = { nullptr, nullptr };
+	aiLogStream log_stream = {nullptr, nullptr};
 };

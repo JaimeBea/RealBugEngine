@@ -14,7 +14,8 @@
 
 #include "Leaks.h"
 
-PanelScene::PanelScene() : Panel("Scene", true) {}
+PanelScene::PanelScene()
+	: Panel("Scene", true) {}
 
 void PanelScene::Update()
 {
@@ -61,12 +62,12 @@ void PanelScene::Update()
 		ImVec2 size = ImGui::GetContentRegionAvail();
 		if (App->renderer->viewport_width != size.x || App->renderer->viewport_height != size.y)
 		{
-			App->camera->ViewportResized((int)size.x, (int)size.y);
-			App->renderer->ViewportResized((int)size.x, (int)size.y);
+			App->camera->ViewportResized((int) size.x, (int) size.y);
+			App->renderer->ViewportResized((int) size.x, (int) size.y);
 		}
 
 		// Draw
-		ImGui::Image((void*)App->renderer->render_texture, size, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*) App->renderer->render_texture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 		// Capture input
 		if (ImGui::IsWindowFocused())

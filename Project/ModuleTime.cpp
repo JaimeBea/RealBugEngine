@@ -6,6 +6,7 @@
 #include "ModuleScene.h"
 
 #include "SDL_timer.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -16,6 +17,8 @@ ModuleTime::ModuleTime()
 
 UpdateStatus ModuleTime::PreUpdate()
 {
+	BROFILER_CATEGORY("ModuleTime - PreUpdate", Profiler::Color::Black)
+
 	frame_count += 1;
 
 	unsigned int real_time = timer.Read();
@@ -39,13 +42,14 @@ UpdateStatus ModuleTime::PreUpdate()
 		time_delta_ms = 0;
 	}
 
-	log_delta_ms((float)real_time_delta_ms);
+	log_delta_ms((float) real_time_delta_ms);
 
-    return UpdateStatus::CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
 void ModuleTime::WaitForEndOfFrame()
 {
+	BROFILER_CATEGORY("ModuleTime - WaitForEndOfFrame", Profiler::Color::Black)
 	if (limit_framerate)
 	{
 		unsigned int real_time_ms = timer.Read();
@@ -101,7 +105,7 @@ bool ModuleTime::IsGameRunning() const
 void ModuleTime::StartGame()
 {
 	if (game_started) return;
-	
+
 	game_started = true;
 	game_running = true;
 }

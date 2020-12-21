@@ -13,6 +13,8 @@ public:
 
 	ComponentTransform(GameObject& owner);
 
+	void OnEditorUpdate() override;
+
 	void InvalidateHierarchy();
 	void Invalidate();
 
@@ -35,4 +37,3 @@ private:
 	float4x4 global_matrix = float4x4::identity;
 	bool dirty = true;
 };
-

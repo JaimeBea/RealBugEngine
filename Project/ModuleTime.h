@@ -54,4 +54,3 @@ private:
 	bool game_running = false;
 	bool game_step_once = false;
 };
-

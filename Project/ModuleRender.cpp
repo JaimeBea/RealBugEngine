@@ -15,36 +15,78 @@
 
 #include "GL/glew.h"
 #include "SDL.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
 static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-	const char* tmp_source = "", * tmp_type = "", * tmp_severity = "";
-	switch (source) {
-	case GL_DEBUG_SOURCE_API: tmp_source = "API"; break;
-	case GL_DEBUG_SOURCE_WINDOW_SYSTEM: tmp_source = "Window System"; break;
-	case GL_DEBUG_SOURCE_SHADER_COMPILER: tmp_source = "Shader Compiler"; break;
-	case GL_DEBUG_SOURCE_THIRD_PARTY: tmp_source = "Third Party"; break;
-	case GL_DEBUG_SOURCE_APPLICATION: tmp_source = "Application"; break;
-	case GL_DEBUG_SOURCE_OTHER: tmp_source = "Other"; break;
+	const char *tmp_source = "", *tmp_type = "", *tmp_severity = "";
+	switch (source)
+	{
+	case GL_DEBUG_SOURCE_API:
+		tmp_source = "API";
+		break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+		tmp_source = "Window System";
+		break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER:
+		tmp_source = "Shader Compiler";
+		break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY:
+		tmp_source = "Third Party";
+		break;
+	case GL_DEBUG_SOURCE_APPLICATION:
+		tmp_source = "Application";
+		break;
+	case GL_DEBUG_SOURCE_OTHER:
+		tmp_source = "Other";
+		break;
 	};
-	switch (type) {
-	case GL_DEBUG_TYPE_ERROR: tmp_type = "Error"; break;
-	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: tmp_type = "Deprecated Behaviour"; break;
-	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: tmp_type = "Undefined Behaviour"; break;
-	case GL_DEBUG_TYPE_PORTABILITY: tmp_type = "Portability"; break;
-	case GL_DEBUG_TYPE_PERFORMANCE: tmp_type = "Performance"; break;
-	case GL_DEBUG_TYPE_MARKER: tmp_type = "Marker"; break;
-	case GL_DEBUG_TYPE_PUSH_GROUP: tmp_type = "Push Group"; break;
-	case GL_DEBUG_TYPE_POP_GROUP: tmp_type = "Pop Group"; break;
-	case GL_DEBUG_TYPE_OTHER: tmp_type = "Other"; break;
+	switch (type)
+	{
+	case GL_DEBUG_TYPE_ERROR:
+		tmp_type = "Error";
+		break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+		tmp_type = "Deprecated Behaviour";
+		break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+		tmp_type = "Undefined Behaviour";
+		break;
+	case GL_DEBUG_TYPE_PORTABILITY:
+		tmp_type = "Portability";
+		break;
+	case GL_DEBUG_TYPE_PERFORMANCE:
+		tmp_type = "Performance";
+		break;
+	case GL_DEBUG_TYPE_MARKER:
+		tmp_type = "Marker";
+		break;
+	case GL_DEBUG_TYPE_PUSH_GROUP:
+		tmp_type = "Push Group";
+		break;
+	case GL_DEBUG_TYPE_POP_GROUP:
+		tmp_type = "Pop Group";
+		break;
+	case GL_DEBUG_TYPE_OTHER:
+		tmp_type = "Other";
+		break;
 	};
-	switch (severity) {
-	case GL_DEBUG_SEVERITY_HIGH: tmp_severity = "high"; break;
-	case GL_DEBUG_SEVERITY_MEDIUM: tmp_severity = "medium"; break;
-	case GL_DEBUG_SEVERITY_LOW: tmp_severity = "low"; break;
-	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
+	switch (severity)
+	{
+	case GL_DEBUG_SEVERITY_HIGH:
+		tmp_severity = "high";
+		break;
+	case GL_DEBUG_SEVERITY_MEDIUM:
+		tmp_severity = "medium";
+		break;
+	case GL_DEBUG_SEVERITY_LOW:
+		tmp_severity = "low";
+		break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION:
+		tmp_severity = "notification";
+		break;
 	};
 
 	if (severity != GL_DEBUG_SEVERITY_HIGH)
@@ -58,14 +100,6 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	context = SDL_GL_CreateContext(App->window->window);
 
@@ -94,6 +128,8 @@ bool ModuleRender::Init()
 
 UpdateStatus ModuleRender::PreUpdate()
 {
+	BROFILER_CATEGORY("ModuleRender - PreUpdate", Profiler::Color::Green)
+
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glViewport(0, 0, viewport_width, viewport_height);
 
@@ -105,6 +141,8 @@ UpdateStatus ModuleRender::PreUpdate()
 
 UpdateStatus ModuleRender::Update()
 {
+	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
+
 	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewport_width, viewport_height);
 
 	// Load model or texture if one gets dropped
@@ -131,7 +169,6 @@ UpdateStatus ModuleRender::Update()
 			}
 			*/
 		}
-		App->input->ReleaseDroppedFileName();
 	}
 
 	// Draw the scene
@@ -149,6 +186,8 @@ UpdateStatus ModuleRender::Update()
 
 UpdateStatus ModuleRender::PostUpdate()
 {
+	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
+
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UpdateStatus::CONTINUE;
@@ -199,7 +238,6 @@ void ModuleRender::DrawGameObject(GameObject* game_object)
 	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
 
 	transform->CalculateGlobalMatrix();
-
 	for (ComponentMesh* mesh : meshes)
 	{
 		mesh->Draw(materials, transform->GetGlobalMatrix());

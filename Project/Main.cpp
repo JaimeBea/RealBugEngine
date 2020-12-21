@@ -4,6 +4,7 @@
 
 #include "SDL.h"
 #include <stdlib.h>
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -19,7 +20,7 @@ enum class MainState
 
 Application* App = nullptr;
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 #ifdef _DEBUG
 	_CrtMemState mem_state;
@@ -34,6 +35,7 @@ int main(int argc, char ** argv)
 	MainState state = MainState::CREATION;
 	while (state != MainState::EXIT)
 	{
+		BROFILER_FRAME("Main");
 		switch (state)
 		{
 		case MainState::CREATION:
@@ -100,7 +102,6 @@ int main(int argc, char ** argv)
 			state = MainState::EXIT;
 			break;
 		}
-
 	}
 
 	LOG("Bye :)\n");

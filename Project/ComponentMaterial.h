@@ -15,6 +15,8 @@ public:
 
 	ComponentMaterial(GameObject& owner);
 
+	void OnEditorUpdate() override;
+
 public:
 	unsigned texture = 0;
 	ShaderType material_type = ShaderType::PHONG;
@@ -23,7 +25,5 @@ public:
 	float Kd = 1;
 	float Ks = 0;
 	int n = 1;
-
-
+	GameObject* light = nullptr;
 };
-

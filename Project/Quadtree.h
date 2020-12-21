@@ -24,7 +24,6 @@ public:
 
 	void Add(GameObject* game_object)
 	{
-
 	}
 
 private:
@@ -56,4 +55,3 @@ private:
 	Pool<ChildNodes> child_nodes = Pool<ChildNodes>();
 	Pool<NodeElement> elements = Pool<NodeElement>();
 };
-

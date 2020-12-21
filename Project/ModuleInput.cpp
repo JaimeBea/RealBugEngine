@@ -10,6 +10,7 @@
 #include "imgui_impl_sdl.h"
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -19,7 +20,7 @@ bool ModuleInput::Init()
 	bool ret = true;
 	SDL_Init(0);
 
-	if(SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
+	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
@@ -30,9 +31,11 @@ bool ModuleInput::Init()
 
 UpdateStatus ModuleInput::PreUpdate()
 {
+	BROFILER_CATEGORY("ModuleInput - PreUpdate", Profiler::Color::AntiqueWhite)
+
 	ImGuiIO& io = ImGui::GetIO();
 
-	mouse_motion = { 0, 0 };
+	mouse_motion = {0, 0};
 	mouse_wheel_motion = 0;
 
 	int window_id = SDL_GetWindowID(App->window->window);
@@ -67,7 +70,7 @@ UpdateStatus ModuleInput::PreUpdate()
 	while (SDL_PollEvent(&event) != 0)
 	{
 		ImGui_ImplSDL2_ProcessEvent(&event);
-		
+
 		switch (event.type)
 		{
 		case SDL_QUIT:
@@ -152,11 +155,11 @@ UpdateStatus ModuleInput::PreUpdate()
 		{
 			mouse_warped = false;
 		}
-		mouse.x = (float)mouse_x;
-		mouse.y = (float)mouse_y;
+		mouse.x = (float) mouse_x;
+		mouse.y = (float) mouse_y;
 	}
 
-    return UpdateStatus::CONTINUE;
+	return UpdateStatus::CONTINUE;
 }
 
 // Called before quitting
