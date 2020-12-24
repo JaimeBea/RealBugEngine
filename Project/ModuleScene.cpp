@@ -172,6 +172,9 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 	GameObject* game_object = game_objects.Obtain();
 	game_object->SetParent(parent);
 	game_object->Init();
+
+	game_objects_id_map[game_object->GetID()] = game_object;
+
 	return game_object;
 }
 
@@ -183,10 +186,7 @@ GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
 
 void ModuleScene::DestroyGameObject(GameObject* game_object)
 {
-	if (game_object == nullptr)
-	{
-		return;
-	}
+	if (game_object == nullptr) return;
 
 	game_object->CleanUp();
 
@@ -195,7 +195,16 @@ void ModuleScene::DestroyGameObject(GameObject* game_object)
 		DestroyGameObject(child);
 	}
 
+	game_objects_id_map.erase(game_object->GetID());
+
 	game_objects.Release(game_object);
+}
+
+GameObject* ModuleScene::GetGameObject(UID id) const
+{
+	if (game_objects_id_map.count(id) == 0) return nullptr;
+
+	return game_objects_id_map.at(id);
 }
 
 GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
