@@ -31,8 +31,8 @@
     <Filter Include="Source\DataStructures">
       <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Filesystem">
-      <UniqueIdentifier>{088e0050-ec8c-4f44-9bfe-b0faf713a3ae}</UniqueIdentifier>
+    <Filter Include="Source\Time">
+      <UniqueIdentifier>{6b6f7bbc-a8f5-434f-9714-082182d39b9c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -366,15 +366,6 @@
     <ClInclude Include="ComponentBoundingBox.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
-    <ClInclude Include="MSTimer.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
-    <ClInclude Include="PerformanceTimer.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Pool.h">
       <Filter>Source\DataStructures</Filter>
     </ClInclude>
@@ -384,17 +375,8 @@
     <ClInclude Include="Application.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="UID.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleFiles.h">
       <Filter>Source\Modules</Filter>
-    </ClInclude>
-    <ClInclude Include="InputStream.h">
-      <Filter>Source\Filesystem</Filter>
-    </ClInclude>
-    <ClInclude Include="OutputStream.h">
-      <Filter>Source\Filesystem</Filter>
     </ClInclude>
     <ClInclude Include="ComponentLight.h">
       <Filter>Source\Components</Filter>
@@ -406,6 +388,21 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Leaks.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Source\DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="MSTimer.h">
+      <Filter>Source\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="PerformanceTimer.h">
+      <Filter>Source\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="UID.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -629,20 +626,8 @@
     <ClCompile Include="ComponentBoundingBox.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source\DataStructures</Filter>
-    </ClCompile>
-    <ClCompile Include="MSTimer.cpp">
-      <Filter>Source\DataStructures</Filter>
-    </ClCompile>
-    <ClCompile Include="PerformanceTimer.cpp">
-      <Filter>Source\DataStructures</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="UID.cpp">
-      <Filter>Source\DataStructures</Filter>
     </ClCompile>
     <ClCompile Include="ComponentLight.cpp">
       <Filter>Source\Components</Filter>
@@ -650,13 +635,19 @@
     <ClCompile Include="ModuleFiles.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="InputStream.cpp">
-      <Filter>Source\Filesystem</Filter>
-    </ClCompile>
-    <ClCompile Include="OutputStream.cpp">
-      <Filter>Source\Filesystem</Filter>
-    </ClCompile>
     <ClCompile Include="Logging.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MSTimer.cpp">
+      <Filter>Source\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceTimer.cpp">
+      <Filter>Source\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="UID.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -60,4 +60,4 @@ deferrer<F> operator*(defer_dummy, F f)
 #define DEFER__(LINE) zz_defer##LINE
 #define DEFER_(LINE) DEFER__(LINE)
 #define DEFER auto DEFER_(__LINE__) = defer_dummy {}* [&]()
-#endif
+#endif // DEFER
