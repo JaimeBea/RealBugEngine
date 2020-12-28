@@ -7,6 +7,7 @@
 #include "ModulePrograms.h"
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
+#include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 #include "ComponentLight.h"
 #include "ModuleEditor.h"
@@ -168,14 +169,14 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	{
 		if (materials[material_index]->IsActive())
 		{
-			texture = materials[material_index]->texture;
+			texture = materials[material_index]->material.diffuse_map;
 		}
 	}
 
 	if (materials[material_index]->material_type == ShaderType::PHONG)
 	{
+		float3 light_position = float3(0, 0, 0);
 		float3 light_color = float3(0, 0, 0);
-		float3 light_direction = float3(0, 0, 0);
 
 		// TODO: Improve after Light class
 		for (GameObject* object : App->scene->root->GetChildren())
@@ -185,22 +186,30 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			{
 				if (light->IsActive())
 				{
-					light_color = light->light_color;
+					light_color = light->light.color;
 				}
-				light_direction = light->light_direction;
+				light_position = object->GetComponent<ComponentTransform>()->GetPosition();
 				break;
 			}
 		}
-		program = App->programs->phong_program;
+		program = App->programs->phong_pbr_program;
 		glUseProgram(program);
 
-		glUniform1f(glGetUniformLocation(program, "Kd"), materials[material_index]->Kd);
-		glUniform1f(glGetUniformLocation(program, "Ks"), materials[material_index]->Ks);
-		glUniform1i(glGetUniformLocation(program, "n"), materials[material_index]->n);
-		glUniform3fv(glGetUniformLocation(program, "ambient_color"), 1, App->renderer->ambient_color.ptr());
-		glUniform3fv(glGetUniformLocation(program, "light_direction"), 1, light_direction.ptr());
-		glUniform3fv(glGetUniformLocation(program, "light_color"), 1, light_color.ptr());
-		glUniform3fv(glGetUniformLocation(program, "camera_direction"), 1, App->camera->GetFront().ptr());
+		glUniform3fv(glGetUniformLocation(program, "material.diffuse_color"), 1, materials[material_index]->material.diffuse_color.ptr());
+		glUniform3fv(glGetUniformLocation(program, "material.specular_color"), 1, materials[material_index]->material.specular_color.ptr());
+		glUniform1f(glGetUniformLocation(program, "material.shininess"), materials[material_index]->material.shininess);
+		glUniform3fv(glGetUniformLocation(program, "material.ambient"), 1, App->renderer->ambient_color.ptr());
+
+		int has_diffuse_map = (materials[material_index]->material.has_diffuse_map) ? 1 : 0;
+		int has_specular_map = (materials[material_index]->material.has_specular_map) ? 1 : 0;
+		int shininess_alpha = (materials[material_index]->material.shininess_alpha) ? 1 : 0;
+		glUniform1i(glGetUniformLocation(program, "material.has_diffuse_map"), has_diffuse_map);
+		glUniform1i(glGetUniformLocation(program, "material.has_specular_map"), has_specular_map);
+		glUniform1i(glGetUniformLocation(program, "material.shininess_alpha"), shininess_alpha);
+
+		glUniform3fv(glGetUniformLocation(program, "light.position"), 1, light_position.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.color"), 1, light_color.ptr());
+		glUniform3fv(glGetUniformLocation(program, "view_pos"), 1, App->camera->GetPosition().ptr());
 	}
 	else
 	{
@@ -210,8 +219,9 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model_matrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view_matrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj_matrix.ptr());
-	glUniform1i(glGetUniformLocation(program, "diffuse_texture"), 0);
+	glUniform1i(glGetUniformLocation(program, "material.diffuse_map"), 0);
 
+	// TODO: Display Specular Texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture);
 

@@ -128,7 +128,7 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 bool ModulePrograms::Start()
 {
 	default_program = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
-	phong_program = CreateProgram("Shaders/phong_vertex.glsl", "Shaders/phong_fragment.glsl");
+	phong_pbr_program = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
 
 	return true;
 }
@@ -136,6 +136,6 @@ bool ModulePrograms::Start()
 bool ModulePrograms::CleanUp()
 {
 	glDeleteProgram(default_program);
-	glDeleteProgram(phong_program);
+	glDeleteProgram(phong_pbr_program);
 	return true;
 }

@@ -94,6 +94,7 @@ bool ModuleScene::Load(const char* file_name)
 		return false;
 	}
 
+	// TODO: Add Specular Texture Loading logic
 	// Load materials
 	LOG("Loading %i materials...", scene->mNumMaterials);
 	std::vector<Texture*> materials;
@@ -238,7 +239,7 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
 		if (ai_mesh->mMaterialIndex >= materials.size())
 		{
-			material->texture = materials.size() > 0 ? *materials.front() : 0;
+			material->material.diffuse_map = materials.size() > 0 ? *materials.front() : 0;
 			LOG("Invalid material found", ai_mesh->mMaterialIndex);
 		}
 		else
@@ -246,12 +247,12 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 			Texture* texture = materials[ai_mesh->mMaterialIndex];
 			if (texture == nullptr)
 			{
-				material->texture = *materials.front();
+				material->material.diffuse_map = *materials.front();
 				LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
 			}
 			else
 			{
-				material->texture = *texture;
+				material->material.diffuse_map = *texture;
 				LOG("Texture applied: %i", *texture);
 			}
 		}

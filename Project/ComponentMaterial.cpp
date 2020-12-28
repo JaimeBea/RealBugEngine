@@ -70,12 +70,84 @@ void ComponentMaterial::OnEditorUpdate()
 					}
 				}
 				ImGui::EndCombo();
+				ImGui::Text("");
 			}
 			if (material->material_type == ShaderType::PHONG)
 			{
-				ImGui::DragFloat("Kd", &material->Kd, drag_speed3f, 0.0f, 1.0f);
-				ImGui::DragFloat("Ks", &material->Ks, drag_speed3f, 0.0f, 1.0f);
-				ImGui::DragInt("n", &material->n, 0.05f, 1, 1000);
+				// Diffuse Texture Combo
+				const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
+				const char* diffuse_item_current = diffuse_items[material->material.has_diffuse_map];
+				ImGui::TextColored(text_color, "Diffuse Settings:");
+				if (ImGui::BeginCombo("##diffuse", diffuse_item_current))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(diffuse_items); ++n)
+					{
+						bool is_selected = (diffuse_item_current == diffuse_items[n]);
+						if (ImGui::Selectable(diffuse_items[n], is_selected))
+						{
+							material->material.has_diffuse_map = n;
+						}
+						if (is_selected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+				if (diffuse_item_current == diffuse_items[0])
+				{
+					ImGui::ColorEdit3("Color##diffuse_color", material->material.diffuse_color.ptr());
+				}
+				ImGui::Text("");
+
+				// Specular Texture Combo
+				const char* specular_items[] = {"Specular Color", "Specular Texture"};
+				const char* specular_item_current = specular_items[material->material.has_specular_map];
+				ImGui::TextColored(text_color, "Specular Settings:");
+				if (ImGui::BeginCombo("##specular", specular_item_current))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(specular_items); ++n)
+					{
+						bool is_selected = (specular_item_current == specular_items[n]);
+						if (ImGui::Selectable(specular_items[n], is_selected))
+						{
+							material->material.has_specular_map = n;
+						};
+						if (is_selected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+				if (specular_item_current == specular_items[0])
+				{
+					ImGui::ColorEdit3("Color##specular_color", material->material.specular_color.ptr());
+				}
+
+				// Shininess Combo
+				const char* shininess_items[] = {"Shininess Value", "Shininess Alpha"};
+				const char* shininess_item_current = shininess_items[material->material.shininess_alpha];
+				if (ImGui::BeginCombo("##shininess", shininess_item_current))
+				{
+					for (int n = 0; n < IM_ARRAYSIZE(shininess_items); ++n)
+					{
+						bool is_selected = (shininess_item_current == shininess_items[n]);
+						if (ImGui::Selectable(shininess_items[n], is_selected))
+						{
+							material->material.shininess_alpha = n;
+						}
+						if (is_selected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndCombo();
+				}
+				if (shininess_item_current == shininess_items[0])
+				{
+					ImGui::DragFloat("Shininess", &material->material.shininess, drag_speed3f, 0.0f, 1000.0f);
+				}
 			}
 			ImGui::Separator();
 			ImGui::TextColored(title_color, "Filters");
@@ -145,10 +217,10 @@ void ComponentMaterial::OnEditorUpdate()
 			ImGui::SameLine();
 			int width;
 			int height;
-			glGetTextureLevelParameteriv(material->texture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material->texture, 0, GL_TEXTURE_HEIGHT, &height);
+			glGetTextureLevelParameteriv(material->material.diffuse_map, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(material->material.diffuse_map, 0, GL_TEXTURE_HEIGHT, &height);
 			ImGui::TextWrapped("%d x %d", width, height);
-			ImGui::Image((void*) material->texture, ImVec2(200, 200));
+			ImGui::Image((void*) material->material.diffuse_map, ImVec2(200, 200));
 			ImGui::Separator();
 		}
 		count++;
