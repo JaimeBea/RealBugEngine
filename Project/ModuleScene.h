@@ -31,9 +31,6 @@ public:
 	GameObject* root = nullptr;
 
 private:
-	GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent);
-
-private:
 	Pool<GameObject> game_objects = Pool<GameObject>();
 	std::unordered_map<UID, GameObject*> game_objects_id_map = std::unordered_map<UID, GameObject*>();
 

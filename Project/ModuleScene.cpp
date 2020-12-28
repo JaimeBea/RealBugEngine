@@ -79,6 +79,91 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
+static GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
+{
+	LOG("Loading node: \"%s\"", node->mName.C_Str());
+
+	// Create GameObje
+	GameObject* game_object = App->scene->CreateGameObject(parent);
+
+	// Load name
+	game_object->name = node->mName.C_Str();
+
+	// Load transform
+	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
+	const float4x4& matrix = *(float4x4*) &node->mTransformation;
+	float3 position;
+	Quat rotation;
+	float3 scale;
+	matrix.Decompose(position, rotation, scale);
+	transform->SetPosition(position);
+	transform->SetRotation(rotation);
+	transform->SetScale(scale);
+	transform->CalculateGlobalMatrix();
+	LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
+
+	// Save min and max points
+	vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
+	vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
+
+	// Load meshes
+	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+	{
+		LOG("Loading mesh %i", i);
+		aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
+
+		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
+		mesh->Load(ai_mesh);
+		mesh->material_index = i;
+
+		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
+		if (ai_mesh->mMaterialIndex >= materials.size())
+		{
+			material->texture = materials.size() > 0 ? *materials.front() : 0;
+			LOG("Invalid material found", ai_mesh->mMaterialIndex);
+		}
+		else
+		{
+			Texture* texture = materials[ai_mesh->mMaterialIndex];
+			if (texture == nullptr)
+			{
+				material->texture = *materials.front();
+				LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
+			}
+			else
+			{
+				material->texture = *texture;
+				LOG("Texture applied: %i", *texture);
+			}
+		}
+
+		// Update min and max points
+		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
+		{
+			aiVector3D vertex = ai_mesh->mVertices[j];
+			if (vertex.x < min_point.x) min_point.x = vertex.x;
+			if (vertex.y < min_point.y) min_point.y = vertex.y;
+			if (vertex.z < min_point.z) min_point.z = vertex.z;
+			if (vertex.x > max_point.x) max_point.x = vertex.x;
+			if (vertex.y > max_point.y) max_point.y = vertex.y;
+			if (vertex.z > max_point.z) max_point.z = vertex.z;
+		}
+	}
+
+	// Create bounding box
+	ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
+	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
+	bounding_box->CalculateWorldBoundingBox();
+
+	// Load children nodes
+	for (unsigned int i = 0; i < node->mNumChildren; ++i)
+	{
+		GameObject* child = LoadNode(scene, materials, node->mChildren[i], game_object);
+	}
+
+	return game_object;
+}
+
 bool ModuleScene::Load(const char* file_name)
 {
 	// Load scene
@@ -205,89 +290,4 @@ GameObject* ModuleScene::GetGameObject(UID id) const
 	if (game_objects_id_map.count(id) == 0) return nullptr;
 
 	return game_objects_id_map.at(id);
-}
-
-GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
-{
-	LOG("Loading node: \"%s\"", node->mName.C_Str());
-
-	// Create GameObje
-	GameObject* game_object = CreateGameObject(parent);
-
-	// Load name
-	game_object->name = node->mName.C_Str();
-
-	// Load transform
-	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	const float4x4& matrix = *(float4x4*) &node->mTransformation;
-	float3 position;
-	Quat rotation;
-	float3 scale;
-	matrix.Decompose(position, rotation, scale);
-	transform->SetPosition(position);
-	transform->SetRotation(rotation);
-	transform->SetScale(scale);
-	transform->CalculateGlobalMatrix();
-	LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
-
-	// Save min and max points
-	vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
-	vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
-
-	// Load meshes
-	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
-	{
-		LOG("Loading mesh %i", i);
-		aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
-
-		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-		mesh->Load(ai_mesh);
-		mesh->material_index = i;
-
-		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
-		if (ai_mesh->mMaterialIndex >= materials.size())
-		{
-			material->texture = materials.size() > 0 ? *materials.front() : 0;
-			LOG("Invalid material found", ai_mesh->mMaterialIndex);
-		}
-		else
-		{
-			Texture* texture = materials[ai_mesh->mMaterialIndex];
-			if (texture == nullptr)
-			{
-				material->texture = *materials.front();
-				LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
-			}
-			else
-			{
-				material->texture = *texture;
-				LOG("Texture applied: %i", *texture);
-			}
-		}
-
-		// Update min and max points
-		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
-		{
-			aiVector3D vertex = ai_mesh->mVertices[j];
-			if (vertex.x < min_point.x) min_point.x = vertex.x;
-			if (vertex.y < min_point.y) min_point.y = vertex.y;
-			if (vertex.z < min_point.z) min_point.z = vertex.z;
-			if (vertex.x > max_point.x) max_point.x = vertex.x;
-			if (vertex.y > max_point.y) max_point.y = vertex.y;
-			if (vertex.z > max_point.z) max_point.z = vertex.z;
-		}
-	}
-
-	// Create bounding box
-	ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
-	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
-	bounding_box->CalculateWorldBoundingBox();
-
-	// Load children nodes
-	for (unsigned int i = 0; i < node->mNumChildren; ++i)
-	{
-		GameObject* child = LoadNode(scene, materials, node->mChildren[i], game_object);
-	}
-
-	return game_object;
 }
