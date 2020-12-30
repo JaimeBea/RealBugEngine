@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Logging.h"
 
+#include "Math/MathFunc.h"
 #include <string.h>
 
 #include "Leaks.h"
@@ -50,4 +51,14 @@ bool ModuleFiles::Save(const char* file_path, const Buffer<char>& buffer, bool a
 	fwrite(buffer.Data(), sizeof(char), buffer.Size(), file);
 
 	return true;
+}
+
+const char* ModuleFiles::GetFileExtension(const char* file_path) const
+{
+	const char* last_slash = strrchr(file_path, '/');
+	const char* last_backslash = strrchr(file_path, '\\');
+	const char* last_separator = Max(last_slash, last_backslash);
+	const char* last_dot = strrchr(file_path, '.');
+	const char* extension = last_separator < last_dot ? last_dot : nullptr;
+	return extension;
 }
