@@ -117,6 +117,7 @@
     <ClInclude Include="ModulePrograms.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
+    <ClInclude Include="ModuleSceneRender.h" />
     <ClInclude Include="ModuleTextures.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleWindow.h" />
@@ -201,6 +202,7 @@
     <ClCompile Include="ModulePrograms.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
+    <ClCompile Include="ModuleSceneRender.cpp" />
     <ClCompile Include="ModuleTextures.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
@@ -232,6 +234,10 @@
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="skybox_vertex.glsl" />
+    <Text Include="skybox_fragment.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>

@@ -399,6 +399,9 @@
     <ClInclude Include="Globals.h">
       <Filter>Source\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleSceneRender.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -641,6 +644,9 @@
     <ClCompile Include="Logging.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleSceneRender.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl">
@@ -681,5 +687,13 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include=".clang-format" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="skybox_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="skybox_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

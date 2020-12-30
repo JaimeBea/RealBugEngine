@@ -3,9 +3,6 @@
 #include "Module.h"
 
 #include "Math/float3.h"
-#include "Math/float4x4.h"
-
-class GameObject;
 
 class ModuleRender : public Module
 {
@@ -31,7 +28,4 @@ public:
 
 	float3 clear_color = {0.1f, 0.1f, 0.1f};
 	float3 ambient_color = {0.0f, 0.0f, 0.0f};
-
-private:
-	void DrawGameObject(GameObject* game_object);
 };

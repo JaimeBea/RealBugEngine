@@ -129,6 +129,7 @@ bool ModulePrograms::Start()
 {
 	default_program = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
 	phong_program = CreateProgram("Shaders/phong_vertex.glsl", "Shaders/phong_fragment.glsl");
+	skybox_program = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
 
 	return true;
 }
