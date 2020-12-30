@@ -14,6 +14,9 @@ public:
 	void OnEditorUpdate() override;
 
 public:
-	float3 light_color = {1.0f, 1.0f, 1.0f};
-	float3 light_direction = {-1.0f, -1.0f, -1.0f};
+	struct Light
+	{
+		float3 position = {1.0f, 1.0f, 1.0f};
+		float3 color = {1.0f, 1.0f, 1.0f};
+	} light;
 };

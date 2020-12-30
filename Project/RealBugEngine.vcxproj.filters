@@ -687,6 +687,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include=".clang-format" />
+    <None Include="..\Game\Shaders\phong_pbr_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Game\Shaders\phong_pbr_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="skybox_vertex.glsl">
