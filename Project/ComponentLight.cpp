@@ -47,10 +47,8 @@ void ComponentLight::OnEditorUpdate()
 			}
 			ImGui::Separator();
 
-			ImGui::TextColored(title_color, "Direction");
-			ImGui::DragFloat3("##light_direction", light_direction.ptr(), drag_speed2f, -inf, +inf);
 			ImGui::TextColored(title_color, "Color");
-			ImGui::ColorEdit3("##light_color", light_color.ptr());
+			ImGui::ColorEdit3("##light_color", light->light.color.ptr());
 		}
 	}
 }
