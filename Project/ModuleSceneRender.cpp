@@ -9,6 +9,7 @@
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 
+#include "GL/glew.h"
 #include "Brofiler.h"
 
 #include "Leaks.h"
@@ -16,6 +17,9 @@
 UpdateStatus ModuleSceneRender::Update()
 {
 	BROFILER_CATEGORY("ModuleSceneRender - Update", Profiler::Color::DarkBlue)
+
+	// Draw Skybox as a first element
+	DrawSkyBox();
 
 	// Load model or texture if one gets dropped
 	const char* dropped_file_name = App->input->GetDroppedFileName();
@@ -71,5 +75,13 @@ void ModuleSceneRender::DrawGameObject(GameObject* game_object)
 	for (GameObject* child : game_object->GetChildren())
 	{
 		DrawGameObject(child);
+	}
+}
+
+void ModuleSceneRender::DrawSkyBox()
+{
+	if (skybox_active)
+	{
+		App->scene->DrawSkyBox();
 	}
 }

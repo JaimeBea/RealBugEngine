@@ -82,6 +82,43 @@ Texture* ModuleTextures::LoadTexture(const char* file_name)
 	return texture;
 }
 
+Texture* ModuleTextures::LoadTextureCubeMap(const char* files[6])
+{
+	// Create texture
+	Texture* texture = textures.Obtain();
+	glGenTextures(1, texture);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, *texture);
+	for (int i = 0; i < 6; ++i)
+	{
+		unsigned image;
+		ilGenImages(1, &image);
+		ilBindImage(image);
+		bool image_loaded = ilLoadImage(files[i]);
+		if (!image_loaded)
+		{
+			LOG("Failed to load image.");
+			return nullptr;
+		}
+		bool image_converted = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+		if (!image_converted)
+		{
+			LOG("Failed to convert image.");
+			return nullptr;
+		}
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
+
+		ilDeleteImages(1, &image);
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	return texture;
+}
+
 void ModuleTextures::ReleaseTexture(Texture* texture)
 {
 	textures.Release(texture);

@@ -6,6 +6,7 @@
 #include "ModuleTime.h"
 #include "ModuleHardwareInfo.h"
 #include "ModuleWindow.h"
+#include "ModuleSceneRender.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
 #include "ModuleTextures.h"
@@ -20,7 +21,7 @@ PanelConfiguration::PanelConfiguration()
 
 void PanelConfiguration::Update()
 {
-	ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowDockID(App->editor->dock_left_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
 	{
 		// Application
@@ -247,8 +248,15 @@ void PanelConfiguration::Update()
 			{
 				App->camera->SetFOV(fov);
 			}
+		}
+
+		// Scene
+		if (ImGui::CollapsingHeader("Scene"))
+		{
+			// TODO: Change the Skybox images
+			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);
 			ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
-			ImGui::ColorEdit3("Ambient Color", App->renderer->ambient_color.ptr());
+			ImGui::ColorEdit3("Ambient Color", App->scene_renderer->ambient_color.ptr());
 		}
 	}
 	ImGui::End();

@@ -138,5 +138,6 @@ bool ModulePrograms::CleanUp()
 {
 	glDeleteProgram(default_program);
 	glDeleteProgram(phong_pbr_program);
+	glDeleteProgram(skybox_program);
 	return true;
 }

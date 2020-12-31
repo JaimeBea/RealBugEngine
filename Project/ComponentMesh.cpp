@@ -6,7 +6,7 @@
 #include "Logging.h"
 #include "ModulePrograms.h"
 #include "ModuleCamera.h"
-#include "ModuleRender.h"
+#include "ModuleSceneRender.h"
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 #include "ComponentLight.h"
@@ -198,7 +198,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		glUniform3fv(glGetUniformLocation(program, "material.diffuse_color"), 1, materials[material_index]->material.diffuse_color.ptr());
 		glUniform3fv(glGetUniformLocation(program, "material.specular_color"), 1, materials[material_index]->material.specular_color.ptr());
 		glUniform1f(glGetUniformLocation(program, "material.shininess"), materials[material_index]->material.shininess);
-		glUniform3fv(glGetUniformLocation(program, "material.ambient"), 1, App->renderer->ambient_color.ptr());
+		glUniform3fv(glGetUniformLocation(program, "material.ambient"), 1, App->scene_renderer->ambient_color.ptr());
 
 		int has_diffuse_map = (materials[material_index]->material.has_diffuse_map) ? 1 : 0;
 		int has_specular_map = (materials[material_index]->material.has_specular_map) ? 1 : 0;
