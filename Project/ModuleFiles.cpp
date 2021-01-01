@@ -53,25 +53,66 @@ bool ModuleFiles::Save(const char* file_path, const Buffer<char>& buffer, bool a
 	return true;
 }
 
-const char* ModuleFiles::GetFileExtension(const char* file_path) const
+UID ModuleFiles::CreateUIDForFileName(const char* file_name)
+{
+	UID id = GenerateUID();
+	id_to_file_name_map[id] = file_name;
+	return id;
+}
+
+std::string ModuleFiles::GetFileNameFromUID(UID id) const
+{
+	return id_to_file_name_map.at(id);
+}
+
+std::string ModuleFiles::GetFileNameAndExtension(const char* file_path) const
+{
+	const char* last_slash = strrchr(file_path, '/');
+	const char* last_backslash = strrchr(file_path, '\\');
+	const char* last_separator = Max(last_slash, last_backslash);
+
+	if (last_separator == nullptr)
+	{
+		return file_path;
+	}
+
+	const char* file_name_and_extension = last_separator + 1;
+	return file_name_and_extension;
+}
+
+std::string ModuleFiles::GetFileName(const char* file_path) const
+{
+	const char* last_slash = strrchr(file_path, '/');
+	const char* last_backslash = strrchr(file_path, '\\');
+	const char* last_separator = Max(last_slash, last_backslash);
+
+	if (last_separator == nullptr)
+	{
+		return file_path;
+	}
+
+	const char* file_name = last_separator + 1;
+	const char* last_dot = strrchr(file_name, '.');
+
+	if (last_dot == nullptr || last_dot == file_name)
+	{
+		return file_name;
+	}
+
+	return std::string(file_name).substr(0, last_dot - file_name);
+}
+
+std::string ModuleFiles::GetFileExtension(const char* file_path) const
 {
 	const char* last_slash = strrchr(file_path, '/');
 	const char* last_backslash = strrchr(file_path, '\\');
 	const char* last_separator = Max(last_slash, last_backslash);
 	const char* last_dot = strrchr(file_path, '.');
 
-	// Check for files without extension starting with '.'
-	if (last_dot == file_path || last_separator == last_dot - 1)
+	if (last_dot == nullptr || last_dot == file_path || last_dot < last_separator || last_dot == last_separator + 1)
 	{
-		return nullptr;
+		return std::string();
 	}
-
-	// If the last separator is at the right of the last dot, there is no extension
-	if (last_separator >= last_dot)
-	{
-		return nullptr;
-	}
-
-	// Get extension including the '.'
+	
 	return last_dot;
 }
