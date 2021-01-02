@@ -7,7 +7,7 @@
 #include "ModuleWindow.h"
 #include "ModuleCamera.h"
 #include "ModuleDebugDraw.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 #include "ModuleScene.h"
 #include "ComponentMesh.h"
 #include "ComponentTransform.h"

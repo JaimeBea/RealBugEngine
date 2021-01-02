@@ -8,7 +8,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 
 #include "GL/glew.h"
 #include "imgui.h"

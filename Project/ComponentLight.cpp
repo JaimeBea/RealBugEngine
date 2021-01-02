@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "Application.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"

@@ -53,18 +53,6 @@ bool ModuleFiles::Save(const char* file_path, const Buffer<char>& buffer, bool a
 	return true;
 }
 
-UID ModuleFiles::CreateUIDForFileName(const char* file_name)
-{
-	UID id = GenerateUID();
-	id_to_file_name_map[id] = file_name;
-	return id;
-}
-
-std::string ModuleFiles::GetFileNameFromUID(UID id) const
-{
-	return id_to_file_name_map.at(id);
-}
-
 std::string ModuleFiles::GetFileNameAndExtension(const char* file_path) const
 {
 	const char* last_slash = strrchr(file_path, '/');

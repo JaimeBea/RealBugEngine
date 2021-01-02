@@ -312,9 +312,6 @@
     <ClInclude Include="ModuleWindow.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleTextures.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp">
       <Filter>Libraries\DebugDraw</Filter>
     </ClInclude>
@@ -413,6 +410,12 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Source\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResources.h">
+      <Filter>Source\Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -581,9 +584,6 @@
     <ClCompile Include="Module.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleTextures.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleRender.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -658,6 +658,9 @@
     </ClCompile>
     <ClCompile Include="UID.cpp">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResources.cpp">
+      <Filter>Source\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

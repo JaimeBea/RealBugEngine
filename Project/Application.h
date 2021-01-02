@@ -12,7 +12,7 @@ class ModuleRender;
 class ModuleEditor;
 class ModuleCamera;
 class ModuleWindow;
-class ModuleTextures;
+class ModuleResources;
 class ModuleFiles;
 class ModuleInput;
 class ModulePrograms;
@@ -35,7 +35,7 @@ public:
 
 public:
 	ModuleHardwareInfo* hardware = nullptr;
-	ModuleTextures* textures = nullptr;
+	ModuleResources* resources = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;

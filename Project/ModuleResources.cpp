@@ -1,4 +1,4 @@
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 
 #include "Globals.h"
 #include "Application.h"
@@ -12,9 +12,10 @@
 
 #include "Leaks.h"
 
-bool ModuleTextures::Init()
+bool ModuleResources::Init()
 {
 	textures.Allocate(100);
+	meshes.Allocate(1000);
 
 	ilInit();
 	iluInit();
@@ -22,7 +23,7 @@ bool ModuleTextures::Init()
 	return true;
 }
 
-bool ModuleTextures::CleanUp()
+bool ModuleResources::CleanUp()
 {
 	for (Texture& texture : textures)
 	{
@@ -32,7 +33,7 @@ bool ModuleTextures::CleanUp()
 	return true;
 }
 
-Texture* ModuleTextures::Import(const char* file_path)
+Texture* ModuleResources::ImportTexture(const char* file_path)
 {
 	LOG("Importing texture from path: \"%s\".", file_path);
 
@@ -71,11 +72,11 @@ Texture* ModuleTextures::Import(const char* file_path)
 	Texture* texture = textures.Obtain();
 
 	// Save texture to custom DDS file
-	std::string file_name = App->files->GetFileName(file_path);
+	texture->file_id = GenerateUID();
+	std::string file_name = std::to_string(texture->file_id);
 	std::string dds_file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
 
 	LOG("Saving image to \"%s\".", dds_file_path.c_str());
-	texture->file_id = App->files->CreateUIDForFileName(file_name.c_str());
 	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
 	size_t size = ilSaveL(IL_DDS, nullptr, 0);
 	if (size == 0)
@@ -97,11 +98,11 @@ Texture* ModuleTextures::Import(const char* file_path)
 	return texture;
 }
 
-void ModuleTextures::Load(Texture* texture)
+void ModuleResources::LoadTexture(Texture* texture)
 {
 	if (texture == nullptr) return;
 
-	std::string file_name = App->files->GetFileNameFromUID(texture->file_id);
+	std::string file_name = std::to_string(texture->file_id);
 	std::string file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
 
 	LOG("Loading texture from path: \"%s\".", file_path.c_str());
@@ -137,13 +138,95 @@ void ModuleTextures::Load(Texture* texture)
 	LOG("Texture loaded successfuly.");
 }
 
-void ModuleTextures::Release(Texture* texture)
+void ModuleResources::UnloadTexture(Texture* texture)
 {
-	textures.Release(texture);
+	if (!texture->gl_texture) return;
+
 	glDeleteTextures(1, &texture->gl_texture);
 }
 
-void ModuleTextures::SetMinFilter(TextureMinFilter filter)
+void ModuleResources::ReleaseTexture(Texture* texture)
+{
+	UnloadTexture(texture);
+	textures.Release(texture);
+}
+
+void ModuleResources::LoadMesh(Mesh* mesh)
+{
+	if (mesh == nullptr) return;
+
+	std::string file_name = std::to_string(mesh->file_id);
+	std::string file_path = std::string(MESHES_PATH) + file_name + MESH_EXTENSION;
+
+	LOG("Loading mesh from path: \"%s\".", file_path.c_str());
+
+	unsigned position_size = sizeof(float) * 3;
+	unsigned normal_size = sizeof(float) * 3;
+	unsigned uv_size = sizeof(float) * 2;
+	unsigned index_size = sizeof(unsigned);
+
+	unsigned vertex_size = position_size + normal_size + uv_size;
+	unsigned vertex_buffer_size = vertex_size * mesh->num_vertices;
+	unsigned index_buffer_size = index_size * mesh->num_indices;
+
+	// Load file
+	Buffer<char> buffer = App->files->Load(file_path.c_str());
+	char* cursor = buffer.Data();
+	mesh->num_vertices = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
+	mesh->num_indices = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
+
+	float* vertices = (float*) cursor;
+	cursor += vertex_size * mesh->num_vertices;
+	unsigned* indices = (unsigned*) cursor;
+
+	LOG("Loading %i vertices...", mesh->num_vertices);
+
+	// Create VAO
+	glGenVertexArrays(1, &mesh->vao);
+	glGenBuffers(1, &mesh->vbo);
+	glGenBuffers(1, &mesh->ebo);
+
+	glBindVertexArray(mesh->vao);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
+
+	// Load VBO
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, vertices, GL_STATIC_DRAW);
+
+	// Load EBO
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, indices, GL_STATIC_DRAW);
+
+	// Load vertex attributes
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) position_size);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*) (position_size + normal_size));
+
+	// Unbind VAO
+	glBindVertexArray(0);
+}
+
+void ModuleResources::UnloadMesh(Mesh* mesh)
+{
+	if (!mesh->vao) return;
+
+	glDeleteVertexArrays(1, &mesh->vao);
+	glDeleteBuffers(1, &mesh->vbo);
+	glDeleteBuffers(1, &mesh->ebo);
+}
+
+void ModuleResources::ReleaseMesh(Mesh* mesh)
+{
+	UnloadMesh(mesh);
+	meshes.Release(mesh);
+}
+
+void ModuleResources::SetMinFilter(TextureMinFilter filter)
 {
 	for (Texture& texture : textures)
 	{
@@ -174,7 +257,7 @@ void ModuleTextures::SetMinFilter(TextureMinFilter filter)
 	min_filter = filter;
 }
 
-void ModuleTextures::SetMagFilter(TextureMagFilter filter)
+void ModuleResources::SetMagFilter(TextureMagFilter filter)
 {
 	for (Texture& texture : textures)
 	{
@@ -193,7 +276,7 @@ void ModuleTextures::SetMagFilter(TextureMagFilter filter)
 	mag_filter = filter;
 }
 
-void ModuleTextures::SetWrap(TextureWrap wrap)
+void ModuleResources::SetWrap(TextureWrap wrap)
 {
 	for (Texture& texture : textures)
 	{
@@ -226,17 +309,17 @@ void ModuleTextures::SetWrap(TextureWrap wrap)
 	texture_wrap = wrap;
 }
 
-TextureMinFilter ModuleTextures::GetMinFilter() const
+TextureMinFilter ModuleResources::GetMinFilter() const
 {
 	return min_filter;
 }
 
-TextureMagFilter ModuleTextures::GetMagFilter() const
+TextureMagFilter ModuleResources::GetMagFilter() const
 {
 	return mag_filter;
 }
 
-TextureWrap ModuleTextures::GetWrap() const
+TextureWrap ModuleResources::GetWrap() const
 {
 	return texture_wrap;
 }

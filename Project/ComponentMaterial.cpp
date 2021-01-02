@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "Application.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "ModuleScene.h"
 #include "PanelHierarchy.h"
@@ -154,7 +154,7 @@ void ComponentMaterial::OnEditorUpdate()
 
 			// Min filter combo box
 			const char* min_filter_items[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
-			const char* min_filter_item_current = min_filter_items[int(App->textures->GetMinFilter())];
+			const char* min_filter_item_current = min_filter_items[int(App->resources->GetMinFilter())];
 			if (ImGui::BeginCombo("Min filter", min_filter_item_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
@@ -162,7 +162,7 @@ void ComponentMaterial::OnEditorUpdate()
 					bool is_selected = (min_filter_item_current == min_filter_items[n]);
 					if (ImGui::Selectable(min_filter_items[n], is_selected))
 					{
-						App->textures->SetMinFilter(TextureMinFilter(n));
+						App->resources->SetMinFilter(TextureMinFilter(n));
 					}
 					if (is_selected)
 					{
@@ -174,7 +174,7 @@ void ComponentMaterial::OnEditorUpdate()
 
 			// Mag filter combo box
 			const char* mag_filter_items[] = {"Nearest", "Linear"};
-			const char* mag_filter_item_current = mag_filter_items[int(App->textures->GetMagFilter())];
+			const char* mag_filter_item_current = mag_filter_items[int(App->resources->GetMagFilter())];
 			if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
@@ -182,7 +182,7 @@ void ComponentMaterial::OnEditorUpdate()
 					bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
 					if (ImGui::Selectable(mag_filter_items[n], is_selected))
 					{
-						App->textures->SetMagFilter(TextureMagFilter(n));
+						App->resources->SetMagFilter(TextureMagFilter(n));
 					}
 					if (is_selected)
 					{
@@ -194,7 +194,7 @@ void ComponentMaterial::OnEditorUpdate()
 
 			// Texture wrap combo box
 			const char* wrap_items[] = {"Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge"};
-			const char* wrap_item_current = wrap_items[int(App->textures->GetWrap())];
+			const char* wrap_item_current = wrap_items[int(App->resources->GetWrap())];
 			if (ImGui::BeginCombo("Wrap", wrap_item_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
@@ -202,7 +202,7 @@ void ComponentMaterial::OnEditorUpdate()
 					bool is_selected = (wrap_item_current == wrap_items[n]);
 					if (ImGui::Selectable(wrap_items[n], is_selected))
 					{
-						App->textures->SetWrap(TextureWrap(n));
+						App->resources->SetWrap(TextureWrap(n));
 					}
 					if (is_selected)
 					{

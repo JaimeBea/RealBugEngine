@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "Texture.h"
+#include "Mesh.h"
 #include "Pool.h"
 
 enum class TextureMinFilter
@@ -29,15 +30,20 @@ enum class TextureWrap
 	MIRROR_CLAMP_TO_EDGE
 };
 
-class ModuleTextures : public Module
+class ModuleResources : public Module
 {
 public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	Texture* Import(const char* file_name);
-	void Load(Texture* texture);
-	void Release(Texture* texture);
+	Texture* ImportTexture(const char* file_name);
+	void LoadTexture(Texture* texture);
+	void UnloadTexture(Texture* texture);
+	void ReleaseTexture(Texture* texture);
+
+	void LoadMesh(Mesh* mesh);
+	void UnloadMesh(Mesh* mesh);
+	void ReleaseMesh(Mesh* mesh);
 
 	void SetMinFilter(TextureMinFilter filter);
 	void SetMagFilter(TextureMagFilter filter);
@@ -49,6 +55,7 @@ public:
 
 public:
 	Pool<Texture> textures;
+	Pool<Mesh> meshes;
 
 private:
 	TextureMinFilter min_filter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;

@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 #include "ModuleFiles.h"
 #include "Component.h"
 #include "ComponentTransform.h"
@@ -83,7 +83,88 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-static GameObject* ImportNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
+static Mesh* ImportMesh(const aiMesh* ai_mesh)
+{
+	// Create mesh
+	Mesh* mesh = App->resources->meshes.Obtain();
+	mesh->num_vertices = ai_mesh->mNumVertices;
+	mesh->num_indices = ai_mesh->mNumFaces * 3;
+	mesh->material_index = ai_mesh->mMaterialIndex;
+
+	// Save to custom format buffer
+	unsigned position_size = sizeof(float) * 3;
+	unsigned normal_size = sizeof(float) * 3;
+	unsigned uv_size = sizeof(float) * 2;
+	unsigned index_size = sizeof(unsigned);
+
+	unsigned header_size = sizeof(unsigned) * 2;
+	unsigned vertex_size = position_size + normal_size + uv_size;
+	unsigned vertex_buffer_size = vertex_size * mesh->num_vertices;
+	unsigned index_buffer_size = index_size * mesh->num_indices;
+
+	size_t size = header_size + vertex_buffer_size + index_buffer_size;
+	Buffer<char> buffer = Buffer<char>(size);
+	char* cursor = buffer.Data();
+
+	*((unsigned*) cursor) = mesh->num_vertices;
+	cursor += sizeof(unsigned);
+	*((unsigned*) cursor) = mesh->num_indices;
+	cursor += sizeof(unsigned);
+
+	for (unsigned i = 0; i < ai_mesh->mNumVertices; ++i)
+	{
+		aiVector3D& vertex = ai_mesh->mVertices[i];
+		aiVector3D& normal = ai_mesh->mNormals[i];
+		aiVector3D* texture_coords = ai_mesh->mTextureCoords[0];
+
+		*((float*) cursor) = vertex.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = vertex.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = vertex.z;
+		cursor += sizeof(float);
+		*((float*) cursor) = normal.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = normal.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = normal.z;
+		cursor += sizeof(float);
+		*((float*) cursor) = texture_coords != nullptr ? texture_coords[i].x : 0;
+		cursor += sizeof(float);
+		*((float*) cursor) = texture_coords != nullptr ? texture_coords[i].y : 0;
+		cursor += sizeof(float);
+	}
+
+	for (unsigned i = 0; i < ai_mesh->mNumFaces; ++i)
+	{
+		aiFace& ai_face = ai_mesh->mFaces[i];
+
+		// Assume triangles = 3 indices per face
+		if (ai_face.mNumIndices != 3)
+		{
+			LOG("Found a face with %i vertices. Discarded.", ai_face.mNumIndices);
+			continue;
+		}
+
+		*((unsigned*) cursor) = ai_face.mIndices[0];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = ai_face.mIndices[1];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = ai_face.mIndices[2];
+		cursor += sizeof(unsigned);
+	}
+
+	// Save buffer to file
+	mesh->file_id = GenerateUID();
+	std::string file_name = std::to_string(mesh->file_id);
+	std::string file_path = std::string(MESHES_PATH) + file_name + MESH_EXTENSION;
+	LOG("Saving mesh to \"%s\".", file_path.c_str());
+	App->files->Save(file_path.c_str(), buffer);
+
+	return mesh;
+}
+
+static GameObject* ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
 {
 	LOG("Importing node: \"%s\"", node->mName.C_Str());
 
@@ -114,11 +195,14 @@ static GameObject* ImportNode(const aiScene* scene, const std::vector<Texture*>&
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 	{
 		LOG("Importing mesh %i", i);
-		aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
+		aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
 
 		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-		mesh->Load(ai_mesh);
-		mesh->material_index = i;
+		mesh->mesh = ImportMesh(ai_mesh);
+		mesh->mesh->material_index = i;
+
+		// TODO: Move mesh loading to a better place
+		App->resources->LoadMesh(mesh->mesh);
 
 		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
 		if (ai_mesh->mMaterialIndex >= materials.size())
@@ -163,7 +247,7 @@ static GameObject* ImportNode(const aiScene* scene, const std::vector<Texture*>&
 	// Load children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		GameObject* child = ImportNode(scene, materials, node->mChildren[i], game_object);
+		GameObject* child = ImportNode(ai_scene, materials, node->mChildren[i], game_object);
 	}
 
 	return game_object;
@@ -212,7 +296,7 @@ bool ModuleScene::Import(const char* file_name)
 
 			// Try to load from the path given in the model file
 			LOG("Trying to import texture...");
-			Texture* texture = App->textures->Import(material_file_dir.C_Str());
+			Texture* texture = App->resources->ImportTexture(material_file_dir.C_Str());
 
 			// Try to load relative to the model folder
 			if (texture == nullptr)
@@ -226,7 +310,7 @@ bool ModuleScene::Import(const char* file_name)
 				}
 				std::string model_folder_dir = model_file_dir.substr(0, last_slash + 1);
 				std::string model_folder_material_file_dir = model_folder_dir + material_file_dir.C_Str();
-				texture = App->textures->Import(model_folder_material_file_dir.c_str());
+				texture = App->resources->ImportTexture(model_folder_material_file_dir.c_str());
 			}
 
 			// Try to load relative to the textures folder
@@ -235,7 +319,7 @@ bool ModuleScene::Import(const char* file_name)
 				LOG("Trying to import texture relative to textures folder...");
 				std::string textures_folder_dir = "Textures\\";
 				std::string textures_folder_material_file_dir = textures_folder_dir + material_file_dir.C_Str();
-				texture = App->textures->Import(textures_folder_material_file_dir.c_str());
+				texture = App->resources->ImportTexture(textures_folder_material_file_dir.c_str());
 			}
 
 			if (texture == nullptr)
@@ -250,7 +334,7 @@ bool ModuleScene::Import(const char* file_name)
 			// TODO: Move load to a better place
 			if (texture != nullptr)
 			{
-				App->textures->Load(texture);
+				App->resources->LoadTexture(texture);
 			}
 
 			materials.push_back(texture);
