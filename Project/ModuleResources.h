@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "Texture.h"
+#include "CubeMap.h"
 #include "Mesh.h"
 #include "Pool.h"
 
@@ -36,10 +37,15 @@ public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	Texture* ImportTexture(const char* file_name);
+	Texture* ImportTexture(const char* file_path);
 	void LoadTexture(Texture* texture);
 	void UnloadTexture(Texture* texture);
 	void ReleaseTexture(Texture* texture);
+
+	CubeMap* ImportCubeMap(const char* file_paths[6]);
+	void LoadCubeMap(CubeMap* cube_map);
+	void UnloadCubeMap(CubeMap* cube_map);
+	void ReleaseCubeMap(CubeMap* cube_map);
 
 	void LoadMesh(Mesh* mesh);
 	void UnloadMesh(Mesh* mesh);
@@ -55,6 +61,7 @@ public:
 
 public:
 	Pool<Texture> textures;
+	Pool<CubeMap> cube_maps;
 	Pool<Mesh> meshes;
 
 private:

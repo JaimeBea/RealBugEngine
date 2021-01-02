@@ -1,7 +1,8 @@
 #include "ModuleSceneRender.h"
 
 #include "Application.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
+#include "ModulePrograms.h"
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
@@ -82,6 +83,20 @@ void ModuleSceneRender::DrawSkyBox()
 {
 	if (skybox_active)
 	{
-		App->scene->DrawSkyBox();
+		glDepthFunc(GL_LEQUAL);
+
+		unsigned program = App->programs->skybox_program;
+		glUseProgram(program);
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
+		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
+		glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
+
+		glBindVertexArray(App->scene->skybox_vao);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, App->scene->skybox_cube_map->gl_texture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+
+		glDepthFunc(GL_LESS);
 	}
 }

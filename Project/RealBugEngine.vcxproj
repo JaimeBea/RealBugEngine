@@ -19,6 +19,7 @@
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
     <ClInclude Include="ComponentTransform.h" />
+    <ClInclude Include="CubeMap.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Leaks.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
@@ -229,6 +230,8 @@
     <None Include="..\Game\Shaders\phong_pbr_fragment.glsl" />
     <None Include="..\Game\Shaders\phong_pbr_vertex.glsl" />
     <None Include="..\Game\Shaders\phong_vertex.glsl" />
+    <None Include="..\Game\Shaders\skybox_fragment.glsl" />
+    <None Include="..\Game\Shaders\skybox_vertex.glsl" />
     <None Include="..\LICENSE" />
     <None Include="..\PackageEngine.bat" />
     <None Include="..\PackageEngine.ps1" />
@@ -241,10 +244,6 @@
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="skybox_vertex.glsl" />
-    <Text Include="skybox_fragment.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{746CC4C3-787F-4B0E-AA66-E388FE3FF4F6}</ProjectGuid>

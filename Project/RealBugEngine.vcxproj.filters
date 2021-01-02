@@ -420,6 +420,9 @@
     <ClInclude Include="ModuleSceneRender.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -714,13 +717,11 @@
     <None Include="..\Game\Shaders\phong_pbr_vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="skybox_vertex.glsl">
+    <None Include="..\Game\Shaders\skybox_fragment.glsl">
       <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="skybox_fragment.glsl">
+    </None>
+    <None Include="..\Game\Shaders\skybox_vertex.glsl">
       <Filter>Shaders</Filter>
-    </Text>
+    </None>
   </ItemGroup>
 </Project>
