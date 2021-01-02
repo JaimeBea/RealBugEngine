@@ -38,6 +38,7 @@ public:
 	bool CleanUp() override;
 
 	Texture* LoadTexture(const char* file_name);
+	Texture* LoadTextureCubeMap(const char* files[6]);
 	void ReleaseTexture(Texture* texture);
 
 	void SetMinFilter(TextureMinFilter filter);

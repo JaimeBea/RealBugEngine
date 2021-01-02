@@ -4,6 +4,8 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModuleTextures.h"
+#include "ModulePrograms.h"
+#include "ModuleCamera.h"
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentLight.h"
@@ -11,6 +13,7 @@
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
 
+#include "GL/glew.h"
 #include "Math/myassert.h"
 #include "assimp/cimport.h"
 #include "assimp/postprocess.h"
@@ -51,6 +54,7 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
+	LoadSkyBox();
 	Load("Assets/BakerHouse.fbx");
 
 	// Create Directional Light
@@ -69,6 +73,9 @@ bool ModuleScene::Start()
 
 bool ModuleScene::CleanUp()
 {
+	glDeleteVertexArrays(1, &skybox_vao);
+	glDeleteBuffers(1, &skybox_vbo);
+
 	DestroyGameObject(root);
 	assert(game_objects.Count() == 0);
 
@@ -282,4 +289,91 @@ GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Textur
 	}
 
 	return game_object;
+}
+
+void ModuleScene::LoadSkyBox()
+{
+	// clang-format off
+	float skyboxVertices[] = {
+	// positions          
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, 1.0f, -1.0f,
+	-1.0f, 1.0f, -1.0f,
+	
+	-1.0f, -1.0f, 1.0f,
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, 1.0f, -1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f,
+
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+
+	-1.0f, -1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, -1.0f, 1.0f,
+	-1.0f, -1.0f, 1.0f,
+	
+	-1.0f, 1.0f, -1.0f,
+	1.0f, 1.0f, -1.0f,
+	1.0f, 1.0f, 1.0f,
+	1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, 1.0f,
+	-1.0f, 1.0f, -1.0f,
+
+	-1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f, 1.0f,
+	1.0f, -1.0f, -1.0f,
+	1.0f, -1.0f, -1.0f,
+	-1.0f, -1.0f, 1.0f,
+	1.0f, -1.0f, 1.0f };
+	// clang-format on
+
+	// skybox VAO
+	glGenVertexArrays(1, &skybox_vao);
+	glGenBuffers(1, &skybox_vbo);
+	glBindVertexArray(skybox_vao);
+	glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+
+	const char* files[6] = {
+		"Assets/Skybox/right.jpg",
+		"Assets/Skybox/left.jpg",
+		"Assets/Skybox/top.jpg",
+		"Assets/Skybox/bottom.jpg",
+		"Assets/Skybox/front.jpg",
+		"Assets/Skybox/back.jpg"};
+
+	skybox_texture = App->textures->LoadTextureCubeMap(files);
+}
+
+void ModuleScene::DrawSkyBox()
+{
+	glDepthFunc(GL_LEQUAL);
+
+	unsigned program = App->programs->skybox_program;
+	glUseProgram(program);
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
+	glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
+
+	glBindVertexArray(skybox_vao);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, *skybox_texture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+
+	glDepthFunc(GL_LESS);
 }

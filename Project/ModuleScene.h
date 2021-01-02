@@ -32,7 +32,16 @@ public:
 
 private:
 	GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent);
+	void LoadSkyBox();
+
+public:
+	void DrawSkyBox();
 
 private:
 	aiLogStream log_stream = {nullptr, nullptr};
+
+	// Skybox
+	unsigned skybox_vao = 0;
+	unsigned skybox_vbo = 0;
+	Texture* skybox_texture = 0;
 };

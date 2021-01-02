@@ -8,6 +8,7 @@ enum class UpdateStatus;
 
 class Module;
 class ModuleHardwareInfo;
+class ModuleSceneRender;
 class ModuleRender;
 class ModuleEditor;
 class ModuleCamera;
@@ -35,6 +36,7 @@ public:
 public:
 	ModuleHardwareInfo* hardware = nullptr;
 	ModuleTextures* textures = nullptr;
+	ModuleSceneRender* scene_renderer = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;
