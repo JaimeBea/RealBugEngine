@@ -3,10 +3,12 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
+#include "ModuleFiles.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "GL/glew.h"
+#include <string>
 
 #include "Leaks.h"
 
@@ -24,16 +26,17 @@ bool ModuleTextures::CleanUp()
 {
 	for (Texture& texture : textures)
 	{
-		glDeleteTextures(1, &texture);
+		glDeleteTextures(1, &texture.gl_texture);
 	}
 
 	return true;
 }
 
-Texture* ModuleTextures::LoadTexture(const char* file_name)
+Texture* ModuleTextures::Import(const char* file_path)
 {
-	LOG("Loading texture from path: \"%s\".", file_name);
+	LOG("Importing texture from path: \"%s\".", file_path);
 
+	// Generate image handler
 	unsigned image;
 	ilGenImages(1, &image);
 	DEFER
@@ -41,8 +44,9 @@ Texture* ModuleTextures::LoadTexture(const char* file_name)
 		ilDeleteImages(1, &image);
 	};
 
+	// Load image
 	ilBindImage(image);
-	bool image_loaded = ilLoadImage(file_name);
+	bool image_loaded = ilLoadImage(file_path);
 	if (!image_loaded)
 	{
 		LOG("Failed to load image.");
@@ -65,10 +69,63 @@ Texture* ModuleTextures::LoadTexture(const char* file_name)
 
 	// Create texture
 	Texture* texture = textures.Obtain();
-	glGenTextures(1, texture);
+
+	// Save texture to custom DDS file
+	std::string file_name = App->files->GetFileName(file_path);
+	std::string dds_file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
+
+	LOG("Saving image to \"%s\".", dds_file_path.c_str());
+	texture->file_id = App->files->CreateUIDForFileName(file_name.c_str());
+	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
+	size_t size = ilSaveL(IL_DDS, nullptr, 0);
+	if (size == 0)
+	{
+		LOG("Failed to save image.");
+		return nullptr;
+	}
+	Buffer<char> buffer = Buffer<char>(size);
+	size = ilSaveL(IL_DDS, buffer.Data(), size);
+	if (size == 0)
+	{
+		LOG("Failed to save image.");
+		return nullptr;
+	}
+	App->files->Save(dds_file_path.c_str(), buffer);
+
+	LOG("Texture imported successfuly.");
+
+	return texture;
+}
+
+void ModuleTextures::Load(Texture* texture)
+{
+	if (texture == nullptr) return;
+
+	std::string file_name = App->files->GetFileNameFromUID(texture->file_id);
+	std::string file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
+
+	LOG("Loading texture from path: \"%s\".", file_path.c_str());
+
+	// Generate image handler
+	unsigned image;
+	ilGenImages(1, &image);
+	DEFER
+	{
+		ilDeleteImages(1, &image);
+	};
+
+	// Load image
+	ilBindImage(image);
+	bool image_loaded = ilLoad(IL_DDS, file_path.c_str());
+	if (!image_loaded)
+	{
+		LOG("Failed to load image.");
+		return;
+	}
 
 	// Generate texture from image
-	glBindTexture(GL_TEXTURE_2D, *texture);
+	glGenTextures(1, &texture->gl_texture);
+	glBindTexture(GL_TEXTURE_2D, texture->gl_texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
 
 	// Generate mipmaps and set filtering and wrapping
@@ -78,21 +135,19 @@ Texture* ModuleTextures::LoadTexture(const char* file_name)
 	SetMagFilter(mag_filter);
 
 	LOG("Texture loaded successfuly.");
-
-	return texture;
 }
 
-void ModuleTextures::ReleaseTexture(Texture* texture)
+void ModuleTextures::Release(Texture* texture)
 {
 	textures.Release(texture);
-	glDeleteTextures(1, texture);
+	glDeleteTextures(1, &texture->gl_texture);
 }
 
 void ModuleTextures::SetMinFilter(TextureMinFilter filter)
 {
-	for (unsigned texture : textures)
+	for (Texture& texture : textures)
 	{
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, texture.gl_texture);
 		switch (filter)
 		{
 		case TextureMinFilter::NEAREST:
@@ -121,9 +176,9 @@ void ModuleTextures::SetMinFilter(TextureMinFilter filter)
 
 void ModuleTextures::SetMagFilter(TextureMagFilter filter)
 {
-	for (unsigned texture : textures)
+	for (Texture& texture : textures)
 	{
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, texture.gl_texture);
 		switch (filter)
 		{
 		case TextureMagFilter::NEAREST:
@@ -140,9 +195,9 @@ void ModuleTextures::SetMagFilter(TextureMagFilter filter)
 
 void ModuleTextures::SetWrap(TextureWrap wrap)
 {
-	for (unsigned texture : textures)
+	for (Texture& texture : textures)
 	{
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindTexture(GL_TEXTURE_2D, texture.gl_texture);
 		switch (wrap)
 		{
 		case TextureWrap::REPEAT:

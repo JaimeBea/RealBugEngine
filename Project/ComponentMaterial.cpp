@@ -76,7 +76,7 @@ void ComponentMaterial::OnEditorUpdate()
 			{
 				// Diffuse Texture Combo
 				const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
-				const char* diffuse_item_current = diffuse_items[material->material.has_diffuse_map];
+				const char* diffuse_item_current = diffuse_items[material->has_diffuse_map];
 				ImGui::TextColored(text_color, "Diffuse Settings:");
 				if (ImGui::BeginCombo("##diffuse", diffuse_item_current))
 				{
@@ -85,7 +85,7 @@ void ComponentMaterial::OnEditorUpdate()
 						bool is_selected = (diffuse_item_current == diffuse_items[n]);
 						if (ImGui::Selectable(diffuse_items[n], is_selected))
 						{
-							material->material.has_diffuse_map = n;
+							material->has_diffuse_map = n ? 1 : 0;
 						}
 						if (is_selected)
 						{
@@ -96,13 +96,13 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (diffuse_item_current == diffuse_items[0])
 				{
-					ImGui::ColorEdit3("Color##diffuse_color", material->material.diffuse_color.ptr());
+					ImGui::ColorEdit3("Color##diffuse_color", material->diffuse_color.ptr());
 				}
 				ImGui::Text("");
 
 				// Specular Texture Combo
 				const char* specular_items[] = {"Specular Color", "Specular Texture"};
-				const char* specular_item_current = specular_items[material->material.has_specular_map];
+				const char* specular_item_current = specular_items[material->has_specular_map];
 				ImGui::TextColored(text_color, "Specular Settings:");
 				if (ImGui::BeginCombo("##specular", specular_item_current))
 				{
@@ -111,7 +111,7 @@ void ComponentMaterial::OnEditorUpdate()
 						bool is_selected = (specular_item_current == specular_items[n]);
 						if (ImGui::Selectable(specular_items[n], is_selected))
 						{
-							material->material.has_specular_map = n;
+							material->has_specular_map = n ? 1 : 0;
 						};
 						if (is_selected)
 						{
@@ -122,12 +122,12 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (specular_item_current == specular_items[0])
 				{
-					ImGui::ColorEdit3("Color##specular_color", material->material.specular_color.ptr());
+					ImGui::ColorEdit3("Color##specular_color", material->specular_color.ptr());
 				}
 
 				// Shininess Combo
 				const char* shininess_items[] = {"Shininess Value", "Shininess Alpha"};
-				const char* shininess_item_current = shininess_items[material->material.shininess_alpha];
+				const char* shininess_item_current = shininess_items[material->has_shininess_in_alpha_channel];
 				if (ImGui::BeginCombo("##shininess", shininess_item_current))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(shininess_items); ++n)
@@ -135,7 +135,7 @@ void ComponentMaterial::OnEditorUpdate()
 						bool is_selected = (shininess_item_current == shininess_items[n]);
 						if (ImGui::Selectable(shininess_items[n], is_selected))
 						{
-							material->material.shininess_alpha = n;
+							material->has_shininess_in_alpha_channel = n ? 1 : 0;
 						}
 						if (is_selected)
 						{
@@ -146,7 +146,7 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (shininess_item_current == shininess_items[0])
 				{
-					ImGui::DragFloat("Shininess", &material->material.shininess, drag_speed3f, 0.0f, 1000.0f);
+					ImGui::DragFloat("Shininess", &material->shininess, drag_speed3f, 0.0f, 1000.0f);
 				}
 			}
 			ImGui::Separator();
@@ -217,10 +217,10 @@ void ComponentMaterial::OnEditorUpdate()
 			ImGui::SameLine();
 			int width;
 			int height;
-			glGetTextureLevelParameteriv(material->material.diffuse_map, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material->material.diffuse_map, 0, GL_TEXTURE_HEIGHT, &height);
+			glGetTextureLevelParameteriv(material->diffuse_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(material->diffuse_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
 			ImGui::TextWrapped("%d x %d", width, height);
-			ImGui::Image((void*) material->material.diffuse_map, ImVec2(200, 200));
+			ImGui::Image((void*) material->diffuse_map->gl_texture, ImVec2(200, 200));
 			ImGui::Separator();
 		}
 		count++;

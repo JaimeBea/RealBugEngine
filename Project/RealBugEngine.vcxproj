@@ -133,6 +133,7 @@
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="UID.h" />
   </ItemGroup>
   <ItemGroup>

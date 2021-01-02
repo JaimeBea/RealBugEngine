@@ -28,11 +28,17 @@
     <Filter Include="Source\Panels">
       <UniqueIdentifier>{bcd7b9b1-e7a5-474b-899d-6d1a5cf157b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\DataStructures">
-      <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Time">
       <UniqueIdentifier>{6b6f7bbc-a8f5-434f-9714-082182d39b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Files">
+      <UniqueIdentifier>{ba49f20a-6c7c-4f01-ae77-0b42754b1a1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Resources">
+      <UniqueIdentifier>{3b29a433-ba06-4fb0-bba0-48c7b0647e54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Utils">
+      <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -367,10 +373,10 @@
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="Pool.h">
-      <Filter>Source\DataStructures</Filter>
+      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Quadtree.h">
-      <Filter>Source\DataStructures</Filter>
+      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source</Filter>
@@ -391,7 +397,7 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Buffer.h">
-      <Filter>Source\DataStructures</Filter>
+      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="MSTimer.h">
       <Filter>Source\Time</Filter>
@@ -400,10 +406,13 @@
       <Filter>Source\Time</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Resources</Filter>
     </ClInclude>
     <ClInclude Include="UID.h">
-      <Filter>Source</Filter>
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source\Resources</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -645,10 +654,10 @@
       <Filter>Source\Time</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Resources</Filter>
     </ClCompile>
     <ClCompile Include="UID.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -149,7 +149,7 @@ UpdateStatus ModuleRender::Update()
 	const char* dropped_file_name = App->input->GetDroppedFileName();
 	if (dropped_file_name != nullptr)
 	{
-		bool loaded_scene = App->scene->Load(dropped_file_name);
+		bool loaded_scene = App->scene->Import(dropped_file_name);
 		if (!loaded_scene)
 		{
 			/* TODO: Load textures

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Component.h"
+
 #include "Math/float3.h"
+
+class Texture;
 
 enum class ShaderType
 {
@@ -19,22 +22,22 @@ public:
 	void OnEditorUpdate() override;
 
 public:
+	GameObject* light = nullptr;
+
 	ShaderType material_type = ShaderType::PHONG;
 
 	// Phong
-	struct Material
-	{
-		float3 diffuse_color = {0.0f, 0.0f, 0.0f};
-		unsigned diffuse_map = 0;
-		float3 specular_color = {0.0f, 0.0f, 0.0f};
-		unsigned specular_map = 0;
-		float shininess = 0;
-		float3 ambient = {0.0f, 0.0f, 0.0f};
 
-		bool has_diffuse_map = true;
-		bool has_specular_map = false;
-		bool shininess_alpha = false;
-	} material;
+	bool has_diffuse_map = false;
+	float3 diffuse_color = {0.0f, 0.0f, 0.0f};
+	Texture* diffuse_map = nullptr;
 
-	GameObject* light = nullptr;
+	bool has_specular_map = false;
+	float3 specular_color = {0.0f, 0.0f, 0.0f};
+	Texture* specular_map = nullptr;
+
+	float shininess = 0;
+	bool has_shininess_in_alpha_channel = false;
+
+	float3 ambient = {0.0f, 0.0f, 0.0f};
 };

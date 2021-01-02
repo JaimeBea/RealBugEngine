@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Module.h"
-
+#include "Texture.h"
 #include "Pool.h"
 
 enum class TextureMinFilter
@@ -29,16 +29,15 @@ enum class TextureWrap
 	MIRROR_CLAMP_TO_EDGE
 };
 
-typedef unsigned int Texture;
-
 class ModuleTextures : public Module
 {
 public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	Texture* LoadTexture(const char* file_name);
-	void ReleaseTexture(Texture* texture);
+	Texture* Import(const char* file_name);
+	void Load(Texture* texture);
+	void Release(Texture* texture);
 
 	void SetMinFilter(TextureMinFilter filter);
 	void SetMagFilter(TextureMagFilter filter);

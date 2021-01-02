@@ -4,12 +4,14 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModuleTextures.h"
+#include "ModuleFiles.h"
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentLight.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
+#include "Texture.h"
 
 #include "Math/myassert.h"
 #include "assimp/cimport.h"
@@ -20,6 +22,8 @@
 #include <string>
 
 #include "Leaks.h"
+
+static aiLogStream log_stream = {nullptr, nullptr};
 
 static void AssimpLogCallback(const char* message, char* user)
 {
@@ -51,7 +55,7 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
-	Load("Assets/BakerHouse.fbx");
+	Import("Assets/BakerHouse.fbx");
 
 	// Create Directional Light
 	GameObject* game_object = CreateGameObject(root);
@@ -79,11 +83,11 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-static GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
+static GameObject* ImportNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
 {
-	LOG("Loading node: \"%s\"", node->mName.C_Str());
+	LOG("Importing node: \"%s\"", node->mName.C_Str());
 
-	// Create GameObje
+	// Create GameObject
 	GameObject* game_object = App->scene->CreateGameObject(parent);
 
 	// Load name
@@ -109,7 +113,7 @@ static GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& m
 	// Load meshes
 	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
 	{
-		LOG("Loading mesh %i", i);
+		LOG("Importing mesh %i", i);
 		aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
 
 		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
@@ -119,7 +123,7 @@ static GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& m
 		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
 		if (ai_mesh->mMaterialIndex >= materials.size())
 		{
-			material->material.diffuse_map = materials.size() > 0 ? *materials.front() : 0;
+			material->diffuse_map = materials.size() > 0 ? materials.front() : nullptr;
 			LOG("Invalid material found", ai_mesh->mMaterialIndex);
 		}
 		else
@@ -127,15 +131,16 @@ static GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& m
 			Texture* texture = materials[ai_mesh->mMaterialIndex];
 			if (texture == nullptr)
 			{
-				material->material.diffuse_map = *materials.front();
+				material->diffuse_map = materials.front();
 				LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
 			}
 			else
 			{
-				material->material.diffuse_map = *texture;
-				LOG("Texture applied: %i", *texture);
+				material->diffuse_map = texture;
+				LOG("Texture applied: %i", texture->gl_texture);
 			}
 		}
+		material->has_diffuse_map = material->diffuse_map ? true : false;
 
 		// Update min and max points
 		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
@@ -158,16 +163,24 @@ static GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& m
 	// Load children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		GameObject* child = LoadNode(scene, materials, node->mChildren[i], game_object);
+		GameObject* child = ImportNode(scene, materials, node->mChildren[i], game_object);
 	}
 
 	return game_object;
 }
 
-bool ModuleScene::Load(const char* file_name)
+bool ModuleScene::Import(const char* file_name)
 {
-	// Load scene
-	LOG("Loading scene from path: \"%s\".", file_name);
+	// Check for extension support
+	std::string extension = App->files->GetFileExtension(file_name);
+	if (!aiIsExtensionSupported(extension.c_str()))
+	{
+		LOG("Extension is not supported by assimp: \"%s\".", extension);
+		return false;
+	}
+
+	// Import scene
+	LOG("Importing scene from path: \"%s\".", file_name);
 	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
 	DEFER
 	{
@@ -175,35 +188,36 @@ bool ModuleScene::Load(const char* file_name)
 	};
 	if (!scene)
 	{
-		LOG("Error loading scene: %s", file_name, aiGetErrorString());
+		LOG("Error importing scene: %s", file_name, aiGetErrorString());
 		return false;
 	}
 
 	// TODO: Add Specular Texture Loading logic
 	// Load materials
-	LOG("Loading %i materials...", scene->mNumMaterials);
+	LOG("Importing %i materials...", scene->mNumMaterials);
 	std::vector<Texture*> materials;
 	materials.reserve(scene->mNumMaterials);
 	for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
 	{
 		LOG("Loading material %i...", i);
+		aiMaterial* ai_material = scene->mMaterials[i];
 		aiString material_file_dir;
 		aiTextureMapping mapping;
 		unsigned uv_index;
-		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_dir, &mapping, &uv_index) == AI_SUCCESS)
+		if (ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_dir, &mapping, &uv_index) == AI_SUCCESS)
 		{
 			// Check if the material is valid for our purposes
 			assert(mapping == aiTextureMapping_UV);
 			assert(uv_index == 0);
 
 			// Try to load from the path given in the model file
-			LOG("Trying to load texture...");
-			Texture* texture = App->textures->LoadTexture(material_file_dir.C_Str());
+			LOG("Trying to import texture...");
+			Texture* texture = App->textures->Import(material_file_dir.C_Str());
 
 			// Try to load relative to the model folder
 			if (texture == nullptr)
 			{
-				LOG("Trying to load texture relative to model folder...");
+				LOG("Trying to import texture relative to model folder...");
 				std::string model_file_dir = file_name;
 				size_t last_slash = model_file_dir.find_last_of('\\');
 				if (last_slash == std::string::npos)
@@ -212,16 +226,16 @@ bool ModuleScene::Load(const char* file_name)
 				}
 				std::string model_folder_dir = model_file_dir.substr(0, last_slash + 1);
 				std::string model_folder_material_file_dir = model_folder_dir + material_file_dir.C_Str();
-				texture = App->textures->LoadTexture(model_folder_material_file_dir.c_str());
+				texture = App->textures->Import(model_folder_material_file_dir.c_str());
 			}
 
 			// Try to load relative to the textures folder
 			if (texture == nullptr)
 			{
-				LOG("Trying to load texture relative to textures folder...");
+				LOG("Trying to import texture relative to textures folder...");
 				std::string textures_folder_dir = "Textures\\";
 				std::string textures_folder_material_file_dir = textures_folder_dir + material_file_dir.C_Str();
-				texture = App->textures->LoadTexture(textures_folder_material_file_dir.c_str());
+				texture = App->textures->Import(textures_folder_material_file_dir.c_str());
 			}
 
 			if (texture == nullptr)
@@ -230,26 +244,42 @@ bool ModuleScene::Load(const char* file_name)
 			}
 			else
 			{
-				LOG("Texture loaded successfuly.");
+				LOG("Texture imported successfuly.");
+			}
+
+			// TODO: Move load to a better place
+			if (texture != nullptr)
+			{
+				App->textures->Load(texture);
 			}
 
 			materials.push_back(texture);
 		}
 		else
 		{
-			materials.push_back(nullptr);
-
 			LOG("Diffuse texture not found.");
+
+			materials.push_back(nullptr);
 		}
 
-		LOG("Material loaded.");
+		LOG("Material imported.");
 	}
 
 	// Create scene tree
-	LOG("Loading scene tree.");
-	GameObject* game_object = LoadNode(scene, materials, scene->mRootNode, root);
+	LOG("Importing scene tree.");
+	GameObject* game_object = ImportNode(scene, materials, scene->mRootNode, root);
 
-	LOG("Scene loaded.");
+	LOG("Scene imported.");
+	return true;
+}
+
+bool ModuleScene::Load(const char* file_name)
+{
+	return true;
+}
+
+bool ModuleScene::Save(const char* file_name) const
+{
 	return true;
 }
 
