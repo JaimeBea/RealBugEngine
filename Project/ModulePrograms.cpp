@@ -91,6 +91,7 @@ bool ModulePrograms::Start()
 {
 	default_program = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
 	phong_pbr_program = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
+	skybox_program = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
 
 	return true;
 }
@@ -99,5 +100,6 @@ bool ModulePrograms::CleanUp()
 {
 	glDeleteProgram(default_program);
 	glDeleteProgram(phong_pbr_program);
+	glDeleteProgram(skybox_program);
 	return true;
 }

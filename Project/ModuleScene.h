@@ -29,7 +29,21 @@ public:
 public:
 	GameObject* root = nullptr;
 
+	Pool<GameObject> game_objects = Pool<GameObject>();
+
+private:
+	GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent);
+	void LoadSkyBox();
+
+public:
+	void DrawSkyBox();
+
 private:
 	Pool<GameObject> game_objects = Pool<GameObject>();
 	std::unordered_map<UID, GameObject*> game_objects_id_map = std::unordered_map<UID, GameObject*>();
+
+	// Skybox
+	unsigned skybox_vao = 0;
+	unsigned skybox_vbo = 0;
+	Texture* skybox_texture = 0;
 };

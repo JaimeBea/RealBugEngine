@@ -11,4 +11,5 @@ public:
 public:
 	unsigned default_program = 0;
 	unsigned phong_pbr_program = 0;
+	unsigned skybox_program = 0;
 };

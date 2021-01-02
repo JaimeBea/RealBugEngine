@@ -417,6 +417,9 @@
     <ClInclude Include="ModuleResources.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleSceneRender.h">
+      <Filter>Source\Modules</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -662,6 +665,9 @@
     <ClCompile Include="ModuleResources.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleSceneRender.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl">
@@ -708,5 +714,13 @@
     <None Include="..\Game\Shaders\phong_pbr_vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="skybox_vertex.glsl">
+      <Filter>Shaders</Filter>
+    </Text>
+    <Text Include="skybox_fragment.glsl">
+      <Filter>Shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>
