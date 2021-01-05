@@ -1,26 +1,19 @@
 #pragma once
 
+#include "ComponentType.h"
+
+class JsonValue;
 class GameObject;
-
-#define REGISTER_COMPONENT(component_type) static const ComponentType static_type = component_type
-
-enum class ComponentType
-{
-	TRANSFORM,
-	MESH,
-	MATERIAL,
-	LIGHT,
-	BOUNDING_BOX,
-	UNKNOWN
-};
 
 class Component
 {
 public:
-	Component(ComponentType type, GameObject& owner, bool active = true);
+	Component(ComponentType type, GameObject& owner, bool active);
 
 	virtual void Update();
 	virtual void OnEditorUpdate();
+	virtual void Save(JsonValue& j_component) const;
+	virtual void Load(JsonValue& j_component);
 
 	void Enable();
 	void Disable();
@@ -30,7 +23,7 @@ public:
 	bool IsActive() const;
 
 private:
-	const ComponentType type = ComponentType::UNKNOWN;
+	ComponentType type = ComponentType::UNKNOWN;
 	GameObject& owner;
 
 	bool active = true;

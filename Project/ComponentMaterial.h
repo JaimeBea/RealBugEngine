@@ -15,9 +15,7 @@ enum class ShaderType
 class ComponentMaterial : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::MATERIAL);
-
-	ComponentMaterial(GameObject& owner);
+	REGISTER_COMPONENT(ComponentMaterial, ComponentType::MATERIAL);
 
 	void OnEditorUpdate() override;
 

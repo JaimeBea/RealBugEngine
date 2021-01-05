@@ -423,6 +423,12 @@
     <ClInclude Include="CubeMap.h">
       <Filter>Source\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentType.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonValue.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -670,6 +676,12 @@
     </ClCompile>
     <ClCompile Include="ModuleSceneRender.cpp">
       <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentType.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonValue.cpp">
+      <Filter>Source\Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

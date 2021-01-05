@@ -22,9 +22,6 @@
 
 #include "Leaks.h"
 
-ComponentMesh::ComponentMesh(GameObject& owner)
-	: Component(static_type, owner) {}
-
 void ComponentMesh::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;

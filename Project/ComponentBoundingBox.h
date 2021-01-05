@@ -7,9 +7,7 @@
 class ComponentBoundingBox : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::BOUNDING_BOX);
-
-	ComponentBoundingBox(GameObject& owner);
+	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
 	void SetLocalBoundingBox(const AABB& bounding_box);
 	void CalculateWorldBoundingBox(bool force = false);

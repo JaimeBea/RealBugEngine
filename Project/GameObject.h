@@ -4,6 +4,7 @@
 #include "ModuleScene.h"
 #include "Component.h"
 #include "UID.h"
+#include "JsonValue.h"
 
 #include <vector>
 #include <string>
@@ -25,7 +26,7 @@ public:
 
 	UID GetID();
 
-	template<class T> T* CreateComponent();
+	template<class T> T* CreateComponent(bool active = true);
 	template<class T> T* GetComponent() const;
 	template<class T> std::vector<T*> GetComponents() const;
 
@@ -39,9 +40,12 @@ public:
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* game_object);
 
+	void Save(JsonValue& object) const;
+	void Load(JsonValue& object);
+
 public:
-	std::string name = "GameObject";
 	UID id = 0;
+	std::string name = "GameObject";
 	std::vector<Component*> components;
 
 private:
@@ -51,9 +55,9 @@ private:
 };
 
 template<class T>
-inline T* GameObject::CreateComponent()
+inline T* GameObject::CreateComponent(bool active)
 {
-	T* component = new T(*this);
+	T* component = new T(*this, active);
 	components.push_back(component);
 	return component;
 }

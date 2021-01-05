@@ -9,9 +9,7 @@
 class ComponentTransform : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::TRANSFORM);
-
-	ComponentTransform(GameObject& owner);
+	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM);
 
 	void OnEditorUpdate() override;
 

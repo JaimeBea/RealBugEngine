@@ -18,8 +18,10 @@
     <ClInclude Include="ComponentBoundingBox.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
+    <ClInclude Include="ComponentType.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="CubeMap.h" />
+    <ClInclude Include="JsonValue.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Leaks.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
@@ -147,6 +149,8 @@
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
+    <ClCompile Include="ComponentType.cpp" />
+    <ClCompile Include="JsonValue.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Libs\imgui\imgui.cpp" />

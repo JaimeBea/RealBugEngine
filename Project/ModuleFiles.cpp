@@ -37,6 +37,11 @@ Buffer<char> ModuleFiles::Load(const char* file_path) const
 
 bool ModuleFiles::Save(const char* file_path, const Buffer<char>& buffer, bool append) const
 {
+	return Save(file_path, buffer.Data(), buffer.Size(), append);
+}
+
+bool ModuleFiles::Save(const char* file_path, const char* buffer, size_t size, bool append) const
+{
 	FILE* file = fopen(file_path, append ? "ab" : "wb");
 	if (!file)
 	{
@@ -48,7 +53,7 @@ bool ModuleFiles::Save(const char* file_path, const Buffer<char>& buffer, bool a
 		fclose(file);
 	};
 
-	fwrite(buffer.Data(), sizeof(char), buffer.Size(), file);
+	fwrite(buffer, sizeof(char), size, file);
 
 	return true;
 }

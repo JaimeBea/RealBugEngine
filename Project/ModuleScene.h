@@ -8,7 +8,7 @@
 #include "Pool.h"
 
 #include <unordered_map>
-#include <vector>
+#include <string>
 
 class CubeMap;
 struct aiScene;
@@ -22,8 +22,8 @@ public:
 	bool CleanUp() override;
 
 	bool Import(const char* file_name);
-	bool Load(const char* file_name);
 	bool Save(const char* file_name) const;
+	bool Load(const char* file_name);
 
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);
@@ -31,6 +31,7 @@ public:
 	GameObject* GetGameObject(UID id) const;
 
 public:
+	std::string file_name = "";
 	GameObject* root = nullptr;
 
 	// Skybox

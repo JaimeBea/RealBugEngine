@@ -8,9 +8,6 @@
 
 #include "imgui.h"
 
-ComponentTransform::ComponentTransform(GameObject& owner)
-	: Component(static_type, owner) {}
-
 void ComponentTransform::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;

@@ -7,9 +7,7 @@
 class ComponentLight : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::LIGHT);
-
-	ComponentLight(GameObject& owner);
+	REGISTER_COMPONENT(ComponentLight, ComponentType::LIGHT);
 
 	void OnEditorUpdate() override;
 

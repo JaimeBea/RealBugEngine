@@ -15,6 +15,7 @@
 #include "ComponentBoundingBox.h"
 #include "Texture.h"
 #include "CubeMap.h"
+#include "JsonValue.h"
 
 #include "GL/glew.h"
 #include "Math/myassert.h"
@@ -23,6 +24,10 @@
 #include "assimp/scene.h"
 #include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/reader.h"
 #include <string>
 
 #include "Leaks.h"
@@ -144,6 +149,9 @@ bool ModuleScene::Start()
 	transform->SetScale(float3(1, 1, 1));
 	transform->CalculateGlobalMatrix();
 	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
+
+	// Saving test TODO: remove
+	Save("Test");
 
 	return true;
 }
@@ -437,12 +445,39 @@ bool ModuleScene::Import(const char* file_name)
 	return true;
 }
 
-bool ModuleScene::Load(const char* file_name)
+bool ModuleScene::Save(const char* file_name) const
 {
+	// Create document
+	rapidjson::Document document;
+	document.SetObject();
+
+	// Create base scene object
+	JsonValue j_scene(document, document);
+
+	// Save GameObjects
+	JsonValue j_game_objects = j_scene["GameObjects"];
+	unsigned i = 0;
+	for (const GameObject& game_object : game_objects)
+	{
+		JsonValue j_game_object = j_game_objects[i];
+		game_object.Save(j_game_object);
+
+		i += 1;
+	}
+
+	// Write document to buffer
+	rapidjson::StringBuffer string_buffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(string_buffer);
+	document.Accept(writer);
+
+	// Save to file
+	std::string file_path = std::string(SCENES_PATH) + file_name + SCENE_EXTENSION;
+	App->files->Save(file_path.c_str(), string_buffer.GetString(), string_buffer.GetSize());
+
 	return true;
 }
 
-bool ModuleScene::Save(const char* file_name) const
+bool ModuleScene::Load(const char* file_name)
 {
 	return true;
 }

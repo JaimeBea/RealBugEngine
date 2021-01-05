@@ -1,8 +1,10 @@
 #include "GameObject.h"
 
 #include "Globals.h"
+#include "ComponentType.h"
 
 #include "Math/myassert.h"
+#include "rapidjson/document.h"
 
 #include "Leaks.h"
 
@@ -126,4 +128,39 @@ bool GameObject::IsDescendantOf(GameObject* game_object)
 	if (GetParent() == nullptr) return false;
 	if (GetParent() == game_object) return true;
 	return GetParent()->IsDescendantOf(game_object);
+}
+
+void GameObject::Save(JsonValue& j_game_object) const
+{
+	j_game_object["Id"] = id;
+	j_game_object["Name"] = name.c_str();
+
+	JsonValue& j_components = j_game_object["Components"];
+	for (unsigned i = 0; i < components.size(); ++i)
+	{
+		JsonValue& j_component = j_components[i];
+		Component& component = *components[i];
+
+		j_component["Type"] = (unsigned) component.GetType();
+		j_component["Active"] = component.IsActive();
+		component.Save(j_component);
+	}
+}
+
+void GameObject::Load(JsonValue& j_game_object)
+{
+	id = j_game_object["Id"];
+	name = j_game_object["Name"];
+
+	JsonValue& j_components = j_game_object["Components"];
+	for (unsigned i = 0; i < j_components.Size(); ++i)
+	{
+		JsonValue& j_component = j_components[i];
+
+		ComponentType type = (ComponentType)(unsigned) j_component["Type"];
+		bool active = j_component["Active"];
+
+		Component* component = CreateComponentByType(*this, type);
+		component->Load(j_component);
+	}
 }

@@ -12,9 +12,6 @@
 #include "imgui.h"
 #include "GL/glew.h"
 
-ComponentMaterial::ComponentMaterial(GameObject& owner)
-	: Component(static_type, owner) {}
-
 void ComponentMaterial::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;

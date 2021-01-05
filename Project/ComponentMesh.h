@@ -13,9 +13,7 @@ struct aiMesh;
 class ComponentMesh : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::MESH);
-
-	ComponentMesh(GameObject& owner);
+	REGISTER_COMPONENT(ComponentMesh, ComponentType::MESH);
 
 	void OnEditorUpdate() override;
 

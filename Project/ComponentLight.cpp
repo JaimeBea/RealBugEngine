@@ -9,9 +9,6 @@
 
 #include "imgui.h"
 
-ComponentLight::ComponentLight(GameObject& owner)
-	: Component(static_type, owner) {}
-
 void ComponentLight::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
