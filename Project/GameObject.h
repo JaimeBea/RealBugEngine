@@ -41,7 +41,7 @@ public:
 	bool IsDescendantOf(GameObject* game_object);
 
 	void Save(JsonValue& object) const;
-	void Load(JsonValue& object);
+	void Load(const JsonValue& object);
 
 public:
 	UID id = 0;

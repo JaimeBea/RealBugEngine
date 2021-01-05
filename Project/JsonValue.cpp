@@ -10,21 +10,6 @@ size_t JsonValue::Size() const
 	return value.Size();
 }
 
-JsonValue JsonValue::operator[](const char* key)
-{
-	if (!value.IsObject())
-	{
-		value.SetObject();
-	}
-
-	if (!value.HasMember(key))
-	{
-		value.AddMember(rapidjson::StringRef(key), rapidjson::Value(), document.GetAllocator());
-	}
-
-	return JsonValue(document, value[key]);
-}
-
 JsonValue JsonValue::operator[](unsigned index)
 {
 	if (!value.IsArray())
@@ -38,6 +23,14 @@ JsonValue JsonValue::operator[](unsigned index)
 	{
 		value.PushBack(rapidjson::Value(), document.GetAllocator());
 	}
+
+	return JsonValue(document, value[index]);
+}
+
+const JsonValue JsonValue::operator[](unsigned index) const
+{
+	assert(value.IsArray());
+	assert(index < value.Size());
 
 	return JsonValue(document, value[index]);
 }

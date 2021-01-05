@@ -13,7 +13,7 @@ void Component::OnEditorUpdate() {}
 
 void Component::Save(JsonValue& j_component) const {}
 
-void Component::Load(JsonValue& j_component) {}
+void Component::Load(const JsonValue& j_component) {}
 
 void Component::Enable()
 {

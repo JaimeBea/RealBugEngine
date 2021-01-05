@@ -13,7 +13,7 @@ public:
 	virtual void Update();
 	virtual void OnEditorUpdate();
 	virtual void Save(JsonValue& j_component) const;
-	virtual void Load(JsonValue& j_component);
+	virtual void Load(const JsonValue& j_component);
 
 	void Enable();
 	void Disable();

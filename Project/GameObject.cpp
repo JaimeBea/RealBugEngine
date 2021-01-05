@@ -147,15 +147,15 @@ void GameObject::Save(JsonValue& j_game_object) const
 	}
 }
 
-void GameObject::Load(JsonValue& j_game_object)
+void GameObject::Load(const JsonValue& j_game_object)
 {
 	id = j_game_object["Id"];
 	name = j_game_object["Name"];
 
-	JsonValue& j_components = j_game_object["Components"];
+	const JsonValue& j_components = j_game_object["Components"];
 	for (unsigned i = 0; i < j_components.Size(); ++i)
 	{
-		JsonValue& j_component = j_components[i];
+		const JsonValue& j_component = j_components[i];
 
 		ComponentType type = (ComponentType)(unsigned) j_component["Type"];
 		bool active = j_component["Active"];
