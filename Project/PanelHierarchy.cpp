@@ -52,6 +52,9 @@ void PanelHierarchy::Update()
 				UpdateHierarchyNode(root);
 				ImGui::TreePop();
 			}
+
+			// Draw all components from Selected GameObject
+			if (selected_object) selected_object->DrawGizmos();
 		}
 	}
 	ImGui::End();

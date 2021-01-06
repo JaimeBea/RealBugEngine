@@ -5,7 +5,11 @@ Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	, owner(owner_)
 	, active(active_) {}
 
+void Component::Init() {}
+
 void Component::Update() {}
+
+void Component::DrawGizmos() {}
 
 void Component::OnEditorUpdate() {}
 

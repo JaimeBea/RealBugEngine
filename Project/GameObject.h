@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Component.h"
 #include "Application.h"
 #include "ModuleScene.h"
-#include "Component.h"
 #include "UID.h"
 
 #include <vector>
@@ -18,6 +18,7 @@ public:
 
 	void Init();
 	void Update();
+	void DrawGizmos();
 	void CleanUp();
 	void Enable();
 	void Disable();
