@@ -1,12 +1,14 @@
 #include "ComponentTransform.h"
 
 #include "GameObject.h"
+#include "ComponentCamera.h"
 #include "Application.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "imgui.h"
+#include "Math/float3x3.h"
 
 ComponentTransform::ComponentTransform(GameObject& owner)
 	: Component(static_type, owner) {}
@@ -19,12 +21,19 @@ void ComponentTransform::OnEditorUpdate()
 	float3 scale = transform->GetScale();
 	float3 rotation = transform->GetRotation().ToEulerXYZ() * RADTODEG;
 
+	// if is a camera
+	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
+
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
 			transform->SetPosition(pos);
+			if (camera != nullptr)
+			{
+				camera->frustum.SetPos(pos);
+			}
 		}
 		if (ImGui::DragFloat3("Scale", scale.ptr(), drag_speed2f, 0, inf))
 		{
@@ -35,6 +44,12 @@ void ComponentTransform::OnEditorUpdate()
 		if (ImGui::DragFloat3("Rotation", rotation.ptr(), drag_speed2f, -inf, inf))
 		{
 			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
+			if (camera != nullptr)
+			{
+				float3x3 rotationMatrix = float3x3::FromQuat(GetRotation());
+				camera->frustum.SetFront(rotationMatrix * float3::unitZ);
+				camera->frustum.SetUp(rotationMatrix * float3::unitY);
+			}
 		}
 		ImGui::Separator();
 	}

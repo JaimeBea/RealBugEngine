@@ -11,6 +11,7 @@ enum class ComponentType
 	MATERIAL,
 	LIGHT,
 	BOUNDING_BOX,
+	CAMERA,
 	UNKNOWN
 };
 
@@ -19,7 +20,9 @@ class Component
 public:
 	Component(ComponentType type, GameObject& owner, bool active = true);
 
+	virtual void Init();
 	virtual void Update();
+	virtual void DrawDebugDraw();
 	virtual void OnEditorUpdate();
 
 	void Enable();

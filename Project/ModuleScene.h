@@ -8,6 +8,7 @@
 
 #include "assimp/cimport.h"
 #include <vector>
+#include <list>
 
 struct aiNode;
 typedef unsigned int Texture;
@@ -29,6 +30,7 @@ public:
 	GameObject* root = nullptr;
 
 	Pool<GameObject> game_objects = Pool<GameObject>();
+	std::list<GameObject*> scene_cameras;
 
 private:
 	GameObject* LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent);

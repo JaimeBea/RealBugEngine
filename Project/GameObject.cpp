@@ -32,6 +32,19 @@ void GameObject::Update()
 	}
 }
 
+void GameObject::DrawDebugDraw()
+{
+	for (Component* component : components)
+	{
+		component->DrawDebugDraw();
+	}
+
+	for (GameObject* child : children)
+	{
+		child->DrawDebugDraw();
+	}
+}
+
 void GameObject::CleanUp()
 {
 	SetParent(nullptr);

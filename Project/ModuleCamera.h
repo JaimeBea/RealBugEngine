@@ -30,6 +30,7 @@ public:
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
 	void Focus(const GameObject* game_object);
+	void ChangeFrustrum(Frustum& frustum_, bool default_);
 
 	vec GetFront() const;
 	vec GetUp() const;
@@ -51,6 +52,7 @@ public:
 	float shift_multiplier = 5.0f;
 
 private:
-	Frustum frustum = Frustum();
+	Frustum engine_camera_frustum = Frustum();
+	Frustum* active_frustum = &engine_camera_frustum;
 	float focus_distance = 0.0f;
 };

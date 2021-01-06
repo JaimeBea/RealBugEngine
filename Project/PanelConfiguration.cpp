@@ -217,39 +217,6 @@ void PanelConfiguration::Update()
 			}
 		}
 
-		// Camera
-		if (ImGui::CollapsingHeader("Camera"))
-		{
-			vec front = App->camera->GetFront();
-			vec up = App->camera->GetUp();
-			ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-			ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-			vec position = App->camera->GetPosition();
-			if (ImGui::InputFloat3("Position", position.ptr()))
-			{
-				App->camera->SetPosition(position);
-			}
-			ImGui::InputFloat("Mov Speed", &App->camera->movement_speed);
-			ImGui::InputFloat("Rot Speed", &App->camera->rotation_speed);
-			ImGui::InputFloat("Zoom Speed", &App->camera->zoom_speed);
-			ImGui::InputFloat("Shift Multiplier", &App->camera->shift_multiplier);
-			float near_plane = App->camera->GetNearPlane();
-			float far_plane = App->camera->GetFarPlane();
-			if (ImGui::InputFloat("Near Plane", &near_plane))
-			{
-				App->camera->SetPlaneDistances(near_plane, far_plane);
-			}
-			if (ImGui::InputFloat("Far Plane", &far_plane))
-			{
-				App->camera->SetPlaneDistances(near_plane, far_plane);
-			}
-			float fov = App->camera->GetFOV();
-			if (ImGui::InputFloat("Field of View", &fov))
-			{
-				App->camera->SetFOV(fov);
-			}
-		}
-
 		// Scene
 		if (ImGui::CollapsingHeader("Scene"))
 		{
