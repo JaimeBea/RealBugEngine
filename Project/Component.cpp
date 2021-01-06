@@ -9,7 +9,7 @@ void Component::Init() {}
 
 void Component::Update() {}
 
-void Component::DrawDebugDraw() {}
+void Component::DrawGizmos() {}
 
 void Component::OnEditorUpdate() {}
 

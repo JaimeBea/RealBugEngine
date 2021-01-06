@@ -54,7 +54,7 @@ void PanelHierarchy::Update()
 			}
 
 			// Draw all components from Selected GameObject
-			if (selected_object) selected_object->DrawDebugDraw();
+			if (selected_object) selected_object->DrawGizmos();
 		}
 	}
 	ImGui::End();

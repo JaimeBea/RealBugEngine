@@ -22,7 +22,7 @@ public:
 
 	virtual void Init();
 	virtual void Update();
-	virtual void DrawDebugDraw();
+	virtual void DrawGizmos();
 	virtual void OnEditorUpdate();
 
 	void Enable();

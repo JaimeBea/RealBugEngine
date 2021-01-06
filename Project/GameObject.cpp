@@ -32,16 +32,16 @@ void GameObject::Update()
 	}
 }
 
-void GameObject::DrawDebugDraw()
+void GameObject::DrawGizmos()
 {
 	for (Component* component : components)
 	{
-		component->DrawDebugDraw();
+		component->DrawGizmos();
 	}
 
 	for (GameObject* child : children)
 	{
-		child->DrawDebugDraw();
+		child->DrawGizmos();
 	}
 }
 

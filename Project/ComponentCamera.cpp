@@ -29,19 +29,9 @@ void ComponentCamera::Init()
 	frustum.SetPos(transform->GetPosition());
 }
 
-void ComponentCamera::Update()
+void ComponentCamera::DrawGizmos()
 {
-	GameObject& parent = this->GetOwner();
-	ComponentTransform* transform = parent.GetComponent<ComponentTransform>();
-
-	transform->SetPosition(frustum.Pos());
-	float3x3 rotationMatrix = float3x3(-frustum.WorldRight(), frustum.Up(), frustum.Front());
-	transform->SetRotation(rotationMatrix.ToQuat());
-}
-
-void ComponentCamera::DrawDebugDraw()
-{
-	if (activate_camera) return;
+	if (camera_selected) return;
 
 	dd::frustum((frustum.ProjectionMatrix() * frustum.ViewMatrix()).Inverted(), dd::colors::White);
 }
@@ -52,9 +42,9 @@ void ComponentCamera::OnEditorUpdate()
 
 	if (ImGui::CollapsingHeader("Camera"))
 	{
-		if (ImGui::Checkbox("Main Camera", &activate_camera))
+		if (ImGui::Checkbox("Main Camera", &camera_selected))
 		{
-			App->camera->ChangeFrustrum(frustum, activate_camera);
+			App->camera->ChangeFrustrum(frustum, camera_selected);
 		}
 		ImGui::Separator();
 
@@ -80,7 +70,7 @@ void ComponentCamera::OnEditorUpdate()
 			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 		}
 
-		if (ImGui::Checkbox("Frustum Culling", &frustum_culling))
+		if (ImGui::Checkbox("Frustum Culling", &apply_frustum_culling))
 		{
 		}
 	}
@@ -88,5 +78,5 @@ void ComponentCamera::OnEditorUpdate()
 
 bool ComponentCamera::GetCullingStatus() const
 {
-	return frustum_culling;
+	return apply_frustum_culling;
 }

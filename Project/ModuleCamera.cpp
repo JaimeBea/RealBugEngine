@@ -66,6 +66,8 @@ UpdateStatus ModuleCamera::Update()
 {
 	BROFILER_CATEGORY("ModuleCamera - Update", Profiler::Color::Blue)
 
+	if (active_frustum != &engine_camera_frustum) return UpdateStatus::CONTINUE;
+
 	float delta_time = App->time->GetRealTimeDeltaTime();
 
 	const float2& mouse_motion = App->input->GetMouseMotion();

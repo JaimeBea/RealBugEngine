@@ -18,7 +18,7 @@ public:
 
 	void Init();
 	void Update();
-	void DrawDebugDraw();
+	void DrawGizmos();
 	void CleanUp();
 	void Enable();
 	void Disable();

@@ -11,8 +11,7 @@ public:
 	ComponentCamera(GameObject& owner);
 
 	void Init() override;
-	void Update() override;
-	void DrawDebugDraw() override;
+	void DrawGizmos() override;
 	void OnEditorUpdate() override;
 
 	bool GetCullingStatus() const;
@@ -20,6 +19,6 @@ public:
 	Frustum frustum = Frustum();
 
 private:
-	bool activate_camera = false;
-	bool frustum_culling = false;
+	bool camera_selected = false;
+	bool apply_frustum_culling = false;
 };
