@@ -221,6 +221,10 @@ void PanelConfiguration::Update()
 		if (ImGui::CollapsingHeader("Scene"))
 		{
 			// TODO: Change the Skybox images
+			ImGui::TextColored(title_color, "Gizmos");
+			ImGui::Checkbox("Draw Bounding Boxes", &App->scene_renderer->draw_all_bounding_boxes);
+			ImGui::Separator();
+	
 			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);
 			ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
 			ImGui::ColorEdit3("Ambient Color", App->scene_renderer->ambient_color.ptr());

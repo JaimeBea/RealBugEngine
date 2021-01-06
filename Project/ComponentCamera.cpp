@@ -70,9 +70,7 @@ void ComponentCamera::OnEditorUpdate()
 			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 		}
 
-		if (ImGui::Checkbox("Frustum Culling", &apply_frustum_culling))
-		{
-		}
+		ImGui::Checkbox("Frustum Culling", &apply_frustum_culling);
 	}
 }
 

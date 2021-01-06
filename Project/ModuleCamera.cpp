@@ -258,7 +258,8 @@ void ModuleCamera::Focus(const GameObject* game_object)
 	if (game_object == nullptr) return;
 
 	ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
-	const AABB& world_bounding_box = bounding_box->GetWorldBoundingBox();
+	if (!bounding_box) return;
+	const AABB& world_bounding_box = bounding_box->GetAABBWorldBoundingBox();
 	if (!world_bounding_box.IsFinite()) return;
 
 	Sphere bounding_sphere = world_bounding_box.MinimalEnclosingSphere();

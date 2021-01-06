@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "ComponentCamera.h"
+#include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
@@ -52,6 +53,8 @@ void ComponentTransform::OnEditorUpdate()
 			}
 		}
 		ImGui::Separator();
+
+		transform->UpdateTransform();
 	}
 }
 
@@ -72,6 +75,8 @@ void ComponentTransform::InvalidateHierarchy()
 void ComponentTransform::Invalidate()
 {
 	dirty = true;
+	ComponentBoundingBox* bounding_box = GetOwner().GetComponent<ComponentBoundingBox>();
+	if (bounding_box) bounding_box->Invalidate();
 }
 
 void ComponentTransform::SetPosition(float3 position_)
@@ -94,7 +99,7 @@ void ComponentTransform::SetScale(float3 scale_)
 
 void ComponentTransform::CalculateGlobalMatrix(bool force)
 {
-	if (force || dirty || true)
+	if (force || dirty)
 	{
 		local_matrix = float4x4::FromTRS(position, rotation, scale);
 
@@ -111,6 +116,21 @@ void ComponentTransform::CalculateGlobalMatrix(bool force)
 		}
 
 		dirty = false;
+	}
+}
+
+void ComponentTransform::UpdateTransform()
+{
+	CalculateGlobalMatrix();
+
+	GameObject& owner = GetOwner();
+	ComponentBoundingBox* bounding_box = owner.GetComponent<ComponentBoundingBox>();
+	if (bounding_box) bounding_box->CalculateWorldBoundingBox();
+
+	for (GameObject* child : owner.GetChildren())
+	{
+		ComponentTransform* transform = child->GetComponent<ComponentTransform>();
+		transform->UpdateTransform();
 	}
 }
 

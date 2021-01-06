@@ -1,15 +1,16 @@
 #include "ComponentMesh.h"
 
-#include "GameObject.h"
 #include "Globals.h"
-#include "Application.h"
 #include "Logging.h"
-#include "ModulePrograms.h"
-#include "ModuleCamera.h"
-#include "ModuleSceneRender.h"
+#include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 #include "ComponentLight.h"
+#include "ComponentBoundingBox.h"
+#include "Application.h"
+#include "ModulePrograms.h"
+#include "ModuleCamera.h"
+#include "ModuleSceneRender.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
@@ -63,6 +64,14 @@ void ComponentMesh::OnEditorUpdate()
 			ImGui::TextWrapped("Num Triangles: ");
 			ImGui::SameLine();
 			ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
+			ImGui::Separator();
+			ImGui::TextColored(title_color, "Bounding Box");
+			ImGui::Checkbox("Draw##mesh", &bb_active);
+			if (bb_active)
+			{
+				ComponentBoundingBox* bounding_box = selected->GetComponent<ComponentBoundingBox>();
+				bounding_box->DrawBoundingBox();
+			}
 			ImGui::Separator();
 		}
 		count++;

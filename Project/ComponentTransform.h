@@ -22,6 +22,7 @@ public:
 	void SetRotation(Quat rotation);
 	void SetScale(float3 scale);
 	void CalculateGlobalMatrix(bool force = false);
+	void UpdateTransform();
 
 	float3 GetPosition() const;
 	Quat GetRotation() const;
