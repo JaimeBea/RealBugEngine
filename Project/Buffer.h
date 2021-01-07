@@ -65,6 +65,11 @@ public:
 		return *this;
 	}
 
+	T& operator[](unsigned index) const
+	{
+		return data[index];
+	}
+
 private:
 	// Copy constructor and assignment are not allowed
 	Buffer(const Buffer<T>&);
