@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "Logging.h"
 #include "ModulePrograms.h"
+#include "ModuleResources.h"
 #include "ModuleCamera.h"
 #include "ModuleSceneRender.h"
 #include "ComponentTransform.h"
@@ -66,6 +67,22 @@ void ComponentMesh::OnEditorUpdate()
 		}
 		count++;
 	}
+}
+
+void ComponentMesh::Save(JsonValue& j_component) const
+{
+	j_component["FileId"] = mesh->file_id;
+	j_component["MaterialIndex"] = mesh->material_index;
+}
+
+void ComponentMesh::Load(const JsonValue& j_component)
+{
+	if (mesh == nullptr) mesh = App->resources->ObtainMesh();
+
+	App->resources->UnloadMesh(mesh);
+	mesh->file_id = j_component["FileId"];
+	mesh->material_index = j_component["MaterialIndex"];
+	App->resources->LoadMesh(mesh);
 }
 
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const

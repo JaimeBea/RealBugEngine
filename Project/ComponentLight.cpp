@@ -49,3 +49,25 @@ void ComponentLight::OnEditorUpdate()
 		}
 	}
 }
+
+void ComponentLight::Save(JsonValue& j_component) const
+{
+	JsonValue& j_position = j_component["Position"];
+	j_position[0] = light.position.x;
+	j_position[1] = light.position.y;
+	j_position[2] = light.position.z;
+
+	JsonValue& j_color = j_component["Color"];
+	j_color[0] = light.color.x;
+	j_color[1] = light.color.y;
+	j_color[2] = light.color.z;
+}
+
+void ComponentLight::Load(const JsonValue& j_component)
+{
+	const JsonValue& j_position = j_component["Position"];
+	light.position.Set(j_position[0], j_position[1], j_position[2]);
+
+	const JsonValue& j_color = j_component["Color"];
+	light.color.Set(j_color[0], j_color[1], j_color[2]);
+}

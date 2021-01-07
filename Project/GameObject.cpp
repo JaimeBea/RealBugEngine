@@ -134,6 +134,8 @@ void GameObject::Save(JsonValue& j_game_object) const
 {
 	j_game_object["Id"] = id;
 	j_game_object["Name"] = name.c_str();
+	j_game_object["Active"] = active;
+	j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;
 
 	JsonValue& j_components = j_game_object["Components"];
 	for (unsigned i = 0; i < components.size(); ++i)
@@ -151,6 +153,7 @@ void GameObject::Load(const JsonValue& j_game_object)
 {
 	id = j_game_object["Id"];
 	name = j_game_object["Name"];
+	active = j_game_object["Active"];
 
 	const JsonValue& j_components = j_game_object["Components"];
 	for (unsigned i = 0; i < j_components.Size(); ++i)
@@ -163,4 +166,11 @@ void GameObject::Load(const JsonValue& j_game_object)
 		Component* component = CreateComponentByType(*this, type);
 		component->Load(j_component);
 	}
+}
+
+void GameObject::PostLoad(const JsonValue& j_game_object)
+{
+	UID parent_id = j_game_object["ParentId"];
+	GameObject* parent = App->scene->GetGameObject(parent_id);
+	SetParent(parent);
 }

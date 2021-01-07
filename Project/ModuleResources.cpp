@@ -109,6 +109,11 @@ Texture* ModuleResources::ImportTexture(const char* file_path)
 	return texture;
 }
 
+Texture* ModuleResources::ObtainTexture()
+{
+	return textures.Obtain();
+}
+
 void ModuleResources::LoadTexture(Texture* texture)
 {
 	if (texture == nullptr) return;
@@ -232,6 +237,11 @@ CubeMap* ModuleResources::ImportCubeMap(const char* file_paths[6])
 	return cube_map;
 }
 
+CubeMap* ModuleResources::ObtainCubeMap()
+{
+	return cube_maps.Obtain();
+}
+
 void ModuleResources::LoadCubeMap(CubeMap* cube_map)
 {
 	// Create texture handle
@@ -287,6 +297,11 @@ void ModuleResources::ReleaseCubeMap(CubeMap* cube_map)
 	cube_maps.Release(cube_map);
 }
 
+Mesh* ModuleResources::ObtainMesh()
+{
+	return meshes.Obtain();
+}
+
 void ModuleResources::LoadMesh(Mesh* mesh)
 {
 	if (mesh == nullptr) return;
@@ -295,6 +310,16 @@ void ModuleResources::LoadMesh(Mesh* mesh)
 	std::string file_path = std::string(MESHES_PATH) + file_name + MESH_EXTENSION;
 
 	LOG("Loading mesh from path: \"%s\".", file_path.c_str());
+
+	// Load file
+	Buffer<char> buffer = App->files->Load(file_path.c_str());
+	char* cursor = buffer.Data();
+
+	// Header
+	mesh->num_vertices = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
+	mesh->num_indices = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
 
 	unsigned position_size = sizeof(float) * 3;
 	unsigned normal_size = sizeof(float) * 3;
@@ -305,16 +330,11 @@ void ModuleResources::LoadMesh(Mesh* mesh)
 	unsigned vertex_buffer_size = vertex_size * mesh->num_vertices;
 	unsigned index_buffer_size = index_size * mesh->num_indices;
 
-	// Load file
-	Buffer<char> buffer = App->files->Load(file_path.c_str());
-	char* cursor = buffer.Data();
-	mesh->num_vertices = *((unsigned*) cursor);
-	cursor += sizeof(unsigned);
-	mesh->num_indices = *((unsigned*) cursor);
-	cursor += sizeof(unsigned);
-
+	// Vertices
 	float* vertices = (float*) cursor;
 	cursor += vertex_size * mesh->num_vertices;
+
+	// Indices
 	unsigned* indices = (unsigned*) cursor;
 
 	LOG("Loading %i vertices...", mesh->num_vertices);

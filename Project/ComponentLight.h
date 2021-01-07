@@ -10,6 +10,8 @@ public:
 	REGISTER_COMPONENT(ComponentLight, ComponentType::LIGHT);
 
 	void OnEditorUpdate() override;
+	void Save(JsonValue& j_component) const override;
+	void Load(const JsonValue& j_component) override;
 
 public:
 	struct Light

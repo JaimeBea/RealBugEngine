@@ -28,6 +28,7 @@
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/reader.h"
+#include "rapidjson/error/en.h"
 #include <string>
 
 #include "Leaks.h"
@@ -64,9 +65,12 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
+	// Loading test TODO: remove
+	//Load("Test");
+
 	Import("Assets/BakerHouse.fbx");
 
-	// Load skybox¡
+	// Load skybox
 	// clang-format off
 	float skybox_vertices[] = {
 		// Front (x, y, z)
@@ -151,7 +155,7 @@ bool ModuleScene::Start()
 	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
 
 	// Saving test TODO: remove
-	Save("Test");
+	//Save("Test");
 
 	return true;
 }
@@ -161,8 +165,7 @@ bool ModuleScene::CleanUp()
 	glDeleteVertexArrays(1, &skybox_vao);
 	glDeleteBuffers(1, &skybox_vbo);
 
-	DestroyGameObject(root);
-	assert(game_objects.Count() == 0);
+	ClearScene();
 
 #ifdef _DEBUG
 	aiDetachAllLogStreams();
@@ -231,6 +234,13 @@ static Mesh* ImportMesh(const aiMesh* ai_mesh)
 		if (ai_face.mNumIndices != 3)
 		{
 			LOG("Found a face with %i vertices. Discarded.", ai_face.mNumIndices);
+
+			*((unsigned*) cursor) = 0;
+			cursor += sizeof(unsigned);
+			*((unsigned*) cursor) = 0;
+			cursor += sizeof(unsigned);
+			*((unsigned*) cursor) = 0;
+			cursor += sizeof(unsigned);
 			continue;
 		}
 
@@ -450,16 +460,21 @@ bool ModuleScene::Save(const char* file_name) const
 	// Create document
 	rapidjson::Document document;
 	document.SetObject();
-
-	// Create base scene object
 	JsonValue j_scene(document, document);
 
+	// Save scene information
+	j_scene["RootId"] = root->GetID();
+
 	// Save GameObjects
-	JsonValue j_game_objects = j_scene["GameObjects"];
+	JsonValue& j_game_objects = j_scene["GameObjects"];
 	unsigned i = 0;
 	for (const GameObject& game_object : game_objects)
 	{
-		JsonValue j_game_object = j_game_objects[i];
+		JsonValue& j_game_object = j_game_objects[i];
+
+		GameObject* parent = game_object.GetParent();
+		j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;
+
 		game_object.Save(j_game_object);
 
 		i += 1;
@@ -467,7 +482,7 @@ bool ModuleScene::Save(const char* file_name) const
 
 	// Write document to buffer
 	rapidjson::StringBuffer string_buffer;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(string_buffer);
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(string_buffer);
 	document.Accept(writer);
 
 	// Save to file
@@ -479,16 +494,66 @@ bool ModuleScene::Save(const char* file_name) const
 
 bool ModuleScene::Load(const char* file_name)
 {
+	// Clear scene
+	ClearScene();
+
+	// Read from file
+	std::string file_path = std::string(SCENES_PATH) + file_name + SCENE_EXTENSION;
+	Buffer<char> buffer = App->files->Load(file_path.c_str());
+
+	// Parse document from file
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
+	if (document.HasParseError())
+	{
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+	}
+	const JsonValue j_scene(document, document);
+
+	// Load GameObjects
+	const JsonValue& j_game_objects = j_scene["GameObjects"];
+	unsigned j_game_objects_size = j_game_objects.Size();
+	Buffer<UID> ids(j_game_objects_size);
+	for (unsigned i = 0; i < j_game_objects_size; ++i)
+	{
+		const JsonValue& j_game_object = j_game_objects[i];
+
+		GameObject* game_object = game_objects.Obtain();
+		game_object->Load(j_game_object);
+
+		UID id = game_object->GetID();
+		game_objects_id_map[id] = game_object;
+		ids[i] = id;
+	}
+
+	// Post-load
+	root = GetGameObject(j_scene["RootId"]);
+	for (unsigned i = 0; i < j_game_objects_size; ++i)
+	{
+		const JsonValue& j_game_object = j_game_objects[i];
+
+		UID id = ids[i];
+		GameObject* game_object = GetGameObject(id);
+		game_object->PostLoad(j_game_object);
+	}
+
 	return true;
+}
+
+void ModuleScene::ClearScene()
+{
+	DestroyGameObject(root);
+	root = nullptr;
+
+	assert(game_objects.Count() == 0);
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 {
 	GameObject* game_object = game_objects.Obtain();
+	game_objects_id_map[game_object->GetID()] = game_object;
 	game_object->SetParent(parent);
 	game_object->Init();
-
-	game_objects_id_map[game_object->GetID()] = game_object;
 
 	return game_object;
 }

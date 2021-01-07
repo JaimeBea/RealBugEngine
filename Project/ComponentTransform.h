@@ -12,6 +12,8 @@ public:
 	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM);
 
 	void OnEditorUpdate() override;
+	void Save(JsonValue& j_component) const override;
+	void Load(const JsonValue& j_component) override;
 
 	void InvalidateHierarchy();
 	void Invalidate();

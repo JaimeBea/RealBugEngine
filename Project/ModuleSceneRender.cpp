@@ -7,6 +7,7 @@
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
 #include "ComponentMesh.h"
+#include "ComponentBoundingBox.h"
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 
@@ -64,10 +65,12 @@ UpdateStatus ModuleSceneRender::Update()
 void ModuleSceneRender::DrawGameObject(GameObject* game_object)
 {
 	ComponentTransform* transform = game_object->GetComponent<ComponentTransform>();
+	ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
 	std::vector<ComponentMesh*> meshes = game_object->GetComponents<ComponentMesh>();
 	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
 
 	transform->CalculateGlobalMatrix();
+	if (bounding_box != nullptr) bounding_box->CalculateWorldBoundingBox();
 	for (ComponentMesh* mesh : meshes)
 	{
 		mesh->Draw(materials, transform->GetGlobalMatrix());

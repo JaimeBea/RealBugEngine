@@ -25,6 +25,8 @@ public:
 	bool Save(const char* file_name) const;
 	bool Load(const char* file_name);
 
+	void ClearScene();
+
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);
 	void DestroyGameObject(GameObject* game_object);

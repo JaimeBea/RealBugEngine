@@ -223,3 +223,71 @@ void ComponentMaterial::OnEditorUpdate()
 		count++;
 	}
 }
+
+void ComponentMaterial::Save(JsonValue& j_component) const
+{
+	j_component["HasDiffuseMap"] = has_diffuse_map;
+	JsonValue& j_diffuse_color = j_component["DiffuseColor"];
+	j_diffuse_color[0] = diffuse_color.x;
+	j_diffuse_color[1] = diffuse_color.y;
+	j_diffuse_color[2] = diffuse_color.z;
+	if (has_diffuse_map) j_component["DiffuseMapFileId"] = diffuse_map->file_id;
+
+	j_component["HasSpecularMap"] = has_specular_map;
+	JsonValue& j_specular_color = j_component["SpecularColor"];
+	j_specular_color[0] = specular_color.x;
+	j_specular_color[1] = specular_color.y;
+	j_specular_color[2] = specular_color.z;
+	if (has_specular_map) j_component["SpecularMapFileId"] = specular_map->file_id;
+
+	j_component["Shininess"] = shininess;
+	j_component["HasShininessInAlphaChannel"] = has_shininess_in_alpha_channel;
+
+	JsonValue& j_ambient = j_component["Ambient"];
+	j_ambient[0] = ambient.x;
+	j_ambient[1] = ambient.y;
+	j_ambient[2] = ambient.z;
+}
+
+void ComponentMaterial::Load(const JsonValue& j_component)
+{
+	has_diffuse_map = j_component["HasDiffuseMap"];
+	const JsonValue& j_diffuse_color = j_component["DiffuseColor"];
+	diffuse_color.Set(j_diffuse_color[0], j_diffuse_color[1], j_diffuse_color[2]);
+	if (has_diffuse_map)
+	{
+		if (diffuse_map == nullptr) diffuse_map = App->resources->ObtainTexture();
+
+		App->resources->UnloadTexture(diffuse_map);
+		diffuse_map->file_id = j_component["DiffuseMapFileId"];
+		App->resources->LoadTexture(diffuse_map);
+	}
+	else if (diffuse_map != nullptr)
+	{
+		App->resources->ReleaseTexture(diffuse_map);
+		diffuse_map = nullptr;
+	}
+
+	has_specular_map = j_component["HasSpecularMap"];
+	const JsonValue& j_specular_color = j_component["SpecularColor"];
+	specular_color.Set(j_specular_color[0], j_specular_color[1], j_specular_color[2]);
+	if (has_specular_map)
+	{
+		if (specular_map == nullptr) specular_map = App->resources->ObtainTexture();
+
+		App->resources->UnloadTexture(specular_map);
+		specular_map->file_id = j_component["SpecularMapFileId"];
+		App->resources->LoadTexture(specular_map);
+	}
+	else if (specular_map != nullptr)
+	{
+		App->resources->ReleaseTexture(specular_map);
+		specular_map = nullptr;
+	}
+
+	shininess = j_component["Shininess"];
+	has_shininess_in_alpha_channel = j_component["HasShininessInAlphaChannel"];
+
+	const JsonValue& j_ambient = j_component["Ambient"];
+	ambient.Set(j_ambient[0], j_ambient[1], j_ambient[2]);
+}

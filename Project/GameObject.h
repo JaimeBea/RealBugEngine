@@ -40,8 +40,9 @@ public:
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* game_object);
 
-	void Save(JsonValue& object) const;
-	void Load(const JsonValue& object);
+	void Save(JsonValue& j_game_object) const;
+	void Load(const JsonValue& j_game_object);
+	void PostLoad(const JsonValue& j_game_object);
 
 public:
 	UID id = 0;
