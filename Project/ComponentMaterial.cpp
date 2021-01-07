@@ -231,14 +231,14 @@ void ComponentMaterial::Save(JsonValue& j_component) const
 	j_diffuse_color[0] = diffuse_color.x;
 	j_diffuse_color[1] = diffuse_color.y;
 	j_diffuse_color[2] = diffuse_color.z;
-	if (has_diffuse_map) j_component["DiffuseMapFileId"] = diffuse_map->file_id;
+	if (has_diffuse_map) j_component["DiffuseMapFileName"] = diffuse_map->file_name.c_str();
 
 	j_component["HasSpecularMap"] = has_specular_map;
 	JsonValue& j_specular_color = j_component["SpecularColor"];
 	j_specular_color[0] = specular_color.x;
 	j_specular_color[1] = specular_color.y;
 	j_specular_color[2] = specular_color.z;
-	if (has_specular_map) j_component["SpecularMapFileId"] = specular_map->file_id;
+	if (has_specular_map) j_component["SpecularMapFileName"] = specular_map->file_name.c_str();
 
 	j_component["Shininess"] = shininess;
 	j_component["HasShininessInAlphaChannel"] = has_shininess_in_alpha_channel;
@@ -259,7 +259,7 @@ void ComponentMaterial::Load(const JsonValue& j_component)
 		if (diffuse_map == nullptr) diffuse_map = App->resources->ObtainTexture();
 
 		App->resources->UnloadTexture(diffuse_map);
-		diffuse_map->file_id = j_component["DiffuseMapFileId"];
+		diffuse_map->file_name = j_component["DiffuseMapFileName"];
 		App->resources->LoadTexture(diffuse_map);
 	}
 	else if (diffuse_map != nullptr)
@@ -276,7 +276,7 @@ void ComponentMaterial::Load(const JsonValue& j_component)
 		if (specular_map == nullptr) specular_map = App->resources->ObtainTexture();
 
 		App->resources->UnloadTexture(specular_map);
-		specular_map->file_id = j_component["SpecularMapFileId"];
+		specular_map->file_name = j_component["SpecularMapFileName"];
 		App->resources->LoadTexture(specular_map);
 	}
 	else if (specular_map != nullptr)

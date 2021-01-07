@@ -1,10 +1,10 @@
 #pragma once
 
-#include "UID.h"
+#include <string>
 
 class Texture
 {
 public:
-	UID file_id = 0;
+	std::string file_name = "";
 	unsigned gl_texture = 0;
 };

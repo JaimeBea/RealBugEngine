@@ -1,11 +1,11 @@
 #pragma once
 
-#include "UID.h"
+#include <string>
 
 class Mesh
 {
 public:
-	UID file_id = 0;
+	std::string file_name = "";
 	unsigned vbo = 0;
 	unsigned ebo = 0;
 	unsigned vao = 0;

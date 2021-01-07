@@ -83,9 +83,8 @@ Texture* ModuleResources::ImportTexture(const char* file_path)
 	Texture* texture = textures.Obtain();
 
 	// Save texture to custom DDS file
-	texture->file_id = GenerateUID();
-	std::string file_name = std::to_string(texture->file_id);
-	std::string dds_file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
+	texture->file_name = App->files->GetFileName(file_path);
+	std::string dds_file_path = std::string(TEXTURES_PATH) + texture->file_name + TEXTURE_EXTENSION;
 
 	LOG("Saving image to \"%s\".", dds_file_path.c_str());
 	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
@@ -118,8 +117,7 @@ void ModuleResources::LoadTexture(Texture* texture)
 {
 	if (texture == nullptr) return;
 
-	std::string file_name = std::to_string(texture->file_id);
-	std::string file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
+	std::string file_path = std::string(TEXTURES_PATH) + texture->file_name + TEXTURE_EXTENSION;
 
 	LOG("Loading texture from path: \"%s\".", file_path.c_str());
 
@@ -210,9 +208,8 @@ CubeMap* ModuleResources::ImportCubeMap(const char* file_paths[6])
 		}
 
 		// Save texture to custom DDS file
-		cube_map->file_ids[i] = GenerateUID();
-		std::string file_name = std::to_string(cube_map->file_ids[i]);
-		std::string dds_file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
+		cube_map->file_names[i] = App->files->GetFileName(file_path);
+		std::string dds_file_path = std::string(TEXTURES_PATH) + cube_map->file_names[i] + TEXTURE_EXTENSION;
 
 		LOG("Saving image to \"%s\".", dds_file_path.c_str());
 		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
@@ -251,8 +248,7 @@ void ModuleResources::LoadCubeMap(CubeMap* cube_map)
 	// Load cube map
 	for (unsigned i = 0; i < 6; ++i)
 	{
-		std::string file_name = std::to_string(cube_map->file_ids[i]);
-		std::string file_path = std::string(TEXTURES_PATH) + file_name + TEXTURE_EXTENSION;
+		std::string file_path = std::string(TEXTURES_PATH) + cube_map->file_names[i] + TEXTURE_EXTENSION;
 
 		LOG("Loading cubemap texture from path: \"%s\".", file_path.c_str());
 
@@ -306,8 +302,7 @@ void ModuleResources::LoadMesh(Mesh* mesh)
 {
 	if (mesh == nullptr) return;
 
-	std::string file_name = std::to_string(mesh->file_id);
-	std::string file_path = std::string(MESHES_PATH) + file_name + MESH_EXTENSION;
+	std::string file_path = std::string(MESHES_PATH) + mesh->file_name + MESH_EXTENSION;
 
 	LOG("Loading mesh from path: \"%s\".", file_path.c_str());
 

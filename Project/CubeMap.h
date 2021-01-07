@@ -1,10 +1,10 @@
 #pragma once
 
-#include "UID.h"
+#include <string>
 
 class CubeMap
 {
 public:
-	UID file_ids[6] = {0, 0, 0, 0, 0, 0};
+	std::string file_names[6] = {"", "", "", "", "", ""};
 	unsigned gl_texture = 0;
 };
