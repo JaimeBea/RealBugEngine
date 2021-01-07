@@ -107,7 +107,7 @@ JsonValue::operator unsigned long long() const
 
 JsonValue::operator float() const
 {
-	assert(value.IsFloat());
+	assert(value.IsDouble());
 	return value.GetFloat();
 }
 
