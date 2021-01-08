@@ -22,42 +22,18 @@ public:
 	UpdateStatus PreUpdate() override;
 	bool CleanUp() override;
 
-	void ReleaseDroppedFileName();
-
+	void ReleaseDroppedFilePath();
 	void WarpMouse(int mouse_x, int mouse_y);
 
-	const char* GetDroppedFileName() const
-	{
-		return dropped_file_name;
-	}
-
-	KeyState GetKey(int scancode) const
-	{
-		return keyboard[scancode];
-	}
-
-	KeyState GetMouseButton(int button) const
-	{
-		return mouse_buttons[button - 1];
-	}
-
-	float GetMouseWheelMotion() const
-	{
-		return mouse_wheel_motion;
-	}
-
-	const float2& GetMouseMotion() const
-	{
-		return mouse_motion;
-	}
-
-	const float2& GetMousePosition() const
-	{
-		return mouse;
-	}
+	const char* GetDroppedFilePath() const;
+	KeyState GetKey(int scancode) const;
+	KeyState GetMouseButton(int button) const;
+	float GetMouseWheelMotion() const;
+	const float2& GetMouseMotion() const;
+	const float2& GetMousePosition() const;
 
 private:
-	char* dropped_file_name = nullptr;
+	char* dropped_file_path = nullptr;
 	KeyState keyboard[SDL_NUM_SCANCODES] = {KS_IDLE};
 	KeyState mouse_buttons[NUM_MOUSE_BUTTONS] = {KS_IDLE};
 	float mouse_wheel_motion = 0;

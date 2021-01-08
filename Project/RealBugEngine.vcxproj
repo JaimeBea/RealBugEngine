@@ -113,6 +113,7 @@
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshImporter.h" />
     <ClInclude Include="Module.h" />
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="ModuleFiles.h" />
@@ -138,7 +139,9 @@
     <ClInclude Include="PerformanceTimer.h" />
     <ClInclude Include="Pool.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="SceneImporter.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureImporter.h" />
     <ClInclude Include="UID.h" />
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +205,7 @@
     <ClCompile Include="Libs\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MeshImporter.cpp" />
     <ClCompile Include="Module.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="ModuleFiles.cpp" />
@@ -225,6 +229,8 @@
     <ClCompile Include="PanelInspector.cpp" />
     <ClCompile Include="PanelScene.cpp" />
     <ClCompile Include="PerformanceTimer.cpp" />
+    <ClCompile Include="SceneImporter.cpp" />
+    <ClCompile Include="TextureImporter.cpp" />
     <ClCompile Include="UID.cpp" />
   </ItemGroup>
   <ItemGroup>

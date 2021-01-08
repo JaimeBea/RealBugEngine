@@ -16,6 +16,7 @@
 #include "PanelInspector.h"
 #include "Texture.h"
 #include "Mesh.h"
+#include "MeshImporter.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
@@ -79,10 +80,10 @@ void ComponentMesh::Load(const JsonValue& j_component)
 {
 	if (mesh == nullptr) mesh = App->resources->ObtainMesh();
 
-	App->resources->UnloadMesh(mesh);
+	MeshImporter::UnloadMesh(mesh);
 	mesh->file_name = j_component["FileName"];
 	mesh->material_index = j_component["MaterialIndex"];
-	App->resources->LoadMesh(mesh);
+	MeshImporter::LoadMesh(mesh);
 }
 
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const

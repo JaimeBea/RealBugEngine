@@ -23,32 +23,6 @@ UpdateStatus ModuleSceneRender::Update()
 	// Draw Skybox as a first element
 	DrawSkyBox();
 
-	// Load model or texture if one gets dropped
-	const char* dropped_file_name = App->input->GetDroppedFileName();
-	if (dropped_file_name != nullptr)
-	{
-		bool loaded_scene = App->scene->Load(dropped_file_name);
-		if (!loaded_scene)
-		{
-			/* TODO: Load textures
-			unsigned loaded_texture = App->textures->LoadTexture(dropped_file_name);
-			if (loaded_texture)
-			{
-				for (unsigned material : current_model->materials)
-				{
-					App->textures->ReleaseTexture(material);
-				}
-				current_model->materials.clear();
-				current_model->materials.push_back(loaded_texture);
-				for (Mesh& mesh : current_model->meshes)
-				{
-					mesh.material_index = 0;
-				}
-			}
-			*/
-		}
-	}
-
 	// Draw the scene
 	GameObject* root = App->scene->root;
 	if (root != nullptr)

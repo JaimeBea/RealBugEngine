@@ -37,21 +37,13 @@ public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	Texture* ImportTexture(const char* file_path);
 	Texture* ObtainTexture();
-	void LoadTexture(Texture* texture);
-	void UnloadTexture(Texture* texture);
 	void ReleaseTexture(Texture* texture);
 
-	CubeMap* ImportCubeMap(const char* file_paths[6]);
 	CubeMap* ObtainCubeMap();
-	void LoadCubeMap(CubeMap* cube_map);
-	void UnloadCubeMap(CubeMap* cube_map);
 	void ReleaseCubeMap(CubeMap* cube_map);
 
 	Mesh* ObtainMesh();
-	void LoadMesh(Mesh* mesh);
-	void UnloadMesh(Mesh* mesh);
 	void ReleaseMesh(Mesh* mesh);
 
 	void SetMinFilter(TextureMinFilter filter);

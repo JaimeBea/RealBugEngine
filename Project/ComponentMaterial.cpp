@@ -8,6 +8,7 @@
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
 #include "ComponentLight.h"
+#include "TextureImporter.h"
 
 #include "imgui.h"
 #include "GL/glew.h"
@@ -258,9 +259,9 @@ void ComponentMaterial::Load(const JsonValue& j_component)
 	{
 		if (diffuse_map == nullptr) diffuse_map = App->resources->ObtainTexture();
 
-		App->resources->UnloadTexture(diffuse_map);
+		TextureImporter::UnloadTexture(diffuse_map);
 		diffuse_map->file_name = j_component["DiffuseMapFileName"];
-		App->resources->LoadTexture(diffuse_map);
+		TextureImporter::LoadTexture(diffuse_map);
 	}
 	else if (diffuse_map != nullptr)
 	{
@@ -275,9 +276,9 @@ void ComponentMaterial::Load(const JsonValue& j_component)
 	{
 		if (specular_map == nullptr) specular_map = App->resources->ObtainTexture();
 
-		App->resources->UnloadTexture(specular_map);
+		TextureImporter::UnloadTexture(specular_map);
 		specular_map->file_name = j_component["SpecularMapFileName"];
-		App->resources->LoadTexture(specular_map);
+		TextureImporter::LoadTexture(specular_map);
 	}
 	else if (specular_map != nullptr)
 	{

@@ -429,6 +429,15 @@
     <ClInclude Include="JsonValue.h">
       <Filter>Source\Files</Filter>
     </ClInclude>
+    <ClInclude Include="SceneImporter.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshImporter.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureImporter.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -681,6 +690,15 @@
       <Filter>Source\Components</Filter>
     </ClCompile>
     <ClCompile Include="JsonValue.cpp">
+      <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporter.cpp">
+      <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshImporter.cpp">
+      <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureImporter.cpp">
       <Filter>Source\Files</Filter>
     </ClCompile>
   </ItemGroup>

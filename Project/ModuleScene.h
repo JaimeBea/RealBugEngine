@@ -19,11 +19,8 @@ class ModuleScene : public Module
 public:
 	bool Init() override;
 	bool Start() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
-
-	bool Import(const char* file_name);
-	bool Save(const char* file_name) const;
-	bool Load(const char* file_name);
 
 	void ClearScene();
 
@@ -36,12 +33,11 @@ public:
 	std::string file_name = "";
 	GameObject* root = nullptr;
 
+	Pool<GameObject> game_objects = Pool<GameObject>();
+	std::unordered_map<UID, GameObject*> game_objects_id_map = std::unordered_map<UID, GameObject*>();
+
 	// Skybox
 	unsigned skybox_vao = 0;
 	unsigned skybox_vbo = 0;
 	CubeMap* skybox_cube_map = 0;
-
-private:
-	Pool<GameObject> game_objects = Pool<GameObject>();
-	std::unordered_map<UID, GameObject*> game_objects_id_map = std::unordered_map<UID, GameObject*>();
 };
