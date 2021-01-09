@@ -4,6 +4,8 @@
 #include "Application.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
+#include "ModuleScene.h"
+#include "SceneImporter.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -69,9 +71,21 @@ UpdateStatus ModuleEditor::Update()
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("File"))
 	{
+		if (ImGui::MenuItem("New"))
+		{
+			modal_to_open = Modal::NEW_SCENE;
+		}
+		if (ImGui::MenuItem("Load"))
+		{
+			modal_to_open = Modal::LOAD_SCENE;
+		}
+		if (ImGui::MenuItem("Save"))
+		{
+			modal_to_open = Modal::SAVE_SCENE;
+		}
 		if (ImGui::MenuItem("Quit"))
 		{
-			return UpdateStatus::STOP;
+			modal_to_open = Modal::QUIT;
 		}
 		ImGui::EndMenu();
 	}
@@ -102,6 +116,89 @@ UpdateStatus ModuleEditor::Update()
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
+
+	// Modals
+	switch (modal_to_open)
+	{
+	case Modal::NEW_SCENE:
+		ImGui::OpenPopup("New scene");
+		break;
+	case Modal::LOAD_SCENE:
+		ImGui::OpenPopup("Load scene");
+		break;
+	case Modal::SAVE_SCENE:
+		ImGui::OpenPopup("Save scene");
+		break;
+	case Modal::QUIT:
+		ImGui::OpenPopup("Quit");
+		break;
+	}
+	modal_to_open = Modal::NONE;
+	
+	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("New scene"))
+	{
+		ImGui::Text("Do you wish to create a new scene?");
+		if (ImGui::Button("New scene"))
+		{
+			App->scene->ClearScene();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Load scene"))
+	{
+		ImGui::InputText("File name", file_name_buffer, sizeof(file_name_buffer));
+		if (ImGui::Button("Load"))
+		{
+			SceneImporter::LoadScene(file_name_buffer);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Save scene"))
+	{
+		ImGui::SetItemDefaultFocus();
+		ImGui::InputText("File name", file_name_buffer, sizeof(file_name_buffer));
+		if (ImGui::Button("Save"))
+		{
+			SceneImporter::SaveScene(file_name_buffer);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Quit"))
+	{
+		ImGui::Text("Do you really want to quit?");
+		if (ImGui::Button("Quit"))
+		{
+			return UpdateStatus::STOP;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
 
 	// Docking
 	ImGuiViewport* viewport = ImGui::GetMainViewport();

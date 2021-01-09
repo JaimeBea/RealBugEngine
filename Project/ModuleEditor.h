@@ -9,8 +9,18 @@
 #include "PanelInspector.h"
 #include "PanelHierarchy.h"
 #include "PanelAbout.h"
+#include "Buffer.h"
 
 #include <vector>
+
+enum class Modal
+{
+	NONE,
+	NEW_SCENE,
+	LOAD_SCENE,
+	SAVE_SCENE,
+	QUIT
+};
 
 class ModuleEditor : public Module
 {
@@ -23,6 +33,8 @@ public:
 	bool CleanUp() override;
 
 public:
+	Modal modal_to_open = Modal::NONE;
+
 	unsigned dock_space_id = 0;
 	unsigned dock_main_id = 0;
 	unsigned dock_left_id = 0;
@@ -37,4 +49,7 @@ public:
 	PanelInspector panel_inspector;
 	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
+
+private:
+	char file_name_buffer[32] = {'\0'};
 };

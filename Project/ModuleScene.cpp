@@ -55,13 +55,7 @@ bool ModuleScene::Init()
 #endif
 
 	// Create Scene
-	root = CreateGameObject(nullptr);
-	root->name = "Scene";
-	ComponentTransform* transform = root->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(0, 0, 0));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
+	ClearScene();
 
 	return true;
 }
@@ -204,6 +198,14 @@ void ModuleScene::ClearScene()
 	root = nullptr;
 
 	assert(game_objects.Count() == 0);
+
+	root = CreateGameObject(nullptr);
+	root->name = "Scene";
+	ComponentTransform* transform = root->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(0, 0, 0));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1, 1, 1));
+	transform->CalculateGlobalMatrix();
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
@@ -226,15 +228,13 @@ void ModuleScene::DestroyGameObject(GameObject* game_object)
 {
 	if (game_object == nullptr) return;
 
-	game_object->CleanUp();
-
 	for (GameObject* child : game_object->GetChildren())
 	{
 		DestroyGameObject(child);
 	}
 
+	game_object->CleanUp();
 	game_objects_id_map.erase(game_object->GetID());
-
 	game_objects.Release(game_object);
 }
 

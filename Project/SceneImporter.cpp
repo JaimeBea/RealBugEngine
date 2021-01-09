@@ -259,12 +259,15 @@ bool SceneImporter::LoadScene(const char* file_name)
 	std::string file_path = std::string(SCENES_PATH) + file_name + SCENE_EXTENSION;
 	Buffer<char> buffer = App->files->Load(file_path.c_str());
 
+	if (buffer.Size() == 0) return false;
+
 	// Parse document from file
 	rapidjson::Document document;
 	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
 	if (document.HasParseError())
 	{
 		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return false;
 	}
 	const JsonValue j_scene(document, document);
 
