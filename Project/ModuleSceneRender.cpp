@@ -34,99 +34,46 @@ UpdateStatus ModuleSceneRender::Update()
 	}
 
 	// Draw the scene
-
 	GameObject* root = App->scene->root;
 	if (root != nullptr)
 	{
-		drawable_game_objects.clear();
-		frustum_normals.clear();
-
-		for (GameObject* camera : App->scene->scene_cameras)
-		{
-			ComponentCamera* component_camera = camera->GetComponent<ComponentCamera>();
-			if (component_camera->GetCullingStatus())
-			{
-				frustum_culling_active = true;
-				frustum_normals.push_back(&GetFrustumNormals(component_camera->frustum));
-			}
-		}
-		DrawScene(root);
+		DrawGameObjectRecursive(root);
 	}
-
-	for (GameObject* drawable_game_object : drawable_game_objects)
-	{
-		DrawGameObject(drawable_game_object);
-	}
-
-	frustum_culling_active = false;
 
 	return UpdateStatus::CONTINUE;
 }
 
-void ModuleSceneRender::DrawScene(GameObject* game_object)
+void ModuleSceneRender::DrawGameObjectRecursive(GameObject* game_object)
 {
-	if (frustum_culling_active)
+	for (GameObject* camera : App->scene->scene_cameras)
 	{
-		for (FrustumNormals* frustum_normal : frustum_normals)
+		ComponentCamera* component_camera = camera->GetComponent<ComponentCamera>();
+		if (component_camera->GetCullingStatus())
 		{
-			if (CheckIfInsideFrustum(game_object, frustum_normal))
+			frustum_culling_active = true;
+			component_camera->UpdateFrustumPlanes();
+			if (CheckIfInsideFrustum(game_object, &component_camera->frustum_planes))
 			{
-				drawable_game_objects.push_back(game_object);
+				DrawGameObject(game_object);
 				break;
 			}
 		}
 	}
-	else
+
+	if (!frustum_culling_active)
 	{
-		drawable_game_objects.push_back(game_object);
+		DrawGameObject(game_object);
 	}
+
+	frustum_culling_active = false;
 
 	for (GameObject* child : game_object->GetChildren())
 	{
-		DrawScene(child);
+		DrawGameObjectRecursive(child);
 	}
 }
 
-FrustumNormals ModuleSceneRender::GetFrustumNormals(Frustum frustum)
-{
-	FrustumNormals frustum_normals;
-
-	float3 pos = frustum.Pos();
-	float3 up = frustum.Up().Normalized();
-	float3 front = frustum.Front();
-	float3 right = frustum.WorldRight().Normalized();
-	float far_distance = frustum.FarPlaneDistance();
-	float near_distance = frustum.NearPlaneDistance();
-	float aspect_ratio = frustum.AspectRatio();
-	float vFOV = frustum.VerticalFov();
-
-	float h_far = 2 * tan(vFOV / 2) * far_distance;
-	float w_far = h_far * aspect_ratio;
-	float h_near = 2 * tan(vFOV / 2) * near_distance;
-	float w_near = h_near * aspect_ratio;
-	float3 far_center = pos + front * far_distance;
-	float3 near_center = pos + front * near_distance;
-
-	frustum_normals.points[0] = far_center + (up * h_far / 2) - (right * w_far / 2);
-	frustum_normals.points[1] = far_center + (up * h_far / 2) + (right * w_far / 2);
-	frustum_normals.points[2] = far_center - (up * h_far / 2) - (right * w_far / 2);
-	frustum_normals.points[3] = far_center - (up * h_far / 2) + (right * w_far / 2);
-	frustum_normals.points[4] = near_center + (up * h_near / 2) - (right * w_near / 2);
-	frustum_normals.points[5] = near_center + (up * h_near / 2) + (right * w_near / 2);
-	frustum_normals.points[6] = near_center - (up * h_near / 2) - (right * w_near / 2);
-	frustum_normals.points[7] = near_center - (up * h_near / 2) + (right * w_near / 2);
-
-	frustum_normals.planes[0] = frustum.LeftPlane();
-	frustum_normals.planes[1] = frustum.RightPlane();
-	frustum_normals.planes[2] = frustum.TopPlane();
-	frustum_normals.planes[3] = frustum.BottomPlane();
-	frustum_normals.planes[4] = frustum.FarPlane();
-	frustum_normals.planes[5] = frustum.NearPlane();
-
-	return frustum_normals;
-}
-
-bool ModuleSceneRender::CheckIfInsideFrustum(GameObject* game_object, FrustumNormals* frustum_normal)
+bool ModuleSceneRender::CheckIfInsideFrustum(GameObject* game_object, FrustumPlanes* frustum_planes)
 {
 	ComponentBoundingBox* boundig_box = game_object->GetComponent<ComponentBoundingBox>();
 	if (!boundig_box) return false;
@@ -134,7 +81,7 @@ bool ModuleSceneRender::CheckIfInsideFrustum(GameObject* game_object, FrustumNor
 	float3 points[8];
 	boundig_box->GetOBBWorldBoundingBox().GetCornerPoints(points);
 
-	for (Plane plane : frustum_normal->planes)
+	for (Plane& plane : frustum_planes->planes)
 	{
 		// check box outside/inside of frustum
 		int out = 0;
@@ -150,22 +97,22 @@ bool ModuleSceneRender::CheckIfInsideFrustum(GameObject* game_object, FrustumNor
 	// check frustum outside/inside box
 	int out;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_normal->points[i].x > aabb.MaxX()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].x > aabb.MaxX()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_normal->points[i].x < aabb.MinX()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].x < aabb.MinX()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_normal->points[i].y > aabb.MaxY()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].y > aabb.MaxY()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_normal->points[i].y < aabb.MinY()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].y < aabb.MinY()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_normal->points[i].z > aabb.MaxZ()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].z > aabb.MaxZ()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_normal->points[i].z < aabb.MinZ()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].z < aabb.MinZ()) ? 1 : 0);
 	if (out == 8) return false;
 
 	return true;

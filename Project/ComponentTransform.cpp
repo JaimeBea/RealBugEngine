@@ -33,6 +33,7 @@ void ComponentTransform::OnEditorUpdate()
 			transform->SetPosition(pos);
 			if (camera != nullptr)
 			{
+				camera->Invalidate();
 				camera->frustum.SetPos(pos);
 			}
 		}
@@ -47,6 +48,7 @@ void ComponentTransform::OnEditorUpdate()
 			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
 			if (camera != nullptr)
 			{
+				camera->Invalidate();
 				float3x3 rotationMatrix = float3x3::FromQuat(GetRotation());
 				camera->frustum.SetFront(rotationMatrix * float3::unitZ);
 				camera->frustum.SetUp(rotationMatrix * float3::unitY);
