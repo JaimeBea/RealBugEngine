@@ -18,6 +18,7 @@ ComponentCamera::ComponentCamera(GameObject& owner)
 
 void ComponentCamera::Init()
 {
+	Invalidate();
 	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	frustum.SetViewPlaneDistances(0.1f, 200.0f);
 	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
@@ -70,10 +71,52 @@ void ComponentCamera::OnEditorUpdate()
 			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 		}
 
-		if (ImGui::Checkbox("Frustum Culling", &apply_frustum_culling))
-		{
-		}
+		ImGui::Checkbox("Frustum Culling", &apply_frustum_culling);
 	}
+}
+
+void ComponentCamera::UpdateFrustumPlanes(bool force)
+{
+	if (dirty || force)
+	{
+		float3 pos = frustum.Pos();
+		float3 up = frustum.Up().Normalized();
+		float3 front = frustum.Front();
+		float3 right = frustum.WorldRight().Normalized();
+		float far_distance = frustum.FarPlaneDistance();
+		float near_distance = frustum.NearPlaneDistance();
+		float aspect_ratio = frustum.AspectRatio();
+		float vFOV = frustum.VerticalFov();
+
+		float h_far = 2 * tan(vFOV / 2) * far_distance;
+		float w_far = h_far * aspect_ratio;
+		float h_near = 2 * tan(vFOV / 2) * near_distance;
+		float w_near = h_near * aspect_ratio;
+		float3 far_center = pos + front * far_distance;
+		float3 near_center = pos + front * near_distance;
+
+		frustum_planes.points[0] = far_center + (up * h_far / 2) - (right * w_far / 2);
+		frustum_planes.points[1] = far_center + (up * h_far / 2) + (right * w_far / 2);
+		frustum_planes.points[2] = far_center - (up * h_far / 2) - (right * w_far / 2);
+		frustum_planes.points[3] = far_center - (up * h_far / 2) + (right * w_far / 2);
+		frustum_planes.points[4] = near_center + (up * h_near / 2) - (right * w_near / 2);
+		frustum_planes.points[5] = near_center + (up * h_near / 2) + (right * w_near / 2);
+		frustum_planes.points[6] = near_center - (up * h_near / 2) - (right * w_near / 2);
+		frustum_planes.points[7] = near_center - (up * h_near / 2) + (right * w_near / 2);
+
+		frustum_planes.planes[0] = frustum.LeftPlane();
+		frustum_planes.planes[1] = frustum.RightPlane();
+		frustum_planes.planes[2] = frustum.TopPlane();
+		frustum_planes.planes[3] = frustum.BottomPlane();
+		frustum_planes.planes[4] = frustum.FarPlane();
+		frustum_planes.planes[5] = frustum.NearPlane();
+	}
+	dirty = false;
+}
+
+void ComponentCamera::Invalidate()
+{
+	dirty = true;
 }
 
 bool ComponentCamera::GetCullingStatus() const

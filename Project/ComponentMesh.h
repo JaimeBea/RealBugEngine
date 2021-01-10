@@ -29,4 +29,7 @@ public:
 	unsigned num_vertices = 0;
 	unsigned num_indices = 0;
 	unsigned material_index = 0;
+
+private:
+	bool bb_active = false;
 };

@@ -63,6 +63,7 @@ UpdateStatus ModuleEditor::Update()
 	ImGui::CaptureMouseFromApp(true);
 	ImGui::CaptureKeyboardFromApp(true);
 
+	// TODO: Remove after test
 	ImGui::ShowDemoWindow();
 
 	// Main menu bar

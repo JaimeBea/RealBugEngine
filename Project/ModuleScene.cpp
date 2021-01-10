@@ -56,7 +56,10 @@ bool ModuleScene::Init()
 bool ModuleScene::Start()
 {
 	LoadSkyBox();
-	Load("Assets/BakerHouse.fbx");
+
+	// TODO: Remove after test
+	Load("Assets/Street_Environment/Street_environment_V01.fbx");
+	//Load("Assets/BakerHouse.fbx");
 
 	// Create Directional Light
 	GameObject* game_object = CreateGameObject(root);
