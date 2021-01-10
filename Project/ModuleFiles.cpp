@@ -121,5 +121,5 @@ std::string ModuleFiles::GetFileFolder(const char* file_path) const
 		return std::string();
 	}
 
-	return std::string(file_path).substr(0, last_slash - file_path);
+	return std::string(file_path).substr(0, last_separator - file_path);
 }

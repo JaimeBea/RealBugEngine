@@ -90,7 +90,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
 
 	// Save buffer to file
 	mesh->file_name = ai_mesh->mName.C_Str();
-	std::string file_path = std::string(MESHES_PATH) + mesh->file_name + MESH_EXTENSION;
+	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
 	LOG("Saving mesh to \"%s\".", file_path.c_str());
 	App->files->Save(file_path.c_str(), buffer);
 
@@ -101,7 +101,7 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 {
 	if (mesh == nullptr) return;
 
-	std::string file_path = std::string(MESHES_PATH) + mesh->file_name + MESH_EXTENSION;
+	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
 
 	LOG("Loading mesh from path: \"%s\".", file_path.c_str());
 

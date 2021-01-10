@@ -9,6 +9,7 @@
 #include "ComponentBoundingBox.h"
 #include "MeshImporter.h"
 #include "TextureImporter.h"
+#include "GameObject.h"
 
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
@@ -20,7 +21,7 @@
 
 #include "Leaks.h"
 
-static GameObject* ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
+static void ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
 {
 	LOG("Importing node: \"%s\"", node->mName.C_Str());
 
@@ -100,16 +101,14 @@ static GameObject* ImportNode(const aiScene* ai_scene, const std::vector<Texture
 	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
 	bounding_box->CalculateWorldBoundingBox();
 
-	// Load children nodes
+	// Import children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; ++i)
 	{
-		GameObject* child = ImportNode(ai_scene, materials, node->mChildren[i], game_object);
+		ImportNode(ai_scene, materials, node->mChildren[i], game_object);
 	}
-
-	return game_object;
 }
 
-bool SceneImporter::ImportScene(const char* file_path)
+bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 {
 	// Check for extension support
 	std::string extension = App->files->GetFileExtension(file_path);
@@ -167,7 +166,8 @@ bool SceneImporter::ImportScene(const char* file_path)
 			if (texture == nullptr)
 			{
 				LOG("Trying to import texture relative to textures folder...");
-				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file_path.C_Str();
+				std::string material_file_name = App->files->GetFileName(material_file_path.C_Str());
+				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file_name + TEXTURE_EXTENSION;
 				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
 			}
 
@@ -200,46 +200,9 @@ bool SceneImporter::ImportScene(const char* file_path)
 
 	// Create scene tree
 	LOG("Importing scene tree.");
-	GameObject* game_object = ImportNode(ai_scene, materials, ai_scene->mRootNode, App->scene->root);
+	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent);
 
 	LOG("Scene imported.");
-	return true;
-}
-
-bool SceneImporter::SaveScene(const char* file_name)
-{
-	// Create document
-	rapidjson::Document document;
-	document.SetObject();
-	JsonValue j_scene(document, document);
-
-	// Save scene information
-	j_scene["RootId"] = App->scene->root->GetID();
-
-	// Save GameObjects
-	JsonValue& j_game_objects = j_scene["GameObjects"];
-	unsigned i = 0;
-	for (const GameObject& game_object : App->scene->game_objects)
-	{
-		JsonValue& j_game_object = j_game_objects[i];
-
-		GameObject* parent = game_object.GetParent();
-		j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;
-
-		game_object.Save(j_game_object);
-
-		i += 1;
-	}
-
-	// Write document to buffer
-	rapidjson::StringBuffer string_buffer;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(string_buffer);
-	document.Accept(writer);
-
-	// Save to file
-	std::string file_path = std::string(SCENES_PATH) + file_name + SCENE_EXTENSION;
-	App->files->Save(file_path.c_str(), string_buffer.GetString(), string_buffer.GetSize());
-
 	return true;
 }
 
@@ -249,7 +212,7 @@ bool SceneImporter::LoadScene(const char* file_name)
 	App->scene->ClearScene();
 
 	// Read from file
-	std::string file_path = std::string(SCENES_PATH) + file_name + SCENE_EXTENSION;
+	std::string file_path = std::string(SCENES_PATH) + "/" + file_name + SCENE_EXTENSION;
 	Buffer<char> buffer = App->files->Load(file_path.c_str());
 
 	if (buffer.Size() == 0) return false;
@@ -290,6 +253,43 @@ bool SceneImporter::LoadScene(const char* file_name)
 		GameObject* game_object = App->scene->GetGameObject(id);
 		game_object->PostLoad(j_game_object);
 	}
+
+	return true;
+}
+
+bool SceneImporter::SaveScene(const char* file_name)
+{
+	// Create document
+	rapidjson::Document document;
+	document.SetObject();
+	JsonValue j_scene(document, document);
+
+	// Save scene information
+	j_scene["RootId"] = App->scene->root->GetID();
+
+	// Save GameObjects
+	JsonValue& j_game_objects = j_scene["GameObjects"];
+	unsigned i = 0;
+	for (const GameObject& game_object : App->scene->game_objects)
+	{
+		JsonValue& j_game_object = j_game_objects[i];
+
+		GameObject* parent = game_object.GetParent();
+		j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;
+
+		game_object.Save(j_game_object);
+
+		i += 1;
+	}
+
+	// Write document to buffer
+	rapidjson::StringBuffer string_buffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(string_buffer);
+	document.Accept(writer);
+
+	// Save to file
+	std::string file_path = std::string(SCENES_PATH) + "/" + file_name + SCENE_EXTENSION;
+	App->files->Save(file_path.c_str(), string_buffer.GetString(), string_buffer.GetSize());
 
 	return true;
 }

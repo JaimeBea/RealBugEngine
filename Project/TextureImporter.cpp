@@ -55,7 +55,7 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 
 	// Save texture to custom DDS file
 	texture->file_name = App->files->GetFileName(file_path);
-	std::string dds_file_path = std::string(TEXTURES_PATH) + texture->file_name + TEXTURE_EXTENSION;
+	std::string dds_file_path = std::string(TEXTURES_PATH) + "/" + texture->file_name + TEXTURE_EXTENSION;
 
 	LOG("Saving image to \"%s\".", dds_file_path.c_str());
 	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
@@ -83,7 +83,7 @@ void TextureImporter::LoadTexture(Texture* texture)
 {
 	if (texture == nullptr) return;
 
-	std::string file_path = std::string(TEXTURES_PATH) + texture->file_name + TEXTURE_EXTENSION;
+	std::string file_path = std::string(TEXTURES_PATH) + "/" + texture->file_name + TEXTURE_EXTENSION;
 
 	LOG("Loading texture from path: \"%s\".", file_path.c_str());
 
@@ -169,7 +169,7 @@ CubeMap* TextureImporter::ImportCubeMap(const char* file_paths[6])
 
 		// Save texture to custom DDS file
 		cube_map->file_names[i] = App->files->GetFileName(file_path);
-		std::string dds_file_path = std::string(TEXTURES_PATH) + cube_map->file_names[i] + TEXTURE_EXTENSION;
+		std::string dds_file_path = std::string(TEXTURES_PATH) + "/" + cube_map->file_names[i] + TEXTURE_EXTENSION;
 
 		LOG("Saving image to \"%s\".", dds_file_path.c_str());
 		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
@@ -203,7 +203,7 @@ void TextureImporter::LoadCubeMap(CubeMap* cube_map)
 	// Load cube map
 	for (unsigned i = 0; i < 6; ++i)
 	{
-		std::string file_path = std::string(TEXTURES_PATH) + cube_map->file_names[i] + TEXTURE_EXTENSION;
+		std::string file_path = std::string(TEXTURES_PATH) + "/" + cube_map->file_names[i] + TEXTURE_EXTENSION;
 
 		LOG("Loading cubemap texture from path: \"%s\".", file_path.c_str());
 

@@ -13,9 +13,9 @@ enum class UpdateStatus
 #define RADTODEG 1.0f / DEGTORAD
 
 // Files -----------
-#define TEXTURES_PATH "Library/Textures/"
-#define MESHES_PATH "Library/Meshes/"
-#define SCENES_PATH "Library/Scenes/"
+#define TEXTURES_PATH "Library/Textures"
+#define MESHES_PATH "Library/Meshes"
+#define SCENES_PATH "Library/Scenes"
 #define TEXTURE_EXTENSION ".dds"
 #define MESH_EXTENSION ".mesh"
 #define SCENE_EXTENSION ".scene"

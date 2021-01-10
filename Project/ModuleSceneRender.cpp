@@ -32,13 +32,6 @@ UpdateStatus ModuleSceneRender::Update()
 	// Draw Skybox as a first element
 	DrawSkyBox();
 
-	// Load model or texture if one gets dropped
-	const char* dropped_file_path = App->input->GetDroppedFilePath();
-	if (dropped_file_path != nullptr)
-	{
-		bool loaded_scene = SceneImporter::ImportScene(dropped_file_path);
-	}
-
 	// Draw the scene
 	GameObject* root = App->scene->root;
 	if (root != nullptr)

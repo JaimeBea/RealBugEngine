@@ -8,6 +8,8 @@
 #include "ModuleCamera.h"
 #include "ModuleResources.h"
 #include "ModuleFiles.h"
+#include "ModuleEditor.h"
+#include "PanelHierarchy.h"
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentLight.h"
@@ -69,7 +71,7 @@ bool ModuleScene::Start()
 	//Load("Test");
 
 	// TODO: Remove after test
-	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx");
+	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
 
 	//SceneImporter::ImportScene("Assets/BakerHouse.fbx");
 
@@ -177,7 +179,7 @@ bool ModuleScene::Start()
 
 UpdateStatus ModuleScene::Update()
 {
-	// Load scene if one gets dropped
+	// Load scene/fbx if one gets dropped
 	const char* dropped_file_path = App->input->GetDroppedFilePath();
 	if (dropped_file_path != nullptr)
 	{
@@ -188,6 +190,12 @@ UpdateStatus ModuleScene::Update()
 			SceneImporter::LoadScene(dropped_file_name.c_str());
 
 			LOG("Scene loaded");
+		}
+		else if (dropped_file_extension == ".fbx")
+		{
+			SceneImporter::ImportScene(dropped_file_path, App->editor->panel_hierarchy.selected_object);
+
+			LOG("Scene imported");
 		}
 
 		App->input->ReleaseDroppedFilePath();
