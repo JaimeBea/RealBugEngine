@@ -420,6 +420,9 @@
     <ClInclude Include="ModuleSceneRender.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentCamera.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
     <ClInclude Include="CubeMap.h">
       <Filter>Source\Resources</Filter>
     </ClInclude>
@@ -700,6 +703,9 @@
     </ClCompile>
     <ClCompile Include="TextureImporter.cpp">
       <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentCamera.cpp">
+      <Filter>Source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

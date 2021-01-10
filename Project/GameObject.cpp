@@ -34,6 +34,19 @@ void GameObject::Update()
 	}
 }
 
+void GameObject::DrawGizmos()
+{
+	for (Component* component : components)
+	{
+		component->DrawGizmos();
+	}
+
+	for (GameObject* child : children)
+	{
+		child->DrawGizmos();
+	}
+}
+
 void GameObject::CleanUp()
 {
 	SetParent(nullptr);

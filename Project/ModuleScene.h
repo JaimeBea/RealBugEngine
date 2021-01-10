@@ -24,6 +24,8 @@ public:
 
 	void ClearScene();
 
+	void DrawSkyBox();
+
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);
 	void DestroyGameObject(GameObject* game_object);
@@ -34,6 +36,9 @@ public:
 	GameObject* root = nullptr;
 
 	Pool<GameObject> game_objects = Pool<GameObject>();
+	std::list<GameObject*> scene_cameras;
+
+private:
 	std::unordered_map<UID, GameObject*> game_objects_id_map = std::unordered_map<UID, GameObject*>();
 
 	// Skybox

@@ -1,12 +1,15 @@
 #include "ComponentTransform.h"
 
 #include "GameObject.h"
+#include "ComponentCamera.h"
+#include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "imgui.h"
+#include "Math/float3x3.h"
 
 void ComponentTransform::OnEditorUpdate()
 {
@@ -16,12 +19,20 @@ void ComponentTransform::OnEditorUpdate()
 	float3 scale = transform->GetScale();
 	float3 rotation = transform->GetRotation().ToEulerXYZ() * RADTODEG;
 
+	// if is a camera
+	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
+
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
 			transform->SetPosition(pos);
+			if (camera != nullptr)
+			{
+				camera->Invalidate();
+				camera->frustum.SetPos(pos);
+			}
 		}
 		if (ImGui::DragFloat3("Scale", scale.ptr(), drag_speed2f, 0, inf))
 		{
@@ -32,8 +43,17 @@ void ComponentTransform::OnEditorUpdate()
 		if (ImGui::DragFloat3("Rotation", rotation.ptr(), drag_speed2f, -inf, inf))
 		{
 			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
+			if (camera != nullptr)
+			{
+				camera->Invalidate();
+				float3x3 rotationMatrix = float3x3::FromQuat(GetRotation());
+				camera->frustum.SetFront(rotationMatrix * float3::unitZ);
+				camera->frustum.SetUp(rotationMatrix * float3::unitY);
+			}
 		}
 		ImGui::Separator();
+
+		transform->UpdateTransform();
 	}
 }
 
@@ -87,6 +107,8 @@ void ComponentTransform::InvalidateHierarchy()
 void ComponentTransform::Invalidate()
 {
 	dirty = true;
+	ComponentBoundingBox* bounding_box = GetOwner().GetComponent<ComponentBoundingBox>();
+	if (bounding_box) bounding_box->Invalidate();
 }
 
 void ComponentTransform::SetPosition(float3 position_)
@@ -109,7 +131,7 @@ void ComponentTransform::SetScale(float3 scale_)
 
 void ComponentTransform::CalculateGlobalMatrix(bool force)
 {
-	if (force || dirty || true)
+	if (force || dirty)
 	{
 		local_matrix = float4x4::FromTRS(position, rotation, scale);
 
@@ -126,6 +148,21 @@ void ComponentTransform::CalculateGlobalMatrix(bool force)
 		}
 
 		dirty = false;
+	}
+}
+
+void ComponentTransform::UpdateTransform()
+{
+	CalculateGlobalMatrix();
+
+	GameObject& owner = GetOwner();
+	ComponentBoundingBox* bounding_box = owner.GetComponent<ComponentBoundingBox>();
+	if (bounding_box) bounding_box->CalculateWorldBoundingBox();
+
+	for (GameObject* child : owner.GetChildren())
+	{
+		ComponentTransform* transform = child->GetComponent<ComponentTransform>();
+		transform->UpdateTransform();
 	}
 }
 

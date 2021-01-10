@@ -14,6 +14,7 @@
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
+#include "ComponentCamera.h"
 #include "Texture.h"
 #include "CubeMap.h"
 #include "JsonValue.h"
@@ -65,7 +66,10 @@ bool ModuleScene::Start()
 	// Loading test TODO: remove
 	//Load("Test");
 
-	SceneImporter::ImportScene("Assets/BakerHouse.fbx");
+	// TODO: Remove after test
+	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx");
+
+	//SceneImporter::ImportScene("Assets/BakerHouse.fbx");
 
 	// Load skybox
 	// clang-format off
@@ -151,8 +155,24 @@ bool ModuleScene::Start()
 	transform->CalculateGlobalMatrix();
 	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
 
+	// Create Game Camera
+	game_object = CreateGameObject(root);
+	game_object->name = "Game Camera";
+	scene_cameras.push_back(game_object);
+
+	transform = game_object->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(2, 3, -5));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1, 1, 1));
+	transform->CalculateGlobalMatrix();
+	ComponentCamera* camera = game_object->CreateComponent<ComponentCamera>();
+	camera->Init();
+
 	// Saving test TODO: remove
 	//Save("Test");
+
+	return true;
+}
 
 	return true;
 }

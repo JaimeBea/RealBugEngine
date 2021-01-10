@@ -23,4 +23,7 @@ public:
 
 public:
 	Mesh* mesh = nullptr;
+
+private:
+	bool bb_active = false;
 };
