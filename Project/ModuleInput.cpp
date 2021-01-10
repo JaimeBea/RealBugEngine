@@ -8,7 +8,6 @@
 #include "ModuleCamera.h"
 
 #include "imgui_impl_sdl.h"
-#include "imgui_impl_sdl.h"
 #include "SDL.h"
 #include "Brofiler.h"
 
@@ -88,9 +87,9 @@ UpdateStatus ModuleInput::PreUpdate()
 			break;
 
 		case SDL_DROPFILE:
-			ReleaseDroppedFileName();
-			dropped_file_name = event.drop.file;
-			LOG("File dropped: %s", dropped_file_name);
+			ReleaseDroppedFilePath();
+			dropped_file_path = event.drop.file;
+			LOG("File dropped: %s", dropped_file_path);
 			break;
 
 		case SDL_MOUSEWHEEL:
@@ -162,21 +161,20 @@ UpdateStatus ModuleInput::PreUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-// Called before quitting
 bool ModuleInput::CleanUp()
 {
-	ReleaseDroppedFileName();
+	ReleaseDroppedFilePath();
 	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }
 
-void ModuleInput::ReleaseDroppedFileName()
+void ModuleInput::ReleaseDroppedFilePath()
 {
-	if (dropped_file_name != nullptr)
+	if (dropped_file_path != nullptr)
 	{
-		SDL_free(dropped_file_name);
-		dropped_file_name = nullptr;
+		SDL_free(dropped_file_path);
+		dropped_file_path = nullptr;
 	}
 }
 
@@ -184,4 +182,34 @@ void ModuleInput::WarpMouse(int mouse_x, int mouse_y)
 {
 	SDL_WarpMouseGlobal(mouse_x, mouse_y);
 	mouse_warped = true;
+}
+
+const char* ModuleInput::GetDroppedFilePath() const
+{
+	return dropped_file_path;
+}
+
+KeyState ModuleInput::GetKey(int scancode) const
+{
+	return keyboard[scancode];
+}
+
+KeyState ModuleInput::GetMouseButton(int button) const
+{
+	return mouse_buttons[button - 1];
+}
+
+float ModuleInput::GetMouseWheelMotion() const
+{
+	return mouse_wheel_motion;
+}
+
+const float2& ModuleInput::GetMouseMotion() const
+{
+	return mouse_motion;
+}
+
+const float2& ModuleInput::GetMousePosition() const
+{
+	return mouse;
 }

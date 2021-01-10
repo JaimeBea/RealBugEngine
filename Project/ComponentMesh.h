@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Mesh.h"
 
 #include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
@@ -12,23 +13,16 @@ struct aiMesh;
 class ComponentMesh : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::MESH);
-
-	ComponentMesh(GameObject& owner);
+	REGISTER_COMPONENT(ComponentMesh, ComponentType::MESH);
 
 	void OnEditorUpdate() override;
+	void Save(JsonValue& j_component) const override;
+	void Load(const JsonValue& j_component) override;
 
-	void Load(const aiMesh* mesh);
-	void Release();
 	void Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const;
 
 public:
-	unsigned vbo = 0;
-	unsigned ebo = 0;
-	unsigned vao = 0;
-	unsigned num_vertices = 0;
-	unsigned num_indices = 0;
-	unsigned material_index = 0;
+	Mesh* mesh = nullptr;
 
 private:
 	bool bb_active = false;

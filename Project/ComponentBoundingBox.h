@@ -8,9 +8,10 @@
 class ComponentBoundingBox : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::BOUNDING_BOX);
+	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
-	ComponentBoundingBox(GameObject& owner);
+	void Save(JsonValue& j_component) const override;
+	void Load(const JsonValue& j_component) override;
 
 	void SetLocalBoundingBox(const AABB& bounding_box);
 	void CalculateWorldBoundingBox(bool force = false);

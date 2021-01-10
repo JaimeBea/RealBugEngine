@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Module.h"
-
+#include "Texture.h"
+#include "CubeMap.h"
+#include "Mesh.h"
 #include "Pool.h"
 
 enum class TextureMinFilter
@@ -29,17 +31,20 @@ enum class TextureWrap
 	MIRROR_CLAMP_TO_EDGE
 };
 
-typedef unsigned int Texture;
-
-class ModuleTextures : public Module
+class ModuleResources : public Module
 {
 public:
 	bool Init() override;
 	bool CleanUp() override;
 
-	Texture* LoadTexture(const char* file_name);
-	Texture* LoadTextureCubeMap(const char* files[6]);
+	Texture* ObtainTexture();
 	void ReleaseTexture(Texture* texture);
+
+	CubeMap* ObtainCubeMap();
+	void ReleaseCubeMap(CubeMap* cube_map);
+
+	Mesh* ObtainMesh();
+	void ReleaseMesh(Mesh* mesh);
 
 	void SetMinFilter(TextureMinFilter filter);
 	void SetMagFilter(TextureMagFilter filter);
@@ -51,6 +56,8 @@ public:
 
 public:
 	Pool<Texture> textures;
+	Pool<CubeMap> cube_maps;
+	Pool<Mesh> meshes;
 
 private:
 	TextureMinFilter min_filter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;

@@ -9,20 +9,21 @@
 #include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModulePrograms.h"
+#include "ModuleResources.h"
 #include "ModuleCamera.h"
 #include "ModuleSceneRender.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
+#include "Texture.h"
+#include "Mesh.h"
+#include "MeshImporter.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
 #include "imgui.h"
 
 #include "Leaks.h"
-
-ComponentMesh::ComponentMesh(GameObject& owner)
-	: Component(static_type, owner) {}
 
 void ComponentMesh::OnEditorUpdate()
 {
@@ -60,10 +61,10 @@ void ComponentMesh::OnEditorUpdate()
 			ImGui::TextColored(title_color, "Geometry");
 			ImGui::TextWrapped("Num Vertices: ");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%d", mesh->num_vertices);
+			ImGui::TextColored(text_color, "%d", mesh->mesh->num_vertices);
 			ImGui::TextWrapped("Num Triangles: ");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%d", mesh->num_indices / 3);
+			ImGui::TextColored(text_color, "%d", mesh->mesh->num_indices / 3);
 			ImGui::Separator();
 			ImGui::TextColored(title_color, "Bounding Box");
 			ImGui::Checkbox("Draw##mesh", &bb_active);
@@ -78,90 +79,20 @@ void ComponentMesh::OnEditorUpdate()
 	}
 }
 
-void ComponentMesh::Load(const aiMesh* mesh)
+void ComponentMesh::Save(JsonValue& j_component) const
 {
-	num_vertices = mesh->mNumVertices;
-	num_indices = mesh->mNumFaces * 3;
-	material_index = mesh->mMaterialIndex;
-
-	LOG("Loading %i vertices...", num_vertices);
-
-	unsigned position_size = sizeof(float) * 3;
-	unsigned normal_size = sizeof(float) * 3;
-	unsigned uv_size = sizeof(float) * 2;
-	unsigned index_size = sizeof(unsigned);
-
-	unsigned vertex_size = position_size + normal_size + uv_size;
-	unsigned vertex_buffer_size = vertex_size * num_vertices;
-	unsigned index_buffer_size = index_size * num_indices;
-
-	// Create VAO
-	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
-	glGenBuffers(1, &ebo);
-
-	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-
-	// Load VBO
-	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, nullptr, GL_STATIC_DRAW);
-	float* vertex_buffer = (float*) glMapBufferRange(GL_ARRAY_BUFFER, 0, vertex_buffer_size, GL_MAP_WRITE_BIT);
-	for (unsigned i = 0; i < mesh->mNumVertices; ++i)
-	{
-		aiVector3D& vertex = mesh->mVertices[i];
-		aiVector3D& normal = mesh->mNormals[i];
-		aiVector3D* texture_coords = mesh->mTextureCoords[0];
-
-		*(vertex_buffer++) = vertex.x;
-		*(vertex_buffer++) = vertex.y;
-		*(vertex_buffer++) = vertex.z;
-		*(vertex_buffer++) = normal.x;
-		*(vertex_buffer++) = normal.y;
-		*(vertex_buffer++) = normal.z;
-		*(vertex_buffer++) = texture_coords != nullptr ? texture_coords[i].x : 0;
-		*(vertex_buffer++) = texture_coords != nullptr ? texture_coords[i].y : 0;
-	}
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-
-	// Load EBO
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, nullptr, GL_STATIC_DRAW);
-	unsigned* index_buffer = (unsigned*) glMapBufferRange(GL_ELEMENT_ARRAY_BUFFER, 0, index_buffer_size, GL_MAP_WRITE_BIT);
-	for (unsigned i = 0; i < mesh->mNumFaces; ++i)
-	{
-		aiFace& face = mesh->mFaces[i];
-
-		// Assume triangles = 3 indices per face
-		if (face.mNumIndices != 3)
-		{
-			LOG("Found a face with %i vertices. Discarded.", face.mNumIndices);
-			continue;
-		}
-
-		*(index_buffer++) = face.mIndices[0];
-		*(index_buffer++) = face.mIndices[1];
-		*(index_buffer++) = face.mIndices[2];
-	}
-	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-
-	// Load vertex attributes
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) position_size);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*) (position_size + normal_size));
-
-	// Unbind VAO
-	glBindVertexArray(0);
+	j_component["FileName"] = mesh->file_name.c_str();
+	j_component["MaterialIndex"] = mesh->material_index;
 }
 
-void ComponentMesh::Release()
+void ComponentMesh::Load(const JsonValue& j_component)
 {
-	glDeleteVertexArrays(1, &vao);
-	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ebo);
+	if (mesh == nullptr) mesh = App->resources->ObtainMesh();
+
+	MeshImporter::UnloadMesh(mesh);
+	mesh->file_name = j_component["FileName"];
+	mesh->material_index = j_component["MaterialIndex"];
+	MeshImporter::LoadMesh(mesh);
 }
 
 void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const
@@ -172,17 +103,18 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 
 	float4x4 view_matrix = App->camera->GetViewMatrix();
 	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
-	unsigned texture = 0;
+	unsigned gl_texture = 0;
 	ComponentLight* light;
-	if (materials.size() > material_index)
+	if (materials.size() > mesh->material_index)
 	{
-		if (materials[material_index]->IsActive())
+		if (materials[mesh->material_index]->IsActive())
 		{
-			texture = materials[material_index]->material.diffuse_map;
+			Texture* diffuse = materials[mesh->material_index]->diffuse_map;
+			gl_texture = diffuse ? diffuse->gl_texture : 0;
 		}
 	}
 
-	if (materials[material_index]->material_type == ShaderType::PHONG)
+	if (materials[mesh->material_index]->material_type == ShaderType::PHONG)
 	{
 		float3 light_position = float3(0, 0, 0);
 		float3 light_color = float3(0, 0, 0);
@@ -204,14 +136,14 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		program = App->programs->phong_pbr_program;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "material.diffuse_color"), 1, materials[material_index]->material.diffuse_color.ptr());
-		glUniform3fv(glGetUniformLocation(program, "material.specular_color"), 1, materials[material_index]->material.specular_color.ptr());
-		glUniform1f(glGetUniformLocation(program, "material.shininess"), materials[material_index]->material.shininess);
+		glUniform3fv(glGetUniformLocation(program, "material.diffuse_color"), 1, materials[mesh->material_index]->diffuse_color.ptr());
+		glUniform3fv(glGetUniformLocation(program, "material.specular_color"), 1, materials[mesh->material_index]->specular_color.ptr());
+		glUniform1f(glGetUniformLocation(program, "material.shininess"), materials[mesh->material_index]->shininess);
 		glUniform3fv(glGetUniformLocation(program, "material.ambient"), 1, App->scene_renderer->ambient_color.ptr());
 
-		int has_diffuse_map = (materials[material_index]->material.has_diffuse_map) ? 1 : 0;
-		int has_specular_map = (materials[material_index]->material.has_specular_map) ? 1 : 0;
-		int shininess_alpha = (materials[material_index]->material.shininess_alpha) ? 1 : 0;
+		int has_diffuse_map = (materials[mesh->material_index]->has_diffuse_map) ? 1 : 0;
+		int has_specular_map = (materials[mesh->material_index]->has_specular_map) ? 1 : 0;
+		int shininess_alpha = (materials[mesh->material_index]->has_shininess_in_alpha_channel) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "material.has_diffuse_map"), has_diffuse_map);
 		glUniform1i(glGetUniformLocation(program, "material.has_specular_map"), has_specular_map);
 		glUniform1i(glGetUniformLocation(program, "material.shininess_alpha"), shininess_alpha);
@@ -232,9 +164,9 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 
 	// TODO: Display Specular Texture
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, gl_texture);
 
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, nullptr);
+	glBindVertexArray(mesh->vao);
+	glDrawElements(GL_TRIANGLES, mesh->num_indices, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
 }

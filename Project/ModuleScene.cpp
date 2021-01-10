@@ -3,9 +3,13 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Logging.h"
-#include "ModuleTextures.h"
+#include "ModuleInput.h"
 #include "ModulePrograms.h"
 #include "ModuleCamera.h"
+#include "ModuleResources.h"
+#include "ModuleFiles.h"
+#include "ModuleEditor.h"
+#include "PanelHierarchy.h"
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentLight.h"
@@ -13,6 +17,11 @@
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
 #include "ComponentCamera.h"
+#include "Texture.h"
+#include "CubeMap.h"
+#include "JsonValue.h"
+#include "SceneImporter.h"
+#include "TextureImporter.h"
 
 #include "GL/glew.h"
 #include "Math/myassert.h"
@@ -21,9 +30,16 @@
 #include "assimp/scene.h"
 #include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/error/en.h"
 #include <string>
 
 #include "Leaks.h"
+
+static aiLogStream log_stream = {nullptr, nullptr};
 
 static void AssimpLogCallback(const char* message, char* user)
 {
@@ -42,50 +58,127 @@ bool ModuleScene::Init()
 #endif
 
 	// Create Scene
-	root = CreateGameObject(nullptr);
-	root->name = "Scene";
-	ComponentTransform* transform = root->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(0, 0, 0));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
+	ClearScene();
 
 	return true;
 }
 
 bool ModuleScene::Start()
 {
-	LoadSkyBox();
+	CreateEmptyScene();
+
+	// Loading test TODO: remove
+	//Load("Test");
 
 	// TODO: Remove after test
-	Load("Assets/Street_Environment/Street_environment_V01.fbx");
-	//Load("Assets/BakerHouse.fbx");
+	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
 
-	// Create Directional Light
-	GameObject* game_object = CreateGameObject(root);
-	game_object->name = "Directional Light";
+	//SceneImporter::ImportScene("Assets/BakerHouse.fbx");
 
-	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(0, 0, 0));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
-	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
+	// Load skybox
+	// clang-format off
+	float skybox_vertices[] = {
+		// Front (x, y, z)
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+	
+		// Left (x, y, z)
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+		
+		// Right (x, y, z)
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 
+		// Back (x, y, z)
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+	
+		// Top (x, y, z)
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+		
+		// Bottom (x, y, z)
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	}; // clang-format on
 
-	// Create Game Camera
-	game_object = CreateGameObject(root);
-	game_object->name = "Game Camera";
-	scene_cameras.push_back(game_object);
+	// Skybox VAO
+	glGenVertexArrays(1, &skybox_vao);
+	glGenBuffers(1, &skybox_vbo);
+	glBindVertexArray(skybox_vao);
+	glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skybox_vertices), &skybox_vertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+	glBindVertexArray(0);
 
-	transform = game_object->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(2, 3, -5));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
-	ComponentCamera* camera = game_object->CreateComponent<ComponentCamera>();
-	camera->Init();
+	const char* files[6] = {
+		"Assets/Skybox/right.jpg",
+		"Assets/Skybox/left.jpg",
+		"Assets/Skybox/top.jpg",
+		"Assets/Skybox/bottom.jpg",
+		"Assets/Skybox/front.jpg",
+		"Assets/Skybox/back.jpg"};
+
+	skybox_cube_map = TextureImporter::ImportCubeMap(files);
+	TextureImporter::LoadCubeMap(skybox_cube_map);
+
+	// Saving test TODO: remove
+	//Save("Test");
 
 	return true;
+}
+
+UpdateStatus ModuleScene::Update()
+{
+	// Load scene/fbx if one gets dropped
+	const char* dropped_file_path = App->input->GetDroppedFilePath();
+	if (dropped_file_path != nullptr)
+	{
+		std::string dropped_file_extension = App->files->GetFileExtension(dropped_file_path);
+		std::string dropped_file_name = App->files->GetFileName(dropped_file_path);
+		if (dropped_file_extension == SCENE_EXTENSION)
+		{
+			SceneImporter::LoadScene(dropped_file_name.c_str());
+
+			LOG("Scene loaded");
+		}
+		else if (dropped_file_extension == ".fbx")
+		{
+			SceneImporter::ImportScene(dropped_file_path, App->editor->panel_hierarchy.selected_object);
+
+			LOG("Scene imported");
+		}
+
+		App->input->ReleaseDroppedFilePath();
+	}
+
+	return UpdateStatus::CONTINUE;
 }
 
 bool ModuleScene::CleanUp()
@@ -93,8 +186,7 @@ bool ModuleScene::CleanUp()
 	glDeleteVertexArrays(1, &skybox_vao);
 	glDeleteBuffers(1, &skybox_vbo);
 
-	DestroyGameObject(root);
-	assert(game_objects.Count() == 0);
+	ClearScene();
 
 #ifdef _DEBUG
 	aiDetachAllLogStreams();
@@ -103,100 +195,56 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-bool ModuleScene::Load(const char* file_name)
+void ModuleScene::CreateEmptyScene()
 {
-	// Load scene
-	LOG("Loading scene from path: \"%s\".", file_name);
-	const aiScene* scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
-	DEFER
-	{
-		aiReleaseImport(scene);
-	};
-	if (!scene)
-	{
-		LOG("Error loading scene: %s", file_name, aiGetErrorString());
-		return false;
-	}
+	ClearScene();
 
-	// TODO: Add Specular Texture Loading logic
-	// Load materials
-	LOG("Loading %i materials...", scene->mNumMaterials);
-	std::vector<Texture*> materials;
-	materials.reserve(scene->mNumMaterials);
-	for (unsigned int i = 0; i < scene->mNumMaterials; ++i)
-	{
-		LOG("Loading material %i...", i);
-		aiString material_file_dir;
-		aiTextureMapping mapping;
-		unsigned uv_index;
-		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_dir, &mapping, &uv_index) == AI_SUCCESS)
-		{
-			// Check if the material is valid for our purposes
-			assert(mapping == aiTextureMapping_UV);
-			assert(uv_index == 0);
+	// Create Scene root node
+	root = CreateGameObject(nullptr);
+	root->name = "Scene";
+	ComponentTransform* scene_transform = root->CreateComponent<ComponentTransform>();
+	scene_transform->SetPosition(float3(0, 0, 0));
+	scene_transform->SetRotation(Quat::identity);
+	scene_transform->SetScale(float3(1, 1, 1));
+	scene_transform->CalculateGlobalMatrix();
 
-			// Try to load from the path given in the model file
-			LOG("Trying to load texture...");
-			Texture* texture = App->textures->LoadTexture(material_file_dir.C_Str());
+	// Create Directional Light
+	GameObject* light = CreateGameObject(root);
+	light->name = "Directional Light";
+	ComponentTransform* light_transform = light->CreateComponent<ComponentTransform>();
+	light_transform->SetPosition(float3(0, 0, 0));
+	light_transform->SetRotation(Quat::identity);
+	light_transform->SetScale(float3(1, 1, 1));
+	light_transform->CalculateGlobalMatrix();
+	ComponentLight* light_light = light->CreateComponent<ComponentLight>();
 
-			// Try to load relative to the model folder
-			if (texture == nullptr)
-			{
-				LOG("Trying to load texture relative to model folder...");
-				std::string model_file_dir = file_name;
-				size_t last_slash = model_file_dir.find_last_of('\\');
-				if (last_slash == std::string::npos)
-				{
-					last_slash = model_file_dir.find_last_of('/');
-				}
-				std::string model_folder_dir = model_file_dir.substr(0, last_slash + 1);
-				std::string model_folder_material_file_dir = model_folder_dir + material_file_dir.C_Str();
-				texture = App->textures->LoadTexture(model_folder_material_file_dir.c_str());
-			}
+	// Create Game Camera
+	GameObject* game_camera = CreateGameObject(root);
+	game_camera->name = "Game Camera";
+	ComponentTransform* game_camera_transform = game_camera->CreateComponent<ComponentTransform>();
+	game_camera_transform->SetPosition(float3(2, 3, -5));
+	game_camera_transform->SetRotation(Quat::identity);
+	game_camera_transform->SetScale(float3(1, 1, 1));
+	game_camera_transform->CalculateGlobalMatrix();
+	ComponentCamera* game_camera_camera = game_camera->CreateComponent<ComponentCamera>();
+	game_camera_camera->Init();
+}
 
-			// Try to load relative to the textures folder
-			if (texture == nullptr)
-			{
-				LOG("Trying to load texture relative to textures folder...");
-				std::string textures_folder_dir = "Textures\\";
-				std::string textures_folder_material_file_dir = textures_folder_dir + material_file_dir.C_Str();
-				texture = App->textures->LoadTexture(textures_folder_material_file_dir.c_str());
-			}
+void ModuleScene::ClearScene()
+{
+	DestroyGameObject(root);
+	root = nullptr;
 
-			if (texture == nullptr)
-			{
-				LOG("Unable to find texture file.");
-			}
-			else
-			{
-				LOG("Texture loaded successfuly.");
-			}
-
-			materials.push_back(texture);
-		}
-		else
-		{
-			materials.push_back(nullptr);
-
-			LOG("Diffuse texture not found.");
-		}
-
-		LOG("Material loaded.");
-	}
-
-	// Create scene tree
-	LOG("Loading scene tree.");
-	GameObject* game_object = LoadNode(scene, materials, scene->mRootNode, root);
-
-	LOG("Scene loaded.");
-	return true;
+	assert(game_objects.Count() == 0);
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 {
 	GameObject* game_object = game_objects.Obtain();
+	game_objects_id_map[game_object->GetID()] = game_object;
 	game_object->SetParent(parent);
 	game_object->Init();
+
 	return game_object;
 }
 
@@ -208,189 +256,30 @@ GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
 
 void ModuleScene::DestroyGameObject(GameObject* game_object)
 {
-	if (game_object == nullptr)
-	{
-		return;
-	}
+	if (game_object == nullptr) return;
 
-	game_object->CleanUp();
-
-	for (GameObject* child : game_object->GetChildren())
+	// We need a copy because we are invalidating the iterator by removing GameObjects
+	std::vector<GameObject*> children = game_object->GetChildren();
+	for (GameObject* child : children)
 	{
 		DestroyGameObject(child);
 	}
 
+	game_objects_id_map.erase(game_object->GetID());
+	game_object->id = 0;
+	for (Component* component : game_object->components)
+	{
+		delete component;
+	}
+	game_object->components.clear();
+	game_object->Enable();
+	game_object->SetParent(nullptr);
 	game_objects.Release(game_object);
 }
 
-GameObject* ModuleScene::LoadNode(const aiScene* scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
+GameObject* ModuleScene::GetGameObject(UID id) const
 {
-	LOG("Loading node: \"%s\"", node->mName.C_Str());
+	if (game_objects_id_map.count(id) == 0) return nullptr;
 
-	// Create GameObje
-	GameObject* game_object = CreateGameObject(parent);
-
-	// Load name
-	game_object->name = node->mName.C_Str();
-
-	// Load transform
-	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	const float4x4& matrix = *(float4x4*) &node->mTransformation;
-	float3 position;
-	Quat rotation;
-	float3 scale;
-	matrix.Decompose(position, rotation, scale);
-	transform->SetPosition(position);
-	transform->SetRotation(rotation);
-	transform->SetScale(scale);
-	transform->CalculateGlobalMatrix();
-	LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
-
-	// Save min and max points
-	vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
-	vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
-
-	// Load meshes
-	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
-	{
-		LOG("Loading mesh %i", i);
-		aiMesh* ai_mesh = scene->mMeshes[node->mMeshes[i]];
-
-		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-		mesh->Load(ai_mesh);
-		mesh->material_index = i;
-
-		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
-		if (ai_mesh->mMaterialIndex >= materials.size())
-		{
-			material->material.diffuse_map = materials.size() > 0 ? *materials.front() : 0;
-			LOG("Invalid material found", ai_mesh->mMaterialIndex);
-		}
-		else
-		{
-			Texture* texture = materials[ai_mesh->mMaterialIndex];
-			if (texture == nullptr)
-			{
-				material->material.diffuse_map = *materials.front();
-				LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
-			}
-			else
-			{
-				material->material.diffuse_map = *texture;
-				LOG("Texture applied: %i", *texture);
-			}
-		}
-
-		// Update min and max points
-		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
-		{
-			aiVector3D vertex = ai_mesh->mVertices[j];
-			if (vertex.x < min_point.x) min_point.x = vertex.x;
-			if (vertex.y < min_point.y) min_point.y = vertex.y;
-			if (vertex.z < min_point.z) min_point.z = vertex.z;
-			if (vertex.x > max_point.x) max_point.x = vertex.x;
-			if (vertex.y > max_point.y) max_point.y = vertex.y;
-			if (vertex.z > max_point.z) max_point.z = vertex.z;
-		}
-	}
-
-	// Create bounding box
-	ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
-	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
-	bounding_box->CalculateWorldBoundingBox();
-
-	// Load children nodes
-	for (unsigned int i = 0; i < node->mNumChildren; ++i)
-	{
-		GameObject* child = LoadNode(scene, materials, node->mChildren[i], game_object);
-	}
-
-	return game_object;
-}
-
-void ModuleScene::LoadSkyBox()
-{
-	// clang-format off
-	float skyboxVertices[] = {
-	// positions          
-	-1.0f, 1.0f, -1.0f,
-	-1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-	1.0f, 1.0f, -1.0f,
-	-1.0f, 1.0f, -1.0f,
-	
-	-1.0f, -1.0f, 1.0f,
-	-1.0f, -1.0f, -1.0f,
-	-1.0f, 1.0f, -1.0f,
-	-1.0f, 1.0f, -1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, -1.0f, 1.0f,
-
-	1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-
-	-1.0f, -1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, -1.0f, 1.0f,
-	-1.0f, -1.0f, 1.0f,
-	
-	-1.0f, 1.0f, -1.0f,
-	1.0f, 1.0f, -1.0f,
-	1.0f, 1.0f, 1.0f,
-	1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, 1.0f,
-	-1.0f, 1.0f, -1.0f,
-
-	-1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f, 1.0f,
-	1.0f, -1.0f, -1.0f,
-	1.0f, -1.0f, -1.0f,
-	-1.0f, -1.0f, 1.0f,
-	1.0f, -1.0f, 1.0f };
-	// clang-format on
-
-	// skybox VAO
-	glGenVertexArrays(1, &skybox_vao);
-	glGenBuffers(1, &skybox_vbo);
-	glBindVertexArray(skybox_vao);
-	glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-
-	const char* files[6] = {
-		"Assets/Skybox/right.jpg",
-		"Assets/Skybox/left.jpg",
-		"Assets/Skybox/top.jpg",
-		"Assets/Skybox/bottom.jpg",
-		"Assets/Skybox/front.jpg",
-		"Assets/Skybox/back.jpg"};
-
-	skybox_texture = App->textures->LoadTextureCubeMap(files);
-}
-
-void ModuleScene::DrawSkyBox()
-{
-	glDepthFunc(GL_LEQUAL);
-
-	unsigned program = App->programs->skybox_program;
-	glUseProgram(program);
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
-	glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
-
-	glBindVertexArray(skybox_vao);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, *skybox_texture);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
-
-	glDepthFunc(GL_LESS);
+	return game_objects_id_map.at(id);
 }

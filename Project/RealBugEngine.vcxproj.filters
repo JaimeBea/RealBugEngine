@@ -28,11 +28,17 @@
     <Filter Include="Source\Panels">
       <UniqueIdentifier>{bcd7b9b1-e7a5-474b-899d-6d1a5cf157b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\DataStructures">
-      <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
+    <Filter Include="Source\Time">
+      <UniqueIdentifier>{6b6f7bbc-a8f5-434f-9714-082182d39b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Files">
+      <UniqueIdentifier>{ba49f20a-6c7c-4f01-ae77-0b42754b1a1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Resources">
+      <UniqueIdentifier>{3b29a433-ba06-4fb0-bba0-48c7b0647e54}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Utils">
-      <UniqueIdentifier>{5da723cc-4936-4088-adc4-4a4de16e71cc}</UniqueIdentifier>
+      <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -306,9 +312,6 @@
     <ClInclude Include="ModuleWindow.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleTextures.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp">
       <Filter>Libraries\DebugDraw</Filter>
     </ClInclude>
@@ -366,44 +369,77 @@
     <ClInclude Include="ComponentBoundingBox.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
-    <ClInclude Include="MSTimer.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
-    <ClInclude Include="PerformanceTimer.h">
-      <Filter>Source\DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Pool.h">
-      <Filter>Source\DataStructures</Filter>
+      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Quadtree.h">
-      <Filter>Source\DataStructures</Filter>
+      <Filter>Source\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="UID.h">
-      <Filter>Source\DataStructures</Filter>
+    <ClInclude Include="ModuleFiles.h">
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ComponentLight.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
     <ClInclude Include="Logging.h">
-      <Filter>Source\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Leaks.h">
-      <Filter>Source\Utils</Filter>
+      <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Globals.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Leaks.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
       <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MSTimer.h">
+      <Filter>Source\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="PerformanceTimer.h">
+      <Filter>Source\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="UID.h">
+      <Filter>Source\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleResources.h">
+      <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ModuleSceneRender.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
     <ClInclude Include="ComponentCamera.h">
       <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentType.h">
+      <Filter>Source\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonValue.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneImporter.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshImporter.h">
+      <Filter>Source\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureImporter.h">
+      <Filter>Source\Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -572,9 +608,6 @@
     <ClCompile Include="Module.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleTextures.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
     <ClCompile Include="ModuleRender.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
@@ -626,29 +659,50 @@
     <ClCompile Include="ComponentBoundingBox.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source\DataStructures</Filter>
-    </ClCompile>
-    <ClCompile Include="MSTimer.cpp">
-      <Filter>Source\DataStructures</Filter>
-    </ClCompile>
-    <ClCompile Include="PerformanceTimer.cpp">
-      <Filter>Source\DataStructures</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="UID.cpp">
-      <Filter>Source\DataStructures</Filter>
     </ClCompile>
     <ClCompile Include="ComponentLight.cpp">
       <Filter>Source\Components</Filter>
     </ClCompile>
+    <ClCompile Include="ModuleFiles.cpp">
+      <Filter>Source\Modules</Filter>
+    </ClCompile>
     <ClCompile Include="Logging.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="MSTimer.cpp">
+      <Filter>Source\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="PerformanceTimer.cpp">
+      <Filter>Source\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="UID.cpp">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleResources.cpp">
+      <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ModuleSceneRender.cpp">
       <Filter>Source\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentType.cpp">
+      <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonValue.cpp">
+      <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneImporter.cpp">
+      <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshImporter.cpp">
+      <Filter>Source\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureImporter.cpp">
+      <Filter>Source\Files</Filter>
     </ClCompile>
     <ClCompile Include="ComponentCamera.cpp">
       <Filter>Source\Components</Filter>
@@ -699,13 +753,11 @@
     <None Include="..\Game\Shaders\phong_pbr_vertex.glsl">
       <Filter>Shaders</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="skybox_vertex.glsl">
+    <None Include="..\Game\Shaders\skybox_fragment.glsl">
       <Filter>Shaders</Filter>
-    </Text>
-    <Text Include="skybox_fragment.glsl">
+    </None>
+    <None Include="..\Game\Shaders\skybox_vertex.glsl">
       <Filter>Shaders</Filter>
-    </Text>
+    </None>
   </ItemGroup>
 </Project>

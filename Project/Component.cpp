@@ -1,5 +1,7 @@
 #include "Component.h"
 
+#include "JsonValue.h"
+
 Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	: type(type_)
 	, owner(owner_)
@@ -12,6 +14,10 @@ void Component::Update() {}
 void Component::DrawGizmos() {}
 
 void Component::OnEditorUpdate() {}
+
+void Component::Save(JsonValue& j_component) const {}
+
+void Component::Load(const JsonValue& j_component) {}
 
 void Component::Enable()
 {

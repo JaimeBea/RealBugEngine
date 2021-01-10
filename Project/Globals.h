@@ -12,6 +12,14 @@ enum class UpdateStatus
 #define DEGTORAD 0.01745329251f
 #define RADTODEG 1.0f / DEGTORAD
 
+// Files -----------
+#define TEXTURES_PATH "Library/Textures"
+#define MESHES_PATH "Library/Meshes"
+#define SCENES_PATH "Library/Scenes"
+#define TEXTURE_EXTENSION ".dds"
+#define MESH_EXTENSION ".mesh"
+#define SCENE_EXTENSION ".scene"
+
 // Configuration -----------
 #define GLSL_VERSION "#version 330"
 
@@ -60,4 +68,4 @@ deferrer<F> operator*(defer_dummy, F f)
 #define DEFER__(LINE) zz_defer##LINE
 #define DEFER_(LINE) DEFER__(LINE)
 #define DEFER auto DEFER_(__LINE__) = defer_dummy {}* [&]()
-#endif
+#endif // DEFER

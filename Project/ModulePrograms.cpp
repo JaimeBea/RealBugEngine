@@ -2,45 +2,19 @@
 
 #include "Globals.h"
 #include "Logging.h"
+#include "Application.h"
+#include "ModuleFiles.h"
 
 #include "GL/glew.h"
-#include <string.h>
 
 #include "Leaks.h"
-
-static char* LoadShader(const char* file_name)
-{
-	FILE* file = fopen(file_name, "rb");
-	if (!file)
-	{
-		LOG("Error opening file %s (%s).\n", file_name, strerror(errno));
-		return nullptr;
-	}
-	DEFER
-	{
-		fclose(file);
-	};
-
-	fseek(file, 0, SEEK_END);
-	size_t size = ftell(file);
-	rewind(file);
-
-	char* data = new char[size + 1];
-	fread(data, 1, size, file);
-	data[size] = '\0';
-
-	return data;
-}
 
 static unsigned CreateShader(unsigned type, const char* file_name)
 {
 	LOG("Creating shader from file: \"%s\"...", file_name);
 
-	char* source = LoadShader(file_name);
-	DEFER
-	{
-		RELEASE_ARRAY(source);
-	};
+	Buffer<char> source_buffer = App->files->Load(file_name);
+	char* source = source_buffer.Data();
 
 	unsigned shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &source, 0);
@@ -56,15 +30,9 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 		if (len > 0)
 		{
 			int written = 0;
-			char* info = new char[len];
-			DEFER
-			{
-				RELEASE_ARRAY(info);
-			};
-
-			glGetShaderInfoLog(shader_id, len, &written, info);
-
-			LOG("Log Info: %s", info);
+			Buffer<char> info = Buffer<char>(len);
+			glGetShaderInfoLog(shader_id, len, &written, info.Data());
+			LOG("Log Info: %s", info.Data());
 		}
 	}
 
@@ -104,15 +72,9 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 		if (len > 0)
 		{
 			int written = 0;
-			char* info = new char[len];
-			DEFER
-			{
-				RELEASE_ARRAY(info);
-			};
-
-			glGetProgramInfoLog(program_id, len, &written, info);
-
-			LOG("Program Log Info: %s", info);
+			Buffer<char> info = Buffer<char>(len);
+			glGetProgramInfoLog(program_id, len, &written, info.Data());
+			LOG("Program Log Info: %s", info.Data());
 		}
 
 		LOG("Error linking program.");

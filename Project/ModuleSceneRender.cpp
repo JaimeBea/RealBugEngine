@@ -7,10 +7,16 @@
 #include "ComponentCamera.h"
 #include "ComponentBoundingBox.h"
 #include "Application.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
+#include "ModulePrograms.h"
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
+#include "ComponentMesh.h"
+#include "ComponentBoundingBox.h"
+#include "ComponentTransform.h"
+#include "ComponentMaterial.h"
+#include "SceneImporter.h"
 
 #include "GL/glew.h"
 #include "Geometry/Plane.h"
@@ -26,13 +32,6 @@ UpdateStatus ModuleSceneRender::Update()
 	// Draw Skybox as a first element
 	DrawSkyBox();
 
-	// Load model or texture if one gets dropped
-	const char* dropped_file_name = App->input->GetDroppedFileName();
-	if (dropped_file_name != nullptr)
-	{
-		bool loaded_scene = App->scene->Load(dropped_file_name);
-	}
-
 	// Draw the scene
 	GameObject* root = App->scene->root;
 	if (root != nullptr)
@@ -45,9 +44,11 @@ UpdateStatus ModuleSceneRender::Update()
 
 void ModuleSceneRender::DrawGameObjectRecursive(GameObject* game_object)
 {
-	for (GameObject* camera : App->scene->scene_cameras)
+	for (GameObject& camera : App->scene->game_objects)
 	{
-		ComponentCamera* component_camera = camera->GetComponent<ComponentCamera>();
+		ComponentCamera* component_camera = camera.GetComponent<ComponentCamera>();
+		if (component_camera == nullptr) continue;
+
 		if (component_camera->GetCullingStatus())
 		{
 			frustum_culling_active = true;
@@ -143,6 +144,20 @@ void ModuleSceneRender::DrawSkyBox()
 {
 	if (skybox_active)
 	{
-		App->scene->DrawSkyBox();
+		glDepthFunc(GL_LEQUAL);
+
+		unsigned program = App->programs->skybox_program;
+		glUseProgram(program);
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
+		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
+		glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
+
+		glBindVertexArray(App->scene->skybox_vao);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, App->scene->skybox_cube_map->gl_texture);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glBindVertexArray(0);
+
+		glDepthFunc(GL_LESS);
 	}
 }

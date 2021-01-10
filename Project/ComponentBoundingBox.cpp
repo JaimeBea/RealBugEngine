@@ -1,13 +1,33 @@
 #include "ComponentBoundingBox.h"
 
+#include "Logging.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
 
 #include "debugdraw.h"
 #include "Math/float3x3.h"
 
-ComponentBoundingBox::ComponentBoundingBox(GameObject& owner)
-	: Component(static_type, owner) {}
+#include "Leaks.h"
+
+void ComponentBoundingBox::Save(JsonValue& j_component) const
+{
+	JsonValue& j_local_bounding_box = j_component["LocalBoundingBox"];
+	j_local_bounding_box[0] = local_bounding_box_aabb.minPoint.x;
+	j_local_bounding_box[1] = local_bounding_box_aabb.minPoint.y;
+	j_local_bounding_box[2] = local_bounding_box_aabb.minPoint.z;
+	j_local_bounding_box[3] = local_bounding_box_aabb.maxPoint.x;
+	j_local_bounding_box[4] = local_bounding_box_aabb.maxPoint.y;
+	j_local_bounding_box[5] = local_bounding_box_aabb.maxPoint.z;
+}
+
+void ComponentBoundingBox::Load(const JsonValue& j_component)
+{
+	const JsonValue& j_local_bounding_box = j_component["LocalBoundingBox"];
+	local_bounding_box_aabb.minPoint.Set(j_local_bounding_box[0], j_local_bounding_box[1], j_local_bounding_box[2]);
+	local_bounding_box_aabb.maxPoint.Set(j_local_bounding_box[3], j_local_bounding_box[4], j_local_bounding_box[5]);
+
+	dirty = true;
+}
 
 void ComponentBoundingBox::SetLocalBoundingBox(const AABB& bounding_box)
 {

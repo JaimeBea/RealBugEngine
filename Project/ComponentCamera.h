@@ -15,13 +15,14 @@ struct FrustumPlanes
 class ComponentCamera : public Component
 {
 public:
-	REGISTER_COMPONENT(ComponentType::CAMERA);
-
-	ComponentCamera(GameObject& owner);
+	REGISTER_COMPONENT(ComponentCamera, ComponentType::CAMERA);
 
 	void Init() override;
 	void DrawGizmos() override;
 	void OnEditorUpdate() override;
+	void Save(JsonValue& j_component) const override;
+	void Load(const JsonValue& j_component) override;
+
 	void UpdateFrustumPlanes(bool force = false);
 	void Invalidate();
 

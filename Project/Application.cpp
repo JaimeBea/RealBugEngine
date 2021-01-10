@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Logging.h"
 #include "ModuleHardwareInfo.h"
+#include "ModuleFiles.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
 #include "ModuleEditor.h"
@@ -11,7 +12,7 @@
 #include "ModuleRender.h"
 #include "ModulePrograms.h"
 #include "ModuleDebugDraw.h"
-#include "ModuleTextures.h"
+#include "ModuleResources.h"
 #include "ModuleScene.h"
 #include "ModuleTime.h"
 
@@ -26,7 +27,8 @@ Application::Application()
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(hardware = new ModuleHardwareInfo());
 	modules.push_back(window = new ModuleWindow());
-	modules.push_back(textures = new ModuleTextures());
+	modules.push_back(files = new ModuleFiles());
+	modules.push_back(resources = new ModuleResources());
 	modules.push_back(programs = new ModulePrograms());
 
 	modules.push_back(time = new ModuleTime());

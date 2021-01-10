@@ -13,7 +13,8 @@ class ModuleRender;
 class ModuleEditor;
 class ModuleCamera;
 class ModuleWindow;
-class ModuleTextures;
+class ModuleResources;
+class ModuleFiles;
 class ModuleInput;
 class ModulePrograms;
 class ModuleDebugDraw;
@@ -35,11 +36,12 @@ public:
 
 public:
 	ModuleHardwareInfo* hardware = nullptr;
-	ModuleTextures* textures = nullptr;
+	ModuleResources* resources = nullptr;
 	ModuleSceneRender* scene_renderer = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;
+	ModuleFiles* files = nullptr;
 	ModuleInput* input = nullptr;
 	ModuleEditor* editor = nullptr;
 	ModulePrograms* programs = nullptr;
