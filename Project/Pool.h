@@ -42,6 +42,7 @@ public:
 
 	T* Obtain()
 	{
+		// Check if the pool has been initialized
 		assert(first_free != nullptr);
 
 		// Check for pool overflow
@@ -55,18 +56,25 @@ public:
 		size_t index = object - data;
 		first_free = next_free[index];
 		next_free[index] = nullptr;
+		count += 1;
 
 		return object;
 	}
 
 	void Release(T* object)
 	{
+		// Check if the object is in the data array
 		assert(object >= data && object < data + size);
+		
+		size_t index = object - data;
+
+		// Check if the object isn't a free object
+		assert(next_free[index] == nullptr);
 
 		// Release the object
-		size_t index = object - data;
 		next_free[index] = first_free;
 		first_free = object;
+		count -= 1;
 	}
 
 	size_t Count()

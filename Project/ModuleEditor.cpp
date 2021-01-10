@@ -142,7 +142,7 @@ UpdateStatus ModuleEditor::Update()
 		ImGui::Text("Do you wish to create a new scene?");
 		if (ImGui::Button("New scene"))
 		{
-			App->scene->ClearScene();
+			App->scene->CreateEmptyScene();
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();

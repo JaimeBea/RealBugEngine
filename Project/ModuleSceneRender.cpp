@@ -16,6 +16,7 @@
 #include "ComponentBoundingBox.h"
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
+#include "SceneImporter.h"
 
 #include "GL/glew.h"
 #include "Geometry/Plane.h"
@@ -32,10 +33,10 @@ UpdateStatus ModuleSceneRender::Update()
 	DrawSkyBox();
 
 	// Load model or texture if one gets dropped
-	const char* dropped_file_name = App->input->GetDroppedFileName();
-	if (dropped_file_name != nullptr)
+	const char* dropped_file_path = App->input->GetDroppedFilePath();
+	if (dropped_file_path != nullptr)
 	{
-		bool loaded_scene = App->scene->Load(dropped_file_name);
+		bool loaded_scene = SceneImporter::ImportScene(dropped_file_path);
 	}
 
 	// Draw the scene
@@ -50,9 +51,11 @@ UpdateStatus ModuleSceneRender::Update()
 
 void ModuleSceneRender::DrawGameObjectRecursive(GameObject* game_object)
 {
-	for (GameObject* camera : App->scene->scene_cameras)
+	for (GameObject& camera : App->scene->game_objects)
 	{
-		ComponentCamera* component_camera = camera->GetComponent<ComponentCamera>();
+		ComponentCamera* component_camera = camera.GetComponent<ComponentCamera>();
+		if (component_camera == nullptr) continue;
+
 		if (component_camera->GetCullingStatus())
 		{
 			frustum_culling_active = true;

@@ -12,19 +12,19 @@
 void ComponentBoundingBox::Save(JsonValue& j_component) const
 {
 	JsonValue& j_local_bounding_box = j_component["LocalBoundingBox"];
-	j_local_bounding_box[0] = local_bounding_box.minPoint.x;
-	j_local_bounding_box[1] = local_bounding_box.minPoint.y;
-	j_local_bounding_box[2] = local_bounding_box.minPoint.z;
-	j_local_bounding_box[3] = local_bounding_box.maxPoint.x;
-	j_local_bounding_box[4] = local_bounding_box.maxPoint.y;
-	j_local_bounding_box[5] = local_bounding_box.maxPoint.z;
+	j_local_bounding_box[0] = local_bounding_box_aabb.minPoint.x;
+	j_local_bounding_box[1] = local_bounding_box_aabb.minPoint.y;
+	j_local_bounding_box[2] = local_bounding_box_aabb.minPoint.z;
+	j_local_bounding_box[3] = local_bounding_box_aabb.maxPoint.x;
+	j_local_bounding_box[4] = local_bounding_box_aabb.maxPoint.y;
+	j_local_bounding_box[5] = local_bounding_box_aabb.maxPoint.z;
 }
 
 void ComponentBoundingBox::Load(const JsonValue& j_component)
 {
 	const JsonValue& j_local_bounding_box = j_component["LocalBoundingBox"];
-	local_bounding_box.minPoint.Set(j_local_bounding_box[0], j_local_bounding_box[1], j_local_bounding_box[2]);
-	local_bounding_box.maxPoint.Set(j_local_bounding_box[3], j_local_bounding_box[4], j_local_bounding_box[5]);
+	local_bounding_box_aabb.minPoint.Set(j_local_bounding_box[0], j_local_bounding_box[1], j_local_bounding_box[2]);
+	local_bounding_box_aabb.maxPoint.Set(j_local_bounding_box[3], j_local_bounding_box[4], j_local_bounding_box[5]);
 
 	dirty = true;
 }

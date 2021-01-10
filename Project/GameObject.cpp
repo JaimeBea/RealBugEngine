@@ -47,21 +47,6 @@ void GameObject::DrawGizmos()
 	}
 }
 
-void GameObject::CleanUp()
-{
-	SetParent(nullptr);
-	while (!children.empty())
-	{
-		children.back()->CleanUp();
-	}
-	children.clear();
-	for (Component* component : components)
-	{
-		delete component;
-	}
-	components.clear();
-}
-
 void GameObject::Enable()
 {
 	active = true;

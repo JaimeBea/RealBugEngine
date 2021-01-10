@@ -6,6 +6,7 @@
 #include "ComponentMaterial.h"
 #include "ComponentLight.h"
 #include "ComponentBoundingBox.h"
+#include "ComponentCamera.h"
 
 Component* CreateComponentByType(GameObject& game_object, ComponentType type, bool active)
 {
@@ -21,6 +22,8 @@ Component* CreateComponentByType(GameObject& game_object, ComponentType type, bo
 		return game_object.CreateComponent<ComponentLight>(active);
 	case ComponentType::BOUNDING_BOX:
 		return game_object.CreateComponent<ComponentBoundingBox>(active);
+	case ComponentType::CAMERA:
+		return game_object.CreateComponent<ComponentCamera>(active);
 	default:
 		return nullptr;
 	}

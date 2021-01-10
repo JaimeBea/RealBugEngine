@@ -63,6 +63,8 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
+	CreateEmptyScene();
+
 	// Loading test TODO: remove
 	//Load("Test");
 
@@ -158,7 +160,6 @@ bool ModuleScene::Start()
 	// Create Game Camera
 	game_object = CreateGameObject(root);
 	game_object->name = "Game Camera";
-	scene_cameras.push_back(game_object);
 
 	transform = game_object->CreateComponent<ComponentTransform>();
 	transform->SetPosition(float3(2, 3, -5));
@@ -170,9 +171,6 @@ bool ModuleScene::Start()
 
 	// Saving test TODO: remove
 	//Save("Test");
-
-	return true;
-}
 
 	return true;
 }
@@ -212,12 +210,9 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-void ModuleScene::ClearScene()
+void ModuleScene::CreateEmptyScene()
 {
-	DestroyGameObject(root);
-	root = nullptr;
-
-	assert(game_objects.Count() == 0);
+	ClearScene();
 
 	root = CreateGameObject(nullptr);
 	root->name = "Scene";
@@ -226,6 +221,14 @@ void ModuleScene::ClearScene()
 	transform->SetRotation(Quat::identity);
 	transform->SetScale(float3(1, 1, 1));
 	transform->CalculateGlobalMatrix();
+}
+
+void ModuleScene::ClearScene()
+{
+	DestroyGameObject(root);
+	root = nullptr;
+
+	assert(game_objects.Count() == 0);
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
@@ -248,13 +251,22 @@ void ModuleScene::DestroyGameObject(GameObject* game_object)
 {
 	if (game_object == nullptr) return;
 
-	for (GameObject* child : game_object->GetChildren())
+	// We need a copy because we are invalidating the iterator by removing GameObjects
+	std::vector<GameObject*> children = game_object->GetChildren();
+	for (GameObject* child : children)
 	{
 		DestroyGameObject(child);
 	}
 
-	game_object->CleanUp();
 	game_objects_id_map.erase(game_object->GetID());
+	game_object->id = 0;
+	for (Component* component : game_object->components)
+	{
+		delete component;
+	}
+	game_object->components.clear();
+	game_object->Enable();
+	game_object->SetParent(nullptr);
 	game_objects.Release(game_object);
 }
 
