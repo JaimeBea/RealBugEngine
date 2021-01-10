@@ -148,29 +148,6 @@ bool ModuleScene::Start()
 	skybox_cube_map = TextureImporter::ImportCubeMap(files);
 	TextureImporter::LoadCubeMap(skybox_cube_map);
 
-	// Create Directional Light
-	GameObject* game_object = CreateGameObject(root);
-	game_object->name = "Directional Light";
-
-	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(0, 0, 0));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
-	ComponentLight* light = game_object->CreateComponent<ComponentLight>();
-
-	// Create Game Camera
-	game_object = CreateGameObject(root);
-	game_object->name = "Game Camera";
-
-	transform = game_object->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(2, 3, -5));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
-	ComponentCamera* camera = game_object->CreateComponent<ComponentCamera>();
-	camera->Init();
-
 	// Saving test TODO: remove
 	//Save("Test");
 
@@ -222,13 +199,35 @@ void ModuleScene::CreateEmptyScene()
 {
 	ClearScene();
 
+	// Create Scene root node
 	root = CreateGameObject(nullptr);
 	root->name = "Scene";
-	ComponentTransform* transform = root->CreateComponent<ComponentTransform>();
-	transform->SetPosition(float3(0, 0, 0));
-	transform->SetRotation(Quat::identity);
-	transform->SetScale(float3(1, 1, 1));
-	transform->CalculateGlobalMatrix();
+	ComponentTransform* scene_transform = root->CreateComponent<ComponentTransform>();
+	scene_transform->SetPosition(float3(0, 0, 0));
+	scene_transform->SetRotation(Quat::identity);
+	scene_transform->SetScale(float3(1, 1, 1));
+	scene_transform->CalculateGlobalMatrix();
+
+	// Create Directional Light
+	GameObject* light = CreateGameObject(root);
+	light->name = "Directional Light";
+	ComponentTransform* light_transform = light->CreateComponent<ComponentTransform>();
+	light_transform->SetPosition(float3(0, 0, 0));
+	light_transform->SetRotation(Quat::identity);
+	light_transform->SetScale(float3(1, 1, 1));
+	light_transform->CalculateGlobalMatrix();
+	ComponentLight* light_light = light->CreateComponent<ComponentLight>();
+
+	// Create Game Camera
+	GameObject* game_camera = CreateGameObject(root);
+	game_camera->name = "Game Camera";
+	ComponentTransform* game_camera_transform = game_camera->CreateComponent<ComponentTransform>();
+	game_camera_transform->SetPosition(float3(2, 3, -5));
+	game_camera_transform->SetRotation(Quat::identity);
+	game_camera_transform->SetScale(float3(1, 1, 1));
+	game_camera_transform->CalculateGlobalMatrix();
+	ComponentCamera* game_camera_camera = game_camera->CreateComponent<ComponentCamera>();
+	game_camera_camera->Init();
 }
 
 void ModuleScene::ClearScene()
