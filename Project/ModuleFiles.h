@@ -15,4 +15,5 @@ public:
 	std::string GetFileNameAndExtension(const char* file_path) const;
 	std::string GetFileName(const char* file_path) const;
 	std::string GetFileExtension(const char* file_path) const;
+	std::string GetFileFolder(const char* file_path) const;
 };

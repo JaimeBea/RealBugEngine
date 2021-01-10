@@ -109,10 +109,10 @@ static GameObject* ImportNode(const aiScene* ai_scene, const std::vector<Texture
 	return game_object;
 }
 
-bool SceneImporter::ImportScene(const char* file_name)
+bool SceneImporter::ImportScene(const char* file_path)
 {
 	// Check for extension support
-	std::string extension = App->files->GetFileExtension(file_name);
+	std::string extension = App->files->GetFileExtension(file_path);
 	if (!aiIsExtensionSupported(extension.c_str()))
 	{
 		LOG("Extension is not supported by assimp: \"%s\".", extension);
@@ -120,15 +120,15 @@ bool SceneImporter::ImportScene(const char* file_name)
 	}
 
 	// Import scene
-	LOG("Importing scene from path: \"%s\".", file_name);
-	const aiScene* ai_scene = aiImportFile(file_name, aiProcessPreset_TargetRealtime_MaxQuality);
+	LOG("Importing scene from path: \"%s\".", file_path);
+	const aiScene* ai_scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
 	DEFER
 	{
 		aiReleaseImport(ai_scene);
 	};
 	if (!ai_scene)
 	{
-		LOG("Error importing scene: %s", file_name, aiGetErrorString());
+		LOG("Error importing scene: %s", file_path, aiGetErrorString());
 		return false;
 	}
 
@@ -141,10 +141,10 @@ bool SceneImporter::ImportScene(const char* file_name)
 	{
 		LOG("Loading material %i...", i);
 		aiMaterial* ai_material = ai_scene->mMaterials[i];
-		aiString material_file_dir;
+		aiString material_file_path;
 		aiTextureMapping mapping;
 		unsigned uv_index;
-		if (ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_dir, &mapping, &uv_index) == AI_SUCCESS)
+		if (ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS)
 		{
 			// Check if the material is valid for our purposes
 			assert(mapping == aiTextureMapping_UV);
@@ -152,29 +152,22 @@ bool SceneImporter::ImportScene(const char* file_name)
 
 			// Try to load from the path given in the model file
 			LOG("Trying to import texture...");
-			Texture* texture = TextureImporter::ImportTexture(material_file_dir.C_Str());
+			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
 
 			// Try to load relative to the model folder
 			if (texture == nullptr)
 			{
 				LOG("Trying to import texture relative to model folder...");
-				std::string model_file_dir = file_name;
-				size_t last_slash = model_file_dir.find_last_of('\\');
-				if (last_slash == std::string::npos)
-				{
-					last_slash = model_file_dir.find_last_of('/');
-				}
-				std::string model_folder_dir = model_file_dir.substr(0, last_slash + 1);
-				std::string model_folder_material_file_dir = model_folder_dir + material_file_dir.C_Str();
-				texture = TextureImporter::ImportTexture(model_folder_material_file_dir.c_str());
+				std::string model_folder_path = App->files->GetFileFolder(file_path);
+				std::string model_folder_material_file_path = model_folder_path + "/" + material_file_path.C_Str();
+				texture = TextureImporter::ImportTexture(model_folder_material_file_path.c_str());
 			}
 
 			// Try to load relative to the textures folder
 			if (texture == nullptr)
 			{
 				LOG("Trying to import texture relative to textures folder...");
-				std::string textures_folder_dir = "Textures\\";
-				std::string textures_folder_material_file_dir = textures_folder_dir + material_file_dir.C_Str();
+				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file_path.C_Str();
 				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
 			}
 

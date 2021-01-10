@@ -109,3 +109,17 @@ std::string ModuleFiles::GetFileExtension(const char* file_path) const
 	
 	return last_dot;
 }
+
+std::string ModuleFiles::GetFileFolder(const char* file_path) const
+{
+	const char* last_slash = strrchr(file_path, '/');
+	const char* last_backslash = strrchr(file_path, '\\');
+	const char* last_separator = Max(last_slash, last_backslash);
+
+	if (last_separator == nullptr)
+	{
+		return std::string();
+	}
+
+	return std::string(file_path).substr(0, last_slash - file_path);
+}
