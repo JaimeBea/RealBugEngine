@@ -17,6 +17,10 @@
 
 Texture* TextureImporter::ImportTexture(const char* file_path)
 {
+	// Timer to measure importing a texture
+	MSTimer timer;
+	timer.Start();
+
 	LOG("Importing texture from path: \"%s\".", file_path);
 
 	// Generate image handler
@@ -74,14 +78,18 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 	}
 	App->files->Save(dds_file_path.c_str(), buffer);
 
-	LOG("Texture imported successfuly.");
-
+	unsigned time_ms = timer.Stop();
+	LOG("Texture imported in %ums.", time_ms);
 	return texture;
 }
 
 void TextureImporter::LoadTexture(Texture* texture)
 {
 	if (texture == nullptr) return;
+
+	// Timer to measure loading a texture
+	MSTimer timer;
+	timer.Start();
 
 	std::string file_path = std::string(TEXTURES_PATH) + "/" + texture->file_name + TEXTURE_EXTENSION;
 
@@ -115,7 +123,8 @@ void TextureImporter::LoadTexture(Texture* texture)
 	App->resources->SetMinFilter(App->resources->GetMinFilter());
 	App->resources->SetMagFilter(App->resources->GetMagFilter());
 
-	LOG("Texture loaded successfuly.");
+	unsigned time_ms = timer.Stop();
+	LOG("Texture loaded in %ums.", time_ms);
 }
 
 void TextureImporter::UnloadTexture(Texture* texture)

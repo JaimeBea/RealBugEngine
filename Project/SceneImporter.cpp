@@ -10,6 +10,7 @@
 #include "MeshImporter.h"
 #include "TextureImporter.h"
 #include "GameObject.h"
+#include "MSTimer.h"
 
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
@@ -110,6 +111,10 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& mat
 
 bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 {
+	// Timer to measure importing a scene
+	MSTimer timer;
+	timer.Start();
+
 	// Check for extension support
 	std::string extension = App->files->GetFileExtension(file_path);
 	if (!aiIsExtensionSupported(extension.c_str()))
@@ -202,7 +207,8 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 	LOG("Importing scene tree.");
 	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent);
 
-	LOG("Scene imported.");
+	unsigned time_ms = timer.Stop();
+	LOG("Scene imported in %ums.", time_ms);
 	return true;
 }
 
@@ -210,6 +216,10 @@ bool SceneImporter::LoadScene(const char* file_name)
 {
 	// Clear scene
 	App->scene->ClearScene();
+
+	// Timer to measure loading a scene
+	MSTimer timer;
+	timer.Start();
 
 	// Read from file
 	std::string file_path = std::string(SCENES_PATH) + "/" + file_name + SCENE_EXTENSION;
@@ -254,6 +264,8 @@ bool SceneImporter::LoadScene(const char* file_name)
 		game_object->PostLoad(j_game_object);
 	}
 
+	unsigned time_ms = timer.Stop();
+	LOG("Scene loaded in %ums.", time_ms);
 	return true;
 }
 
