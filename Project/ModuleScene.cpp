@@ -65,6 +65,11 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
+	App->files->CreateFolder("Library");
+	App->files->CreateFolder(TEXTURES_PATH);
+	App->files->CreateFolder(MESHES_PATH);
+	App->files->CreateFolder(SCENES_PATH);
+
 	CreateEmptyScene();
 
 	// Loading test TODO: remove

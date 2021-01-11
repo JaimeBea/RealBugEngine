@@ -5,6 +5,7 @@
 
 #include "Math/MathFunc.h"
 #include <string.h>
+#include <windows.h>
 
 #include "Leaks.h"
 
@@ -56,6 +57,41 @@ bool ModuleFiles::Save(const char* file_path, const char* buffer, size_t size, b
 	fwrite(buffer, sizeof(char), size, file);
 
 	return true;
+}
+
+void ModuleFiles::CreateFolder(const char* folder_path) const
+{
+	CreateDirectory(folder_path, nullptr);
+}
+
+void ModuleFiles::EraseFolder(const char* folder_path) const
+{
+	RemoveDirectory(folder_path);
+}
+
+void ModuleFiles::EraseFile(const char* file_path) const
+{
+	DeleteFile(file_path);
+}
+
+std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folder_path) const
+{
+	std::string folder_path_ex = std::string(folder_path) + "\\*";
+	std::vector<std::string> file_paths;
+	WIN32_FIND_DATA data;
+	HANDLE handle = FindFirstFile(folder_path_ex.c_str(), &data);
+	if (handle == INVALID_HANDLE_VALUE) return file_paths;
+	unsigned i = 0;
+	do
+	{
+		if (i >= 2) // Ignore '.' and '..'
+		{
+			file_paths.push_back(data.cFileName);
+		}
+		i++;
+	} while (FindNextFile(handle, &data));
+	FindClose(handle);
+	return file_paths;
 }
 
 std::string ModuleFiles::GetFileNameAndExtension(const char* file_path) const
