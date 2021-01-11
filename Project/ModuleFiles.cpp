@@ -71,7 +71,7 @@ void ModuleFiles::EraseFolder(const char* folder_path) const
 
 void ModuleFiles::EraseFile(const char* file_path) const
 {
-	DeleteFile(file_path);
+	remove(file_path);
 }
 
 std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folder_path) const

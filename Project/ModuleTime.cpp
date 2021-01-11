@@ -4,11 +4,15 @@
 #include "Logging.h"
 #include "Application.h"
 #include "ModuleScene.h"
+#include "ModuleFiles.h"
+#include "SceneImporter.h"
 
 #include "SDL_timer.h"
 #include "Brofiler.h"
 
 #include "Leaks.h"
+
+#define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
 
 ModuleTime::ModuleTime()
 {
@@ -106,6 +110,8 @@ void ModuleTime::StartGame()
 {
 	if (game_started) return;
 
+	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
+
 	game_started = true;
 	game_running = true;
 }
@@ -114,11 +120,14 @@ void ModuleTime::StopGame()
 {
 	if (!game_started) return;
 
+	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
+	std::string temp_scene_file_path = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
+	App->files->EraseFile(temp_scene_file_path.c_str());
+
 	game_started = false;
 	game_running = false;
 
 	time_last_ms = 0;
-	// TODO: Restore the scene
 }
 
 void ModuleTime::PauseGame()
