@@ -27,6 +27,12 @@
     <ClInclude Include="Leaks.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
+    <ClInclude Include="Libs\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="Libs\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="Libs\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="Libs\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="Libs\imgui\ImApp.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Libs\imgui\imconfig.h" />
@@ -157,6 +163,10 @@
     <ClCompile Include="ComponentType.cpp" />
     <ClCompile Include="JsonValue.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Libs\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="Libs\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="Libs\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="Libs\imgui\imgui.cpp" />
     <ClCompile Include="Libs\imgui\imgui_demo.cpp" />
@@ -301,7 +311,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/rapidjson/include; $(ProjectDir)/Libs/brofiler/include; $(ProjectDir)/Libs/assimp/include; $(ProjectDir)/Libs/DeviL/include; $(ProjectDir)/Libs/DebugDraw; $(ProjectDir)/Libs/imgui; $(ProjectDir)/Libs/MathGeoLib; $(ProjectDir)/Libs/SDL/include; $(ProjectDir)/Libs/glew-2.1.0/include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Libs/rapidjson/include;$(ProjectDir)/Libs/brofiler/include;$(ProjectDir)/Libs/assimp/include;$(ProjectDir)/Libs/DeviL/include;$(ProjectDir)/Libs/DebugDraw;$(ProjectDir)/Libs/imgui;$(ProjectDir)/Libs/MathGeoLib;$(ProjectDir)/Libs/SDL/include;$(ProjectDir)/Libs/glew-2.1.0/include;$(ProjectDir)/Libs/ImGuizmo</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>

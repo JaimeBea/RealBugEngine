@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "GameObject.h"
 #include "ComponentBoundingBox.h"
+#include "ComponentMesh.h"
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
@@ -10,10 +11,13 @@
 #include "ModuleTime.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
+#include "MeshImporter.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
 #include "Geometry/Sphere.h"
+#include "Geometry/LineSegment.h"
+#include "Geometry/Triangle.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include "SDL_video.h"
@@ -281,6 +285,57 @@ void ModuleCamera::ChangeFrustrum(Frustum& frustum_, bool change)
 	else
 	{
 		active_frustum = &engine_camera_frustum;
+	}
+}
+
+void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
+{
+	if (active_frustum != &engine_camera_frustum) return;
+
+	std::list<GameObject*> intersected_game_objects;
+	LineSegment ray = engine_camera_frustum.UnProjectLineSegment(pos.x, pos.y);
+
+	// Check with AABB
+	for (GameObject& game_object : App->scene->game_objects)
+	{
+		ComponentBoundingBox* aabb = game_object.GetComponent<ComponentBoundingBox>();
+		if (!aabb) continue;
+
+		float dist_near = engine_camera_frustum.NearPlaneDistance();
+		float dist_far = engine_camera_frustum.FarPlaneDistance();
+
+		if (ray.Intersects(aabb->GetAABBWorldBoundingBox(), dist_near, dist_far))
+		{
+			intersected_game_objects.push_back(&game_object);
+		}
+	}
+
+	GameObject* selected_game_object = nullptr;
+	float min_distance = inf;
+	for (GameObject* game_object : intersected_game_objects)
+	{
+		ComponentMesh* mesh = game_object->GetComponent<ComponentMesh>();
+		if (mesh)
+		{
+			float distance;
+			std::list<Triangle> triangles;
+			MeshImporter::ExtractMeshTriangles(mesh->mesh, triangles);
+			for (Triangle& triangle : triangles)
+			{
+				if (ray.Intersects(triangle, &distance, NULL))
+				{
+					if (distance < min_distance)
+					{
+						selected_game_object = game_object;
+						min_distance = distance;
+					}
+				}
+			}
+		}
+	}
+	if (selected_game_object) 
+	{
+		App->editor->panel_hierarchy.SetSelectedObject(selected_game_object);
 	}
 }
 

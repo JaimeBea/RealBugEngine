@@ -71,9 +71,9 @@ bool ModuleScene::Start()
 	//Load("Test");
 
 	// TODO: Remove after test
-	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
+	//SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
 
-	//SceneImporter::ImportScene("Assets/BakerHouse.fbx");
+	SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
 
 	// Load skybox
 	// clang-format off

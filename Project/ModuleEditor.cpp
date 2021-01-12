@@ -7,6 +7,7 @@
 #include "ModuleScene.h"
 #include "SceneImporter.h"
 
+#include "ImGuizmo.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_sdl.h"
@@ -54,6 +55,9 @@ UpdateStatus ModuleEditor::PreUpdate()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
+	//ImGuizmo::Enable(true);
+	
 
 	return UpdateStatus::CONTINUE;
 }

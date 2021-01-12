@@ -4,9 +4,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{79b8a595-ed5e-49e8-950c-67ec1eb55f5a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{41a9c95d-c7f8-41aa-b8c6-00de5e1c96d1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Libraries">
       <UniqueIdentifier>{82e06375-f960-4178-b3b0-6fd3fe66fbe3}</UniqueIdentifier>
     </Filter>
@@ -18,6 +15,12 @@
     </Filter>
     <Filter Include="Libraries\DebugDraw">
       <UniqueIdentifier>{b4c25d6d-23f2-4e70-93b5-642eeab731b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\ImGuizmo">
+      <UniqueIdentifier>{58bbf47b-4d7a-4c94-bfab-6478e678cd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{41a9c95d-c7f8-41aa-b8c6-00de5e1c96d1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Components">
       <UniqueIdentifier>{39661246-1d23-450e-ba54-492b4367ef9a}</UniqueIdentifier>
@@ -441,6 +444,24 @@
     <ClInclude Include="TextureImporter.h">
       <Filter>Source\Files</Filter>
     </ClInclude>
+    <ClInclude Include="Libs\ImGuizmo\ImCurveEdit.h">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\ImGuizmo\ImGradient.h">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\ImGuizmo\ImGuizmo.h">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\ImGuizmo\ImSequencer.h">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\ImGuizmo\ImZoomSlider.h">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="Libs\imgui\ImApp.h">
+      <Filter>Libraries\ImGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -706,6 +727,18 @@
     </ClCompile>
     <ClCompile Include="ComponentCamera.cpp">
       <Filter>Source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\ImGuizmo\ImCurveEdit.cpp">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\ImGuizmo\ImGradient.cpp">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="Libs\ImGuizmo\ImSequencer.cpp">
+      <Filter>Libraries\ImGuizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

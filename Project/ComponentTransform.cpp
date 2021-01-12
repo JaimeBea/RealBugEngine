@@ -7,13 +7,14 @@
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
+#include "PanelScene.h"
 
-#include "imgui.h"
 #include "Math/float3x3.h"
 
 void ComponentTransform::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+
 	ComponentTransform* transform = selected->GetComponent<ComponentTransform>();
 	float3 pos = transform->GetPosition();
 	float3 scale = transform->GetScale();
@@ -24,6 +25,22 @@ void ComponentTransform::OnEditorUpdate()
 
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
+		if (ImGui::IsKeyPressed(90)) // W key
+			current_guizmo_operation = ImGuizmo::TRANSLATE;
+		if (ImGui::IsKeyPressed(69)) // E key
+			current_guizmo_operation = ImGuizmo::ROTATE;
+		if (ImGui::IsKeyPressed(82)) // R key
+			current_guizmo_operation = ImGuizmo::SCALE;
+		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE))
+			current_guizmo_operation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE))
+			current_guizmo_operation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE))
+			current_guizmo_operation = ImGuizmo::SCALE;
+		ImGui::Separator();
+
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
@@ -51,9 +68,45 @@ void ComponentTransform::OnEditorUpdate()
 				camera->frustum.SetUp(rotationMatrix * float3::unitY);
 			}
 		}
-		ImGui::Separator();
 
+		if (current_guizmo_operation != ImGuizmo::SCALE)
+		{
+			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL))
+				current_guizmo_mode = ImGuizmo::LOCAL;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD))
+				current_guizmo_mode = ImGuizmo::WORLD;
+		}
+		ImGui::Checkbox("##snap", &useSnap);
+		ImGui::SameLine();
+
+		switch (current_guizmo_operation)
+		{
+		case ImGuizmo::TRANSLATE:
+			ImGui::InputFloat3("Snap", &snap[0]);
+			break;
+		case ImGuizmo::ROTATE:
+			ImGui::InputFloat("Angle Snap", &snap[0]);
+			break;
+		case ImGuizmo::SCALE:
+			ImGui::InputFloat("Scale Snap", &snap[0]);
+			break;
+		}
+		ImGui::Checkbox("Bound Sizing", &boundSizing);
+		if (boundSizing)
+		{
+			ImGui::PushID(3);
+			ImGui::Checkbox("", &boundSizingSnap);
+			ImGui::SameLine();
+			ImGui::InputFloat3("Snap", boundsSnap);
+			ImGui::PopID();
+		}
+
+		Frustum& default_frustum = App->camera->engine_camera_frustum;
 		transform->UpdateTransform();
+		float4x4 matrix = transform->GetGlobalMatrix();
+
+		ImGui::Separator();
 	}
 }
 
@@ -181,7 +234,22 @@ float3 ComponentTransform::GetScale() const
 	return scale;
 }
 
+const float4x4& ComponentTransform::GetLocalMatrix() const
+{
+	return local_matrix;
+}
+
 const float4x4& ComponentTransform::GetGlobalMatrix() const
 {
 	return global_matrix;
+}
+
+ImGuizmo::OPERATION ComponentTransform::GetGizmoOperation() const
+{
+	return current_guizmo_operation;
+}
+
+ImGuizmo::MODE ComponentTransform::GetGizmoMode() const
+{
+	return current_guizmo_mode;
 }
