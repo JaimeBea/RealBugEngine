@@ -65,6 +65,11 @@ bool ModuleScene::Init()
 
 bool ModuleScene::Start()
 {
+	App->files->CreateFolder("Library");
+	App->files->CreateFolder(TEXTURES_PATH);
+	App->files->CreateFolder(MESHES_PATH);
+	App->files->CreateFolder(SCENES_PATH);
+
 	CreateEmptyScene();
 
 	// Loading test TODO: remove
@@ -72,7 +77,6 @@ bool ModuleScene::Start()
 
 	// TODO: Remove after test
 	//SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
-
 	SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
 
 	// Load skybox

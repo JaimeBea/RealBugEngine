@@ -16,6 +16,10 @@
 
 Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
 {
+	// Timer to measure importing a mesh
+	MSTimer timer;
+	timer.Start();
+
 	// Create mesh
 	Mesh* mesh = App->resources->meshes.Obtain();
 	mesh->num_vertices = ai_mesh->mNumVertices;
@@ -98,12 +102,18 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
 	LOG("Saving mesh to \"%s\".", file_path.c_str());
 	App->files->Save(file_path.c_str(), buffer);
 
+	unsigned time_ms = timer.Stop();
+	LOG("Mesh imported in %ums", time_ms);
 	return mesh;
 }
 
 void MeshImporter::LoadMesh(Mesh* mesh)
 {
 	if (mesh == nullptr) return;
+
+	// Timer to measure loading a mesh
+	MSTimer timer;
+	timer.Start();
 
 	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
 
@@ -163,6 +173,9 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 
 	// Unbind VAO
 	glBindVertexArray(0);
+
+	unsigned time_ms = timer.Stop();
+	LOG("Mesh loaded in %ums", time_ms);
 }
 
 void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangles)
