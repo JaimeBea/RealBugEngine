@@ -51,6 +51,7 @@ static void AssimpLogCallback(const char* message, char* user)
 bool ModuleScene::Init()
 {
 	game_objects.Allocate(10000);
+	quadtree.Initialize(AABB2D({-1000, -1000}, {1000, 1000}), 8, 4, 10000);
 
 #ifdef _DEBUG
 	log_stream.callback = AssimpLogCallback;
@@ -76,8 +77,8 @@ bool ModuleScene::Start()
 	//Load("Test");
 
 	// TODO: Remove after test
-	//SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
-	SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
+	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
+	//SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
 
 	// Load skybox
 	// clang-format off
@@ -180,6 +181,23 @@ UpdateStatus ModuleScene::Update()
 		}
 
 		App->input->ReleaseDroppedFilePath();
+	}
+
+	// Update Quadtree
+	quadtree.Clear();
+	for (GameObject& game_object : game_objects)
+	{
+		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
+		if (bounding_box == nullptr) continue;
+
+		const AABB& world_aabb = bounding_box->GetWorldAABB();
+		quadtree.Add(&game_object, AABB2D(world_aabb.minPoint.xz(), world_aabb.maxPoint.xz()));
+	}
+
+	// Update GameObjects
+	for (GameObject& game_object : game_objects)
+	{
+		game_object.Update();
 	}
 
 	return UpdateStatus::CONTINUE;

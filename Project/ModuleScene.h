@@ -6,6 +6,7 @@
 #include "ComponentMaterial.h"
 #include "UID.h"
 #include "Pool.h"
+#include "Quadtree.h"
 
 #include <unordered_map>
 #include <string>
@@ -34,8 +35,10 @@ public:
 	std::string file_name = "";
 	GameObject* root = nullptr;
 
-	Pool<GameObject> game_objects = Pool<GameObject>();
-	std::unordered_map<UID, GameObject*> game_objects_id_map = std::unordered_map<UID, GameObject*>();
+	Pool<GameObject> game_objects;
+	std::unordered_map<UID, GameObject*> game_objects_id_map;
+
+	Quadtree<GameObject> quadtree;
 
 	// Skybox
 	unsigned skybox_vao = 0;

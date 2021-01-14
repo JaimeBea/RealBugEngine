@@ -267,7 +267,7 @@ void ModuleCamera::Focus(const GameObject* game_object)
 
 	ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
 	if (!bounding_box) return;
-	const AABB& world_bounding_box = bounding_box->GetAABBWorldBoundingBox();
+	const AABB& world_bounding_box = bounding_box->GetWorldAABB();
 	if (!world_bounding_box.IsFinite()) return;
 
 	Sphere bounding_sphere = world_bounding_box.MinimalEnclosingSphere();
@@ -280,11 +280,11 @@ void ModuleCamera::Focus(const GameObject* game_object)
 	LookAt(model_center.x, model_center.y, model_center.z);
 }
 
-void ModuleCamera::ChangeFrustrum(Frustum& frustum_, bool change)
+void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change)
 {
 	if (change)
 	{
-		active_frustum = &frustum_;
+		active_frustum = &frustum;
 	}
 	else
 	{
@@ -351,6 +351,55 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 
 	unsigned time_ms = timer.Stop();
 	LOG("Ray Tracing in %ums", time_ms);
+
+	
+}
+
+void ModuleCamera::ChangeCullingFrustum(Frustum& frustum, bool change)
+{
+	if (change)
+	{
+		culling_frustum = &frustum;
+	}
+	else
+	{
+		culling_frustum = &engine_camera_frustum;
+	}
+}
+
+void ModuleCamera::CalculateFrustumPlanes()
+{
+	float3 pos = culling_frustum->Pos();
+	float3 up = culling_frustum->Up().Normalized();
+	float3 front = culling_frustum->Front();
+	float3 right = culling_frustum->WorldRight().Normalized();
+	float far_distance = culling_frustum->FarPlaneDistance();
+	float near_distance = culling_frustum->NearPlaneDistance();
+	float aspect_ratio = culling_frustum->AspectRatio();
+	float vFOV = culling_frustum->VerticalFov();
+
+	float h_far = 2 * tan(vFOV / 2) * far_distance;
+	float w_far = h_far * aspect_ratio;
+	float h_near = 2 * tan(vFOV / 2) * near_distance;
+	float w_near = h_near * aspect_ratio;
+	float3 far_center = pos + front * far_distance;
+	float3 near_center = pos + front * near_distance;
+
+	frustum_planes.points[0] = far_center + (up * h_far / 2) - (right * w_far / 2);
+	frustum_planes.points[1] = far_center + (up * h_far / 2) + (right * w_far / 2);
+	frustum_planes.points[2] = far_center - (up * h_far / 2) - (right * w_far / 2);
+	frustum_planes.points[3] = far_center - (up * h_far / 2) + (right * w_far / 2);
+	frustum_planes.points[4] = near_center + (up * h_near / 2) - (right * w_near / 2);
+	frustum_planes.points[5] = near_center + (up * h_near / 2) + (right * w_near / 2);
+	frustum_planes.points[6] = near_center - (up * h_near / 2) - (right * w_near / 2);
+	frustum_planes.points[7] = near_center - (up * h_near / 2) + (right * w_near / 2);
+
+	frustum_planes.planes[0] = culling_frustum->LeftPlane();
+	frustum_planes.planes[1] = culling_frustum->RightPlane();
+	frustum_planes.planes[2] = culling_frustum->TopPlane();
+	frustum_planes.planes[3] = culling_frustum->BottomPlane();
+	frustum_planes.planes[4] = culling_frustum->FarPlane();
+	frustum_planes.planes[5] = culling_frustum->NearPlane();
 }
 
 vec ModuleCamera::GetFront() const
@@ -411,4 +460,19 @@ float4x4 ModuleCamera::GetProjectionMatrix() const
 float4x4 ModuleCamera::GetViewMatrix() const
 {
 	return active_frustum->ViewMatrix();
+}
+
+Frustum* ModuleCamera::GetActiveFrustum() const
+{
+	return active_frustum;
+}
+
+Frustum* ModuleCamera::GetCullingFrustum() const
+{
+	return culling_frustum;
+}
+
+const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const
+{
+	return frustum_planes;
 }

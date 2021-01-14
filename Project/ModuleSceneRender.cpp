@@ -17,6 +17,8 @@
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 #include "SceneImporter.h"
+#include "Logging.h"
+#include "PerformanceTimer.h"
 
 #include "GL/glew.h"
 #include "Geometry/Plane.h"
@@ -32,57 +34,76 @@ UpdateStatus ModuleSceneRender::Update()
 	// Draw Skybox as a first element
 	DrawSkyBox();
 
-	// Draw the scene
-	GameObject* root = App->scene->root;
-	if (root != nullptr)
+	// Draw the scene TODO: optimize
+	//PerformanceTimer timer;
+	//timer.Start();
+	for (GameObject& game_object : App->scene->game_objects)
 	{
-		DrawGameObjectRecursive(root);
+		game_object.flag = false;
 	}
+	App->camera->CalculateFrustumPlanes();
+	DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	//LOG("Scene draw: %llu mis", timer.Stop());
 
 	return UpdateStatus::CONTINUE;
 }
 
-void ModuleSceneRender::DrawGameObjectRecursive(GameObject* game_object)
+void ModuleSceneRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb)
 {
-	for (GameObject& camera : App->scene->game_objects)
+	if (node.IsBranch())
 	{
-		ComponentCamera* component_camera = camera.GetComponent<ComponentCamera>();
-		if (component_camera == nullptr) continue;
+		vec2d center = (aabb.maxPoint - aabb.minPoint) * 0.5f;
 
-		if (component_camera->GetCullingStatus())
+		const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
+		AABB2D top_left_aabb = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
+		DrawSceneRecursive(top_left, top_left_aabb);
+
+		const Quadtree<GameObject>::Node& top_right = node.child_nodes->nodes[1];
+		AABB2D top_right_aabb = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
+		DrawSceneRecursive(top_right, top_right_aabb);
+
+		const Quadtree<GameObject>::Node& bottom_left = node.child_nodes->nodes[2];
+		AABB2D bottom_left_aabb = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
+		DrawSceneRecursive(bottom_left, bottom_left_aabb);
+
+		const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
+		AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
+		DrawSceneRecursive(bottom_right, bottom_right_aabb);
+	}
+	else
+	{
+		AABB aabb_3d = AABB({aabb.minPoint.x, -inf, aabb.minPoint.y}, {aabb.maxPoint.x, inf, aabb.maxPoint.y});
+		if (CheckIfInsideFrustum(aabb_3d, aabb_3d))
 		{
-			frustum_culling_active = true;
-			component_camera->UpdateFrustumPlanes();
-			if (CheckIfInsideFrustum(game_object, &component_camera->frustum_planes))
+			const Quadtree<GameObject>::Element* element = node.first_element;
+			while (element != nullptr)
 			{
-				DrawGameObject(game_object);
-				break;
+				GameObject* game_object = element->object;
+				if (!game_object->flag)
+				{
+					ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
+					const AABB& game_object_aabb = bounding_box->GetWorldAABB();
+					const OBB& game_object_obb = bounding_box->GetWorldOBB();
+					if (CheckIfInsideFrustum(game_object_aabb, game_object_obb))
+					{
+						DrawGameObject(game_object);
+					}
+
+					game_object->flag = true;
+				}
+				element = element->next;
 			}
 		}
 	}
-
-	if (!frustum_culling_active)
-	{
-		DrawGameObject(game_object);
-	}
-
-	frustum_culling_active = false;
-
-	for (GameObject* child : game_object->GetChildren())
-	{
-		DrawGameObjectRecursive(child);
-	}
 }
 
-bool ModuleSceneRender::CheckIfInsideFrustum(GameObject* game_object, FrustumPlanes* frustum_planes)
+bool ModuleSceneRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb)
 {
-	ComponentBoundingBox* boundig_box = game_object->GetComponent<ComponentBoundingBox>();
-	if (!boundig_box) return false;
-
 	float3 points[8];
-	boundig_box->GetOBBWorldBoundingBox().GetCornerPoints(points);
+	obb.GetCornerPoints(points);
 
-	for (Plane& plane : frustum_planes->planes)
+	const FrustumPlanes& frustum_planes = App->camera->GetFrustumPlanes();
+	for (const Plane& plane : frustum_planes.planes)
 	{
 		// check box outside/inside of frustum
 		int out = 0;
@@ -93,27 +114,25 @@ bool ModuleSceneRender::CheckIfInsideFrustum(GameObject* game_object, FrustumPla
 		if (out == 8) return false;
 	}
 
-	AABB aabb = boundig_box->GetAABBWorldBoundingBox();
-
 	// check frustum outside/inside box
 	int out;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].x > aabb.MaxX()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].x > aabb.MaxX()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].x < aabb.MinX()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].x < aabb.MinX()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].y > aabb.MaxY()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].y > aabb.MaxY()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].y < aabb.MinY()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].y < aabb.MinY()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].z > aabb.MaxZ()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].z > aabb.MaxZ()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes->points[i].z < aabb.MinZ()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].z < aabb.MinZ()) ? 1 : 0);
 	if (out == 8) return false;
 
 	return true;
@@ -126,11 +145,8 @@ void ModuleSceneRender::DrawGameObject(GameObject* game_object)
 	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
 	ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
 
-	transform->CalculateGlobalMatrix();
-
 	if (bounding_box && draw_all_bounding_boxes)
 	{
-		bounding_box->CalculateWorldBoundingBox();
 		bounding_box->DrawBoundingBox();
 	}
 

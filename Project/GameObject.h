@@ -50,6 +50,9 @@ public:
 	std::string name = "GameObject";
 	std::vector<Component*> components;
 
+	// Auxiliary variable to help with iterating on the Quadtree
+	bool flag = false;
+
 private:
 	bool active = true;
 	GameObject* parent = nullptr;

@@ -5,11 +5,17 @@
 #include "MathGeoLibFwd.h"
 #include "Math/float4x4.h"
 #include "Math/float3.h"
-#include "Math/float2.h"
+#include "Geometry/Plane.h"
 #include "Geometry/Frustum.h"
 
 class Model;
 class GameObject;
+
+struct FrustumPlanes
+{
+	float3 points[8]; // 0: ftl, 1: ftr, 2: fbl, 3: fbr, 4: ntl, 5: ntr, 6: nbl, 7: nbr. (far/near, top/bottom, left/right).
+	Plane planes[6]; // left, right, up, down, front, back
+};
 
 class ModuleCamera : public Module
 {
@@ -31,9 +37,9 @@ public:
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
 	void Focus(const GameObject* game_object);
-	void ChangeFrustrum(Frustum& frustum_, bool default_);
-	bool EngineFrustumActived();
-	void CalculateFrustumNearestObject(float2 pos);
+	void ChangeActiveFrustum(Frustum& frustum, bool change);
+	void ChangeCullingFrustum(Frustum& frustum, bool change);
+	void CalculateFrustumPlanes();
 
 	vec GetFront() const;
 	vec GetUp() const;
@@ -47,6 +53,9 @@ public:
 	float GetAspectRatio() const;
 	float4x4 GetProjectionMatrix() const;
 	float4x4 GetViewMatrix() const;
+	Frustum* GetActiveFrustum() const;
+	Frustum* GetCullingFrustum() const;
+	const FrustumPlanes& GetFrustumPlanes() const;
 
 public:
 	float movement_speed = 0.4f;
@@ -56,6 +65,11 @@ public:
 	Frustum engine_camera_frustum = Frustum();
 
 private:
-	Frustum* active_frustum = &engine_camera_frustum;
 	float focus_distance = 0.0f;
+
+	Frustum engine_camera_frustum = Frustum();
+	Frustum* active_frustum = &engine_camera_frustum;
+	Frustum* culling_frustum = &engine_camera_frustum;
+
+	FrustumPlanes frustum_planes = FrustumPlanes();
 };
