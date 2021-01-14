@@ -10,6 +10,7 @@ class ComponentBoundingBox : public Component
 public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
+	void Update() override;
 	void Save(JsonValue& j_component) const override;
 	void Load(const JsonValue& j_component) override;
 
@@ -18,13 +19,13 @@ public:
 	void DrawBoundingBox();
 	void Invalidate();
 
-	const OBB& GetOBBWorldBoundingBox() const;
-	const AABB& GetAABBWorldBoundingBox() const;
+	const OBB& GetWorldOBB() const;
+	const AABB& GetWorldAABB() const;
 
 private:
-	bool dirty = true;
+	AABB local_aabb = {{0, 0, 0}, {0, 0, 0}};
 
-	AABB local_bounding_box_aabb = AABB(vec(0, 0, 0), vec(0, 0, 0));
-	AABB world_bounding_box_aabb = AABB(vec(0, 0, 0), vec(0, 0, 0));
-	OBB world_bounding_box_obb = OBB(world_bounding_box_aabb);
+	bool dirty = true;
+	AABB world_aabb = {{0, 0, 0}, {0, 0, 0}};
+	OBB world_obb = {world_aabb};
 };

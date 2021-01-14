@@ -5,11 +5,17 @@
 #include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModuleEditor.h"
+#include "ModuleCamera.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "imgui.h"
 #include "Math/float3x3.h"
+
+void ComponentTransform::Update()
+{
+	CalculateGlobalMatrix();
+}
 
 void ComponentTransform::OnEditorUpdate()
 {
@@ -30,7 +36,6 @@ void ComponentTransform::OnEditorUpdate()
 			transform->SetPosition(pos);
 			if (camera != nullptr)
 			{
-				camera->Invalidate();
 				camera->frustum.SetPos(pos);
 			}
 		}
@@ -45,15 +50,12 @@ void ComponentTransform::OnEditorUpdate()
 			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
 			if (camera != nullptr)
 			{
-				camera->Invalidate();
 				float3x3 rotationMatrix = float3x3::FromQuat(GetRotation());
 				camera->frustum.SetFront(rotationMatrix * float3::unitZ);
 				camera->frustum.SetUp(rotationMatrix * float3::unitY);
 			}
 		}
 		ImGui::Separator();
-
-		transform->UpdateTransform();
 	}
 }
 
@@ -148,21 +150,6 @@ void ComponentTransform::CalculateGlobalMatrix(bool force)
 		}
 
 		dirty = false;
-	}
-}
-
-void ComponentTransform::UpdateTransform()
-{
-	CalculateGlobalMatrix();
-
-	GameObject& owner = GetOwner();
-	ComponentBoundingBox* bounding_box = owner.GetComponent<ComponentBoundingBox>();
-	if (bounding_box) bounding_box->CalculateWorldBoundingBox();
-
-	for (GameObject* child : owner.GetChildren())
-	{
-		ComponentTransform* transform = child->GetComponent<ComponentTransform>();
-		transform->UpdateTransform();
 	}
 }
 
