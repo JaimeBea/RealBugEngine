@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "ComponentBoundingBox.h"
 #include "ComponentMesh.h"
+#include "ComponentTransform.h"
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
@@ -12,9 +13,12 @@
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "MeshImporter.h"
+#include "MSTimer.h"
+#include "Logging.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
+#include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
 #include "Geometry/LineSegment.h"
 #include "Geometry/Triangle.h"
@@ -288,8 +292,16 @@ void ModuleCamera::ChangeFrustrum(Frustum& frustum_, bool change)
 	}
 }
 
+bool ModuleCamera::EngineFrustumActived()
+{
+	return (active_frustum == &engine_camera_frustum);
+}
+
 void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 {
+	MSTimer timer;
+	timer.Start();
+
 	if (active_frustum != &engine_camera_frustum) return;
 
 	std::list<GameObject*> intersected_game_objects;
@@ -301,10 +313,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 		ComponentBoundingBox* aabb = game_object.GetComponent<ComponentBoundingBox>();
 		if (!aabb) continue;
 
-		float dist_near = engine_camera_frustum.NearPlaneDistance();
-		float dist_far = engine_camera_frustum.FarPlaneDistance();
-
-		if (ray.Intersects(aabb->GetAABBWorldBoundingBox(), dist_near, dist_far))
+		if (ray.Intersects(aabb->GetAABBWorldBoundingBox()))
 		{
 			intersected_game_objects.push_back(&game_object);
 		}
@@ -317,9 +326,10 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 		ComponentMesh* mesh = game_object->GetComponent<ComponentMesh>();
 		if (mesh)
 		{
+			float4x4 model = game_object->GetComponent<ComponentTransform>()->GetGlobalMatrix();
 			float distance;
 			std::list<Triangle> triangles;
-			MeshImporter::ExtractMeshTriangles(mesh->mesh, triangles);
+			MeshImporter::ExtractMeshTriangles(mesh->mesh, triangles, model);
 			for (Triangle& triangle : triangles)
 			{
 				if (ray.Intersects(triangle, &distance, NULL))
@@ -333,10 +343,14 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 			}
 		}
 	}
-	if (selected_game_object) 
+	if (selected_game_object)
 	{
+		LOG("Selected: %s", selected_game_object->name.c_str());
 		App->editor->panel_hierarchy.SetSelectedObject(selected_game_object);
 	}
+
+	unsigned time_ms = timer.Stop();
+	LOG("Ray Tracing in %ums", time_ms);
 }
 
 vec ModuleCamera::GetFront() const

@@ -1,4 +1,5 @@
 #include "ModuleDebugDraw.h"
+#include "ModuleDebugDraw.h"
 
 #include "Globals.h"
 
@@ -595,7 +596,7 @@ UpdateStatus ModuleDebugDraw::Update()
 {
 	BROFILER_CATEGORY("ModuleDebugDraw - Update", Profiler::Color::Purple)
 
-	dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
+	//dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
 	dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
 
 	return UpdateStatus::CONTINUE;

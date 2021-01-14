@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
+#include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleEditor.h"
@@ -14,6 +15,7 @@
 #include "ImGuizmo.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
+#include "Geometry/OBB.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include "Logging.h"
@@ -26,6 +28,8 @@ PanelScene::PanelScene()
 
 void PanelScene::Update()
 {
+	int imguizmo_size = 100;
+
 	ImGui::SetNextWindowDockID(App->editor->dock_main_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
 	{
@@ -71,21 +75,18 @@ void PanelScene::Update()
 		{
 			App->camera->ViewportResized((int) size.x, (int) size.y);
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
-
-			int count = 0;
-			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			ImDrawVert* last_vertex = draw_list->VtxBuffer.end();
-			framebuffer_position = {
-				last_vertex->pos.x,
-				last_vertex->pos.y,
-			};
 			framebuffer_size = {
 				size.x,
 				size.y,
 			};
 		}
 
-		//LOG("x: %f , y: %f", frame_buffer_position.x, frame_buffer_position.y);
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		ImDrawVert* last_vertex = draw_list->VtxBuffer.end();
+		framebuffer_position = {
+			last_vertex->pos.x,
+			last_vertex->pos.y,
+		};
 
 		// Draw
 		ImGui::Image((void*) App->renderer->render_texture, size, ImVec2(0, 1), ImVec2(1, 0));
@@ -94,9 +95,10 @@ void PanelScene::Update()
 		if (ImGui::IsWindowFocused())
 		{
 			ImGui::CaptureKeyboardFromApp(false);
-			ImGui::CaptureMouseFromApp(true);
-			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered())
+
+			if (ImGui::IsMouseClicked(0) && !ImGui::IsMouseClicked(1) && ImGui::IsItemHovered() && !ImGuizmo::IsUsing())
 			{
+				ImGui::CaptureMouseFromApp(true);
 				ImGuiIO& io = ImGui::GetIO();
 				float2 mouse_pos_normalized;
 				mouse_pos_normalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebuffer_position.x) / (size.x), 1.0f));
@@ -106,33 +108,35 @@ void PanelScene::Update()
 			}
 			ImGui::CaptureMouseFromApp(false);
 		}
-		float viewManipulateRight = framebuffer_position.x + size.x;
-		float viewManipulateTop = framebuffer_position.y;
-
-		ImGuizmo::SetDrawlist();
-		ImGuizmo::SetRect(framebuffer_position.x, framebuffer_position.y, size.x, size.y);
-
-		Frustum& default_frustum = App->camera->engine_camera_frustum;
-		float4x4 camera_view = default_frustum.ViewMatrix();
-		float4x4 camera_projection = default_frustum.ProjectionMatrix();
 
 		GameObject* selected_object = App->editor->panel_hierarchy.selected_object;
 		if (selected_object)
 		{
+			float viewManipulateRight = framebuffer_position.x + framebuffer_size.x;
+			float viewManipulateTop = framebuffer_position.y;
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(framebuffer_position.x, framebuffer_position.y, framebuffer_size.x, framebuffer_size.y);
+
+			Frustum& default_frustum = App->camera->engine_camera_frustum;
+			float4x4 camera_view = float4x4(default_frustum.ViewMatrix()).Transposed();
+			float4x4 camera_projection = default_frustum.ProjectionMatrix().Transposed();
+
 			ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
 			transform->CalculateGlobalMatrix();
-			float4x4 matrix = transform->GetGlobalMatrix();
-			ImGuizmo::DrawCubes(camera_view.ptr(), camera_projection.ptr(), matrix.ptr(), 0);
-			ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), transform->GetGizmoOperation(), transform->GetGizmoMode(), matrix.ptr(), NULL); //, useSnap ? &snap[0] : NULL); // boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
+			float4x4 matrix = transform->GetGlobalMatrix().Transposed();
 
-			// Update Transform values
-			//float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-			//ImGuizmo::DecomposeMatrixToComponents(matrix.ptr(), matrixTranslation, matrixRotation, matrixScale);
-			//transform->SetPosition(float3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
-			//transform->SetRotation(Quat::FromEulerXYZ(matrixRotation[0] * DEGTORAD, matrixRotation[1] * DEGTORAD, matrixRotation[2] * DEGTORAD));
-			//transform->SetScale(float3(matrixScale[0], matrixScale[1], matrixScale[2]));
+			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), transform->GetGizmoOperation(), transform->GetGizmoMode(), matrix.ptr(), NULL, transform->GetUseSnap() ? transform->GetSnap().ptr() : NULL))
+			{
+				float4x4 matrix_t = matrix.Transposed();
+				float3 angles = matrix_t.ToEulerXYZ();
+				transform->SetPosition(matrix_t.TranslatePart());
+				transform->SetRotation(Quat::FromEulerXYZ(angles[0], angles[1] , angles[2]));
+				transform->SetScale(matrix_t.GetScale());
+
+				transform->CalculateGlobalMatrix();
+			}
+			ImGuizmo::ViewManipulate(camera_view.ptr(), 4, ImVec2(viewManipulateRight - imguizmo_size, viewManipulateTop), ImVec2(imguizmo_size, imguizmo_size), 0x10101010);
 		}
-		ImGuizmo::ViewManipulate(camera_view.ptr(), 0, ImVec2(viewManipulateRight - 100, viewManipulateTop), ImVec2(100, 100), 0x10101010);
 
 		ImGui::End();
 	}

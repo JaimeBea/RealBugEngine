@@ -9,7 +9,7 @@
 
 #include "assimp/mesh.h"
 #include "Math/float3.h"
-#include "Geometry/Triangle.h"
+#include "Math/float4.h"
 #include "GL/glew.h"
 #include <list>
 #include <vector>
@@ -178,7 +178,7 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 	LOG("Mesh loaded in %ums", time_ms);
 }
 
-void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangles)
+void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangles, float4x4 model)
 {
 	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
 
@@ -202,7 +202,7 @@ void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangl
 		cursor += sizeof(float);
 		vertex[2] = *(float*) cursor;
 		cursor += sizeof(float) * 6;
-		vertices.push_back(float3(vertex[0], vertex[1], vertex[2]));
+		vertices.push_back((model * float4(vertex[0], vertex[1], vertex[2], 1)).xyz());
 	}
 
 	for (int i = 0; i < mesh->num_indices/3; i++)

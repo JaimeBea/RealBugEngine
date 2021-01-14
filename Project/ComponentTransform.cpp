@@ -5,11 +5,13 @@
 #include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModuleEditor.h"
+#include "ModuleInput.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
 #include "PanelScene.h"
 
 #include "Math/float3x3.h"
+#include "SDL.h"
 
 void ComponentTransform::OnEditorUpdate()
 {
@@ -20,17 +22,19 @@ void ComponentTransform::OnEditorUpdate()
 	float3 scale = transform->GetScale();
 	float3 rotation = transform->GetRotation().ToEulerXYZ() * RADTODEG;
 
-	// if is a camera
-	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
+	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
+	{
+		if (App->input->GetKey(SDL_SCANCODE_W)) // W key
+			current_guizmo_operation = ImGuizmo::TRANSLATE;
+		if (App->input->GetKey(SDL_SCANCODE_E)) // E key
+			current_guizmo_operation = ImGuizmo::ROTATE;
+		if (App->input->GetKey(SDL_SCANCODE_R)) // R key
+			current_guizmo_operation = ImGuizmo::SCALE;
+	}
 
+	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
-		if (ImGui::IsKeyPressed(90)) // W key
-			current_guizmo_operation = ImGuizmo::TRANSLATE;
-		if (ImGui::IsKeyPressed(69)) // E key
-			current_guizmo_operation = ImGuizmo::ROTATE;
-		if (ImGui::IsKeyPressed(82)) // R key
-			current_guizmo_operation = ImGuizmo::SCALE;
 		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE))
 			current_guizmo_operation = ImGuizmo::TRANSLATE;
 		ImGui::SameLine();
@@ -77,7 +81,10 @@ void ComponentTransform::OnEditorUpdate()
 			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD))
 				current_guizmo_mode = ImGuizmo::WORLD;
 		}
-		ImGui::Checkbox("##snap", &useSnap);
+		ImGui::Separator();
+
+		ImGui::TextColored(title_color, "Snap");
+		ImGui::Checkbox("##snap", &use_snap);
 		ImGui::SameLine();
 
 		switch (current_guizmo_operation)
@@ -92,21 +99,9 @@ void ComponentTransform::OnEditorUpdate()
 			ImGui::InputFloat("Scale Snap", &snap[0]);
 			break;
 		}
-		ImGui::Checkbox("Bound Sizing", &boundSizing);
-		if (boundSizing)
-		{
-			ImGui::PushID(3);
-			ImGui::Checkbox("", &boundSizingSnap);
-			ImGui::SameLine();
-			ImGui::InputFloat3("Snap", boundsSnap);
-			ImGui::PopID();
-		}
-
-		Frustum& default_frustum = App->camera->engine_camera_frustum;
-		transform->UpdateTransform();
-		float4x4 matrix = transform->GetGlobalMatrix();
 
 		ImGui::Separator();
+		transform->UpdateTransform();
 	}
 }
 
@@ -252,4 +247,14 @@ ImGuizmo::OPERATION ComponentTransform::GetGizmoOperation() const
 ImGuizmo::MODE ComponentTransform::GetGizmoMode() const
 {
 	return current_guizmo_mode;
+}
+
+bool ComponentTransform::GetUseSnap() const
+{
+	return use_snap;
+}
+
+float3 ComponentTransform::GetSnap()
+{
+	return float3(snap[0], snap[1], snap[2]);
 }

@@ -34,6 +34,10 @@ public:
 
 	ImGuizmo::OPERATION GetGizmoOperation() const;
 	ImGuizmo::MODE GetGizmoMode() const;
+	bool GetUseSnap() const;
+	float3 GetSnap();
+
+
 
 private:
 	//ImGuizmo
@@ -48,10 +52,6 @@ private:
 	float4x4 global_matrix = float4x4::identity;
 	bool dirty = true;
 
-	bool useSnap = false;
+	bool use_snap = false;
 	float snap[3] = {1.f, 1.f, 1.f};
-	float bounds[6] = {-0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f};
-	float boundsSnap[3] = {0.1f, 0.1f, 0.1f};
-	bool boundSizing = false;
-	bool boundSizingSnap = false;
 };

@@ -32,6 +32,7 @@ public:
 	void LookAt(float x, float y, float z);
 	void Focus(const GameObject* game_object);
 	void ChangeFrustrum(Frustum& frustum_, bool default_);
+	bool EngineFrustumActived();
 	void CalculateFrustumNearestObject(float2 pos);
 
 	vec GetFront() const;
