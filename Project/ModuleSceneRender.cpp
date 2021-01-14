@@ -72,7 +72,7 @@ void ModuleSceneRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& nod
 	}
 	else
 	{
-		AABB aabb_3d = AABB({aabb.minPoint.x, -1000, aabb.minPoint.y}, {aabb.maxPoint.x, 1000, aabb.maxPoint.y});
+		AABB aabb_3d = AABB({aabb.minPoint.x, -inf, aabb.minPoint.y}, {aabb.maxPoint.x, inf, aabb.maxPoint.y});
 		if (CheckIfInsideFrustum(aabb_3d, aabb_3d))
 		{
 			const Quadtree<GameObject>::Element* element = node.first_element;
