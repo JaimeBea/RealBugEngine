@@ -441,6 +441,9 @@
     <ClInclude Include="TextureImporter.h">
       <Filter>Source\Files</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
