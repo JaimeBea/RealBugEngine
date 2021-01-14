@@ -77,6 +77,19 @@ public:
 		count -= 1;
 	}
 
+	void ReleaseAll()
+	{
+		// Reset count and free list
+		count = 0;
+		first_free = data;
+
+		// Initialize free list
+		for (size_t i = 0; i < size; ++i)
+		{
+			next_free[i] = data + (i + 1);
+		}
+	}
+
 	size_t Count()
 	{
 		return count;

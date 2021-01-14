@@ -11,6 +11,7 @@ class ComponentTransform : public Component
 public:
 	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM);
 
+	void Update() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue& j_component) const override;
 	void Load(const JsonValue& j_component) override;
@@ -22,7 +23,6 @@ public:
 	void SetRotation(Quat rotation);
 	void SetScale(float3 scale);
 	void CalculateGlobalMatrix(bool force = false);
-	void UpdateTransform();
 
 	float3 GetPosition() const;
 	Quat GetRotation() const;
@@ -33,8 +33,8 @@ private:
 	float3 position = float3(0, 0, 0);
 	Quat rotation = Quat::identity;
 	float3 scale = float3(1, 1, 1);
-
+	
+	bool dirty = true;
 	float4x4 local_matrix = float4x4::identity;
 	float4x4 global_matrix = float4x4::identity;
-	bool dirty = true;
 };
