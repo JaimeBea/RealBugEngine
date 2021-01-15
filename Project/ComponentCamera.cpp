@@ -30,7 +30,7 @@ void ComponentCamera::DrawGizmos()
 {
 	if (active_camera) return;
 
-	dd::frustum((frustum.ProjectionMatrix() * frustum.ViewMatrix()).Inverted(), dd::colors::White);
+	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
 
 void ComponentCamera::OnEditorUpdate()
