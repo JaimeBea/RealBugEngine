@@ -117,8 +117,8 @@ void PanelScene::Update()
 			ImGui::CaptureMouseFromApp(false);
 		}
 
-		float viewManipulateRight = framebuffer_position.x + framebuffer_size.x;
-		float viewManipulateTop = framebuffer_position.y;
+		float view_manipulate_right = framebuffer_position.x + framebuffer_size.x;
+		float view_manipulate_top = framebuffer_position.y;
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(framebuffer_position.x, framebuffer_position.y, framebuffer_size.x, framebuffer_size.y);
 
@@ -130,24 +130,34 @@ void PanelScene::Update()
 		if (selected_object)
 		{
 			ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
-			float4x4 matrix = transform->GetGlobalMatrix().Transposed();
-
-			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), transform->GetGizmoOperation(), transform->GetGizmoMode(), matrix.ptr(), NULL, transform->GetUseSnap() ? transform->GetSnap().ptr() : NULL))
+			GameObject* parent = selected_object->GetParent();
+			float4x4 inverse_parent_matrix = float4x4::identity;
+			if (parent != nullptr)
 			{
-				float4x4 matrix_t = matrix.Transposed();
-				float3 angles = matrix_t.RotatePart().ToEulerXYZ();
-				transform->SetPosition(matrix_t.TranslatePart());
-				transform->SetScale(matrix_t.RotatePart().GetScale());
-				transform->SetRotation(Quat::FromEulerXYZ(angles[0], angles[1], angles[2]));
+				ComponentTransform* parent_transform = parent->GetComponent<ComponentTransform>();
+				inverse_parent_matrix = parent_transform->GetGlobalMatrix().Inverted();
+			}
+			float4x4 global_matrix = transform->GetGlobalMatrix().Transposed();
+
+			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), transform->GetGizmoOperation(), transform->GetGizmoMode(), global_matrix.ptr(), NULL, transform->GetUseSnap() ? transform->GetSnap().ptr() : NULL))
+			{
+				float4x4 local_matrix = inverse_parent_matrix * global_matrix.Transposed();
+
+				float3 translation;
+				Quat rotation;
+				float3 scale;
+				local_matrix.Decompose(translation, rotation, scale);
+
+				transform->SetPosition(translation);
+				transform->SetScale(scale);
+				transform->SetRotation(rotation);
 			}
 		}
-		ImGuizmo::ViewManipulate(camera_view.ptr(), 4, ImVec2(viewManipulateRight - imguizmo_size, viewManipulateTop), ImVec2(imguizmo_size, imguizmo_size), 0x10101010);
+
+		ImGuizmo::ViewManipulate(camera_view.ptr(), 4, ImVec2(view_manipulate_right - imguizmo_size, view_manipulate_top), ImVec2(imguizmo_size, imguizmo_size), 0x10101010);
 
 		float4x4 new_camera_view = camera_view.InverseTransposed();
-
-		App->camera->engine_camera_frustum.SetUp(new_camera_view.Col(1).xyz());
-		App->camera->engine_camera_frustum.SetFront(-new_camera_view.Col(2).xyz());
-		App->camera->engine_camera_frustum.SetPos(new_camera_view.Col(3).xyz());
+		App->camera->engine_camera_frustum.SetFrame(new_camera_view.Col(3).xyz(), -new_camera_view.Col(2).xyz(), new_camera_view.Col(1).xyz());
 
 		ImGui::End();
 	}
