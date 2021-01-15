@@ -13,6 +13,7 @@ public:
 	{
 	public:
 		T* object = nullptr;
+		AABB2D aabb = {{0, 0}, {0, 0}};
 		Element* next = nullptr;
 	};
 
@@ -33,6 +34,7 @@ public:
 				// Leaf that can't split or leaf with space
 				Element* new_first_element = tree.elements.Obtain();
 				new_first_element->object = object;
+				new_first_element->aabb = object_aabb;
 				new_first_element->next = first_element;
 				first_element = new_first_element;
 				element_count += 1;
@@ -40,37 +42,12 @@ public:
 			else
 			{
 				// Leaf with no space that can split
-				Split(tree, object_aabb, depth, node_aabb);
+				Split(tree, depth, node_aabb);
 				child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb);
 			}
 		}
 
-		void Remove(Quadtree& tree, T* object)
-		{
-			if (IsBranch())
-			{
-				// Branch
-				child_nodes->Remove(tree, object);
-			}
-			else
-			{
-				// Leaf
-				Element** address = &first_element;
-				while (*address != nullptr)
-				{
-					if ((*address)->object == object)
-					{
-						tree.elements.Release(*address);
-						*address = (*address)->next;
-						return; // Elements can't repeat within the same node
-					}
-
-					address = &(*address)->next;
-				}
-			}
-		}
-
-		void Split(Quadtree& tree, const AABB2D& object_aabb, unsigned depth, const AABB2D& node_aabb)
+		void Split(Quadtree& tree, unsigned depth, const AABB2D& node_aabb)
 		{
 			// Get first element before anything changes
 			Element* element = first_element;
@@ -84,11 +61,13 @@ public:
 			while (element != nullptr)
 			{
 				T* object = element->object;
+				AABB2D object_aabb = element->aabb;
 				Element* next_element = element->next;
 				tree.elements.Release(element);
-				element = next_element;
 
 				child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb);
+
+				element = next_element;
 			}
 		}
 
@@ -126,34 +105,30 @@ public:
 
 		void Add(Quadtree& tree, T* object, const AABB2D& object_aabb, unsigned depth, const AABB2D& node_aabb)
 		{
-			vec2d center = (node_aabb.maxPoint - node_aabb.minPoint) * 0.5f;
+			vec2d center = node_aabb.minPoint + (node_aabb.maxPoint - node_aabb.minPoint) * 0.5f;
 
-			Node& top_left = nodes[0];
 			AABB2D top_left_aabb = {{node_aabb.minPoint.x, center.y}, {center.x, node_aabb.maxPoint.y}};
 			if (object_aabb.Intersects(top_left_aabb))
 			{
-				top_left.Add(tree, object, object_aabb, depth, top_left_aabb);
+				nodes[0].Add(tree, object, object_aabb, depth, top_left_aabb);
 			}
 
-			Node& top_right = nodes[1];
 			AABB2D top_right_aabb = {{center.x, center.y}, {node_aabb.maxPoint.x, node_aabb.maxPoint.y}};
 			if (object_aabb.Intersects(top_right_aabb))
 			{
-				top_right.Add(tree, object, object_aabb, depth, top_right_aabb);
+				nodes[1].Add(tree, object, object_aabb, depth, top_right_aabb);
 			}
 
-			Node& bottom_left = nodes[2];
 			AABB2D bottom_left_aabb = {{node_aabb.minPoint.x, node_aabb.minPoint.y}, {center.x, center.y}};
 			if (object_aabb.Intersects(bottom_left_aabb))
 			{
-				bottom_left.Add(tree, object, object_aabb, depth, bottom_left_aabb);
+				nodes[2].Add(tree, object, object_aabb, depth, bottom_left_aabb);
 			}
 
-			Node& bottom_right = nodes[3];
 			AABB2D bottom_right_aabb = {{center.x, node_aabb.minPoint.y}, {node_aabb.maxPoint.x, center.y}};
 			if (object_aabb.Intersects(bottom_right_aabb))
 			{
-				bottom_right.Add(tree, object, object_aabb, depth, bottom_right_aabb);
+				nodes[3].Add(tree, object, object_aabb, depth, bottom_right_aabb);
 			}
 		}
 
@@ -185,11 +160,6 @@ public:
 	void Add(T* object, const AABB2D& object_aabb)
 	{
 		root.Add(*this, object, object_aabb, 1, bounds);
-	}
-
-	void Remove(T* object)
-	{
-		root.Remove(*this, object);
 	}
 
 	void Clear()

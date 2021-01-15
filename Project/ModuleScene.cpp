@@ -51,7 +51,7 @@ static void AssimpLogCallback(const char* message, char* user)
 bool ModuleScene::Init()
 {
 	game_objects.Allocate(10000);
-	quadtree.Initialize(AABB2D({-1000, -1000}, {1000, 1000}), 8, 4, 10000);
+	quadtree.Initialize(AABB2D({-100, -100}, {100, 100}), 8, 4, 20000);
 
 #ifdef _DEBUG
 	log_stream.callback = AssimpLogCallback;

@@ -20,6 +20,7 @@
 #include "Logging.h"
 #include "PerformanceTimer.h"
 
+#include "debugdraw.h"
 #include "GL/glew.h"
 #include "Geometry/Plane.h"
 #include "Brofiler.h"
@@ -35,46 +36,60 @@ UpdateStatus ModuleSceneRender::Update()
 	DrawSkyBox();
 
 	// Draw the scene TODO: optimize
-	//PerformanceTimer timer;
-	//timer.Start();
 	for (GameObject& game_object : App->scene->game_objects)
 	{
 		game_object.flag = false;
 	}
 	App->camera->CalculateFrustumPlanes();
+	PerformanceTimer timer;
+	timer.Start();
 	DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
-	//LOG("Scene draw: %llu mis", timer.Stop());
+	LOG("Scene draw: %llu mis", timer.Stop());
 
 	return UpdateStatus::CONTINUE;
 }
 
 void ModuleSceneRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb)
 {
-	if (node.IsBranch())
+	AABB aabb_3d = AABB({aabb.minPoint.x, -inf, aabb.minPoint.y}, {aabb.maxPoint.x, inf, aabb.maxPoint.y});
+	if (true || CheckIfInsideFrustum(aabb_3d, aabb_3d))
 	{
-		vec2d center = (aabb.maxPoint - aabb.minPoint) * 0.5f;
-
-		const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
-		AABB2D top_left_aabb = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
-		DrawSceneRecursive(top_left, top_left_aabb);
-
-		const Quadtree<GameObject>::Node& top_right = node.child_nodes->nodes[1];
-		AABB2D top_right_aabb = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
-		DrawSceneRecursive(top_right, top_right_aabb);
-
-		const Quadtree<GameObject>::Node& bottom_left = node.child_nodes->nodes[2];
-		AABB2D bottom_left_aabb = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
-		DrawSceneRecursive(bottom_left, bottom_left_aabb);
-
-		const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
-		AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
-		DrawSceneRecursive(bottom_right, bottom_right_aabb);
-	}
-	else
-	{
-		AABB aabb_3d = AABB({aabb.minPoint.x, -inf, aabb.minPoint.y}, {aabb.maxPoint.x, inf, aabb.maxPoint.y});
-		if (CheckIfInsideFrustum(aabb_3d, aabb_3d))
+		if (node.IsBranch())
 		{
+			vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
+
+			const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
+			AABB2D top_left_aabb = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
+			DrawSceneRecursive(top_left, top_left_aabb);
+
+			const Quadtree<GameObject>::Node& top_right = node.child_nodes->nodes[1];
+			AABB2D top_right_aabb = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
+			DrawSceneRecursive(top_right, top_right_aabb);
+
+			const Quadtree<GameObject>::Node& bottom_left = node.child_nodes->nodes[2];
+			AABB2D bottom_left_aabb = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
+			DrawSceneRecursive(bottom_left, bottom_left_aabb);
+
+			const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
+			AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
+			DrawSceneRecursive(bottom_right, bottom_right_aabb);
+		}
+		else
+		{
+			if (true)
+			{
+				float3 points[8] = {
+					{aabb.minPoint.x, 0, aabb.minPoint.y},
+					{aabb.maxPoint.x, 0, aabb.minPoint.y},
+					{aabb.maxPoint.x, 0, aabb.maxPoint.y},
+					{aabb.minPoint.x, 0, aabb.maxPoint.y},
+					{aabb.minPoint.x, 30, aabb.minPoint.y},
+					{aabb.maxPoint.x, 30, aabb.minPoint.y},
+					{aabb.maxPoint.x, 30, aabb.maxPoint.y},
+					{aabb.minPoint.x, 30, aabb.maxPoint.y},
+				};
+				dd::box(points, dd::colors::White);
+			}
 			const Quadtree<GameObject>::Element* element = node.first_element;
 			while (element != nullptr)
 			{
