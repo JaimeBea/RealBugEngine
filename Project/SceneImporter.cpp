@@ -22,45 +22,57 @@
 
 #include "Leaks.h"
 
-static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent)
+static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulated_transform)
 {
-	LOG("Importing node: \"%s\"", node->mName.C_Str());
+	std::string name = node->mName.C_Str();
+	LOG("Importing node: \"%s\"", name.c_str());
 
-	// Create GameObject
-	GameObject* game_object = App->scene->CreateGameObject(parent);
-
-	// Load name
-	game_object->name = node->mName.C_Str();
-
-	// Load transform
-	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	const float4x4& matrix = *(float4x4*) &node->mTransformation;
-	float3 position;
-	Quat rotation;
-	float3 scale;
-	matrix.Decompose(position, rotation, scale);
-	transform->SetPosition(position);
-	transform->SetRotation(rotation);
-	transform->SetScale(scale);
-	transform->CalculateGlobalMatrix();
-	LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
-
-	// Save min and max points
-	vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
-	vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
-
-	// Load meshes
-	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+	if (name.find("$AssimpFbx$") != std::string::npos) // Auxiliary node
 	{
-		LOG("Importing mesh %i", i);
-		aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
+		// Import children nodes
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
+		{
+			const float4x4& transform = accumulated_transform * (*(float4x4*) &node->mTransformation);
+			ImportNode(ai_scene, materials, node->mChildren[i], parent, transform);
+		}
+	}
+	else // Normal node
+	{
+		// Create GameObject
+		GameObject* game_object = App->scene->CreateGameObject(parent);
 
-		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-		mesh->mesh = MeshImporter::ImportMesh(ai_mesh);
-		mesh->mesh->material_index = i;
+		// Load name
+		game_object->name = name;
 
-		// TODO: Move mesh loading to a better place
-		MeshImporter::LoadMesh(mesh->mesh);
+		// Load transform
+		ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
+		const float4x4& matrix = accumulated_transform * (*(float4x4*) &node->mTransformation);
+		float3 position;
+		Quat rotation;
+		float3 scale;
+		matrix.Decompose(position, rotation, scale);
+		transform->SetPosition(position);
+		transform->SetRotation(rotation);
+		transform->SetScale(scale);
+		transform->CalculateGlobalMatrix();
+		LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
+
+		// Save min and max points
+		vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
+		vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
+
+		// Load meshes
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+		{
+			LOG("Importing mesh %i", i);
+			aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
+
+			ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
+			mesh->mesh = MeshImporter::ImportMesh(ai_mesh);
+			mesh->mesh->material_index = i;
+
+			// TODO: Move mesh loading to a better place
+			MeshImporter::LoadMesh(mesh->mesh);
 
 		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
 		if (materials.size() > 0)
@@ -76,28 +88,29 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& mat
 			}
 		}
 
-		// Update min and max points
-		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
-		{
-			aiVector3D vertex = ai_mesh->mVertices[j];
-			if (vertex.x < min_point.x) min_point.x = vertex.x;
-			if (vertex.y < min_point.y) min_point.y = vertex.y;
-			if (vertex.z < min_point.z) min_point.z = vertex.z;
-			if (vertex.x > max_point.x) max_point.x = vertex.x;
-			if (vertex.y > max_point.y) max_point.y = vertex.y;
-			if (vertex.z > max_point.z) max_point.z = vertex.z;
+			// Update min and max points
+			for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
+			{
+				aiVector3D vertex = ai_mesh->mVertices[j];
+				if (vertex.x < min_point.x) min_point.x = vertex.x;
+				if (vertex.y < min_point.y) min_point.y = vertex.y;
+				if (vertex.z < min_point.z) min_point.z = vertex.z;
+				if (vertex.x > max_point.x) max_point.x = vertex.x;
+				if (vertex.y > max_point.y) max_point.y = vertex.y;
+				if (vertex.z > max_point.z) max_point.z = vertex.z;
+			}
 		}
-	}
 
-	// Create bounding box
-	ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
-	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
-	bounding_box->CalculateWorldBoundingBox();
+		// Create bounding box
+		ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
+		bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
+		bounding_box->CalculateWorldBoundingBox();
 
-	// Import children nodes
-	for (unsigned int i = 0; i < node->mNumChildren; ++i)
-	{
-		ImportNode(ai_scene, materials, node->mChildren[i], game_object);
+		// Import children nodes
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
+		{
+			ImportNode(ai_scene, materials, node->mChildren[i], game_object, float4x4::identity);
+		}
 	}
 }
 
@@ -244,7 +257,7 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 
 	// Create scene tree
 	LOG("Importing scene tree.");
-	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent);
+	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent, float4x4::identity);
 
 	unsigned time_ms = timer.Stop();
 	LOG("Scene imported in %ums.", time_ms);
