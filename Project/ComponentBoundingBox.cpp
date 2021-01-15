@@ -46,8 +46,8 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force)
 	{
 		GameObject& owner = GetOwner();
 		ComponentTransform* transform = owner.GetComponent<ComponentTransform>();
-		float3x3 transformed = transform->GetGlobalMatrix().Float3x3Part();
-		world_obb = local_aabb.Transform(transform->GetGlobalMatrix());
+		world_obb = OBB(local_aabb);
+		world_obb.Transform(transform->GetGlobalMatrix());
 		world_aabb = world_obb.MinimalEnclosingAABB();
 		dirty = false;
 	}
