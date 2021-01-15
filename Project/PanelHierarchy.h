@@ -15,7 +15,6 @@ public:
 
 public:
 	GameObject* selected_object = nullptr;
-	UID selected_id = 0;
 
 private:
 	int window_width = 0;
