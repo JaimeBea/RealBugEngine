@@ -116,3 +116,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		ImGui::TreePop();
 	}
 }
+
+void PanelHierarchy::SetSelectedObject(GameObject* game_object)
+{
+	selected_object = game_object;
+	selected_id = game_object->GetID();
+}

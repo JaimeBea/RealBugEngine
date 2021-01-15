@@ -224,10 +224,32 @@ void PanelConfiguration::Update()
 			ImGui::TextColored(title_color, "Gizmos");
 			ImGui::Checkbox("Draw Bounding Boxes", &App->scene_renderer->draw_all_bounding_boxes);
 			ImGui::Separator();
-	
+
 			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);
 			ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
 			ImGui::ColorEdit3("Ambient Color", App->scene_renderer->ambient_color.ptr());
+		}
+
+		// Camera
+		if (ImGui::CollapsingHeader("Engine Camera"))
+		{
+			Frustum& frustum = App->camera->GetEngineFrustum();
+			vec front = frustum.Front();
+			vec up = frustum.Up();
+			ImGui::TextColored(title_color, "Frustum");
+			ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+			float near_plane = frustum.NearPlaneDistance();
+			float far_plane = frustum.FarPlaneDistance();
+			if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f"))
+			{
+				frustum.SetViewPlaneDistances(near_plane, far_plane);
+			}
+			if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f"))
+			{
+				frustum.SetViewPlaneDistances(near_plane, far_plane);
+			}
 		}
 	}
 	ImGui::End();

@@ -22,7 +22,7 @@
 
 #include "Leaks.h"
 
-static void ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulated_transform)
+static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulated_transform)
 {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
@@ -74,27 +74,19 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& mat
 			// TODO: Move mesh loading to a better place
 			MeshImporter::LoadMesh(mesh->mesh);
 
-			ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
+		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
+		if (materials.size() > 0)
+		{
 			if (ai_mesh->mMaterialIndex >= materials.size())
 			{
-				material->diffuse_map = materials.size() > 0 ? materials.front() : nullptr;
+				material->material = materials.front();
 				LOG("Invalid material found", ai_mesh->mMaterialIndex);
 			}
 			else
 			{
-				Texture* texture = materials[ai_mesh->mMaterialIndex];
-				if (texture == nullptr)
-				{
-					material->diffuse_map = materials.front();
-					LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
-				}
-				else
-				{
-					material->diffuse_map = texture;
-					LOG("Texture applied: %i", texture->gl_texture);
-				}
+				material->material = materials[ai_mesh->mMaterialIndex];
 			}
-			material->has_diffuse_map = material->diffuse_map ? true : false;
+		}
 
 			// Update min and max points
 			for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
@@ -152,7 +144,7 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 	// TODO: Add Specular Texture Loading logic
 	// Load materials
 	LOG("Importing %i materials...", ai_scene->mNumMaterials);
-	std::vector<Texture*> materials;
+	std::vector<Material> materials;
 	materials.reserve(ai_scene->mNumMaterials);
 	for (unsigned int i = 0; i < ai_scene->mNumMaterials; ++i)
 	{
@@ -160,7 +152,9 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 		aiMaterial* ai_material = ai_scene->mMaterials[i];
 		aiString material_file_path;
 		aiTextureMapping mapping;
+		aiColor4D color;
 		unsigned uv_index;
+		Material material;
 		if (ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS)
 		{
 			// Check if the material is valid for our purposes
@@ -168,7 +162,53 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 			assert(uv_index == 0);
 
 			// Try to load from the path given in the model file
-			LOG("Trying to import texture...");
+			LOG("Trying to import diffuse texture...");
+			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
+
+			// Try to load relative to the model folder
+			if (texture == nullptr)
+			{
+				LOG("Trying to import texture relative to model folder...");
+				std::string model_folder_path = App->files->GetFileFolder(file_path);
+				std::string model_folder_material_file_path = model_folder_path + "/" + material_file_path.C_Str();
+				texture = TextureImporter::ImportTexture(model_folder_material_file_path.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (texture == nullptr)
+			{
+				LOG("Trying to import texture relative to textures folder...");
+				std::string material_file = App->files->GetFileNameAndExtension(material_file_path.C_Str());
+				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file;
+				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
+			}
+
+			if (texture == nullptr)
+			{
+				LOG("Unable to find diffuse texture file.");
+			}
+			else
+			{
+				LOG("Diffuse texture imported successfuly.");
+				material.has_diffuse_map = true;
+				material.diffuse_map = texture;
+				// TODO: Move load to a better place
+				TextureImporter::LoadTexture(texture);
+			}
+		}
+		else
+		{
+			LOG("Diffuse texture not found.");
+		}
+
+		if (ai_material->GetTexture(aiTextureType_SPECULAR, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS)
+		{
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uv_index == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to import specular texture...");
 			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
 
 			// Try to load relative to the model folder
@@ -191,29 +231,28 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 
 			if (texture == nullptr)
 			{
-				LOG("Unable to find texture file.");
+				LOG("Unable to find specular texture file.");
 			}
 			else
 			{
-				LOG("Texture imported successfuly.");
-			}
-
-			// TODO: Move load to a better place
-			if (texture != nullptr)
-			{
+				LOG("Specular texture imported successfuly.");
+				material.has_specular_map = true;
+				material.specular_map = texture;
+				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);
 			}
-
-			materials.push_back(texture);
 		}
 		else
 		{
-			materials.push_back(nullptr);
-
-			LOG("Diffuse texture not found.");
+			LOG("Specular texture not found.");
 		}
 
+		ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, material.diffuse_color);
+		ai_material->Get(AI_MATKEY_COLOR_SPECULAR, material.specular_color);
+		ai_material->Get(AI_MATKEY_SHININESS, material.shininess);
+
 		LOG("Material imported.");
+		materials.push_back(material);
 	}
 
 	// Create scene tree

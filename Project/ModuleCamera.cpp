@@ -3,6 +3,8 @@
 #include "Globals.h"
 #include "GameObject.h"
 #include "ComponentBoundingBox.h"
+#include "ComponentMesh.h"
+#include "ComponentTransform.h"
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
@@ -10,10 +12,16 @@
 #include "ModuleTime.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
+#include "MeshImporter.h"
+#include "MSTimer.h"
+#include "Logging.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
+#include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
+#include "Geometry/LineSegment.h"
+#include "Geometry/Triangle.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include "SDL_video.h"
@@ -284,6 +292,58 @@ void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change)
 	}
 }
 
+void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
+{
+	//MSTimer timer;
+	//timer.Start();
+
+	if (active_frustum != &engine_camera_frustum) return;
+
+	std::list<GameObject*> intersected_game_objects;
+	LineSegment ray = engine_camera_frustum.UnProjectLineSegment(pos.x, pos.y);
+
+	// Check with AABB
+	for (GameObject& game_object : App->scene->game_objects)
+	{
+		ComponentBoundingBox* aabb = game_object.GetComponent<ComponentBoundingBox>();
+		if (!aabb) continue;
+
+		if (ray.Intersects(aabb->GetWorldAABB()))
+		{
+			intersected_game_objects.push_back(&game_object);
+		}
+	}
+
+	GameObject* selected_game_object = nullptr;
+	float min_distance = inf;
+	for (GameObject* game_object : intersected_game_objects)
+	{
+		ComponentMesh* mesh = game_object->GetComponent<ComponentMesh>();
+		if (mesh)
+		{
+			float4x4 model = game_object->GetComponent<ComponentTransform>()->GetGlobalMatrix();
+			float distance;
+			std::list<Triangle> triangles;
+			MeshImporter::ExtractMeshTriangles(mesh->mesh, triangles, model);
+			for (Triangle& triangle : triangles)
+			{
+				if (ray.Intersects(triangle, &distance, NULL))
+				{
+					if (distance < min_distance)
+					{
+						selected_game_object = game_object;
+						min_distance = distance;
+					}
+				}
+			}
+		}
+	}
+	if (selected_game_object) App->editor->panel_hierarchy.SetSelectedObject(selected_game_object);
+
+	//unsigned time_ms = timer.Stop();
+	//LOG("Ray Tracing in %ums", time_ms);
+}
+
 void ModuleCamera::ChangeCullingFrustum(Frustum& frustum, bool change)
 {
 	if (change)
@@ -389,6 +449,11 @@ float4x4 ModuleCamera::GetProjectionMatrix() const
 float4x4 ModuleCamera::GetViewMatrix() const
 {
 	return active_frustum->ViewMatrix();
+}
+
+Frustum ModuleCamera::GetEngineFrustum() const
+{
+	return engine_camera_frustum;
 }
 
 Frustum* ModuleCamera::GetActiveFrustum() const

@@ -12,6 +12,7 @@ public:
 
 	void Update() override;
 	void UpdateHierarchyNode(GameObject* game_object);
+	void SetSelectedObject(GameObject* game_object);
 
 public:
 	GameObject* selected_object = nullptr;
