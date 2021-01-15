@@ -178,7 +178,7 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 	LOG("Mesh loaded in %ums", time_ms);
 }
 
-void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle>& triangles, float4x4 model)
+std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float4x4& model)
 {
 	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
 
@@ -186,34 +186,41 @@ void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle>& triangl
 	Buffer<char> buffer = App->files->Load(file_path.c_str());
 	char* cursor = buffer.Data();
 
-	//Skip header
-	cursor += sizeof(unsigned) * 2;
+	// Header
+	unsigned num_vertices = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
+	unsigned num_indices = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
 
 	// Vertices
 	std::vector<float3> vertices;
-	for (int i = 0; i < mesh->num_vertices; i++)
+	for (int i = 0; i < num_vertices; i++)
 	{
 		float vertex[3] = {};
-		vertex[0] = *(float*) cursor;
+		vertex[0] = *((float*) cursor);
 		cursor += sizeof(float);
-		vertex[1] = *(float*) cursor;
+		vertex[1] = *((float*) cursor);
 		cursor += sizeof(float);
-		vertex[2] = *(float*) cursor;
+		vertex[2] = *((float*) cursor);
 		cursor += sizeof(float) * 6;
 		vertices.push_back((model * float4(vertex[0], vertex[1], vertex[2], 1)).xyz());
 	}
 
-	for (int i = 0; i < mesh->num_indices / 3; i++)
+	std::vector<Triangle> triangles;
+	triangles.reserve(num_indices / 3);
+	for (int i = 0; i < num_indices / 3; i++)
 	{
-		int triange_indices[3] = {};
-		triange_indices[0] = *(unsigned*) cursor;
+		unsigned triange_indices[3] = {};
+		triange_indices[0] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
-		triange_indices[1] = *(unsigned*) cursor;
+		triange_indices[1] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
-		triange_indices[2] = *(unsigned*) cursor;
+		triange_indices[2] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
 		triangles.push_back(Triangle(vertices[triange_indices[0]], vertices[triange_indices[1]], vertices[triange_indices[2]]));
 	}
+
+	return triangles;
 }
 
 void MeshImporter::UnloadMesh(Mesh* mesh)

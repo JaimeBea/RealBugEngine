@@ -26,6 +26,7 @@
 #include "SDL_scancode.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include <vector>
 
 #include "Leaks.h"
 
@@ -294,37 +295,31 @@ void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change)
 
 void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 {
-	//MSTimer timer;
-	//timer.Start();
+	MSTimer timer;
+	timer.Start();
 
 	if (active_frustum != &engine_camera_frustum) return;
 
-	std::list<GameObject*> intersected_game_objects;
+	std::vector<GameObject*> intersecting_objects;
 	LineSegment ray = engine_camera_frustum.UnProjectLineSegment(pos.x, pos.y);
 
 	// Check with AABB
 	for (GameObject& game_object : App->scene->game_objects)
 	{
-		ComponentBoundingBox* aabb = game_object.GetComponent<ComponentBoundingBox>();
-		if (!aabb) continue;
-
-		if (ray.Intersects(aabb->GetWorldAABB()))
-		{
-			intersected_game_objects.push_back(&game_object);
-		}
+		game_object.flag = false;
 	}
+	GetIntersectingAABBRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds, ray, intersecting_objects);
 
 	GameObject* selected_game_object = nullptr;
 	float min_distance = inf;
-	for (GameObject* game_object : intersected_game_objects)
+	float distance = 0;
+	for (GameObject* game_object : intersecting_objects)
 	{
-		ComponentMesh* mesh = game_object->GetComponent<ComponentMesh>();
-		if (mesh)
+		std::vector<ComponentMesh*> meshes = game_object->GetComponents<ComponentMesh>();
+		for (ComponentMesh* mesh : meshes)
 		{
-			float4x4 model = game_object->GetComponent<ComponentTransform>()->GetGlobalMatrix();
-			float distance;
-			std::list<Triangle> triangles;
-			MeshImporter::ExtractMeshTriangles(mesh->mesh, triangles, model);
+			const float4x4& model = game_object->GetComponent<ComponentTransform>()->GetGlobalMatrix();
+			std::vector<Triangle> triangles = MeshImporter::ExtractMeshTriangles(mesh->mesh, model);
 			for (Triangle& triangle : triangles)
 			{
 				if (ray.Intersects(triangle, &distance, NULL))
@@ -338,10 +333,63 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 			}
 		}
 	}
-	if (selected_game_object) App->editor->panel_hierarchy.selected_object = selected_game_object;
 
-	//unsigned time_ms = timer.Stop();
-	//LOG("Ray Tracing in %ums", time_ms);
+	if (selected_game_object != nullptr)
+	{
+		App->editor->panel_hierarchy.selected_object = selected_game_object;
+	}
+
+	LOG("Ray Tracing in %ums", timer.Stop());
+}
+
+
+
+void ModuleCamera::GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& node_aabb, const LineSegment& ray, std::vector<GameObject*>& intersecting_objects)
+{
+	AABB node_aabb_3d = AABB({node_aabb.minPoint.x, -1000000.0f, node_aabb.minPoint.y}, {node_aabb.maxPoint.x, 1000000.0f, node_aabb.maxPoint.y});
+	if (ray.Intersects(node_aabb_3d))
+	{
+		if (node.IsBranch())
+		{
+			vec2d center = node_aabb.minPoint + (node_aabb.maxPoint - node_aabb.minPoint) * 0.5f;
+
+			const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
+			AABB2D top_left_aabb = {{node_aabb.minPoint.x, center.y}, {center.x, node_aabb.maxPoint.y}};
+			GetIntersectingAABBRecursive(top_left, top_left_aabb, ray, intersecting_objects);
+
+			const Quadtree<GameObject>::Node& top_right = node.child_nodes->nodes[1];
+			AABB2D top_right_aabb = {{center.x, center.y}, {node_aabb.maxPoint.x, node_aabb.maxPoint.y}};
+			GetIntersectingAABBRecursive(top_right, top_right_aabb, ray, intersecting_objects);
+
+			const Quadtree<GameObject>::Node& bottom_left = node.child_nodes->nodes[2];
+			AABB2D bottom_left_aabb = {{node_aabb.minPoint.x, node_aabb.minPoint.y}, {center.x, center.y}};
+			GetIntersectingAABBRecursive(bottom_left, bottom_left_aabb, ray, intersecting_objects);
+
+			const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
+			AABB2D bottom_right_aabb = {{center.x, node_aabb.minPoint.y}, {node_aabb.maxPoint.x, center.y}};
+			GetIntersectingAABBRecursive(bottom_right, bottom_right_aabb, ray, intersecting_objects);
+		}
+		else
+		{
+			const Quadtree<GameObject>::Element* element = node.first_element;
+			while (element != nullptr)
+			{
+				GameObject* game_object = element->object;
+				if (!game_object->flag)
+				{
+					ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
+					const AABB& game_object_aabb = bounding_box->GetWorldAABB();
+					if (ray.Intersects(game_object_aabb))
+					{
+						intersecting_objects.push_back(game_object);
+					}
+
+					game_object->flag = true;
+				}
+				element = element->next;
+			}
+		}
+	}
 }
 
 void ModuleCamera::ChangeCullingFrustum(Frustum& frustum, bool change)
