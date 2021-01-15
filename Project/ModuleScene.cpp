@@ -51,7 +51,7 @@ static void AssimpLogCallback(const char* message, char* user)
 bool ModuleScene::Init()
 {
 	game_objects.Allocate(10000);
-	quadtree.Initialize(AABB2D({-1000, -1000}, {1000, 1000}), 8, 4, 10000);
+	quadtree.Initialize(AABB2D({-100, -100}, {100, 100}), 8, 4, 20000);
 
 #ifdef _DEBUG
 	log_stream.callback = AssimpLogCallback;
@@ -77,8 +77,8 @@ bool ModuleScene::Start()
 	//Load("Test");
 
 	// TODO: Remove after test
-	//SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
-	SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
+	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
+	//SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
 
 	// Load skybox
 	// clang-format off
@@ -175,9 +175,16 @@ UpdateStatus ModuleScene::Update()
 		}
 		else if (dropped_file_extension == ".fbx")
 		{
-			SceneImporter::ImportScene(dropped_file_path, App->editor->panel_hierarchy.selected_object);
+			SceneImporter::ImportScene(dropped_file_path, root);
 
 			LOG("Scene imported");
+		}
+		else if (dropped_file_extension == ".png" || dropped_file_extension == ".tif" || dropped_file_extension == ".dds")
+		{
+			Texture* texture = TextureImporter::ImportTexture(dropped_file_path);
+			TextureImporter::LoadTexture(texture);
+
+			LOG("Texture imported");
 		}
 
 		App->input->ReleaseDroppedFilePath();

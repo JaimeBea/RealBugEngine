@@ -444,6 +444,9 @@
     <ClInclude Include="TextureImporter.h">
       <Filter>Source\Files</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source\Resources</Filter>
+    </ClInclude>
     <ClInclude Include="Libs\ImGuizmo\ImCurveEdit.h">
       <Filter>Libraries\ImGuizmo</Filter>
     </ClInclude>

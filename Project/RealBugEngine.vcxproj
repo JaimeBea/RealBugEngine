@@ -119,6 +119,7 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshImporter.h" />
     <ClInclude Include="Module.h" />

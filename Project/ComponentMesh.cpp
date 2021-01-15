@@ -109,12 +109,12 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	{
 		if (materials[mesh->material_index]->IsActive())
 		{
-			Texture* diffuse = materials[mesh->material_index]->diffuse_map;
+			Texture* diffuse = materials[mesh->material_index]->material.diffuse_map;
 			gl_texture = diffuse ? diffuse->gl_texture : 0;
 		}
 	}
 
-	if (materials[mesh->material_index]->material_type == ShaderType::PHONG)
+	if (materials[mesh->material_index]->material.material_type == ShaderType::PHONG)
 	{
 		float3 light_position = float3(0, 0, 0);
 		float3 light_color = float3(0, 0, 0);
@@ -136,14 +136,14 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		program = App->programs->phong_pbr_program;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "material.diffuse_color"), 1, materials[mesh->material_index]->diffuse_color.ptr());
-		glUniform3fv(glGetUniformLocation(program, "material.specular_color"), 1, materials[mesh->material_index]->specular_color.ptr());
-		glUniform1f(glGetUniformLocation(program, "material.shininess"), materials[mesh->material_index]->shininess);
+		glUniform3fv(glGetUniformLocation(program, "material.diffuse_color"), 1, materials[mesh->material_index]->material.diffuse_color.ptr());
+		glUniform3fv(glGetUniformLocation(program, "material.specular_color"), 1, materials[mesh->material_index]->material.specular_color.ptr());
+		glUniform1f(glGetUniformLocation(program, "material.shininess"), materials[mesh->material_index]->material.shininess);
 		glUniform3fv(glGetUniformLocation(program, "material.ambient"), 1, App->scene_renderer->ambient_color.ptr());
 
-		int has_diffuse_map = (materials[mesh->material_index]->has_diffuse_map) ? 1 : 0;
-		int has_specular_map = (materials[mesh->material_index]->has_specular_map) ? 1 : 0;
-		int shininess_alpha = (materials[mesh->material_index]->has_shininess_in_alpha_channel) ? 1 : 0;
+		int has_diffuse_map = (materials[mesh->material_index]->material.has_diffuse_map) ? 1 : 0;
+		int has_specular_map = (materials[mesh->material_index]->material.has_specular_map) ? 1 : 0;
+		int shininess_alpha = (materials[mesh->material_index]->material.has_shininess_in_alpha_channel) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "material.has_diffuse_map"), has_diffuse_map);
 		glUniform1i(glGetUniformLocation(program, "material.has_specular_map"), has_specular_map);
 		glUniform1i(glGetUniformLocation(program, "material.shininess_alpha"), shininess_alpha);

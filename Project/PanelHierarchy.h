@@ -11,12 +11,12 @@ public:
 	PanelHierarchy();
 
 	void Update() override;
-	void UpdateHierarchyNode(GameObject* game_object);
-	void SetSelectedObject(GameObject* game_object);
 
 public:
 	GameObject* selected_object = nullptr;
-	UID selected_id = 0;
+
+private:
+	void UpdateHierarchyNode(GameObject* game_object);
 
 private:
 	int window_width = 0;

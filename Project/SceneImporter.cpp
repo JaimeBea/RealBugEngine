@@ -22,90 +22,95 @@
 
 #include "Leaks.h"
 
-static void ImportNode(const aiScene* ai_scene, const std::vector<Texture*>& materials, const aiNode* node, GameObject* parent)
+static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulated_transform)
 {
-	LOG("Importing node: \"%s\"", node->mName.C_Str());
+	std::string name = node->mName.C_Str();
+	LOG("Importing node: \"%s\"", name.c_str());
 
-	// Create GameObject
-	GameObject* game_object = App->scene->CreateGameObject(parent);
-
-	// Load name
-	game_object->name = node->mName.C_Str();
-
-	// Load transform
-	ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-	const float4x4& matrix = *(float4x4*) &node->mTransformation;
-	float3 position;
-	Quat rotation;
-	float3 scale;
-	matrix.Decompose(position, rotation, scale);
-	transform->SetPosition(position);
-	transform->SetRotation(rotation);
-	transform->SetScale(scale);
-	transform->CalculateGlobalMatrix();
-	LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
-
-	// Save min and max points
-	vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
-	vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
-
-	// Load meshes
-	for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+	if (name.find("$AssimpFbx$") != std::string::npos) // Auxiliary node
 	{
-		LOG("Importing mesh %i", i);
-		aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
-
-		ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-		mesh->mesh = MeshImporter::ImportMesh(ai_mesh);
-		mesh->mesh->material_index = i;
-
-		// TODO: Move mesh loading to a better place
-		MeshImporter::LoadMesh(mesh->mesh);
-
-		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
-		if (ai_mesh->mMaterialIndex >= materials.size())
+		// Import children nodes
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
 		{
-			material->diffuse_map = materials.size() > 0 ? materials.front() : nullptr;
-			LOG("Invalid material found", ai_mesh->mMaterialIndex);
-		}
-		else
-		{
-			Texture* texture = materials[ai_mesh->mMaterialIndex];
-			if (texture == nullptr)
-			{
-				material->diffuse_map = materials.front();
-				LOG("Material has no texture: %i", ai_mesh->mMaterialIndex);
-			}
-			else
-			{
-				material->diffuse_map = texture;
-				LOG("Texture applied: %i", texture->gl_texture);
-			}
-		}
-		material->has_diffuse_map = material->diffuse_map ? true : false;
-
-		// Update min and max points
-		for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
-		{
-			aiVector3D vertex = ai_mesh->mVertices[j];
-			if (vertex.x < min_point.x) min_point.x = vertex.x;
-			if (vertex.y < min_point.y) min_point.y = vertex.y;
-			if (vertex.z < min_point.z) min_point.z = vertex.z;
-			if (vertex.x > max_point.x) max_point.x = vertex.x;
-			if (vertex.y > max_point.y) max_point.y = vertex.y;
-			if (vertex.z > max_point.z) max_point.z = vertex.z;
+			const float4x4& transform = accumulated_transform * (*(float4x4*) &node->mTransformation);
+			ImportNode(ai_scene, materials, node->mChildren[i], parent, transform);
 		}
 	}
-
-	// Create bounding box
-	ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
-	bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
-	bounding_box->CalculateWorldBoundingBox();
-
-	// Import children nodes
-	for (unsigned int i = 0; i < node->mNumChildren; ++i)
+	else // Normal node
 	{
-		ImportNode(ai_scene, materials, node->mChildren[i], game_object);
+		// Create GameObject
+		GameObject* game_object = App->scene->CreateGameObject(parent);
+
+		// Load name
+		game_object->name = name;
+
+		// Load transform
+		ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
+		const float4x4& matrix = accumulated_transform * (*(float4x4*) &node->mTransformation);
+		float3 position;
+		Quat rotation;
+		float3 scale;
+		matrix.Decompose(position, rotation, scale);
+		transform->SetPosition(position);
+		transform->SetRotation(rotation);
+		transform->SetScale(scale);
+		transform->CalculateGlobalMatrix();
+		LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
+
+		// Save min and max points
+		vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
+		vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
+
+		// Load meshes
+		for (unsigned int i = 0; i < node->mNumMeshes; ++i)
+		{
+			LOG("Importing mesh %i", i);
+			aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
+
+			ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
+			mesh->mesh = MeshImporter::ImportMesh(ai_mesh);
+			mesh->mesh->material_index = i;
+
+			// TODO: Move mesh loading to a better place
+			MeshImporter::LoadMesh(mesh->mesh);
+
+			ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
+			if (materials.size() > 0)
+			{
+				if (ai_mesh->mMaterialIndex >= materials.size())
+				{
+					material->material = materials.front();
+					LOG("Invalid material found", ai_mesh->mMaterialIndex);
+				}
+				else
+				{
+					material->material = materials[ai_mesh->mMaterialIndex];
+				}
+			}
+
+			// Update min and max points
+			for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
+			{
+				aiVector3D vertex = ai_mesh->mVertices[j];
+				if (vertex.x < min_point.x) min_point.x = vertex.x;
+				if (vertex.y < min_point.y) min_point.y = vertex.y;
+				if (vertex.z < min_point.z) min_point.z = vertex.z;
+				if (vertex.x > max_point.x) max_point.x = vertex.x;
+				if (vertex.y > max_point.y) max_point.y = vertex.y;
+				if (vertex.z > max_point.z) max_point.z = vertex.z;
+			}
+		}
+
+		// Create bounding box
+		ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
+		bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
+		bounding_box->CalculateWorldBoundingBox();
+
+		// Import children nodes
+		for (unsigned int i = 0; i < node->mNumChildren; ++i)
+		{
+			ImportNode(ai_scene, materials, node->mChildren[i], game_object, float4x4::identity);
+		}
 	}
 }
 
@@ -136,10 +141,9 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 		return false;
 	}
 
-	// TODO: Add Specular Texture Loading logic
 	// Load materials
 	LOG("Importing %i materials...", ai_scene->mNumMaterials);
-	std::vector<Texture*> materials;
+	std::vector<Material> materials;
 	materials.reserve(ai_scene->mNumMaterials);
 	for (unsigned int i = 0; i < ai_scene->mNumMaterials; ++i)
 	{
@@ -147,7 +151,9 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 		aiMaterial* ai_material = ai_scene->mMaterials[i];
 		aiString material_file_path;
 		aiTextureMapping mapping;
+		aiColor4D color;
 		unsigned uv_index;
+		Material material;
 		if (ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS)
 		{
 			// Check if the material is valid for our purposes
@@ -155,7 +161,53 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 			assert(uv_index == 0);
 
 			// Try to load from the path given in the model file
-			LOG("Trying to import texture...");
+			LOG("Trying to import diffuse texture...");
+			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
+
+			// Try to load relative to the model folder
+			if (texture == nullptr)
+			{
+				LOG("Trying to import texture relative to model folder...");
+				std::string model_folder_path = App->files->GetFileFolder(file_path);
+				std::string model_folder_material_file_path = model_folder_path + "/" + material_file_path.C_Str();
+				texture = TextureImporter::ImportTexture(model_folder_material_file_path.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (texture == nullptr)
+			{
+				LOG("Trying to import texture relative to textures folder...");
+				std::string material_file = App->files->GetFileNameAndExtension(material_file_path.C_Str());
+				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file;
+				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
+			}
+
+			if (texture == nullptr)
+			{
+				LOG("Unable to find diffuse texture file.");
+			}
+			else
+			{
+				LOG("Diffuse texture imported successfuly.");
+				material.has_diffuse_map = true;
+				material.diffuse_map = texture;
+				// TODO: Move load to a better place
+				TextureImporter::LoadTexture(texture);
+			}
+		}
+		else
+		{
+			LOG("Diffuse texture not found.");
+		}
+
+		if (ai_material->GetTexture(aiTextureType_SPECULAR, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS)
+		{
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uv_index == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to import specular texture...");
 			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
 
 			// Try to load relative to the model folder
@@ -178,34 +230,33 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 
 			if (texture == nullptr)
 			{
-				LOG("Unable to find texture file.");
+				LOG("Unable to find specular texture file.");
 			}
 			else
 			{
-				LOG("Texture imported successfuly.");
-			}
-
-			// TODO: Move load to a better place
-			if (texture != nullptr)
-			{
+				LOG("Specular texture imported successfuly.");
+				material.has_specular_map = true;
+				material.specular_map = texture;
+				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);
 			}
-
-			materials.push_back(texture);
 		}
 		else
 		{
-			materials.push_back(nullptr);
-
-			LOG("Diffuse texture not found.");
+			LOG("Specular texture not found.");
 		}
 
+		ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, material.diffuse_color);
+		ai_material->Get(AI_MATKEY_COLOR_SPECULAR, material.specular_color);
+		ai_material->Get(AI_MATKEY_SHININESS, material.shininess);
+
 		LOG("Material imported.");
+		materials.push_back(material);
 	}
 
 	// Create scene tree
 	LOG("Importing scene tree.");
-	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent);
+	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent, float4x4::identity);
 
 	unsigned time_ms = timer.Stop();
 	LOG("Scene imported in %ums.", time_ms);
