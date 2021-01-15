@@ -95,9 +95,13 @@ void PanelScene::Update()
 		if (ImGui::IsWindowFocused())
 		{
 			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT))
+			{
 				ImGuizmo::Enable(false);
+			}
 			else
+			{
 				ImGuizmo::Enable(true);
+			}
 
 			ImGui::CaptureKeyboardFromApp(false);
 

@@ -30,25 +30,19 @@ void ComponentTransform::OnEditorUpdate()
 
 	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
 	{
-		if (App->input->GetKey(SDL_SCANCODE_W)) // W key
-			current_guizmo_operation = ImGuizmo::TRANSLATE;
-		if (App->input->GetKey(SDL_SCANCODE_E)) // E key
-			current_guizmo_operation = ImGuizmo::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R)) // R key
-			current_guizmo_operation = ImGuizmo::SCALE;
+		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
+		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE; 
+		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
 	}
 
 	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
-		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE))
-			current_guizmo_operation = ImGuizmo::TRANSLATE;
+		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
 		ImGui::SameLine();
-		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE))
-			current_guizmo_operation = ImGuizmo::ROTATE;
+		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
 		ImGui::SameLine();
-		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE))
-			current_guizmo_operation = ImGuizmo::SCALE;
+		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
 		ImGui::Separator();
 
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
@@ -79,11 +73,9 @@ void ComponentTransform::OnEditorUpdate()
 
 		if (current_guizmo_operation != ImGuizmo::SCALE)
 		{
-			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL))
-				current_guizmo_mode = ImGuizmo::LOCAL;
+			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
 			ImGui::SameLine();
-			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD))
-				current_guizmo_mode = ImGuizmo::WORLD;
+			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
 		}
 		ImGui::Separator();
 

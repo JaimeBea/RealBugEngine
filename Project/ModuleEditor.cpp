@@ -56,8 +56,6 @@ UpdateStatus ModuleEditor::PreUpdate()
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
-	//ImGuizmo::Enable(true);
-	
 
 	return UpdateStatus::CONTINUE;
 }
@@ -139,7 +137,7 @@ UpdateStatus ModuleEditor::Update()
 		break;
 	}
 	modal_to_open = Modal::NONE;
-	
+
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("New scene"))
 	{
