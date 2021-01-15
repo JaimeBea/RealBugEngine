@@ -35,25 +35,28 @@ static void WarpMouseOnEdges()
 	const float2& mouse_position = App->input->GetMousePosition();
 
 	SDL_DisplayMode display_mode;
-	SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(App->window->window), &display_mode);
+	int display_index = SDL_GetWindowDisplayIndex(App->window->window);
+	SDL_GetCurrentDisplayMode(display_index, &display_mode);
+	SDL_Rect display_bounds;
+	SDL_GetDisplayBounds(display_index, &display_bounds);
 	int screen_width = display_mode.w;
 	int screen_height = display_mode.h;
 
-	if (mouse_position.x < 20)
+	if (mouse_position.x < display_bounds.x + 20)
 	{
-		App->input->WarpMouse(screen_width - 22, (int) mouse_position.y);
+		App->input->WarpMouse(display_bounds.x + display_bounds.w - 22, (int) mouse_position.y);
 	}
-	if (mouse_position.y < 20)
+	if (mouse_position.y < display_bounds.y + 20)
 	{
-		App->input->WarpMouse((int) mouse_position.x, screen_height - 22);
+		App->input->WarpMouse((int) mouse_position.x, display_bounds.y + display_bounds.h - 22);
 	}
-	if (mouse_position.x > screen_width - 20)
+	if (mouse_position.x > display_bounds.x + display_bounds.w - 20)
 	{
-		App->input->WarpMouse(22, (int) mouse_position.y);
+		App->input->WarpMouse(display_bounds.x + 22, (int) mouse_position.y);
 	}
-	if (mouse_position.y > screen_height - 20)
+	if (mouse_position.y > display_bounds.y + display_bounds.h - 20)
 	{
-		App->input->WarpMouse((int) mouse_position.x, 22);
+		App->input->WarpMouse((int) mouse_position.x, display_bounds.y + 22);
 	}
 }
 
