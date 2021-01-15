@@ -175,9 +175,16 @@ UpdateStatus ModuleScene::Update()
 		}
 		else if (dropped_file_extension == ".fbx")
 		{
-			SceneImporter::ImportScene(dropped_file_path, App->editor->panel_hierarchy.selected_object);
+			SceneImporter::ImportScene(dropped_file_path, root);
 
 			LOG("Scene imported");
+		}
+		else if (dropped_file_extension == ".png" || dropped_file_extension == ".tif" || dropped_file_extension == ".dds")
+		{
+			Texture* texture = TextureImporter::ImportTexture(dropped_file_path);
+			TextureImporter::LoadTexture(texture);
+
+			LOG("Texture imported");
 		}
 
 		App->input->ReleaseDroppedFilePath();

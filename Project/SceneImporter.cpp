@@ -165,8 +165,8 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 			if (texture == nullptr)
 			{
 				LOG("Trying to import texture relative to textures folder...");
-				std::string material_file_name = App->files->GetFileName(material_file_path.C_Str());
-				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file_name + TEXTURE_EXTENSION;
+				std::string material_file = App->files->GetFileNameAndExtension(material_file_path.C_Str());
+				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file;
 				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
 			}
 

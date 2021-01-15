@@ -72,6 +72,9 @@ void ComponentMaterial::OnEditorUpdate()
 			}
 			if (material->material.material_type == ShaderType::PHONG)
 			{
+				std::vector<Texture*> textures;
+				for (Texture& texture : App->resources->textures) textures.push_back(&texture);
+
 				// Diffuse Texture Combo
 				const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
 				const char* diffuse_item_current = diffuse_items[material->material.has_diffuse_map];
@@ -95,6 +98,26 @@ void ComponentMaterial::OnEditorUpdate()
 				if (diffuse_item_current == diffuse_items[0])
 				{
 					ImGui::ColorEdit3("Color##diffuse_color", material->material.diffuse_color.ptr());
+				}
+				else
+				{
+					std::string& current_diffuse_texture = material->material.diffuse_map ? material->material.diffuse_map->file_name : "";
+					if (ImGui::BeginCombo("Texture##diffuse_texture", current_diffuse_texture.c_str()))
+					{
+						for (unsigned i = 0; i < textures.size(); ++i)
+						{
+							bool is_selected = (current_diffuse_texture == textures[i]->file_name);
+							if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected))
+							{
+								material->material.diffuse_map = textures[i];
+							};
+							if (is_selected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
 				}
 				ImGui::Text("");
 
@@ -121,6 +144,26 @@ void ComponentMaterial::OnEditorUpdate()
 				if (specular_item_current == specular_items[0])
 				{
 					ImGui::ColorEdit3("Color##specular_color", material->material.specular_color.ptr());
+				}
+				else
+				{
+					std::string& current_specular_texture = material->material.specular_map ? material->material.specular_map->file_name : "";
+					if (ImGui::BeginCombo("Texture##specular_texture", current_specular_texture.c_str()))
+					{
+						for (unsigned i = 0; i < textures.size(); ++i)
+						{
+							bool is_selected = (current_specular_texture == textures[i]->file_name);
+							if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected))
+							{
+								material->material.specular_map = textures[i];
+							};
+							if (is_selected)
+							{
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
 				}
 
 				// Shininess Combo
@@ -210,16 +253,32 @@ void ComponentMaterial::OnEditorUpdate()
 				ImGui::EndCombo();
 			}
 			ImGui::Separator();
-			ImGui::TextColored(title_color, "Texture");
-			ImGui::TextWrapped("Size: ");
-			ImGui::SameLine();
-			int width;
-			int height;
-			glGetTextureLevelParameteriv(material->material.diffuse_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material->material.diffuse_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
-			ImGui::TextWrapped("%d x %d", width, height);
-			ImGui::Image((void*) material->material.diffuse_map->gl_texture, ImVec2(200, 200));
-			ImGui::Separator();
+			if (material->material.diffuse_map != nullptr)
+			{
+				ImGui::TextColored(title_color, "Diffuse Texture");
+				ImGui::TextWrapped("Size: ");
+				ImGui::SameLine();
+				int width;
+				int height;
+				glGetTextureLevelParameteriv(material->material.diffuse_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
+				glGetTextureLevelParameteriv(material->material.diffuse_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
+				ImGui::TextWrapped("%d x %d", width, height);
+				ImGui::Image((void*) material->material.diffuse_map->gl_texture, ImVec2(200, 200));
+				ImGui::Separator();
+			}
+			if (material->material.specular_map != nullptr)
+			{
+				ImGui::TextColored(title_color, "Specular Texture");
+				ImGui::TextWrapped("Size: ");
+				ImGui::SameLine();
+				int width;
+				int height;
+				glGetTextureLevelParameteriv(material->material.specular_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
+				glGetTextureLevelParameteriv(material->material.specular_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
+				ImGui::TextWrapped("%d x %d", width, height);
+				ImGui::Image((void*) material->material.specular_map->gl_texture, ImVec2(200, 200));
+				ImGui::Separator();
+			}
 		}
 		count++;
 	}

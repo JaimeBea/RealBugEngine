@@ -6,6 +6,7 @@
 #include "Math/MathFunc.h"
 #include <string.h>
 #include <windows.h>
+#include <algorithm>
 
 #include "Leaks.h"
 
@@ -115,12 +116,7 @@ std::string ModuleFiles::GetFileName(const char* file_path) const
 	const char* last_backslash = strrchr(file_path, '\\');
 	const char* last_separator = Max(last_slash, last_backslash);
 
-	if (last_separator == nullptr)
-	{
-		return file_path;
-	}
-
-	const char* file_name = last_separator + 1;
+	const char* file_name = last_separator == nullptr ? file_path : last_separator + 1;
 	const char* last_dot = strrchr(file_name, '.');
 
 	if (last_dot == nullptr || last_dot == file_name)
@@ -142,8 +138,10 @@ std::string ModuleFiles::GetFileExtension(const char* file_path) const
 	{
 		return std::string();
 	}
-	
-	return last_dot;
+
+	std::string extension = std::string(last_dot);
+	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+	return extension;
 }
 
 std::string ModuleFiles::GetFileFolder(const char* file_path) const
