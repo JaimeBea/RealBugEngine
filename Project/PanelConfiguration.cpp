@@ -223,6 +223,7 @@ void PanelConfiguration::Update()
 			// TODO: Change the Skybox images
 			ImGui::TextColored(title_color, "Gizmos");
 			ImGui::Checkbox("Draw Bounding Boxes", &App->scene_renderer->draw_all_bounding_boxes);
+			ImGui::Checkbox("Draw Quadtree", &App->scene_renderer->draw_quadtree);
 			ImGui::Separator();
 
 			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);

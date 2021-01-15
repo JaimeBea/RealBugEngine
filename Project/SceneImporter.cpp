@@ -74,19 +74,19 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& mat
 			// TODO: Move mesh loading to a better place
 			MeshImporter::LoadMesh(mesh->mesh);
 
-		ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
-		if (materials.size() > 0)
-		{
-			if (ai_mesh->mMaterialIndex >= materials.size())
+			ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
+			if (materials.size() > 0)
 			{
-				material->material = materials.front();
-				LOG("Invalid material found", ai_mesh->mMaterialIndex);
+				if (ai_mesh->mMaterialIndex >= materials.size())
+				{
+					material->material = materials.front();
+					LOG("Invalid material found", ai_mesh->mMaterialIndex);
+				}
+				else
+				{
+					material->material = materials[ai_mesh->mMaterialIndex];
+				}
 			}
-			else
-			{
-				material->material = materials[ai_mesh->mMaterialIndex];
-			}
-		}
 
 			// Update min and max points
 			for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j)
@@ -141,7 +141,6 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent)
 		return false;
 	}
 
-	// TODO: Add Specular Texture Loading logic
 	// Load materials
 	LOG("Importing %i materials...", ai_scene->mNumMaterials);
 	std::vector<Material> materials;
