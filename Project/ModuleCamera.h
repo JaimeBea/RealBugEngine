@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Module.h"
+#include "Quadtree.h"
 
 #include "MathGeoLibFwd.h"
 #include "Math/float4x4.h"
 #include "Math/float3.h"
 #include "Geometry/Plane.h"
 #include "Geometry/Frustum.h"
+#include <vector>
 
 class Model;
 class GameObject;
@@ -65,6 +67,9 @@ public:
 	float zoom_speed = 0.001f;
 	float shift_multiplier = 5.0f;
 	Frustum engine_camera_frustum = Frustum();
+
+private:
+	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& node_aabb, const LineSegment& ray, std::vector<GameObject*>& intersecting_objects);
 
 private:
 	float focus_distance = 0.0f;

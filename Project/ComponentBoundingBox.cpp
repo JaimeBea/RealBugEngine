@@ -56,8 +56,17 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force)
 void ComponentBoundingBox::DrawBoundingBox()
 {
 	float3 points[8];
-
 	world_obb.GetCornerPoints(points);
+
+	// Reorder points for drawing
+	float3 aux;
+	aux = points[2];
+	points[2] = points[3];
+	points[3] = aux;
+	aux = points[6];
+	points[6] = points[7];
+	points[7] = aux;
+
 	dd::box(points, dd::colors::White);
 }
 

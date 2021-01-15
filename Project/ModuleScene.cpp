@@ -73,9 +73,6 @@ bool ModuleScene::Start()
 
 	CreateEmptyScene();
 
-	// Loading test TODO: remove
-	//Load("Test");
-
 	// TODO: Remove after test
 	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
 	//SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
@@ -152,9 +149,6 @@ bool ModuleScene::Start()
 
 	skybox_cube_map = TextureImporter::ImportCubeMap(files);
 	TextureImporter::LoadCubeMap(skybox_cube_map);
-
-	// Saving test TODO: remove
-	//Save("Test");
 
 	return true;
 }
