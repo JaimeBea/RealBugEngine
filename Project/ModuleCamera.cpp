@@ -292,15 +292,10 @@ void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change)
 	}
 }
 
-bool ModuleCamera::EngineFrustumActived()
-{
-	return (active_frustum == &engine_camera_frustum);
-}
-
 void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 {
-	MSTimer timer;
-	timer.Start();
+	//MSTimer timer;
+	//timer.Start();
 
 	if (active_frustum != &engine_camera_frustum) return;
 
@@ -313,7 +308,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 		ComponentBoundingBox* aabb = game_object.GetComponent<ComponentBoundingBox>();
 		if (!aabb) continue;
 
-		if (ray.Intersects(aabb->GetAABBWorldBoundingBox()))
+		if (ray.Intersects(aabb->GetWorldAABB()))
 		{
 			intersected_game_objects.push_back(&game_object);
 		}
@@ -345,14 +340,11 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 	}
 	if (selected_game_object)
 	{
-		LOG("Selected: %s", selected_game_object->name.c_str());
 		App->editor->panel_hierarchy.SetSelectedObject(selected_game_object);
 	}
 
-	unsigned time_ms = timer.Stop();
-	LOG("Ray Tracing in %ums", time_ms);
-
-	
+	//unsigned time_ms = timer.Stop();
+	//LOG("Ray Tracing in %ums", time_ms);
 }
 
 void ModuleCamera::ChangeCullingFrustum(Frustum& frustum, bool change)
@@ -460,6 +452,11 @@ float4x4 ModuleCamera::GetProjectionMatrix() const
 float4x4 ModuleCamera::GetViewMatrix() const
 {
 	return active_frustum->ViewMatrix();
+}
+
+Frustum ModuleCamera::GetEngineFrustum() const
+{
+	return engine_camera_frustum;
 }
 
 Frustum* ModuleCamera::GetActiveFrustum() const

@@ -37,8 +37,6 @@ public:
 	bool GetUseSnap() const;
 	float3 GetSnap();
 
-
-
 private:
 	//ImGuizmo
 	ImGuizmo::OPERATION current_guizmo_operation = ImGuizmo::TRANSLATE;
@@ -47,11 +45,10 @@ private:
 	float3 position = float3(0, 0, 0);
 	Quat rotation = Quat::identity;
 	float3 scale = float3(1, 1, 1);
-	
+
 	bool dirty = true;
 	float4x4 local_matrix = float4x4::identity;
 	float4x4 global_matrix = float4x4::identity;
-	bool dirty = true;
 
 	bool use_snap = false;
 	float snap[3] = {1.f, 1.f, 1.f};

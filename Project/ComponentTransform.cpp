@@ -105,7 +105,6 @@ void ComponentTransform::OnEditorUpdate()
 		}
 
 		ImGui::Separator();
-		transform->UpdateTransform();
 	}
 }
 

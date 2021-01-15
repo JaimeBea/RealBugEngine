@@ -37,6 +37,7 @@ public:
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
 	void Focus(const GameObject* game_object);
+	void CalculateFrustumNearestObject(float2 pos);
 	void ChangeActiveFrustum(Frustum& frustum, bool change);
 	void ChangeCullingFrustum(Frustum& frustum, bool change);
 	void CalculateFrustumPlanes();
@@ -53,6 +54,7 @@ public:
 	float GetAspectRatio() const;
 	float4x4 GetProjectionMatrix() const;
 	float4x4 GetViewMatrix() const;
+	Frustum GetEngineFrustum() const;
 	Frustum* GetActiveFrustum() const;
 	Frustum* GetCullingFrustum() const;
 	const FrustumPlanes& GetFrustumPlanes() const;
@@ -67,7 +69,6 @@ public:
 private:
 	float focus_distance = 0.0f;
 
-	Frustum engine_camera_frustum = Frustum();
 	Frustum* active_frustum = &engine_camera_frustum;
 	Frustum* culling_frustum = &engine_camera_frustum;
 

@@ -94,49 +94,56 @@ void PanelScene::Update()
 		// Capture input
 		if (ImGui::IsWindowFocused())
 		{
+			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT))
+				ImGuizmo::Enable(false);
+			else
+				ImGuizmo::Enable(true);
+
 			ImGui::CaptureKeyboardFromApp(false);
 
-			if (ImGui::IsMouseClicked(0) && !ImGui::IsMouseClicked(1) && ImGui::IsItemHovered() && !ImGuizmo::IsUsing())
+			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver())
 			{
 				ImGui::CaptureMouseFromApp(true);
 				ImGuiIO& io = ImGui::GetIO();
 				float2 mouse_pos_normalized;
 				mouse_pos_normalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebuffer_position.x) / (size.x), 1.0f));
 				mouse_pos_normalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebuffer_position.y) / (size.y), 1.0f));
-				LOG("ImGui x: %f , y: %f", mouse_pos_normalized.x, mouse_pos_normalized.y);
 				App->camera->CalculateFrustumNearestObject(mouse_pos_normalized);
 			}
 			ImGui::CaptureMouseFromApp(false);
 		}
 
+		float viewManipulateRight = framebuffer_position.x + framebuffer_size.x;
+		float viewManipulateTop = framebuffer_position.y;
+		ImGuizmo::SetDrawlist();
+		ImGuizmo::SetRect(framebuffer_position.x, framebuffer_position.y, framebuffer_size.x, framebuffer_size.y);
+
+		Frustum& engine_frustum = App->camera->GetEngineFrustum();
+		float4x4 camera_view = float4x4(engine_frustum.ViewMatrix()).Transposed();
+		float4x4 camera_projection = engine_frustum.ProjectionMatrix().Transposed();
+
 		GameObject* selected_object = App->editor->panel_hierarchy.selected_object;
 		if (selected_object)
 		{
-			float viewManipulateRight = framebuffer_position.x + framebuffer_size.x;
-			float viewManipulateTop = framebuffer_position.y;
-			ImGuizmo::SetDrawlist();
-			ImGuizmo::SetRect(framebuffer_position.x, framebuffer_position.y, framebuffer_size.x, framebuffer_size.y);
-
-			Frustum& default_frustum = App->camera->engine_camera_frustum;
-			float4x4 camera_view = float4x4(default_frustum.ViewMatrix()).Transposed();
-			float4x4 camera_projection = default_frustum.ProjectionMatrix().Transposed();
-
 			ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
-			transform->CalculateGlobalMatrix();
 			float4x4 matrix = transform->GetGlobalMatrix().Transposed();
 
 			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), transform->GetGizmoOperation(), transform->GetGizmoMode(), matrix.ptr(), NULL, transform->GetUseSnap() ? transform->GetSnap().ptr() : NULL))
 			{
 				float4x4 matrix_t = matrix.Transposed();
-				float3 angles = matrix_t.ToEulerXYZ();
+				float3 angles = matrix_t.RotatePart().ToEulerXYZ();
 				transform->SetPosition(matrix_t.TranslatePart());
-				transform->SetRotation(Quat::FromEulerXYZ(angles[0], angles[1] , angles[2]));
-				transform->SetScale(matrix_t.GetScale());
-
-				transform->CalculateGlobalMatrix();
+				transform->SetScale(matrix_t.RotatePart().GetScale());
+				transform->SetRotation(Quat::FromEulerXYZ(angles[0], angles[1], angles[2]));
 			}
-			ImGuizmo::ViewManipulate(camera_view.ptr(), 4, ImVec2(viewManipulateRight - imguizmo_size, viewManipulateTop), ImVec2(imguizmo_size, imguizmo_size), 0x10101010);
 		}
+		ImGuizmo::ViewManipulate(camera_view.ptr(), 4, ImVec2(viewManipulateRight - imguizmo_size, viewManipulateTop), ImVec2(imguizmo_size, imguizmo_size), 0x10101010);
+
+		float4x4 new_camera_view = camera_view.InverseTransposed();
+
+		App->camera->engine_camera_frustum.SetUp(new_camera_view.Col(1).xyz());
+		App->camera->engine_camera_frustum.SetFront(-new_camera_view.Col(2).xyz());
+		App->camera->engine_camera_frustum.SetPos(new_camera_view.Col(3).xyz());
 
 		ImGui::End();
 	}

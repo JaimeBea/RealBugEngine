@@ -224,7 +224,7 @@ void PanelConfiguration::Update()
 			ImGui::TextColored(title_color, "Gizmos");
 			ImGui::Checkbox("Draw Bounding Boxes", &App->scene_renderer->draw_all_bounding_boxes);
 			ImGui::Separator();
-	
+
 			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);
 			ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
 			ImGui::ColorEdit3("Ambient Color", App->scene_renderer->ambient_color.ptr());
@@ -233,7 +233,7 @@ void PanelConfiguration::Update()
 		// Camera
 		if (ImGui::CollapsingHeader("Engine Camera"))
 		{
-			Frustum& frustum = App->camera->engine_camera_frustum;
+			Frustum& frustum = App->camera->GetEngineFrustum();
 			vec front = frustum.Front();
 			vec up = frustum.Up();
 			ImGui::TextColored(title_color, "Frustum");

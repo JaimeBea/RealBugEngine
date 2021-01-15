@@ -13,4 +13,4 @@ namespace MeshImporter
 	void LoadMesh(Mesh* mesh);
 	void ExtractMeshTriangles(Mesh* mesh, std::list<Triangle>& triangles, float4x4 model);
 	void UnloadMesh(Mesh* mesh);
-};
+}; // namespace MeshImporter

@@ -178,11 +178,9 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 	LOG("Mesh loaded in %ums", time_ms);
 }
 
-void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangles, float4x4 model)
+void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle>& triangles, float4x4 model)
 {
 	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
-
-	LOG("Loading mesh from path: \"%s\".", file_path.c_str());
 
 	// Load file
 	Buffer<char> buffer = App->files->Load(file_path.c_str());
@@ -193,7 +191,7 @@ void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangl
 
 	// Vertices
 	std::vector<float3> vertices;
-	for (int i = 0; i < mesh->num_vertices; i++) 
+	for (int i = 0; i < mesh->num_vertices; i++)
 	{
 		float vertex[3] = {};
 		vertex[0] = *(float*) cursor;
@@ -205,10 +203,10 @@ void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle> &triangl
 		vertices.push_back((model * float4(vertex[0], vertex[1], vertex[2], 1)).xyz());
 	}
 
-	for (int i = 0; i < mesh->num_indices/3; i++)
+	for (int i = 0; i < mesh->num_indices / 3; i++)
 	{
-		int triange_indices[3] = {}; 
-		triange_indices[0] = *(unsigned *) cursor;
+		int triange_indices[3] = {};
+		triange_indices[0] = *(unsigned*) cursor;
 		cursor += sizeof(unsigned);
 		triange_indices[1] = *(unsigned*) cursor;
 		cursor += sizeof(unsigned);
