@@ -338,7 +338,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 			}
 		}
 	}
-	if (selected_game_object) App->editor->panel_hierarchy.SetSelectedObject(selected_game_object);
+	if (selected_game_object) App->editor->panel_hierarchy.selected_object = selected_game_object;
 
 	//unsigned time_ms = timer.Stop();
 	//LOG("Ray Tracing in %ums", time_ms);
