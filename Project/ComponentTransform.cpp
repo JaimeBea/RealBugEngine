@@ -5,12 +5,14 @@
 #include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModuleEditor.h"
+#include "ModuleInput.h"
 #include "ModuleCamera.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
+#include "PanelScene.h"
 
-#include "imgui.h"
 #include "Math/float3x3.h"
+#include "SDL.h"
 
 void ComponentTransform::Update()
 {
@@ -20,16 +22,29 @@ void ComponentTransform::Update()
 void ComponentTransform::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+
 	ComponentTransform* transform = selected->GetComponent<ComponentTransform>();
 	float3 pos = transform->GetPosition();
 	float3 scale = transform->GetScale();
 	float3 rotation = transform->GetRotation().ToEulerXYZ() * RADTODEG;
 
-	// if is a camera
-	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
+	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
+	{
+		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
+		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE; 
+		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
+	}
 
+	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
+		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
+		ImGui::Separator();
+
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
@@ -55,6 +70,32 @@ void ComponentTransform::OnEditorUpdate()
 				camera->frustum.SetUp(rotationMatrix * float3::unitY);
 			}
 		}
+
+		if (current_guizmo_operation != ImGuizmo::SCALE)
+		{
+			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
+		}
+		ImGui::Separator();
+
+		ImGui::TextColored(title_color, "Snap");
+		ImGui::Checkbox("##snap", &use_snap);
+		ImGui::SameLine();
+
+		switch (current_guizmo_operation)
+		{
+		case ImGuizmo::TRANSLATE:
+			ImGui::InputFloat3("Snap", &snap[0]);
+			break;
+		case ImGuizmo::ROTATE:
+			ImGui::InputFloat("Angle Snap", &snap[0]);
+			break;
+		case ImGuizmo::SCALE:
+			ImGui::InputFloat("Scale Snap", &snap[0]);
+			break;
+		}
+
 		ImGui::Separator();
 	}
 }
@@ -168,7 +209,32 @@ float3 ComponentTransform::GetScale() const
 	return scale;
 }
 
+const float4x4& ComponentTransform::GetLocalMatrix() const
+{
+	return local_matrix;
+}
+
 const float4x4& ComponentTransform::GetGlobalMatrix() const
 {
 	return global_matrix;
+}
+
+ImGuizmo::OPERATION ComponentTransform::GetGizmoOperation() const
+{
+	return current_guizmo_operation;
+}
+
+ImGuizmo::MODE ComponentTransform::GetGizmoMode() const
+{
+	return current_guizmo_mode;
+}
+
+bool ComponentTransform::GetUseSnap() const
+{
+	return use_snap;
+}
+
+float3 ComponentTransform::GetSnap()
+{
+	return float3(snap[0], snap[1], snap[2]);
 }

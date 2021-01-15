@@ -7,6 +7,7 @@
 #include "ModuleScene.h"
 #include "SceneImporter.h"
 
+#include "ImGuizmo.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "imgui_impl_sdl.h"
@@ -54,6 +55,7 @@ UpdateStatus ModuleEditor::PreUpdate()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -135,7 +137,7 @@ UpdateStatus ModuleEditor::Update()
 		break;
 	}
 	modal_to_open = Modal::NONE;
-	
+
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("New scene"))
 	{
