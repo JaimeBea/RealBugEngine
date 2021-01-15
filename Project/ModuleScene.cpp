@@ -235,8 +235,8 @@ void ModuleScene::CreateEmptyScene()
 	GameObject* light = CreateGameObject(root);
 	light->name = "Directional Light";
 	ComponentTransform* light_transform = light->CreateComponent<ComponentTransform>();
-	light_transform->SetPosition(float3(0, 0, 0));
-	light_transform->SetRotation(Quat::identity);
+	light_transform->SetPosition(float3(0, 300, 0));
+	light_transform->SetRotation(Quat::FromEulerXYZ(0.0f, -pi/2, 0.0));
 	light_transform->SetScale(float3(1, 1, 1));
 	light_transform->CalculateGlobalMatrix();
 	ComponentDirectionalLight* light_light = light->CreateComponent<ComponentDirectionalLight>();

@@ -20,9 +20,11 @@ enum class ComponentType
 	TRANSFORM = 1,
 	MESH = 2,
 	MATERIAL = 3,
-	DIRECTIONAL_LIGHT = 4,
-	BOUNDING_BOX = 5,
-	CAMERA = 6
+	BOUNDING_BOX = 4,
+	CAMERA = 5,
+	DIRECTIONAL_LIGHT = 6,
+	POINT_LIGHT = 7,
+	SPOT_LIGHT = 8
 };
 
 Component* CreateComponentByType(GameObject& game_object, ComponentType type, bool active = true);

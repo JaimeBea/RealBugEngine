@@ -41,7 +41,7 @@ void ComponentMesh::OnEditorUpdate()
 		}
 		else
 		{
-			sprintf_s(name, 50, "Mesh %d", count);
+			sprintf_s(name, 50, "Mesh %d##mesh_%d", count, count);
 		}
 
 		if (ImGui::CollapsingHeader(name))

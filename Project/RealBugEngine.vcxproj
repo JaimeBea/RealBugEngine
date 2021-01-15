@@ -19,6 +19,8 @@
     <ClInclude Include="ComponentBoundingBox.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
+    <ClInclude Include="ComponentPointLight.h" />
+    <ClInclude Include="ComponentSpotLight.h" />
     <ClInclude Include="ComponentType.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="CubeMap.h" />
@@ -160,6 +162,8 @@
     <ClCompile Include="ComponentBoundingBox.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
+    <ClCompile Include="ComponentPointLight.cpp" />
+    <ClCompile Include="ComponentSpotLight.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="ComponentType.cpp" />
     <ClCompile Include="JsonValue.cpp" />

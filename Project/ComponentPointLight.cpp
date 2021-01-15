@@ -1,4 +1,4 @@
-#include "ComponentDirectionalLight.h"
+#include "ComponentPointLight.h"
 
 #include "GameObject.h"
 #include "ComponentTransform.h"
@@ -15,14 +15,7 @@
 
 #include "imgui.h"
 
-void ComponentDirectionalLight::Update()
-{
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	// TODO: Fix update direction
-	light.direction = float3(0.0f, pi / 2, 0.0f);
-}
-
-void ComponentDirectionalLight::DrawGizmos()
+void ComponentPointLight::DrawGizmos()
 {
 	if (IsActive())
 	{
@@ -31,34 +24,34 @@ void ComponentDirectionalLight::DrawGizmos()
 	}
 }
 
-void ComponentDirectionalLight::OnEditorUpdate()
+void ComponentPointLight::OnEditorUpdate()
 {
 	GameObject* selected = App->editor->panel_hierarchy.selected_object;
-	std::vector<ComponentDirectionalLight*> lights = selected->GetComponents<ComponentDirectionalLight>();
+	std::vector<ComponentPointLight*> lights = selected->GetComponents<ComponentPointLight>();
 	int count = 1;
 
-	for (ComponentDirectionalLight* light : lights)
+	for (ComponentPointLight* light : lights)
 	{
 		// Show only # when multiple
 		char name[50];
 		if (lights.size() == 1)
 		{
-			sprintf_s(name, 50, "Light");
+			sprintf_s(name, 10, "Light");
 		}
 		else
 		{
-			sprintf_s(name, 50, "Light %d##light_%d", count, count);
+			sprintf_s(name, 30, "Light %d#point_light_%d", count, count);
 		}
 
 		if (ImGui::CollapsingHeader(name))
 		{
 			bool active = IsActive();
-			if (ImGui::Checkbox("Active##light", &active))
+			if (ImGui::Checkbox("Active##point_light_active", &active))
 			{
 				active ? Enable() : Disable();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Remove##light"))
+			if (ImGui::Button("Remove##point_light_remove"))
 			{
 				// TODO: Fix me
 				//selected->RemoveComponent(material);
@@ -67,20 +60,16 @@ void ComponentDirectionalLight::OnEditorUpdate()
 			ImGui::Separator();
 
 			ImGui::TextColored(title_color, "Parameters");
-			ImGui::InputFloat3("Direction##dir_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-			ImGui::ColorEdit3("Color##dir_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intenisty##dir_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, 1.0f);
+			ImGui::ColorEdit3("Color##point_light_color", light->light.color.ptr());
+			ImGui::DragFloat("Intensity##point_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, 1.0f);
+			ImGui::DragFloat("Linear Constant##point_light_kl", &light->light.kl, drag_speed3f, 0.0f, 2.0f);
+			ImGui::DragFloat("Quadratic Constant##point_light_kq", &light->light.kq, drag_speed3f, 0.0f, 2.0f);
 		}
 	}
 }
 
-void ComponentDirectionalLight::Save(JsonValue& j_component) const
+void ComponentPointLight::Save(JsonValue& j_component) const
 {
-	JsonValue& j_direction = j_component["Direction"];
-	j_direction[0] = light.direction.x;
-	j_direction[1] = light.direction.y;
-	j_direction[2] = light.direction.z;
-
 	JsonValue& j_color = j_component["Color"];
 	j_color[0] = light.color.x;
 	j_color[1] = light.color.y;
@@ -88,21 +77,30 @@ void ComponentDirectionalLight::Save(JsonValue& j_component) const
 
 	JsonValue& j_intensity = j_component["Intensity"];
 	j_intensity = light.intensity;
+
+	JsonValue& j_kl = j_component["kl"];
+	j_kl = light.kl;
+
+	JsonValue& j_kq = j_component["kq"];
+	j_kq = light.kq;
 }
 
-void ComponentDirectionalLight::Load(const JsonValue& j_component)
+void ComponentPointLight::Load(const JsonValue& j_component)
 {
-	const JsonValue& j_direction = j_component["Direction"];
-	light.direction.Set(j_direction[0], j_direction[1], j_direction[2]);
-
 	const JsonValue& j_color = j_component["Color"];
 	light.color.Set(j_color[0], j_color[1], j_color[2]);
 
 	const JsonValue& j_intensity = j_component["Intensity"];
 	light.intensity = j_intensity;
+
+	const JsonValue& j_kl = j_component["kl"];
+	light.kl = j_kl;
+
+	const JsonValue& j_kq = j_component["kq"];
+	light.kq = j_kq;
 }
 
-DirectionalLight ComponentDirectionalLight::GetLightStruct() const
+PointLight ComponentPointLight::GetLightStruct() const
 {
 	return light;
 }

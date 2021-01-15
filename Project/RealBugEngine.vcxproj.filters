@@ -468,6 +468,12 @@
     <ClInclude Include="ComponentDirectionalLight.h">
       <Filter>Source\Components\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentPointLight.h">
+      <Filter>Source\Components\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentSpotLight.h">
+      <Filter>Source\Components\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui.cpp">
@@ -744,6 +750,12 @@
       <Filter>Libraries\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="ComponentDirectionalLight.cpp">
+      <Filter>Source\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentPointLight.cpp">
+      <Filter>Source\Components\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentSpotLight.cpp">
       <Filter>Source\Components\Lights</Filter>
     </ClCompile>
   </ItemGroup>
