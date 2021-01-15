@@ -8,7 +8,11 @@
 #include "Buffer.h"
 
 #include "assimp/mesh.h"
+#include "Math/float3.h"
+#include "Math/float4.h"
 #include "GL/glew.h"
+#include <list>
+#include <vector>
 
 Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
 {
@@ -172,6 +176,44 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 
 	unsigned time_ms = timer.Stop();
 	LOG("Mesh loaded in %ums", time_ms);
+}
+
+void MeshImporter::ExtractMeshTriangles(Mesh* mesh, std::list<Triangle>& triangles, float4x4 model)
+{
+	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
+
+	// Load file
+	Buffer<char> buffer = App->files->Load(file_path.c_str());
+	char* cursor = buffer.Data();
+
+	//Skip header
+	cursor += sizeof(unsigned) * 2;
+
+	// Vertices
+	std::vector<float3> vertices;
+	for (int i = 0; i < mesh->num_vertices; i++)
+	{
+		float vertex[3] = {};
+		vertex[0] = *(float*) cursor;
+		cursor += sizeof(float);
+		vertex[1] = *(float*) cursor;
+		cursor += sizeof(float);
+		vertex[2] = *(float*) cursor;
+		cursor += sizeof(float) * 6;
+		vertices.push_back((model * float4(vertex[0], vertex[1], vertex[2], 1)).xyz());
+	}
+
+	for (int i = 0; i < mesh->num_indices / 3; i++)
+	{
+		int triange_indices[3] = {};
+		triange_indices[0] = *(unsigned*) cursor;
+		cursor += sizeof(unsigned);
+		triange_indices[1] = *(unsigned*) cursor;
+		cursor += sizeof(unsigned);
+		triange_indices[2] = *(unsigned*) cursor;
+		cursor += sizeof(unsigned);
+		triangles.push_back(Triangle(vertices[triange_indices[0]], vertices[triange_indices[1]], vertices[triange_indices[2]]));
+	}
 }
 
 void MeshImporter::UnloadMesh(Mesh* mesh)
