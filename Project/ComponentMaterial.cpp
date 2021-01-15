@@ -7,7 +7,6 @@
 #include "ModuleScene.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
-#include "ComponentLight.h"
 #include "TextureImporter.h"
 
 #include "imgui.h"

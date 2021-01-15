@@ -238,3 +238,8 @@ float3 ComponentTransform::GetSnap()
 {
 	return float3(snap[0], snap[1], snap[2]);
 }
+
+bool ComponentTransform::GetDirty() const
+{
+	return dirty;
+}

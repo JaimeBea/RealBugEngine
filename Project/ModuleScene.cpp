@@ -12,7 +12,7 @@
 #include "PanelHierarchy.h"
 #include "Component.h"
 #include "ComponentTransform.h"
-#include "ComponentLight.h"
+#include "ComponentDirectionalLight.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
@@ -245,7 +245,7 @@ void ModuleScene::CreateEmptyScene()
 	light_transform->SetRotation(Quat::identity);
 	light_transform->SetScale(float3(1, 1, 1));
 	light_transform->CalculateGlobalMatrix();
-	ComponentLight* light_light = light->CreateComponent<ComponentLight>();
+	ComponentDirectionalLight* light_light = light->CreateComponent<ComponentDirectionalLight>();
 
 	// Create Game Camera
 	GameObject* game_camera = CreateGameObject(root);

@@ -15,7 +15,7 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentCamera.h" />
-    <ClInclude Include="ComponentLight.h" />
+    <ClInclude Include="ComponentDirectionalLight.h" />
     <ClInclude Include="ComponentBoundingBox.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
@@ -156,7 +156,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
-    <ClCompile Include="ComponentLight.cpp" />
+    <ClCompile Include="ComponentDirectionalLight.cpp" />
     <ClCompile Include="ComponentBoundingBox.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />

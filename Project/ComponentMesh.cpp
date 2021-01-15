@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
-#include "ComponentLight.h"
+#include "ComponentDirectionalLight.h"
 #include "ComponentBoundingBox.h"
 #include "Application.h"
 #include "ModulePrograms.h"
@@ -104,7 +104,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	float4x4 view_matrix = App->camera->GetViewMatrix();
 	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
 	unsigned gl_texture = 0;
-	ComponentLight* light;
+	ComponentDirectionalLight* light;
 	if (materials.size() > mesh->material_index)
 	{
 		if (materials[mesh->material_index]->IsActive())
@@ -122,12 +122,12 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		// TODO: Improve after Light class
 		for (GameObject* object : App->scene->root->GetChildren())
 		{
-			light = object->GetComponent<ComponentLight>();
+			light = object->GetComponent<ComponentDirectionalLight>();
 			if (light != nullptr)
 			{
 				if (light->IsActive())
 				{
-					light_color = light->light.color;
+					light_color = light->GetLightStruct().color;
 				}
 				light_position = object->GetComponent<ComponentTransform>()->GetPosition();
 				break;

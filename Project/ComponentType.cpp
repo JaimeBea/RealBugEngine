@@ -4,7 +4,7 @@
 #include "ComponentTransform.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
-#include "ComponentLight.h"
+#include "ComponentDirectionalLight.h"
 #include "ComponentBoundingBox.h"
 #include "ComponentCamera.h"
 
@@ -18,8 +18,8 @@ Component* CreateComponentByType(GameObject& game_object, ComponentType type, bo
 		return game_object.CreateComponent<ComponentMesh>(active);
 	case ComponentType::MATERIAL:
 		return game_object.CreateComponent<ComponentMaterial>(active);
-	case ComponentType::LIGHT:
-		return game_object.CreateComponent<ComponentLight>(active);
+	case ComponentType::DIRECTIONAL_LIGHT:
+		return game_object.CreateComponent<ComponentDirectionalLight>(active);
 	case ComponentType::BOUNDING_BOX:
 		return game_object.CreateComponent<ComponentBoundingBox>(active);
 	case ComponentType::CAMERA:

@@ -20,7 +20,7 @@ enum class ComponentType
 	TRANSFORM = 1,
 	MESH = 2,
 	MATERIAL = 3,
-	LIGHT = 4,
+	DIRECTIONAL_LIGHT = 4,
 	BOUNDING_BOX = 5,
 	CAMERA = 6
 };
