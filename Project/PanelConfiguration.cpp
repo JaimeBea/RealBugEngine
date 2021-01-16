@@ -6,6 +6,7 @@
 #include "ModuleTime.h"
 #include "ModuleHardwareInfo.h"
 #include "ModuleWindow.h"
+#include "ModuleScene.h"
 #include "ModuleSceneRender.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
@@ -224,6 +225,15 @@ void PanelConfiguration::Update()
 			ImGui::TextColored(title_color, "Gizmos");
 			ImGui::Checkbox("Draw Bounding Boxes", &App->scene_renderer->draw_all_bounding_boxes);
 			ImGui::Checkbox("Draw Quadtree", &App->scene_renderer->draw_quadtree);
+			ImGui::Separator();
+			ImGui::InputFloat2("Min Point", App->scene->quadtree_bounds.minPoint.ptr());
+			ImGui::InputFloat2("Max Point", App->scene->quadtree_bounds.maxPoint.ptr());
+			ImGui::InputScalar("Max Depth", ImGuiDataType_U32, &App->scene->quadtree_max_depth);
+			ImGui::InputScalar("Elements Per Node", ImGuiDataType_U32, &App->scene->quadtree_elements_per_node);
+			if (ImGui::Button("Rebuild Quadtree"))
+			{
+				App->scene->RebuildQuadtree(App->scene->quadtree_bounds, App->scene->quadtree_max_depth, App->scene->quadtree_elements_per_node);
+			}
 			ImGui::Separator();
 
 			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);
