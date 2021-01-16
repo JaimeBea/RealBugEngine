@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Globals.h"
 #include "Component.h"
 
 #include "Math/float3.h"
@@ -23,6 +24,7 @@ public:
 
 	void SetPosition(float3 position);
 	void SetRotation(Quat rotation);
+	void SetRotation(float3 rotation);
 	void SetScale(float3 scale);
 	void CalculateGlobalMatrix(bool force = false);
 
@@ -44,9 +46,11 @@ private:
 	ImGuizmo::OPERATION current_guizmo_operation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE current_guizmo_mode = ImGuizmo::WORLD;
 
-	float3 position = float3(0, 0, 0);
+	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
-	float3 scale = float3(1, 1, 1);
+	float3 scale = float3::one;
+
+	float3 local_euler_angles = float3::zero;
 
 	bool dirty = true;
 	float4x4 local_matrix = float4x4::identity;

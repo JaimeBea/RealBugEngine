@@ -21,12 +21,9 @@ void ComponentTransform::Update()
 
 void ComponentTransform::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
-
-	ComponentTransform* transform = selected->GetComponent<ComponentTransform>();
-	float3 pos = transform->GetPosition();
-	float3 scale = transform->GetScale();
-	float3 rotation = transform->GetRotation().ToEulerXYZ() * RADTODEG;
+	float3 pos = position;
+	float3 scl = scale;
+	float3 rot = local_euler_angles;
 
 	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
 	{
@@ -35,7 +32,7 @@ void ComponentTransform::OnEditorUpdate()
 		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
 	}
 
-	ComponentCamera* camera = selected->GetComponent<ComponentCamera>();
+	ComponentCamera* camera = GetOwner().GetComponent<ComponentCamera>();
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
 		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
@@ -48,21 +45,22 @@ void ComponentTransform::OnEditorUpdate()
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
-			transform->SetPosition(pos);
+			SetPosition(pos);
 			if (camera != nullptr)
 			{
 				camera->frustum.SetPos(pos);
 			}
 		}
-		if (ImGui::DragFloat3("Scale", scale.ptr(), drag_speed2f, 0, inf))
+		if (ImGui::DragFloat3("Scale", scl.ptr(), drag_speed2f, 0, inf))
 		{
-			transform->SetScale(scale);
+			SetScale(scl);
 		}
 
 		// TODO: Fix Quaternion Angles
-		if (ImGui::DragFloat3("Rotation", rotation.ptr(), drag_speed2f, -inf, inf))
+		if (ImGui::DragFloat3("Rotation", rot.ptr(), drag_speed2f, -inf, inf))
 		{
-			transform->SetRotation(Quat::FromEulerXYZ(rotation[0] * DEGTORAD, rotation[1] * DEGTORAD, rotation[2] * DEGTORAD));
+			SetRotation(rot);
+			InvalidateHierarchy();
 			if (camera != nullptr)
 			{
 				float3x3 rotationMatrix = float3x3::FromQuat(GetRotation());
@@ -117,6 +115,11 @@ void ComponentTransform::Save(JsonValue& j_component) const
 	j_scale[0] = scale.x;
 	j_scale[1] = scale.y;
 	j_scale[2] = scale.z;
+
+	JsonValue& j_local_euler_angles = j_component["LocalEulerAngles"];
+	j_local_euler_angles[0] = local_euler_angles.x;
+	j_local_euler_angles[1] = local_euler_angles.y;
+	j_local_euler_angles[2] = local_euler_angles.z;
 }
 
 void ComponentTransform::Load(const JsonValue& j_component)
@@ -129,6 +132,9 @@ void ComponentTransform::Load(const JsonValue& j_component)
 
 	const JsonValue& j_scale = j_component["Scale"];
 	scale.Set(j_scale[0], j_scale[1], j_scale[2]);
+
+	const JsonValue& j_local_euler_angles = j_component["LocalEulerAngles"];
+	local_euler_angles.Set(j_local_euler_angles[0], j_local_euler_angles[1], j_local_euler_angles[2]);
 
 	dirty = true;
 }
@@ -163,6 +169,14 @@ void ComponentTransform::SetPosition(float3 position_)
 void ComponentTransform::SetRotation(Quat rotation_)
 {
 	rotation = rotation_;
+	local_euler_angles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+	InvalidateHierarchy();
+}
+
+void ComponentTransform::SetRotation(float3 rotation_)
+{
+	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
+	local_euler_angles = rotation_;
 	InvalidateHierarchy();
 }
 
