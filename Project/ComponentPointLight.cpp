@@ -15,12 +15,16 @@
 
 #include "imgui.h"
 
+void ComponentPointLight::OnTransformUpdate()
+{
+	light.pos = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
+}
+
 void ComponentPointLight::DrawGizmos()
 {
-	if (IsActive())
+	if (IsActive() && draw_gizmos)
 	{
-		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		dd::line(transform->GetPosition(), light.direction * 10000, dd::colors::White);
+		dd::sphere(light.pos, dd::colors::White, 10.0f);
 	}
 }
 
@@ -59,11 +63,14 @@ void ComponentPointLight::OnEditorUpdate()
 			}
 			ImGui::Separator();
 
+			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
+			ImGui::Separator();
+
 			ImGui::TextColored(title_color, "Parameters");
 			ImGui::ColorEdit3("Color##point_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intensity##point_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, 1.0f);
-			ImGui::DragFloat("Linear Constant##point_light_kl", &light->light.kl, drag_speed3f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant##point_light_kq", &light->light.kq, drag_speed3f, 0.0f, 2.0f);
+			ImGui::DragFloat("Intensity##point_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, inf);
+			ImGui::DragFloat("Linear Constant##point_light_kl", &light->light.kl, drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Quadratic Constant##point_light_kq", &light->light.kq, drag_speed5f, 0.0f, 2.0f);
 		}
 	}
 }
@@ -100,7 +107,7 @@ void ComponentPointLight::Load(const JsonValue& j_component)
 	light.kq = j_kq;
 }
 
-PointLight ComponentPointLight::GetLightStruct() const
+PointLight& ComponentPointLight::GetLightStruct() const
 {
 	return light;
 }

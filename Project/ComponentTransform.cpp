@@ -28,11 +28,10 @@ void ComponentTransform::OnEditorUpdate()
 	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
 	{
 		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
-		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE; 
+		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE;
 		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
 	}
 
-	ComponentCamera* camera = GetOwner().GetComponent<ComponentCamera>();
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
 		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
@@ -46,27 +45,19 @@ void ComponentTransform::OnEditorUpdate()
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
 			SetPosition(pos);
-			if (camera != nullptr)
-			{
-				camera->frustum.SetPos(pos);
-			}
+			GetOwner().OnTransformUpdate();
 		}
 		if (ImGui::DragFloat3("Scale", scl.ptr(), drag_speed2f, 0, inf))
 		{
 			SetScale(scl);
+			GetOwner().OnTransformUpdate();
 		}
 
-		// TODO: Fix Quaternion Angles
 		if (ImGui::DragFloat3("Rotation", rot.ptr(), drag_speed2f, -inf, inf))
 		{
 			SetRotation(rot);
+			GetOwner().OnTransformUpdate();
 			InvalidateHierarchy();
-			if (camera != nullptr)
-			{
-				float3x3 rotationMatrix = float3x3::FromQuat(GetRotation());
-				camera->frustum.SetFront(rotationMatrix * float3::unitZ);
-				camera->frustum.SetUp(rotationMatrix * float3::unitY);
-			}
 		}
 
 		if (current_guizmo_operation != ImGuizmo::SCALE)

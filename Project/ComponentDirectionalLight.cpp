@@ -15,19 +15,18 @@
 
 #include "imgui.h"
 
-void ComponentDirectionalLight::Update()
+void ComponentDirectionalLight::OnTransformUpdate()
 {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	// TODO: Fix update direction
-	light.direction = float3(0.0f, pi / 2, 0.0f);
+	light.direction = transform->GetRotation() * float3::unitZ;
 }
 
 void ComponentDirectionalLight::DrawGizmos()
 {
-	if (IsActive())
+	if (IsActive() && draw_gizmos)
 	{
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		dd::line(transform->GetPosition(), light.direction * 10000, dd::colors::White);
+		dd::cone(transform->GetPosition(), light.direction * 200, dd::colors::White, 200.0f, 200.0f);
 	}
 }
 
@@ -66,6 +65,9 @@ void ComponentDirectionalLight::OnEditorUpdate()
 			}
 			ImGui::Separator();
 
+			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
+			ImGui::Separator();
+
 			ImGui::TextColored(title_color, "Parameters");
 			ImGui::InputFloat3("Direction##dir_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::ColorEdit3("Color##dir_light_color", light->light.color.ptr());
@@ -102,7 +104,7 @@ void ComponentDirectionalLight::Load(const JsonValue& j_component)
 	light.intensity = j_intensity;
 }
 
-DirectionalLight ComponentDirectionalLight::GetLightStruct() const
+DirectionalLight& ComponentDirectionalLight::GetLightStruct() const
 {
 	return light;
 }

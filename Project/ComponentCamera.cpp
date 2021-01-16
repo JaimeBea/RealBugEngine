@@ -21,8 +21,7 @@ void ComponentCamera::Init()
 	frustum.SetFront(vec::unitZ);
 	frustum.SetUp(vec::unitY);
 
-	GameObject& parent = this->GetOwner();
-	ComponentTransform* transform = parent.GetComponent<ComponentTransform>();
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 	frustum.SetPos(transform->GetPosition());
 }
 
@@ -31,6 +30,16 @@ void ComponentCamera::DrawGizmos()
 	if (active_camera) return;
 
 	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
+}
+
+void ComponentCamera::OnTransformUpdate()
+{
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+	frustum.SetPos(transform->GetPosition());
+
+	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetRotation());
+	frustum.SetFront(rotationMatrix * float3::unitZ);
+	frustum.SetUp(rotationMatrix * float3::unitY);
 }
 
 void ComponentCamera::OnEditorUpdate()

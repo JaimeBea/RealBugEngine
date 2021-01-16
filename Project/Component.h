@@ -13,6 +13,7 @@ public:
 	virtual void Init();
 	virtual void Update();
 	virtual void DrawGizmos();
+	virtual void OnTransformUpdate();
 	virtual void OnEditorUpdate();
 	virtual void Save(JsonValue& j_component) const;
 	virtual void Load(const JsonValue& j_component);

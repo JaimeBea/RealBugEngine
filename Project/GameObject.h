@@ -20,6 +20,7 @@ public:
 	void Init();
 	void Update();
 	void DrawGizmos();
+	void OnTransformUpdate();
 	void CleanUp();
 	void Enable();
 	void Disable();

@@ -13,6 +13,8 @@
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentDirectionalLight.h"
+#include "ComponentPointLight.h"
+#include "ComponentSpotLight.h"
 #include "ComponentMesh.h"
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
@@ -50,7 +52,7 @@ static void AssimpLogCallback(const char* message, char* user)
 
 bool ModuleScene::Init()
 {
-	game_objects.Allocate(10000);
+	game_objects.Allocate(400000);
 	quadtree.Initialize(AABB2D({-100, -100}, {100, 100}), 8, 4, 20000);
 
 #ifdef _DEBUG
@@ -232,14 +234,37 @@ void ModuleScene::CreateEmptyScene()
 	scene_transform->CalculateGlobalMatrix();
 
 	// Create Directional Light
-	GameObject* light = CreateGameObject(root);
-	light->name = "Directional Light";
-	ComponentTransform* light_transform = light->CreateComponent<ComponentTransform>();
-	light_transform->SetPosition(float3(0, 300, 0));
-	light_transform->SetRotation(Quat::FromEulerXYZ(0.0f, -pi/2, 0.0));
-	light_transform->SetScale(float3(1, 1, 1));
-	light_transform->CalculateGlobalMatrix();
-	ComponentDirectionalLight* light_light = light->CreateComponent<ComponentDirectionalLight>();
+	GameObject* dir_light = CreateGameObject(root);
+	dir_light->name = "Directional Light";
+	ComponentTransform* dir_light_transform = dir_light->CreateComponent<ComponentTransform>();
+	dir_light_transform->SetPosition(float3(0, 300, 0));
+	dir_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
+	dir_light_transform->SetScale(float3(1, 1, 1));
+	dir_light_transform->CalculateGlobalMatrix();
+	ComponentDirectionalLight* dir_light_light = dir_light->CreateComponent<ComponentDirectionalLight>();
+	dir_light->OnTransformUpdate();
+
+	// Create Point Light
+	GameObject* point_light = CreateGameObject(root);
+	point_light->name = "Point Light";
+	ComponentTransform* point_light_transform = point_light->CreateComponent<ComponentTransform>();
+	point_light_transform->SetPosition(float3(0, 10, 0));
+	point_light_transform->SetRotation(Quat::identity);
+	point_light_transform->SetScale(float3(1, 1, 1));
+	point_light_transform->CalculateGlobalMatrix();
+	ComponentPointLight* point_light_light = point_light->CreateComponent<ComponentPointLight>();
+	point_light->OnTransformUpdate();
+
+	// Create Spot Light
+	GameObject* spot_light = CreateGameObject(root);
+	spot_light->name = "Spot Light";
+	ComponentTransform* spot_light_transform = spot_light->CreateComponent<ComponentTransform>();
+	spot_light_transform->SetPosition(float3(0, 10, 0));
+	spot_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
+	spot_light_transform->SetScale(float3(1, 1, 1));
+	spot_light_transform->CalculateGlobalMatrix();
+	ComponentSpotLight* spot_light_light = spot_light->CreateComponent<ComponentSpotLight>();
+	spot_light->OnTransformUpdate();
 
 	// Create Game Camera
 	GameObject* game_camera = CreateGameObject(root);

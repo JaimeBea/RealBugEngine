@@ -15,19 +15,19 @@
 
 #include "imgui.h"
 
-void ComponentSpotLight::Update()
+void ComponentSpotLight::OnTransformUpdate()
 {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 	// TODO: Fix update direction
-	light.direction = float3(0.0f, pi / 2, 0.0f);
+	light.pos = transform->GetPosition();
+	light.direction = transform->GetRotation() * float3::unitZ;
 }
 
 void ComponentSpotLight::DrawGizmos()
 {
-	if (IsActive())
+	if (IsActive() && draw_gizmos)
 	{
-		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		dd::line(transform->GetPosition(), light.direction * 10000, dd::colors::White);
+		dd::cone(light.pos, light.direction * 200, dd::colors::White, 200.0f, 0.0f);
 	}
 }
 
@@ -66,20 +66,23 @@ void ComponentSpotLight::OnEditorUpdate()
 			}
 			ImGui::Separator();
 
+			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
+			ImGui::Separator();
+
 			ImGui::TextColored(title_color, "Parameters");
 			ImGui::InputFloat3("Direction##spot_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::ColorEdit3("Color##spot_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intenisty##spot_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, 1.0f);
-			ImGui::DragFloat("Linear Constant##spot_light_kl", &light->light.kl, drag_speed3f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant##spot_light_kq", &light->light.kq, drag_speed3f, 0.0f, 2.0f);
+			ImGui::DragFloat("Intensity##spot_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, inf);
+			ImGui::DragFloat("Linear Constant##spot_light_kl", &light->light.kl, drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Quadratic Constant##spot_light_kq", &light->light.kq, drag_speed5f, 0.0f, 2.0f);
 
-			float deg_outter_angle = light->light.outter_angle * RADTODEG;
+			float deg_outer_angle = light->light.outer_angle * RADTODEG;
 			float deg_inner_angle = light->light.inner_angle * RADTODEG;
-			if (ImGui::DragFloat("Outter Angle##spot_light_outer_angle", &deg_outter_angle, drag_speed3f, 0.0f, 90.0f))
+			if (ImGui::DragFloat("Outter Angle##spot_light_outer_angle", &deg_outer_angle, drag_speed3f, 0.0f, 90.0f))
 			{
-				light->light.outter_angle = deg_outter_angle * DEGTORAD;
+				light->light.outer_angle = deg_outer_angle * DEGTORAD;
 			}
-			if (ImGui::DragFloat("Inner Angle##spot_light_inner_angle", &deg_inner_angle, drag_speed3f, 0.0f, deg_outter_angle))
+			if (ImGui::DragFloat("Inner Angle##spot_light_inner_angle", &deg_inner_angle, drag_speed3f, 0.0f, deg_outer_angle))
 			{
 				light->light.inner_angle = deg_inner_angle * DEGTORAD;
 			}
@@ -111,8 +114,8 @@ void ComponentSpotLight::Save(JsonValue& j_component) const
 	JsonValue& j_inner_angle = j_component["inner_angle"];
 	j_inner_angle = light.inner_angle;
 
-	JsonValue& j_outter_angle = j_component["outter_angle"];
-	j_outter_angle = light.outter_angle;
+	JsonValue& j_outer_angle = j_component["outer_angle"];
+	j_outer_angle = light.outer_angle;
 }
 
 void ComponentSpotLight::Load(const JsonValue& j_component)
@@ -135,11 +138,11 @@ void ComponentSpotLight::Load(const JsonValue& j_component)
 	const JsonValue& j_inner_angle = j_component["inner_angle"];
 	light.inner_angle = j_inner_angle;
 
-	const JsonValue& j_outter_angle = j_component["outter_angle"];
-	light.outter_angle = j_outter_angle;
+	const JsonValue& j_outer_angle = j_component["outer_angle"];
+	light.outer_angle = j_outer_angle;
 }
 
-SpotLight ComponentSpotLight::GetLightStruct() const
+SpotLight& ComponentSpotLight::GetLightStruct() const
 {
 	return light;
 }
