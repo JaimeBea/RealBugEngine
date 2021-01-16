@@ -50,6 +50,8 @@ public:
 	std::string name = "GameObject";
 	std::vector<Component*> components;
 
+	bool is_in_quadtree = false;
+
 	// Auxiliary variable to help with iterating on the Quadtree
 	bool flag = false;
 

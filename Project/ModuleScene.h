@@ -25,6 +25,8 @@ public:
 
 	void CreateEmptyScene();
 	void ClearScene();
+	void RebuildQuadtree(const AABB2D& bounds, unsigned max_depth, unsigned elements_per_node);
+	void ClearQuadtree();
 
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);
@@ -38,7 +40,11 @@ public:
 	Pool<GameObject> game_objects;
 	std::unordered_map<UID, GameObject*> game_objects_id_map;
 
+	// Quadtree
 	Quadtree<GameObject> quadtree;
+	AABB2D quadtree_bounds = AABB2D({-100, -100}, {100, 100});
+	unsigned quadtree_max_depth = 8;
+	unsigned quadtree_elements_per_node = 4;
 
 	// Skybox
 	unsigned skybox_vao = 0;
