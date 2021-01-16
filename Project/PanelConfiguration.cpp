@@ -230,6 +230,11 @@ void PanelConfiguration::Update()
 			ImGui::InputFloat2("Max Point", App->scene->quadtree_bounds.maxPoint.ptr());
 			ImGui::InputScalar("Max Depth", ImGuiDataType_U32, &App->scene->quadtree_max_depth);
 			ImGui::InputScalar("Elements Per Node", ImGuiDataType_U32, &App->scene->quadtree_elements_per_node);
+			if (ImGui::Button("Clear Quadtree"))
+			{
+				App->scene->ClearQuadtree();
+			}
+			ImGui::SameLine();
 			if (ImGui::Button("Rebuild Quadtree"))
 			{
 				App->scene->RebuildQuadtree(App->scene->quadtree_bounds, App->scene->quadtree_max_depth, App->scene->quadtree_elements_per_node);

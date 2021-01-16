@@ -63,6 +63,31 @@ public:
 			}
 		}
 
+		void Remove(Quadtree& tree, T* object)
+		{
+			if (IsBranch())
+			{
+				child_nodes->Remove(tree, object);
+			}
+			else
+			{
+				Element* element = first_element;
+				Element** element_ptr = &first_element;
+				while (element != nullptr)
+				{
+					if (element->object == object)
+					{
+						*element_ptr = element->next;
+						tree.elements.Release(element);
+						element_count -= 1;
+					}
+
+					element = element->next;
+					element_ptr = &element->next;
+				}
+			}
+		}
+
 		void Split(Quadtree& tree, unsigned depth, const AABB2D& node_aabb, bool optimizing)
 		{
 			if (optimizing)
@@ -195,6 +220,14 @@ public:
 			}
 		}
 
+		void Remove(Quadtree& tree, T* object)
+		{
+			for (Node& node : nodes)
+			{
+				node.Remove(tree, object);
+			}
+		}
+
 	public:
 		Node nodes[4];
 	};
@@ -219,6 +252,13 @@ public:
 
 		aux_root.Add(*this, object, object_aabb, 1, bounds, false);
 		added_objects.emplace_back(std::pair<T*, AABB2D>(object, object_aabb));
+	}
+
+	void Remove(T* object)
+	{
+		assert(operative); // Tried to remove an object from an unlocked quadtree
+
+		root.Remove(*this, object);
 	}
 
 	void Optimize()

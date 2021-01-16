@@ -26,6 +26,7 @@ public:
 	void CreateEmptyScene();
 	void ClearScene();
 	void RebuildQuadtree(const AABB2D& bounds, unsigned max_depth, unsigned elements_per_node);
+	void ClearQuadtree();
 
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);

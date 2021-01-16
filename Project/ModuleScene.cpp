@@ -247,6 +247,7 @@ void ModuleScene::ClearScene()
 {
 	DestroyGameObject(root);
 	root = nullptr;
+	quadtree.Clear();
 
 	assert(game_objects.Count() == 0);
 }
@@ -262,8 +263,18 @@ void ModuleScene::RebuildQuadtree(const AABB2D& bounds, unsigned max_depth, unsi
 		bounding_box->CalculateWorldBoundingBox();
 		const AABB& world_aabb = bounding_box->GetWorldAABB();
 		quadtree.Add(&game_object, AABB2D(world_aabb.minPoint.xz(), world_aabb.maxPoint.xz()));
+		game_object.is_in_quadtree = true;
 	}
 	quadtree.Optimize();
+}
+
+void ModuleScene::ClearQuadtree()
+{
+	quadtree.Clear();
+	for (GameObject& game_object : game_objects)
+	{
+		game_object.is_in_quadtree = false;
+	}
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
@@ -291,6 +302,11 @@ void ModuleScene::DestroyGameObject(GameObject* game_object)
 	for (GameObject* child : children)
 	{
 		DestroyGameObject(child);
+	}
+
+	if (game_object->is_in_quadtree)
+	{
+		quadtree.Remove(game_object);
 	}
 
 	game_objects_id_map.erase(game_object->GetID());

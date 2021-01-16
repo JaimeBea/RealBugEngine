@@ -36,12 +36,29 @@ UpdateStatus ModuleSceneRender::Update()
 	DrawSkyBox();
 
 	// Draw the scene
+	//PerformanceTimer timer;
+	//timer.Start();
+	App->camera->CalculateFrustumPlanes();
 	for (GameObject& game_object : App->scene->game_objects)
 	{
 		game_object.flag = false;
+		if (game_object.is_in_quadtree) continue;
+
+		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
+		if (bounding_box == nullptr) continue;
+
+		const AABB& game_object_aabb = bounding_box->GetWorldAABB();
+		const OBB& game_object_obb = bounding_box->GetWorldOBB();
+		if (CheckIfInsideFrustum(game_object_aabb, game_object_obb))
+		{
+			DrawGameObject(&game_object);
+		}
 	}
-	App->camera->CalculateFrustumPlanes();
-	DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	if (App->scene->quadtree.IsOperative())
+	{
+		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	}
+	//LOG("Scene draw: %llu mis", timer.Stop());
 
 	// Draw quadtree
 	if (draw_quadtree)
