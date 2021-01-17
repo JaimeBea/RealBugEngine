@@ -312,8 +312,7 @@ bool SceneImporter::LoadScene(const char* file_name)
 	}
 
 	// Post-load
-	bool is_something_selected = j_scene["IsSomethingSelected"];
-	App->editor->selected_object = is_something_selected ? App->scene->GetGameObject(j_scene["SelectedId"]) : nullptr;
+	App->editor->selected_object = nullptr;
 	App->scene->root = App->scene->GetGameObject(j_scene["RootId"]);
 	for (unsigned i = 0; i < j_game_objects_size; ++i)
 	{
@@ -338,12 +337,6 @@ bool SceneImporter::SaveScene(const char* file_name)
 
 	// Save scene information
 	j_scene["RootId"] = App->scene->root->GetID();
-	bool is_something_selected = App->editor->selected_object != nullptr;
-	j_scene["IsSomethingSelected"] = is_something_selected;
-	if (is_something_selected)
-	{
-		j_scene["SelectedId"] = App->editor->selected_object->GetID();
-	}
 
 	// Save GameObjects
 	JsonValue j_game_objects = j_scene["GameObjects"];
