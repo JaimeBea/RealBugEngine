@@ -14,18 +14,6 @@
 
 #include "Leaks.h"
 
-void ComponentCamera::Init()
-{
-	frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-	frustum.SetViewPlaneDistances(0.1f, 200.0f);
-	frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
-	frustum.SetFront(vec::unitZ);
-	frustum.SetUp(vec::unitY);
-
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	frustum.SetPos(transform->GetPosition());
-}
-
 void ComponentCamera::DrawGizmos()
 {
 	if (active_camera) return;
@@ -115,4 +103,16 @@ void ComponentCamera::Load(JsonValue j_component)
 	frustum.SetPerspective(j_frustum["HorizontalFov"], j_frustum["VerticalFov"]);
 
 	active_camera = j_component["CameraSelected"];
+}
+
+Frustum ComponentCamera::BuildDefaultFrustum() const
+{
+	Frustum new_frustum;
+	new_frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	new_frustum.SetViewPlaneDistances(0.1f, 200.0f);
+	new_frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+	new_frustum.SetFront(vec::unitZ);
+	new_frustum.SetUp(vec::unitY);
+	new_frustum.SetPos(vec::zero);
+	return new_frustum;
 }

@@ -15,11 +15,6 @@
 
 #include "Leaks.h"
 
-void ComponentDirectionalLight::Init()
-{
-	OnTransformUpdate();
-}
-
 void ComponentDirectionalLight::OnTransformUpdate()
 {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();

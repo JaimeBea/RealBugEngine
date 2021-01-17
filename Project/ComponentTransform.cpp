@@ -16,6 +16,15 @@
 
 #include "Leaks.h"
 
+void ComponentTransform::Init()
+{
+	CalculateGlobalMatrix();
+	for (Component* component : GetOwner().components)
+	{
+		component->OnTransformUpdate();
+	}
+}
+
 void ComponentTransform::Update()
 {
 	CalculateGlobalMatrix();
@@ -162,6 +171,7 @@ void ComponentTransform::CalculateGlobalMatrix(bool force)
 		{
 			ComponentTransform* parent_transform = parent->GetComponent<ComponentTransform>();
 
+			parent_transform->CalculateGlobalMatrix();
 			global_matrix = parent_transform->global_matrix * local_matrix;
 		}
 		else

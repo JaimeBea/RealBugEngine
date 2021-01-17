@@ -12,6 +12,7 @@ class ComponentTransform : public Component
 public:
 	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM);
 
+	void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue j_component) const override;

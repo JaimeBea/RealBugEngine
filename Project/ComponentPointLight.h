@@ -21,7 +21,6 @@ class ComponentPointLight : public Component
 public:
 	REGISTER_COMPONENT(ComponentPointLight, ComponentType::POINT_LIGHT);
 
-	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;

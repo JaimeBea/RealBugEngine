@@ -274,6 +274,7 @@ bool SceneImporter::LoadScene(const char* file_name)
 {
 	// Clear scene
 	App->scene->ClearScene();
+	App->editor->selected_object = nullptr;
 
 	// Timer to measure loading a scene
 	MSTimer timer;
@@ -312,7 +313,6 @@ bool SceneImporter::LoadScene(const char* file_name)
 	}
 
 	// Post-load
-	App->editor->selected_object = nullptr;
 	App->scene->root = App->scene->GetGameObject(j_scene["RootId"]);
 	for (unsigned i = 0; i < j_game_objects_size; ++i)
 	{
@@ -322,6 +322,23 @@ bool SceneImporter::LoadScene(const char* file_name)
 		GameObject* game_object = App->scene->GetGameObject(id);
 		game_object->PostLoad(j_game_object);
 	}
+	
+	// Init components
+	for (unsigned i = 0; i < j_game_objects_size; ++i)
+	{
+		JsonValue j_game_object = j_game_objects[i];
+
+		UID id = ids[i];
+		GameObject* game_object = App->scene->GetGameObject(id);
+		game_object->InitComponents();
+	}
+
+	// Quadtree generation
+	JsonValue j_quadtree_bounds = j_scene["QuadtreeBounds"];
+	App->scene->quadtree_bounds = {{j_quadtree_bounds[0], j_quadtree_bounds[1]}, {j_quadtree_bounds[2], j_quadtree_bounds[3]}};
+	App->scene->quadtree_max_depth = j_scene["QuadtreeMaxDepth"];
+	App->scene->quadtree_elements_per_node = j_scene["QuadtreeElementsPerNode"];
+	App->scene->RebuildQuadtree();
 
 	unsigned time_ms = timer.Stop();
 	LOG("Scene loaded in %ums.", time_ms);
@@ -337,6 +354,13 @@ bool SceneImporter::SaveScene(const char* file_name)
 
 	// Save scene information
 	j_scene["RootId"] = App->scene->root->GetID();
+	JsonValue j_quadtree_bounds = j_scene["QuadtreeBounds"];
+	j_quadtree_bounds[0] = App->scene->quadtree_bounds.minPoint.x;
+	j_quadtree_bounds[1] = App->scene->quadtree_bounds.minPoint.y;
+	j_quadtree_bounds[2] = App->scene->quadtree_bounds.maxPoint.x;
+	j_quadtree_bounds[3] = App->scene->quadtree_bounds.maxPoint.y;
+	j_scene["QuadtreeMaxDepth"] = App->scene->quadtree_max_depth;
+	j_scene["QuadtreeElementsPerNode"] = App->scene->quadtree_elements_per_node;
 
 	// Save GameObjects
 	JsonValue j_game_objects = j_scene["GameObjects"];
