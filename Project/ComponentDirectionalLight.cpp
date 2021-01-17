@@ -32,47 +32,29 @@ void ComponentDirectionalLight::DrawGizmos()
 
 void ComponentDirectionalLight::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->selected_object;
-	std::vector<ComponentDirectionalLight*> lights = selected->GetComponents<ComponentDirectionalLight>();
-	int count = 1;
-
-	for (ComponentDirectionalLight* light : lights)
+	if (ImGui::CollapsingHeader("Light"))
 	{
-		// Show only # when multiple
-		char name[50];
-		if (lights.size() == 1)
+		bool active = IsActive();
+		if (ImGui::Checkbox("Active", &active))
 		{
-			sprintf_s(name, 50, "Light");
+			active ? Enable() : Disable();
 		}
-		else
+		ImGui::SameLine();
+		if (ImGui::Button("Remove"))
 		{
-			sprintf_s(name, 50, "Light %d##light_%d", count, count);
+			// TODO: Fix me
+			//selected->RemoveComponent(material);
+			//continue;
 		}
+		ImGui::Separator();
 
-		if (ImGui::CollapsingHeader(name))
-		{
-			bool active = IsActive();
-			if (ImGui::Checkbox("Active##light", &active))
-			{
-				active ? Enable() : Disable();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Remove##light"))
-			{
-				// TODO: Fix me
-				//selected->RemoveComponent(material);
-				//continue;
-			}
-			ImGui::Separator();
+		ImGui::Checkbox("Draw Gizmos", &draw_gizmos);
+		ImGui::Separator();
 
-			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
-			ImGui::Separator();
-
-			ImGui::TextColored(App->editor->title_color, "Parameters");
-			ImGui::InputFloat3("Direction##dir_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-			ImGui::ColorEdit3("Color##dir_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intenisty##dir_light_intensity", &light->light.intensity, App->editor->drag_speed3f, 0.0f, 1.0f);
-		}
+		ImGui::TextColored(App->editor->title_color, "Parameters");
+		ImGui::InputFloat3("Direction", light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+		ImGui::ColorEdit3("Color", light.color.ptr());
+		ImGui::DragFloat("Intenisty", &light.intensity, App->editor->drag_speed3f, 0.0f, 1.0f);
 	}
 }
 

@@ -45,8 +45,6 @@ void ComponentCamera::OnTransformUpdate()
 
 void ComponentCamera::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->selected_object;
-
 	if (ImGui::CollapsingHeader("Camera"))
 	{
 		if (ImGui::Checkbox("Main Camera", &active_camera))

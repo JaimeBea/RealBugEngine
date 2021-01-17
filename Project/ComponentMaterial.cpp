@@ -15,55 +15,62 @@
 
 void ComponentMaterial::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->selected_object;
-	std::vector<ComponentMaterial*> materials = selected->GetComponents<ComponentMaterial>();
-	int count = 1;
-
-	for (ComponentMaterial* material : materials)
+	if (ImGui::CollapsingHeader("Material"))
 	{
-		// Show only # when multiple
-		char name[50];
-		if (materials.size() == 1)
+		bool active = IsActive();
+		if (ImGui::Checkbox("Active", &active))
 		{
-			sprintf_s(name, 50, "Material");
+			active ? Enable() : Disable();
 		}
-		else
+		ImGui::SameLine();
+
+		if (ImGui::Button("Remove"))
 		{
-			sprintf_s(name, 50, "Material %d##material_%d", count, count);
+			// TODO: Fix me
+			// selected->RemoveComponent(material);
+			// continue;
 		}
+		ImGui::Separator();
 
-		if (ImGui::CollapsingHeader(name))
+		ImGui::TextColored(App->editor->title_color, "Shader");
+
+		// Material types
+		const char* material_types[] = {"Standard", "Phong"};
+		const char* material_types_current = material_types[(int) material.material_type];
+		if (ImGui::BeginCombo("Type", material_types_current))
 		{
-			bool active = IsActive();
-			sprintf_s(name, 50, "Active##material_%d", count);
-			if (ImGui::Checkbox(name, &active))
+			for (int n = 0; n < IM_ARRAYSIZE(material_types); ++n)
 			{
-				active ? Enable() : Disable();
-			}
-			ImGui::SameLine();
-			sprintf_s(name, 50, "Remove##material_%d", count);
-			if (ImGui::Button(name))
-			{
-				// TODO: Fix me
-				// selected->RemoveComponent(material);
-				// continue;
-			}
-			ImGui::Separator();
-
-			ImGui::TextColored(App->editor->title_color, "Shader");
-
-			// Material types
-			const char* material_types[] = {"Standard", "Phong"};
-			const char* material_types_current = material_types[(int) material->material.material_type];
-			sprintf_s(name, 50, "Type##material_%d", count);
-			if (ImGui::BeginCombo(name, material_types_current))
-			{
-				for (int n = 0; n < IM_ARRAYSIZE(material_types); ++n)
+				bool is_selected = (material_types_current == material_types[n]);
+				if (ImGui::Selectable(material_types[n], is_selected))
 				{
-					bool is_selected = (material_types_current == material_types[n]);
-					if (ImGui::Selectable(material_types[n], is_selected))
+					material.material_type = ShaderType(n);
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+			ImGui::Text("");
+		}
+		if (material.material_type == ShaderType::PHONG)
+		{
+			std::vector<Texture*> textures;
+			for (Texture& texture : App->resources->textures) textures.push_back(&texture);
+
+			// Diffuse Texture Combo
+			const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
+			const char* diffuse_item_current = diffuse_items[material.has_diffuse_map];
+			ImGui::TextColored(App->editor->text_color, "Diffuse Settings:");
+			if (ImGui::BeginCombo("##diffuse", diffuse_item_current))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(diffuse_items); ++n)
+				{
+					bool is_selected = (diffuse_item_current == diffuse_items[n]);
+					if (ImGui::Selectable(diffuse_items[n], is_selected))
 					{
-						material->material.material_type = ShaderType(n);
+						material.has_diffuse_map = n ? 1 : 0;
 					}
 					if (is_selected)
 					{
@@ -71,75 +78,22 @@ void ComponentMaterial::OnEditorUpdate()
 					}
 				}
 				ImGui::EndCombo();
-				ImGui::Text("");
 			}
-			if (material->material.material_type == ShaderType::PHONG)
+			if (diffuse_item_current == diffuse_items[0])
 			{
-				std::vector<Texture*> textures;
-				for (Texture& texture : App->resources->textures) textures.push_back(&texture);
-
-				// Diffuse Texture Combo
-				const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
-				const char* diffuse_item_current = diffuse_items[material->material.has_diffuse_map];
-				ImGui::TextColored(App->editor->text_color, "Diffuse Settings:");
-				sprintf_s(name, 50, "##diffuse_material_%d", count);
-				if (ImGui::BeginCombo(name, diffuse_item_current))
+				ImGui::ColorEdit3("Color##diffuse", material.diffuse_color.ptr());
+			}
+			else
+			{
+				std::string& current_diffuse_texture = material.diffuse_map ? material.diffuse_map->file_name : "";
+				if (ImGui::BeginCombo("Texture##diffuse", current_diffuse_texture.c_str()))
 				{
-					for (int n = 0; n < IM_ARRAYSIZE(diffuse_items); ++n)
+					for (unsigned i = 0; i < textures.size(); ++i)
 					{
-						bool is_selected = (diffuse_item_current == diffuse_items[n]);
-						if (ImGui::Selectable(diffuse_items[n], is_selected))
+						bool is_selected = (current_diffuse_texture == textures[i]->file_name);
+						if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected))
 						{
-							material->material.has_diffuse_map = n ? 1 : 0;
-						}
-						if (is_selected)
-						{
-							ImGui::SetItemDefaultFocus();
-						}
-					}
-					ImGui::EndCombo();
-				}
-				if (diffuse_item_current == diffuse_items[0])
-				{
-					sprintf_s(name, 50, "Color##diffuse_color_%d", count);
-					ImGui::ColorEdit3(name, material->material.diffuse_color.ptr());
-				}
-				else
-				{
-					std::string& current_diffuse_texture = material->material.diffuse_map ? material->material.diffuse_map->file_name : "";
-					sprintf_s(name, 50, "Texture##diffuse_texture_%d", count);
-					if (ImGui::BeginCombo(name, current_diffuse_texture.c_str()))
-					{
-						for (unsigned i = 0; i < textures.size(); ++i)
-						{
-							bool is_selected = (current_diffuse_texture == textures[i]->file_name);
-							if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected))
-							{
-								material->material.diffuse_map = textures[i];
-							};
-							if (is_selected)
-							{
-								ImGui::SetItemDefaultFocus();
-							}
-						}
-						ImGui::EndCombo();
-					}
-				}
-				ImGui::Text("");
-
-				// Specular Texture Combo
-				const char* specular_items[] = {"Specular Color", "Specular Texture"};
-				const char* specular_item_current = specular_items[material->material.has_specular_map];
-				ImGui::TextColored(App->editor->text_color, "Specular Settings:");
-				sprintf_s(name, 50, "##specular_%d", count);
-				if (ImGui::BeginCombo(name, specular_item_current))
-				{
-					for (int n = 0; n < IM_ARRAYSIZE(specular_items); ++n)
-					{
-						bool is_selected = (specular_item_current == specular_items[n]);
-						if (ImGui::Selectable(specular_items[n], is_selected))
-						{
-							material->material.has_specular_map = n ? 1 : 0;
+							material.diffuse_map = textures[i];
 						};
 						if (is_selected)
 						{
@@ -148,46 +102,45 @@ void ComponentMaterial::OnEditorUpdate()
 					}
 					ImGui::EndCombo();
 				}
-				if (specular_item_current == specular_items[0])
+			}
+			ImGui::Text("");
+
+			// Specular Texture Combo
+			const char* specular_items[] = {"Specular Color", "Specular Texture"};
+			const char* specular_item_current = specular_items[material.has_specular_map];
+			ImGui::TextColored(App->editor->text_color, "Specular Settings:");
+			if (ImGui::BeginCombo("##specular", specular_item_current))
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(specular_items); ++n)
 				{
-					sprintf_s(name, 50, "Color##specular_color_%d", count);
-					ImGui::ColorEdit3(name, material->material.specular_color.ptr());
-				}
-				else
-				{
-					std::string& current_specular_texture = material->material.specular_map ? material->material.specular_map->file_name : "";
-					sprintf_s(name, 50, "Texture##specular_texture_%d", count);
-					if (ImGui::BeginCombo(name, current_specular_texture.c_str()))
+					bool is_selected = (specular_item_current == specular_items[n]);
+					if (ImGui::Selectable(specular_items[n], is_selected))
 					{
-						for (unsigned i = 0; i < textures.size(); ++i)
-						{
-							bool is_selected = (current_specular_texture == textures[i]->file_name);
-							if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected))
-							{
-								material->material.specular_map = textures[i];
-							};
-							if (is_selected)
-							{
-								ImGui::SetItemDefaultFocus();
-							}
-						}
-						ImGui::EndCombo();
+						material.has_specular_map = n ? 1 : 0;
+					};
+					if (is_selected)
+					{
+						ImGui::SetItemDefaultFocus();
 					}
 				}
-
-				// Shininess Combo
-				const char* shininess_items[] = {"Shininess Value", "Shininess Alpha"};
-				const char* shininess_item_current = shininess_items[material->material.has_shininess_in_alpha_channel];
-				sprintf_s(name, 50, "##shininess_%d", count);
-				if (ImGui::BeginCombo(name, shininess_item_current))
+				ImGui::EndCombo();
+			}
+			if (specular_item_current == specular_items[0])
+			{
+				ImGui::ColorEdit3("Color##specular", material.specular_color.ptr());
+			}
+			else
+			{
+				std::string& current_specular_texture = material.specular_map ? material.specular_map->file_name : "";
+				if (ImGui::BeginCombo("Texture##specular", current_specular_texture.c_str()))
 				{
-					for (int n = 0; n < IM_ARRAYSIZE(shininess_items); ++n)
+					for (unsigned i = 0; i < textures.size(); ++i)
 					{
-						bool is_selected = (shininess_item_current == shininess_items[n]);
-						if (ImGui::Selectable(shininess_items[n], is_selected))
+						bool is_selected = (current_specular_texture == textures[i]->file_name);
+						if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected))
 						{
-							material->material.has_shininess_in_alpha_channel = n ? 1 : 0;
-						}
+							material.specular_map = textures[i];
+						};
 						if (is_selected)
 						{
 							ImGui::SetItemDefaultFocus();
@@ -195,27 +148,19 @@ void ComponentMaterial::OnEditorUpdate()
 					}
 					ImGui::EndCombo();
 				}
-				if (shininess_item_current == shininess_items[0])
-				{
-					sprintf_s(name, 50, "Shininess##shininess_value_%d", count);
-					ImGui::DragFloat(name, &material->material.shininess, App->editor->drag_speed3f, 0.0f, 1000.0f);
-				}
 			}
-			ImGui::Separator();
-			ImGui::TextColored(App->editor->title_color, "Filters");
 
-			// Min filter combo box
-			const char* min_filter_items[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
-			const char* min_filter_item_current = min_filter_items[int(App->resources->GetMinFilter())];
-			sprintf_s(name, 50, "Min filter##min_filter_%d", count);
-			if (ImGui::BeginCombo(name, min_filter_item_current))
+			// Shininess Combo
+			const char* shininess_items[] = {"Shininess Value", "Shininess Alpha"};
+			const char* shininess_item_current = shininess_items[material.has_shininess_in_alpha_channel];
+			if (ImGui::BeginCombo("##shininess", shininess_item_current))
 			{
-				for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
+				for (int n = 0; n < IM_ARRAYSIZE(shininess_items); ++n)
 				{
-					bool is_selected = (min_filter_item_current == min_filter_items[n]);
-					if (ImGui::Selectable(min_filter_items[n], is_selected))
+					bool is_selected = (shininess_item_current == shininess_items[n]);
+					if (ImGui::Selectable(shininess_items[n], is_selected))
 					{
-						App->resources->SetMinFilter(TextureMinFilter(n));
+						material.has_shininess_in_alpha_channel = n ? 1 : 0;
 					}
 					if (is_selected)
 					{
@@ -224,77 +169,100 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				ImGui::EndCombo();
 			}
-
-			// Mag filter combo box
-			const char* mag_filter_items[] = {"Nearest", "Linear"};
-			const char* mag_filter_item_current = mag_filter_items[int(App->resources->GetMagFilter())];
-			sprintf_s(name, 50, "Mag filter##mag_filter_%d", count);
-			if (ImGui::BeginCombo(name, mag_filter_item_current))
+			if (shininess_item_current == shininess_items[0])
 			{
-				for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
-				{
-					bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
-					if (ImGui::Selectable(mag_filter_items[n], is_selected))
-					{
-						App->resources->SetMagFilter(TextureMagFilter(n));
-					}
-					if (is_selected)
-					{
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-
-			// Texture wrap combo box
-			const char* wrap_items[] = {"Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge"};
-			const char* wrap_item_current = wrap_items[int(App->resources->GetWrap())];
-			sprintf_s(name, 50, "Wrap##mwrap_filter_%d", count);
-			if (ImGui::BeginCombo(name, wrap_item_current))
-			{
-				for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
-				{
-					bool is_selected = (wrap_item_current == wrap_items[n]);
-					if (ImGui::Selectable(wrap_items[n], is_selected))
-					{
-						App->resources->SetWrap(TextureWrap(n));
-					}
-					if (is_selected)
-					{
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-			ImGui::Separator();
-			if (material->material.diffuse_map != nullptr)
-			{
-				ImGui::TextColored(App->editor->title_color, "Diffuse Texture");
-				ImGui::TextWrapped("Size: ");
-				ImGui::SameLine();
-				int width;
-				int height;
-				glGetTextureLevelParameteriv(material->material.diffuse_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
-				glGetTextureLevelParameteriv(material->material.diffuse_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
-				ImGui::TextWrapped("%d x %d", width, height);
-				ImGui::Image((void*) material->material.diffuse_map->gl_texture, ImVec2(200, 200));
-				ImGui::Separator();
-			}
-			if (material->material.specular_map != nullptr)
-			{
-				ImGui::TextColored(App->editor->title_color, "Specular Texture");
-				ImGui::TextWrapped("Size: ");
-				ImGui::SameLine();
-				int width;
-				int height;
-				glGetTextureLevelParameteriv(material->material.specular_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
-				glGetTextureLevelParameteriv(material->material.specular_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
-				ImGui::TextWrapped("%d x %d", width, height);
-				ImGui::Image((void*) material->material.specular_map->gl_texture, ImVec2(200, 200));
-				ImGui::Separator();
+				ImGui::DragFloat("Shininess##shininess", &material.shininess, App->editor->drag_speed3f, 0.0f, 1000.0f);
 			}
 		}
-		count++;
+		ImGui::Separator();
+		ImGui::TextColored(App->editor->title_color, "Filters");
+
+		// Min filter combo box
+		const char* min_filter_items[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
+		const char* min_filter_item_current = min_filter_items[int(App->resources->GetMinFilter())];
+		if (ImGui::BeginCombo("Min filter", min_filter_item_current))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
+			{
+				bool is_selected = (min_filter_item_current == min_filter_items[n]);
+				if (ImGui::Selectable(min_filter_items[n], is_selected))
+				{
+					App->resources->SetMinFilter(TextureMinFilter(n));
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		// Mag filter combo box
+		const char* mag_filter_items[] = {"Nearest", "Linear"};
+		const char* mag_filter_item_current = mag_filter_items[int(App->resources->GetMagFilter())];
+		if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
+			{
+				bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
+				if (ImGui::Selectable(mag_filter_items[n], is_selected))
+				{
+					App->resources->SetMagFilter(TextureMagFilter(n));
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		// Texture wrap combo box
+		const char* wrap_items[] = {"Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge"};
+		const char* wrap_item_current = wrap_items[int(App->resources->GetWrap())];
+		if (ImGui::BeginCombo("Wrap", wrap_item_current))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
+			{
+				bool is_selected = (wrap_item_current == wrap_items[n]);
+				if (ImGui::Selectable(wrap_items[n], is_selected))
+				{
+					App->resources->SetWrap(TextureWrap(n));
+				}
+				if (is_selected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::Separator();
+		if (material.diffuse_map != nullptr)
+		{
+			ImGui::TextColored(App->editor->title_color, "Diffuse Texture");
+			ImGui::TextWrapped("Size:##diffuse");
+			ImGui::SameLine();
+			int width;
+			int height;
+			glGetTextureLevelParameteriv(material.diffuse_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(material.diffuse_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
+			ImGui::TextWrapped("%d x %d##diffuse", width, height);
+			ImGui::Image((void*) material.diffuse_map->gl_texture, ImVec2(200, 200));
+			ImGui::Separator();
+		}
+		if (material.specular_map != nullptr)
+		{
+			ImGui::TextColored(App->editor->title_color, "Specular Texture");
+			ImGui::TextWrapped("Size:##specular");
+			ImGui::SameLine();
+			int width;
+			int height;
+			glGetTextureLevelParameteriv(material.specular_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(material.specular_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
+			ImGui::TextWrapped("%d x %d##specular", width, height);
+			ImGui::Image((void*) material.specular_map->gl_texture, ImVec2(200, 200));
+			ImGui::Separator();
+		}
 	}
 }
 
@@ -338,7 +306,11 @@ void ComponentMaterial::Load(JsonValue j_component)
 				material.diffuse_map = &texture;
 			}
 		}
-		if (material.diffuse_map == nullptr) material.diffuse_map = App->resources->ObtainTexture();
+		if (material.diffuse_map == nullptr)
+		{
+			material.diffuse_map = App->resources->ObtainTexture();
+			material.diffuse_map->file_name = diffuse_file_name;
+		}
 
 		TextureImporter::UnloadTexture(material.diffuse_map);
 		TextureImporter::LoadTexture(material.diffuse_map);
@@ -362,7 +334,11 @@ void ComponentMaterial::Load(JsonValue j_component)
 				material.specular_map = &texture;
 			}
 		}
-		if (material.specular_map == nullptr) material.specular_map = App->resources->ObtainTexture();
+		if (material.specular_map == nullptr)
+		{
+			material.specular_map = App->resources->ObtainTexture();
+			material.specular_map->file_name = specular_file_name;
+		}
 
 		TextureImporter::UnloadTexture(material.specular_map);
 		TextureImporter::LoadTexture(material.specular_map);
