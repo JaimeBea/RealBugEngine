@@ -28,7 +28,10 @@ void ComponentSpotLight::DrawGizmos()
 {
 	if (IsActive() && draw_gizmos)
 	{
-		dd::cone(light.pos, light.direction * 200, dd::colors::White, 200.0f, 0.0f);
+		float delta = light.kl * light.kl - 4 * (light.kc - 10) * light.kq;
+		float distance = Max(abs((-light.kl + sqrt(delta))) / (2 * light.kq), abs((-light.kl - sqrt(delta)) / (2 * light.kq)));
+		float b = distance * tan(light.outer_angle);
+		dd::cone(light.pos, light.direction * distance, dd::colors::White, distance * tan(light.outer_angle), 0.0f);
 	}
 }
 

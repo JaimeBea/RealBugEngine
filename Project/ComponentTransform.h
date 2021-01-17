@@ -6,7 +6,6 @@
 #include "Math/Quat.h"
 #include "Math/float4x4.h"
 #include "imgui.h"
-#include "ImGuizmo.h"
 
 class ComponentTransform : public Component
 {
@@ -33,18 +32,9 @@ public:
 	const float4x4& GetLocalMatrix() const;
 	const float4x4& GetGlobalMatrix() const;
 
-	ImGuizmo::OPERATION GetGizmoOperation() const;
-	ImGuizmo::MODE GetGizmoMode() const;
-	bool GetUseSnap() const;
-	float3 GetSnap();
-
 	bool GetDirty() const;
 
 private:
-	//ImGuizmo
-	ImGuizmo::OPERATION current_guizmo_operation = ImGuizmo::TRANSLATE;
-	ImGuizmo::MODE current_guizmo_mode = ImGuizmo::WORLD;
-
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
 	float3 scale = float3::one;
@@ -54,7 +44,4 @@ private:
 	bool dirty = true;
 	float4x4 local_matrix = float4x4::identity;
 	float4x4 global_matrix = float4x4::identity;
-
-	bool use_snap = false;
-	float snap[3] = {1.f, 1.f, 1.f};
 };

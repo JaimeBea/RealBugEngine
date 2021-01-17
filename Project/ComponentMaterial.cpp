@@ -36,12 +36,14 @@ void ComponentMaterial::OnEditorUpdate()
 		if (ImGui::CollapsingHeader(name))
 		{
 			bool active = IsActive();
-			if (ImGui::Checkbox("Active##material", &active))
+			sprintf_s(name, 50, "Active##material_%d", count);
+			if (ImGui::Checkbox(name, &active))
 			{
 				active ? Enable() : Disable();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Remove##material"))
+			sprintf_s(name, 50, "Remove##material_%d", count);
+			if (ImGui::Button(name))
 			{
 				// TODO: Fix me
 				// selected->RemoveComponent(material);
@@ -54,7 +56,8 @@ void ComponentMaterial::OnEditorUpdate()
 			// Material types
 			const char* material_types[] = {"Standard", "Phong"};
 			const char* material_types_current = material_types[(int) material->material.material_type];
-			if (ImGui::BeginCombo("Type", material_types_current))
+			sprintf_s(name, 50, "Type##material_%d", count);
+			if (ImGui::BeginCombo(name, material_types_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(material_types); ++n)
 				{
@@ -80,7 +83,8 @@ void ComponentMaterial::OnEditorUpdate()
 				const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
 				const char* diffuse_item_current = diffuse_items[material->material.has_diffuse_map];
 				ImGui::TextColored(App->editor->text_color, "Diffuse Settings:");
-				if (ImGui::BeginCombo("##diffuse", diffuse_item_current))
+				sprintf_s(name, 50, "##diffuse_material_%d", count);
+				if (ImGui::BeginCombo(name, diffuse_item_current))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(diffuse_items); ++n)
 					{
@@ -98,12 +102,14 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (diffuse_item_current == diffuse_items[0])
 				{
-					ImGui::ColorEdit3("Color##diffuse_color", material->material.diffuse_color.ptr());
+					sprintf_s(name, 50, "Color##diffuse_color_%d", count);
+					ImGui::ColorEdit3(name, material->material.diffuse_color.ptr());
 				}
 				else
 				{
 					std::string& current_diffuse_texture = material->material.diffuse_map ? material->material.diffuse_map->file_name : "";
-					if (ImGui::BeginCombo("Texture##diffuse_texture", current_diffuse_texture.c_str()))
+					sprintf_s(name, 50, "Texture##diffuse_texture_%d", count);
+					if (ImGui::BeginCombo(name, current_diffuse_texture.c_str()))
 					{
 						for (unsigned i = 0; i < textures.size(); ++i)
 						{
@@ -126,7 +132,8 @@ void ComponentMaterial::OnEditorUpdate()
 				const char* specular_items[] = {"Specular Color", "Specular Texture"};
 				const char* specular_item_current = specular_items[material->material.has_specular_map];
 				ImGui::TextColored(App->editor->text_color, "Specular Settings:");
-				if (ImGui::BeginCombo("##specular", specular_item_current))
+				sprintf_s(name, 50, "##specular_%d", count);
+				if (ImGui::BeginCombo(name, specular_item_current))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(specular_items); ++n)
 					{
@@ -144,12 +151,14 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (specular_item_current == specular_items[0])
 				{
-					ImGui::ColorEdit3("Color##specular_color", material->material.specular_color.ptr());
+					sprintf_s(name, 50, "Color##specular_color_%d", count);
+					ImGui::ColorEdit3(name, material->material.specular_color.ptr());
 				}
 				else
 				{
 					std::string& current_specular_texture = material->material.specular_map ? material->material.specular_map->file_name : "";
-					if (ImGui::BeginCombo("Texture##specular_texture", current_specular_texture.c_str()))
+					sprintf_s(name, 50, "Texture##specular_texture_%d", count);
+					if (ImGui::BeginCombo(name, current_specular_texture.c_str()))
 					{
 						for (unsigned i = 0; i < textures.size(); ++i)
 						{
@@ -170,7 +179,8 @@ void ComponentMaterial::OnEditorUpdate()
 				// Shininess Combo
 				const char* shininess_items[] = {"Shininess Value", "Shininess Alpha"};
 				const char* shininess_item_current = shininess_items[material->material.has_shininess_in_alpha_channel];
-				if (ImGui::BeginCombo("##shininess", shininess_item_current))
+				sprintf_s(name, 50, "##shininess_%d", count);
+				if (ImGui::BeginCombo(name, shininess_item_current))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(shininess_items); ++n)
 					{
@@ -188,7 +198,8 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (shininess_item_current == shininess_items[0])
 				{
-					ImGui::DragFloat("Shininess", &material->material.shininess, App->editor->drag_speed3f, 0.0f, 1000.0f);
+					sprintf_s(name, 50, "Shininess##shininess_value_%d", count);
+					ImGui::DragFloat(name, &material->material.shininess, App->editor->drag_speed3f, 0.0f, 1000.0f);
 				}
 			}
 			ImGui::Separator();
@@ -197,7 +208,8 @@ void ComponentMaterial::OnEditorUpdate()
 			// Min filter combo box
 			const char* min_filter_items[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
 			const char* min_filter_item_current = min_filter_items[int(App->resources->GetMinFilter())];
-			if (ImGui::BeginCombo("Min filter", min_filter_item_current))
+			sprintf_s(name, 50, "Min filter##min_filter_%d", count);
+			if (ImGui::BeginCombo(name, min_filter_item_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n)
 				{
@@ -217,7 +229,8 @@ void ComponentMaterial::OnEditorUpdate()
 			// Mag filter combo box
 			const char* mag_filter_items[] = {"Nearest", "Linear"};
 			const char* mag_filter_item_current = mag_filter_items[int(App->resources->GetMagFilter())];
-			if (ImGui::BeginCombo("Mag filter", mag_filter_item_current))
+			sprintf_s(name, 50, "Mag filter##mag_filter_%d", count);
+			if (ImGui::BeginCombo(name, mag_filter_item_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n)
 				{
@@ -237,7 +250,8 @@ void ComponentMaterial::OnEditorUpdate()
 			// Texture wrap combo box
 			const char* wrap_items[] = {"Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge"};
 			const char* wrap_item_current = wrap_items[int(App->resources->GetWrap())];
-			if (ImGui::BeginCombo("Wrap", wrap_item_current))
+			sprintf_s(name, 50, "Wrap##mwrap_filter_%d", count);
+			if (ImGui::BeginCombo(name, wrap_item_current))
 			{
 				for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n)
 				{

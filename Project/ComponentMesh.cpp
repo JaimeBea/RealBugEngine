@@ -49,12 +49,14 @@ void ComponentMesh::OnEditorUpdate()
 		if (ImGui::CollapsingHeader(name))
 		{
 			bool active = IsActive();
-			if (ImGui::Checkbox("Active##mesh", &active))
+			sprintf_s(name, 50, "Active##mesh_%d", count);
+			if (ImGui::Checkbox(name, &active))
 			{
 				active ? Enable() : Disable();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Remove##mesh"))
+			sprintf_s(name, 50, "Remove##mesh_%d", count);
+			if (ImGui::Button(name))
 			{
 				// TODO: Add delete Component tool
 			}
@@ -69,7 +71,8 @@ void ComponentMesh::OnEditorUpdate()
 			ImGui::TextColored(App->editor->text_color, "%d", mesh->mesh->num_indices / 3);
 			ImGui::Separator();
 			ImGui::TextColored(App->editor->title_color, "Bounding Box");
-			ImGui::Checkbox("Draw##mesh", &bb_active);
+			sprintf_s(name, 50, "Draw##mesh_%d", count);
+			ImGui::Checkbox(name, &bb_active);
 			if (bb_active)
 			{
 				ComponentBoundingBox* bounding_box = selected->GetComponent<ComponentBoundingBox>();
