@@ -236,7 +236,7 @@ void PanelConfiguration::Update()
 			ImGui::SameLine();
 			if (ImGui::Button("Rebuild Quadtree"))
 			{
-				App->scene->RebuildQuadtree(App->scene->quadtree_bounds, App->scene->quadtree_max_depth, App->scene->quadtree_elements_per_node);
+				App->scene->RebuildQuadtree();
 			}
 			ImGui::Separator();
 

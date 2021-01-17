@@ -147,8 +147,6 @@ bool ModuleScene::Start()
 	skybox_cube_map = TextureImporter::ImportCubeMap(files);
 	TextureImporter::LoadCubeMap(skybox_cube_map);
 
-	//RebuildQuadtree(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
-
 	return true;
 }
 
@@ -219,6 +217,7 @@ void ModuleScene::CreateEmptyScene()
 	scene_transform->SetPosition(float3(0, 0, 0));
 	scene_transform->SetRotation(Quat::identity);
 	scene_transform->SetScale(float3(1, 1, 1));
+	root->InitComponents();
 
 	// Create Directional Light
 	GameObject* dir_light = CreateGameObject(root);
@@ -228,7 +227,7 @@ void ModuleScene::CreateEmptyScene()
 	dir_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	dir_light_transform->SetScale(float3(1, 1, 1));
 	ComponentDirectionalLight* dir_light_light = dir_light->CreateComponent<ComponentDirectionalLight>();
-	dir_light_light->Init();
+	dir_light->InitComponents();
 
 	// Create Point Light
 	GameObject* point_light = CreateGameObject(root);
@@ -238,7 +237,7 @@ void ModuleScene::CreateEmptyScene()
 	point_light_transform->SetRotation(Quat::identity);
 	point_light_transform->SetScale(float3(1, 1, 1));
 	ComponentPointLight* point_light_light = point_light->CreateComponent<ComponentPointLight>();
-	point_light_light->Init();
+	point_light->InitComponents();
 
 	// Create Spot Light
 	GameObject* spot_light = CreateGameObject(root);
@@ -248,7 +247,7 @@ void ModuleScene::CreateEmptyScene()
 	spot_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	spot_light_transform->SetScale(float3(1, 1, 1));
 	ComponentSpotLight* spot_light_light = spot_light->CreateComponent<ComponentSpotLight>();
-	spot_light_light->Init();
+	spot_light->InitComponents();
 
 	// Create Game Camera
 	GameObject* game_camera = CreateGameObject(root);
@@ -258,7 +257,7 @@ void ModuleScene::CreateEmptyScene()
 	game_camera_transform->SetRotation(Quat::identity);
 	game_camera_transform->SetScale(float3(1, 1, 1));
 	ComponentCamera* game_camera_camera = game_camera->CreateComponent<ComponentCamera>();
-	game_camera_camera->Init();
+	game_camera->InitComponents();
 }
 
 void ModuleScene::ClearScene()
@@ -270,9 +269,9 @@ void ModuleScene::ClearScene()
 	assert(game_objects.Count() == 0);
 }
 
-void ModuleScene::RebuildQuadtree(const AABB2D& bounds, unsigned max_depth, unsigned elements_per_node)
+void ModuleScene::RebuildQuadtree()
 {
-	quadtree.Initialize(bounds, max_depth, elements_per_node);
+	quadtree.Initialize(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
 	for (GameObject& game_object : game_objects)
 	{
 		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();

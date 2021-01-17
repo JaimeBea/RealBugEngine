@@ -15,11 +15,6 @@
 
 #include "Leaks.h"
 
-void ComponentPointLight::Init()
-{
-	OnTransformUpdate();
-}
-
 void ComponentPointLight::OnTransformUpdate()
 {
 	light.pos = GetOwner().GetComponent<ComponentTransform>()->GetPosition();

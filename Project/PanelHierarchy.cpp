@@ -71,7 +71,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 			transform->SetPosition(float3(0, 0, 0));
 			transform->SetRotation(Quat::identity);
 			transform->SetScale(float3(1, 1, 1));
-			transform->CalculateGlobalMatrix();
+			new_object->InitComponents();
 		}
 
 		ImGui::EndPopup();

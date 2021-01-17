@@ -10,7 +10,7 @@ class ComponentBoundingBox : public Component
 public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
-	void Update() override;
+	void OnTransformUpdate() override;
 	void Save(JsonValue j_component) const override;
 	void Load(JsonValue j_component) override;
 

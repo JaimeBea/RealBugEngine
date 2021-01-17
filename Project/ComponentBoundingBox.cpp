@@ -9,9 +9,9 @@
 
 #include "Leaks.h"
 
-void ComponentBoundingBox::Update()
+void ComponentBoundingBox::OnTransformUpdate()
 {
-	CalculateWorldBoundingBox();
+	CalculateWorldBoundingBox(true);
 }
 
 void ComponentBoundingBox::Save(JsonValue j_component) const

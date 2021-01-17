@@ -13,6 +13,14 @@ void GameObject::Init()
 	id = GenerateUID();
 }
 
+void GameObject::InitComponents()
+{
+	for (Component* component : components)
+	{
+		component->Init();
+	}
+}
+
 void GameObject::Update()
 {
 	for (Component* component : components)

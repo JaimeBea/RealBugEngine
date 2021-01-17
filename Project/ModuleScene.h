@@ -23,7 +23,7 @@ public:
 
 	void CreateEmptyScene();
 	void ClearScene();
-	void RebuildQuadtree(const AABB2D& bounds, unsigned max_depth, unsigned elements_per_node);
+	void RebuildQuadtree();
 	void ClearQuadtree();
 
 	GameObject* CreateGameObject(GameObject* parent);
@@ -40,9 +40,9 @@ public:
 
 	// Quadtree
 	Quadtree<GameObject> quadtree;
-	AABB2D quadtree_bounds = AABB2D({-100, -100}, {100, 100});
-	unsigned quadtree_max_depth = 8;
-	unsigned quadtree_elements_per_node = 4;
+	AABB2D quadtree_bounds = {{-1000, -1000}, {1000, 1000}};
+	unsigned quadtree_max_depth = 4;
+	unsigned quadtree_elements_per_node = 200;
 
 	// Skybox
 	unsigned skybox_vao = 0;

@@ -13,6 +13,7 @@ class GameObject
 {
 public:
 	void Init();
+	void InitComponents();
 	void Update();
 	void DrawGizmos();
 	void CleanUp();

@@ -15,11 +15,6 @@
 
 #include "Leaks.h"
 
-void ComponentSpotLight::Init()
-{
-	OnTransformUpdate();
-}
-
 void ComponentSpotLight::OnTransformUpdate()
 {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
