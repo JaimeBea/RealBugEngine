@@ -73,8 +73,8 @@ bool ModuleScene::Start()
 	CreateEmptyScene();
 
 	// TODO: Remove after test
-	SceneImporter::ImportScene("Assets/Street_Environment/Street_environment_V01.fbx", App->scene->root);
-	//SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
+	//SceneImporter::LoadScene("survival_shooter");
+	SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
 
 	// Load skybox
 	// clang-format off
@@ -297,9 +297,11 @@ void ModuleScene::ClearQuadtree()
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 {
 	GameObject* game_object = game_objects.Obtain();
-	game_objects_id_map[game_object->GetID()] = game_object;
-	game_object->SetParent(parent);
 	game_object->Init();
+	game_object->SetParent(parent);
+	game_objects_id_map[game_object->GetID()] = game_object;
+	
+
 
 	return game_object;
 }

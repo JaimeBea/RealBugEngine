@@ -55,7 +55,9 @@ void PanelInspector::Update()
 
 			for (Component* component : selected->components)
 			{
+				ImGui::PushID(component);
 				component->OnEditorUpdate();
+				ImGui::PopID();
 			}
 		}
 	}

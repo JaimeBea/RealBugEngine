@@ -28,58 +28,39 @@
 
 void ComponentMesh::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->selected_object;
-	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
-	int count = 1;
-
-	for (ComponentMesh* mesh : meshes)
+	if (ImGui::CollapsingHeader("Mesh"))
 	{
-		// Show only # when multiple
-		char name[50];
-		if (meshes.size() == 1)
-		{
-			sprintf_s(name, 50, "Mesh");
-		}
-		else
-		{
-			sprintf_s(name, 50, "Mesh %d##mesh_%d", count, count);
-		}
+		bool active = IsActive();
 
-		if (ImGui::CollapsingHeader(name))
+		if (ImGui::Checkbox("Active", &active))
 		{
-			bool active = IsActive();
-			sprintf_s(name, 50, "Active##mesh_%d", count);
-			if (ImGui::Checkbox(name, &active))
-			{
-				active ? Enable() : Disable();
-			}
-			ImGui::SameLine();
-			sprintf_s(name, 50, "Remove##mesh_%d", count);
-			if (ImGui::Button(name))
-			{
-				// TODO: Add delete Component tool
-			}
-			ImGui::Separator();
-
-			ImGui::TextColored(App->editor->title_color, "Geometry");
-			ImGui::TextWrapped("Num Vertices: ");
-			ImGui::SameLine();
-			ImGui::TextColored(App->editor->text_color, "%d", mesh->mesh->num_vertices);
-			ImGui::TextWrapped("Num Triangles: ");
-			ImGui::SameLine();
-			ImGui::TextColored(App->editor->text_color, "%d", mesh->mesh->num_indices / 3);
-			ImGui::Separator();
-			ImGui::TextColored(App->editor->title_color, "Bounding Box");
-			sprintf_s(name, 50, "Draw##mesh_%d", count);
-			ImGui::Checkbox(name, &bb_active);
-			if (bb_active)
-			{
-				ComponentBoundingBox* bounding_box = selected->GetComponent<ComponentBoundingBox>();
-				bounding_box->DrawBoundingBox();
-			}
-			ImGui::Separator();
+			active ? Enable() : Disable();
 		}
-		count++;
+		ImGui::SameLine();
+
+		if (ImGui::Button("Remove"))
+		{
+			// TODO: Add delete Component tool
+		}
+		ImGui::Separator();
+
+		ImGui::TextColored(App->editor->title_color, "Geometry");
+		ImGui::TextWrapped("Num Vertices: ");
+		ImGui::SameLine();
+		ImGui::TextColored(App->editor->text_color, "%d", mesh->num_vertices);
+		ImGui::TextWrapped("Num Triangles: ");
+		ImGui::SameLine();
+		ImGui::TextColored(App->editor->text_color, "%d", mesh->num_indices / 3);
+		ImGui::Separator();
+		ImGui::TextColored(App->editor->title_color, "Bounding Box");
+
+		ImGui::Checkbox("Draw", &bb_active);
+		if (bb_active)
+		{
+			ComponentBoundingBox* bounding_box = GetOwner().GetComponent<ComponentBoundingBox>();
+			bounding_box->DrawBoundingBox();
+		}
+		ImGui::Separator();
 	}
 }
 
@@ -99,7 +80,11 @@ void ComponentMesh::Load(JsonValue j_component)
 			mesh = &other_mesh;
 		}
 	}
-	if (mesh == nullptr) mesh = App->resources->ObtainMesh();
+	if (mesh == nullptr)
+	{
+		mesh = App->resources->ObtainMesh();
+		mesh->file_name = file_name;
+	}
 	mesh->material_index = j_component["MaterialIndex"];
 
 	MeshImporter::UnloadMesh(mesh);

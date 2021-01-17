@@ -36,59 +36,41 @@ void ComponentSpotLight::DrawGizmos()
 
 void ComponentSpotLight::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->selected_object;
-	std::vector<ComponentSpotLight*> lights = selected->GetComponents<ComponentSpotLight>();
-	int count = 1;
-
-	for (ComponentSpotLight* light : lights)
+	if (ImGui::CollapsingHeader("Light"))
 	{
-		// Show only # when multiple
-		char name[50];
-		if (lights.size() == 1)
+		bool active = IsActive();
+		if (ImGui::Checkbox("Active", &active))
 		{
-			sprintf_s(name, 50, "Light");
+			active ? Enable() : Disable();
 		}
-		else
+		ImGui::SameLine();
+		if (ImGui::Button("Remove"))
 		{
-			sprintf_s(name, 50, "Light %d##spot_light_%d", count, count);
+			// TODO: Fix me
+			//selected->RemoveComponent(material);
+			//continue;
 		}
+		ImGui::Separator();
 
-		if (ImGui::CollapsingHeader(name))
+		ImGui::Checkbox("Draw Gizmos", &draw_gizmos);
+		ImGui::Separator();
+
+		ImGui::TextColored(App->editor->title_color, "Parameters");
+		ImGui::InputFloat3("Direction", light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+		ImGui::ColorEdit3("Color", light.color.ptr());
+		ImGui::DragFloat("Intensity", &light.intensity, App->editor->drag_speed3f, 0.0f, inf);
+		ImGui::DragFloat("Linear Constant", &light.kl, App->editor->drag_speed5f, 0.0f, 2.0f);
+		ImGui::DragFloat("Quadratic Constant", &light.kq, App->editor->drag_speed5f, 0.0f, 2.0f);
+
+		float deg_outer_angle = light.outer_angle * RADTODEG;
+		float deg_inner_angle = light.inner_angle * RADTODEG;
+		if (ImGui::DragFloat("Outter Angle", &deg_outer_angle, App->editor->drag_speed3f, 0.0f, 90.0f))
 		{
-			bool active = IsActive();
-			if (ImGui::Checkbox("Active##spot_light_active", &active))
-			{
-				active ? Enable() : Disable();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Remove##spot_light_remove"))
-			{
-				// TODO: Fix me
-				//selected->RemoveComponent(material);
-				//continue;
-			}
-			ImGui::Separator();
-
-			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
-			ImGui::Separator();
-
-			ImGui::TextColored(App->editor->title_color, "Parameters");
-			ImGui::InputFloat3("Direction##spot_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-			ImGui::ColorEdit3("Color##spot_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intensity##spot_light_intensity", &light->light.intensity, App->editor->drag_speed3f, 0.0f, inf);
-			ImGui::DragFloat("Linear Constant##spot_light_kl", &light->light.kl, App->editor->drag_speed5f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant##spot_light_kq", &light->light.kq, App->editor->drag_speed5f, 0.0f, 2.0f);
-
-			float deg_outer_angle = light->light.outer_angle * RADTODEG;
-			float deg_inner_angle = light->light.inner_angle * RADTODEG;
-			if (ImGui::DragFloat("Outter Angle##spot_light_outer_angle", &deg_outer_angle, App->editor->drag_speed3f, 0.0f, 90.0f))
-			{
-				light->light.outer_angle = deg_outer_angle * DEGTORAD;
-			}
-			if (ImGui::DragFloat("Inner Angle##spot_light_inner_angle", &deg_inner_angle, App->editor->drag_speed3f, 0.0f, deg_outer_angle))
-			{
-				light->light.inner_angle = deg_inner_angle * DEGTORAD;
-			}
+			light.outer_angle = deg_outer_angle * DEGTORAD;
+		}
+		if (ImGui::DragFloat("Inner Angle", &deg_inner_angle, App->editor->drag_speed3f, 0.0f, deg_outer_angle))
+		{
+			light.inner_angle = deg_inner_angle * DEGTORAD;
 		}
 	}
 }

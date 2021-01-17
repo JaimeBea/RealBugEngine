@@ -32,48 +32,30 @@ void ComponentPointLight::DrawGizmos()
 
 void ComponentPointLight::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->selected_object;
-	std::vector<ComponentPointLight*> lights = selected->GetComponents<ComponentPointLight>();
-	int count = 1;
-
-	for (ComponentPointLight* light : lights)
+	if (ImGui::CollapsingHeader("Light"))
 	{
-		// Show only # when multiple
-		char name[50];
-		if (lights.size() == 1)
+		bool active = IsActive();
+		if (ImGui::Checkbox("Active", &active))
 		{
-			sprintf_s(name, 10, "Light");
+			active ? Enable() : Disable();
 		}
-		else
+		ImGui::SameLine();
+		if (ImGui::Button("Remove"))
 		{
-			sprintf_s(name, 30, "Light %d#point_light_%d", count, count);
+			// TODO: Fix me
+			//selected->RemoveComponent(material);
+			//continue;
 		}
+		ImGui::Separator();
 
-		if (ImGui::CollapsingHeader(name))
-		{
-			bool active = IsActive();
-			if (ImGui::Checkbox("Active##point_light_active", &active))
-			{
-				active ? Enable() : Disable();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Remove##point_light_remove"))
-			{
-				// TODO: Fix me
-				//selected->RemoveComponent(material);
-				//continue;
-			}
-			ImGui::Separator();
+		ImGui::Checkbox("Draw Gizmos", &draw_gizmos);
+		ImGui::Separator();
 
-			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
-			ImGui::Separator();
-
-			ImGui::TextColored(App->editor->title_color, "Parameters");
-			ImGui::ColorEdit3("Color##point_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intensity##point_light_intensity", &light->light.intensity, App->editor->drag_speed3f, 0.0f, inf);
-			ImGui::DragFloat("Linear Constant##point_light_kl", &light->light.kl, App->editor->drag_speed5f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant##point_light_kq", &light->light.kq, App->editor->drag_speed5f, 0.0f, 2.0f);
-		}
+		ImGui::TextColored(App->editor->title_color, "Parameters");
+		ImGui::ColorEdit3("Color", light.color.ptr());
+		ImGui::DragFloat("Intensity", &light.intensity, App->editor->drag_speed3f, 0.0f, inf);
+		ImGui::DragFloat("Linear Constant", &light.kl, App->editor->drag_speed5f, 0.0f, 2.0f);
+		ImGui::DragFloat("Quadratic Constant", &light.kq, App->editor->drag_speed5f, 0.0f, 2.0f);
 	}
 }
 
