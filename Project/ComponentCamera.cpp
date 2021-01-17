@@ -82,18 +82,18 @@ void ComponentCamera::OnEditorUpdate()
 	}
 }
 
-void ComponentCamera::Save(JsonValue& j_component) const
+void ComponentCamera::Save(JsonValue j_component) const
 {
-	JsonValue& j_frustum = j_component["Frustum"];
-	JsonValue& j_pos = j_frustum["Pos"];
+	JsonValue j_frustum = j_component["Frustum"];
+	JsonValue j_pos = j_frustum["Pos"];
 	j_pos[0] = frustum.Pos().x;
 	j_pos[1] = frustum.Pos().y;
 	j_pos[2] = frustum.Pos().z;
-	JsonValue& j_up = j_frustum["Up"];
+	JsonValue j_up = j_frustum["Up"];
 	j_up[0] = frustum.Up().x;
 	j_up[1] = frustum.Up().y;
 	j_up[2] = frustum.Up().z;
-	JsonValue& j_front = j_frustum["Front"];
+	JsonValue j_front = j_frustum["Front"];
 	j_front[0] = frustum.Front().x;
 	j_front[1] = frustum.Front().y;
 	j_front[2] = frustum.Front().z;
@@ -105,12 +105,12 @@ void ComponentCamera::Save(JsonValue& j_component) const
 	j_component["CameraSelected"] = active_camera;
 }
 
-void ComponentCamera::Load(const JsonValue& j_component)
+void ComponentCamera::Load(JsonValue j_component)
 {
-	const JsonValue& j_frustum = j_component["Frustum"];
-	const JsonValue& j_pos = j_frustum["Pos"];
-	const JsonValue& j_up = j_frustum["Up"];
-	const JsonValue& j_front = j_frustum["Front"];
+	JsonValue j_frustum = j_component["Frustum"];
+	JsonValue j_pos = j_frustum["Pos"];
+	JsonValue j_up = j_frustum["Up"];
+	JsonValue j_front = j_frustum["Front"];
 	frustum.SetFrame(vec(j_pos[0], j_pos[1], j_pos[2]), vec(j_front[0], j_front[1], j_front[2]), vec(j_up[0], j_up[1], j_up[2]));
 	frustum.SetViewPlaneDistances(j_frustum["NearPlaneDistance"], j_frustum["FarPlaneDistance"]);
 	frustum.SetPerspective(j_frustum["HorizontalFov"], j_frustum["VerticalFov"]);

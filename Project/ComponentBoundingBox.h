@@ -11,8 +11,8 @@ public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
 	void Update() override;
-	void Save(JsonValue& j_component) const override;
-	void Load(const JsonValue& j_component) override;
+	void Save(JsonValue j_component) const override;
+	void Load(JsonValue j_component) override;
 
 	void SetLocalBoundingBox(const AABB& bounding_box);
 	void CalculateWorldBoundingBox(bool force = false);

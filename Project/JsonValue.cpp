@@ -6,11 +6,10 @@ JsonValue::JsonValue(rapidjson::Document& document_, rapidjson::Value& value_)
 
 size_t JsonValue::Size() const
 {
-	assert(value.IsArray());
-	return value.Size();
+	return value.IsArray() ? value.Size() : 0;
 }
 
-JsonValue JsonValue::operator[](unsigned index)
+JsonValue JsonValue::operator[](unsigned index) const
 {
 	if (!value.IsArray())
 	{
@@ -23,14 +22,6 @@ JsonValue JsonValue::operator[](unsigned index)
 	{
 		value.PushBack(rapidjson::Value(), document.GetAllocator());
 	}
-
-	return JsonValue(document, value[index]);
-}
-
-const JsonValue JsonValue::operator[](unsigned index) const
-{
-	assert(value.IsArray());
-	assert(index < value.Size());
 
 	return JsonValue(document, value[index]);
 }
@@ -77,48 +68,40 @@ void JsonValue::operator=(const char* x)
 
 JsonValue::operator bool() const
 {
-	assert(value.IsBool());
-	return value.GetBool();
+	return value.IsBool() ? value.GetBool() : false;
 }
 
 JsonValue::operator int() const
 {
-	assert(value.IsInt());
-	return value.GetInt();
+	return value.IsInt() ? value.GetInt() : 0;
 }
 
 JsonValue::operator unsigned() const
 {
-	assert(value.IsUint());
-	return value.GetUint();
+	return value.IsUint() ? value.GetUint() : 0;
 }
 
 JsonValue::operator long long() const
 {
-	assert(value.IsInt64());
-	return value.GetInt64();
+	return value.IsInt64() ? value.GetInt64() : 0;
 }
 
 JsonValue::operator unsigned long long() const
 {
-	assert(value.IsUint64());
-	return value.GetUint64();
+	return value.IsUint64() ? value.GetUint64() : 0;
 }
 
 JsonValue::operator float() const
 {
-	assert(value.IsDouble());
-	return value.GetFloat();
+	return value.IsDouble() ? value.GetFloat() : 0;
 }
 
 JsonValue::operator double() const
 {
-	assert(value.IsDouble());
-	return value.GetDouble();
+	return value.IsDouble() ? value.GetDouble() : 0;
 }
 
 JsonValue::operator std::string() const
 {
-	assert(value.IsString());
-	return value.GetString();
+	return value.IsString() ? value.GetString() : "";
 }

@@ -85,42 +85,42 @@ void ComponentTransform::OnEditorUpdate()
 	}
 }
 
-void ComponentTransform::Save(JsonValue& j_component) const
+void ComponentTransform::Save(JsonValue j_component) const
 {
-	JsonValue& j_position = j_component["Position"];
+	JsonValue j_position = j_component["Position"];
 	j_position[0] = position.x;
 	j_position[1] = position.y;
 	j_position[2] = position.z;
 
-	JsonValue& j_rotation = j_component["Rotation"];
+	JsonValue j_rotation = j_component["Rotation"];
 	j_rotation[0] = rotation.x;
 	j_rotation[1] = rotation.y;
 	j_rotation[2] = rotation.z;
 	j_rotation[3] = rotation.w;
 
-	JsonValue& j_scale = j_component["Scale"];
+	JsonValue j_scale = j_component["Scale"];
 	j_scale[0] = scale.x;
 	j_scale[1] = scale.y;
 	j_scale[2] = scale.z;
 
-	JsonValue& j_local_euler_angles = j_component["LocalEulerAngles"];
+	JsonValue j_local_euler_angles = j_component["LocalEulerAngles"];
 	j_local_euler_angles[0] = local_euler_angles.x;
 	j_local_euler_angles[1] = local_euler_angles.y;
 	j_local_euler_angles[2] = local_euler_angles.z;
 }
 
-void ComponentTransform::Load(const JsonValue& j_component)
+void ComponentTransform::Load(JsonValue j_component)
 {
-	const JsonValue& j_position = j_component["Position"];
+	JsonValue j_position = j_component["Position"];
 	position.Set(j_position[0], j_position[1], j_position[2]);
 
-	const JsonValue& j_rotation = j_component["Rotation"];
+	JsonValue j_rotation = j_component["Rotation"];
 	rotation.Set(j_rotation[0], j_rotation[1], j_rotation[2], j_rotation[3]);
 
-	const JsonValue& j_scale = j_component["Scale"];
+	JsonValue j_scale = j_component["Scale"];
 	scale.Set(j_scale[0], j_scale[1], j_scale[2]);
 
-	const JsonValue& j_local_euler_angles = j_component["LocalEulerAngles"];
+	JsonValue j_local_euler_angles = j_component["LocalEulerAngles"];
 	local_euler_angles.Set(j_local_euler_angles[0], j_local_euler_angles[1], j_local_euler_angles[2]);
 
 	dirty = true;

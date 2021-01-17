@@ -16,8 +16,8 @@ public:
 	REGISTER_COMPONENT(ComponentMesh, ComponentType::MESH);
 
 	void OnEditorUpdate() override;
-	void Save(JsonValue& j_component) const override;
-	void Load(const JsonValue& j_component) override;
+	void Save(JsonValue j_component) const override;
+	void Load(JsonValue j_component) override;
 
 	void Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const;
 
