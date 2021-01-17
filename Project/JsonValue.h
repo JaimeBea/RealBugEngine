@@ -8,7 +8,7 @@ class JsonValue
 public:
 	JsonValue(rapidjson::Document& document, rapidjson::Value& value);
 
-	// Size of the array. Only works if the value is an array.
+	// Size of the array. Returns 0 if the value is not an array.
 	size_t Size() const;
 
 	// Object/array access (Creates new members if they don't exist)

@@ -6,8 +6,7 @@ JsonValue::JsonValue(rapidjson::Document& document_, rapidjson::Value& value_)
 
 size_t JsonValue::Size() const
 {
-	assert(value.IsArray());
-	return value.Size();
+	return value.IsArray() ? value.Size() : 0;
 }
 
 JsonValue JsonValue::operator[](unsigned index) const
