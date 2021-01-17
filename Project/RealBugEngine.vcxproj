@@ -134,7 +134,6 @@
     <ClInclude Include="ModulePrograms.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleScene.h" />
-    <ClInclude Include="ModuleSceneRender.h" />
     <ClInclude Include="ModuleResources.h" />
     <ClInclude Include="ModuleTime.h" />
     <ClInclude Include="ModuleWindow.h" />
@@ -233,7 +232,6 @@
     <ClCompile Include="ModulePrograms.cpp" />
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleScene.cpp" />
-    <ClCompile Include="ModuleSceneRender.cpp" />
     <ClCompile Include="ModuleResources.cpp" />
     <ClCompile Include="ModuleTime.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />

@@ -1,5 +1,7 @@
 #include "Panel.h"
 
+#include "imgui.h"
+
 #include "Leaks.h"
 
 Panel::Panel(const char* name, bool enabled)

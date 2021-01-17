@@ -2,24 +2,24 @@
 
 #include "Globals.h"
 #include "Logging.h"
+#include "Application.h"
+#include "MeshImporter.h"
 #include "GameObject.h"
+#include "Texture.h"
+#include "Mesh.h"
 #include "ComponentTransform.h"
 #include "ComponentMaterial.h"
 #include "ComponentDirectionalLight.h"
 #include "ComponentPointLight.h"
 #include "ComponentSpotLight.h"
 #include "ComponentBoundingBox.h"
-#include "Application.h"
 #include "ModulePrograms.h"
 #include "ModuleResources.h"
 #include "ModuleCamera.h"
-#include "ModuleSceneRender.h"
+#include "ModuleRender.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
-#include "Texture.h"
-#include "Mesh.h"
-#include "MeshImporter.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
@@ -62,15 +62,15 @@ void ComponentMesh::OnEditorUpdate()
 			}
 			ImGui::Separator();
 
-			ImGui::TextColored(title_color, "Geometry");
+			ImGui::TextColored(App->editor->title_color, "Geometry");
 			ImGui::TextWrapped("Num Vertices: ");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%d", mesh->mesh->num_vertices);
+			ImGui::TextColored(App->editor->text_color, "%d", mesh->mesh->num_vertices);
 			ImGui::TextWrapped("Num Triangles: ");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%d", mesh->mesh->num_indices / 3);
+			ImGui::TextColored(App->editor->text_color, "%d", mesh->mesh->num_indices / 3);
 			ImGui::Separator();
-			ImGui::TextColored(title_color, "Bounding Box");
+			ImGui::TextColored(App->editor->title_color, "Bounding Box");
 			sprintf_s(name, 50, "Draw##mesh_%d", count);
 			ImGui::Checkbox(name, &bb_active);
 			if (bb_active)
@@ -181,7 +181,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 
 							count = 0;
 							selected = -1;
-							int max_distance = 0;
+							float max_distance = 0;
 							for (float point_distance : point_distances_vector)
 							{
 								if (point_distance > max_distance)
@@ -234,7 +234,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 
 							count = 0;
 							selected = -1;
-							int max_distance = 0;
+							float max_distance = 0;
 							for (float spot_distance : spot_distances_vector)
 							{
 								if (spot_distance > max_distance)
@@ -267,7 +267,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		glUniform1i(glGetUniformLocation(program, "has_specular_map"), has_specular_map);
 		glUniform1i(glGetUniformLocation(program, "shininess_alpha"), shininess_alpha);
 
-		glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->scene_renderer->ambient_color.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambient_color.ptr());
 
 		if (directional_light != nullptr)
 		{

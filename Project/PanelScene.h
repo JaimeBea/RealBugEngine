@@ -3,6 +3,7 @@
 #include "Panel.h"
 
 #include "Math/float2.h"
+#include "imgui.h"
 #include "ImGuizmo.h"
 
 struct ImDrawList;

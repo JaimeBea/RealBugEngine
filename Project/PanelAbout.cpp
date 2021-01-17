@@ -1,6 +1,7 @@
 #include "PanelAbout.h"
 
 #include "Application.h"
+#include "ModuleEditor.h"
 
 #include "imgui.h"
 
@@ -14,9 +15,9 @@ void PanelAbout::Update()
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled, ImGuiWindowFlags_AlwaysAutoResize))
 	{
-		ImGui::TextColored(title_color, "RealBug Engine");
+		ImGui::TextColored(App->editor->title_color, "RealBug Engine");
 		ImGui::Separator();
-		ImGui::TextColored(title_color, u8"By Jaime Bea & Llorenç (Lowy) Solé.");
+		ImGui::TextColored(App->editor->title_color, u8"By Jaime Bea & Llorenç (Lowy) Solé.");
 		ImGui::Text("Engine developed during the Master in Advanced Programming for AAA Video Games by UPC.");
 		ImGui::Text("Engine licensed under the MIT License.");
 		ImGui::Separator();

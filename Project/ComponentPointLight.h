@@ -13,7 +13,7 @@ struct PointLight
 	// Init value to rise 100 meters.
 	float kc = 1.0f; //Keep in one to avoid having denominator less than 1
 	float kl = 0.045f;
-	float kq = 0.0075;
+	float kq = 0.0075f;
 };
 
 class ComponentPointLight : public Component

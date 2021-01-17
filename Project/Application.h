@@ -37,7 +37,6 @@ public:
 public:
 	ModuleHardwareInfo* hardware = nullptr;
 	ModuleResources* resources = nullptr;
-	ModuleSceneRender* scene_renderer = nullptr;
 	ModuleRender* renderer = nullptr;
 	ModuleCamera* camera = nullptr;
 	ModuleWindow* window = nullptr;

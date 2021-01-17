@@ -14,7 +14,7 @@ struct SpotLight
 	// Init value to rise 100 meters.
 	float kc = 1.0f; //Keep in one to avoid having denominator less than 1
 	float kl = 0.045f;
-	float kq = 0.0075;
+	float kq = 0.0075f;
 	float inner_angle = pi / 12;
 	float outer_angle = pi / 6;
 };

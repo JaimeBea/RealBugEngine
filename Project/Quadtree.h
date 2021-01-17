@@ -33,7 +33,7 @@ public:
 				// Branch
 				child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb, optimizing);
 			}
-			else if (depth == tree.max_depth || element_count < tree.max_node_elements)
+			else if (depth == tree.max_depth || (unsigned) element_count < tree.max_node_elements)
 			{
 				// Leaf that can't split or leaf with space
 				if (optimizing)

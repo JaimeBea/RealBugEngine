@@ -1,5 +1,7 @@
 #include "JsonValue.h"
 
+#include "Leaks.h"
+
 JsonValue::JsonValue(rapidjson::Document& document_, rapidjson::Value& value_)
 	: document(document_)
 	, value(value_) {}

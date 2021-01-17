@@ -3,9 +3,9 @@
 #include "Globals.h"
 #include "Logging.h"
 #include "Application.h"
+#include "SceneImporter.h"
 #include "ModuleScene.h"
 #include "ModuleFiles.h"
-#include "SceneImporter.h"
 
 #include "SDL_timer.h"
 #include "Brofiler.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Globals.h"
 #include "Component.h"
 
 #include "Math/float3.h"

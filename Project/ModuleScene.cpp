@@ -1,15 +1,13 @@
 #include "ModuleScene.h"
 
 #include "Globals.h"
-#include "Application.h"
 #include "Logging.h"
-#include "ModuleInput.h"
-#include "ModulePrograms.h"
-#include "ModuleCamera.h"
-#include "ModuleResources.h"
-#include "ModuleFiles.h"
-#include "ModuleEditor.h"
-#include "PanelHierarchy.h"
+#include "Application.h"
+#include "SceneImporter.h"
+#include "TextureImporter.h"
+#include "JsonValue.h"
+#include "Texture.h"
+#include "CubeMap.h"
 #include "Component.h"
 #include "ComponentTransform.h"
 #include "ComponentDirectionalLight.h"
@@ -19,11 +17,13 @@
 #include "ComponentMaterial.h"
 #include "ComponentBoundingBox.h"
 #include "ComponentCamera.h"
-#include "Texture.h"
-#include "CubeMap.h"
-#include "JsonValue.h"
-#include "SceneImporter.h"
-#include "TextureImporter.h"
+#include "ModuleInput.h"
+#include "ModulePrograms.h"
+#include "ModuleCamera.h"
+#include "ModuleResources.h"
+#include "ModuleFiles.h"
+#include "ModuleEditor.h"
+#include "PanelHierarchy.h"
 
 #include "GL/glew.h"
 #include "Math/myassert.h"
@@ -38,6 +38,7 @@
 #include "rapidjson/reader.h"
 #include "rapidjson/error/en.h"
 #include <string>
+#include "Brofiler.h"
 
 #include "Leaks.h"
 
@@ -158,6 +159,8 @@ bool ModuleScene::Start()
 
 UpdateStatus ModuleScene::Update()
 {
+	BROFILER_CATEGORY("ModuleScene - Update", Profiler::Color::Green)
+
 	// Load scene/fbx if one gets dropped
 	const char* dropped_file_path = App->input->GetDroppedFilePath();
 	if (dropped_file_path != nullptr)
@@ -306,7 +309,7 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 
 GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
 {
-	// NTH: Duplicate Game Objects
+	// TODO: Duplicate Game Objects
 	return game_object;
 }
 

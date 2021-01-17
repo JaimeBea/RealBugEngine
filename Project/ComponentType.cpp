@@ -10,6 +10,8 @@
 #include "ComponentPointLight.h"
 #include "ComponentSpotLight.h"
 
+#include "Leaks.h"
+
 Component* CreateComponentByType(GameObject& game_object, ComponentType type, bool active)
 {
 	switch (type)

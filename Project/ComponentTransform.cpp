@@ -1,9 +1,9 @@
 #include "ComponentTransform.h"
 
+#include "Application.h"
 #include "GameObject.h"
 #include "ComponentCamera.h"
 #include "ComponentBoundingBox.h"
-#include "Application.h"
 #include "ModuleEditor.h"
 #include "ModuleInput.h"
 #include "ModuleCamera.h"
@@ -13,6 +13,8 @@
 
 #include "Math/float3x3.h"
 #include "SDL.h"
+
+#include "Leaks.h"
 
 void ComponentTransform::Update()
 {
@@ -27,17 +29,17 @@ void ComponentTransform::OnEditorUpdate()
 
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
-		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
+		ImGui::TextColored(App->editor->title_color, "Transformation (X,Y,Z)");
+		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->drag_speed2f, -inf, inf))
 		{
 			SetPosition(pos);
 		}
-		if (ImGui::DragFloat3("Scale", scl.ptr(), drag_speed2f, 0, inf))
+		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->drag_speed2f, 0, inf))
 		{
 			SetScale(scl);
 		}
 
-		if (ImGui::DragFloat3("Rotation", rot.ptr(), drag_speed2f, -inf, inf))
+		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->drag_speed2f, -inf, inf))
 		{
 			SetRotation(rot);
 		}

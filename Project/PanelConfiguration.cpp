@@ -7,7 +7,6 @@
 #include "ModuleHardwareInfo.h"
 #include "ModuleWindow.h"
 #include "ModuleScene.h"
-#include "ModuleSceneRender.h"
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
 #include "ModuleResources.h"
@@ -59,25 +58,25 @@ void PanelConfiguration::Update()
 		{
 			ImGui::Text("GLEW version:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, App->hardware->glew_version);
+			ImGui::TextColored(App->editor->text_color, App->hardware->glew_version);
 			ImGui::Text("SDL version:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, App->hardware->sdl_version);
+			ImGui::TextColored(App->editor->text_color, App->hardware->sdl_version);
 			ImGui::Text("Assimp version:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, App->hardware->assimp_version);
+			ImGui::TextColored(App->editor->text_color, App->hardware->assimp_version);
 			ImGui::Text("DeviL version:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, App->hardware->devil_version);
+			ImGui::TextColored(App->editor->text_color, App->hardware->devil_version);
 
 			ImGui::Separator();
 
 			ImGui::Text("CPUs:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
+			ImGui::TextColored(App->editor->text_color, "%i (Cache: %i kb)", App->hardware->cpu_count, App->hardware->cache_size_kb);
 			ImGui::Text("System RAM:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%.1f Gb", App->hardware->ram_gb);
+			ImGui::TextColored(App->editor->text_color, "%.1f Gb", App->hardware->ram_gb);
 			ImGui::Text("Caps:");
 			const char* items[] = {"3DNow", "ARMSIMD", "AVX", "AVX2", "AVX512F", "AltiVec", "MMX", "NEON", "RDTSC", "SSE", "SSE2", "SSE3", "SSE41", "SSE42"};
 			for (int i = 0; i < IM_ARRAYSIZE(items); ++i)
@@ -85,7 +84,7 @@ void PanelConfiguration::Update()
 				if (App->hardware->caps[i])
 				{
 					ImGui::SameLine();
-					ImGui::TextColored(text_color, items[i]);
+					ImGui::TextColored(App->editor->text_color, items[i]);
 				}
 
 				// Line break to avoid too many items in the same line
@@ -99,25 +98,25 @@ void PanelConfiguration::Update()
 
 			ImGui::Text("GPU Vendor:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%s", App->hardware->gpu_vendor);
+			ImGui::TextColored(App->editor->text_color, "%s", App->hardware->gpu_vendor);
 			ImGui::Text("GPU Renderer:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%s", App->hardware->gpu_renderer);
+			ImGui::TextColored(App->editor->text_color, "%s", App->hardware->gpu_renderer);
 			ImGui::Text("GPU OpenGL Version:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%s", App->hardware->gpu_opengl_version);
+			ImGui::TextColored(App->editor->text_color, "%s", App->hardware->gpu_opengl_version);
 			ImGui::Text("VRAM Budget:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_budget_mb);
+			ImGui::TextColored(App->editor->text_color, "%.1f Mb", App->hardware->vram_budget_mb);
 			ImGui::Text("VRAM Usage:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_usage_mb);
+			ImGui::TextColored(App->editor->text_color, "%.1f Mb", App->hardware->vram_usage_mb);
 			ImGui::Text("VRAM Available:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_available_mb);
+			ImGui::TextColored(App->editor->text_color, "%.1f Mb", App->hardware->vram_available_mb);
 			ImGui::Text("VRAM Reserved:");
 			ImGui::SameLine();
-			ImGui::TextColored(text_color, "%.1f Mb", App->hardware->vram_reserved_mb);
+			ImGui::TextColored(App->editor->text_color, "%.1f Mb", App->hardware->vram_reserved_mb);
 		}
 
 		// Window
@@ -222,9 +221,9 @@ void PanelConfiguration::Update()
 		if (ImGui::CollapsingHeader("Scene"))
 		{
 			// TODO: Change the Skybox images
-			ImGui::TextColored(title_color, "Gizmos");
-			ImGui::Checkbox("Draw Bounding Boxes", &App->scene_renderer->draw_all_bounding_boxes);
-			ImGui::Checkbox("Draw Quadtree", &App->scene_renderer->draw_quadtree);
+			ImGui::TextColored(App->editor->title_color, "Gizmos");
+			ImGui::Checkbox("Draw Bounding Boxes", &App->renderer->draw_all_bounding_boxes);
+			ImGui::Checkbox("Draw Quadtree", &App->renderer->draw_quadtree);
 			ImGui::Separator();
 			ImGui::InputFloat2("Min Point", App->scene->quadtree_bounds.minPoint.ptr());
 			ImGui::InputFloat2("Max Point", App->scene->quadtree_bounds.maxPoint.ptr());
@@ -241,9 +240,9 @@ void PanelConfiguration::Update()
 			}
 			ImGui::Separator();
 
-			ImGui::Checkbox("Skybox", &App->scene_renderer->skybox_active);
+			ImGui::Checkbox("Skybox", &App->renderer->skybox_active);
 			ImGui::ColorEdit3("Background", App->renderer->clear_color.ptr());
-			ImGui::ColorEdit3("Ambient Color", App->scene_renderer->ambient_color.ptr());
+			ImGui::ColorEdit3("Ambient Color", App->renderer->ambient_color.ptr());
 		}
 
 		// Camera
@@ -252,7 +251,7 @@ void PanelConfiguration::Update()
 			Frustum& frustum = App->camera->GetEngineFrustum();
 			vec front = frustum.Front();
 			vec up = frustum.Up();
-			ImGui::TextColored(title_color, "Frustum");
+			ImGui::TextColored(App->editor->title_color, "Frustum");
 			ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 

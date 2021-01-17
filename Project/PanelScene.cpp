@@ -1,10 +1,11 @@
 #include "PanelScene.h"
 
 #include "Globals.h"
+#include "Logging.h"
+#include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
 #include "ComponentBoundingBox.h"
-#include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleEditor.h"
 #include "ModuleCamera.h"
@@ -18,7 +19,6 @@
 #include "Geometry/OBB.h"
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
-#include "Logging.h"
 #include <algorithm>
 
 #include "Leaks.h"
@@ -28,7 +28,7 @@ PanelScene::PanelScene()
 
 void PanelScene::Update()
 {
-	int imguizmo_size = 100;
+	float imguizmo_size = 100;
 
 	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
 	{
@@ -100,7 +100,7 @@ void PanelScene::Update()
 		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 		ImGui::SameLine();
 
-		ImGui::TextColored(title_color, "Snap");
+		ImGui::TextColored(App->editor->title_color, "Snap");
 		ImGui::SameLine();
 		ImGui::Checkbox("##snap", &use_snap);
 		ImGui::SameLine();

@@ -1,13 +1,13 @@
 #include "TextureImporter.h"
 
 #include "Globals.h"
-#include "Application.h"
 #include "Logging.h"
-#include "ModuleResources.h"
-#include "ModuleFiles.h"
+#include "Application.h"
 #include "Texture.h"
 #include "CubeMap.h"
 #include "Buffer.h"
+#include "ModuleResources.h"
+#include "ModuleFiles.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"

@@ -1,11 +1,11 @@
 #include "MeshImporter.h"
 
-#include "Application.h"
 #include "Logging.h"
-#include "ModuleResources.h"
-#include "ModuleFiles.h"
+#include "Application.h"
 #include "Mesh.h"
 #include "Buffer.h"
+#include "ModuleResources.h"
+#include "ModuleFiles.h"
 
 #include "assimp/mesh.h"
 #include "Math/float3.h"
@@ -13,6 +13,8 @@
 #include "GL/glew.h"
 #include <list>
 #include <vector>
+
+#include "Leaks.h"
 
 Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
 {
@@ -194,7 +196,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 	// Vertices
 	std::vector<float3> vertices;
-	for (int i = 0; i < num_vertices; i++)
+	for (unsigned i = 0; i < num_vertices; i++)
 	{
 		float vertex[3] = {};
 		vertex[0] = *((float*) cursor);
@@ -208,7 +210,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 	std::vector<Triangle> triangles;
 	triangles.reserve(num_indices / 3);
-	for (int i = 0; i < num_indices / 3; i++)
+	for (unsigned i = 0; i < num_indices / 3; i++)
 	{
 		unsigned triange_indices[3] = {};
 		triange_indices[0] = *((unsigned*) cursor);

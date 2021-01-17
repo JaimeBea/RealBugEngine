@@ -1,8 +1,10 @@
 #include "ComponentSpotLight.h"
 
+#include "Globals.h"
+#include "Logging.h"
+#include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
-#include "Application.h"
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
@@ -10,10 +12,9 @@
 
 #include "debugdraw.h"
 #include "Math/float3x3.h"
-#include "Globals.h"
-#include "Logging.h"
-
 #include "imgui.h"
+
+#include "Leaks.h"
 
 void ComponentSpotLight::OnTransformUpdate()
 {
@@ -72,20 +73,20 @@ void ComponentSpotLight::OnEditorUpdate()
 			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
 			ImGui::Separator();
 
-			ImGui::TextColored(title_color, "Parameters");
+			ImGui::TextColored(App->editor->title_color, "Parameters");
 			ImGui::InputFloat3("Direction##spot_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::ColorEdit3("Color##spot_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intensity##spot_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, inf);
-			ImGui::DragFloat("Linear Constant##spot_light_kl", &light->light.kl, drag_speed5f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant##spot_light_kq", &light->light.kq, drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Intensity##spot_light_intensity", &light->light.intensity, App->editor->drag_speed3f, 0.0f, inf);
+			ImGui::DragFloat("Linear Constant##spot_light_kl", &light->light.kl, App->editor->drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Quadratic Constant##spot_light_kq", &light->light.kq, App->editor->drag_speed5f, 0.0f, 2.0f);
 
 			float deg_outer_angle = light->light.outer_angle * RADTODEG;
 			float deg_inner_angle = light->light.inner_angle * RADTODEG;
-			if (ImGui::DragFloat("Outter Angle##spot_light_outer_angle", &deg_outer_angle, drag_speed3f, 0.0f, 90.0f))
+			if (ImGui::DragFloat("Outter Angle##spot_light_outer_angle", &deg_outer_angle, App->editor->drag_speed3f, 0.0f, 90.0f))
 			{
 				light->light.outer_angle = deg_outer_angle * DEGTORAD;
 			}
-			if (ImGui::DragFloat("Inner Angle##spot_light_inner_angle", &deg_inner_angle, drag_speed3f, 0.0f, deg_outer_angle))
+			if (ImGui::DragFloat("Inner Angle##spot_light_inner_angle", &deg_inner_angle, App->editor->drag_speed3f, 0.0f, deg_outer_angle))
 			{
 				light->light.inner_angle = deg_inner_angle * DEGTORAD;
 			}

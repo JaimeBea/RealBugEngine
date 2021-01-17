@@ -1,9 +1,9 @@
 #include "ComponentCamera.h"
 
 #include "Globals.h"
+#include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
-#include "Application.h"
 #include "ModuleEditor.h"
 #include "ModuleCamera.h"
 #include "PanelHierarchy.h"
@@ -12,6 +12,8 @@
 #include "debugdraw.h"
 #include "Math/float3x3.h"
 #include "Math/Quat.h"
+
+#include "Leaks.h"
 
 void ComponentCamera::Init()
 {
@@ -56,7 +58,7 @@ void ComponentCamera::OnEditorUpdate()
 
 		vec front = frustum.Front();
 		vec up = frustum.Up();
-		ImGui::TextColored(title_color, "Frustum");
+		ImGui::TextColored(App->editor->title_color, "Frustum");
 		ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
