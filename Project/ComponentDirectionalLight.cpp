@@ -76,7 +76,7 @@ void ComponentDirectionalLight::OnEditorUpdate()
 	}
 }
 
-void ComponentDirectionalLight::Save(JsonValue& j_component) const
+void ComponentDirectionalLight::Save(JsonValue j_component) const
 {
 	JsonValue& j_direction = j_component["Direction"];
 	j_direction[0] = light.direction.x;
@@ -92,7 +92,7 @@ void ComponentDirectionalLight::Save(JsonValue& j_component) const
 	j_intensity = light.intensity;
 }
 
-void ComponentDirectionalLight::Load(const JsonValue& j_component)
+void ComponentDirectionalLight::Load(JsonValue j_component)
 {
 	const JsonValue& j_direction = j_component["Direction"];
 	light.direction.Set(j_direction[0], j_direction[1], j_direction[2]);

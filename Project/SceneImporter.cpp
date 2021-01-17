@@ -289,15 +289,15 @@ bool SceneImporter::LoadScene(const char* file_name)
 		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
 		return false;
 	}
-	const JsonValue j_scene(document, document);
+	JsonValue j_scene(document, document);
 
 	// Load GameObjects
-	const JsonValue& j_game_objects = j_scene["GameObjects"];
+	JsonValue j_game_objects = j_scene["GameObjects"];
 	unsigned j_game_objects_size = j_game_objects.Size();
 	Buffer<UID> ids(j_game_objects_size);
 	for (unsigned i = 0; i < j_game_objects_size; ++i)
 	{
-		const JsonValue& j_game_object = j_game_objects[i];
+		JsonValue j_game_object = j_game_objects[i];
 
 		GameObject* game_object = App->scene->game_objects.Obtain();
 		game_object->Load(j_game_object);
@@ -311,7 +311,7 @@ bool SceneImporter::LoadScene(const char* file_name)
 	App->scene->root = App->scene->GetGameObject(j_scene["RootId"]);
 	for (unsigned i = 0; i < j_game_objects_size; ++i)
 	{
-		const JsonValue& j_game_object = j_game_objects[i];
+		JsonValue j_game_object = j_game_objects[i];
 
 		UID id = ids[i];
 		GameObject* game_object = App->scene->GetGameObject(id);
@@ -334,11 +334,11 @@ bool SceneImporter::SaveScene(const char* file_name)
 	j_scene["RootId"] = App->scene->root->GetID();
 
 	// Save GameObjects
-	JsonValue& j_game_objects = j_scene["GameObjects"];
+	JsonValue j_game_objects = j_scene["GameObjects"];
 	unsigned i = 0;
 	for (const GameObject& game_object : App->scene->game_objects)
 	{
-		JsonValue& j_game_object = j_game_objects[i];
+		JsonValue j_game_object = j_game_objects[i];
 
 		GameObject* parent = game_object.GetParent();
 		j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;

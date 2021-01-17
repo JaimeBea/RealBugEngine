@@ -90,55 +90,55 @@ void ComponentSpotLight::OnEditorUpdate()
 	}
 }
 
-void ComponentSpotLight::Save(JsonValue& j_component) const
+void ComponentSpotLight::Save(JsonValue j_component) const
 {
-	JsonValue& j_direction = j_component["Direction"];
+	JsonValue j_direction = j_component["Direction"];
 	j_direction[0] = light.direction.x;
 	j_direction[1] = light.direction.y;
 	j_direction[2] = light.direction.z;
 
-	JsonValue& j_color = j_component["Color"];
+	JsonValue j_color = j_component["Color"];
 	j_color[0] = light.color.x;
 	j_color[1] = light.color.y;
 	j_color[2] = light.color.z;
 
-	JsonValue& j_intensity = j_component["Intensity"];
+	JsonValue j_intensity = j_component["Intensity"];
 	j_intensity = light.intensity;
 
-	JsonValue& j_kl = j_component["Kl"];
+	JsonValue j_kl = j_component["Kl"];
 	j_kl = light.kl;
 
-	JsonValue& j_kq = j_component["Kq"];
+	JsonValue j_kq = j_component["Kq"];
 	j_kq = light.kq;
 
-	JsonValue& j_inner_angle = j_component["InnerAngle"];
+	JsonValue j_inner_angle = j_component["InnerAngle"];
 	j_inner_angle = light.inner_angle;
 
-	JsonValue& j_outer_angle = j_component["OuterAngle"];
+	JsonValue j_outer_angle = j_component["OuterAngle"];
 	j_outer_angle = light.outer_angle;
 }
 
-void ComponentSpotLight::Load(const JsonValue& j_component)
+void ComponentSpotLight::Load(JsonValue j_component)
 {
-	const JsonValue& j_direction = j_component["Direction"];
+	JsonValue j_direction = j_component["Direction"];
 	light.direction.Set(j_direction[0], j_direction[1], j_direction[2]);
 
-	const JsonValue& j_color = j_component["Color"];
+	JsonValue j_color = j_component["Color"];
 	light.color.Set(j_color[0], j_color[1], j_color[2]);
 
-	const JsonValue& j_intensity = j_component["Intensity"];
+	JsonValue j_intensity = j_component["Intensity"];
 	light.intensity = j_intensity;
 
-	const JsonValue& j_kl = j_component["Kl"];
+	JsonValue j_kl = j_component["Kl"];
 	light.kl = j_kl;
 
-	const JsonValue& j_kq = j_component["Kq"];
+	JsonValue j_kq = j_component["Kq"];
 	light.kq = j_kq;
 
-	const JsonValue& j_inner_angle = j_component["InnerAngle"];
+	JsonValue j_inner_angle = j_component["InnerAngle"];
 	light.inner_angle = j_inner_angle;
 
-	const JsonValue& j_outer_angle = j_component["OuterAngle"];
+	JsonValue j_outer_angle = j_component["OuterAngle"];
 	light.outer_angle = j_outer_angle;
 }
 

@@ -75,35 +75,35 @@ void ComponentPointLight::OnEditorUpdate()
 	}
 }
 
-void ComponentPointLight::Save(JsonValue& j_component) const
+void ComponentPointLight::Save(JsonValue j_component) const
 {
-	JsonValue& j_color = j_component["Color"];
+	JsonValue j_color = j_component["Color"];
 	j_color[0] = light.color.x;
 	j_color[1] = light.color.y;
 	j_color[2] = light.color.z;
 
-	JsonValue& j_intensity = j_component["Intensity"];
+	JsonValue j_intensity = j_component["Intensity"];
 	j_intensity = light.intensity;
 
-	JsonValue& j_kl = j_component["Kl"];
+	JsonValue j_kl = j_component["Kl"];
 	j_kl = light.kl;
 
-	JsonValue& j_kq = j_component["Kq"];
+	JsonValue j_kq = j_component["Kq"];
 	j_kq = light.kq;
 }
 
-void ComponentPointLight::Load(const JsonValue& j_component)
+void ComponentPointLight::Load(JsonValue j_component)
 {
-	const JsonValue& j_color = j_component["Color"];
+	JsonValue j_color = j_component["Color"];
 	light.color.Set(j_color[0], j_color[1], j_color[2]);
 
-	const JsonValue& j_intensity = j_component["Intensity"];
+	JsonValue j_intensity = j_component["Intensity"];
 	light.intensity = j_intensity;
 
-	const JsonValue& j_kl = j_component["Kl"];
+	JsonValue j_kl = j_component["Kl"];
 	light.kl = j_kl;
 
-	const JsonValue& j_kq = j_component["Kq"];
+	JsonValue j_kq = j_component["Kq"];
 	light.kq = j_kq;
 }
 

@@ -81,13 +81,13 @@ void ComponentMesh::OnEditorUpdate()
 	}
 }
 
-void ComponentMesh::Save(JsonValue& j_component) const
+void ComponentMesh::Save(JsonValue j_component) const
 {
 	j_component["FileName"] = mesh->file_name.c_str();
 	j_component["MaterialIndex"] = mesh->material_index;
 }
 
-void ComponentMesh::Load(const JsonValue& j_component)
+void ComponentMesh::Load(JsonValue j_component)
 {
 	if (mesh == nullptr) mesh = App->resources->ObtainMesh();
 

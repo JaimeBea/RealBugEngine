@@ -11,13 +11,9 @@ public:
 	// Size of the array. Only works if the value is an array.
 	size_t Size() const;
 
-	// Non-const object/array access (Creates new members if they don't exist)
-	template<typename T> JsonValue operator[](T* key);
-	JsonValue operator[](unsigned index);
-
-	// Const object/array access (Can't create new members if they don't exist)
-	template<typename T> const JsonValue operator[](T* key) const;
-	const JsonValue operator[](unsigned index) const;
+	// Oobject/array access (Creates new members if they don't exist)
+	template<typename T> JsonValue operator[](T* key) const;
+	JsonValue operator[](unsigned index) const;
 
 	// Assignment operators to modify the value
 	void operator=(bool x);
@@ -46,7 +42,7 @@ private:
 
 // Template is necessary to disambiguate with 'operator[](int index)'
 template<typename T>
-inline JsonValue JsonValue::operator[](T* key)
+inline JsonValue JsonValue::operator[](T* key) const
 {
 	if (!value.IsObject())
 	{
@@ -57,16 +53,6 @@ inline JsonValue JsonValue::operator[](T* key)
 	{
 		value.AddMember(rapidjson::StringRef(key), rapidjson::Value(), document.GetAllocator());
 	}
-
-	return JsonValue(document, value[key]);
-}
-
-// Template is necessary to disambiguate with 'operator[](int index)'
-template<typename T>
-inline const JsonValue JsonValue::operator[](T* key) const
-{
-	assert(value.IsObject());
-	assert(value.HasMember(key));
 
 	return JsonValue(document, value[key]);
 }
