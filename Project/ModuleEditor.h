@@ -52,6 +52,8 @@ public:
 	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
 
+	GameObject* selected_object = nullptr;
+
 	ImVec4 title_color = ImVec4(0.35f, 0.69f, 0.87f, 1.0f);
 	ImVec4 text_color = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 	float drag_speed1f = 0.5f;

@@ -7,7 +7,6 @@
 #include "ComponentTransform.h"
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
-#include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "debugdraw.h"
@@ -33,7 +32,7 @@ void ComponentDirectionalLight::DrawGizmos()
 
 void ComponentDirectionalLight::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	GameObject* selected = App->editor->selected_object;
 	std::vector<ComponentDirectionalLight*> lights = selected->GetComponents<ComponentDirectionalLight>();
 	int count = 1;
 

@@ -60,9 +60,6 @@ bool ModuleScene::Init()
 	aiAttachLogStream(&log_stream);
 #endif
 
-	// Create Scene
-	ClearScene();
-
 	return true;
 }
 

@@ -28,20 +28,7 @@ bool ModuleResources::Init()
 
 bool ModuleResources::CleanUp()
 {
-	for (Texture& texture : textures)
-	{
-		TextureImporter::UnloadTexture(&texture);
-	}
-
-	for (CubeMap& cube_map : cube_maps)
-	{
-		TextureImporter::UnloadCubeMap(&cube_map);
-	}
-
-	for (Mesh& mesh : meshes)
-	{
-		MeshImporter::UnloadMesh(&mesh);
-	}
+	ReleaseAll();
 
 	return true;
 }
@@ -77,6 +64,24 @@ void ModuleResources::ReleaseMesh(Mesh* mesh)
 {
 	MeshImporter::UnloadMesh(mesh);
 	meshes.Release(mesh);
+}
+
+void ModuleResources::ReleaseAll()
+{
+	for (Texture& texture : textures)
+	{
+		ReleaseTexture(&texture);
+	}
+
+	for (CubeMap& cube_map : cube_maps)
+	{
+		ReleaseCubeMap(&cube_map);
+	}
+
+	for (Mesh& mesh : meshes)
+	{
+		ReleaseMesh(&mesh);
+	}
 }
 
 void ModuleResources::SetMinFilter(TextureMinFilter filter)
