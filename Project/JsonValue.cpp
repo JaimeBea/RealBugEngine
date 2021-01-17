@@ -18,9 +18,7 @@ JsonValue JsonValue::operator[](unsigned index) const
 		value.SetArray();
 	}
 
-	assert(index <= value.Size());
-
-	if (index == value.Size())
+	while (index >= value.Size())
 	{
 		value.PushBack(rapidjson::Value(), document.GetAllocator());
 	}

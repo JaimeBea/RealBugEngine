@@ -16,7 +16,7 @@
 
 #include "Leaks.h"
 
-Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
+Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index)
 {
 	// Timer to measure importing a mesh
 	MSTimer timer;
@@ -99,8 +99,10 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh)
 	}
 
 	// Save buffer to file
-	mesh->file_name = ai_mesh->mName.C_Str();
-	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
+	
+	std::string file_name = std::string(ai_mesh->mName.C_Str()) + std::to_string(index);
+	mesh->file_name = file_name;
+	std::string file_path = std::string(MESHES_PATH) + "/" + file_name + MESH_EXTENSION;
 	LOG("Saving mesh to \"%s\".", file_path.c_str());
 	App->files->Save(file_path.c_str(), buffer);
 

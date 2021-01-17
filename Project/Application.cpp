@@ -32,11 +32,11 @@ Application::Application()
 
 	modules.push_back(time = new ModuleTime());
 	modules.push_back(input = new ModuleInput());
+	modules.push_back(camera = new ModuleCamera());
 
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(debug_draw = new ModuleDebugDraw());
-	modules.push_back(camera = new ModuleCamera());
 
 	modules.push_back(renderer = new ModuleRender());
 }
