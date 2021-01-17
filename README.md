@@ -2,6 +2,8 @@
 
 Basic engine created for UPC's Master in Advanced Programming for AAA Videogames.
 
+![Photo of the Engine](https://i.imgur.com/ouVEiux.jpg)
+
 ## Features
 
 - 3D Scene view with Unity-like controls
@@ -118,7 +120,7 @@ There are no commands currently available.
 - Dear ImGui (https://github.com/ocornut/imgui)
 - DeviL (http://openil.sourceforge.net/)
 - assimp (https://github.com/assimp/assimp)
-- ImGuimoz (https://github.com/CedricGuillemet/ImGuizmo)
+- ImGuizmo (https://github.com/CedricGuillemet/ImGuizmo)
 - RapidJason (https://github.com/Tencent/rapidjson)
 
 ## Authors
