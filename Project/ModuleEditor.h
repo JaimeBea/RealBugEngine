@@ -2,16 +2,18 @@
 
 #include "Module.h"
 
-#include "Panel.h"
+#include "Buffer.h"
 #include "PanelScene.h"
 #include "PanelConsole.h"
 #include "PanelConfiguration.h"
 #include "PanelInspector.h"
 #include "PanelHierarchy.h"
 #include "PanelAbout.h"
-#include "Buffer.h"
 
+#include "imgui.h"
 #include <vector>
+
+class Panel;
 
 enum class Modal
 {
@@ -49,6 +51,13 @@ public:
 	PanelInspector panel_inspector;
 	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
+
+	ImVec4 title_color = ImVec4(0.35f, 0.69f, 0.87f, 1.0f);
+	ImVec4 text_color = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+	float drag_speed1f = 0.5f;
+	float drag_speed2f = 0.05f;
+	float drag_speed3f = 0.005f;
+	float drag_speed5f = 0.00005f;
 
 private:
 	char file_name_buffer[32] = {'\0'};

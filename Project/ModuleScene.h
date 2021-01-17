@@ -2,8 +2,6 @@
 
 #include "Module.h"
 #include "GameObject.h"
-#include "ComponentMesh.h"
-#include "ComponentMaterial.h"
 #include "UID.h"
 #include "Pool.h"
 #include "Quadtree.h"

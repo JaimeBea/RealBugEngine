@@ -1,8 +1,10 @@
 #include "ComponentPointLight.h"
 
+#include "Globals.h"
+#include "Logging.h"
+#include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
-#include "Application.h"
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
@@ -10,10 +12,9 @@
 
 #include "debugdraw.h"
 #include "Math/float3x3.h"
-#include "Globals.h"
-#include "Logging.h"
-
 #include "imgui.h"
+
+#include "Leaks.h"
 
 void ComponentPointLight::OnTransformUpdate()
 {
@@ -66,11 +67,11 @@ void ComponentPointLight::OnEditorUpdate()
 			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
 			ImGui::Separator();
 
-			ImGui::TextColored(title_color, "Parameters");
+			ImGui::TextColored(App->editor->title_color, "Parameters");
 			ImGui::ColorEdit3("Color##point_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intensity##point_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, inf);
-			ImGui::DragFloat("Linear Constant##point_light_kl", &light->light.kl, drag_speed5f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant##point_light_kq", &light->light.kq, drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Intensity##point_light_intensity", &light->light.intensity, App->editor->drag_speed3f, 0.0f, inf);
+			ImGui::DragFloat("Linear Constant##point_light_kl", &light->light.kl, App->editor->drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Quadratic Constant##point_light_kq", &light->light.kq, App->editor->drag_speed5f, 0.0f, 2.0f);
 		}
 	}
 }

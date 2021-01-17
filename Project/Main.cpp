@@ -1,6 +1,6 @@
 #include "Globals.h"
-#include "Application.h"
 #include "Logging.h"
+#include "Application.h"
 
 #include "SDL.h"
 #include <stdlib.h>

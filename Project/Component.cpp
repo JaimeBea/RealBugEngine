@@ -2,6 +2,8 @@
 
 #include "JsonValue.h"
 
+#include "Leaks.h"
+
 Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	: type(type_)
 	, owner(owner_)

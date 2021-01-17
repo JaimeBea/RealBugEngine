@@ -1,7 +1,7 @@
 #include "PanelConsole.h"
 
-#include "Application.h"
 #include "Logging.h"
+#include "Application.h"
 #include "ModuleEditor.h"
 
 #include "imgui.h"

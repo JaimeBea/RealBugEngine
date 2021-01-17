@@ -1,8 +1,10 @@
 #include "ComponentDirectionalLight.h"
 
+#include "Globals.h"
+#include "Logging.h"
+#include "Application.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
-#include "Application.h"
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "PanelHierarchy.h"
@@ -10,10 +12,9 @@
 
 #include "debugdraw.h"
 #include "Math/float3x3.h"
-#include "Globals.h"
-#include "Logging.h"
-
 #include "imgui.h"
+
+#include "Leaks.h"
 
 void ComponentDirectionalLight::OnTransformUpdate()
 {
@@ -68,10 +69,10 @@ void ComponentDirectionalLight::OnEditorUpdate()
 			ImGui::Checkbox("Draw Gizmos##spot_light_gizmos", &draw_gizmos);
 			ImGui::Separator();
 
-			ImGui::TextColored(title_color, "Parameters");
+			ImGui::TextColored(App->editor->title_color, "Parameters");
 			ImGui::InputFloat3("Direction##dir_light_direction", light->light.direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::ColorEdit3("Color##dir_light_color", light->light.color.ptr());
-			ImGui::DragFloat("Intenisty##dir_light_intensity", &light->light.intensity, drag_speed3f, 0.0f, 1.0f);
+			ImGui::DragFloat("Intenisty##dir_light_intensity", &light->light.intensity, App->editor->drag_speed3f, 0.0f, 1.0f);
 		}
 	}
 }

@@ -1,16 +1,18 @@
 #include "ComponentMaterial.h"
 
-#include "GameObject.h"
 #include "Application.h"
+#include "TextureImporter.h"
+#include "GameObject.h"
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "ModuleScene.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
-#include "TextureImporter.h"
 
 #include "imgui.h"
 #include "GL/glew.h"
+
+#include "Leaks.h"
 
 void ComponentMaterial::OnEditorUpdate()
 {
@@ -47,7 +49,7 @@ void ComponentMaterial::OnEditorUpdate()
 			}
 			ImGui::Separator();
 
-			ImGui::TextColored(title_color, "Shader");
+			ImGui::TextColored(App->editor->title_color, "Shader");
 
 			// Material types
 			const char* material_types[] = {"Standard", "Phong"};
@@ -77,7 +79,7 @@ void ComponentMaterial::OnEditorUpdate()
 				// Diffuse Texture Combo
 				const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
 				const char* diffuse_item_current = diffuse_items[material->material.has_diffuse_map];
-				ImGui::TextColored(text_color, "Diffuse Settings:");
+				ImGui::TextColored(App->editor->text_color, "Diffuse Settings:");
 				if (ImGui::BeginCombo("##diffuse", diffuse_item_current))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(diffuse_items); ++n)
@@ -123,7 +125,7 @@ void ComponentMaterial::OnEditorUpdate()
 				// Specular Texture Combo
 				const char* specular_items[] = {"Specular Color", "Specular Texture"};
 				const char* specular_item_current = specular_items[material->material.has_specular_map];
-				ImGui::TextColored(text_color, "Specular Settings:");
+				ImGui::TextColored(App->editor->text_color, "Specular Settings:");
 				if (ImGui::BeginCombo("##specular", specular_item_current))
 				{
 					for (int n = 0; n < IM_ARRAYSIZE(specular_items); ++n)
@@ -186,11 +188,11 @@ void ComponentMaterial::OnEditorUpdate()
 				}
 				if (shininess_item_current == shininess_items[0])
 				{
-					ImGui::DragFloat("Shininess", &material->material.shininess, drag_speed3f, 0.0f, 1000.0f);
+					ImGui::DragFloat("Shininess", &material->material.shininess, App->editor->drag_speed3f, 0.0f, 1000.0f);
 				}
 			}
 			ImGui::Separator();
-			ImGui::TextColored(title_color, "Filters");
+			ImGui::TextColored(App->editor->title_color, "Filters");
 
 			// Min filter combo box
 			const char* min_filter_items[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
@@ -254,7 +256,7 @@ void ComponentMaterial::OnEditorUpdate()
 			ImGui::Separator();
 			if (material->material.diffuse_map != nullptr)
 			{
-				ImGui::TextColored(title_color, "Diffuse Texture");
+				ImGui::TextColored(App->editor->title_color, "Diffuse Texture");
 				ImGui::TextWrapped("Size: ");
 				ImGui::SameLine();
 				int width;
@@ -267,7 +269,7 @@ void ComponentMaterial::OnEditorUpdate()
 			}
 			if (material->material.specular_map != nullptr)
 			{
-				ImGui::TextColored(title_color, "Specular Texture");
+				ImGui::TextColored(App->editor->title_color, "Specular Texture");
 				ImGui::TextWrapped("Size: ");
 				ImGui::SameLine();
 				int width;

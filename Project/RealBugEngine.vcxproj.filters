@@ -420,9 +420,6 @@
     <ClInclude Include="ModuleResources.h">
       <Filter>Source\Modules</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleSceneRender.h">
-      <Filter>Source\Modules</Filter>
-    </ClInclude>
     <ClInclude Include="ComponentCamera.h">
       <Filter>Source\Components</Filter>
     </ClInclude>
@@ -714,9 +711,6 @@
       <Filter>Source\Utils</Filter>
     </ClCompile>
     <ClCompile Include="ModuleResources.cpp">
-      <Filter>Source\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="ModuleSceneRender.cpp">
       <Filter>Source\Modules</Filter>
     </ClCompile>
     <ClCompile Include="ComponentType.cpp">

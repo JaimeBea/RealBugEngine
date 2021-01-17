@@ -1,11 +1,11 @@
 #include "PanelHierarchy.h"
 
+#include "Logging.h"
 #include "Application.h"
-#include "ModuleEditor.h"
-#include "ModuleScene.h"
 #include "GameObject.h"
 #include "ComponentTransform.h"
-#include "Logging.h"
+#include "ModuleEditor.h"
+#include "ModuleScene.h"
 
 #include "imgui.h"
 
@@ -106,7 +106,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 
 	if (open)
 	{
-		for (int i = 0; i < children.size(); i++)
+		for (unsigned i = 0; i < children.size(); i++)
 		{
 			UpdateHierarchyNode(children[i]);
 		}

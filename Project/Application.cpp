@@ -8,7 +8,6 @@
 #include "ModuleWindow.h"
 #include "ModuleEditor.h"
 #include "ModuleCamera.h"
-#include "ModuleSceneRender.h"
 #include "ModuleRender.h"
 #include "ModulePrograms.h"
 #include "ModuleDebugDraw.h"
@@ -39,7 +38,6 @@ Application::Application()
 	modules.push_back(debug_draw = new ModuleDebugDraw());
 	modules.push_back(camera = new ModuleCamera());
 
-	modules.push_back(scene_renderer = new ModuleSceneRender());
 	modules.push_back(renderer = new ModuleRender());
 }
 

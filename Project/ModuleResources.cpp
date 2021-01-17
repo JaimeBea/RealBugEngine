@@ -1,11 +1,11 @@
 #include "ModuleResources.h"
 
 #include "Globals.h"
-#include "Application.h"
 #include "Logging.h"
-#include "ModuleFiles.h"
+#include "Application.h"
 #include "MeshImporter.h"
 #include "TextureImporter.h"
+#include "ModuleFiles.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
