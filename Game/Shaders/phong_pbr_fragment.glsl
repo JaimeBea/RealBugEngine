@@ -84,7 +84,6 @@ void main()
 	vec3 ambient_color = diffuse_color * light.ambient.color;
     
 	vec3 accumulative_color = ambient_color;
-	
     // Directional Light
     if (light.directional.is_active == 1)
     {

@@ -85,10 +85,10 @@ void ComponentPointLight::Save(JsonValue& j_component) const
 	JsonValue& j_intensity = j_component["Intensity"];
 	j_intensity = light.intensity;
 
-	JsonValue& j_kl = j_component["kl"];
+	JsonValue& j_kl = j_component["Kl"];
 	j_kl = light.kl;
 
-	JsonValue& j_kq = j_component["kq"];
+	JsonValue& j_kq = j_component["Kq"];
 	j_kq = light.kq;
 }
 
@@ -100,10 +100,10 @@ void ComponentPointLight::Load(const JsonValue& j_component)
 	const JsonValue& j_intensity = j_component["Intensity"];
 	light.intensity = j_intensity;
 
-	const JsonValue& j_kl = j_component["kl"];
+	const JsonValue& j_kl = j_component["Kl"];
 	light.kl = j_kl;
 
-	const JsonValue& j_kq = j_component["kq"];
+	const JsonValue& j_kq = j_component["Kq"];
 	light.kq = j_kq;
 }
 

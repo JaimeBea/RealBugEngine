@@ -34,19 +34,6 @@ void GameObject::Update()
 	}
 }
 
-void GameObject::OnTransformUpdate()
-{
-	for (Component* component : components)
-	{
-		component->OnTransformUpdate();
-	}
-
-	for (GameObject* child : children)
-	{
-		child->OnTransformUpdate();
-	}
-}
-
 void GameObject::DrawGizmos()
 {
 	for (Component* component : components)

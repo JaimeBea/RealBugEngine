@@ -151,7 +151,6 @@ void PanelScene::Update()
 				transform->SetPosition(translation);
 				transform->SetScale(scale);
 				transform->SetRotation(rotation);
-				selected_object->OnTransformUpdate();
 			}
 		}
 

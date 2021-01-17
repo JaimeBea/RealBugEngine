@@ -105,8 +105,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 
 	float4x4 view_matrix = App->camera->GetViewMatrix();
 	float4x4 proj_matrix = App->camera->GetProjectionMatrix();
-	unsigned gl_texture_diffuse = 1;
-	unsigned gl_texture_specular = 1;
+	unsigned gl_texture_diffuse = 0;
+	unsigned gl_texture_specular = 0;
 
 	if (materials.size() > mesh->material_index)
 	{

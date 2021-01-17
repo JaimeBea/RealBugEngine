@@ -45,19 +45,15 @@ void ComponentTransform::OnEditorUpdate()
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
 			SetPosition(pos);
-			GetOwner().OnTransformUpdate();
 		}
 		if (ImGui::DragFloat3("Scale", scl.ptr(), drag_speed2f, 0, inf))
 		{
 			SetScale(scl);
-			GetOwner().OnTransformUpdate();
 		}
 
 		if (ImGui::DragFloat3("Rotation", rot.ptr(), drag_speed2f, -inf, inf))
 		{
 			SetRotation(rot);
-			GetOwner().OnTransformUpdate();
-			InvalidateHierarchy();
 		}
 
 		if (current_guizmo_operation != ImGuizmo::SCALE)
@@ -155,6 +151,10 @@ void ComponentTransform::SetPosition(float3 position_)
 {
 	position = position_;
 	InvalidateHierarchy();
+	for (Component* component : GetOwner().components)
+	{
+		component->OnTransformUpdate();
+	}
 }
 
 void ComponentTransform::SetRotation(Quat rotation_)
@@ -162,6 +162,10 @@ void ComponentTransform::SetRotation(Quat rotation_)
 	rotation = rotation_;
 	local_euler_angles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
+	for (Component* component : GetOwner().components)
+	{
+		component->OnTransformUpdate();
+	}
 }
 
 void ComponentTransform::SetRotation(float3 rotation_)
@@ -169,12 +173,20 @@ void ComponentTransform::SetRotation(float3 rotation_)
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	local_euler_angles = rotation_;
 	InvalidateHierarchy();
+	for (Component* component : GetOwner().components)
+	{
+		component->OnTransformUpdate();
+	}
 }
 
 void ComponentTransform::SetScale(float3 scale_)
 {
 	scale = scale_;
 	InvalidateHierarchy();
+	for (Component* component : GetOwner().components)
+	{
+		component->OnTransformUpdate();
+	}
 }
 
 void ComponentTransform::CalculateGlobalMatrix(bool force)

@@ -221,7 +221,6 @@ void ModuleScene::CreateEmptyScene()
 	scene_transform->SetPosition(float3(0, 0, 0));
 	scene_transform->SetRotation(Quat::identity);
 	scene_transform->SetScale(float3(1, 1, 1));
-	scene_transform->CalculateGlobalMatrix();
 
 	// Create Directional Light
 	GameObject* dir_light = CreateGameObject(root);
@@ -230,9 +229,7 @@ void ModuleScene::CreateEmptyScene()
 	dir_light_transform->SetPosition(float3(0, 300, 0));
 	dir_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	dir_light_transform->SetScale(float3(1, 1, 1));
-	dir_light_transform->CalculateGlobalMatrix();
 	ComponentDirectionalLight* dir_light_light = dir_light->CreateComponent<ComponentDirectionalLight>();
-	dir_light->OnTransformUpdate();
 
 	// Create Point Light
 	GameObject* point_light = CreateGameObject(root);
@@ -241,9 +238,7 @@ void ModuleScene::CreateEmptyScene()
 	point_light_transform->SetPosition(float3(0, 10, 0));
 	point_light_transform->SetRotation(Quat::identity);
 	point_light_transform->SetScale(float3(1, 1, 1));
-	point_light_transform->CalculateGlobalMatrix();
 	ComponentPointLight* point_light_light = point_light->CreateComponent<ComponentPointLight>();
-	point_light->OnTransformUpdate();
 
 	// Create Spot Light
 	GameObject* spot_light = CreateGameObject(root);
@@ -252,9 +247,7 @@ void ModuleScene::CreateEmptyScene()
 	spot_light_transform->SetPosition(float3(0, 10, 0));
 	spot_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	spot_light_transform->SetScale(float3(1, 1, 1));
-	spot_light_transform->CalculateGlobalMatrix();
 	ComponentSpotLight* spot_light_light = spot_light->CreateComponent<ComponentSpotLight>();
-	spot_light->OnTransformUpdate();
 
 	// Create Game Camera
 	GameObject* game_camera = CreateGameObject(root);
@@ -263,7 +256,6 @@ void ModuleScene::CreateEmptyScene()
 	game_camera_transform->SetPosition(float3(2, 3, -5));
 	game_camera_transform->SetRotation(Quat::identity);
 	game_camera_transform->SetScale(float3(1, 1, 1));
-	game_camera_transform->CalculateGlobalMatrix();
 	ComponentCamera* game_camera_camera = game_camera->CreateComponent<ComponentCamera>();
 	game_camera_camera->Init();
 }
