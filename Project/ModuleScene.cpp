@@ -136,15 +136,13 @@ bool ModuleScene::Start()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
 	glBindVertexArray(0);
 
-	const char* files[6] = {
-		"Assets/Skybox/right.jpg",
-		"Assets/Skybox/left.jpg",
-		"Assets/Skybox/top.jpg",
-		"Assets/Skybox/bottom.jpg",
-		"Assets/Skybox/front.jpg",
-		"Assets/Skybox/back.jpg"};
-
-	skybox_cube_map = TextureImporter::ImportCubeMap(files);
+	skybox_cube_map = App->resources->ObtainCubeMap();
+	skybox_cube_map->file_names[0] = "right";
+	skybox_cube_map->file_names[1] = "left";
+	skybox_cube_map->file_names[2] = "top";
+	skybox_cube_map->file_names[3] = "bottom";
+	skybox_cube_map->file_names[4] = "front";
+	skybox_cube_map->file_names[5] = "back";
 	TextureImporter::LoadCubeMap(skybox_cube_map);
 
 	return true;
