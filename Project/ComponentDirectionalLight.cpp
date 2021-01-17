@@ -26,7 +26,7 @@ void ComponentDirectionalLight::DrawGizmos()
 	if (IsActive() && draw_gizmos)
 	{
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		dd::cone(transform->GetPosition(), light.direction * 200, dd::colors::White, 200.0f, 200.0f);
+		dd::cone(transform->GetPosition(), light.direction * 200, dd::colors::White, 1.0f, 1.0f);
 	}
 }
 

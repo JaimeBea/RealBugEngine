@@ -12,7 +12,7 @@
 #include "ModuleTime.h"
 
 #include "imgui.h"
-#include "ImGuizmo.h"
+#include "imgui_internal.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
 #include "Geometry/OBB.h"
@@ -29,6 +29,13 @@ PanelScene::PanelScene()
 void PanelScene::Update()
 {
 	int imguizmo_size = 100;
+
+	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
+	{
+		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
+		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE;
+		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
+	}
 
 	ImGui::SetNextWindowDockID(App->editor->dock_main_id, ImGuiCond_FirstUseEver);
 	if (ImGui::Begin(name, &enabled))
@@ -68,6 +75,51 @@ void PanelScene::Update()
 		{
 			App->time->StepGame();
 		}
+
+		ImGui::SameLine();
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+		ImGui::SameLine();
+
+		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
+		ImGui::SameLine();
+		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
+
+		if (current_guizmo_operation != ImGuizmo::SCALE)
+		{
+			ImGui::SameLine();
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
+		}
+
+		ImGui::SameLine();
+		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+		ImGui::SameLine();
+
+		ImGui::TextColored(title_color, "Snap");
+		ImGui::SameLine();
+		ImGui::Checkbox("##snap", &use_snap);
+		ImGui::SameLine();
+
+		ImGui::PushItemWidth(150);
+		switch (current_guizmo_operation)
+		{
+		case ImGuizmo::TRANSLATE:
+			ImGui::InputFloat3("Snap", &snap[0]);
+			break;
+		case ImGuizmo::ROTATE:
+			ImGui::InputFloat("Angle Snap", &snap[0]);
+			break;
+		case ImGuizmo::SCALE:
+			ImGui::InputFloat("Scale Snap", &snap[0]);
+			break;
+		}
+		ImGui::PopItemWidth();
+		ImGui::Separator();
 
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
@@ -139,7 +191,7 @@ void PanelScene::Update()
 			}
 			float4x4 global_matrix = transform->GetGlobalMatrix().Transposed();
 
-			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), transform->GetGizmoOperation(), transform->GetGizmoMode(), global_matrix.ptr(), NULL, transform->GetUseSnap() ? transform->GetSnap().ptr() : NULL))
+			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), current_guizmo_operation, current_guizmo_mode, global_matrix.ptr(), NULL, use_snap ? snap : NULL))
 			{
 				float4x4 local_matrix = inverse_parent_matrix * global_matrix.Transposed();
 

@@ -24,7 +24,9 @@ void ComponentPointLight::DrawGizmos()
 {
 	if (IsActive() && draw_gizmos)
 	{
-		dd::sphere(light.pos, dd::colors::White, 10.0f);
+		float delta = light.kl * light.kl - 4 * (light.kc - 10) * light.kq;
+		float distance = Max(abs((-light.kl + sqrt(delta))) / (2 * light.kq), abs((-light.kl - sqrt(delta)) / (2 * light.kq)));
+		dd::sphere(light.pos, dd::colors::White, distance);
 	}
 }
 
