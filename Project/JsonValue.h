@@ -11,7 +11,7 @@ public:
 	// Size of the array. Only works if the value is an array.
 	size_t Size() const;
 
-	// Oobject/array access (Creates new members if they don't exist)
+	// Object/array access (Creates new members if they don't exist)
 	template<typename T> JsonValue operator[](T* key) const;
 	JsonValue operator[](unsigned index) const;
 
