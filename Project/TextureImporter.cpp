@@ -46,6 +46,13 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 		return nullptr;
 	}
 
+	// Flip image if neccessary
+	ILinfo info;
+	iluGetImageInfo(&info);
+	if (info.Origin == IL_ORIGIN_UPPER_LEFT)
+	{
+		iluFlipImage();
+	}
 	// Create texture
 	Texture* texture = App->resources->ObtainTexture();
 
@@ -102,14 +109,6 @@ void TextureImporter::LoadTexture(Texture* texture)
 	{
 		LOG("Failed to load image.");
 		return;
-	}
-
-	// Flip image if neccessary
-	ILinfo info;
-	iluGetImageInfo(&info);
-	if (info.Origin == IL_ORIGIN_UPPER_LEFT)
-	{
-		iluFlipImage();
 	}
 
 	// Generate texture from image

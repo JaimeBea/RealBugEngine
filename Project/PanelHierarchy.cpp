@@ -23,9 +23,6 @@ void PanelHierarchy::Update()
 		if (root != nullptr)
 		{
 			UpdateHierarchyNode(root);
-
-			// Draw all components from Selected GameObject
-			if (selected_object) selected_object->DrawGizmos();
 		}
 	}
 	ImGui::End();

@@ -7,11 +7,13 @@
 #include "ComponentCamera.h"
 #include "ComponentBoundingBox.h"
 #include "Application.h"
+#include "ModuleEditor.h"
 #include "ModuleResources.h"
 #include "ModulePrograms.h"
 #include "ModuleScene.h"
 #include "ModuleCamera.h"
 #include "ModuleInput.h"
+#include "PanelHierarchy.h"
 #include "ComponentMesh.h"
 #include "ComponentBoundingBox.h"
 #include "ComponentTransform.h"
@@ -42,6 +44,10 @@ UpdateStatus ModuleSceneRender::Update()
 	}
 	App->camera->CalculateFrustumPlanes();
 	DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+
+	// Draw Guizmos
+	GameObject* selected_object = App->editor->panel_hierarchy.selected_object;
+	if (selected_object) selected_object->DrawGizmos();
 
 	// Draw quadtree
 	if (draw_quadtree)
