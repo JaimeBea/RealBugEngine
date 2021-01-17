@@ -100,7 +100,7 @@ void PanelScene::Update()
 		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 		ImGui::SameLine();
 
-		ImGui::TextColored(title_color, "Snap");
+		ImGui::TextColored(App->editor->title_color, "Snap");
 		ImGui::SameLine();
 		ImGui::Checkbox("##snap", &use_snap);
 		ImGui::SameLine();
