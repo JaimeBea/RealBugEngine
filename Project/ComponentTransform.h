@@ -39,6 +39,8 @@ public:
 	bool GetUseSnap() const;
 	float3 GetSnap();
 
+	bool GetDirty() const;
+
 private:
 	//ImGuizmo
 	ImGuizmo::OPERATION current_guizmo_operation = ImGuizmo::TRANSLATE;

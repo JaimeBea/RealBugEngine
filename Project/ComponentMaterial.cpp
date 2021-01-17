@@ -7,7 +7,6 @@
 #include "ModuleScene.h"
 #include "PanelHierarchy.h"
 #include "PanelInspector.h"
-#include "ComponentLight.h"
 #include "TextureImporter.h"
 
 #include "imgui.h"
@@ -29,7 +28,7 @@ void ComponentMaterial::OnEditorUpdate()
 		}
 		else
 		{
-			sprintf_s(name, 50, "Material %d", count);
+			sprintf_s(name, 50, "Material %d##material_%d", count, count);
 		}
 
 		if (ImGui::CollapsingHeader(name))

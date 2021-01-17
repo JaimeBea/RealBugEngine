@@ -260,11 +260,11 @@ void PanelConfiguration::Update()
 			float far_plane = frustum.FarPlaneDistance();
 			if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f"))
 			{
-				frustum.SetViewPlaneDistances(near_plane, far_plane);
+				App->camera->engine_camera_frustum.SetViewPlaneDistances(near_plane, far_plane);
 			}
 			if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f"))
 			{
-				frustum.SetViewPlaneDistances(near_plane, far_plane);
+				App->camera->engine_camera_frustum.SetViewPlaneDistances(near_plane, far_plane);
 			}
 		}
 	}

@@ -39,7 +39,7 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 		LOG("Failed to load image.");
 		return nullptr;
 	}
-	bool image_converted = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
+	bool image_converted = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	if (!image_converted)
 	{
 		LOG("Failed to convert image.");
@@ -53,7 +53,6 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 	{
 		iluFlipImage();
 	}
-
 	// Create texture
 	Texture* texture = App->resources->ObtainTexture();
 
@@ -115,7 +114,7 @@ void TextureImporter::LoadTexture(Texture* texture)
 	// Generate texture from image
 	glGenTextures(1, &texture->gl_texture);
 	glBindTexture(GL_TEXTURE_2D, texture->gl_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
 
 	// Generate mipmaps and set filtering and wrapping
 	glGenerateMipmap(GL_TEXTURE_2D);

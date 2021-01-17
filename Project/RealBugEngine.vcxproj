@@ -15,10 +15,12 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentCamera.h" />
-    <ClInclude Include="ComponentLight.h" />
+    <ClInclude Include="ComponentDirectionalLight.h" />
     <ClInclude Include="ComponentBoundingBox.h" />
     <ClInclude Include="ComponentMaterial.h" />
     <ClInclude Include="ComponentMesh.h" />
+    <ClInclude Include="ComponentPointLight.h" />
+    <ClInclude Include="ComponentSpotLight.h" />
     <ClInclude Include="ComponentType.h" />
     <ClInclude Include="ComponentTransform.h" />
     <ClInclude Include="CubeMap.h" />
@@ -156,10 +158,12 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentCamera.cpp" />
-    <ClCompile Include="ComponentLight.cpp" />
+    <ClCompile Include="ComponentDirectionalLight.cpp" />
     <ClCompile Include="ComponentBoundingBox.cpp" />
     <ClCompile Include="ComponentMaterial.cpp" />
     <ClCompile Include="ComponentMesh.cpp" />
+    <ClCompile Include="ComponentPointLight.cpp" />
+    <ClCompile Include="ComponentSpotLight.cpp" />
     <ClCompile Include="ComponentTransform.cpp" />
     <ClCompile Include="ComponentType.cpp" />
     <ClCompile Include="JsonValue.cpp" />
