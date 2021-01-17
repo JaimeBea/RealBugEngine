@@ -25,22 +25,8 @@ void ComponentTransform::OnEditorUpdate()
 	float3 scl = scale;
 	float3 rot = local_euler_angles;
 
-	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
-	{
-		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
-		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
-	}
-
 	if (ImGui::CollapsingHeader("Transformation"))
 	{
-		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
-		ImGui::Separator();
-
 		ImGui::TextColored(title_color, "Transformation (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", pos.ptr(), drag_speed2f, -inf, inf))
 		{
@@ -55,32 +41,6 @@ void ComponentTransform::OnEditorUpdate()
 		{
 			SetRotation(rot);
 		}
-
-		if (current_guizmo_operation != ImGuizmo::SCALE)
-		{
-			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
-		}
-		ImGui::Separator();
-
-		ImGui::TextColored(title_color, "Snap");
-		ImGui::Checkbox("##snap", &use_snap);
-		ImGui::SameLine();
-
-		switch (current_guizmo_operation)
-		{
-		case ImGuizmo::TRANSLATE:
-			ImGui::InputFloat3("Snap", &snap[0]);
-			break;
-		case ImGuizmo::ROTATE:
-			ImGui::InputFloat("Angle Snap", &snap[0]);
-			break;
-		case ImGuizmo::SCALE:
-			ImGui::InputFloat("Scale Snap", &snap[0]);
-			break;
-		}
-
 		ImGui::Separator();
 	}
 }
@@ -234,26 +194,6 @@ const float4x4& ComponentTransform::GetLocalMatrix() const
 const float4x4& ComponentTransform::GetGlobalMatrix() const
 {
 	return global_matrix;
-}
-
-ImGuizmo::OPERATION ComponentTransform::GetGizmoOperation() const
-{
-	return current_guizmo_operation;
-}
-
-ImGuizmo::MODE ComponentTransform::GetGizmoMode() const
-{
-	return current_guizmo_mode;
-}
-
-bool ComponentTransform::GetUseSnap() const
-{
-	return use_snap;
-}
-
-float3 ComponentTransform::GetSnap()
-{
-	return float3(snap[0], snap[1], snap[2]);
 }
 
 bool ComponentTransform::GetDirty() const
