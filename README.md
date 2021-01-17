@@ -7,8 +7,8 @@ Basic engine created for UPC's Master in Advanced Programming for AAA Videogames
 - 3D Scene view with Unity-like controls
 - Loading basic 3D models into the scene by dragging and dropping files
 - Basic console log
-- Basic configuration and properties panels
 - Loading and saving scenes
+- Custom file format to save the information loaded
 - Implementation of an editable Quadtree
 - Frustum Culling
 - PBR Phong implementation
@@ -23,8 +23,8 @@ Basic engine created for UPC's Master in Advanced Programming for AAA Videogames
 
 ### Loading models and textures
 
-- Drag model files inside any engine window to load it and replace the current geometry
-- You can also load a different texture file for the model in the same manner
+- Drag model files inside any engine window to load it
+- You can also load a different texture file for the model in the same manner. Select it clicking in the object, inside the Inspector Panel
 
 ### Menu items
 
@@ -94,6 +94,7 @@ This panel contains engine information and configuration variables for multiple 
 ### Scene panel
 - Play/Stop/Pause controller
 - Gizmos parameters
+- Preview of the scene
 
 ### Inspector panel
 Contains information about the currently loaded model
