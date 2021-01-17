@@ -6,7 +6,6 @@
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
 #include "ModuleScene.h"
-#include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "imgui.h"
@@ -16,7 +15,7 @@
 
 void ComponentMaterial::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	GameObject* selected = App->editor->selected_object;
 	std::vector<ComponentMaterial*> materials = selected->GetComponents<ComponentMaterial>();
 	int count = 1;
 
@@ -331,10 +330,17 @@ void ComponentMaterial::Load(JsonValue j_component)
 	material.diffuse_color.Set(j_diffuse_color[0], j_diffuse_color[1], j_diffuse_color[2]);
 	if (material.has_diffuse_map)
 	{
+		std::string diffuse_file_name = j_component["DiffuseMapFileName"];
+		for (Texture& texture : App->resources->textures)
+		{
+			if (texture.file_name == diffuse_file_name)
+			{
+				material.diffuse_map = &texture;
+			}
+		}
 		if (material.diffuse_map == nullptr) material.diffuse_map = App->resources->ObtainTexture();
 
 		TextureImporter::UnloadTexture(material.diffuse_map);
-		material.diffuse_map->file_name = j_component["DiffuseMapFileName"];
 		TextureImporter::LoadTexture(material.diffuse_map);
 	}
 	else if (material.diffuse_map != nullptr)
@@ -348,10 +354,17 @@ void ComponentMaterial::Load(JsonValue j_component)
 	material.specular_color.Set(j_specular_color[0], j_specular_color[1], j_specular_color[2]);
 	if (material.has_specular_map)
 	{
+		std::string specular_file_name = j_component["SpecularMapFileName"];
+		for (Texture& texture : App->resources->textures)
+		{
+			if (texture.file_name == specular_file_name)
+			{
+				material.specular_map = &texture;
+			}
+		}
 		if (material.specular_map == nullptr) material.specular_map = App->resources->ObtainTexture();
 
 		TextureImporter::UnloadTexture(material.specular_map);
-		material.specular_map->file_name = j_component["SpecularMapFileName"];
 		TextureImporter::LoadTexture(material.specular_map);
 	}
 	else if (material.specular_map != nullptr)

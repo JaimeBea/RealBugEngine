@@ -179,7 +179,7 @@ UpdateStatus ModuleRender::Update()
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
 	// Draw Guizmos
-	GameObject* selected_object = App->editor->panel_hierarchy.selected_object;
+	GameObject* selected_object = App->editor->selected_object;
 	if (selected_object) selected_object->DrawGizmos();
 
 	// Draw quadtree

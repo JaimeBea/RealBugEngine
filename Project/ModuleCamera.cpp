@@ -14,7 +14,6 @@
 #include "ModuleRender.h"
 #include "ModuleTime.h"
 #include "ModuleEditor.h"
-#include "PanelHierarchy.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -160,7 +159,7 @@ UpdateStatus ModuleCamera::Update()
 		// Focus camera around geometry with f key
 		if (App->input->GetKey(SDL_SCANCODE_F))
 		{
-			Focus(App->editor->panel_hierarchy.selected_object);
+			Focus(App->editor->selected_object);
 		}
 
 		// Move with arrow keys
@@ -352,7 +351,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 
 	if (selected_game_object != nullptr)
 	{
-		App->editor->panel_hierarchy.selected_object = selected_game_object;
+		App->editor->selected_object = selected_game_object;
 	}
 
 	LOG("Ray Tracing in %ums", timer.Stop());

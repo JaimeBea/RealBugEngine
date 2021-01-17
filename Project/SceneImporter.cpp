@@ -13,6 +13,7 @@
 #include "ComponentMesh.h"
 #include "ModuleFiles.h"
 #include "ModuleScene.h"
+#include "ModuleEditor.h"
 #include "ModuleResources.h"
 
 #include "assimp/scene.h"
@@ -311,6 +312,7 @@ bool SceneImporter::LoadScene(const char* file_name)
 	}
 
 	// Post-load
+	App->editor->selected_object = nullptr;
 	App->scene->root = App->scene->GetGameObject(j_scene["RootId"]);
 	for (unsigned i = 0; i < j_game_objects_size; ++i)
 	{

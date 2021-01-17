@@ -18,7 +18,6 @@
 #include "ModuleCamera.h"
 #include "ModuleRender.h"
 #include "ModuleEditor.h"
-#include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "assimp/mesh.h"
@@ -29,7 +28,7 @@
 
 void ComponentMesh::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	GameObject* selected = App->editor->selected_object;
 	std::vector<ComponentMesh*> meshes = selected->GetComponents<ComponentMesh>();
 	int count = 1;
 
@@ -92,11 +91,18 @@ void ComponentMesh::Save(JsonValue j_component) const
 
 void ComponentMesh::Load(JsonValue j_component)
 {
+	std::string file_name = j_component["FileName"];
+	for (Mesh& other_mesh : App->resources->meshes)
+	{
+		if (other_mesh.file_name == file_name)
+		{
+			mesh = &other_mesh;
+		}
+	}
 	if (mesh == nullptr) mesh = App->resources->ObtainMesh();
+	mesh->material_index = j_component["MaterialIndex"];
 
 	MeshImporter::UnloadMesh(mesh);
-	mesh->file_name = j_component["FileName"];
-	mesh->material_index = j_component["MaterialIndex"];
 	MeshImporter::LoadMesh(mesh);
 }
 

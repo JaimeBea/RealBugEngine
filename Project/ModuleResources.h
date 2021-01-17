@@ -46,6 +46,8 @@ public:
 	Mesh* ObtainMesh();
 	void ReleaseMesh(Mesh* mesh);
 
+	void ReleaseAll();
+
 	void SetMinFilter(TextureMinFilter filter);
 	void SetMagFilter(TextureMagFilter filter);
 	void SetWrap(TextureWrap wrap);

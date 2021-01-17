@@ -6,7 +6,6 @@
 #include "ComponentTransform.h"
 #include "ModuleEditor.h"
 #include "ModuleCamera.h"
-#include "PanelHierarchy.h"
 
 #include "imgui.h"
 #include "debugdraw.h"
@@ -46,7 +45,7 @@ void ComponentCamera::OnTransformUpdate()
 
 void ComponentCamera::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	GameObject* selected = App->editor->selected_object;
 
 	if (ImGui::CollapsingHeader("Camera"))
 	{

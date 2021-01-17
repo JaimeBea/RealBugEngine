@@ -39,7 +39,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	ImGuiTreeNodeFlags flags = base_flags;
 
 	if (children.empty()) flags |= ImGuiTreeNodeFlags_Leaf;
-	bool is_selected = selected_object == game_object;
+	bool is_selected = App->editor->selected_object == game_object;
 	if (is_selected) flags |= ImGuiTreeNodeFlags_Selected;
 
 	bool open = ImGui::TreeNodeEx(label, flags);
@@ -52,7 +52,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 			if (ImGui::Selectable("Delete"))
 			{
 				App->scene->DestroyGameObject(game_object);
-				if (is_selected) selected_object = nullptr;
+				if (is_selected) App->editor->selected_object = nullptr;
 			}
 
 			ImGui::Selectable("Duplicate");
@@ -80,7 +80,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 
 	if (ImGui::IsItemClicked())
 	{
-		selected_object = game_object;
+		App->editor->selected_object = game_object;
 	}
 
 	if (ImGui::BeginDragDropSource())
@@ -93,10 +93,10 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
 		{
-			if (!game_object->IsDescendantOf(selected_object))
+			if (!game_object->IsDescendantOf(App->editor->selected_object))
 			{
-				selected_object->SetParent(game_object);
-				ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
+				App->editor->selected_object->SetParent(game_object);
+				ComponentTransform* transform = App->editor->selected_object->GetComponent<ComponentTransform>();
 				transform->InvalidateHierarchy();
 				transform->CalculateGlobalMatrix();
 			}

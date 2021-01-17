@@ -7,7 +7,6 @@
 #include "ComponentTransform.h"
 #include "ModuleResources.h"
 #include "ModuleEditor.h"
-#include "PanelHierarchy.h"
 #include "PanelInspector.h"
 
 #include "debugdraw.h"
@@ -37,7 +36,7 @@ void ComponentSpotLight::DrawGizmos()
 
 void ComponentSpotLight::OnEditorUpdate()
 {
-	GameObject* selected = App->editor->panel_hierarchy.selected_object;
+	GameObject* selected = App->editor->selected_object;
 	std::vector<ComponentSpotLight*> lights = selected->GetComponents<ComponentSpotLight>();
 	int count = 1;
 

@@ -178,7 +178,7 @@ void PanelScene::Update()
 		float4x4 camera_view = float4x4(engine_frustum.ViewMatrix()).Transposed();
 		float4x4 camera_projection = engine_frustum.ProjectionMatrix().Transposed();
 
-		GameObject* selected_object = App->editor->panel_hierarchy.selected_object;
+		GameObject* selected_object = App->editor->selected_object;
 		if (selected_object)
 		{
 			ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
