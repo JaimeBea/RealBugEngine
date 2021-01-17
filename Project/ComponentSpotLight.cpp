@@ -15,6 +15,11 @@
 
 #include "Leaks.h"
 
+void ComponentSpotLight::Init()
+{
+	OnTransformUpdate();
+}
+
 void ComponentSpotLight::OnTransformUpdate()
 {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
@@ -77,6 +82,11 @@ void ComponentSpotLight::OnEditorUpdate()
 
 void ComponentSpotLight::Save(JsonValue j_component) const
 {
+	JsonValue j_pos = j_component["Pos"];
+	j_pos[0] = light.pos.x;
+	j_pos[1] = light.pos.y;
+	j_pos[2] = light.pos.z;
+
 	JsonValue j_direction = j_component["Direction"];
 	j_direction[0] = light.direction.x;
 	j_direction[1] = light.direction.y;
@@ -105,6 +115,9 @@ void ComponentSpotLight::Save(JsonValue j_component) const
 
 void ComponentSpotLight::Load(JsonValue j_component)
 {
+	JsonValue j_pos = j_component["Pos"];
+	light.pos.Set(j_pos[0], j_pos[1], j_pos[2]);
+
 	JsonValue j_direction = j_component["Direction"];
 	light.direction.Set(j_direction[0], j_direction[1], j_direction[2]);
 

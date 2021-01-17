@@ -24,6 +24,7 @@ class ComponentSpotLight : public Component
 public:
 	REGISTER_COMPONENT(ComponentSpotLight, ComponentType::SPOT_LIGHT);
 
+	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;

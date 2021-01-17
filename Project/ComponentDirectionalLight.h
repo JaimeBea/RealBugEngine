@@ -16,6 +16,7 @@ class ComponentDirectionalLight : public Component
 public:
 	REGISTER_COMPONENT(ComponentDirectionalLight, ComponentType::DIRECTIONAL_LIGHT);
 
+	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;

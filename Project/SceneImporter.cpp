@@ -72,7 +72,7 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& mat
 			aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
 
 			ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-			mesh->mesh = MeshImporter::ImportMesh(ai_mesh);
+			mesh->mesh = MeshImporter::ImportMesh(ai_mesh, i);
 			mesh->mesh->material_index = i;
 
 			// TODO: Move mesh loading to a better place

@@ -15,6 +15,11 @@
 
 #include "Leaks.h"
 
+void ComponentPointLight::Init()
+{
+	OnTransformUpdate();
+}
+
 void ComponentPointLight::OnTransformUpdate()
 {
 	light.pos = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
@@ -61,6 +66,11 @@ void ComponentPointLight::OnEditorUpdate()
 
 void ComponentPointLight::Save(JsonValue j_component) const
 {
+	JsonValue j_pos = j_component["Pos"];
+	j_pos[0] = light.pos.x;
+	j_pos[1] = light.pos.y;
+	j_pos[2] = light.pos.z;
+
 	JsonValue j_color = j_component["Color"];
 	j_color[0] = light.color.x;
 	j_color[1] = light.color.y;
@@ -78,6 +88,9 @@ void ComponentPointLight::Save(JsonValue j_component) const
 
 void ComponentPointLight::Load(JsonValue j_component)
 {
+	JsonValue j_pos = j_component["Pos"];
+	light.pos.Set(j_pos[0], j_pos[1], j_pos[2]);
+
 	JsonValue j_color = j_component["Color"];
 	light.color.Set(j_color[0], j_color[1], j_color[2]);
 

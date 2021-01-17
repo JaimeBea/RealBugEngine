@@ -72,9 +72,7 @@ bool ModuleScene::Start()
 
 	CreateEmptyScene();
 
-	// TODO: Remove after test
-	//SceneImporter::LoadScene("survival_shooter");
-	SceneImporter::ImportScene("Assets/BakerHouse.fbx", App->scene->root);
+	SceneImporter::LoadScene("survival_shooter");
 
 	// Load skybox
 	// clang-format off
@@ -149,7 +147,7 @@ bool ModuleScene::Start()
 	skybox_cube_map = TextureImporter::ImportCubeMap(files);
 	TextureImporter::LoadCubeMap(skybox_cube_map);
 
-	RebuildQuadtree(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
+	//RebuildQuadtree(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
 
 	return true;
 }
@@ -230,6 +228,7 @@ void ModuleScene::CreateEmptyScene()
 	dir_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	dir_light_transform->SetScale(float3(1, 1, 1));
 	ComponentDirectionalLight* dir_light_light = dir_light->CreateComponent<ComponentDirectionalLight>();
+	dir_light_light->Init();
 
 	// Create Point Light
 	GameObject* point_light = CreateGameObject(root);
@@ -239,6 +238,7 @@ void ModuleScene::CreateEmptyScene()
 	point_light_transform->SetRotation(Quat::identity);
 	point_light_transform->SetScale(float3(1, 1, 1));
 	ComponentPointLight* point_light_light = point_light->CreateComponent<ComponentPointLight>();
+	point_light_light->Init();
 
 	// Create Spot Light
 	GameObject* spot_light = CreateGameObject(root);
@@ -248,6 +248,7 @@ void ModuleScene::CreateEmptyScene()
 	spot_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	spot_light_transform->SetScale(float3(1, 1, 1));
 	ComponentSpotLight* spot_light_light = spot_light->CreateComponent<ComponentSpotLight>();
+	spot_light_light->Init();
 
 	// Create Game Camera
 	GameObject* game_camera = CreateGameObject(root);
@@ -300,8 +301,6 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 	game_object->Init();
 	game_object->SetParent(parent);
 	game_objects_id_map[game_object->GetID()] = game_object;
-	
-
 
 	return game_object;
 }
