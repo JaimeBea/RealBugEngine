@@ -310,8 +310,21 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos)
 	for (GameObject& game_object : App->scene->game_objects)
 	{
 		game_object.flag = false;
+		if (game_object.is_in_quadtree) continue;
+
+		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
+		if (bounding_box == nullptr) continue;
+
+		const AABB& game_object_aabb = bounding_box->GetWorldAABB();
+		if (ray.Intersects(game_object_aabb))
+		{
+			intersecting_objects.push_back(&game_object);
+		}
 	}
-	GetIntersectingAABBRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds, ray, intersecting_objects);
+	if (App->scene->quadtree.IsOperative())
+	{
+		GetIntersectingAABBRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds, ray, intersecting_objects);
+	}
 
 	GameObject* selected_game_object = nullptr;
 	float min_distance = inf;

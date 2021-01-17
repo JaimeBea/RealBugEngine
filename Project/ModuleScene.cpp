@@ -52,8 +52,7 @@ static void AssimpLogCallback(const char* message, char* user)
 
 bool ModuleScene::Init()
 {
-	game_objects.Allocate(400000);
-	quadtree.Initialize(AABB2D({-100, -100}, {100, 100}), 8, 4, 20000);
+	game_objects.Allocate(10000);
 
 #ifdef _DEBUG
 	log_stream.callback = AssimpLogCallback;
@@ -152,6 +151,8 @@ bool ModuleScene::Start()
 	skybox_cube_map = TextureImporter::ImportCubeMap(files);
 	TextureImporter::LoadCubeMap(skybox_cube_map);
 
+	RebuildQuadtree(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
+
 	return true;
 }
 
@@ -184,17 +185,6 @@ UpdateStatus ModuleScene::Update()
 		}
 
 		App->input->ReleaseDroppedFilePath();
-	}
-
-	// Update Quadtree
-	quadtree.Clear();
-	for (GameObject& game_object : game_objects)
-	{
-		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
-		if (bounding_box == nullptr) continue;
-
-		const AABB& world_aabb = bounding_box->GetWorldAABB();
-		quadtree.Add(&game_object, AABB2D(world_aabb.minPoint.xz(), world_aabb.maxPoint.xz()));
 	}
 
 	// Update GameObjects
@@ -282,8 +272,34 @@ void ModuleScene::ClearScene()
 {
 	DestroyGameObject(root);
 	root = nullptr;
+	quadtree.Clear();
 
 	assert(game_objects.Count() == 0);
+}
+
+void ModuleScene::RebuildQuadtree(const AABB2D& bounds, unsigned max_depth, unsigned elements_per_node)
+{
+	quadtree.Initialize(bounds, max_depth, elements_per_node);
+	for (GameObject& game_object : game_objects)
+	{
+		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
+		if (bounding_box == nullptr) continue;
+
+		bounding_box->CalculateWorldBoundingBox();
+		const AABB& world_aabb = bounding_box->GetWorldAABB();
+		quadtree.Add(&game_object, AABB2D(world_aabb.minPoint.xz(), world_aabb.maxPoint.xz()));
+		game_object.is_in_quadtree = true;
+	}
+	quadtree.Optimize();
+}
+
+void ModuleScene::ClearQuadtree()
+{
+	quadtree.Clear();
+	for (GameObject& game_object : game_objects)
+	{
+		game_object.is_in_quadtree = false;
+	}
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent)
@@ -311,6 +327,11 @@ void ModuleScene::DestroyGameObject(GameObject* game_object)
 	for (GameObject* child : children)
 	{
 		DestroyGameObject(child);
+	}
+
+	if (game_object->is_in_quadtree)
+	{
+		quadtree.Remove(game_object);
 	}
 
 	game_objects_id_map.erase(game_object->GetID());

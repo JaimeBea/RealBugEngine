@@ -177,6 +177,8 @@ void GameObject::Load(const JsonValue& j_game_object)
 		Component* component = CreateComponentByType(*this, type);
 		component->Load(j_component);
 	}
+
+	is_in_quadtree = false;
 }
 
 void GameObject::PostLoad(const JsonValue& j_game_object)

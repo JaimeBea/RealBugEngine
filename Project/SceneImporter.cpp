@@ -102,9 +102,12 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& mat
 		}
 
 		// Create bounding box
-		ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
-		bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
-		bounding_box->CalculateWorldBoundingBox();
+		if (min_point.x < max_point.x)
+		{
+			ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
+			bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
+			bounding_box->CalculateWorldBoundingBox();
+		}
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i)

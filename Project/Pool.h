@@ -42,14 +42,9 @@ public:
 
 	T* Obtain()
 	{
-		// Check if the pool has been initialized
-		assert(first_free != nullptr);
+		assert(first_free != nullptr); // The pool hasn't been initialized
 
-		// Check for pool overflow
-		if (first_free == data + size)
-		{
-			return nullptr;
-		}
+		assert(first_free != data + size); // Pool overflow
 
 		// Obtain a new object
 		T* object = first_free;
@@ -63,13 +58,11 @@ public:
 
 	void Release(T* object)
 	{
-		// Check if the object is in the data array
-		assert(object >= data && object < data + size);
+		assert(object >= data && object < data + size); // The object is not in the data array
 		
 		size_t index = object - data;
 
-		// Check if the object isn't a free object
-		assert(next_free[index] == nullptr);
+		assert(next_free[index] == nullptr); // The object is already free
 
 		// Release the object
 		next_free[index] = first_free;
