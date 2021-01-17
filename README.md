@@ -7,23 +7,31 @@ Basic engine created for UPC's Master in Advanced Programming for AAA Videogames
 - 3D Scene view with Unity-like controls
 - Loading basic 3D models into the scene by dragging and dropping files
 - Basic console log
-- Basic configuration and properties panels
+- Loading and saving scenes
+- Custom file format to save the information loaded
+- Implementation of an editable Quadtree
+- Frustum Culling
+- PBR Phong implementation
+- Three types of lights (directional, point, spot)
+- Ray tracing (to select objects in the scene)
 
 ## Additional features
 
 - Basic templated pool data structure to allow for faster allocation/deallocation of resources
-- Rendering to framebuffers to show the scene inside an ImGui window.
 
 ## How to use
 
 ### Loading models and textures
 
-- Drag model files inside any engine window to load it and replace the current geometry
-- You can also load a different texture file for the model in the same manner
+- Drag model files inside any engine window to load it
+- You can also load a different texture file for the model in the same manner. Select it clicking in the object, inside the Inspector Panel
 
 ### Menu items
 
 - File
+  - New: Create new empty scene
+  - Load: Load a scene 
+  - Save: Save a scene
   - Quit: Exit the engine
 - View
   - Open/Close different panels from here
@@ -46,6 +54,7 @@ Left click to focus on the scene window first.
 - Arrow keys to move around
 - F key to focus around the geometry
 - Shift to move faster (5x)
+- W/E/R to translate/rotate/scale selected object
 
 Movement and zoom speed depend on the distance to the focus point (zooming out makes moving and zooming faster).
 
@@ -55,6 +64,7 @@ This panel contains engine information and configuration variables for multiple 
 
 - Application
   - Application name and organization
+- Time
   - FPS and MS graph
   - Change Framerate Limit
   - Activate/Deactivate Framerate Limit
@@ -70,31 +80,30 @@ This panel contains engine information and configuration variables for multiple 
     - Desktop Fullscreen
   - Change brightness
   - Resize window
-- Camera
-  - Frustum vector information (read-only)
-  - Change camera position
-  - Change camera movement/rotation/zoom speed
-  - Change the shift key speed multiplier
-  - Change near/far planes
-  - Change the vertical FOV
+- Scene
+  - Draw Bounding Boxes
+  - Draw Quadtree
+  - Configure Quadtree
+  - Draw Skybox
   - Change the background color
-- Textures
-  - Change min/mag filters (applies to all textures)
-  - Change texture wrapping (applies to all textures)
-  - Information about loaded textures (size and preview)
-- Models
-  - Information about loaded models
-    - Meshes (vertices, triangles and material)
-    - Materials (texture information)
-    - Information about the calculated bounding sphere
+  - Change the ambient color
+- Engine Camera
+  - Frustum vector information (read-only)
+  - Change near/far planes
 
-### Properties panel
+### Scene panel
+- Play/Stop/Pause controller
+- Gizmos parameters
+- Preview of the scene
 
+### Inspector panel
 Contains information about the currently loaded model
 
 - Transformation (postition, rotation and scale)
-- Geometry (meshes and bounding sphere)
-- Textures (size and preview)
+- Geometry (meshes and bounding box)
+- Textures (shader configuration, size and preview)
+- Lights (lights parameters)
+- Camera (camera parameters)
 
 ### Console panel
 
@@ -109,6 +118,8 @@ There are no commands currently available.
 - Dear ImGui (https://github.com/ocornut/imgui)
 - DeviL (http://openil.sourceforge.net/)
 - assimp (https://github.com/assimp/assimp)
+- ImGuimoz (https://github.com/CedricGuillemet/ImGuizmo)
+- RapidJason (https://github.com/Tencent/rapidjson)
 
 ## Authors
 
@@ -123,3 +134,4 @@ https://github.com/JaimeBea/RealBugEngine
 ## License
 
 [MIT](./LICENSE)
+
