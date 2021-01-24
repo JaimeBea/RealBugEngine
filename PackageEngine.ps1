@@ -1,4 +1,4 @@
-${EngineName} = "RealBugEngine"
+${EngineName} = "TBD-Engine"
 ${Version} = "0.0.2"
 
 ${ReleaseDir} = "Build/Release"

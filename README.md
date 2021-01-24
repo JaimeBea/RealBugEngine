@@ -1,4 +1,4 @@
-# RealBugEngine
+# TBD-Engine
 
 Basic engine created for UPC's Master in Advanced Programming for AAA Videogames.
 
@@ -131,7 +131,7 @@ _Lowy Solé Franquesa_ (http://github.com/lowysole)
 
 ## Github
 
-https://github.com/JaimeBea/RealBugEngine
+https://github.com/TBD-org/TBD-Engine
 
 ## License
 
