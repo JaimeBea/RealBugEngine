@@ -1,7 +1,6 @@
 #pragma once
 
-class PerformanceTimer
-{
+class PerformanceTimer {
 public:
 	void Start();
 	unsigned long long Stop();

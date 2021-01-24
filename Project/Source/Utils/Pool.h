@@ -5,16 +5,13 @@
 #include "Math/myassert.h"
 
 template<typename T>
-class Pool
-{
+class Pool {
 public:
-	~Pool()
-	{
+	~Pool() {
 		Clear();
 	}
 
-	void Allocate(unsigned amount)
-	{
+	void Allocate(unsigned amount) {
 		Clear();
 
 		// Allocate
@@ -25,14 +22,12 @@ public:
 		first_free = data;
 
 		// Initialize free list
-		for (size_t i = 0; i < amount; ++i)
-		{
+		for (size_t i = 0; i < amount; ++i) {
 			next_free[i] = data + (i + 1);
 		}
 	}
 
-	void Clear()
-	{
+	void Clear() {
 		size = 0;
 		count = 0;
 		RELEASE_ARRAY(data);
@@ -40,8 +35,7 @@ public:
 		first_free = nullptr;
 	}
 
-	T* Obtain()
-	{
+	T* Obtain() {
 		assert(first_free != nullptr); // The pool hasn't been initialized
 
 		assert(first_free != data + size); // Pool overflow
@@ -56,10 +50,9 @@ public:
 		return object;
 	}
 
-	void Release(T* object)
-	{
+	void Release(T* object) {
 		assert(object >= data && object < data + size); // The object is not in the data array
-		
+
 		size_t index = object - data;
 
 		assert(next_free[index] == nullptr); // The object is already free
@@ -70,50 +63,42 @@ public:
 		count -= 1;
 	}
 
-	void ReleaseAll()
-	{
+	void ReleaseAll() {
 		// Reset count and free list
 		count = 0;
 		first_free = data;
 
 		// Initialize free list
-		for (size_t i = 0; i < size; ++i)
-		{
+		for (size_t i = 0; i < size; ++i) {
 			next_free[i] = data + (i + 1);
 		}
 	}
 
-	size_t Count()
-	{
+	size_t Count() {
 		return count;
 	}
 
 	// Iteration
 
-	class Iterator
-	{
+	class Iterator {
 	public:
 		Iterator(const Pool<T>& pool__, size_t index__)
 			: pool(&pool__)
 			, index(index__) {}
 
-		const Iterator& operator++()
-		{
+		const Iterator& operator++() {
 			index += 1;
-			while (index < pool->size && pool->next_free[index] != nullptr)
-			{
+			while (index < pool->size && pool->next_free[index] != nullptr) {
 				index += 1;
 			}
 			return *this;
 		}
 
-		bool operator!=(const Iterator& other) const
-		{
+		bool operator!=(const Iterator& other) const {
 			return index != other.index;
 		}
 
-		T& operator*() const
-		{
+		T& operator*() const {
 			return pool->data[index];
 		}
 
@@ -122,33 +107,27 @@ public:
 		size_t index;
 	};
 
-	typename Pool<T>::Iterator begin()
-	{
+	typename Pool<T>::Iterator begin() {
 		size_t index = 0;
-		while (index < size && next_free[index] != nullptr)
-		{
+		while (index < size && next_free[index] != nullptr) {
 			index += 1;
 		}
 		return Pool<T>::Iterator(*this, index);
 	}
 
-	typename Pool<const T>::Iterator begin() const
-	{
+	typename Pool<const T>::Iterator begin() const {
 		size_t index = 0;
-		while (index < size && next_free[index] != nullptr)
-		{
+		while (index < size && next_free[index] != nullptr) {
 			index += 1;
 		}
 		return Pool<const T>::Iterator((Pool<const T>&) *this, index);
 	}
 
-	typename Pool<T>::Iterator end()
-	{
+	typename Pool<T>::Iterator end() {
 		return Pool<T>::Iterator(*this, size);
 	}
 
-	typename Pool<const T>::Iterator end() const
-	{
+	typename Pool<const T>::Iterator end() const {
 		return Pool<const T>::Iterator((Pool<const T>&) *this, size);
 	}
 

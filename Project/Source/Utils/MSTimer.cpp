@@ -6,24 +6,18 @@
 
 #include "Utils/Leaks.h"
 
-void MSTimer::Start()
-{
+void MSTimer::Start() {
 	start_time = SDL_GetTicks();
 	delta_time = 0;
 	running = true;
 }
 
-unsigned int MSTimer::Stop()
-{
-	if (running)
-	{
+unsigned int MSTimer::Stop() {
+	if (running) {
 		unsigned int now_time = SDL_GetTicks();
-		if (SDL_TICKS_PASSED(now_time, start_time))
-		{
+		if (SDL_TICKS_PASSED(now_time, start_time)) {
 			delta_time = now_time - start_time;
-		}
-		else
-		{
+		} else {
 			delta_time = 0;
 		}
 
@@ -33,17 +27,12 @@ unsigned int MSTimer::Stop()
 	return delta_time;
 }
 
-unsigned int MSTimer::Read()
-{
-	if (running)
-	{
+unsigned int MSTimer::Read() {
+	if (running) {
 		unsigned int now_time = SDL_GetTicks();
-		if (SDL_TICKS_PASSED(now_time, start_time))
-		{
+		if (SDL_TICKS_PASSED(now_time, start_time)) {
 			delta_time = now_time - start_time;
-		}
-		else
-		{
+		} else {
 			delta_time = 0;
 		}
 	}

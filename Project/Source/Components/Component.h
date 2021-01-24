@@ -5,8 +5,7 @@
 class JsonValue;
 class GameObject;
 
-class Component
-{
+class Component {
 public:
 	Component(ComponentType type, GameObject& owner, bool active);
 

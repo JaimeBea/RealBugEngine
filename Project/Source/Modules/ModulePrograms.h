@@ -2,8 +2,7 @@
 
 #include "Module.h"
 
-class ModulePrograms : public Module
-{
+class ModulePrograms : public Module {
 public:
 	bool Start() override;
 	bool CleanUp() override;

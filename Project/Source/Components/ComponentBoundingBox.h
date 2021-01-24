@@ -5,8 +5,7 @@
 #include "Geometry/AABB.h"
 #include "Geometry/OBB.h"
 
-class ComponentBoundingBox : public Component
-{
+class ComponentBoundingBox : public Component {
 public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 

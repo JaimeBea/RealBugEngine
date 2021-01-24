@@ -6,8 +6,7 @@
 #include <string>
 #include <vector>
 
-class ModuleFiles : public Module
-{
+class ModuleFiles : public Module {
 public:
 	Buffer<char> Load(const char* file_path) const;
 	bool Save(const char* file_path, const Buffer<char>& buffer, bool append = false) const;

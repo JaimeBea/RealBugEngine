@@ -15,8 +15,7 @@
 
 #include "Utils/Leaks.h"
 
-Texture* TextureImporter::ImportTexture(const char* file_path)
-{
+Texture* TextureImporter::ImportTexture(const char* file_path) {
 	// Timer to measure importing a texture
 	MSTimer timer;
 	timer.Start();
@@ -26,22 +25,19 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 	// Generate image handler
 	unsigned image;
 	ilGenImages(1, &image);
-	DEFER
-	{
+	DEFER {
 		ilDeleteImages(1, &image);
 	};
 
 	// Load image
 	ilBindImage(image);
 	bool image_loaded = ilLoadImage(file_path);
-	if (!image_loaded)
-	{
+	if (!image_loaded) {
 		LOG("Failed to load image.");
 		return nullptr;
 	}
 	bool image_converted = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-	if (!image_converted)
-	{
+	if (!image_converted) {
 		LOG("Failed to convert image.");
 		return nullptr;
 	}
@@ -49,8 +45,7 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 	// Flip image if neccessary
 	ILinfo info;
 	iluGetImageInfo(&info);
-	if (info.Origin == IL_ORIGIN_UPPER_LEFT)
-	{
+	if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
 		iluFlipImage();
 	}
 	// Create texture
@@ -63,15 +58,13 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 	LOG("Saving image to \"%s\".", dds_file_path.c_str());
 	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
 	size_t size = ilSaveL(IL_DDS, nullptr, 0);
-	if (size == 0)
-	{
+	if (size == 0) {
 		LOG("Failed to save image.");
 		return nullptr;
 	}
 	Buffer<char> buffer = Buffer<char>(size);
 	size = ilSaveL(IL_DDS, buffer.Data(), size);
-	if (size == 0)
-	{
+	if (size == 0) {
 		LOG("Failed to save image.");
 		return nullptr;
 	}
@@ -82,8 +75,7 @@ Texture* TextureImporter::ImportTexture(const char* file_path)
 	return texture;
 }
 
-void TextureImporter::LoadTexture(Texture* texture)
-{
+void TextureImporter::LoadTexture(Texture* texture) {
 	if (texture == nullptr) return;
 
 	// Timer to measure loading a texture
@@ -97,16 +89,14 @@ void TextureImporter::LoadTexture(Texture* texture)
 	// Generate image handler
 	unsigned image;
 	ilGenImages(1, &image);
-	DEFER
-	{
+	DEFER {
 		ilDeleteImages(1, &image);
 	};
 
 	// Load image
 	ilBindImage(image);
 	bool image_loaded = ilLoad(IL_DDS, file_path.c_str());
-	if (!image_loaded)
-	{
+	if (!image_loaded) {
 		LOG("Failed to load image.");
 		return;
 	}
@@ -126,20 +116,17 @@ void TextureImporter::LoadTexture(Texture* texture)
 	LOG("Texture loaded in %ums.", time_ms);
 }
 
-void TextureImporter::UnloadTexture(Texture* texture)
-{
+void TextureImporter::UnloadTexture(Texture* texture) {
 	if (!texture->gl_texture) return;
 
 	glDeleteTextures(1, &texture->gl_texture);
 }
 
-CubeMap* TextureImporter::ImportCubeMap(const char* file_paths[6])
-{
+CubeMap* TextureImporter::ImportCubeMap(const char* file_paths[6]) {
 	// Create cube map
 	CubeMap* cube_map = App->resources->ObtainCubeMap();
 
-	for (unsigned i = 0; i < 6; ++i)
-	{
+	for (unsigned i = 0; i < 6; ++i) {
 		const char* file_path = file_paths[i];
 
 		LOG("Importing cube map texture from path: \"%s\".", file_path);
@@ -147,22 +134,19 @@ CubeMap* TextureImporter::ImportCubeMap(const char* file_paths[6])
 		// Generate image handler
 		unsigned image;
 		ilGenImages(1, &image);
-		DEFER
-		{
+		DEFER {
 			ilDeleteImages(1, &image);
 		};
 
 		// Load image
 		ilBindImage(image);
 		bool image_loaded = ilLoadImage(file_path);
-		if (!image_loaded)
-		{
+		if (!image_loaded) {
 			LOG("Failed to load image.");
 			return nullptr;
 		}
 		bool image_converted = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE);
-		if (!image_converted)
-		{
+		if (!image_converted) {
 			LOG("Failed to convert image.");
 			return nullptr;
 		}
@@ -182,15 +166,13 @@ CubeMap* TextureImporter::ImportCubeMap(const char* file_paths[6])
 		LOG("Saving image to \"%s\".", dds_file_path.c_str());
 		ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
 		size_t size = ilSaveL(IL_DDS, nullptr, 0);
-		if (size == 0)
-		{
+		if (size == 0) {
 			LOG("Failed to save image.");
 			return nullptr;
 		}
 		Buffer<char> buffer = Buffer<char>(size);
 		size = ilSaveL(IL_DDS, buffer.Data(), size);
-		if (size == 0)
-		{
+		if (size == 0) {
 			LOG("Failed to save image.");
 			return nullptr;
 		}
@@ -202,15 +184,13 @@ CubeMap* TextureImporter::ImportCubeMap(const char* file_paths[6])
 	return cube_map;
 }
 
-void TextureImporter::LoadCubeMap(CubeMap* cube_map)
-{
+void TextureImporter::LoadCubeMap(CubeMap* cube_map) {
 	// Create texture handle
 	glGenTextures(1, &cube_map->gl_texture);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map->gl_texture);
 
 	// Load cube map
-	for (unsigned i = 0; i < 6; ++i)
-	{
+	for (unsigned i = 0; i < 6; ++i) {
 		std::string file_path = std::string(TEXTURES_PATH) + "/" + cube_map->file_names[i] + TEXTURE_EXTENSION;
 
 		LOG("Loading cubemap texture from path: \"%s\".", file_path.c_str());
@@ -218,16 +198,14 @@ void TextureImporter::LoadCubeMap(CubeMap* cube_map)
 		// Generate image handler
 		unsigned image;
 		ilGenImages(1, &image);
-		DEFER
-		{
+		DEFER {
 			ilDeleteImages(1, &image);
 		};
 
 		// Load image
 		ilBindImage(image);
 		bool image_loaded = ilLoad(IL_DDS, file_path.c_str());
-		if (!image_loaded)
-		{
+		if (!image_loaded) {
 			LOG("Failed to load image.");
 			return;
 		}
@@ -243,8 +221,7 @@ void TextureImporter::LoadCubeMap(CubeMap* cube_map)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-void TextureImporter::UnloadCubeMap(CubeMap* cube_map)
-{
+void TextureImporter::UnloadCubeMap(CubeMap* cube_map) {
 	if (!cube_map->gl_texture) return;
 
 	glDeleteTextures(1, &cube_map->gl_texture);

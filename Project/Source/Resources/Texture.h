@@ -2,8 +2,7 @@
 
 #include <string>
 
-class Texture
-{
+class Texture {
 public:
 	std::string file_name = "";
 	unsigned gl_texture = 0;

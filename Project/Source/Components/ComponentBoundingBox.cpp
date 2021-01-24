@@ -9,13 +9,11 @@
 
 #include "Utils/Leaks.h"
 
-void ComponentBoundingBox::OnTransformUpdate()
-{
+void ComponentBoundingBox::OnTransformUpdate() {
 	CalculateWorldBoundingBox(true);
 }
 
-void ComponentBoundingBox::Save(JsonValue j_component) const
-{
+void ComponentBoundingBox::Save(JsonValue j_component) const {
 	JsonValue j_local_bounding_box = j_component["LocalBoundingBox"];
 	j_local_bounding_box[0] = local_aabb.minPoint.x;
 	j_local_bounding_box[1] = local_aabb.minPoint.y;
@@ -25,8 +23,7 @@ void ComponentBoundingBox::Save(JsonValue j_component) const
 	j_local_bounding_box[5] = local_aabb.maxPoint.z;
 }
 
-void ComponentBoundingBox::Load(JsonValue j_component)
-{
+void ComponentBoundingBox::Load(JsonValue j_component) {
 	JsonValue j_local_bounding_box = j_component["LocalBoundingBox"];
 	local_aabb.minPoint.Set(j_local_bounding_box[0], j_local_bounding_box[1], j_local_bounding_box[2]);
 	local_aabb.maxPoint.Set(j_local_bounding_box[3], j_local_bounding_box[4], j_local_bounding_box[5]);
@@ -34,16 +31,13 @@ void ComponentBoundingBox::Load(JsonValue j_component)
 	dirty = true;
 }
 
-void ComponentBoundingBox::SetLocalBoundingBox(const AABB& bounding_box)
-{
+void ComponentBoundingBox::SetLocalBoundingBox(const AABB& bounding_box) {
 	local_aabb = bounding_box;
 	dirty = true;
 }
 
-void ComponentBoundingBox::CalculateWorldBoundingBox(bool force)
-{
-	if (dirty || force)
-	{
+void ComponentBoundingBox::CalculateWorldBoundingBox(bool force) {
+	if (dirty || force) {
 		GameObject& owner = GetOwner();
 		ComponentTransform* transform = owner.GetComponent<ComponentTransform>();
 		world_obb = OBB(local_aabb);
@@ -53,8 +47,7 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force)
 	}
 }
 
-void ComponentBoundingBox::DrawBoundingBox()
-{
+void ComponentBoundingBox::DrawBoundingBox() {
 	float3 points[8];
 	world_obb.GetCornerPoints(points);
 
@@ -70,17 +63,14 @@ void ComponentBoundingBox::DrawBoundingBox()
 	dd::box(points, dd::colors::White);
 }
 
-void ComponentBoundingBox::Invalidate()
-{
+void ComponentBoundingBox::Invalidate() {
 	dirty = true;
 }
 
-const OBB& ComponentBoundingBox::GetWorldOBB() const
-{
+const OBB& ComponentBoundingBox::GetWorldOBB() const {
 	return world_obb;
 }
 
-const AABB& ComponentBoundingBox::GetWorldAABB() const
-{
+const AABB& ComponentBoundingBox::GetWorldAABB() const {
 	return world_aabb;
 }

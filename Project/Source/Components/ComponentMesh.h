@@ -10,8 +10,7 @@
 class ComponentMaterial;
 struct aiMesh;
 
-class ComponentMesh : public Component
-{
+class ComponentMesh : public Component {
 public:
 	REGISTER_COMPONENT(ComponentMesh, ComponentType::MESH);
 

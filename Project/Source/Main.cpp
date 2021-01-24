@@ -8,8 +8,7 @@
 
 #include "Utils/Leaks.h"
 
-enum class MainState
-{
+enum class MainState {
 	CREATION,
 	INIT,
 	START,
@@ -20,8 +19,7 @@ enum class MainState
 
 Application* App = nullptr;
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 #ifdef _DEBUG
 	_CrtMemState mem_state;
 	_CrtMemCheckpoint(&mem_state);
@@ -33,11 +31,9 @@ int main(int argc, char** argv)
 	// Game loop
 	int main_return = EXIT_FAILURE;
 	MainState state = MainState::CREATION;
-	while (state != MainState::EXIT)
-	{
+	while (state != MainState::EXIT) {
 		BROFILER_FRAME("Main");
-		switch (state)
-		{
+		switch (state) {
 		case MainState::CREATION:
 			LOG("Application Creation --------------");
 			App = new Application();
@@ -46,43 +42,34 @@ int main(int argc, char** argv)
 
 		case MainState::INIT:
 			LOG("Application Init --------------");
-			if (App->Init() == false)
-			{
+			if (App->Init() == false) {
 				LOG("Application Init exits with error -----");
 				state = MainState::EXIT;
-			}
-			else
-			{
+			} else {
 				state = MainState::START;
 			}
 			break;
 
 		case MainState::START:
 			LOG("Application Start --------------");
-			if (App->Start() == false)
-			{
+			if (App->Start() == false) {
 				LOG("Application Start exits with error -----");
 				state = MainState::EXIT;
-			}
-			else
-			{
+			} else {
 				state = MainState::UPDATE;
 				LOG("Application Update --------------");
 			}
 			break;
 
-		case MainState::UPDATE:
-		{
+		case MainState::UPDATE: {
 			UpdateStatus update_return = App->Update();
 
-			if (update_return == UpdateStatus::ERROR)
-			{
+			if (update_return == UpdateStatus::ERROR) {
 				LOG("Application Update exits with error -----");
 				state = MainState::EXIT;
 			}
 
-			if (update_return == UpdateStatus::STOP)
-			{
+			if (update_return == UpdateStatus::STOP) {
 				state = MainState::FINISH;
 			}
 			break;
@@ -90,12 +77,9 @@ int main(int argc, char** argv)
 
 		case MainState::FINISH:
 			LOG("Application CleanUp --------------");
-			if (App->CleanUp() == false)
-			{
+			if (App->CleanUp() == false) {
 				LOG("Application CleanUp exits with error -----");
-			}
-			else
-			{
+			} else {
 				LOG("Application CleanUp completed successfuly -----");
 				main_return = EXIT_SUCCESS;
 			}

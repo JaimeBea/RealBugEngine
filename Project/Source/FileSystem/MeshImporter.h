@@ -7,8 +7,7 @@
 class Mesh;
 struct aiMesh;
 
-namespace MeshImporter
-{
+namespace MeshImporter {
 	Mesh* ImportMesh(const aiMesh* ai_mesh, unsigned index);
 	void LoadMesh(Mesh* mesh);
 	std::vector<Triangle> ExtractMeshTriangles(Mesh* mesh, const float4x4& model);

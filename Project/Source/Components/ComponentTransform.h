@@ -7,8 +7,7 @@
 #include "Math/float4x4.h"
 #include "imgui.h"
 
-class ComponentTransform : public Component
-{
+class ComponentTransform : public Component {
 public:
 	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM);
 

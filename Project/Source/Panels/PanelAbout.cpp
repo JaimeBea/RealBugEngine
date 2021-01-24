@@ -10,11 +10,9 @@
 PanelAbout::PanelAbout()
 	: Panel("About", false) {}
 
-void PanelAbout::Update()
-{
+void PanelAbout::Update() {
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled, ImGuiWindowFlags_AlwaysAutoResize))
-	{
+	if (ImGui::Begin(name, &enabled, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::TextColored(App->editor->title_color, "TBD Engine");
 		ImGui::Separator();
 		ImGui::TextColored(App->editor->title_color, u8"By Jaime Bea & Llorenç (Lowy) Solé.");
@@ -25,8 +23,7 @@ void PanelAbout::Update()
 		ImVec2 child_size = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 6);
 
 		ImGui::Checkbox("Libraries", &show_library);
-		if (show_library)
-		{
+		if (show_library) {
 			ImGui::BeginChildFrame(ImGui::GetID("cfg_infos"), child_size);
 			ImGui::Text("MathGeoLib v1.5 ");
 			ImGui::Text("Simple DirectMedia Layer (SDL) v2.0");

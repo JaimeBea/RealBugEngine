@@ -10,11 +10,9 @@ Panel::Panel(const char* name, bool enabled)
 
 void Panel::Update() {}
 
-void Panel::HelpMarker(const char* desc)
-{
+void Panel::HelpMarker(const char* desc) {
 	ImGui::TextDisabled("(?)");
-	if (ImGui::IsItemHovered())
-	{
+	if (ImGui::IsItemHovered()) {
 		ImGui::BeginTooltip();
 		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
 		ImGui::TextUnformatted(desc);

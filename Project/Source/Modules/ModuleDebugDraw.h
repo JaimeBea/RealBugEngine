@@ -7,8 +7,7 @@
 class DDRenderInterfaceCoreGL;
 class Camera;
 
-class ModuleDebugDraw : public Module
-{
+class ModuleDebugDraw : public Module {
 public:
 	bool Start() override;
 	UpdateStatus Update() override;

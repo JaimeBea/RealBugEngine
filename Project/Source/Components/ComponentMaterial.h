@@ -3,8 +3,7 @@
 #include "Component.h"
 #include "Resources/Material.h"
 
-class ComponentMaterial : public Component
-{
+class ComponentMaterial : public Component {
 public:
 	REGISTER_COMPONENT(ComponentMaterial, ComponentType::MATERIAL);
 

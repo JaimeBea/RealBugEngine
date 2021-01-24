@@ -5,58 +5,49 @@
 #include <cstring>
 
 template<typename T>
-class Buffer
-{
+class Buffer {
 public:
 	Buffer()
 		: size(0)
 		, data(nullptr) {}
 
 	Buffer(size_t size_)
-		: size(size_)
-	{
+		: size(size_) {
 		data = new T[size];
 	}
 
 	Buffer(Buffer<T>&& buffer)
-		: size(buffer.size)
-	{
+		: size(buffer.size) {
 		char* old_data = data;
 		data = buffer.data;
 		buffer.data = old_data;
 	}
 
-	~Buffer()
-	{
+	~Buffer() {
 		Clear();
 	}
 
-	void Allocate(size_t size_)
-	{
+	void Allocate(size_t size_) {
 		Clear();
 
 		size = size_;
 		data = new T[size];
 	}
 
-	void Clear()
-	{
+	void Clear() {
 		size = 0;
 		RELEASE_ARRAY(data);
 	}
 
-	T* Data() const
-	{
+	T* Data() const {
 		return data;
 	}
 
-	size_t Size() const
-	{
+	size_t Size() const {
 		return size;
 	}
 
-	Buffer<T>& operator=(Buffer<T>&& buffer)
-	{
+	Buffer<T>& operator=(Buffer<T>&& buffer) {
 		size = buffer.size;
 		T* old_data = data;
 		data = buffer.data;
@@ -65,8 +56,7 @@ public:
 		return *this;
 	}
 
-	T& operator[](unsigned index) const
-	{
+	T& operator[](unsigned index) const {
 		return data[index];
 	}
 

@@ -26,53 +26,39 @@
 PanelScene::PanelScene()
 	: Panel("Scene", true) {}
 
-void PanelScene::Update()
-{
+void PanelScene::Update() {
 	float imguizmo_size = 100;
 
-	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT))
-	{
+	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT)) {
 		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
 		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE;
 		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
 	}
 
 	ImGui::SetNextWindowDockID(App->editor->dock_main_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled))
-	{
+	if (ImGui::Begin(name, &enabled)) {
 		// Play / Pause / Step buttons
-		if (App->time->HasGameStarted())
-		{
-			if (ImGui::Button("Stop"))
-			{
+		if (App->time->HasGameStarted()) {
+			if (ImGui::Button("Stop")) {
 				App->time->StopGame();
 			}
 			ImGui::SameLine();
-			if (App->time->IsGameRunning())
-			{
-				if (ImGui::Button("Pause"))
-				{
+			if (App->time->IsGameRunning()) {
+				if (ImGui::Button("Pause")) {
 					App->time->PauseGame();
 				}
-			}
-			else
-			{
-				if (ImGui::Button("Resume"))
-				{
+			} else {
+				if (ImGui::Button("Resume")) {
 					App->time->ResumeGame();
 				}
 			}
-		}
-		else
-		{
-			if (ImGui::Button("Play"))
-			{
+		} else {
+			if (ImGui::Button("Play")) {
 				App->time->StartGame();
 			}
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Step"))
-		{
+		if (ImGui::Button("Step")) {
 			App->time->StepGame();
 		}
 
@@ -86,8 +72,7 @@ void PanelScene::Update()
 		ImGui::SameLine();
 		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
 
-		if (current_guizmo_operation != ImGuizmo::SCALE)
-		{
+		if (current_guizmo_operation != ImGuizmo::SCALE) {
 			ImGui::SameLine();
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 			ImGui::SameLine();
@@ -106,8 +91,7 @@ void PanelScene::Update()
 		ImGui::SameLine();
 
 		ImGui::PushItemWidth(150);
-		switch (current_guizmo_operation)
-		{
+		switch (current_guizmo_operation) {
 		case ImGuizmo::TRANSLATE:
 			ImGui::InputFloat3("Snap", &snap[0]);
 			break;
@@ -123,8 +107,7 @@ void PanelScene::Update()
 
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (App->renderer->viewport_width != size.x || App->renderer->viewport_height != size.y)
-		{
+		if (App->renderer->viewport_width != size.x || App->renderer->viewport_height != size.y) {
 			App->camera->ViewportResized((int) size.x, (int) size.y);
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
 			framebuffer_size = {
@@ -144,21 +127,16 @@ void PanelScene::Update()
 		ImGui::Image((void*) App->renderer->render_texture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 		// Capture input
-		if (ImGui::IsWindowFocused())
-		{
-			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT))
-			{
+		if (ImGui::IsWindowFocused()) {
+			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT)) {
 				ImGuizmo::Enable(false);
-			}
-			else
-			{
+			} else {
 				ImGuizmo::Enable(true);
 			}
 
 			ImGui::CaptureKeyboardFromApp(false);
 
-			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver())
-			{
+			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
 				ImGui::CaptureMouseFromApp(true);
 				ImGuiIO& io = ImGui::GetIO();
 				float2 mouse_pos_normalized;
@@ -179,20 +157,17 @@ void PanelScene::Update()
 		float4x4 camera_projection = engine_frustum.ProjectionMatrix().Transposed();
 
 		GameObject* selected_object = App->editor->selected_object;
-		if (selected_object)
-		{
+		if (selected_object) {
 			ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
 			GameObject* parent = selected_object->GetParent();
 			float4x4 inverse_parent_matrix = float4x4::identity;
-			if (parent != nullptr)
-			{
+			if (parent != nullptr) {
 				ComponentTransform* parent_transform = parent->GetComponent<ComponentTransform>();
 				inverse_parent_matrix = parent_transform->GetGlobalMatrix().Inverted();
 			}
 			float4x4 global_matrix = transform->GetGlobalMatrix().Transposed();
 
-			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), current_guizmo_operation, current_guizmo_mode, global_matrix.ptr(), NULL, use_snap ? snap : NULL))
-			{
+			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), current_guizmo_operation, current_guizmo_mode, global_matrix.ptr(), NULL, use_snap ? snap : NULL)) {
 				float4x4 local_matrix = inverse_parent_matrix * global_matrix.Transposed();
 
 				float3 translation;

@@ -14,13 +14,11 @@
 
 #define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
 
-ModuleTime::ModuleTime()
-{
+ModuleTime::ModuleTime() {
 	timer.Start();
 }
 
-UpdateStatus ModuleTime::PreUpdate()
-{
+UpdateStatus ModuleTime::PreUpdate() {
 	BROFILER_CATEGORY("ModuleTime - PreUpdate", Profiler::Color::Black)
 
 	frame_count += 1;
@@ -29,20 +27,15 @@ UpdateStatus ModuleTime::PreUpdate()
 	real_time_delta_ms = real_time - real_time_last_ms;
 	real_time_last_ms = real_time;
 
-	if (game_running)
-	{
+	if (game_running) {
 		time_delta_ms = lroundf(real_time_delta_ms * time_scale);
 		time_last_ms += time_delta_ms;
-	}
-	else if (game_step_once)
-	{
+	} else if (game_step_once) {
 		time_delta_ms = step_delta_time_ms;
 		time_last_ms += time_delta_ms;
 
 		game_step_once = false;
-	}
-	else
-	{
+	} else {
 		time_delta_ms = 0;
 	}
 
@@ -51,63 +44,51 @@ UpdateStatus ModuleTime::PreUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-void ModuleTime::WaitForEndOfFrame()
-{
+void ModuleTime::WaitForEndOfFrame() {
 	BROFILER_CATEGORY("ModuleTime - WaitForEndOfFrame", Profiler::Color::Black)
-	if (limit_framerate)
-	{
+	if (limit_framerate) {
 		unsigned int real_time_ms = timer.Read();
 		unsigned int frame_ms = real_time_ms - real_time_last_ms;
 		unsigned int min_ms = 1000 / max_fps;
-		if (frame_ms < min_ms)
-		{
+		if (frame_ms < min_ms) {
 			SDL_Delay(min_ms - frame_ms);
 		}
 	}
 }
 
-float ModuleTime::GetDeltaTime() const
-{
+float ModuleTime::GetDeltaTime() const {
 	return time_delta_ms / 1000.0f;
 }
 
-float ModuleTime::GetRealTimeDeltaTime() const
-{
+float ModuleTime::GetRealTimeDeltaTime() const {
 	return real_time_delta_ms / 1000.0f;
 }
 
-float ModuleTime::GetTimeSinceStartup() const
-{
+float ModuleTime::GetTimeSinceStartup() const {
 	return time_last_ms / 1000.0f;
 }
 
-float ModuleTime::GetRealTimeSinceStartup() const
-{
+float ModuleTime::GetRealTimeSinceStartup() const {
 	return real_time_last_ms / 1000.0f;
 }
 
-float ModuleTime::GetTimeScale() const
-{
+float ModuleTime::GetTimeScale() const {
 	return time_scale;
 }
 
-void ModuleTime::SetTimeScale(float time_scale)
-{
+void ModuleTime::SetTimeScale(float time_scale) {
 	time_scale = std::max(0.0f, time_scale);
 }
 
-bool ModuleTime::HasGameStarted() const
-{
+bool ModuleTime::HasGameStarted() const {
 	return game_started;
 }
 
-bool ModuleTime::IsGameRunning() const
-{
+bool ModuleTime::IsGameRunning() const {
 	return game_running;
 }
 
-void ModuleTime::StartGame()
-{
+void ModuleTime::StartGame() {
 	if (game_started) return;
 
 	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
@@ -116,8 +97,7 @@ void ModuleTime::StartGame()
 	game_running = true;
 }
 
-void ModuleTime::StopGame()
-{
+void ModuleTime::StopGame() {
 	if (!game_started) return;
 
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
@@ -130,31 +110,27 @@ void ModuleTime::StopGame()
 	time_last_ms = 0;
 }
 
-void ModuleTime::PauseGame()
-{
+void ModuleTime::PauseGame() {
 	if (!game_started) return;
 	if (!game_running) return;
 
 	game_running = false;
 }
 
-void ModuleTime::ResumeGame()
-{
+void ModuleTime::ResumeGame() {
 	if (!game_started) return;
 	if (game_running) return;
 
 	game_running = true;
 }
 
-void ModuleTime::StepGame()
-{
+void ModuleTime::StepGame() {
 	if (!game_started) StartGame();
 	if (game_running) PauseGame();
 
 	game_step_once = true;
 }
 
-unsigned int ModuleTime::GetFrameCount() const
-{
+unsigned int ModuleTime::GetFrameCount() const {
 	return frame_count;
 }

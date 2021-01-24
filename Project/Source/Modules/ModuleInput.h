@@ -7,16 +7,14 @@
 
 #define NUM_MOUSE_BUTTONS 5
 
-enum KeyState
-{
+enum KeyState {
 	KS_IDLE = 0,
 	KS_DOWN,
 	KS_REPEAT,
 	KS_UP
 };
 
-class ModuleInput : public Module
-{
+class ModuleInput : public Module {
 public:
 	bool Init() override;
 	UpdateStatus PreUpdate() override;

@@ -19,28 +19,22 @@
 PanelConfiguration::PanelConfiguration()
 	: Panel("Configuration", true) {}
 
-void PanelConfiguration::Update()
-{
+void PanelConfiguration::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dock_left_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled))
-	{
+	if (ImGui::Begin(name, &enabled)) {
 		// Application
-		if (ImGui::CollapsingHeader("Application"))
-		{
-			if (ImGui::InputText("App name", App->app_name, IM_ARRAYSIZE(App->app_name)))
-			{
+		if (ImGui::CollapsingHeader("Application")) {
+			if (ImGui::InputText("App name", App->app_name, IM_ARRAYSIZE(App->app_name))) {
 				App->window->SetTitle(App->app_name);
 			}
 			ImGui::InputText("Organization", App->organization, IM_ARRAYSIZE(App->organization));
 		}
 
 		// Time
-		if (ImGui::CollapsingHeader("Time"))
-		{
+		if (ImGui::CollapsingHeader("Time")) {
 			ImGui::SliderInt("Max FPS", &App->time->max_fps, 1, 240);
 			ImGui::Checkbox("Limit framerate", &App->time->limit_framerate);
-			if (ImGui::Checkbox("VSync", &App->time->vsync))
-			{
+			if (ImGui::Checkbox("VSync", &App->time->vsync)) {
 				App->renderer->SetVSync(App->time->vsync);
 			}
 			ImGui::SliderInt("Step delta time (MS)", &App->time->step_delta_time_ms, 1, 1000);
@@ -54,8 +48,7 @@ void PanelConfiguration::Update()
 		}
 
 		// Hardware
-		if (ImGui::CollapsingHeader("Hardware"))
-		{
+		if (ImGui::CollapsingHeader("Hardware")) {
 			ImGui::Text("GLEW version:");
 			ImGui::SameLine();
 			ImGui::TextColored(App->editor->text_color, App->hardware->glew_version);
@@ -79,17 +72,14 @@ void PanelConfiguration::Update()
 			ImGui::TextColored(App->editor->text_color, "%.1f Gb", App->hardware->ram_gb);
 			ImGui::Text("Caps:");
 			const char* items[] = {"3DNow", "ARMSIMD", "AVX", "AVX2", "AVX512F", "AltiVec", "MMX", "NEON", "RDTSC", "SSE", "SSE2", "SSE3", "SSE41", "SSE42"};
-			for (int i = 0; i < IM_ARRAYSIZE(items); ++i)
-			{
-				if (App->hardware->caps[i])
-				{
+			for (int i = 0; i < IM_ARRAYSIZE(items); ++i) {
+				if (App->hardware->caps[i]) {
 					ImGui::SameLine();
 					ImGui::TextColored(App->editor->text_color, items[i]);
 				}
 
 				// Line break to avoid too many items in the same line
-				if (i == 6)
-				{
+				if (i == 6) {
 					ImGui::Text("");
 				}
 			}
@@ -120,22 +110,17 @@ void PanelConfiguration::Update()
 		}
 
 		// Window
-		if (ImGui::CollapsingHeader("Window"))
-		{
+		if (ImGui::CollapsingHeader("Window")) {
 			// Window mode combo box
 			const char* items[] = {"Windowed", "Borderless", "Fullscreen", "Fullscreen desktop"};
 			const char* item_current = items[int(App->window->GetWindowMode())];
-			if (ImGui::BeginCombo("Window mode", item_current))
-			{
-				for (int n = 0; n < IM_ARRAYSIZE(items); ++n)
-				{
+			if (ImGui::BeginCombo("Window mode", item_current)) {
+				for (int n = 0; n < IM_ARRAYSIZE(items); ++n) {
 					bool is_selected = (item_current == items[n]);
-					if (ImGui::Selectable(items[n], is_selected))
-					{
+					if (ImGui::Selectable(items[n], is_selected)) {
 						App->window->SetWindowMode(WindowMode(n));
 					}
-					if (is_selected)
-					{
+					if (is_selected) {
 						ImGui::SetItemDefaultFocus();
 					}
 				}
@@ -143,70 +128,54 @@ void PanelConfiguration::Update()
 			}
 
 			float brightness = App->window->GetBrightness();
-			if (ImGui::SliderFloat("Brightness", &brightness, 0.25f, 1.0f))
-			{
+			if (ImGui::SliderFloat("Brightness", &brightness, 0.25f, 1.0f)) {
 				App->window->SetBrightness(brightness);
 			}
 
-			if (App->window->GetWindowMode() == WindowMode::BORDERLESS || App->window->GetWindowMode() == WindowMode::WINDOWED)
-			{
+			if (App->window->GetWindowMode() == WindowMode::BORDERLESS || App->window->GetWindowMode() == WindowMode::WINDOWED) {
 				bool resizable = App->window->GetResizable();
-				if (ImGui::Checkbox("Resizable", &resizable))
-				{
+				if (ImGui::Checkbox("Resizable", &resizable)) {
 					App->window->SetResizable(resizable);
 				}
-				if (resizable)
-				{
+				if (resizable) {
 					bool size_changed = false;
 					bool size_changing = false;
 					ImGui::SliderInt("Width", &window_width, 640, 4096);
-					if (ImGui::IsItemDeactivatedAfterEdit())
-					{
+					if (ImGui::IsItemDeactivatedAfterEdit()) {
 						size_changed = true;
 					}
-					if (ImGui::IsItemActive())
-					{
+					if (ImGui::IsItemActive()) {
 						size_changing = true;
 					}
 					ImGui::SliderInt("Height", &window_height, 480, 2160);
-					if (ImGui::IsItemDeactivatedAfterEdit())
-					{
+					if (ImGui::IsItemDeactivatedAfterEdit()) {
 						size_changed = true;
 					}
-					if (ImGui::IsItemActive())
-					{
+					if (ImGui::IsItemActive()) {
 						size_changing = true;
 					}
 
-					if (size_changed)
-					{
+					if (size_changed) {
 						App->window->SetSize(window_width, window_height);
-					}
-					else if (!size_changing)
-					{
+					} else if (!size_changing) {
 						window_width = App->window->GetWidth();
 						window_height = App->window->GetHeight();
 					}
 				}
-			}
-			else
-			{
+			} else {
 				int current_display_mode_index = App->window->GetCurrentDisplayMode();
 				const SDL_DisplayMode& current_display_mode = App->window->display_modes[current_display_mode_index];
 				char current_display_mode_label[40];
 				sprintf_s(current_display_mode_label, " %i bpp\t%i x %i @ %iHz", SDL_BITSPERPIXEL(current_display_mode.format), current_display_mode.w, current_display_mode.h, current_display_mode.refresh_rate);
 
-				if (ImGui::BeginCombo("Display Modes", current_display_mode_label))
-				{
+				if (ImGui::BeginCombo("Display Modes", current_display_mode_label)) {
 					int display_mode_index = 0;
-					for (const SDL_DisplayMode& display_mode : App->window->display_modes)
-					{
+					for (const SDL_DisplayMode& display_mode : App->window->display_modes) {
 						bool is_selected = (current_display_mode_index == display_mode_index);
 						char display_mode_label[40];
 						sprintf_s(display_mode_label, " %i bpp\t%i x %i @ %iHz", SDL_BITSPERPIXEL(display_mode.format), display_mode.w, display_mode.h, display_mode.refresh_rate);
 
-						if (ImGui::Selectable(display_mode_label, is_selected))
-						{
+						if (ImGui::Selectable(display_mode_label, is_selected)) {
 							App->window->SetCurrentDisplayMode(display_mode_index);
 						}
 
@@ -218,8 +187,7 @@ void PanelConfiguration::Update()
 		}
 
 		// Scene
-		if (ImGui::CollapsingHeader("Scene"))
-		{
+		if (ImGui::CollapsingHeader("Scene")) {
 			// TODO: Change the Skybox images
 			ImGui::TextColored(App->editor->title_color, "Gizmos");
 			ImGui::Checkbox("Draw Bounding Boxes", &App->renderer->draw_all_bounding_boxes);
@@ -229,13 +197,11 @@ void PanelConfiguration::Update()
 			ImGui::InputFloat2("Max Point", App->scene->quadtree_bounds.maxPoint.ptr());
 			ImGui::InputScalar("Max Depth", ImGuiDataType_U32, &App->scene->quadtree_max_depth);
 			ImGui::InputScalar("Elements Per Node", ImGuiDataType_U32, &App->scene->quadtree_elements_per_node);
-			if (ImGui::Button("Clear Quadtree"))
-			{
+			if (ImGui::Button("Clear Quadtree")) {
 				App->scene->ClearQuadtree();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Rebuild Quadtree"))
-			{
+			if (ImGui::Button("Rebuild Quadtree")) {
 				App->scene->RebuildQuadtree();
 			}
 			ImGui::Separator();
@@ -246,8 +212,7 @@ void PanelConfiguration::Update()
 		}
 
 		// Camera
-		if (ImGui::CollapsingHeader("Engine Camera"))
-		{
+		if (ImGui::CollapsingHeader("Engine Camera")) {
 			Frustum& frustum = App->camera->GetEngineFrustum();
 			vec front = frustum.Front();
 			vec up = frustum.Up();
@@ -257,12 +222,10 @@ void PanelConfiguration::Update()
 
 			float near_plane = frustum.NearPlaneDistance();
 			float far_plane = frustum.FarPlaneDistance();
-			if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f"))
-			{
+			if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f")) {
 				App->camera->engine_camera_frustum.SetViewPlaneDistances(near_plane, far_plane);
 			}
-			if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f"))
-			{
+			if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f")) {
 				App->camera->engine_camera_frustum.SetViewPlaneDistances(near_plane, far_plane);
 			}
 		}

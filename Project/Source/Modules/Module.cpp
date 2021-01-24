@@ -6,32 +6,26 @@
 
 Module::~Module() {}
 
-bool Module::Init()
-{
+bool Module::Init() {
 	return true;
 }
 
-bool Module::Start()
-{
+bool Module::Start() {
 	return true;
 }
 
-UpdateStatus Module::PreUpdate()
-{
+UpdateStatus Module::PreUpdate() {
 	return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus Module::Update()
-{
+UpdateStatus Module::Update() {
 	return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus Module::PostUpdate()
-{
+UpdateStatus Module::PostUpdate() {
 	return UpdateStatus::CONTINUE;
 }
 
-bool Module::CleanUp()
-{
+bool Module::CleanUp() {
 	return true;
 }

@@ -5,8 +5,7 @@
 
 struct SDL_version;
 
-class ModuleHardwareInfo : public Module
-{
+class ModuleHardwareInfo : public Module {
 public:
 	bool Start() override;
 	UpdateStatus Update() override;

@@ -21,8 +21,7 @@
 
 #include "Utils/Leaks.h"
 
-Application::Application()
-{
+Application::Application() {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(hardware = new ModuleHardwareInfo());
 	modules.push_back(window = new ModuleWindow());
@@ -41,56 +40,46 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 }
 
-Application::~Application()
-{
-	for (Module* module : modules)
-	{
+Application::~Application() {
+	for (Module* module : modules) {
 		delete module;
 	}
 }
 
-bool Application::Init()
-{
+bool Application::Init() {
 	bool ret = true;
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
-	{
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it) {
 		ret = (*it)->Init();
 	}
 
 	return ret;
 }
 
-bool Application::Start()
-{
+bool Application::Start() {
 	bool ret = true;
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
-	{
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it) {
 		ret = (*it)->Start();
 	}
 
 	return ret;
 }
 
-UpdateStatus Application::Update()
-{
+UpdateStatus Application::Update() {
 	BROFILER_CATEGORY("App - Update", Profiler::Color::Red)
 
 	UpdateStatus ret = UpdateStatus::CONTINUE;
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
-	{
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it) {
 		ret = (*it)->PreUpdate();
 	}
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
-	{
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it) {
 		ret = (*it)->Update();
 	}
 
-	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it)
-	{
+	for (std::vector<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UpdateStatus::CONTINUE; ++it) {
 		ret = (*it)->PostUpdate();
 	}
 
@@ -99,19 +88,16 @@ UpdateStatus Application::Update()
 	return ret;
 }
 
-bool Application::CleanUp()
-{
+bool Application::CleanUp() {
 	bool ret = true;
 
-	for (std::vector<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
-	{
+	for (std::vector<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it) {
 		ret = (*it)->CleanUp();
 	}
 
 	return ret;
 }
 
-void Application::RequestBrowser(char* url)
-{
+void Application::RequestBrowser(char* url) {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
 }

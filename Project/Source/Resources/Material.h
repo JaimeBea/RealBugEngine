@@ -4,14 +4,12 @@
 
 class Texture;
 
-enum class ShaderType
-{
+enum class ShaderType {
 	STANDARD,
 	PHONG
 };
 
-class Material
-{
+class Material {
 public:
 	ShaderType material_type = ShaderType::PHONG;
 
