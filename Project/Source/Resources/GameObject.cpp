@@ -8,6 +8,13 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_ID "Id"
+#define JSON_TAG_NAME "Name"
+#define JSON_TAG_ACTIVE "Active"
+#define JSON_TAG_PARENT_ID "ParentId"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_COMPONENTS "Components"
+
 void GameObject::Init() {
 	id = GenerateUID();
 }
@@ -103,33 +110,33 @@ bool GameObject::IsDescendantOf(GameObject* game_object) {
 }
 
 void GameObject::Save(JsonValue j_game_object) const {
-	j_game_object["Id"] = id;
-	j_game_object["Name"] = name.c_str();
-	j_game_object["Active"] = active;
-	j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;
+	j_game_object[JSON_TAG_ID] = id;
+	j_game_object[JSON_TAG_NAME] = name.c_str();
+	j_game_object[JSON_TAG_ACTIVE] = active;
+	j_game_object[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
 
-	JsonValue j_components = j_game_object["Components"];
+	JsonValue j_components = j_game_object[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
 		JsonValue j_component = j_components[i];
 		Component& component = *components[i];
 
-		j_component["Type"] = (unsigned) component.GetType();
-		j_component["Active"] = component.IsActive();
+		j_component[JSON_TAG_TYPE] = (unsigned) component.GetType();
+		j_component[JSON_TAG_ACTIVE] = component.IsActive();
 		component.Save(j_component);
 	}
 }
 
 void GameObject::Load(JsonValue j_game_object) {
-	id = j_game_object["Id"];
-	name = j_game_object["Name"];
-	active = j_game_object["Active"];
+	id = j_game_object[JSON_TAG_ID];
+	name = j_game_object[JSON_TAG_NAME];
+	active = j_game_object[JSON_TAG_ACTIVE];
 
-	JsonValue j_components = j_game_object["Components"];
+	JsonValue j_components = j_game_object[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < j_components.Size(); ++i) {
 		JsonValue j_component = j_components[i];
 
-		ComponentType type = (ComponentType)(unsigned) j_component["Type"];
-		bool active = j_component["Active"];
+		ComponentType type = (ComponentType)(unsigned) j_component[JSON_TAG_TYPE];
+		bool active = j_component[JSON_TAG_ACTIVE];
 
 		Component* component = CreateComponentByType(*this, type);
 		component->Load(j_component);
@@ -139,7 +146,7 @@ void GameObject::Load(JsonValue j_game_object) {
 }
 
 void GameObject::PostLoad(JsonValue j_game_object) {
-	UID parent_id = j_game_object["ParentId"];
+	UID parent_id = j_game_object[JSON_TAG_PARENT_ID];
 	GameObject* parent = App->scene->GetGameObject(parent_id);
 	SetParent(parent);
 }

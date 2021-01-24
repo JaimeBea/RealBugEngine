@@ -12,6 +12,16 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_HAS_DIFFUSE_MAP "HasDiffuseMap"
+#define JSON_TAG_DIFFUSE_COLOR "DiffuseColor"
+#define JSON_TAG_DIFFUSE_MAP_FILE_NAME "DiffuseMapFileName"
+#define JSON_TAG_HAS_SPECULAR_MAP "HasSpecularMap"
+#define JSON_TAG_SPECULAR_COLOR "SpecularColor"
+#define JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME "SpecularMapFileName"
+#define JSON_TAG_SHININESS "Shininess"
+#define JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
+#define JSON_TAG_AMBIENT "Ambient"
+
 void ComponentMaterial::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Material")) {
 		bool active = IsActive();
@@ -216,35 +226,35 @@ void ComponentMaterial::OnEditorUpdate() {
 }
 
 void ComponentMaterial::Save(JsonValue j_component) const {
-	j_component["HasDiffuseMap"] = material.has_diffuse_map;
-	JsonValue j_diffuse_color = j_component["DiffuseColor"];
+	j_component[JSON_TAG_HAS_DIFFUSE_MAP] = material.has_diffuse_map;
+	JsonValue j_diffuse_color = j_component[JSON_TAG_DIFFUSE_COLOR];
 	j_diffuse_color[0] = material.diffuse_color.x;
 	j_diffuse_color[1] = material.diffuse_color.y;
 	j_diffuse_color[2] = material.diffuse_color.z;
-	if (material.has_diffuse_map) j_component["DiffuseMapFileName"] = material.diffuse_map->file_name.c_str();
+	if (material.has_diffuse_map) j_component[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuse_map->file_name.c_str();
 
-	j_component["HasSpecularMap"] = material.has_specular_map;
-	JsonValue j_specular_color = j_component["SpecularColor"];
+	j_component[JSON_TAG_HAS_SPECULAR_MAP] = material.has_specular_map;
+	JsonValue j_specular_color = j_component[JSON_TAG_SPECULAR_COLOR];
 	j_specular_color[0] = material.specular_color.x;
 	j_specular_color[1] = material.specular_color.y;
 	j_specular_color[2] = material.specular_color.z;
-	if (material.has_specular_map) j_component["SpecularMapFileName"] = material.specular_map->file_name.c_str();
+	if (material.has_specular_map) j_component[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specular_map->file_name.c_str();
 
-	j_component["Shininess"] = material.shininess;
-	j_component["HasShininessInAlphaChannel"] = material.has_shininess_in_alpha_channel;
+	j_component[JSON_TAG_SHININESS] = material.shininess;
+	j_component[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.has_shininess_in_alpha_channel;
 
-	JsonValue j_ambient = j_component["Ambient"];
+	JsonValue j_ambient = j_component[JSON_TAG_AMBIENT];
 	j_ambient[0] = material.ambient.x;
 	j_ambient[1] = material.ambient.y;
 	j_ambient[2] = material.ambient.z;
 }
 
 void ComponentMaterial::Load(JsonValue j_component) {
-	material.has_diffuse_map = j_component["HasDiffuseMap"];
-	JsonValue j_diffuse_color = j_component["DiffuseColor"];
+	material.has_diffuse_map = j_component[JSON_TAG_HAS_DIFFUSE_MAP];
+	JsonValue j_diffuse_color = j_component[JSON_TAG_DIFFUSE_COLOR];
 	material.diffuse_color.Set(j_diffuse_color[0], j_diffuse_color[1], j_diffuse_color[2]);
 	if (material.has_diffuse_map) {
-		std::string diffuse_file_name = j_component["DiffuseMapFileName"];
+		std::string diffuse_file_name = j_component[JSON_TAG_DIFFUSE_MAP_FILE_NAME];
 		for (Texture& texture : App->resources->textures) {
 			if (texture.file_name == diffuse_file_name) {
 				material.diffuse_map = &texture;
@@ -262,11 +272,11 @@ void ComponentMaterial::Load(JsonValue j_component) {
 		material.diffuse_map = nullptr;
 	}
 
-	material.has_specular_map = j_component["HasSpecularMap"];
-	JsonValue j_specular_color = j_component["SpecularColor"];
+	material.has_specular_map = j_component[JSON_TAG_HAS_SPECULAR_MAP];
+	JsonValue j_specular_color = j_component[JSON_TAG_SPECULAR_COLOR];
 	material.specular_color.Set(j_specular_color[0], j_specular_color[1], j_specular_color[2]);
 	if (material.has_specular_map) {
-		std::string specular_file_name = j_component["SpecularMapFileName"];
+		std::string specular_file_name = j_component[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
 		for (Texture& texture : App->resources->textures) {
 			if (texture.file_name == specular_file_name) {
 				material.specular_map = &texture;
@@ -284,9 +294,9 @@ void ComponentMaterial::Load(JsonValue j_component) {
 		material.specular_map = nullptr;
 	}
 
-	material.shininess = j_component["Shininess"];
-	material.has_shininess_in_alpha_channel = j_component["HasShininessInAlphaChannel"];
+	material.shininess = j_component[JSON_TAG_SHININESS];
+	material.has_shininess_in_alpha_channel = j_component[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
 
-	JsonValue j_ambient = j_component["Ambient"];
+	JsonValue j_ambient = j_component[JSON_TAG_AMBIENT];
 	material.ambient.Set(j_ambient[0], j_ambient[1], j_ambient[2]);
 }

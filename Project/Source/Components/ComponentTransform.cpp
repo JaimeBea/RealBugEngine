@@ -13,6 +13,11 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_POSITION "Position"
+#define JSON_TAG_ROTATION "Rotation"
+#define JSON_TAG_SCALE "Scale"
+#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
+
 void ComponentTransform::Init() {
 	CalculateGlobalMatrix();
 	for (Component* component : GetOwner().components) {
@@ -46,39 +51,39 @@ void ComponentTransform::OnEditorUpdate() {
 }
 
 void ComponentTransform::Save(JsonValue j_component) const {
-	JsonValue j_position = j_component["Position"];
+	JsonValue j_position = j_component[JSON_TAG_POSITION];
 	j_position[0] = position.x;
 	j_position[1] = position.y;
 	j_position[2] = position.z;
 
-	JsonValue j_rotation = j_component["Rotation"];
+	JsonValue j_rotation = j_component[JSON_TAG_ROTATION];
 	j_rotation[0] = rotation.x;
 	j_rotation[1] = rotation.y;
 	j_rotation[2] = rotation.z;
 	j_rotation[3] = rotation.w;
 
-	JsonValue j_scale = j_component["Scale"];
+	JsonValue j_scale = j_component[JSON_TAG_SCALE];
 	j_scale[0] = scale.x;
 	j_scale[1] = scale.y;
 	j_scale[2] = scale.z;
 
-	JsonValue j_local_euler_angles = j_component["LocalEulerAngles"];
+	JsonValue j_local_euler_angles = j_component[JSON_TAG_LOCAL_EULER_ANGLES];
 	j_local_euler_angles[0] = local_euler_angles.x;
 	j_local_euler_angles[1] = local_euler_angles.y;
 	j_local_euler_angles[2] = local_euler_angles.z;
 }
 
 void ComponentTransform::Load(JsonValue j_component) {
-	JsonValue j_position = j_component["Position"];
+	JsonValue j_position = j_component[JSON_TAG_POSITION];
 	position.Set(j_position[0], j_position[1], j_position[2]);
 
-	JsonValue j_rotation = j_component["Rotation"];
+	JsonValue j_rotation = j_component[JSON_TAG_ROTATION];
 	rotation.Set(j_rotation[0], j_rotation[1], j_rotation[2], j_rotation[3]);
 
-	JsonValue j_scale = j_component["Scale"];
+	JsonValue j_scale = j_component[JSON_TAG_SCALE];
 	scale.Set(j_scale[0], j_scale[1], j_scale[2]);
 
-	JsonValue j_local_euler_angles = j_component["LocalEulerAngles"];
+	JsonValue j_local_euler_angles = j_component[JSON_TAG_LOCAL_EULER_ANGLES];
 	local_euler_angles.Set(j_local_euler_angles[0], j_local_euler_angles[1], j_local_euler_angles[2]);
 
 	dirty = true;

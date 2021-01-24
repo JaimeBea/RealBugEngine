@@ -26,6 +26,13 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_GAMEOBJECTS "GameObjects"
+#define JSON_TAG_ROOT_ID "RootId"
+#define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
+#define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
+#define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE  "QuadtreeElementsPerNode"
+#define JSON_TAG_PARENT_ID "ParentId"
+
 static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulated_transform) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
@@ -263,7 +270,7 @@ bool SceneImporter::LoadScene(const char* file_name) {
 	JsonValue j_scene(document, document);
 
 	// Load GameObjects
-	JsonValue j_game_objects = j_scene["GameObjects"];
+	JsonValue j_game_objects = j_scene[JSON_TAG_GAMEOBJECTS];
 	unsigned j_game_objects_size = j_game_objects.Size();
 	Buffer<UID> ids(j_game_objects_size);
 	for (unsigned i = 0; i < j_game_objects_size; ++i) {
@@ -278,7 +285,7 @@ bool SceneImporter::LoadScene(const char* file_name) {
 	}
 
 	// Post-load
-	App->scene->root = App->scene->GetGameObject(j_scene["RootId"]);
+	App->scene->root = App->scene->GetGameObject(j_scene[JSON_TAG_ROOT_ID]);
 	for (unsigned i = 0; i < j_game_objects_size; ++i) {
 		JsonValue j_game_object = j_game_objects[i];
 
@@ -297,10 +304,10 @@ bool SceneImporter::LoadScene(const char* file_name) {
 	}
 
 	// Quadtree generation
-	JsonValue j_quadtree_bounds = j_scene["QuadtreeBounds"];
+	JsonValue j_quadtree_bounds = j_scene[JSON_TAG_QUADTREE_BOUNDS];
 	App->scene->quadtree_bounds = {{j_quadtree_bounds[0], j_quadtree_bounds[1]}, {j_quadtree_bounds[2], j_quadtree_bounds[3]}};
-	App->scene->quadtree_max_depth = j_scene["QuadtreeMaxDepth"];
-	App->scene->quadtree_elements_per_node = j_scene["QuadtreeElementsPerNode"];
+	App->scene->quadtree_max_depth = j_scene[JSON_TAG_QUADTREE_MAX_DEPTH];
+	App->scene->quadtree_elements_per_node = j_scene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
 	App->scene->RebuildQuadtree();
 
 	unsigned time_ms = timer.Stop();
@@ -315,23 +322,23 @@ bool SceneImporter::SaveScene(const char* file_name) {
 	JsonValue j_scene(document, document);
 
 	// Save scene information
-	j_scene["RootId"] = App->scene->root->GetID();
-	JsonValue j_quadtree_bounds = j_scene["QuadtreeBounds"];
+	j_scene[JSON_TAG_ROOT_ID] = App->scene->root->GetID();
+	JsonValue j_quadtree_bounds = j_scene[JSON_TAG_QUADTREE_BOUNDS];
 	j_quadtree_bounds[0] = App->scene->quadtree_bounds.minPoint.x;
 	j_quadtree_bounds[1] = App->scene->quadtree_bounds.minPoint.y;
 	j_quadtree_bounds[2] = App->scene->quadtree_bounds.maxPoint.x;
 	j_quadtree_bounds[3] = App->scene->quadtree_bounds.maxPoint.y;
-	j_scene["QuadtreeMaxDepth"] = App->scene->quadtree_max_depth;
-	j_scene["QuadtreeElementsPerNode"] = App->scene->quadtree_elements_per_node;
+	j_scene[JSON_TAG_QUADTREE_MAX_DEPTH] = App->scene->quadtree_max_depth;
+	j_scene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = App->scene->quadtree_elements_per_node;
 
 	// Save GameObjects
-	JsonValue j_game_objects = j_scene["GameObjects"];
+	JsonValue j_game_objects = j_scene[JSON_TAG_GAMEOBJECTS];
 	unsigned i = 0;
 	for (const GameObject& game_object : App->scene->game_objects) {
 		JsonValue j_game_object = j_game_objects[i];
 
 		GameObject* parent = game_object.GetParent();
-		j_game_object["ParentId"] = parent != nullptr ? parent->id : 0;
+		j_game_object[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
 
 		game_object.Save(j_game_object);
 
