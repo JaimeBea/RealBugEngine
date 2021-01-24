@@ -25,6 +25,9 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_FILENAME "FileName"
+#define JSON_TAG_MATERIAL_INDEX "MaterialIndex"
+
 void ComponentMesh::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Mesh")) {
 		bool active = IsActive();
@@ -59,12 +62,12 @@ void ComponentMesh::OnEditorUpdate() {
 }
 
 void ComponentMesh::Save(JsonValue j_component) const {
-	j_component["FileName"] = mesh->file_name.c_str();
-	j_component["MaterialIndex"] = mesh->material_index;
+	j_component[JSON_TAG_FILENAME] = mesh->file_name.c_str();
+	j_component[JSON_TAG_MATERIAL_INDEX] = mesh->material_index;
 }
 
 void ComponentMesh::Load(JsonValue j_component) {
-	std::string file_name = j_component["FileName"];
+	std::string file_name = j_component[JSON_TAG_FILENAME];
 	for (Mesh& other_mesh : App->resources->meshes) {
 		if (other_mesh.file_name == file_name) {
 			mesh = &other_mesh;
@@ -74,7 +77,7 @@ void ComponentMesh::Load(JsonValue j_component) {
 		mesh = App->resources->ObtainMesh();
 		mesh->file_name = file_name;
 	}
-	mesh->material_index = j_component["MaterialIndex"];
+	mesh->material_index = j_component[JSON_TAG_MATERIAL_INDEX];
 
 	MeshImporter::UnloadMesh(mesh);
 	MeshImporter::LoadMesh(mesh);
