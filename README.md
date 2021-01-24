@@ -129,6 +129,10 @@ _Jaime Bea Pérez-Zubizarreta_ (https://github.com/JaimeBea)
 
 _Lowy Solé Franquesa_ (http://github.com/lowysole)
 
+_Jordi Gil Gonzalez_ (https://jordi-gil.github.io/)
+
+_Cristian Ferrer Galan_ (https://github.com/Yonimevicio)
+
 ## Github
 
 https://github.com/TBD-org/TBD-Engine
