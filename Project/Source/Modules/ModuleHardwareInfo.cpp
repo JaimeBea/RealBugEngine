@@ -13,8 +13,7 @@
 
 #include "Utils/Leaks.h"
 
-bool ModuleHardwareInfo::Start()
-{
+bool ModuleHardwareInfo::Start() {
 	SDL_version sdl_version_struct;
 	SDL_VERSION(&sdl_version_struct);
 
@@ -48,8 +47,7 @@ bool ModuleHardwareInfo::Start()
 	return true;
 }
 
-UpdateStatus ModuleHardwareInfo::Update()
-{
+UpdateStatus ModuleHardwareInfo::Update() {
 	BROFILER_CATEGORY("ModuleHardwareInfo - PreUpdate", Profiler::Color::Orange)
 
 	int vram_budget_kb;
@@ -63,7 +61,6 @@ UpdateStatus ModuleHardwareInfo::Update()
 	return UpdateStatus::CONTINUE;
 }
 
-bool ModuleHardwareInfo::CleanUp()
-{
+bool ModuleHardwareInfo::CleanUp() {
 	return true;
 }

@@ -13,8 +13,7 @@ class Component;
 	static const ComponentType static_type = component_type; \
 	component_class(GameObject& owner, bool active) : Component(static_type, owner, active) {}
 
-enum class ComponentType
-{
+enum class ComponentType {
 	// SERIALIZATION: IDs should be consistent between versions (don't change what an ID means)
 	UNKNOWN = 0,
 	TRANSFORM = 1,

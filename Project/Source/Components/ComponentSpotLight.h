@@ -4,8 +4,7 @@
 
 #include "Math/float3.h"
 
-struct SpotLight
-{
+struct SpotLight {
 	float3 pos = {0.0f, 0.0f, 0.0f};
 	float3 direction = {0.0f, 0.0f, 0.0f};
 	float3 color = {1.0f, 1.0f, 1.0f};
@@ -19,8 +18,7 @@ struct SpotLight
 	float outer_angle = pi / 6;
 };
 
-class ComponentSpotLight : public Component
-{
+class ComponentSpotLight : public Component {
 public:
 	REGISTER_COMPONENT(ComponentSpotLight, ComponentType::SPOT_LIGHT);
 

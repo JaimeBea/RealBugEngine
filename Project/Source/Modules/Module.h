@@ -2,8 +2,7 @@
 
 enum class UpdateStatus;
 
-class Module
-{
+class Module {
 public:
 	virtual ~Module();
 

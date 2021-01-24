@@ -8,8 +8,7 @@
 
 struct ImDrawList;
 
-class PanelScene : public Panel
-{
+class PanelScene : public Panel {
 public:
 	PanelScene();
 

@@ -4,8 +4,7 @@
 
 #include "Math/float3.h"
 
-struct PointLight
-{
+struct PointLight {
 	float3 pos = {0.0f, 0.0f, 0.0f};
 	float3 color = {1.0f, 1.0f, 1.0f};
 	float intensity = 1.0f;
@@ -16,8 +15,7 @@ struct PointLight
 	float kq = 0.0075f;
 };
 
-class ComponentPointLight : public Component
-{
+class ComponentPointLight : public Component {
 public:
 	REGISTER_COMPONENT(ComponentPointLight, ComponentType::POINT_LIGHT);
 

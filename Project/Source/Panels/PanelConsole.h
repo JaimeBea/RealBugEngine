@@ -2,8 +2,7 @@
 
 #include "Panel.h"
 
-class PanelConsole : public Panel
-{
+class PanelConsole : public Panel {
 public:
 	PanelConsole();
 

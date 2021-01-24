@@ -13,8 +13,7 @@ class CubeMap;
 struct aiScene;
 struct aiNode;
 
-class ModuleScene : public Module
-{
+class ModuleScene : public Module {
 public:
 	bool Init() override;
 	bool Start() override;

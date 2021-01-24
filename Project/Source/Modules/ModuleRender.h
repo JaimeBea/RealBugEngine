@@ -8,8 +8,7 @@
 
 class GameObject;
 
-class ModuleRender : public Module
-{
+class ModuleRender : public Module {
 public:
 	bool Init() override;
 	UpdateStatus PreUpdate() override;

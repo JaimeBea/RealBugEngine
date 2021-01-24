@@ -21,8 +21,7 @@ class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
 
-class Application
-{
+class Application {
 public:
 	Application();
 	~Application();

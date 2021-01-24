@@ -14,33 +14,26 @@
 
 #include "Utils/Leaks.h"
 
-void ComponentDirectionalLight::OnTransformUpdate()
-{
+void ComponentDirectionalLight::OnTransformUpdate() {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 	light.direction = transform->GetRotation() * float3::unitZ;
 }
 
-void ComponentDirectionalLight::DrawGizmos()
-{
-	if (IsActive() && draw_gizmos)
-	{
+void ComponentDirectionalLight::DrawGizmos() {
+	if (IsActive() && draw_gizmos) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		dd::cone(transform->GetPosition(), light.direction * 200, dd::colors::White, 1.0f, 1.0f);
 	}
 }
 
-void ComponentDirectionalLight::OnEditorUpdate()
-{
-	if (ImGui::CollapsingHeader("Light"))
-	{
+void ComponentDirectionalLight::OnEditorUpdate() {
+	if (ImGui::CollapsingHeader("Light")) {
 		bool active = IsActive();
-		if (ImGui::Checkbox("Active", &active))
-		{
+		if (ImGui::Checkbox("Active", &active)) {
 			active ? Enable() : Disable();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Remove"))
-		{
+		if (ImGui::Button("Remove")) {
 			// TODO: Fix me
 			//selected->RemoveComponent(material);
 			//continue;
@@ -57,8 +50,7 @@ void ComponentDirectionalLight::OnEditorUpdate()
 	}
 }
 
-void ComponentDirectionalLight::Save(JsonValue j_component) const
-{
+void ComponentDirectionalLight::Save(JsonValue j_component) const {
 	JsonValue& j_direction = j_component["Direction"];
 	j_direction[0] = light.direction.x;
 	j_direction[1] = light.direction.y;
@@ -73,8 +65,7 @@ void ComponentDirectionalLight::Save(JsonValue j_component) const
 	j_intensity = light.intensity;
 }
 
-void ComponentDirectionalLight::Load(JsonValue j_component)
-{
+void ComponentDirectionalLight::Load(JsonValue j_component) {
 	const JsonValue& j_direction = j_component["Direction"];
 	light.direction.Set(j_direction[0], j_direction[1], j_direction[2]);
 
@@ -85,7 +76,6 @@ void ComponentDirectionalLight::Load(JsonValue j_component)
 	light.intensity = j_intensity;
 }
 
-DirectionalLight& ComponentDirectionalLight::GetLightStruct() const
-{
+DirectionalLight& ComponentDirectionalLight::GetLightStruct() const {
 	return light;
 }

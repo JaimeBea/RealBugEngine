@@ -3,8 +3,7 @@
 #include "Module.h"
 #include "Utils/MSTimer.h"
 
-class ModuleTime : public Module
-{
+class ModuleTime : public Module {
 public:
 	ModuleTime();
 

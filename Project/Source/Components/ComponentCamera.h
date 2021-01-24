@@ -4,8 +4,7 @@
 
 #include "Geometry/Frustum.h"
 
-class ComponentCamera : public Component
-{
+class ComponentCamera : public Component {
 public:
 	REGISTER_COMPONENT(ComponentCamera, ComponentType::CAMERA);
 

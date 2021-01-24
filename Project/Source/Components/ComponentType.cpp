@@ -12,10 +12,8 @@
 
 #include "Utils/Leaks.h"
 
-Component* CreateComponentByType(GameObject& game_object, ComponentType type, bool active)
-{
-	switch (type)
-	{
+Component* CreateComponentByType(GameObject& game_object, ComponentType type, bool active) {
+	switch (type) {
 	case ComponentType::TRANSFORM:
 		return game_object.CreateComponent<ComponentTransform>(active);
 	case ComponentType::MESH:

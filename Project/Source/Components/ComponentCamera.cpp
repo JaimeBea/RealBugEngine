@@ -14,15 +14,13 @@
 
 #include "Utils/Leaks.h"
 
-void ComponentCamera::DrawGizmos()
-{
+void ComponentCamera::DrawGizmos() {
 	if (active_camera) return;
 
 	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
 
-void ComponentCamera::OnTransformUpdate()
-{
+void ComponentCamera::OnTransformUpdate() {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 	frustum.SetPos(transform->GetPosition());
 
@@ -31,12 +29,9 @@ void ComponentCamera::OnTransformUpdate()
 	frustum.SetUp(rotationMatrix * float3::unitY);
 }
 
-void ComponentCamera::OnEditorUpdate()
-{
-	if (ImGui::CollapsingHeader("Camera"))
-	{
-		if (ImGui::Checkbox("Main Camera", &active_camera))
-		{
+void ComponentCamera::OnEditorUpdate() {
+	if (ImGui::CollapsingHeader("Camera")) {
+		if (ImGui::Checkbox("Main Camera", &active_camera)) {
 			App->camera->ChangeActiveFrustum(frustum, active_camera);
 		}
 		ImGui::Separator();
@@ -49,28 +44,23 @@ void ComponentCamera::OnEditorUpdate()
 
 		float near_plane = frustum.NearPlaneDistance();
 		float far_plane = frustum.FarPlaneDistance();
-		if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f"))
-		{
+		if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f")) {
 			frustum.SetViewPlaneDistances(near_plane, far_plane);
 		}
-		if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f"))
-		{
+		if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f")) {
 			frustum.SetViewPlaneDistances(near_plane, far_plane);
 		}
 		float fov = frustum.VerticalFov();
-		if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f"))
-		{
+		if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
 			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 		}
-		if (ImGui::Checkbox("Frustum Culling", &culling_camera))
-		{
+		if (ImGui::Checkbox("Frustum Culling", &culling_camera)) {
 			App->camera->ChangeCullingFrustum(frustum, culling_camera);
 		}
 	}
 }
 
-void ComponentCamera::Save(JsonValue j_component) const
-{
+void ComponentCamera::Save(JsonValue j_component) const {
 	JsonValue j_frustum = j_component["Frustum"];
 	JsonValue j_pos = j_frustum["Pos"];
 	j_pos[0] = frustum.Pos().x;
@@ -92,8 +82,7 @@ void ComponentCamera::Save(JsonValue j_component) const
 	j_component["CameraSelected"] = active_camera;
 }
 
-void ComponentCamera::Load(JsonValue j_component)
-{
+void ComponentCamera::Load(JsonValue j_component) {
 	JsonValue j_frustum = j_component["Frustum"];
 	JsonValue j_pos = j_frustum["Pos"];
 	JsonValue j_up = j_frustum["Up"];
@@ -105,8 +94,7 @@ void ComponentCamera::Load(JsonValue j_component)
 	active_camera = j_component["CameraSelected"];
 }
 
-Frustum ComponentCamera::BuildDefaultFrustum() const
-{
+Frustum ComponentCamera::BuildDefaultFrustum() const {
 	Frustum new_frustum;
 	new_frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
 	new_frustum.SetViewPlaneDistances(0.1f, 200.0f);

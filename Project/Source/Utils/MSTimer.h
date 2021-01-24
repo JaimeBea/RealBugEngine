@@ -1,7 +1,6 @@
 #pragma once
 
-class MSTimer
-{
+class MSTimer {
 public:
 	void Start();
 	unsigned int Stop();

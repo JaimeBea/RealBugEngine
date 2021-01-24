@@ -6,8 +6,7 @@
 #include "Resources/CubeMap.h"
 #include "Resources/Mesh.h"
 
-enum class TextureMinFilter
-{
+enum class TextureMinFilter {
 	NEAREST,
 	LINEAR,
 	NEAREST_MIPMAP_NEAREST,
@@ -16,14 +15,12 @@ enum class TextureMinFilter
 	LINEAR_MIPMAP_LINEAR
 };
 
-enum class TextureMagFilter
-{
+enum class TextureMagFilter {
 	NEAREST,
 	LINEAR
 };
 
-enum class TextureWrap
-{
+enum class TextureWrap {
 	REPEAT,
 	CLAMP_TO_EDGE,
 	CLAMP_TO_BORDER,
@@ -31,8 +28,7 @@ enum class TextureWrap
 	MIRROR_CLAMP_TO_EDGE
 };
 
-class ModuleResources : public Module
-{
+class ModuleResources : public Module {
 public:
 	bool Init() override;
 	bool CleanUp() override;

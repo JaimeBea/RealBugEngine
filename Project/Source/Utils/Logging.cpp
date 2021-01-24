@@ -6,8 +6,7 @@
 
 #include "Leaks.h"
 
-void log(const char file[], int line, const char* format, ...)
-{
+void log(const char file[], int line, const char* format, ...) {
 	static char tmp_string[4096];
 	static char tmp_string2[4096];
 	static va_list ap;
@@ -22,12 +21,10 @@ void log(const char file[], int line, const char* format, ...)
 	log_string->append(tmp_string2);
 }
 
-void log_delta_ms(float delta_ms)
-{
+void log_delta_ms(float delta_ms) {
 	float fps = 1000.0f / delta_ms;
 	fps_log_index -= 1;
-	if (fps_log_index < 0)
-	{
+	if (fps_log_index < 0) {
 		fps_log_index = FPS_LOG_SIZE - 1;
 	}
 	fps_log[fps_log_index] = fps;

@@ -14,33 +14,26 @@
 
 #include "Utils/Leaks.h"
 
-void ComponentPointLight::OnTransformUpdate()
-{
+void ComponentPointLight::OnTransformUpdate() {
 	light.pos = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 }
 
-void ComponentPointLight::DrawGizmos()
-{
-	if (IsActive() && draw_gizmos)
-	{
+void ComponentPointLight::DrawGizmos() {
+	if (IsActive() && draw_gizmos) {
 		float delta = light.kl * light.kl - 4 * (light.kc - 10) * light.kq;
 		float distance = Max(abs((-light.kl + sqrt(delta))) / (2 * light.kq), abs((-light.kl - sqrt(delta)) / (2 * light.kq)));
 		dd::sphere(light.pos, dd::colors::White, distance);
 	}
 }
 
-void ComponentPointLight::OnEditorUpdate()
-{
-	if (ImGui::CollapsingHeader("Light"))
-	{
+void ComponentPointLight::OnEditorUpdate() {
+	if (ImGui::CollapsingHeader("Light")) {
 		bool active = IsActive();
-		if (ImGui::Checkbox("Active", &active))
-		{
+		if (ImGui::Checkbox("Active", &active)) {
 			active ? Enable() : Disable();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Remove"))
-		{
+		if (ImGui::Button("Remove")) {
 			// TODO: Fix me
 			//selected->RemoveComponent(material);
 			//continue;
@@ -58,8 +51,7 @@ void ComponentPointLight::OnEditorUpdate()
 	}
 }
 
-void ComponentPointLight::Save(JsonValue j_component) const
-{
+void ComponentPointLight::Save(JsonValue j_component) const {
 	JsonValue j_pos = j_component["Pos"];
 	j_pos[0] = light.pos.x;
 	j_pos[1] = light.pos.y;
@@ -80,8 +72,7 @@ void ComponentPointLight::Save(JsonValue j_component) const
 	j_kq = light.kq;
 }
 
-void ComponentPointLight::Load(JsonValue j_component)
-{
+void ComponentPointLight::Load(JsonValue j_component) {
 	JsonValue j_pos = j_component["Pos"];
 	light.pos.Set(j_pos[0], j_pos[1], j_pos[2]);
 
@@ -98,7 +89,6 @@ void ComponentPointLight::Load(JsonValue j_component)
 	light.kq = j_kq;
 }
 
-PointLight& ComponentPointLight::GetLightStruct() const
-{
+PointLight& ComponentPointLight::GetLightStruct() const {
 	return light;
 }

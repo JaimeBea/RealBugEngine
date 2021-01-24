@@ -15,8 +15,7 @@
 
 class Panel;
 
-enum class Modal
-{
+enum class Modal {
 	NONE,
 	NEW_SCENE,
 	LOAD_SCENE,
@@ -24,8 +23,7 @@ enum class Modal
 	QUIT
 };
 
-class ModuleEditor : public Module
-{
+class ModuleEditor : public Module {
 public:
 	bool Init() override;
 	bool Start() override;

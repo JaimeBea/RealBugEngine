@@ -16,8 +16,7 @@
 
 #include "Utils/Leaks.h"
 
-Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index)
-{
+Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index) {
 	// Timer to measure importing a mesh
 	MSTimer timer;
 	timer.Start();
@@ -48,8 +47,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index)
 	*((unsigned*) cursor) = mesh->num_indices;
 	cursor += sizeof(unsigned);
 
-	for (unsigned i = 0; i < ai_mesh->mNumVertices; ++i)
-	{
+	for (unsigned i = 0; i < ai_mesh->mNumVertices; ++i) {
 		aiVector3D& vertex = ai_mesh->mVertices[i];
 		aiVector3D& normal = ai_mesh->mNormals[i];
 		aiVector3D* texture_coords = ai_mesh->mTextureCoords[0];
@@ -72,13 +70,11 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index)
 		cursor += sizeof(float);
 	}
 
-	for (unsigned i = 0; i < ai_mesh->mNumFaces; ++i)
-	{
+	for (unsigned i = 0; i < ai_mesh->mNumFaces; ++i) {
 		aiFace& ai_face = ai_mesh->mFaces[i];
 
 		// Assume triangles = 3 indices per face
-		if (ai_face.mNumIndices != 3)
-		{
+		if (ai_face.mNumIndices != 3) {
 			LOG("Found a face with %i vertices. Discarded.", ai_face.mNumIndices);
 
 			*((unsigned*) cursor) = 0;
@@ -99,7 +95,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index)
 	}
 
 	// Save buffer to file
-	
+
 	std::string file_name = std::string(ai_mesh->mName.C_Str()) + std::to_string(index);
 	mesh->file_name = file_name;
 	std::string file_path = std::string(MESHES_PATH) + "/" + file_name + MESH_EXTENSION;
@@ -111,8 +107,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index)
 	return mesh;
 }
 
-void MeshImporter::LoadMesh(Mesh* mesh)
-{
+void MeshImporter::LoadMesh(Mesh* mesh) {
 	if (mesh == nullptr) return;
 
 	// Timer to measure loading a mesh
@@ -182,8 +177,7 @@ void MeshImporter::LoadMesh(Mesh* mesh)
 	LOG("Mesh loaded in %ums", time_ms);
 }
 
-std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float4x4& model)
-{
+std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float4x4& model) {
 	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
 
 	// Load file
@@ -198,8 +192,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 	// Vertices
 	std::vector<float3> vertices;
-	for (unsigned i = 0; i < num_vertices; i++)
-	{
+	for (unsigned i = 0; i < num_vertices; i++) {
 		float vertex[3] = {};
 		vertex[0] = *((float*) cursor);
 		cursor += sizeof(float);
@@ -212,8 +205,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 	std::vector<Triangle> triangles;
 	triangles.reserve(num_indices / 3);
-	for (unsigned i = 0; i < num_indices / 3; i++)
-	{
+	for (unsigned i = 0; i < num_indices / 3; i++) {
 		unsigned triange_indices[3] = {};
 		triange_indices[0] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
@@ -227,8 +219,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 	return triangles;
 }
 
-void MeshImporter::UnloadMesh(Mesh* mesh)
-{
+void MeshImporter::UnloadMesh(Mesh* mesh) {
 	if (!mesh->vao) return;
 
 	glDeleteVertexArrays(1, &mesh->vao);

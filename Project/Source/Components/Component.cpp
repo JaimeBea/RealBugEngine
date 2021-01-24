@@ -23,27 +23,22 @@ void Component::Save(JsonValue j_component) const {}
 
 void Component::Load(JsonValue j_component) {}
 
-void Component::Enable()
-{
+void Component::Enable() {
 	active = true;
 }
 
-void Component::Disable()
-{
+void Component::Disable() {
 	active = false;
 }
 
-ComponentType Component::GetType() const
-{
+ComponentType Component::GetType() const {
 	return type;
 }
 
-GameObject& Component::GetOwner() const
-{
+GameObject& Component::GetOwner() const {
 	return owner;
 }
 
-bool Component::IsActive() const
-{
+bool Component::IsActive() const {
 	return active;
 }

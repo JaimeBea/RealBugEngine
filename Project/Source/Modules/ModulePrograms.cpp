@@ -9,8 +9,7 @@
 
 #include "Utils/Leaks.h"
 
-static unsigned CreateShader(unsigned type, const char* file_name)
-{
+static unsigned CreateShader(unsigned type, const char* file_name) {
 	LOG("Creating shader from file: \"%s\"...", file_name);
 
 	Buffer<char> source_buffer = App->files->Load(file_name);
@@ -23,12 +22,10 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 
 	int res = GL_FALSE;
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
-	if (res == GL_FALSE)
-	{
+	if (res == GL_FALSE) {
 		int len = 0;
 		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
+		if (len > 0) {
 			int written = 0;
 			Buffer<char> info = Buffer<char>(len);
 			glGetShaderInfoLog(shader_id, len, &written, info.Data());
@@ -40,20 +37,17 @@ static unsigned CreateShader(unsigned type, const char* file_name)
 	return shader_id;
 }
 
-static unsigned CreateProgram(const char* vertex_shader_file_name, const char* fragment_shader_file_name)
-{
+static unsigned CreateProgram(const char* vertex_shader_file_name, const char* fragment_shader_file_name) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
 	LOG("Compiling shaders...");
 	unsigned vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_shader_file_name);
-	DEFER
-	{
+	DEFER {
 		glDeleteShader(vertex_shader);
 	};
 	unsigned fragment_shader = CreateShader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
-	DEFER
-	{
+	DEFER {
 		glDeleteShader(fragment_shader);
 	};
 
@@ -65,12 +59,10 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 	glLinkProgram(program_id);
 	int res = GL_FALSE;
 	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
-	if (res == GL_FALSE)
-	{
+	if (res == GL_FALSE) {
 		int len = 0;
 		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0)
-		{
+		if (len > 0) {
 			int written = 0;
 			Buffer<char> info = Buffer<char>(len);
 			glGetProgramInfoLog(program_id, len, &written, info.Data());
@@ -78,17 +70,14 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 		}
 
 		LOG("Error linking program.");
-	}
-	else
-	{
+	} else {
 		LOG("Program linked.");
 	}
 
 	return program_id;
 }
 
-bool ModulePrograms::Start()
-{
+bool ModulePrograms::Start() {
 	default_program = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
 	phong_pbr_program = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
 	skybox_program = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
@@ -96,8 +85,7 @@ bool ModulePrograms::Start()
 	return true;
 }
 
-bool ModulePrograms::CleanUp()
-{
+bool ModulePrograms::CleanUp() {
 	glDeleteProgram(default_program);
 	glDeleteProgram(phong_pbr_program);
 	glDeleteProgram(skybox_program);

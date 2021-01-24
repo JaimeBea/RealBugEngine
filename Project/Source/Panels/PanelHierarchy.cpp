@@ -14,22 +14,18 @@
 PanelHierarchy::PanelHierarchy()
 	: Panel("Hierarchy", true) {}
 
-void PanelHierarchy::Update()
-{
+void PanelHierarchy::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dock_left_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled))
-	{
+	if (ImGui::Begin(name, &enabled)) {
 		GameObject* root = App->scene->root;
-		if (root != nullptr)
-		{
+		if (root != nullptr) {
 			UpdateHierarchyNode(root);
 		}
 	}
 	ImGui::End();
 }
 
-void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
-{
+void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object) {
 	const std::vector<GameObject*>& children = game_object->GetChildren();
 
 	char label[160];
@@ -45,12 +41,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	bool open = ImGui::TreeNodeEx(label, flags);
 
 	ImGui::PushID(label);
-	if (ImGui::BeginPopupContextItem("Options"))
-	{
-		if (game_object != App->scene->root)
-		{
-			if (ImGui::Selectable("Delete"))
-			{
+	if (ImGui::BeginPopupContextItem("Options")) {
+		if (game_object != App->scene->root) {
+			if (ImGui::Selectable("Delete")) {
 				App->scene->DestroyGameObject(game_object);
 				if (is_selected) App->editor->selected_object = nullptr;
 			}
@@ -63,8 +56,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 			ImGui::Separator();
 		}
 
-		if (ImGui::Selectable("Create Empty"))
-		{
+		if (ImGui::Selectable("Create Empty")) {
 			GameObject* new_object = App->scene->CreateGameObject(game_object);
 			new_object->name = "Game Object";
 			ComponentTransform* transform = new_object->CreateComponent<ComponentTransform>();
@@ -78,23 +70,18 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 	}
 	ImGui::PopID();
 
-	if (ImGui::IsItemClicked())
-	{
+	if (ImGui::IsItemClicked()) {
 		App->editor->selected_object = game_object;
 	}
 
-	if (ImGui::BeginDragDropSource())
-	{
+	if (ImGui::BeginDragDropSource()) {
 		ImGui::SetDragDropPayload("_HIERARCHY", game_object, sizeof(GameObject*));
 		ImGui::EndDragDropSource();
 	}
 
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY"))
-		{
-			if (!game_object->IsDescendantOf(App->editor->selected_object))
-			{
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY")) {
+			if (!game_object->IsDescendantOf(App->editor->selected_object)) {
 				App->editor->selected_object->SetParent(game_object);
 				ComponentTransform* transform = App->editor->selected_object->GetComponent<ComponentTransform>();
 				transform->InvalidateHierarchy();
@@ -104,10 +91,8 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* game_object)
 		ImGui::EndDragDropTarget();
 	}
 
-	if (open)
-	{
-		for (unsigned i = 0; i < children.size(); i++)
-		{
+	if (open) {
+		for (unsigned i = 0; i < children.size(); i++) {
 			UpdateHierarchyNode(children[i]);
 		}
 		ImGui::TreePop();

@@ -14,8 +14,7 @@
 
 #include "Utils/Leaks.h"
 
-bool ModuleResources::Init()
-{
+bool ModuleResources::Init() {
 	textures.Allocate(100);
 	cube_maps.Allocate(10);
 	meshes.Allocate(1000);
@@ -26,71 +25,57 @@ bool ModuleResources::Init()
 	return true;
 }
 
-bool ModuleResources::CleanUp()
-{
+bool ModuleResources::CleanUp() {
 	ReleaseAll();
 
 	return true;
 }
 
-Texture* ModuleResources::ObtainTexture()
-{
+Texture* ModuleResources::ObtainTexture() {
 	return textures.Obtain();
 }
 
-void ModuleResources::ReleaseTexture(Texture* texture)
-{
+void ModuleResources::ReleaseTexture(Texture* texture) {
 	TextureImporter::UnloadTexture(texture);
 	textures.Release(texture);
 }
 
-CubeMap* ModuleResources::ObtainCubeMap()
-{
+CubeMap* ModuleResources::ObtainCubeMap() {
 	return cube_maps.Obtain();
 }
 
-void ModuleResources::ReleaseCubeMap(CubeMap* cube_map)
-{
+void ModuleResources::ReleaseCubeMap(CubeMap* cube_map) {
 	TextureImporter::UnloadCubeMap(cube_map);
 	cube_maps.Release(cube_map);
 }
 
-Mesh* ModuleResources::ObtainMesh()
-{
+Mesh* ModuleResources::ObtainMesh() {
 	return meshes.Obtain();
 }
 
-void ModuleResources::ReleaseMesh(Mesh* mesh)
-{
+void ModuleResources::ReleaseMesh(Mesh* mesh) {
 	MeshImporter::UnloadMesh(mesh);
 	meshes.Release(mesh);
 }
 
-void ModuleResources::ReleaseAll()
-{
-	for (Texture& texture : textures)
-	{
+void ModuleResources::ReleaseAll() {
+	for (Texture& texture : textures) {
 		ReleaseTexture(&texture);
 	}
 
-	for (CubeMap& cube_map : cube_maps)
-	{
+	for (CubeMap& cube_map : cube_maps) {
 		ReleaseCubeMap(&cube_map);
 	}
 
-	for (Mesh& mesh : meshes)
-	{
+	for (Mesh& mesh : meshes) {
 		ReleaseMesh(&mesh);
 	}
 }
 
-void ModuleResources::SetMinFilter(TextureMinFilter filter)
-{
-	for (Texture& texture : textures)
-	{
+void ModuleResources::SetMinFilter(TextureMinFilter filter) {
+	for (Texture& texture : textures) {
 		glBindTexture(GL_TEXTURE_2D, texture.gl_texture);
-		switch (filter)
-		{
+		switch (filter) {
 		case TextureMinFilter::NEAREST:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			break;
@@ -115,13 +100,10 @@ void ModuleResources::SetMinFilter(TextureMinFilter filter)
 	min_filter = filter;
 }
 
-void ModuleResources::SetMagFilter(TextureMagFilter filter)
-{
-	for (Texture& texture : textures)
-	{
+void ModuleResources::SetMagFilter(TextureMagFilter filter) {
+	for (Texture& texture : textures) {
 		glBindTexture(GL_TEXTURE_2D, texture.gl_texture);
-		switch (filter)
-		{
+		switch (filter) {
 		case TextureMagFilter::NEAREST:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			break;
@@ -134,13 +116,10 @@ void ModuleResources::SetMagFilter(TextureMagFilter filter)
 	mag_filter = filter;
 }
 
-void ModuleResources::SetWrap(TextureWrap wrap)
-{
-	for (Texture& texture : textures)
-	{
+void ModuleResources::SetWrap(TextureWrap wrap) {
+	for (Texture& texture : textures) {
 		glBindTexture(GL_TEXTURE_2D, texture.gl_texture);
-		switch (wrap)
-		{
+		switch (wrap) {
 		case TextureWrap::REPEAT:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -167,17 +146,14 @@ void ModuleResources::SetWrap(TextureWrap wrap)
 	texture_wrap = wrap;
 }
 
-TextureMinFilter ModuleResources::GetMinFilter() const
-{
+TextureMinFilter ModuleResources::GetMinFilter() const {
 	return min_filter;
 }
 
-TextureMagFilter ModuleResources::GetMagFilter() const
-{
+TextureMagFilter ModuleResources::GetMagFilter() const {
 	return mag_filter;
 }
 
-TextureWrap ModuleResources::GetWrap() const
-{
+TextureWrap ModuleResources::GetWrap() const {
 	return texture_wrap;
 }

@@ -7,16 +7,14 @@
 
 struct SDL_Surface;
 
-enum class WindowMode
-{
+enum class WindowMode {
 	WINDOWED,
 	BORDERLESS,
 	FULLSCREEN,
 	FULLSCREEN_DESKTOP
 };
 
-class ModuleWindow : public Module
-{
+class ModuleWindow : public Module {
 public:
 	bool Init() override;
 	bool CleanUp() override;

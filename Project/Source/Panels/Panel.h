@@ -1,7 +1,6 @@
 #pragma once
 
-class Panel
-{
+class Panel {
 public:
 	Panel(const char* name, bool enabled);
 

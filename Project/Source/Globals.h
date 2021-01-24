@@ -1,8 +1,7 @@
 #pragma once
 
 // Enums -----------
-enum class UpdateStatus
-{
+enum class UpdateStatus {
 	CONTINUE,
 	STOP,
 	ERROR
@@ -24,21 +23,19 @@ enum class UpdateStatus
 #define GLSL_VERSION "#version 330"
 
 // Delete helpers -----------
-#define RELEASE(x)        \
-	{                     \
-		if (x != nullptr) \
-		{                 \
-			delete x;     \
-			x = nullptr;  \
-		}                 \
+#define RELEASE(x)          \
+	{                       \
+		if (x != nullptr) { \
+			delete x;       \
+			x = nullptr;    \
+		}                   \
 	}
-#define RELEASE_ARRAY(x)  \
-	{                     \
-		if (x != nullptr) \
-		{                 \
-			delete[] x;   \
-			x = nullptr;  \
-		}                 \
+#define RELEASE_ARRAY(x)    \
+	{                       \
+		if (x != nullptr) { \
+			delete[] x;     \
+			x = nullptr;    \
+		}                   \
 	}
 
 // Defer -----------
@@ -46,22 +43,18 @@ enum class UpdateStatus
 // Important: End of scope is not end of function. Be careful when using it inside loops.
 // Usage: DEFER{ statements; };
 #ifndef DEFER
-struct defer_dummy
-{};
+struct defer_dummy {};
 
 template<class F>
-struct deferrer
-{
+struct deferrer {
 	F f;
-	~deferrer()
-	{
+	~deferrer() {
 		f();
 	}
 };
 
 template<class F>
-deferrer<F> operator*(defer_dummy, F f)
-{
+deferrer<F> operator*(defer_dummy, F f) {
 	return {f};
 }
 

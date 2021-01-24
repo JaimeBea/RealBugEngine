@@ -9,8 +9,7 @@
 #include <vector>
 #include <string>
 
-class GameObject
-{
+class GameObject {
 public:
 	void Init();
 	void InitComponents();
@@ -58,20 +57,16 @@ private:
 };
 
 template<class T>
-inline T* GameObject::CreateComponent(bool active)
-{
+inline T* GameObject::CreateComponent(bool active) {
 	T* component = new T(*this, active);
 	components.push_back(component);
 	return component;
 }
 
 template<class T>
-inline T* GameObject::GetComponent() const
-{
-	for (Component* component : components)
-	{
-		if (component->GetType() == T::static_type)
-		{
+inline T* GameObject::GetComponent() const {
+	for (Component* component : components) {
+		if (component->GetType() == T::static_type) {
 			return (T*) component;
 		}
 	}
@@ -80,14 +75,11 @@ inline T* GameObject::GetComponent() const
 }
 
 template<class T>
-inline std::vector<T*> GameObject::GetComponents() const
-{
+inline std::vector<T*> GameObject::GetComponents() const {
 	std::vector<T*> aux_components;
 
-	for (Component* component : components)
-	{
-		if (component->GetType() == T::static_type)
-		{
+	for (Component* component : components) {
+		if (component->GetType() == T::static_type) {
 			aux_components.push_back((T*) component);
 		}
 	}

@@ -44,15 +44,13 @@
 
 static aiLogStream log_stream = {nullptr, nullptr};
 
-static void AssimpLogCallback(const char* message, char* user)
-{
+static void AssimpLogCallback(const char* message, char* user) {
 	std::string message_str = message;
 	std::string final_message_str = message_str.substr(0, message_str.find_last_of('\n'));
 	LOG(final_message_str.c_str());
 }
 
-bool ModuleScene::Init()
-{
+bool ModuleScene::Init() {
 	game_objects.Allocate(10000);
 
 #ifdef _DEBUG
@@ -63,8 +61,7 @@ bool ModuleScene::Init()
 	return true;
 }
 
-bool ModuleScene::Start()
-{
+bool ModuleScene::Start() {
 	App->files->CreateFolder("Library");
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(MESHES_PATH);
@@ -148,30 +145,23 @@ bool ModuleScene::Start()
 	return true;
 }
 
-UpdateStatus ModuleScene::Update()
-{
+UpdateStatus ModuleScene::Update() {
 	BROFILER_CATEGORY("ModuleScene - Update", Profiler::Color::Green)
 
 	// Load scene/fbx if one gets dropped
 	const char* dropped_file_path = App->input->GetDroppedFilePath();
-	if (dropped_file_path != nullptr)
-	{
+	if (dropped_file_path != nullptr) {
 		std::string dropped_file_extension = App->files->GetFileExtension(dropped_file_path);
 		std::string dropped_file_name = App->files->GetFileName(dropped_file_path);
-		if (dropped_file_extension == SCENE_EXTENSION)
-		{
+		if (dropped_file_extension == SCENE_EXTENSION) {
 			SceneImporter::LoadScene(dropped_file_name.c_str());
 
 			LOG("Scene loaded");
-		}
-		else if (dropped_file_extension == ".fbx")
-		{
+		} else if (dropped_file_extension == ".fbx") {
 			SceneImporter::ImportScene(dropped_file_path, root);
 
 			LOG("Scene imported");
-		}
-		else if (dropped_file_extension == ".png" || dropped_file_extension == ".tif" || dropped_file_extension == ".dds")
-		{
+		} else if (dropped_file_extension == ".png" || dropped_file_extension == ".tif" || dropped_file_extension == ".dds") {
 			Texture* texture = TextureImporter::ImportTexture(dropped_file_path);
 			TextureImporter::LoadTexture(texture);
 
@@ -182,16 +172,14 @@ UpdateStatus ModuleScene::Update()
 	}
 
 	// Update GameObjects
-	for (GameObject& game_object : game_objects)
-	{
+	for (GameObject& game_object : game_objects) {
 		game_object.Update();
 	}
 
 	return UpdateStatus::CONTINUE;
 }
 
-bool ModuleScene::CleanUp()
-{
+bool ModuleScene::CleanUp() {
 	glDeleteVertexArrays(1, &skybox_vao);
 	glDeleteBuffers(1, &skybox_vbo);
 
@@ -204,8 +192,7 @@ bool ModuleScene::CleanUp()
 	return true;
 }
 
-void ModuleScene::CreateEmptyScene()
-{
+void ModuleScene::CreateEmptyScene() {
 	ClearScene();
 
 	// Create Scene root node
@@ -258,8 +245,7 @@ void ModuleScene::CreateEmptyScene()
 	game_camera->InitComponents();
 }
 
-void ModuleScene::ClearScene()
-{
+void ModuleScene::ClearScene() {
 	DestroyGameObject(root);
 	root = nullptr;
 	quadtree.Clear();
@@ -267,11 +253,9 @@ void ModuleScene::ClearScene()
 	assert(game_objects.Count() == 0);
 }
 
-void ModuleScene::RebuildQuadtree()
-{
+void ModuleScene::RebuildQuadtree() {
 	quadtree.Initialize(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
-	for (GameObject& game_object : game_objects)
-	{
+	for (GameObject& game_object : game_objects) {
 		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
 		if (bounding_box == nullptr) continue;
 
@@ -283,17 +267,14 @@ void ModuleScene::RebuildQuadtree()
 	quadtree.Optimize();
 }
 
-void ModuleScene::ClearQuadtree()
-{
+void ModuleScene::ClearQuadtree() {
 	quadtree.Clear();
-	for (GameObject& game_object : game_objects)
-	{
+	for (GameObject& game_object : game_objects) {
 		game_object.is_in_quadtree = false;
 	}
 }
 
-GameObject* ModuleScene::CreateGameObject(GameObject* parent)
-{
+GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
 	GameObject* game_object = game_objects.Obtain();
 	game_object->Init();
 	game_object->SetParent(parent);
@@ -302,32 +283,27 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent)
 	return game_object;
 }
 
-GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object)
-{
+GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object) {
 	// TODO: Duplicate Game Objects
 	return game_object;
 }
 
-void ModuleScene::DestroyGameObject(GameObject* game_object)
-{
+void ModuleScene::DestroyGameObject(GameObject* game_object) {
 	if (game_object == nullptr) return;
 
 	// We need a copy because we are invalidating the iterator by removing GameObjects
 	std::vector<GameObject*> children = game_object->GetChildren();
-	for (GameObject* child : children)
-	{
+	for (GameObject* child : children) {
 		DestroyGameObject(child);
 	}
 
-	if (game_object->is_in_quadtree)
-	{
+	if (game_object->is_in_quadtree) {
 		quadtree.Remove(game_object);
 	}
 
 	game_objects_id_map.erase(game_object->GetID());
 	game_object->id = 0;
-	for (Component* component : game_object->components)
-	{
+	for (Component* component : game_object->components) {
 		delete component;
 	}
 	game_object->components.clear();
@@ -336,8 +312,7 @@ void ModuleScene::DestroyGameObject(GameObject* game_object)
 	game_objects.Release(game_object);
 }
 
-GameObject* ModuleScene::GetGameObject(UID id) const
-{
+GameObject* ModuleScene::GetGameObject(UID id) const {
 	if (game_objects_id_map.count(id) == 0) return nullptr;
 
 	return game_objects_id_map.at(id);

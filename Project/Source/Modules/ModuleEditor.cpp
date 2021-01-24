@@ -18,8 +18,7 @@
 
 #include "Utils/Leaks.h"
 
-bool ModuleEditor::Init()
-{
+bool ModuleEditor::Init() {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -29,8 +28,7 @@ bool ModuleEditor::Init()
 	return true;
 }
 
-bool ModuleEditor::Start()
-{
+bool ModuleEditor::Start() {
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(GLSL_VERSION);
 
@@ -48,8 +46,7 @@ bool ModuleEditor::Start()
 	return true;
 }
 
-UpdateStatus ModuleEditor::PreUpdate()
-{
+UpdateStatus ModuleEditor::PreUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PreUpdate", Profiler::Color::Azure)
 
 	ImGui_ImplOpenGL3_NewFrame();
@@ -60,8 +57,7 @@ UpdateStatus ModuleEditor::PreUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus ModuleEditor::Update()
-{
+UpdateStatus ModuleEditor::Update() {
 	BROFILER_CATEGORY("ModuleEditor - Update", Profiler::Color::Azure)
 
 	ImGui::CaptureMouseFromApp(true);
@@ -69,28 +65,22 @@ UpdateStatus ModuleEditor::Update()
 
 	// Main menu bar
 	ImGui::BeginMainMenuBar();
-	if (ImGui::BeginMenu("File"))
-	{
-		if (ImGui::MenuItem("New"))
-		{
+	if (ImGui::BeginMenu("File")) {
+		if (ImGui::MenuItem("New")) {
 			modal_to_open = Modal::NEW_SCENE;
 		}
-		if (ImGui::MenuItem("Load"))
-		{
+		if (ImGui::MenuItem("Load")) {
 			modal_to_open = Modal::LOAD_SCENE;
 		}
-		if (ImGui::MenuItem("Save"))
-		{
+		if (ImGui::MenuItem("Save")) {
 			modal_to_open = Modal::SAVE_SCENE;
 		}
-		if (ImGui::MenuItem("Quit"))
-		{
+		if (ImGui::MenuItem("Quit")) {
 			modal_to_open = Modal::QUIT;
 		}
 		ImGui::EndMenu();
 	}
-	if (ImGui::BeginMenu("View"))
-	{
+	if (ImGui::BeginMenu("View")) {
 		ImGui::MenuItem(panel_scene.name, "", &panel_scene.enabled);
 		ImGui::MenuItem(panel_console.name, "", &panel_console.enabled);
 		ImGui::MenuItem(panel_inspector.name, "", &panel_inspector.enabled);
@@ -98,18 +88,14 @@ UpdateStatus ModuleEditor::Update()
 		ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
 		ImGui::EndMenu();
 	}
-	if (ImGui::BeginMenu("Help"))
-	{
-		if (ImGui::MenuItem("Repository"))
-		{
+	if (ImGui::BeginMenu("Help")) {
+		if (ImGui::MenuItem("Repository")) {
 			App->RequestBrowser("https://github.com/TBD-org/TBD-Engine/wiki");
 		}
-		if (ImGui::MenuItem("Download latest"))
-		{
+		if (ImGui::MenuItem("Download latest")) {
 			App->RequestBrowser("https://github.com/TBD-org/TBD-Engine/releases");
 		}
-		if (ImGui::MenuItem("Report a bug"))
-		{
+		if (ImGui::MenuItem("Report a bug")) {
 			App->RequestBrowser("https://github.com/TBD-org/TBD-Engine/issues");
 		}
 		ImGui::MenuItem(panel_about.name, "", &panel_about.enabled);
@@ -118,8 +104,7 @@ UpdateStatus ModuleEditor::Update()
 	ImGui::EndMainMenuBar();
 
 	// Modals
-	switch (modal_to_open)
-	{
+	switch (modal_to_open) {
 	case Modal::NEW_SCENE:
 		ImGui::OpenPopup("New scene");
 		break;
@@ -136,65 +121,53 @@ UpdateStatus ModuleEditor::Update()
 	modal_to_open = Modal::NONE;
 
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("New scene"))
-	{
+	if (ImGui::BeginPopupModal("New scene")) {
 		ImGui::Text("Do you wish to create a new scene?");
-		if (ImGui::Button("New scene"))
-		{
+		if (ImGui::Button("New scene")) {
 			App->scene->CreateEmptyScene();
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel"))
-		{
+		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Load scene"))
-	{
+	if (ImGui::BeginPopupModal("Load scene")) {
 		ImGui::InputText("File name", file_name_buffer, sizeof(file_name_buffer));
-		if (ImGui::Button("Load"))
-		{
+		if (ImGui::Button("Load")) {
 			SceneImporter::LoadScene(file_name_buffer);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel"))
-		{
+		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Save scene"))
-	{
+	if (ImGui::BeginPopupModal("Save scene")) {
 		ImGui::SetItemDefaultFocus();
 		ImGui::InputText("File name", file_name_buffer, sizeof(file_name_buffer));
-		if (ImGui::Button("Save"))
-		{
+		if (ImGui::Button("Save")) {
 			SceneImporter::SaveScene(file_name_buffer);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel"))
-		{
+		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Quit"))
-	{
+	if (ImGui::BeginPopupModal("Quit")) {
 		ImGui::Text("Do you really want to quit?");
-		if (ImGui::Button("Quit"))
-		{
+		if (ImGui::Button("Quit")) {
 			return UpdateStatus::STOP;
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel"))
-		{
+		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
@@ -204,8 +177,7 @@ UpdateStatus ModuleEditor::Update()
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGuiID dock_space_id = ImGui::GetID("DockSpace");
 
-	if (!ImGui::DockBuilderGetNode(dock_space_id))
-	{
+	if (!ImGui::DockBuilderGetNode(dock_space_id)) {
 		ImGui::DockBuilderAddNode(dock_space_id);
 		ImGui::DockBuilderSetNodeSize(dock_space_id, viewport->GetWorkSize());
 
@@ -231,10 +203,8 @@ UpdateStatus ModuleEditor::Update()
 	ImGui::End();
 
 	// Panels
-	for (Panel* panel : panels)
-	{
-		if (panel->enabled)
-		{
+	for (Panel* panel : panels) {
+		if (panel->enabled) {
 			panel->Update();
 		}
 	}
@@ -242,8 +212,7 @@ UpdateStatus ModuleEditor::Update()
 	return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus ModuleEditor::PostUpdate()
-{
+UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
 
 	// Draw to default frame buffer (main window)
@@ -265,8 +234,7 @@ UpdateStatus ModuleEditor::PostUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-bool ModuleEditor::CleanUp()
-{
+bool ModuleEditor::CleanUp() {
 	panels.clear();
 
 	ImGui_ImplOpenGL3_Shutdown();

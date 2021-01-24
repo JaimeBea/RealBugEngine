@@ -3,8 +3,7 @@
 #include "rapidjson/document.h"
 #include "string"
 
-class JsonValue
-{
+class JsonValue {
 public:
 	JsonValue(rapidjson::Document& document, rapidjson::Value& value);
 
@@ -42,15 +41,12 @@ private:
 
 // Template is necessary to disambiguate with 'operator[](int index)'
 template<typename T>
-inline JsonValue JsonValue::operator[](T* key) const
-{
-	if (!value.IsObject())
-	{
+inline JsonValue JsonValue::operator[](T* key) const {
+	if (!value.IsObject()) {
 		value.SetObject();
 	}
 
-	if (!value.HasMember(key))
-	{
+	if (!value.HasMember(key)) {
 		value.AddMember(rapidjson::StringRef(key), rapidjson::Value(), document.GetAllocator());
 	}
 

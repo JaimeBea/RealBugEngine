@@ -26,11 +26,9 @@
 
 #include "Utils/Leaks.h"
 
-static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-{
+static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 	const char *tmp_source = "", *tmp_type = "", *tmp_severity = "";
-	switch (source)
-	{
+	switch (source) {
 	case GL_DEBUG_SOURCE_API:
 		tmp_source = "API";
 		break;
@@ -50,8 +48,7 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 		tmp_source = "Other";
 		break;
 	};
-	switch (type)
-	{
+	switch (type) {
 	case GL_DEBUG_TYPE_ERROR:
 		tmp_type = "Error";
 		break;
@@ -80,8 +77,7 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 		tmp_type = "Other";
 		break;
 	};
-	switch (severity)
-	{
+	switch (severity) {
 	case GL_DEBUG_SEVERITY_HIGH:
 		tmp_severity = "high";
 		break;
@@ -96,16 +92,14 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 		break;
 	};
 
-	if (severity != GL_DEBUG_SEVERITY_HIGH)
-	{
+	if (severity != GL_DEBUG_SEVERITY_HIGH) {
 		return;
 	}
 
 	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>", tmp_source, tmp_type, tmp_severity, id, message);
 }
 
-bool ModuleRender::Init()
-{
+bool ModuleRender::Init() {
 	LOG("Creating Renderer context");
 
 	context = SDL_GL_CreateContext(App->window->window);
@@ -133,8 +127,7 @@ bool ModuleRender::Init()
 	return true;
 }
 
-UpdateStatus ModuleRender::PreUpdate()
-{
+UpdateStatus ModuleRender::PreUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PreUpdate", Profiler::Color::Green)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -146,8 +139,7 @@ UpdateStatus ModuleRender::PreUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus ModuleRender::Update()
-{
+UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
 	// Draw Skybox as a first element
@@ -157,8 +149,7 @@ UpdateStatus ModuleRender::Update()
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (GameObject& game_object : App->scene->game_objects)
-	{
+	for (GameObject& game_object : App->scene->game_objects) {
 		game_object.flag = false;
 		if (game_object.is_in_quadtree) continue;
 
@@ -167,13 +158,11 @@ UpdateStatus ModuleRender::Update()
 
 		const AABB& game_object_aabb = bounding_box->GetWorldAABB();
 		const OBB& game_object_obb = bounding_box->GetWorldOBB();
-		if (CheckIfInsideFrustum(game_object_aabb, game_object_obb))
-		{
+		if (CheckIfInsideFrustum(game_object_aabb, game_object_obb)) {
 			DrawGameObject(&game_object);
 		}
 	}
-	if (App->scene->quadtree.IsOperative())
-	{
+	if (App->scene->quadtree.IsOperative()) {
 		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
@@ -183,8 +172,7 @@ UpdateStatus ModuleRender::Update()
 	if (selected_object) selected_object->DrawGizmos();
 
 	// Draw quadtree
-	if (draw_quadtree)
-	{
+	if (draw_quadtree) {
 		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
 	}
 
@@ -194,8 +182,7 @@ UpdateStatus ModuleRender::Update()
 	return UpdateStatus::CONTINUE;
 }
 
-UpdateStatus ModuleRender::PostUpdate()
-{
+UpdateStatus ModuleRender::PostUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
 
 	SDL_GL_SwapWindow(App->window->window);
@@ -203,8 +190,7 @@ UpdateStatus ModuleRender::PostUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-bool ModuleRender::CleanUp()
-{
+bool ModuleRender::CleanUp() {
 	glDeleteTextures(1, &render_texture);
 	glDeleteRenderbuffers(1, &depth_renderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);
@@ -212,8 +198,7 @@ bool ModuleRender::CleanUp()
 	return true;
 }
 
-void ModuleRender::ViewportResized(int width, int height)
-{
+void ModuleRender::ViewportResized(int width, int height) {
 	viewport_width = width;
 	viewport_height = height;
 
@@ -230,21 +215,17 @@ void ModuleRender::ViewportResized(int width, int height)
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_renderbuffer);
 
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-	{
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		LOG("ERROR: Framebuffer is not complete!");
 	}
 }
 
-void ModuleRender::SetVSync(bool vsync)
-{
+void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
 }
 
-void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb)
-{
-	if (node.IsBranch())
-	{
+void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
+	if (node.IsBranch()) {
 		vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
 
 		const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
@@ -262,9 +243,7 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 		const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
 		AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
 		DrawQuadtreeRecursive(bottom_right, bottom_right_aabb);
-	}
-	else
-	{
+	} else {
 		float3 points[8] = {
 			{aabb.minPoint.x, 0, aabb.minPoint.y},
 			{aabb.maxPoint.x, 0, aabb.minPoint.y},
@@ -279,13 +258,10 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 	}
 }
 
-void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb)
-{
+void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
 	AABB aabb_3d = AABB({aabb.minPoint.x, -1000000.0f, aabb.minPoint.y}, {aabb.maxPoint.x, 1000000.0f, aabb.maxPoint.y});
-	if (CheckIfInsideFrustum(aabb_3d, OBB(aabb_3d)))
-	{
-		if (node.IsBranch())
-		{
+	if (CheckIfInsideFrustum(aabb_3d, OBB(aabb_3d))) {
+		if (node.IsBranch()) {
 			vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
 
 			const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
@@ -303,20 +279,15 @@ void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, co
 			const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
 			AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
 			DrawSceneRecursive(bottom_right, bottom_right_aabb);
-		}
-		else
-		{
+		} else {
 			const Quadtree<GameObject>::Element* element = node.first_element;
-			while (element != nullptr)
-			{
+			while (element != nullptr) {
 				GameObject* game_object = element->object;
-				if (!game_object->flag)
-				{
+				if (!game_object->flag) {
 					ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
 					const AABB& game_object_aabb = bounding_box->GetWorldAABB();
 					const OBB& game_object_obb = bounding_box->GetWorldOBB();
-					if (CheckIfInsideFrustum(game_object_aabb, game_object_obb))
-					{
+					if (CheckIfInsideFrustum(game_object_aabb, game_object_obb)) {
 						DrawGameObject(game_object);
 					}
 
@@ -328,18 +299,15 @@ void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, co
 	}
 }
 
-bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb)
-{
+bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 	float3 points[8];
 	obb.GetCornerPoints(points);
 
 	const FrustumPlanes& frustum_planes = App->camera->GetFrustumPlanes();
-	for (const Plane& plane : frustum_planes.planes)
-	{
+	for (const Plane& plane : frustum_planes.planes) {
 		// check box outside/inside of frustum
 		int out = 0;
-		for (int i = 0; i < 8; i++)
-		{
+		for (int i = 0; i < 8; i++) {
 			out += (plane.SignedDistance(points[i]) > 0 ? 1 : 0);
 		}
 		if (out == 8) return false;
@@ -369,28 +337,23 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb)
 	return true;
 }
 
-void ModuleRender::DrawGameObject(GameObject* game_object)
-{
+void ModuleRender::DrawGameObject(GameObject* game_object) {
 	ComponentTransform* transform = game_object->GetComponent<ComponentTransform>();
 	std::vector<ComponentMesh*> meshes = game_object->GetComponents<ComponentMesh>();
 	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
 	ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
 
-	if (bounding_box && draw_all_bounding_boxes)
-	{
+	if (bounding_box && draw_all_bounding_boxes) {
 		bounding_box->DrawBoundingBox();
 	}
 
-	for (ComponentMesh* mesh : meshes)
-	{
+	for (ComponentMesh* mesh : meshes) {
 		mesh->Draw(materials, transform->GetGlobalMatrix());
 	}
 }
 
-void ModuleRender::DrawSkyBox()
-{
-	if (skybox_active)
-	{
+void ModuleRender::DrawSkyBox() {
+	if (skybox_active) {
 		glDepthFunc(GL_LEQUAL);
 
 		unsigned program = App->programs->skybox_program;

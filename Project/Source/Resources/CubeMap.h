@@ -2,8 +2,7 @@
 
 #include <string>
 
-class CubeMap
-{
+class CubeMap {
 public:
 	std::string file_names[6] = {"", "", "", "", "", ""};
 	unsigned gl_texture = 0;

@@ -5,8 +5,7 @@
 
 class GameObject;
 
-class PanelHierarchy : public Panel
-{
+class PanelHierarchy : public Panel {
 public:
 	PanelHierarchy();
 

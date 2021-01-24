@@ -13,14 +13,12 @@
 
 #include "Utils/Leaks.h"
 
-bool ModuleInput::Init()
-{
+bool ModuleInput::Init() {
 	LOG("Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
-	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
-	{
+	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0) {
 		LOG("SDL_EVENTS could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
 	}
@@ -28,8 +26,7 @@ bool ModuleInput::Init()
 	return ret;
 }
 
-UpdateStatus ModuleInput::PreUpdate()
-{
+UpdateStatus ModuleInput::PreUpdate() {
 	BROFILER_CATEGORY("ModuleInput - PreUpdate", Profiler::Color::AntiqueWhite)
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -39,47 +36,37 @@ UpdateStatus ModuleInput::PreUpdate()
 
 	int window_id = SDL_GetWindowID(App->window->window);
 
-	for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
-	{
-		if (keyboard[i] == KS_DOWN)
-		{
+	for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
+		if (keyboard[i] == KS_DOWN) {
 			keyboard[i] = KS_REPEAT;
 		}
 
-		if (keyboard[i] == KS_UP)
-		{
+		if (keyboard[i] == KS_UP) {
 			keyboard[i] = KS_IDLE;
 		}
 	}
 
-	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
-	{
-		if (mouse_buttons[i] == KS_DOWN)
-		{
+	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
+		if (mouse_buttons[i] == KS_DOWN) {
 			mouse_buttons[i] = KS_REPEAT;
 		}
 
-		if (mouse_buttons[i] == KS_UP)
-		{
+		if (mouse_buttons[i] == KS_UP) {
 			mouse_buttons[i] = KS_IDLE;
 		}
 	}
 
 	SDL_Event event;
-	while (SDL_PollEvent(&event) != 0)
-	{
+	while (SDL_PollEvent(&event) != 0) {
 		ImGui_ImplSDL2_ProcessEvent(&event);
 
-		switch (event.type)
-		{
+		switch (event.type) {
 		case SDL_QUIT:
 			return UpdateStatus::STOP;
 
 		case SDL_WINDOWEVENT:
-			if (event.window.windowID == window_id)
-			{
-				switch (event.window.event)
-				{
+			if (event.window.windowID == window_id) {
+				switch (event.window.event) {
 				case SDL_WINDOWEVENT_CLOSE:
 					return UpdateStatus::STOP;
 				}
@@ -93,12 +80,9 @@ UpdateStatus ModuleInput::PreUpdate()
 			break;
 
 		case SDL_MOUSEWHEEL:
-			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED)
-			{
+			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
 				mouse_wheel_motion = (float) event.wheel.x;
-			}
-			else
-			{
+			} else {
 				mouse_wheel_motion = (float) event.wheel.y;
 			}
 			break;
@@ -121,37 +105,28 @@ UpdateStatus ModuleInput::PreUpdate()
 		}
 	}
 
-	if (io.WantCaptureKeyboard)
-	{
-		for (int i = 0; i < SDL_NUM_SCANCODES; ++i)
-		{
+	if (io.WantCaptureKeyboard) {
+		for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
 			keyboard[i] = KS_IDLE;
 		}
 	}
 
-	if (io.WantCaptureMouse)
-	{
+	if (io.WantCaptureMouse) {
 		mouse_wheel_motion = 0;
 		mouse_motion.x = 0;
 		mouse_motion.y = 0;
 
-		for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i)
-		{
+		for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
 			mouse_buttons[i] = KS_IDLE;
 		}
-	}
-	else
-	{
+	} else {
 		int mouse_x;
 		int mouse_y;
 		SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
-		if (!mouse_warped)
-		{
+		if (!mouse_warped) {
 			mouse_motion.x = mouse_x - mouse.x;
 			mouse_motion.y = mouse_y - mouse.y;
-		}
-		else
-		{
+		} else {
 			mouse_warped = false;
 		}
 		mouse.x = (float) mouse_x;
@@ -161,55 +136,45 @@ UpdateStatus ModuleInput::PreUpdate()
 	return UpdateStatus::CONTINUE;
 }
 
-bool ModuleInput::CleanUp()
-{
+bool ModuleInput::CleanUp() {
 	ReleaseDroppedFilePath();
 	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
 }
 
-void ModuleInput::ReleaseDroppedFilePath()
-{
-	if (dropped_file_path != nullptr)
-	{
+void ModuleInput::ReleaseDroppedFilePath() {
+	if (dropped_file_path != nullptr) {
 		SDL_free(dropped_file_path);
 		dropped_file_path = nullptr;
 	}
 }
 
-void ModuleInput::WarpMouse(int mouse_x, int mouse_y)
-{
+void ModuleInput::WarpMouse(int mouse_x, int mouse_y) {
 	SDL_WarpMouseGlobal(mouse_x, mouse_y);
 	mouse_warped = true;
 }
 
-const char* ModuleInput::GetDroppedFilePath() const
-{
+const char* ModuleInput::GetDroppedFilePath() const {
 	return dropped_file_path;
 }
 
-KeyState ModuleInput::GetKey(int scancode) const
-{
+KeyState ModuleInput::GetKey(int scancode) const {
 	return keyboard[scancode];
 }
 
-KeyState ModuleInput::GetMouseButton(int button) const
-{
+KeyState ModuleInput::GetMouseButton(int button) const {
 	return mouse_buttons[button - 1];
 }
 
-float ModuleInput::GetMouseWheelMotion() const
-{
+float ModuleInput::GetMouseWheelMotion() const {
 	return mouse_wheel_motion;
 }
 
-const float2& ModuleInput::GetMouseMotion() const
-{
+const float2& ModuleInput::GetMouseMotion() const {
 	return mouse_motion;
 }
 
-const float2& ModuleInput::GetMousePosition() const
-{
+const float2& ModuleInput::GetMousePosition() const {
 	return mouse;
 }

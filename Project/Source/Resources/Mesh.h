@@ -2,8 +2,7 @@
 
 #include <string>
 
-class Mesh
-{
+class Mesh {
 public:
 	std::string file_name = "";
 	unsigned vbo = 0;

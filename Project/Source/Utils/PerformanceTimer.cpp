@@ -6,17 +6,14 @@
 
 #include "Utils/Leaks.h"
 
-void PerformanceTimer::Start()
-{
+void PerformanceTimer::Start() {
 	start_count = SDL_GetPerformanceCounter();
 	delta_time = 0;
 	running = true;
 }
 
-unsigned long long PerformanceTimer::Stop()
-{
-	if (running)
-	{
+unsigned long long PerformanceTimer::Stop() {
+	if (running) {
 		delta_time = (SDL_GetPerformanceCounter() - start_count) * 1000000 / SDL_GetPerformanceFrequency();
 		running = false;
 	}
@@ -24,10 +21,8 @@ unsigned long long PerformanceTimer::Stop()
 	return delta_time;
 }
 
-unsigned long long PerformanceTimer::Read()
-{
-	if (running)
-	{
+unsigned long long PerformanceTimer::Read() {
+	if (running) {
 		delta_time = (SDL_GetPerformanceCounter() - start_count) * 1000000 / SDL_GetPerformanceFrequency();
 	}
 
