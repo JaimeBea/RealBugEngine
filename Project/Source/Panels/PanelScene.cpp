@@ -14,6 +14,7 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "IconsFontAwesome5.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
 #include "Geometry/OBB.h"
@@ -36,74 +37,80 @@ void PanelScene::Update() {
 	}
 
 	ImGui::SetNextWindowDockID(App->editor->dock_main_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled)) {
-		// Play / Pause / Step buttons
-		if (App->time->HasGameStarted()) {
-			if (ImGui::Button("Stop")) {
-				App->time->StopGame();
-			}
-			ImGui::SameLine();
-			if (App->time->IsGameRunning()) {
-				if (ImGui::Button("Pause")) {
-					App->time->PauseGame();
+	std::string windowName = std::string(ICON_FA_BORDER_ALL " ") + name;
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	if (ImGui::Begin(windowName.c_str(), &enabled, ImGuiWindowFlags_MenuBar)) {
+		// MenuBar Scene
+		if (ImGui::BeginMenuBar()) {
+			// Play / Pause / Step buttons
+			if (App->time->HasGameStarted()) {
+				if (ImGui::Button("Stop")) {
+					App->time->StopGame();
+				}
+				ImGui::SameLine();
+				if (App->time->IsGameRunning()) {
+					if (ImGui::Button("Pause")) {
+						App->time->PauseGame();
+					}
+				} else {
+					if (ImGui::Button("Resume")) {
+						App->time->ResumeGame();
+					}
 				}
 			} else {
-				if (ImGui::Button("Resume")) {
-					App->time->ResumeGame();
+				if (ImGui::Button("Play")) {
+					App->time->StartGame();
 				}
 			}
-		} else {
-			if (ImGui::Button("Play")) {
-				App->time->StartGame();
+			ImGui::SameLine();
+			if (ImGui::Button("Step")) {
+				App->time->StepGame();
 			}
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Step")) {
-			App->time->StepGame();
-		}
 
-		ImGui::SameLine();
-		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-		ImGui::SameLine();
-
-		if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
-		ImGui::SameLine();
-		if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
-
-		if (current_guizmo_operation != ImGuizmo::SCALE) {
 			ImGui::SameLine();
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 			ImGui::SameLine();
-			if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
+
+			if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
 			ImGui::SameLine();
-			if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
+			if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
+			ImGui::SameLine();
+			if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
+
+			if (current_guizmo_operation != ImGuizmo::SCALE) {
+				ImGui::SameLine();
+				ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+				ImGui::SameLine();
+				if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
+				ImGui::SameLine();
+				if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
+			}
+
+			ImGui::SameLine();
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+			ImGui::SameLine();
+
+			ImGui::TextColored(App->editor->title_color, "Snap");
+			ImGui::SameLine();
+			ImGui::Checkbox("##snap", &use_snap);
+			ImGui::SameLine();
+
+			ImGui::PushItemWidth(150);
+			switch (current_guizmo_operation) {
+			case ImGuizmo::TRANSLATE:
+				ImGui::InputFloat3("Snap", &snap[0]);
+				break;
+			case ImGuizmo::ROTATE:
+				ImGui::InputFloat("Angle Snap", &snap[0]);
+				break;
+			case ImGuizmo::SCALE:
+				ImGui::InputFloat("Scale Snap", &snap[0]);
+				break;
+			}
+			ImGui::PopItemWidth();
+
+			ImGui::EndMenuBar();
 		}
-
-		ImGui::SameLine();
-		ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-		ImGui::SameLine();
-
-		ImGui::TextColored(App->editor->title_color, "Snap");
-		ImGui::SameLine();
-		ImGui::Checkbox("##snap", &use_snap);
-		ImGui::SameLine();
-
-		ImGui::PushItemWidth(150);
-		switch (current_guizmo_operation) {
-		case ImGuizmo::TRANSLATE:
-			ImGui::InputFloat3("Snap", &snap[0]);
-			break;
-		case ImGuizmo::ROTATE:
-			ImGui::InputFloat("Angle Snap", &snap[0]);
-			break;
-		case ImGuizmo::SCALE:
-			ImGui::InputFloat("Scale Snap", &snap[0]);
-			break;
-		}
-		ImGui::PopItemWidth();
-		ImGui::Separator();
 
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
@@ -116,13 +123,9 @@ void PanelScene::Update() {
 			};
 		}
 
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		ImDrawVert* last_vertex = draw_list->VtxBuffer.end();
-		framebuffer_position = {
-			last_vertex->pos.x,
-			last_vertex->pos.y,
-		};
-
+		ImVec2 framebuffer_position = ImGui::GetWindowPos();
+		framebuffer_position.y += (ImGui::GetWindowHeight() - size.y);
+		
 		// Draw
 		ImGui::Image((void*) App->renderer->render_texture, size, ImVec2(0, 1), ImVec2(1, 0));
 
@@ -187,5 +190,6 @@ void PanelScene::Update() {
 		App->camera->engine_camera_frustum.SetFrame(new_camera_view.Col(3).xyz(), -new_camera_view.Col(2).xyz(), new_camera_view.Col(1).xyz());
 
 		ImGui::End();
+		ImGui::PopStyleVar();
 	}
 }

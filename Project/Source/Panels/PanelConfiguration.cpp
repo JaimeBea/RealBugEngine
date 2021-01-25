@@ -13,6 +13,7 @@
 
 #include "GL/glew.h"
 #include "imgui.h"
+#include "IconsForkAwesome.h"
 
 #include "Utils/Leaks.h"
 
@@ -21,7 +22,8 @@ PanelConfiguration::PanelConfiguration()
 
 void PanelConfiguration::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dock_left_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled)) {
+	std::string windowName = std::string(ICON_FK_COGS " ") + name;
+	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		// Application
 		if (ImGui::CollapsingHeader("Application")) {
 			if (ImGui::InputText("App name", App->app_name, IM_ARRAYSIZE(App->app_name))) {

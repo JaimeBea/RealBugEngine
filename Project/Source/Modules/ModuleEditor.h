@@ -9,6 +9,7 @@
 #include "Panels/PanelInspector.h"
 #include "Panels/PanelHierarchy.h"
 #include "Panels/PanelAbout.h"
+#include "Panels/PanelProject.h"
 
 #include "imgui.h"
 #include <vector>
@@ -49,6 +50,7 @@ public:
 	PanelInspector panel_inspector;
 	PanelHierarchy panel_hierarchy;
 	PanelAbout panel_about;
+	PanelProject panel_project;
 
 	GameObject* selected_object = nullptr;
 

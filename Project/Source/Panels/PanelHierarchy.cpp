@@ -8,6 +8,7 @@
 #include "Modules/ModuleScene.h"
 
 #include "imgui.h"
+#include "IconsFontAwesome5.h"
 
 #include "Utils/Leaks.h"
 
@@ -16,7 +17,8 @@ PanelHierarchy::PanelHierarchy()
 
 void PanelHierarchy::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dock_left_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled)) {
+	std::string windowName = std::string(ICON_FA_SITEMAP " ") + name;
+	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		GameObject* root = App->scene->root;
 		if (root != nullptr) {
 			UpdateHierarchyNode(root);

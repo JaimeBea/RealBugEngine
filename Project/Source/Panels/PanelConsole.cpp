@@ -5,6 +5,7 @@
 #include "Modules/ModuleEditor.h"
 
 #include "imgui.h"
+#include "IconsForkAwesome.h"
 
 #include "Utils/Leaks.h"
 
@@ -17,7 +18,8 @@ PanelConsole::PanelConsole()
 
 void PanelConsole::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dock_down_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled)) {
+	std::string windowName = std::string(ICON_FK_TERMINAL " ") + name;
+	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		// Output
 		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);

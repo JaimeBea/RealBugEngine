@@ -4,6 +4,7 @@
 #include "Modules/ModuleEditor.h"
 
 #include "imgui.h"
+#include "IconsForkAwesome.h"
 
 #include "Utils/Leaks.h"
 
@@ -12,10 +13,11 @@ PanelAbout::PanelAbout()
 
 void PanelAbout::Update() {
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled, ImGuiWindowFlags_AlwaysAutoResize)) {
+	std::string windowName = std::string(ICON_FK_INFO_CIRCLE " ") + name;
+	if (ImGui::Begin(windowName.c_str(), &enabled, ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::TextColored(App->editor->title_color, "TBD Engine");
 		ImGui::Separator();
-		ImGui::TextColored(App->editor->title_color, u8"By Jaime Bea & Llorenç (Lowy) Solé.");
+		ImGui::TextColored(App->editor->title_color, u8"By TBD org.");
 		ImGui::Text("Engine developed during the Master in Advanced Programming for AAA Video Games by UPC.");
 		ImGui::Text("Engine licensed under the MIT License.");
 		ImGui::Separator();
