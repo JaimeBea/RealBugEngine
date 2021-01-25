@@ -88,8 +88,8 @@ static void ApplyCustomStyle() {
 	style->TabRounding = 0.0f;
 	style->WindowRounding = 0.0f;
 
+	// Merge in icons from Font Awesome and Fork Awesome
 	ImGui::GetIO().Fonts->AddFontDefault();
-	// merge in icons from Font Awesome
 	ImFontConfig icons_config;
 	icons_config.MergeMode = true;
 	icons_config.PixelSnapH = true;
