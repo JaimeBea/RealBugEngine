@@ -11,6 +11,7 @@
 
 #include "GL/glew.h"
 #include "imgui.h"
+#include "IconsFontAwesome5.h"
 
 #include "Utils/Leaks.h"
 
@@ -19,7 +20,8 @@ PanelInspector::PanelInspector()
 
 void PanelInspector::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin(name, &enabled)) {
+	std::string windowName = std::string(ICON_FA_CUBE " ") + name;
+	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		GameObject* selected = App->editor->selected_object;
 		if (selected != nullptr) {
 			ImGui::TextUnformatted("Id:");

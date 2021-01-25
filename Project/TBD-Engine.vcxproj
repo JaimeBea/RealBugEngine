@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
+    <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
+    <ClInclude Include="Libs\imgui\imgui_utils.h" />
     <ClInclude Include="Source\Globals.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Utils\Leaks.h" />
