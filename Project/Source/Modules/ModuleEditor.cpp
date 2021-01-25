@@ -136,7 +136,6 @@ bool ModuleEditor::Start() {
 	panels.push_back(&panel_hierarchy);
 	panels.push_back(&panel_inspector);
 	panels.push_back(&panel_about);
-	panels.push_back(&panel_project);
 
 	return true;
 }
@@ -181,7 +180,6 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panel_inspector.name, "", &panel_inspector.enabled);
 		ImGui::MenuItem(panel_hierarchy.name, "", &panel_hierarchy.enabled);
 		ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
-		ImGui::MenuItem(panel_project.name, "", &panel_project.enabled);
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu("Help")) {
