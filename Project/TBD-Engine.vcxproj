@@ -319,8 +319,6 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <AdditionalIncludeDirectories>$(ProjectDir)/Libs\ImGuizmo; $(ProjectDir)/Libs\rapidjson/include; $(ProjectDir)/Libs\brofiler/include; $(ProjectDir)/Libs\assimp/include; $(ProjectDir)/Libs\DeviL/include; $(ProjectDir)/Libs\DebugDraw; $(ProjectDir)/Libs\imgui; $(ProjectDir)/Libs\MathGeoLib; $(ProjectDir)/Libs\SDL/include; $(ProjectDir)/Libs\glew-2.1.0/include; $(ProjectDir)/Source</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard_C>Default</LanguageStandard_C>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
