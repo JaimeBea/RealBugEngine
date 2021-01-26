@@ -43,9 +43,6 @@
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{08286394-6ddb-40c8-8cff-f98acfcd8509}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Components\Lights">
-      <UniqueIdentifier>{65fbe68f-acfc-4a2d-bc5a-de9fe8f2efa1}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\imconfig.h">
@@ -462,14 +459,8 @@
     <ClInclude Include="Libs\imgui\ImApp.h">
       <Filter>Libraries\ImGUI</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentDirectionalLight.h">
-      <Filter>Source\Components\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentPointLight.h">
-      <Filter>Source\Components\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="ComponentSpotLight.h">
-      <Filter>Source\Components\Lights</Filter>
+    <ClInclude Include="ComponentLight.h">
+      <Filter>Source\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -743,14 +734,8 @@
     <ClCompile Include="Libs\ImGuizmo\ImSequencer.cpp">
       <Filter>Libraries\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentDirectionalLight.cpp">
-      <Filter>Source\Components\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentPointLight.cpp">
-      <Filter>Source\Components\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="ComponentSpotLight.cpp">
-      <Filter>Source\Components\Lights</Filter>
+    <ClCompile Include="ComponentLight.cpp">
+      <Filter>Source\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,9 +10,7 @@
 #include "Resources/CubeMap.h"
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
-#include "Components/ComponentDirectionalLight.h"
-#include "Components/ComponentPointLight.h"
-#include "Components/ComponentSpotLight.h"
+#include "Components/ComponentLight.h"
 #include "Components/ComponentMesh.h"
 #include "Components/ComponentMaterial.h"
 #include "Components/ComponentBoundingBox.h"
@@ -211,28 +209,8 @@ void ModuleScene::CreateEmptyScene() {
 	dir_light_transform->SetPosition(float3(0, 300, 0));
 	dir_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	dir_light_transform->SetScale(float3(1, 1, 1));
-	ComponentDirectionalLight* dir_light_light = dir_light->CreateComponent<ComponentDirectionalLight>();
+	ComponentLight* dir_light_light = dir_light->CreateComponent<ComponentLight>();
 	dir_light->InitComponents();
-
-	// Create Point Light
-	GameObject* point_light = CreateGameObject(root);
-	point_light->name = "Point Light";
-	ComponentTransform* point_light_transform = point_light->CreateComponent<ComponentTransform>();
-	point_light_transform->SetPosition(float3(0, 10, 0));
-	point_light_transform->SetRotation(Quat::identity);
-	point_light_transform->SetScale(float3(1, 1, 1));
-	ComponentPointLight* point_light_light = point_light->CreateComponent<ComponentPointLight>();
-	point_light->InitComponents();
-
-	// Create Spot Light
-	GameObject* spot_light = CreateGameObject(root);
-	spot_light->name = "Spot Light";
-	ComponentTransform* spot_light_transform = spot_light->CreateComponent<ComponentTransform>();
-	spot_light_transform->SetPosition(float3(0, 10, 0));
-	spot_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
-	spot_light_transform->SetScale(float3(1, 1, 1));
-	ComponentSpotLight* spot_light_light = spot_light->CreateComponent<ComponentSpotLight>();
-	spot_light->InitComponents();
 
 	// Create Game Camera
 	GameObject* game_camera = CreateGameObject(root);

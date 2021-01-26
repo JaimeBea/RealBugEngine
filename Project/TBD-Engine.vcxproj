@@ -45,12 +45,10 @@
     <ClInclude Include="Source\Modules\ModuleWindow.h" />
     <ClInclude Include="Source\Components\Component.h" />
     <ClInclude Include="Source\Components\ComponentCamera.h" />
-    <ClInclude Include="Source\Components\ComponentDirectionalLight.h" />
+    <ClInclude Include="Source\Components\ComponentLight.h" />
     <ClInclude Include="Source\Components\ComponentBoundingBox.h" />
     <ClInclude Include="Source\Components\ComponentMaterial.h" />
     <ClInclude Include="Source\Components\ComponentMesh.h" />
-    <ClInclude Include="Source\Components\ComponentPointLight.h" />
-    <ClInclude Include="Source\Components\ComponentSpotLight.h" />
     <ClInclude Include="Source\Components\ComponentType.h" />
     <ClInclude Include="Source\Components\ComponentTransform.h" />
     <ClInclude Include="Source\Panels\Panel.h" />
@@ -180,12 +178,10 @@
     <ClCompile Include="Source\Modules\ModuleWindow.cpp" />
     <ClCompile Include="Source\Components\Component.cpp" />
     <ClCompile Include="Source\Components\ComponentCamera.cpp" />
-    <ClCompile Include="Source\Components\ComponentDirectionalLight.cpp" />
+    <ClCompile Include="Source\Components\ComponentLight.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox.cpp" />
     <ClCompile Include="Source\Components\ComponentMaterial.cpp" />
     <ClCompile Include="Source\Components\ComponentMesh.cpp" />
-    <ClCompile Include="Source\Components\ComponentPointLight.cpp" />
-    <ClCompile Include="Source\Components\ComponentSpotLight.cpp" />
     <ClCompile Include="Source\Components\ComponentTransform.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Panels\Panel.cpp" />
