@@ -6,9 +6,7 @@
 #include "Components/ComponentMaterial.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
-#include "Components/ComponentDirectionalLight.h"
-#include "Components/ComponentPointLight.h"
-#include "Components/ComponentSpotLight.h"
+#include "Components/ComponentLight.h"
 
 #include "Utils/Leaks.h"
 
@@ -24,12 +22,8 @@ Component* CreateComponentByType(GameObject& game_object, ComponentType type, bo
 		return game_object.CreateComponent<ComponentBoundingBox>(active);
 	case ComponentType::CAMERA:
 		return game_object.CreateComponent<ComponentCamera>(active);
-	case ComponentType::DIRECTIONAL_LIGHT:
-		return game_object.CreateComponent<ComponentDirectionalLight>(active);
-	case ComponentType::POINT_LIGHT:
-		return game_object.CreateComponent<ComponentPointLight>(active);
-	case ComponentType::SPOT_LIGHT:
-		return game_object.CreateComponent<ComponentSpotLight>(active);
+	case ComponentType::LIGHT:
+		return game_object.CreateComponent<ComponentLight>(active);
 	default:
 		return nullptr;
 	}

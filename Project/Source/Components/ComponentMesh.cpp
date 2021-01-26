@@ -9,9 +9,7 @@
 #include "Resources/Mesh.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentMaterial.h"
-#include "Components/ComponentDirectionalLight.h"
-#include "Components/ComponentPointLight.h"
-#include "Components/ComponentSpotLight.h"
+#include "Components/ComponentLight.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleResources.h"
@@ -102,37 +100,39 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		}
 	}
 
-	DirectionalLight* directional_light = nullptr;
-	std::vector<PointLight*> point_lights_vector;
+	ComponentLight* directional_light = nullptr;
+	std::vector<ComponentLight*> point_lights_vector;
 	std::vector<float> point_distances_vector;
-	std::vector<SpotLight*> spot_lights_vector;
+	std::vector<ComponentLight*> spot_lights_vector;
 	std::vector<float> spot_distances_vector;
 
 	if (materials[mesh->material_index]->material.material_type == ShaderType::PHONG) {
 		float far_point_distance = 0;
-		PointLight* far_point_light = nullptr;
+		ComponentLight* far_point_light = nullptr;
 		float far_spot_distance = 0;
-		SpotLight* far_spot_light = nullptr;
+		ComponentLight* far_spot_light = nullptr;
 
 		for (GameObject& object : App->scene->game_objects) {
-			ComponentDirectionalLight* dir_light = object.GetComponent<ComponentDirectionalLight>();
-			if (dir_light != nullptr) {
-				if (dir_light->IsActive()) {
-					directional_light = &dir_light->GetLightStruct();
+			ComponentLight* light = object.GetComponent<ComponentLight>();
+			if (light == nullptr) continue;
+
+			if (light->lightType == LightType::DIRECTIONAL) {
+				// It takes the first actived Directional Light inside the Pool
+				if (light->IsActive() && directional_light == nullptr) {
+					directional_light = light;
+					continue;
 				}
-			}
-			ComponentPointLight* point_light = object.GetComponent<ComponentPointLight>();
-			if (point_light != nullptr) {
-				if (point_light->IsActive()) {
+			} else if (light->lightType == LightType::POINT) {
+				if (light->IsActive()) {
 					float3 mesh_position = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 light_position = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(mesh_position, light_position);
 					if (point_lights_vector.size() < 8) {
 						point_distances_vector.push_back(distance);
-						point_lights_vector.push_back(&point_light->GetLightStruct());
+						point_lights_vector.push_back(light);
 
 						if (distance > far_point_distance) {
-							far_point_light = &point_light->GetLightStruct();
+							far_point_light = light;
 							far_point_distance = distance;
 						}
 					} else {
@@ -144,7 +144,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 								count += 1;
 							}
 
-							point_lights_vector[selected] = &point_light->GetLightStruct();
+							point_lights_vector[selected] = light;
 							point_distances_vector[selected] = distance;
 
 							count = 0;
@@ -163,19 +163,17 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 						}
 					}
 				}
-			}
-			ComponentSpotLight* spot_light = object.GetComponent<ComponentSpotLight>();
-			if (spot_light != nullptr) {
-				if (spot_light->IsActive()) {
+			} else if (light->lightType == LightType::SPOT) {
+				if (light->IsActive()) {
 					float3 mesh_position = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 light_position = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(mesh_position, light_position);
 					if (spot_lights_vector.size() < 8) {
 						spot_distances_vector.push_back(distance);
-						spot_lights_vector.push_back(&spot_light->GetLightStruct());
+						spot_lights_vector.push_back(light);
 
 						if (distance > far_spot_distance) {
-							far_spot_light = &spot_light->GetLightStruct();
+							far_spot_light = light;
 							far_spot_distance = distance;
 						}
 					} else {
@@ -187,7 +185,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 								count += 1;
 							}
 
-							spot_lights_vector[selected] = &spot_light->GetLightStruct();
+							spot_lights_vector[selected] = light;
 							spot_distances_vector[selected] = distance;
 
 							count = 0;
@@ -306,8 +304,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[0].kc"), spot_lights_vector[0]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[0].kl"), spot_lights_vector[0]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[0].kq"), spot_lights_vector[0]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].inner_angle"), spot_lights_vector[0]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].outer_angle"), spot_lights_vector[0]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[0].inner_angle"), spot_lights_vector[0]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[0].outer_angle"), spot_lights_vector[0]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 1) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[1].pos"), 1, spot_lights_vector[1]->pos.ptr());
@@ -317,8 +315,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[1].kc"), spot_lights_vector[1]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[1].kl"), spot_lights_vector[1]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[1].kq"), spot_lights_vector[1]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].inner_angle"), spot_lights_vector[1]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].outer_angle"), spot_lights_vector[1]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[1].inner_angle"), spot_lights_vector[1]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[1].outer_angle"), spot_lights_vector[1]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 2) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[2].pos"), 1, spot_lights_vector[2]->pos.ptr());
@@ -328,8 +326,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[2].kc"), spot_lights_vector[2]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[2].kl"), spot_lights_vector[2]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[2].kq"), spot_lights_vector[2]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].inner_angle"), spot_lights_vector[2]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].outer_angle"), spot_lights_vector[2]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[2].inner_angle"), spot_lights_vector[2]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[2].outer_angle"), spot_lights_vector[2]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 3) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[3].pos"), 1, spot_lights_vector[3]->pos.ptr());
@@ -339,8 +337,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[3].kc"), spot_lights_vector[3]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[3].kl"), spot_lights_vector[3]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[3].kq"), spot_lights_vector[3]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].inner_angle"), spot_lights_vector[3]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].outer_angle"), spot_lights_vector[3]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[3].inner_angle"), spot_lights_vector[3]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[3].outer_angle"), spot_lights_vector[3]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 4) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[4].pos"), 1, spot_lights_vector[4]->pos.ptr());
@@ -350,8 +348,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[4].kc"), spot_lights_vector[4]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[4].kl"), spot_lights_vector[4]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[4].kq"), spot_lights_vector[4]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].inner_angle"), spot_lights_vector[4]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].outer_angle"), spot_lights_vector[4]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[4].inner_angle"), spot_lights_vector[4]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[4].outer_angle"), spot_lights_vector[4]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 5) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[5].pos"), 1, spot_lights_vector[5]->pos.ptr());
@@ -361,8 +359,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[5].kc"), spot_lights_vector[5]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[5].kl"), spot_lights_vector[5]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[5].kq"), spot_lights_vector[5]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].inner_angle"), spot_lights_vector[5]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].outer_angle"), spot_lights_vector[5]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[5].inner_angle"), spot_lights_vector[5]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[5].outer_angle"), spot_lights_vector[5]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 6) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[6].pos"), 1, spot_lights_vector[6]->pos.ptr());
@@ -372,8 +370,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[6].kc"), spot_lights_vector[6]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[6].kl"), spot_lights_vector[6]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[6].kq"), spot_lights_vector[6]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].inner_angle"), spot_lights_vector[6]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].outer_angle"), spot_lights_vector[6]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[6].inner_angle"), spot_lights_vector[6]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[6].outer_angle"), spot_lights_vector[6]->outerAngle);
 		}
 		if (spot_lights_vector.size() > 7) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[7].pos"), 1, spot_lights_vector[7]->pos.ptr());
@@ -383,8 +381,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[7].kc"), spot_lights_vector[7]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[7].kl"), spot_lights_vector[7]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[7].kq"), spot_lights_vector[7]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].inner_angle"), spot_lights_vector[7]->inner_angle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].outer_angle"), spot_lights_vector[7]->outer_angle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[7].inner_angle"), spot_lights_vector[7]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[7].outer_angle"), spot_lights_vector[7]->outerAngle);
 		}
 		glUniform1i(glGetUniformLocation(program, "light.num_spots"), spot_lights_vector.size());
 
