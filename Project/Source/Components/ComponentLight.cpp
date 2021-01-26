@@ -32,7 +32,7 @@ void ComponentLight::DrawGizmos() {
 	if (IsActive() && drawGizmos) {
 		if (lightType == LightType::DIRECTIONAL) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-			dd::arrow(transform->GetPosition(), direction * 200, dd::colors::White, 1.0f);
+			dd::cone(transform->GetPosition(), direction * 200, dd::colors::White, 1.0f, 1.0f);
 		} else {
 			float delta = kl * kl - 4 * (kc - 10) * kq;
 			float distance = Max(abs((-kl + sqrt(delta))) / (2 * kq), abs((-kl - sqrt(delta)) / (2 * kq)));
