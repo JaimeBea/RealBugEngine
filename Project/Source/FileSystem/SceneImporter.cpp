@@ -103,9 +103,9 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 
 		// Create bounding box
 		if (minPoint.x < maxPoint.x) {
-			ComponentBoundingBox* bounding_box = gameObject->CreateComponent<ComponentBoundingBox>();
-			bounding_box->SetLocalBoundingBox(AABB(minPoint, maxPoint));
-			bounding_box->CalculateWorldBoundingBox();
+			ComponentBoundingBox* boundingBox = gameObject->CreateComponent<ComponentBoundingBox>();
+			boundingBox->SetLocalBoundingBox(AABB(minPoint, maxPoint));
+			boundingBox->CalculateWorldBoundingBox();
 		}
 
 		// Import children nodes

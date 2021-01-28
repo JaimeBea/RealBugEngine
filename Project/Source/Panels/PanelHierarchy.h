@@ -12,7 +12,7 @@ public:
 	void Update() override;
 
 private:
-	void UpdateHierarchyNode(GameObject* game_object);
+	void UpdateHierarchyNode(GameObject* gameObject);
 
 private:
 	int windowWidth = 0;

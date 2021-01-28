@@ -8,7 +8,7 @@
 #define FPS_LOG_SIZE 100
 
 void Log(const char file[], int line, const char* format, ...);
-void LogDeltaMS(float delta_ms);
+void LogDeltaMS(float deltaMs);
 
 extern std::string* logString;
 extern int fpsLogIndex;

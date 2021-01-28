@@ -70,11 +70,11 @@ void ComponentLight::OnEditorUpdate() {
 		ImGui::TextColored(App->editor->textColor, "Light Type:");
 		if (ImGui::BeginCombo("##lightType", lightTypeComboCurrent)) {
 			for (int n = 0; n < IM_ARRAYSIZE(lightTypeCombo); ++n) {
-				bool is_selected = (lightTypeComboCurrent == lightTypeCombo[n]);
-				if (ImGui::Selectable(lightTypeCombo[n], is_selected)) {
+				bool isSelected = (lightTypeComboCurrent == lightTypeCombo[n]);
+				if (ImGui::Selectable(lightTypeCombo[n], isSelected)) {
 					lightType = (LightType) n;
 				}
-				if (is_selected) {
+				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
 				}
 			}

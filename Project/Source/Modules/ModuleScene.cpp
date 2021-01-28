@@ -219,7 +219,7 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetPosition(float3(2, 3, -5));
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
-	ComponentCamera* game_camera_camera = gameCamera->CreateComponent<ComponentCamera>();
+	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
 	gameCamera->InitComponents();
 }
 

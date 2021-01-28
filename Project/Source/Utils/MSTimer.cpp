@@ -14,9 +14,9 @@ void MSTimer::Start() {
 
 unsigned int MSTimer::Stop() {
 	if (running) {
-		unsigned int now_time = SDL_GetTicks();
-		if (SDL_TICKS_PASSED(now_time, startTime)) {
-			deltaTime = now_time - startTime;
+		unsigned int nowTime = SDL_GetTicks();
+		if (SDL_TICKS_PASSED(nowTime, startTime)) {
+			deltaTime = nowTime - startTime;
 		} else {
 			deltaTime = 0;
 		}

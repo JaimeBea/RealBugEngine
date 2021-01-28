@@ -98,9 +98,9 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 
 	std::string fileName = std::string(assimpMesh->mName.C_Str()) + std::to_string(index);
 	mesh->fileName = fileName;
-	std::string file_path = std::string(MESHES_PATH) + "/" + fileName + MESH_EXTENSION;
-	LOG("Saving mesh to \"%s\".", file_path.c_str());
-	App->files->Save(file_path.c_str(), buffer);
+	std::string filePath = std::string(MESHES_PATH) + "/" + fileName + MESH_EXTENSION;
+	LOG("Saving mesh to \"%s\".", filePath.c_str());
+	App->files->Save(filePath.c_str(), buffer);
 
 	unsigned timeMs = timer.Stop();
 	LOG("Mesh imported in %ums", timeMs);

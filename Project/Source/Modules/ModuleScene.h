@@ -27,7 +27,7 @@ public:
 
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);
-	void DestroyGameObject(GameObject* game_object);
+	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
 public:

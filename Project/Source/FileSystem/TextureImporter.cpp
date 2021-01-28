@@ -95,8 +95,8 @@ void TextureImporter::LoadTexture(Texture* texture) {
 
 	// Load image
 	ilBindImage(image);
-	bool image_loaded = ilLoad(IL_DDS, filePath.c_str());
-	if (!image_loaded) {
+	bool imageLoaded = ilLoad(IL_DDS, filePath.c_str());
+	if (!imageLoaded) {
 		LOG("Failed to load image.");
 		return;
 	}

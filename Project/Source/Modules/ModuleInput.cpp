@@ -34,7 +34,7 @@ UpdateStatus ModuleInput::PreUpdate() {
 	mouseMotion = {0, 0};
 	mouseWheelMotion = 0;
 
-	int window_id = SDL_GetWindowID(App->window->window);
+	int windowId = SDL_GetWindowID(App->window->window);
 
 	for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
 		if (keyboard[i] == KS_DOWN) {
@@ -65,7 +65,7 @@ UpdateStatus ModuleInput::PreUpdate() {
 			return UpdateStatus::STOP;
 
 		case SDL_WINDOWEVENT:
-			if (event.window.windowID == window_id) {
+			if (event.window.windowID == windowId) {
 				switch (event.window.event) {
 				case SDL_WINDOWEVENT_CLOSE:
 					return UpdateStatus::STOP;
@@ -120,17 +120,17 @@ UpdateStatus ModuleInput::PreUpdate() {
 			mouseButtons[i] = KS_IDLE;
 		}
 	} else {
-		int mouse_x;
-		int mouse_y;
-		SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
+		int mouseX;
+		int mouseY;
+		SDL_GetGlobalMouseState(&mouseX, &mouseY);
 		if (!mouseWarped) {
-			mouseMotion.x = mouse_x - mouse.x;
-			mouseMotion.y = mouse_y - mouse.y;
+			mouseMotion.x = mouseX - mouse.x;
+			mouseMotion.y = mouseY - mouse.y;
 		} else {
 			mouseWarped = false;
 		}
-		mouse.x = (float) mouse_x;
-		mouse.y = (float) mouse_y;
+		mouse.x = (float) mouseX;
+		mouse.y = (float) mouseY;
 	}
 
 	return UpdateStatus::CONTINUE;
