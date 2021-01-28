@@ -3,7 +3,7 @@
 class GameObject;
 
 namespace SceneImporter {
-	bool ImportScene(const char* file_path, GameObject* parent);
-	bool LoadScene(const char* file_name);
-	bool SaveScene(const char* file_name);
+	bool ImportScene(const char* filePath, GameObject* parent);
+	bool LoadScene(const char* fileName);
+	bool SaveScene(const char* fileName);
 } // namespace SceneImporter

@@ -37,55 +37,55 @@ void ComponentMaterial::OnEditorUpdate() {
 		}
 		ImGui::Separator();
 
-		ImGui::TextColored(App->editor->title_color, "Shader");
+		ImGui::TextColored(App->editor->titleColor, "Shader");
 
 		// Material types
-		const char* material_types[] = {"Standard", "Phong"};
-		const char* material_types_current = material_types[(int) material.material_type];
-		if (ImGui::BeginCombo("Type", material_types_current)) {
-			for (int n = 0; n < IM_ARRAYSIZE(material_types); ++n) {
-				bool is_selected = (material_types_current == material_types[n]);
-				if (ImGui::Selectable(material_types[n], is_selected)) {
-					material.material_type = ShaderType(n);
+		const char* materialTypes[] = {"Standard", "Phong"};
+		const char* materialTypesCurrent = materialTypes[(int) material.materialType];
+		if (ImGui::BeginCombo("Type", materialTypesCurrent)) {
+			for (int n = 0; n < IM_ARRAYSIZE(materialTypes); ++n) {
+				bool isSelected = (materialTypesCurrent == materialTypes[n]);
+				if (ImGui::Selectable(materialTypes[n], isSelected)) {
+					material.materialType = ShaderType(n);
 				}
-				if (is_selected) {
+				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
 				}
 			}
 			ImGui::EndCombo();
 			ImGui::Text("");
 		}
-		if (material.material_type == ShaderType::PHONG) {
+		if (material.materialType == ShaderType::PHONG) {
 			std::vector<Texture*> textures;
 			for (Texture& texture : App->resources->textures) textures.push_back(&texture);
 
 			// Diffuse Texture Combo
-			const char* diffuse_items[] = {"Diffuse Color", "Diffuse Texture"};
-			const char* diffuse_item_current = diffuse_items[material.has_diffuse_map];
-			ImGui::TextColored(App->editor->text_color, "Diffuse Settings:");
-			if (ImGui::BeginCombo("##diffuse", diffuse_item_current)) {
-				for (int n = 0; n < IM_ARRAYSIZE(diffuse_items); ++n) {
-					bool is_selected = (diffuse_item_current == diffuse_items[n]);
-					if (ImGui::Selectable(diffuse_items[n], is_selected)) {
-						material.has_diffuse_map = n ? 1 : 0;
+			const char* diffuseItems[] = {"Diffuse Color", "Diffuse Texture"};
+			const char* diffuseItemCurrent = diffuseItems[material.hasDiffuseMap];
+			ImGui::TextColored(App->editor->textColor, "Diffuse Settings:");
+			if (ImGui::BeginCombo("##diffuse", diffuseItemCurrent)) {
+				for (int n = 0; n < IM_ARRAYSIZE(diffuseItems); ++n) {
+					bool isSelected = (diffuseItemCurrent == diffuseItems[n]);
+					if (ImGui::Selectable(diffuseItems[n], isSelected)) {
+						material.hasDiffuseMap = n ? 1 : 0;
 					}
-					if (is_selected) {
+					if (isSelected) {
 						ImGui::SetItemDefaultFocus();
 					}
 				}
 				ImGui::EndCombo();
 			}
-			if (diffuse_item_current == diffuse_items[0]) {
-				ImGui::ColorEdit3("Color##diffuse", material.diffuse_color.ptr());
+			if (diffuseItemCurrent == diffuseItems[0]) {
+				ImGui::ColorEdit3("Color##diffuse", material.diffuseColor.ptr());
 			} else {
-				std::string& current_diffuse_texture = material.diffuse_map ? material.diffuse_map->file_name : "";
-				if (ImGui::BeginCombo("Texture##diffuse", current_diffuse_texture.c_str())) {
+				std::string& currentDiffuseTexture = material.diffuseMap ? material.diffuseMap->fileName : "";
+				if (ImGui::BeginCombo("Texture##diffuse", currentDiffuseTexture.c_str())) {
 					for (unsigned i = 0; i < textures.size(); ++i) {
-						bool is_selected = (current_diffuse_texture == textures[i]->file_name);
-						if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected)) {
-							material.diffuse_map = textures[i];
+						bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
+						if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
+							material.diffuseMap = textures[i];
 						};
-						if (is_selected) {
+						if (isSelected) {
 							ImGui::SetItemDefaultFocus();
 						}
 					}
@@ -95,32 +95,32 @@ void ComponentMaterial::OnEditorUpdate() {
 			ImGui::Text("");
 
 			// Specular Texture Combo
-			const char* specular_items[] = {"Specular Color", "Specular Texture"};
-			const char* specular_item_current = specular_items[material.has_specular_map];
-			ImGui::TextColored(App->editor->text_color, "Specular Settings:");
-			if (ImGui::BeginCombo("##specular", specular_item_current)) {
-				for (int n = 0; n < IM_ARRAYSIZE(specular_items); ++n) {
-					bool is_selected = (specular_item_current == specular_items[n]);
-					if (ImGui::Selectable(specular_items[n], is_selected)) {
-						material.has_specular_map = n ? 1 : 0;
+			const char* specularItems[] = {"Specular Color", "Specular Texture"};
+			const char* specularItemCurrent = specularItems[material.hasSpecularMap];
+			ImGui::TextColored(App->editor->textColor, "Specular Settings:");
+			if (ImGui::BeginCombo("##specular", specularItemCurrent)) {
+				for (int n = 0; n < IM_ARRAYSIZE(specularItems); ++n) {
+					bool isSelected = (specularItemCurrent == specularItems[n]);
+					if (ImGui::Selectable(specularItems[n], isSelected)) {
+						material.hasSpecularMap = n ? 1 : 0;
 					};
-					if (is_selected) {
+					if (isSelected) {
 						ImGui::SetItemDefaultFocus();
 					}
 				}
 				ImGui::EndCombo();
 			}
-			if (specular_item_current == specular_items[0]) {
-				ImGui::ColorEdit3("Color##specular", material.specular_color.ptr());
+			if (specularItemCurrent == specularItems[0]) {
+				ImGui::ColorEdit3("Color##specular", material.specularColor.ptr());
 			} else {
-				std::string& current_specular_texture = material.specular_map ? material.specular_map->file_name : "";
-				if (ImGui::BeginCombo("Texture##specular", current_specular_texture.c_str())) {
+				std::string& currentSpecularTexture = material.specularMap ? material.specularMap->fileName : "";
+				if (ImGui::BeginCombo("Texture##specular", currentSpecularTexture.c_str())) {
 					for (unsigned i = 0; i < textures.size(); ++i) {
-						bool is_selected = (current_specular_texture == textures[i]->file_name);
-						if (ImGui::Selectable(textures[i]->file_name.c_str(), is_selected)) {
-							material.specular_map = textures[i];
+						bool isSelected = (currentSpecularTexture == textures[i]->fileName);
+						if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
+							material.specularMap = textures[i];
 						};
-						if (is_selected) {
+						if (isSelected) {
 							ImGui::SetItemDefaultFocus();
 						}
 					}
@@ -129,37 +129,37 @@ void ComponentMaterial::OnEditorUpdate() {
 			}
 
 			// Shininess Combo
-			const char* shininess_items[] = {"Shininess Value", "Shininess Alpha"};
-			const char* shininess_item_current = shininess_items[material.has_shininess_in_alpha_channel];
-			if (ImGui::BeginCombo("##shininess", shininess_item_current)) {
-				for (int n = 0; n < IM_ARRAYSIZE(shininess_items); ++n) {
-					bool is_selected = (shininess_item_current == shininess_items[n]);
-					if (ImGui::Selectable(shininess_items[n], is_selected)) {
-						material.has_shininess_in_alpha_channel = n ? 1 : 0;
+			const char* shininessItems[] = {"Shininess Value", "Shininess Alpha"};
+			const char* shininessItemCurrent = shininessItems[material.hasShininessInAlphaChannel];
+			if (ImGui::BeginCombo("##shininess", shininessItemCurrent)) {
+				for (int n = 0; n < IM_ARRAYSIZE(shininessItems); ++n) {
+					bool isSelected = (shininessItemCurrent == shininessItems[n]);
+					if (ImGui::Selectable(shininessItems[n], isSelected)) {
+						material.hasShininessInAlphaChannel = n ? 1 : 0;
 					}
-					if (is_selected) {
+					if (isSelected) {
 						ImGui::SetItemDefaultFocus();
 					}
 				}
 				ImGui::EndCombo();
 			}
-			if (shininess_item_current == shininess_items[0]) {
-				ImGui::DragFloat("Shininess##shininess", &material.shininess, App->editor->drag_speed3f, 0.0f, 1000.0f);
+			if (shininessItemCurrent == shininessItems[0]) {
+				ImGui::DragFloat("Shininess##shininess", &material.shininess, App->editor->dragSpeed3f, 0.0f, 1000.0f);
 			}
 		}
 		ImGui::Separator();
-		ImGui::TextColored(App->editor->title_color, "Filters");
+		ImGui::TextColored(App->editor->titleColor, "Filters");
 
 		// Min filter combo box
-		const char* min_filter_items[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
-		const char* min_filter_item_current = min_filter_items[int(App->resources->GetMinFilter())];
-		if (ImGui::BeginCombo("Min filter", min_filter_item_current)) {
-			for (int n = 0; n < IM_ARRAYSIZE(min_filter_items); ++n) {
-				bool is_selected = (min_filter_item_current == min_filter_items[n]);
-				if (ImGui::Selectable(min_filter_items[n], is_selected)) {
+		const char* minFilterItems[] = {"Nearest", "Linear", "Nearest Mipmap Nearest", "Linear Mipmap Nearest", "Nearest Mipmap Linear", "Linear Mipmap Linear"};
+		const char* minFilterItemCurrent = minFilterItems[(int) App->resources->GetMinFilter()];
+		if (ImGui::BeginCombo("Min filter", minFilterItemCurrent)) {
+			for (int n = 0; n < IM_ARRAYSIZE(minFilterItems); ++n) {
+				bool isSelected = (minFilterItemCurrent == minFilterItems[n]);
+				if (ImGui::Selectable(minFilterItems[n], isSelected)) {
 					App->resources->SetMinFilter(TextureMinFilter(n));
 				}
-				if (is_selected) {
+				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
 				}
 			}
@@ -167,15 +167,15 @@ void ComponentMaterial::OnEditorUpdate() {
 		}
 
 		// Mag filter combo box
-		const char* mag_filter_items[] = {"Nearest", "Linear"};
-		const char* mag_filter_item_current = mag_filter_items[int(App->resources->GetMagFilter())];
-		if (ImGui::BeginCombo("Mag filter", mag_filter_item_current)) {
-			for (int n = 0; n < IM_ARRAYSIZE(mag_filter_items); ++n) {
-				bool is_selected = (mag_filter_item_current == mag_filter_items[n]);
-				if (ImGui::Selectable(mag_filter_items[n], is_selected)) {
+		const char* magFilterItems[] = {"Nearest", "Linear"};
+		const char* magFilterItemCurrent = magFilterItems[(int) App->resources->GetMagFilter()];
+		if (ImGui::BeginCombo("Mag filter", magFilterItemCurrent)) {
+			for (int n = 0; n < IM_ARRAYSIZE(magFilterItems); ++n) {
+				bool isSelected = (magFilterItemCurrent == magFilterItems[n]);
+				if (ImGui::Selectable(magFilterItems[n], isSelected)) {
 					App->resources->SetMagFilter(TextureMagFilter(n));
 				}
-				if (is_selected) {
+				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
 				}
 			}
@@ -183,120 +183,120 @@ void ComponentMaterial::OnEditorUpdate() {
 		}
 
 		// Texture wrap combo box
-		const char* wrap_items[] = {"Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge"};
-		const char* wrap_item_current = wrap_items[int(App->resources->GetWrap())];
-		if (ImGui::BeginCombo("Wrap", wrap_item_current)) {
-			for (int n = 0; n < IM_ARRAYSIZE(wrap_items); ++n) {
-				bool is_selected = (wrap_item_current == wrap_items[n]);
-				if (ImGui::Selectable(wrap_items[n], is_selected)) {
+		const char* wrapItems[] = {"Repeat", "Clamp to Edge", "Clamp to Border", "Mirrored Repeat", "Mirrored Clamp to Edge"};
+		const char* wrapItemCurrent = wrapItems[(int) App->resources->GetWrap()];
+		if (ImGui::BeginCombo("Wrap", wrapItemCurrent)) {
+			for (int n = 0; n < IM_ARRAYSIZE(wrapItems); ++n) {
+				bool isSelected = (wrapItemCurrent == wrapItems[n]);
+				if (ImGui::Selectable(wrapItems[n], isSelected)) {
 					App->resources->SetWrap(TextureWrap(n));
 				}
-				if (is_selected) {
+				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
 				}
 			}
 			ImGui::EndCombo();
 		}
 		ImGui::Separator();
-		if (material.diffuse_map != nullptr) {
-			ImGui::TextColored(App->editor->title_color, "Diffuse Texture");
+		if (material.diffuseMap != nullptr) {
+			ImGui::TextColored(App->editor->titleColor, "Diffuse Texture");
 			ImGui::TextWrapped("Size:##diffuse");
 			ImGui::SameLine();
 			int width;
 			int height;
-			glGetTextureLevelParameteriv(material.diffuse_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material.diffuse_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
+			glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
 			ImGui::TextWrapped("%d x %d##diffuse", width, height);
-			ImGui::Image((void*) material.diffuse_map->gl_texture, ImVec2(200, 200));
+			ImGui::Image((void*) material.diffuseMap->glTexture, ImVec2(200, 200));
 			ImGui::Separator();
 		}
-		if (material.specular_map != nullptr) {
-			ImGui::TextColored(App->editor->title_color, "Specular Texture");
+		if (material.specularMap != nullptr) {
+			ImGui::TextColored(App->editor->titleColor, "Specular Texture");
 			ImGui::TextWrapped("Size:##specular");
 			ImGui::SameLine();
 			int width;
 			int height;
-			glGetTextureLevelParameteriv(material.specular_map->gl_texture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material.specular_map->gl_texture, 0, GL_TEXTURE_HEIGHT, &height);
+			glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
 			ImGui::TextWrapped("%d x %d##specular", width, height);
-			ImGui::Image((void*) material.specular_map->gl_texture, ImVec2(200, 200));
+			ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
 			ImGui::Separator();
 		}
 	}
 }
 
-void ComponentMaterial::Save(JsonValue j_component) const {
-	j_component[JSON_TAG_HAS_DIFFUSE_MAP] = material.has_diffuse_map;
-	JsonValue j_diffuse_color = j_component[JSON_TAG_DIFFUSE_COLOR];
-	j_diffuse_color[0] = material.diffuse_color.x;
-	j_diffuse_color[1] = material.diffuse_color.y;
-	j_diffuse_color[2] = material.diffuse_color.z;
-	if (material.has_diffuse_map) j_component[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuse_map->file_name.c_str();
+void ComponentMaterial::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_HAS_DIFFUSE_MAP] = material.hasDiffuseMap;
+	JsonValue jDiffuseColor = jComponent[JSON_TAG_DIFFUSE_COLOR];
+	jDiffuseColor[0] = material.diffuseColor.x;
+	jDiffuseColor[1] = material.diffuseColor.y;
+	jDiffuseColor[2] = material.diffuseColor.z;
+	if (material.hasDiffuseMap) jComponent[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuseMap->fileName.c_str();
 
-	j_component[JSON_TAG_HAS_SPECULAR_MAP] = material.has_specular_map;
-	JsonValue j_specular_color = j_component[JSON_TAG_SPECULAR_COLOR];
-	j_specular_color[0] = material.specular_color.x;
-	j_specular_color[1] = material.specular_color.y;
-	j_specular_color[2] = material.specular_color.z;
-	if (material.has_specular_map) j_component[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specular_map->file_name.c_str();
+	jComponent[JSON_TAG_HAS_SPECULAR_MAP] = material.hasSpecularMap;
+	JsonValue jSpecularColor = jComponent[JSON_TAG_SPECULAR_COLOR];
+	jSpecularColor[0] = material.specularColor.x;
+	jSpecularColor[1] = material.specularColor.y;
+	jSpecularColor[2] = material.specularColor.z;
+	if (material.hasSpecularMap) jComponent[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
 
-	j_component[JSON_TAG_SHININESS] = material.shininess;
-	j_component[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.has_shininess_in_alpha_channel;
+	jComponent[JSON_TAG_SHININESS] = material.shininess;
+	jComponent[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.hasShininessInAlphaChannel;
 
-	JsonValue j_ambient = j_component[JSON_TAG_AMBIENT];
-	j_ambient[0] = material.ambient.x;
-	j_ambient[1] = material.ambient.y;
-	j_ambient[2] = material.ambient.z;
+	JsonValue jAmbient = jComponent[JSON_TAG_AMBIENT];
+	jAmbient[0] = material.ambient.x;
+	jAmbient[1] = material.ambient.y;
+	jAmbient[2] = material.ambient.z;
 }
 
-void ComponentMaterial::Load(JsonValue j_component) {
-	material.has_diffuse_map = j_component[JSON_TAG_HAS_DIFFUSE_MAP];
-	JsonValue j_diffuse_color = j_component[JSON_TAG_DIFFUSE_COLOR];
-	material.diffuse_color.Set(j_diffuse_color[0], j_diffuse_color[1], j_diffuse_color[2]);
-	if (material.has_diffuse_map) {
-		std::string diffuse_file_name = j_component[JSON_TAG_DIFFUSE_MAP_FILE_NAME];
+void ComponentMaterial::Load(JsonValue jComponent) {
+	material.hasDiffuseMap = jComponent[JSON_TAG_HAS_DIFFUSE_MAP];
+	JsonValue jDiffuseColor = jComponent[JSON_TAG_DIFFUSE_COLOR];
+	material.diffuseColor.Set(jDiffuseColor[0], jDiffuseColor[1], jDiffuseColor[2]);
+	if (material.hasDiffuseMap) {
+		std::string diffuseFileName = jComponent[JSON_TAG_DIFFUSE_MAP_FILE_NAME];
 		for (Texture& texture : App->resources->textures) {
-			if (texture.file_name == diffuse_file_name) {
-				material.diffuse_map = &texture;
+			if (texture.fileName == diffuseFileName) {
+				material.diffuseMap = &texture;
 			}
 		}
-		if (material.diffuse_map == nullptr) {
-			material.diffuse_map = App->resources->ObtainTexture();
-			material.diffuse_map->file_name = diffuse_file_name;
+		if (material.diffuseMap == nullptr) {
+			material.diffuseMap = App->resources->ObtainTexture();
+			material.diffuseMap->fileName = diffuseFileName;
 		}
 
-		TextureImporter::UnloadTexture(material.diffuse_map);
-		TextureImporter::LoadTexture(material.diffuse_map);
-	} else if (material.diffuse_map != nullptr) {
-		App->resources->ReleaseTexture(material.diffuse_map);
-		material.diffuse_map = nullptr;
+		TextureImporter::UnloadTexture(material.diffuseMap);
+		TextureImporter::LoadTexture(material.diffuseMap);
+	} else if (material.diffuseMap != nullptr) {
+		App->resources->ReleaseTexture(material.diffuseMap);
+		material.diffuseMap = nullptr;
 	}
 
-	material.has_specular_map = j_component[JSON_TAG_HAS_SPECULAR_MAP];
-	JsonValue j_specular_color = j_component[JSON_TAG_SPECULAR_COLOR];
-	material.specular_color.Set(j_specular_color[0], j_specular_color[1], j_specular_color[2]);
-	if (material.has_specular_map) {
-		std::string specular_file_name = j_component[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
+	material.hasSpecularMap = jComponent[JSON_TAG_HAS_SPECULAR_MAP];
+	JsonValue jSpecularColor = jComponent[JSON_TAG_SPECULAR_COLOR];
+	material.specularColor.Set(jSpecularColor[0], jSpecularColor[1], jSpecularColor[2]);
+	if (material.hasSpecularMap) {
+		std::string specularFileName = jComponent[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
 		for (Texture& texture : App->resources->textures) {
-			if (texture.file_name == specular_file_name) {
-				material.specular_map = &texture;
+			if (texture.fileName == specularFileName) {
+				material.specularMap = &texture;
 			}
 		}
-		if (material.specular_map == nullptr) {
-			material.specular_map = App->resources->ObtainTexture();
-			material.specular_map->file_name = specular_file_name;
+		if (material.specularMap == nullptr) {
+			material.specularMap = App->resources->ObtainTexture();
+			material.specularMap->fileName = specularFileName;
 		}
 
-		TextureImporter::UnloadTexture(material.specular_map);
-		TextureImporter::LoadTexture(material.specular_map);
-	} else if (material.specular_map != nullptr) {
-		App->resources->ReleaseTexture(material.specular_map);
-		material.specular_map = nullptr;
+		TextureImporter::UnloadTexture(material.specularMap);
+		TextureImporter::LoadTexture(material.specularMap);
+	} else if (material.specularMap != nullptr) {
+		App->resources->ReleaseTexture(material.specularMap);
+		material.specularMap = nullptr;
 	}
 
-	material.shininess = j_component[JSON_TAG_SHININESS];
-	material.has_shininess_in_alpha_channel = j_component[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
+	material.shininess = jComponent[JSON_TAG_SHININESS];
+	material.hasShininessInAlphaChannel = jComponent[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
 
-	JsonValue j_ambient = j_component[JSON_TAG_AMBIENT];
-	material.ambient.Set(j_ambient[0], j_ambient[1], j_ambient[2]);
+	JsonValue jAmbient = jComponent[JSON_TAG_AMBIENT];
+	material.ambient.Set(jAmbient[0], jAmbient[1], jAmbient[2]);
 }

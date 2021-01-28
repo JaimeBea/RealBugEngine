@@ -37,7 +37,7 @@ public:
 	void ReleaseTexture(Texture* texture);
 
 	CubeMap* ObtainCubeMap();
-	void ReleaseCubeMap(CubeMap* cube_map);
+	void ReleaseCubeMap(CubeMap* cubeMap);
 
 	Mesh* ObtainMesh();
 	void ReleaseMesh(Mesh* mesh);
@@ -54,11 +54,11 @@ public:
 
 public:
 	Pool<Texture> textures;
-	Pool<CubeMap> cube_maps;
+	Pool<CubeMap> cubeMaps;
 	Pool<Mesh> meshes;
 
 private:
-	TextureMinFilter min_filter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;
-	TextureMagFilter mag_filter = TextureMagFilter::LINEAR;
-	TextureWrap texture_wrap = TextureWrap::REPEAT;
+	TextureMinFilter minFilter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;
+	TextureMagFilter magFilter = TextureMagFilter::LINEAR;
+	TextureWrap textureWrap = TextureWrap::REPEAT;
 };

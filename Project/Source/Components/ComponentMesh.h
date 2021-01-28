@@ -15,14 +15,14 @@ public:
 	REGISTER_COMPONENT(ComponentMesh, ComponentType::MESH);
 
 	void OnEditorUpdate() override;
-	void Save(JsonValue j_component) const override;
-	void Load(JsonValue j_component) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
-	void Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& model_matrix) const;
+	void Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& modelMatrix) const;
 
 public:
 	Mesh* mesh = nullptr;
 
 private:
-	bool bb_active = false;
+	bool bbActive = false;
 };

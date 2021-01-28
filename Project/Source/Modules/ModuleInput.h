@@ -21,7 +21,7 @@ public:
 	bool CleanUp() override;
 
 	void ReleaseDroppedFilePath();
-	void WarpMouse(int mouse_x, int mouse_y);
+	void WarpMouse(int mouseX, int mouseY);
 
 	const char* GetDroppedFilePath() const;
 	KeyState GetKey(int scancode) const;
@@ -31,11 +31,11 @@ public:
 	const float2& GetMousePosition() const;
 
 private:
-	char* dropped_file_path = nullptr;
+	char* droppedFilePath = nullptr;
 	KeyState keyboard[SDL_NUM_SCANCODES] = {KS_IDLE};
-	KeyState mouse_buttons[NUM_MOUSE_BUTTONS] = {KS_IDLE};
-	float mouse_wheel_motion = 0;
-	float2 mouse_motion = {0, 0};
+	KeyState mouseButtons[NUM_MOUSE_BUTTONS] = {KS_IDLE};
+	float mouseWheelMotion = 0;
+	float2 mouseMotion = {0, 0};
 	float2 mouse = {0, 0};
-	bool mouse_warped = false;
+	bool mouseWarped = false;
 };

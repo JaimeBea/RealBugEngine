@@ -62,19 +62,19 @@ void ComponentLight::OnEditorUpdate() {
 		ImGui::Checkbox("Draw Gizmos", &drawGizmos);
 		ImGui::Separator();
 
-		ImGui::TextColored(App->editor->title_color, "Parameters");
+		ImGui::TextColored(App->editor->titleColor, "Parameters");
 
 		// Light Type Combo
 		const char* lightTypeCombo[] = {"Directional Light", "Point Light", "Spot Light"};
 		const char* lightTypeComboCurrent = lightTypeCombo[(int) lightType];
-		ImGui::TextColored(App->editor->text_color, "Light Type:");
+		ImGui::TextColored(App->editor->textColor, "Light Type:");
 		if (ImGui::BeginCombo("##lightType", lightTypeComboCurrent)) {
 			for (int n = 0; n < IM_ARRAYSIZE(lightTypeCombo); ++n) {
-				bool is_selected = (lightTypeComboCurrent == lightTypeCombo[n]);
-				if (ImGui::Selectable(lightTypeCombo[n], is_selected)) {
+				bool isSelected = (lightTypeComboCurrent == lightTypeCombo[n]);
+				if (ImGui::Selectable(lightTypeCombo[n], isSelected)) {
 					lightType = (LightType) n;
 				}
-				if (is_selected) {
+				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
 				}
 			}
@@ -85,20 +85,20 @@ void ComponentLight::OnEditorUpdate() {
 			ImGui::InputFloat3("Direction", direction.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 		ImGui::ColorEdit3("Color", color.ptr());
-		ImGui::DragFloat("Intensity", &intensity, App->editor->drag_speed3f, 0.0f, inf);
+		ImGui::DragFloat("Intensity", &intensity, App->editor->dragSpeed3f, 0.0f, inf);
 
 		if (lightType == LightType::POINT || lightType == LightType::SPOT) {
-			ImGui::DragFloat("Linear Constant", &kl, App->editor->drag_speed5f, 0.0f, 2.0f);
-			ImGui::DragFloat("Quadratic Constant", &kq, App->editor->drag_speed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Linear Constant", &kl, App->editor->dragSpeed5f, 0.0f, 2.0f);
+			ImGui::DragFloat("Quadratic Constant", &kq, App->editor->dragSpeed5f, 0.0f, 2.0f);
 		}
 
 		if (lightType == LightType::SPOT) {
 			float degOuterAngle = outerAngle * RADTODEG;
 			float degInnerAngle = innerAngle * RADTODEG;
-			if (ImGui::DragFloat("Outter Angle", &degOuterAngle, App->editor->drag_speed3f, 0.0f, 90.0f)) {
+			if (ImGui::DragFloat("Outter Angle", &degOuterAngle, App->editor->dragSpeed3f, 0.0f, 90.0f)) {
 				outerAngle = degOuterAngle * DEGTORAD;
 			}
-			if (ImGui::DragFloat("Inner Angle", &degInnerAngle, App->editor->drag_speed3f, 0.0f, degOuterAngle)) {
+			if (ImGui::DragFloat("Inner Angle", &degInnerAngle, App->editor->dragSpeed3f, 0.0f, degOuterAngle)) {
 				innerAngle = degInnerAngle * DEGTORAD;
 			}
 		}

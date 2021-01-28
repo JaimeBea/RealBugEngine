@@ -9,63 +9,63 @@
 
 #include "Utils/Leaks.h"
 
-static unsigned CreateShader(unsigned type, const char* file_name) {
-	LOG("Creating shader from file: \"%s\"...", file_name);
+static unsigned CreateShader(unsigned type, const char* filePath) {
+	LOG("Creating shader from file: \"%s\"...", filePath);
 
-	Buffer<char> source_buffer = App->files->Load(file_name);
-	char* source = source_buffer.Data();
+	Buffer<char> sourceBuffer = App->files->Load(filePath);
+	char* source = sourceBuffer.Data();
 
-	unsigned shader_id = glCreateShader(type);
-	glShaderSource(shader_id, 1, &source, 0);
+	unsigned shaderId = glCreateShader(type);
+	glShaderSource(shaderId, 1, &source, 0);
 
-	glCompileShader(shader_id);
+	glCompileShader(shaderId);
 
 	int res = GL_FALSE;
-	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &res);
 	if (res == GL_FALSE) {
 		int len = 0;
-		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
+		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &len);
 		if (len > 0) {
 			int written = 0;
 			Buffer<char> info = Buffer<char>(len);
-			glGetShaderInfoLog(shader_id, len, &written, info.Data());
+			glGetShaderInfoLog(shaderId, len, &written, info.Data());
 			LOG("Log Info: %s", info.Data());
 		}
 	}
 
 	LOG("Shader created successfuly.");
-	return shader_id;
+	return shaderId;
 }
 
-static unsigned CreateProgram(const char* vertex_shader_file_name, const char* fragment_shader_file_name) {
+static unsigned CreateProgram(const char* vertexShaderFilePath, const char* fragmentShaderFilePath) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
 	LOG("Compiling shaders...");
-	unsigned vertex_shader = CreateShader(GL_VERTEX_SHADER, vertex_shader_file_name);
+	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, vertexShaderFilePath);
 	DEFER {
-		glDeleteShader(vertex_shader);
+		glDeleteShader(vertexShader);
 	};
-	unsigned fragment_shader = CreateShader(GL_FRAGMENT_SHADER, fragment_shader_file_name);
+	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, fragmentShaderFilePath);
 	DEFER {
-		glDeleteShader(fragment_shader);
+		glDeleteShader(fragmentShader);
 	};
 
 	// Link the program
 	LOG("Linking program...");
-	unsigned program_id = glCreateProgram();
-	glAttachShader(program_id, vertex_shader);
-	glAttachShader(program_id, fragment_shader);
-	glLinkProgram(program_id);
+	unsigned programId = glCreateProgram();
+	glAttachShader(programId, vertexShader);
+	glAttachShader(programId, fragmentShader);
+	glLinkProgram(programId);
 	int res = GL_FALSE;
-	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
+	glGetProgramiv(programId, GL_LINK_STATUS, &res);
 	if (res == GL_FALSE) {
 		int len = 0;
-		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
+		glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &len);
 		if (len > 0) {
 			int written = 0;
 			Buffer<char> info = Buffer<char>(len);
-			glGetProgramInfoLog(program_id, len, &written, info.Data());
+			glGetProgramInfoLog(programId, len, &written, info.Data());
 			LOG("Program Log Info: %s", info.Data());
 		}
 
@@ -74,20 +74,20 @@ static unsigned CreateProgram(const char* vertex_shader_file_name, const char* f
 		LOG("Program linked.");
 	}
 
-	return program_id;
+	return programId;
 }
 
 bool ModulePrograms::Start() {
-	default_program = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
-	phong_pbr_program = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
-	skybox_program = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
+	defaultProgram = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
+	phongPbrProgram = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
+	skyboxProgram = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
 
 	return true;
 }
 
 bool ModulePrograms::CleanUp() {
-	glDeleteProgram(default_program);
-	glDeleteProgram(phong_pbr_program);
-	glDeleteProgram(skybox_program);
+	glDeleteProgram(defaultProgram);
+	glDeleteProgram(phongPbrProgram);
+	glDeleteProgram(skyboxProgram);
 	return true;
 }

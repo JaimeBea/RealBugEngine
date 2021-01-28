@@ -10,10 +10,10 @@ public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
 	void OnTransformUpdate() override;
-	void Save(JsonValue j_component) const override;
-	void Load(JsonValue j_component) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
-	void SetLocalBoundingBox(const AABB& bounding_box);
+	void SetLocalBoundingBox(const AABB& boundingBox);
 	void CalculateWorldBoundingBox(bool force = false);
 	void DrawBoundingBox();
 	void Invalidate();
@@ -22,9 +22,9 @@ public:
 	const AABB& GetWorldAABB() const;
 
 private:
-	AABB local_aabb = {{0, 0, 0}, {0, 0, 0}};
+	AABB localAABB = {{0, 0, 0}, {0, 0, 0}};
 
 	bool dirty = true;
-	AABB world_aabb = {{0, 0, 0}, {0, 0, 0}};
-	OBB world_obb = {world_aabb};
+	AABB worldAABB = {{0, 0, 0}, {0, 0, 0}};
+	OBB worldOBB = {worldAABB};
 };

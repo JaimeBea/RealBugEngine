@@ -14,8 +14,8 @@ public:
 	virtual void DrawGizmos();
 	virtual void OnTransformUpdate();
 	virtual void OnEditorUpdate();
-	virtual void Save(JsonValue j_component) const;
-	virtual void Load(JsonValue j_component);
+	virtual void Save(JsonValue jComponent) const;
+	virtual void Load(JsonValue jComponent);
 
 	void Enable();
 	void Disable();

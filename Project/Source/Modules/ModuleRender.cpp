@@ -27,68 +27,68 @@
 #include "Utils/Leaks.h"
 
 static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
-	const char *tmp_source = "", *tmp_type = "", *tmp_severity = "";
+	const char *tmpSource = "", *tmpType = "", *tmpSeverity = "";
 	switch (source) {
 	case GL_DEBUG_SOURCE_API:
-		tmp_source = "API";
+		tmpSource = "API";
 		break;
 	case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-		tmp_source = "Window System";
+		tmpSource = "Window System";
 		break;
 	case GL_DEBUG_SOURCE_SHADER_COMPILER:
-		tmp_source = "Shader Compiler";
+		tmpSource = "Shader Compiler";
 		break;
 	case GL_DEBUG_SOURCE_THIRD_PARTY:
-		tmp_source = "Third Party";
+		tmpSource = "Third Party";
 		break;
 	case GL_DEBUG_SOURCE_APPLICATION:
-		tmp_source = "Application";
+		tmpSource = "Application";
 		break;
 	case GL_DEBUG_SOURCE_OTHER:
-		tmp_source = "Other";
+		tmpSource = "Other";
 		break;
 	};
 	switch (type) {
 	case GL_DEBUG_TYPE_ERROR:
-		tmp_type = "Error";
+		tmpType = "Error";
 		break;
 	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-		tmp_type = "Deprecated Behaviour";
+		tmpType = "Deprecated Behaviour";
 		break;
 	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-		tmp_type = "Undefined Behaviour";
+		tmpType = "Undefined Behaviour";
 		break;
 	case GL_DEBUG_TYPE_PORTABILITY:
-		tmp_type = "Portability";
+		tmpType = "Portability";
 		break;
 	case GL_DEBUG_TYPE_PERFORMANCE:
-		tmp_type = "Performance";
+		tmpType = "Performance";
 		break;
 	case GL_DEBUG_TYPE_MARKER:
-		tmp_type = "Marker";
+		tmpType = "Marker";
 		break;
 	case GL_DEBUG_TYPE_PUSH_GROUP:
-		tmp_type = "Push Group";
+		tmpType = "Push Group";
 		break;
 	case GL_DEBUG_TYPE_POP_GROUP:
-		tmp_type = "Pop Group";
+		tmpType = "Pop Group";
 		break;
 	case GL_DEBUG_TYPE_OTHER:
-		tmp_type = "Other";
+		tmpType = "Other";
 		break;
 	};
 	switch (severity) {
 	case GL_DEBUG_SEVERITY_HIGH:
-		tmp_severity = "high";
+		tmpSeverity = "high";
 		break;
 	case GL_DEBUG_SEVERITY_MEDIUM:
-		tmp_severity = "medium";
+		tmpSeverity = "medium";
 		break;
 	case GL_DEBUG_SEVERITY_LOW:
-		tmp_severity = "low";
+		tmpSeverity = "low";
 		break;
 	case GL_DEBUG_SEVERITY_NOTIFICATION:
-		tmp_severity = "notification";
+		tmpSeverity = "notification";
 		break;
 	};
 
@@ -96,7 +96,7 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 		return;
 	}
 
-	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>", tmp_source, tmp_type, tmp_severity, id, message);
+	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>", tmpSource, tmpType, tmpSeverity, id, message);
 }
 
 bool ModuleRender::Init() {
@@ -119,8 +119,8 @@ bool ModuleRender::Init() {
 #endif
 
 	glGenFramebuffers(1, &framebuffer);
-	glGenRenderbuffers(1, &depth_renderbuffer);
-	glGenTextures(1, &render_texture);
+	glGenRenderbuffers(1, &depthRenderbuffer);
+	glGenTextures(1, &renderTexture);
 
 	ViewportResized(200, 200);
 
@@ -131,9 +131,9 @@ UpdateStatus ModuleRender::PreUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PreUpdate", Profiler::Color::Green)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glViewport(0, 0, viewport_width, viewport_height);
+	glViewport(0, 0, viewportWidth, viewportHeight);
 
-	glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.0f);
+	glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	return UpdateStatus::CONTINUE;
@@ -149,17 +149,17 @@ UpdateStatus ModuleRender::Update() {
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (GameObject& game_object : App->scene->game_objects) {
-		game_object.flag = false;
-		if (game_object.is_in_quadtree) continue;
+	for (GameObject& gameObject : App->scene->gameObjects) {
+		gameObject.flag = false;
+		if (gameObject.isInQuadtree) continue;
 
-		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
-		if (bounding_box == nullptr) continue;
+		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
+		if (boundingBox == nullptr) continue;
 
-		const AABB& game_object_aabb = bounding_box->GetWorldAABB();
-		const OBB& game_object_obb = bounding_box->GetWorldOBB();
-		if (CheckIfInsideFrustum(game_object_aabb, game_object_obb)) {
-			DrawGameObject(&game_object);
+		const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
+		const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+		if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
+			DrawGameObject(&gameObject);
 		}
 	}
 	if (App->scene->quadtree.IsOperative()) {
@@ -168,16 +168,16 @@ UpdateStatus ModuleRender::Update() {
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
 	// Draw Guizmos
-	GameObject* selected_object = App->editor->selected_object;
-	if (selected_object) selected_object->DrawGizmos();
+	GameObject* selectedGameObject = App->editor->selectedGameObject;
+	if (selectedGameObject) selectedGameObject->DrawGizmos();
 
 	// Draw quadtree
-	if (draw_quadtree) {
+	if (drawQuadtree) {
 		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
 	}
 
 	// Draw debug draw
-	App->debug_draw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewport_width, viewport_height);
+	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
 	return UpdateStatus::CONTINUE;
 }
@@ -191,29 +191,29 @@ UpdateStatus ModuleRender::PostUpdate() {
 }
 
 bool ModuleRender::CleanUp() {
-	glDeleteTextures(1, &render_texture);
-	glDeleteRenderbuffers(1, &depth_renderbuffer);
+	glDeleteTextures(1, &renderTexture);
+	glDeleteRenderbuffers(1, &depthRenderbuffer);
 	glDeleteFramebuffers(1, &framebuffer);
 
 	return true;
 }
 
 void ModuleRender::ViewportResized(int width, int height) {
-	viewport_width = width;
-	viewport_height = height;
+	viewportWidth = width;
+	viewportHeight = height;
 
 	// Framebuffer calculations
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-	glBindTexture(GL_TEXTURE_2D, render_texture);
+	glBindTexture(GL_TEXTURE_2D, renderTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, render_texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
 
-	glBindRenderbuffer(GL_RENDERBUFFER, depth_renderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depth_renderbuffer);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		LOG("ERROR: Framebuffer is not complete!");
@@ -228,21 +228,21 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 	if (node.IsBranch()) {
 		vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
 
-		const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
-		AABB2D top_left_aabb = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
-		DrawQuadtreeRecursive(top_left, top_left_aabb);
+		const Quadtree<GameObject>::Node& topLeft = node.childNodes->nodes[0];
+		AABB2D topLeftAABB = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
+		DrawQuadtreeRecursive(topLeft, topLeftAABB);
 
-		const Quadtree<GameObject>::Node& top_right = node.child_nodes->nodes[1];
-		AABB2D top_right_aabb = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
-		DrawQuadtreeRecursive(top_right, top_right_aabb);
+		const Quadtree<GameObject>::Node& topRight = node.childNodes->nodes[1];
+		AABB2D topRightAABB = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
+		DrawQuadtreeRecursive(topRight, topRightAABB);
 
-		const Quadtree<GameObject>::Node& bottom_left = node.child_nodes->nodes[2];
-		AABB2D bottom_left_aabb = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
-		DrawQuadtreeRecursive(bottom_left, bottom_left_aabb);
+		const Quadtree<GameObject>::Node& bottomLeft = node.childNodes->nodes[2];
+		AABB2D bottomLeftAABB = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
+		DrawQuadtreeRecursive(bottomLeft, bottomLeftAABB);
 
-		const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
-		AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
-		DrawQuadtreeRecursive(bottom_right, bottom_right_aabb);
+		const Quadtree<GameObject>::Node& bottomRight = node.childNodes->nodes[3];
+		AABB2D bottomRightAABB = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
+		DrawQuadtreeRecursive(bottomRight, bottomRightAABB);
 	} else {
 		float3 points[8] = {
 			{aabb.minPoint.x, 0, aabb.minPoint.y},
@@ -259,39 +259,39 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 }
 
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
-	AABB aabb_3d = AABB({aabb.minPoint.x, -1000000.0f, aabb.minPoint.y}, {aabb.maxPoint.x, 1000000.0f, aabb.maxPoint.y});
-	if (CheckIfInsideFrustum(aabb_3d, OBB(aabb_3d))) {
+	AABB aabb3d = AABB({aabb.minPoint.x, -1000000.0f, aabb.minPoint.y}, {aabb.maxPoint.x, 1000000.0f, aabb.maxPoint.y});
+	if (CheckIfInsideFrustum(aabb3d, OBB(aabb3d))) {
 		if (node.IsBranch()) {
 			vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
 
-			const Quadtree<GameObject>::Node& top_left = node.child_nodes->nodes[0];
-			AABB2D top_left_aabb = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
-			DrawSceneRecursive(top_left, top_left_aabb);
+			const Quadtree<GameObject>::Node& topLeft = node.childNodes->nodes[0];
+			AABB2D topLeftAABB = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
+			DrawSceneRecursive(topLeft, topLeftAABB);
 
-			const Quadtree<GameObject>::Node& top_right = node.child_nodes->nodes[1];
-			AABB2D top_right_aabb = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
-			DrawSceneRecursive(top_right, top_right_aabb);
+			const Quadtree<GameObject>::Node& topRight = node.childNodes->nodes[1];
+			AABB2D topRightAABB = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
+			DrawSceneRecursive(topRight, topRightAABB);
 
-			const Quadtree<GameObject>::Node& bottom_left = node.child_nodes->nodes[2];
-			AABB2D bottom_left_aabb = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
-			DrawSceneRecursive(bottom_left, bottom_left_aabb);
+			const Quadtree<GameObject>::Node& bottomLeft = node.childNodes->nodes[2];
+			AABB2D bottomLeftAABB = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
+			DrawSceneRecursive(bottomLeft, bottomLeftAABB);
 
-			const Quadtree<GameObject>::Node& bottom_right = node.child_nodes->nodes[3];
-			AABB2D bottom_right_aabb = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
-			DrawSceneRecursive(bottom_right, bottom_right_aabb);
+			const Quadtree<GameObject>::Node& bottomRight = node.childNodes->nodes[3];
+			AABB2D bottomRightAABB = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
+			DrawSceneRecursive(bottomRight, bottomRightAABB);
 		} else {
-			const Quadtree<GameObject>::Element* element = node.first_element;
+			const Quadtree<GameObject>::Element* element = node.firstElement;
 			while (element != nullptr) {
-				GameObject* game_object = element->object;
-				if (!game_object->flag) {
-					ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
-					const AABB& game_object_aabb = bounding_box->GetWorldAABB();
-					const OBB& game_object_obb = bounding_box->GetWorldOBB();
-					if (CheckIfInsideFrustum(game_object_aabb, game_object_obb)) {
-						DrawGameObject(game_object);
+				GameObject* gameObject = element->object;
+				if (!gameObject->flag) {
+					ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
+					const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
+					const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+					if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
+						DrawGameObject(gameObject);
 					}
 
-					game_object->flag = true;
+					gameObject->flag = true;
 				}
 				element = element->next;
 			}
@@ -303,8 +303,8 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 	float3 points[8];
 	obb.GetCornerPoints(points);
 
-	const FrustumPlanes& frustum_planes = App->camera->GetFrustumPlanes();
-	for (const Plane& plane : frustum_planes.planes) {
+	const FrustumPlanes& frustumPlanes = App->camera->GetFrustumPlanes();
+	for (const Plane& plane : frustumPlanes.planes) {
 		// check box outside/inside of frustum
 		int out = 0;
 		for (int i = 0; i < 8; i++) {
@@ -316,35 +316,35 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 	// check frustum outside/inside box
 	int out;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].x > aabb.MaxX()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustumPlanes.points[i].x > aabb.MaxX()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].x < aabb.MinX()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustumPlanes.points[i].x < aabb.MinX()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].y > aabb.MaxY()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustumPlanes.points[i].y > aabb.MaxY()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].y < aabb.MinY()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustumPlanes.points[i].y < aabb.MinY()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].z > aabb.MaxZ()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustumPlanes.points[i].z > aabb.MaxZ()) ? 1 : 0);
 	if (out == 8) return false;
 	out = 0;
-	for (int i = 0; i < 8; i++) out += ((frustum_planes.points[i].z < aabb.MinZ()) ? 1 : 0);
+	for (int i = 0; i < 8; i++) out += ((frustumPlanes.points[i].z < aabb.MinZ()) ? 1 : 0);
 	if (out == 8) return false;
 
 	return true;
 }
 
-void ModuleRender::DrawGameObject(GameObject* game_object) {
-	ComponentTransform* transform = game_object->GetComponent<ComponentTransform>();
-	std::vector<ComponentMesh*> meshes = game_object->GetComponents<ComponentMesh>();
-	std::vector<ComponentMaterial*> materials = game_object->GetComponents<ComponentMaterial>();
-	ComponentBoundingBox* bounding_box = game_object->GetComponent<ComponentBoundingBox>();
+void ModuleRender::DrawGameObject(GameObject* gameObject) {
+	ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
+	std::vector<ComponentMesh*> meshes = gameObject->GetComponents<ComponentMesh>();
+	std::vector<ComponentMaterial*> materials = gameObject->GetComponents<ComponentMaterial>();
+	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
-	if (bounding_box && draw_all_bounding_boxes) {
-		bounding_box->DrawBoundingBox();
+	if (boundingBox && drawAllBoundingBoxes) {
+		boundingBox->DrawBoundingBox();
 	}
 
 	for (ComponentMesh* mesh : meshes) {
@@ -353,18 +353,18 @@ void ModuleRender::DrawGameObject(GameObject* game_object) {
 }
 
 void ModuleRender::DrawSkyBox() {
-	if (skybox_active) {
+	if (skyboxActive) {
 		glDepthFunc(GL_LEQUAL);
 
-		unsigned program = App->programs->skybox_program;
+		unsigned program = App->programs->skyboxProgram;
 		glUseProgram(program);
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
 		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
 		glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
 
-		glBindVertexArray(App->scene->skybox_vao);
+		glBindVertexArray(App->scene->skyboxVao);
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, App->scene->skybox_cube_map->gl_texture);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, App->scene->skyboxCubeMap->glTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 

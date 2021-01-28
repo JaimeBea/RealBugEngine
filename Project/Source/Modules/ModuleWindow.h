@@ -39,12 +39,9 @@ public:
 	SDL_Window* window = nullptr;
 	SDL_Surface* surface = nullptr;
 
-	std::vector<SDL_DisplayMode> display_modes;
-
-	int default_window_width = 1280;
-	int default_window_height = 720;
+	std::vector<SDL_DisplayMode> displayModes;
 
 private:
-	WindowMode window_mode = WindowMode::WINDOWED;
-	int current_display_mode = 0;
+	WindowMode windowMode = WindowMode::WINDOWED;
+	int currentDisplayMode = 0;
 };

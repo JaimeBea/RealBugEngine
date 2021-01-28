@@ -4,6 +4,6 @@
 
 class Texture {
 public:
-	std::string file_name = "";
-	unsigned gl_texture = 0;
+	std::string fileName = "";
+	unsigned glTexture = 0;
 };

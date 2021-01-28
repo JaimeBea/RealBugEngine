@@ -27,24 +27,24 @@ public:
 
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* parent);
-	void DestroyGameObject(GameObject* game_object);
+	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
 public:
-	std::string file_name = "";
+	std::string fileName = "";
 	GameObject* root = nullptr;
 
-	Pool<GameObject> game_objects;
-	std::unordered_map<UID, GameObject*> game_objects_id_map;
+	Pool<GameObject> gameObjects;
+	std::unordered_map<UID, GameObject*> gameObjectsIdMap;
 
 	// Quadtree
 	Quadtree<GameObject> quadtree;
-	AABB2D quadtree_bounds = {{-1000, -1000}, {1000, 1000}};
-	unsigned quadtree_max_depth = 4;
-	unsigned quadtree_elements_per_node = 200;
+	AABB2D quadtreeBounds = {{-1000, -1000}, {1000, 1000}};
+	unsigned quadtreeMaxDepth = 4;
+	unsigned quadtreeElementsPerNode = 200;
 
 	// Skybox
-	unsigned skybox_vao = 0;
-	unsigned skybox_vbo = 0;
-	CubeMap* skybox_cube_map = 0;
+	unsigned skyboxVao = 0;
+	unsigned skyboxVbo = 0;
+	CubeMap* skyboxCubeMap = 0;
 };

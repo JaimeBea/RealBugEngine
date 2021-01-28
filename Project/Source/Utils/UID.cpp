@@ -5,9 +5,9 @@
 #include "Utils/Leaks.h"
 
 static std::random_device random;
-static std::mt19937_64 mersenne_twister(random());
+static std::mt19937_64 mersenneTwister(random());
 static std::uniform_int_distribution<UID> distribution;
 
 UID GenerateUID() {
-	return distribution(mersenne_twister);
+	return distribution(mersenneTwister);
 }

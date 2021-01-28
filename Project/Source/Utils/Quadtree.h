@@ -23,111 +23,111 @@ public:
 	class QuadNode;
 	class Node {
 	public:
-		void Add(Quadtree& tree, T* object, const AABB2D& object_aabb, unsigned depth, const AABB2D& node_aabb, bool optimizing) {
+		void Add(Quadtree& tree, T* object, const AABB2D& objectAABB, unsigned depth, const AABB2D& nodeAABB, bool optimizing) {
 			if (IsBranch()) {
 				// Branch
-				child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb, optimizing);
-			} else if (depth == tree.max_depth || (unsigned) element_count < tree.max_node_elements) {
+				childNodes->Add(tree, object, objectAABB, depth + 1, nodeAABB, optimizing);
+			} else if (depth == tree.maxDepth || (unsigned) elementCount < tree.maxNodeElements) {
 				// Leaf that can't split or leaf with space
 				if (optimizing) {
-					Element* new_first_element = tree.elements.Obtain();
-					new_first_element->object = object;
-					new_first_element->aabb = object_aabb;
-					new_first_element->next = first_element;
-					first_element = new_first_element;
+					Element* newFirstElement = tree.elements.Obtain();
+					newFirstElement->object = object;
+					newFirstElement->aabb = objectAABB;
+					newFirstElement->next = firstElement;
+					firstElement = newFirstElement;
 				} else {
 					Element element;
 					element.object = object;
-					element.aabb = object_aabb;
-					size_t index = temp_element_list->size();
-					temp_element_list->emplace_back(element);
-					tree.num_added_elements += 1;
+					element.aabb = objectAABB;
+					size_t index = tempElementList->size();
+					tempElementList->emplace_back(element);
+					tree.numAddedElements += 1;
 				}
-				element_count += 1;
+				elementCount += 1;
 			} else {
 				// Leaf with no space that can split
-				Split(tree, depth, node_aabb, optimizing);
-				child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb, optimizing);
+				Split(tree, depth, nodeAABB, optimizing);
+				childNodes->Add(tree, object, objectAABB, depth + 1, nodeAABB, optimizing);
 			}
 		}
 
 		void Remove(Quadtree& tree, T* object) {
 			if (IsBranch()) {
-				child_nodes->Remove(tree, object);
+				childNodes->Remove(tree, object);
 			} else {
-				Element* element = first_element;
-				Element** element_ptr = &first_element;
+				Element* element = firstElement;
+				Element** elementPtr = &firstElement;
 				while (element != nullptr) {
 					if (element->object == object) {
-						*element_ptr = element->next;
+						*elementPtr = element->next;
 						tree.elements.Release(element);
-						element_count -= 1;
+						elementCount -= 1;
 					}
 
 					element = element->next;
-					element_ptr = &element->next;
+					elementPtr = &element->next;
 				}
 			}
 		}
 
-		void Split(Quadtree& tree, unsigned depth, const AABB2D& node_aabb, bool optimizing) {
+		void Split(Quadtree& tree, unsigned depth, const AABB2D& nodeAABB, bool optimizing) {
 			if (optimizing) {
 				// Get first element before anything changes
-				Element* element = first_element;
+				Element* element = firstElement;
 
 				// Transform leaf into branch
-				element_count = -1;
-				child_nodes = tree.quad_nodes.Obtain();
-				child_nodes->Initialize();
+				elementCount = -1;
+				childNodes = tree.quadNodes.Obtain();
+				childNodes->Initialize();
 
 				// Remove all elements and reinsert them
 				while (element != nullptr) {
 					T* object = element->object;
-					AABB2D object_aabb = element->aabb;
-					Element* next_element = element->next;
+					AABB2D objectAABB = element->aabb;
+					Element* nextElement = element->next;
 					tree.elements.Release(element);
 
-					child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb, optimizing);
+					childNodes->Add(tree, object, objectAABB, depth + 1, nodeAABB, optimizing);
 
-					element = next_element;
+					element = nextElement;
 				}
 			} else {
 				// Get element vector before anything changes
-				std::list<Element>* temp_elements = temp_element_list;
+				std::list<Element>* tempElements = tempElementList;
 
 				// Transform leaf into branch
-				element_count = -1;
-				tree.aux_quad_nodes.emplace_back(QuadNode());
-				child_nodes = &tree.aux_quad_nodes.back();
-				child_nodes->InitializeAndCreateElementLists();
+				elementCount = -1;
+				tree.auxQuadNodes.emplace_back(QuadNode());
+				childNodes = &tree.auxQuadNodes.back();
+				childNodes->InitializeAndCreateElementLists();
 
 				// Remove all elements and reinsert them
-				for (Element& temp_element : *temp_elements) {
-					T* object = temp_element.object;
-					AABB2D object_aabb = temp_element.aabb;
-					tree.num_added_elements -= 1;
+				for (Element& tempElement : *tempElements) {
+					T* object = tempElement.object;
+					AABB2D objectAABB = tempElement.aabb;
+					tree.numAddedElements -= 1;
 
-					child_nodes->Add(tree, object, object_aabb, depth + 1, node_aabb, optimizing);
+					childNodes->Add(tree, object, objectAABB, depth + 1, nodeAABB, optimizing);
 				}
 
-				RELEASE(temp_elements);
+				RELEASE(tempElements);
 			}
 		}
 
 		bool IsLeaf() const {
-			return element_count >= 0;
+			return elementCount >= 0;
 		}
 
 		bool IsBranch() const {
-			return element_count < 0;
+			return elementCount < 0;
 		}
 
 	public:
-		int element_count = 0; // Leaf: number of elements. Branch: -1.
+		int elementCount = 0; // Leaf: number of elements. Branch: -1.
 		union {
-			Element* first_element = nullptr; // Leaf only: first element.
-			QuadNode* child_nodes; // Branch only: child nodes index.
-			std::list<Element>* temp_element_list;
+			Element* firstElement = nullptr; // Leaf only: first element.
+			QuadNode* childNodes; // Branch only: child nodes index.
+			std::list<Element>* tempElementList;
 		};
 	};
 
@@ -136,47 +136,47 @@ public:
 	public:
 		void Initialize() {
 			for (Node& node : nodes) {
-				node.element_count = 0;
-				node.first_element = nullptr;
+				node.elementCount = 0;
+				node.firstElement = nullptr;
 			}
 		}
 
 		void InitializeAndCreateElementLists() {
 			for (Node& node : nodes) {
-				node.element_count = 0;
-				node.temp_element_list = new std::list<Element>();
+				node.elementCount = 0;
+				node.tempElementList = new std::list<Element>();
 			}
 		}
 
 		void ReleaseElementLists() {
 			for (Node& node : nodes) {
 				if (node.IsLeaf()) {
-					RELEASE(node.temp_element_list);
+					RELEASE(node.tempElementList);
 				}
 			}
 		}
 
-		void Add(Quadtree& tree, T* object, const AABB2D& object_aabb, unsigned depth, const AABB2D& node_aabb, bool optimizing) {
-			vec2d center = node_aabb.minPoint + (node_aabb.maxPoint - node_aabb.minPoint) * 0.5f;
+		void Add(Quadtree& tree, T* object, const AABB2D& objectAABB, unsigned depth, const AABB2D& nodeAABB, bool optimizing) {
+			vec2d center = nodeAABB.minPoint + (nodeAABB.maxPoint - nodeAABB.minPoint) * 0.5f;
 
-			AABB2D top_left_aabb = {{node_aabb.minPoint.x, center.y}, {center.x, node_aabb.maxPoint.y}};
-			if (object_aabb.Intersects(top_left_aabb)) {
-				nodes[0].Add(tree, object, object_aabb, depth, top_left_aabb, optimizing);
+			AABB2D topLeftAABB = {{nodeAABB.minPoint.x, center.y}, {center.x, nodeAABB.maxPoint.y}};
+			if (objectAABB.Intersects(topLeftAABB)) {
+				nodes[0].Add(tree, object, objectAABB, depth, topLeftAABB, optimizing);
 			}
 
-			AABB2D top_right_aabb = {{center.x, center.y}, {node_aabb.maxPoint.x, node_aabb.maxPoint.y}};
-			if (object_aabb.Intersects(top_right_aabb)) {
-				nodes[1].Add(tree, object, object_aabb, depth, top_right_aabb, optimizing);
+			AABB2D topRightAABB = {{center.x, center.y}, {nodeAABB.maxPoint.x, nodeAABB.maxPoint.y}};
+			if (objectAABB.Intersects(topRightAABB)) {
+				nodes[1].Add(tree, object, objectAABB, depth, topRightAABB, optimizing);
 			}
 
-			AABB2D bottom_left_aabb = {{node_aabb.minPoint.x, node_aabb.minPoint.y}, {center.x, center.y}};
-			if (object_aabb.Intersects(bottom_left_aabb)) {
-				nodes[2].Add(tree, object, object_aabb, depth, bottom_left_aabb, optimizing);
+			AABB2D bottomLeftAABB = {{nodeAABB.minPoint.x, nodeAABB.minPoint.y}, {center.x, center.y}};
+			if (objectAABB.Intersects(bottomLeftAABB)) {
+				nodes[2].Add(tree, object, objectAABB, depth, bottomLeftAABB, optimizing);
 			}
 
-			AABB2D bottom_right_aabb = {{center.x, node_aabb.minPoint.y}, {node_aabb.maxPoint.x, center.y}};
-			if (object_aabb.Intersects(bottom_right_aabb)) {
-				nodes[3].Add(tree, object, object_aabb, depth, bottom_right_aabb, optimizing);
+			AABB2D bottomRightAABB = {{center.x, nodeAABB.minPoint.y}, {nodeAABB.maxPoint.x, center.y}};
+			if (objectAABB.Intersects(bottomRightAABB)) {
+				nodes[3].Add(tree, object, objectAABB, depth, bottomRightAABB, optimizing);
 			}
 		}
 
@@ -191,23 +191,23 @@ public:
 	};
 
 public:
-	void Initialize(AABB2D quadtree_bounds, unsigned quadtree_max_depth, unsigned max_elements_per_node) {
-		assert(quadtree_max_depth > 0);
+	void Initialize(AABB2D quadtreeBounds, unsigned quadtreeMaxDepth, unsigned maxElementsPerNode) {
+		assert(quadtreeMaxDepth > 0);
 
 		Clear();
 
-		bounds = quadtree_bounds;
-		max_depth = quadtree_max_depth;
-		max_node_elements = max_elements_per_node;
+		bounds = quadtreeBounds;
+		maxDepth = quadtreeMaxDepth;
+		maxNodeElements = maxElementsPerNode;
 
-		aux_root.temp_element_list = new std::list<Element>();
+		auxRoot.tempElementList = new std::list<Element>();
 	}
 
-	void Add(T* object, const AABB2D& object_aabb) {
+	void Add(T* object, const AABB2D& objectAABB) {
 		assert(!operative); // Tried to add an object to a locked quadtree
 
-		aux_root.Add(*this, object, object_aabb, 1, bounds, false);
-		added_objects.emplace_back(std::pair<T*, AABB2D>(object, object_aabb));
+		auxRoot.Add(*this, object, objectAABB, 1, bounds, false);
+		addedObjects.emplace_back(std::pair<T*, AABB2D>(object, objectAABB));
 	}
 
 	void Remove(T* object) {
@@ -217,27 +217,27 @@ public:
 	}
 
 	void Optimize() {
-		quad_nodes.Allocate(aux_quad_nodes.size());
-		elements.Allocate(num_added_elements);
+		quadNodes.Allocate(auxQuadNodes.size());
+		elements.Allocate(numAddedElements);
 
-		for (std::pair<T*, AABB2D> pair : added_objects) {
+		for (std::pair<T*, AABB2D> pair : addedObjects) {
 			AddToPools(pair.first, pair.second);
 		}
 
-		for (QuadNode& quad_node : aux_quad_nodes) {
-			quad_node.ReleaseElementLists();
+		for (QuadNode& quadNode : auxQuadNodes) {
+			quadNode.ReleaseElementLists();
 		}
 
-		if (aux_root.IsBranch()) {
-			aux_root.element_count = 0;
-			aux_root.temp_element_list = nullptr;
+		if (auxRoot.IsBranch()) {
+			auxRoot.elementCount = 0;
+			auxRoot.tempElementList = nullptr;
 		} else {
-			aux_root.element_count = 0;
-			RELEASE(aux_root.temp_element_list);
+			auxRoot.elementCount = 0;
+			RELEASE(auxRoot.tempElementList);
 		}
-		num_added_elements = 0;
-		aux_quad_nodes.clear();
-		added_objects.clear();
+		numAddedElements = 0;
+		auxQuadNodes.clear();
+		addedObjects.clear();
 
 		operative = true;
 	}
@@ -249,51 +249,51 @@ public:
 	void Clear() {
 		bounds.minPoint.Set(0, 0);
 		bounds.maxPoint.Set(0, 0);
-		max_depth = 0;
-		max_node_elements = 0;
+		maxDepth = 0;
+		maxNodeElements = 0;
 
-		root.element_count = 0;
-		root.first_element = nullptr;
-		quad_nodes.Clear();
+		root.elementCount = 0;
+		root.firstElement = nullptr;
+		quadNodes.Clear();
 		elements.Clear();
 
 		operative = false;
 
-		for (QuadNode& quad_node : aux_quad_nodes) {
-			quad_node.ReleaseElementLists();
+		for (QuadNode& quadNode : auxQuadNodes) {
+			quadNode.ReleaseElementLists();
 		}
 
-		if (aux_root.IsBranch()) {
-			aux_root.element_count = 0;
-			aux_root.temp_element_list = nullptr;
+		if (auxRoot.IsBranch()) {
+			auxRoot.elementCount = 0;
+			auxRoot.tempElementList = nullptr;
 		} else {
-			aux_root.element_count = 0;
-			RELEASE(aux_root.temp_element_list);
+			auxRoot.elementCount = 0;
+			RELEASE(auxRoot.tempElementList);
 		}
-		num_added_elements = 0;
-		aux_quad_nodes.clear();
-		added_objects.clear();
+		numAddedElements = 0;
+		auxQuadNodes.clear();
+		addedObjects.clear();
 	}
 
 public:
 	AABB2D bounds = {{0, 0}, {0, 0}}; // Bounds of the quadtree. All elements should be contained inside this.
-	unsigned max_depth = 0; // Max depth of the tree. Useful to avoid infinite divisions. This should be >= 1.
-	unsigned max_node_elements = 0; // Max number of elements before a node is divided.
+	unsigned maxDepth = 0; // Max depth of the tree. Useful to avoid infinite divisions. This should be >= 1.
+	unsigned maxNodeElements = 0; // Max number of elements before a node is divided.
 
 	Node root;
-	Pool<QuadNode> quad_nodes;
+	Pool<QuadNode> quadNodes;
 	Pool<Element> elements;
 
 protected:
-	void AddToPools(T* object, const AABB2D& object_aabb) {
-		root.Add(*this, object, object_aabb, 1, bounds, true);
+	void AddToPools(T* object, const AABB2D& objectAABB) {
+		root.Add(*this, object, objectAABB, 1, bounds, true);
 	}
 
 private:
 	bool operative = false;
 
-	Node aux_root;
-	unsigned num_added_elements = 0;
-	std::list<QuadNode> aux_quad_nodes;
-	std::list<std::pair<T*, AABB2D>> added_objects;
+	Node auxRoot;
+	unsigned numAddedElements = 0;
+	std::list<QuadNode> auxQuadNodes;
+	std::list<std::pair<T*, AABB2D>> addedObjects;
 };

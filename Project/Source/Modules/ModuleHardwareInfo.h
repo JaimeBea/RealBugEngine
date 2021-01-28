@@ -12,19 +12,19 @@ public:
 	bool CleanUp() override;
 
 public:
-	char glew_version[20] = "Not available";
-	char sdl_version[20] = "Not available";
-	char assimp_version[20] = "Not available";
-	char devil_version[20] = "Not available";
-	int cpu_count = 0;
-	int cache_size_kb = 0;
-	float ram_gb = 0;
+	char glewVersion[20] = "Not available";
+	char sdlVersion[20] = "Not available";
+	char assimpVersion[20] = "Not available";
+	char devilVersion[20] = "Not available";
+	int cpuCount = 0;
+	int cacheSizeKb = 0;
+	float ramGb = 0;
 	bool caps[14] = {false};
-	const char* gpu_vendor = "Not available";
-	const char* gpu_renderer = "Not available";
-	const char* gpu_opengl_version = "Not available";
-	float vram_budget_mb = 0;
-	float vram_available_mb = 0;
-	float vram_usage_mb = 0;
-	float vram_reserved_mb = 0;
+	const char* gpuVendor = "Not available";
+	const char* gpuRenderer = "Not available";
+	const char* gpuOpenglVersion = "Not available";
+	float vramBudgetMb = 0;
+	float vramAvailableMb = 0;
+	float vramUsageMb = 0;
+	float vramReservedMb = 0;
 };

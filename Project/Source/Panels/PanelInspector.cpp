@@ -19,14 +19,14 @@ PanelInspector::PanelInspector()
 	: Panel("Inspector", true) {}
 
 void PanelInspector::Update() {
-	ImGui::SetNextWindowDockID(App->editor->dock_right_id, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowDockID(App->editor->dockRightId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_CUBE " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
-		GameObject* selected = App->editor->selected_object;
+		GameObject* selected = App->editor->selectedGameObject;
 		if (selected != nullptr) {
 			ImGui::TextUnformatted("Id:");
 			ImGui::SameLine();
-			ImGui::TextColored(App->editor->text_color, "%llu", selected->GetID());
+			ImGui::TextColored(App->editor->textColor, "%llu", selected->GetID());
 
 			char name[100];
 			sprintf_s(name, 100, "%s", selected->name.c_str());

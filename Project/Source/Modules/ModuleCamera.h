@@ -26,9 +26,9 @@ public:
 
 	void ViewportResized(int width, int height);
 
-	void SetFOV(float h_fov);
-	void SetAspectRatio(float aspect_ratio);
-	void SetPlaneDistances(float near_plane, float far_plane);
+	void SetFOV(float hFov);
+	void SetAspectRatio(float aspectRatio);
+	void SetPlaneDistances(float nearPlane, float farPlane);
 	void SetPosition(const vec& position);
 	void SetPosition(float x, float y, float z);
 	void SetOrientation(const float3x3& rotationMatrix);
@@ -36,7 +36,7 @@ public:
 	void Zoom(float amount);
 	void Rotate(const float3x3& rotationMatrix);
 	void LookAt(float x, float y, float z);
-	void Focus(const GameObject* game_object);
+	void Focus(const GameObject* gameObject);
 	void CalculateFrustumNearestObject(float2 pos);
 	void ChangeActiveFrustum(Frustum& frustum, bool change);
 	void ChangeCullingFrustum(Frustum& frustum, bool change);
@@ -60,20 +60,20 @@ public:
 	const FrustumPlanes& GetFrustumPlanes() const;
 
 public:
-	float movement_speed = 0.4f;
-	float rotation_speed = 0.2f;
-	float zoom_speed = 0.001f;
-	float shift_multiplier = 5.0f;
-	Frustum engine_camera_frustum = Frustum();
+	float movementSpeed = 0.4f;
+	float rotationSpeed = 0.2f;
+	float zoomSpeed = 0.001f;
+	float shiftMultiplier = 5.0f;
+	Frustum engineCameraFrustum = Frustum();
 
 private:
-	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& node_aabb, const LineSegment& ray, std::vector<GameObject*>& intersecting_objects);
+	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects);
 
 private:
-	float focus_distance = 0.0f;
+	float focusDistance = 0.0f;
 
-	Frustum* active_frustum = &engine_camera_frustum;
-	Frustum* culling_frustum = &engine_camera_frustum;
+	Frustum* activeFrustum = &engineCameraFrustum;
+	Frustum* cullingFrustum = &engineCameraFrustum;
 
-	FrustumPlanes frustum_planes = FrustumPlanes();
+	FrustumPlanes frustumPlanes = FrustumPlanes();
 };

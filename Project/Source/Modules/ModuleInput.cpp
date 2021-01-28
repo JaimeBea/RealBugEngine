@@ -31,10 +31,10 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 	ImGuiIO& io = ImGui::GetIO();
 
-	mouse_motion = {0, 0};
-	mouse_wheel_motion = 0;
+	mouseMotion = {0, 0};
+	mouseWheelMotion = 0;
 
-	int window_id = SDL_GetWindowID(App->window->window);
+	int windowId = SDL_GetWindowID(App->window->window);
 
 	for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
 		if (keyboard[i] == KS_DOWN) {
@@ -47,12 +47,12 @@ UpdateStatus ModuleInput::PreUpdate() {
 	}
 
 	for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
-		if (mouse_buttons[i] == KS_DOWN) {
-			mouse_buttons[i] = KS_REPEAT;
+		if (mouseButtons[i] == KS_DOWN) {
+			mouseButtons[i] = KS_REPEAT;
 		}
 
-		if (mouse_buttons[i] == KS_UP) {
-			mouse_buttons[i] = KS_IDLE;
+		if (mouseButtons[i] == KS_UP) {
+			mouseButtons[i] = KS_IDLE;
 		}
 	}
 
@@ -65,7 +65,7 @@ UpdateStatus ModuleInput::PreUpdate() {
 			return UpdateStatus::STOP;
 
 		case SDL_WINDOWEVENT:
-			if (event.window.windowID == window_id) {
+			if (event.window.windowID == windowId) {
 				switch (event.window.event) {
 				case SDL_WINDOWEVENT_CLOSE:
 					return UpdateStatus::STOP;
@@ -75,24 +75,24 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_DROPFILE:
 			ReleaseDroppedFilePath();
-			dropped_file_path = event.drop.file;
-			LOG("File dropped: %s", dropped_file_path);
+			droppedFilePath = event.drop.file;
+			LOG("File dropped: %s", droppedFilePath);
 			break;
 
 		case SDL_MOUSEWHEEL:
 			if (event.wheel.direction == SDL_MOUSEWHEEL_FLIPPED) {
-				mouse_wheel_motion = (float) event.wheel.x;
+				mouseWheelMotion = (float) event.wheel.x;
 			} else {
-				mouse_wheel_motion = (float) event.wheel.y;
+				mouseWheelMotion = (float) event.wheel.y;
 			}
 			break;
 
 		case SDL_MOUSEBUTTONDOWN:
-			mouse_buttons[event.button.button - 1] = KS_DOWN;
+			mouseButtons[event.button.button - 1] = KS_DOWN;
 			break;
 
 		case SDL_MOUSEBUTTONUP:
-			mouse_buttons[event.button.button - 1] = KS_UP;
+			mouseButtons[event.button.button - 1] = KS_UP;
 			break;
 
 		case SDL_KEYDOWN:
@@ -112,25 +112,25 @@ UpdateStatus ModuleInput::PreUpdate() {
 	}
 
 	if (io.WantCaptureMouse) {
-		mouse_wheel_motion = 0;
-		mouse_motion.x = 0;
-		mouse_motion.y = 0;
+		mouseWheelMotion = 0;
+		mouseMotion.x = 0;
+		mouseMotion.y = 0;
 
 		for (int i = 0; i < NUM_MOUSE_BUTTONS; ++i) {
-			mouse_buttons[i] = KS_IDLE;
+			mouseButtons[i] = KS_IDLE;
 		}
 	} else {
-		int mouse_x;
-		int mouse_y;
-		SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
-		if (!mouse_warped) {
-			mouse_motion.x = mouse_x - mouse.x;
-			mouse_motion.y = mouse_y - mouse.y;
+		int mouseX;
+		int mouseY;
+		SDL_GetGlobalMouseState(&mouseX, &mouseY);
+		if (!mouseWarped) {
+			mouseMotion.x = mouseX - mouse.x;
+			mouseMotion.y = mouseY - mouse.y;
 		} else {
-			mouse_warped = false;
+			mouseWarped = false;
 		}
-		mouse.x = (float) mouse_x;
-		mouse.y = (float) mouse_y;
+		mouse.x = (float) mouseX;
+		mouse.y = (float) mouseY;
 	}
 
 	return UpdateStatus::CONTINUE;
@@ -144,19 +144,19 @@ bool ModuleInput::CleanUp() {
 }
 
 void ModuleInput::ReleaseDroppedFilePath() {
-	if (dropped_file_path != nullptr) {
-		SDL_free(dropped_file_path);
-		dropped_file_path = nullptr;
+	if (droppedFilePath != nullptr) {
+		SDL_free(droppedFilePath);
+		droppedFilePath = nullptr;
 	}
 }
 
-void ModuleInput::WarpMouse(int mouse_x, int mouse_y) {
-	SDL_WarpMouseGlobal(mouse_x, mouse_y);
-	mouse_warped = true;
+void ModuleInput::WarpMouse(int mouseX, int mouseY) {
+	SDL_WarpMouseGlobal(mouseX, mouseY);
+	mouseWarped = true;
 }
 
 const char* ModuleInput::GetDroppedFilePath() const {
-	return dropped_file_path;
+	return droppedFilePath;
 }
 
 KeyState ModuleInput::GetKey(int scancode) const {
@@ -164,15 +164,15 @@ KeyState ModuleInput::GetKey(int scancode) const {
 }
 
 KeyState ModuleInput::GetMouseButton(int button) const {
-	return mouse_buttons[button - 1];
+	return mouseButtons[button - 1];
 }
 
 float ModuleInput::GetMouseWheelMotion() const {
-	return mouse_wheel_motion;
+	return mouseWheelMotion;
 }
 
 const float2& ModuleInput::GetMouseMotion() const {
-	return mouse_motion;
+	return mouseMotion;
 }
 
 const float2& ModuleInput::GetMousePosition() const {

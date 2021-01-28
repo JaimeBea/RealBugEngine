@@ -35,7 +35,7 @@ Application::Application() {
 
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(editor = new ModuleEditor());
-	modules.push_back(debug_draw = new ModuleDebugDraw());
+	modules.push_back(debugDraw = new ModuleDebugDraw());
 
 	modules.push_back(renderer = new ModuleRender());
 }

@@ -30,31 +30,29 @@
 #define JSON_TAG_ROOT_ID "RootId"
 #define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
-#define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE  "QuadtreeElementsPerNode"
+#define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
 
-static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulated_transform) {
+static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
-	if (name.find("$AssimpFbx$") != std::string::npos) // Auxiliary node
-	{
+	if (name.find("$AssimpFbx$") != std::string::npos) { // Auxiliary node
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			const float4x4& transform = accumulated_transform * (*(float4x4*) &node->mTransformation);
-			ImportNode(ai_scene, materials, node->mChildren[i], parent, transform);
+			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
+			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform);
 		}
-	} else // Normal node
-	{
+	} else { // Normal node
 		// Create GameObject
-		GameObject* game_object = App->scene->CreateGameObject(parent);
+		GameObject* gameObject = App->scene->CreateGameObject(parent);
 
 		// Load name
-		game_object->name = name;
+		gameObject->name = name;
 
 		// Load transform
-		ComponentTransform* transform = game_object->CreateComponent<ComponentTransform>();
-		const float4x4& matrix = accumulated_transform * (*(float4x4*) &node->mTransformation);
+		ComponentTransform* transform = gameObject->CreateComponent<ComponentTransform>();
+		const float4x4& matrix = accumulatedTransform * (*(float4x4*) &node->mTransformation);
 		float3 position;
 		Quat rotation;
 		float3 scale;
@@ -66,123 +64,123 @@ static void ImportNode(const aiScene* ai_scene, const std::vector<Material>& mat
 		LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
 
 		// Save min and max points
-		vec min_point = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
-		vec max_point = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
+		vec minPoint = vec(FLOAT_INF, FLOAT_INF, FLOAT_INF);
+		vec maxPoint = vec(-FLOAT_INF, -FLOAT_INF, -FLOAT_INF);
 
 		// Load meshes
 		for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
 			LOG("Importing mesh %i", i);
-			aiMesh* ai_mesh = ai_scene->mMeshes[node->mMeshes[i]];
+			aiMesh* assimpMesh = assimpScene->mMeshes[node->mMeshes[i]];
 
-			ComponentMesh* mesh = game_object->CreateComponent<ComponentMesh>();
-			mesh->mesh = MeshImporter::ImportMesh(ai_mesh, i);
-			mesh->mesh->material_index = i;
+			ComponentMesh* mesh = gameObject->CreateComponent<ComponentMesh>();
+			mesh->mesh = MeshImporter::ImportMesh(assimpMesh, i);
+			mesh->mesh->materialIndex = i;
 
 			// TODO: Move mesh loading to a better place
 			MeshImporter::LoadMesh(mesh->mesh);
 
-			ComponentMaterial* material = game_object->CreateComponent<ComponentMaterial>();
+			ComponentMaterial* material = gameObject->CreateComponent<ComponentMaterial>();
 			if (materials.size() > 0) {
-				if (ai_mesh->mMaterialIndex >= materials.size()) {
+				if (assimpMesh->mMaterialIndex >= materials.size()) {
 					material->material = materials.front();
-					LOG("Invalid material found", ai_mesh->mMaterialIndex);
+					LOG("Invalid material found", assimpMesh->mMaterialIndex);
 				} else {
-					material->material = materials[ai_mesh->mMaterialIndex];
+					material->material = materials[assimpMesh->mMaterialIndex];
 				}
 			}
 
 			// Update min and max points
-			for (unsigned int j = 0; j < ai_mesh->mNumVertices; ++j) {
-				aiVector3D vertex = ai_mesh->mVertices[j];
-				if (vertex.x < min_point.x) min_point.x = vertex.x;
-				if (vertex.y < min_point.y) min_point.y = vertex.y;
-				if (vertex.z < min_point.z) min_point.z = vertex.z;
-				if (vertex.x > max_point.x) max_point.x = vertex.x;
-				if (vertex.y > max_point.y) max_point.y = vertex.y;
-				if (vertex.z > max_point.z) max_point.z = vertex.z;
+			for (unsigned int j = 0; j < assimpMesh->mNumVertices; ++j) {
+				aiVector3D vertex = assimpMesh->mVertices[j];
+				if (vertex.x < minPoint.x) minPoint.x = vertex.x;
+				if (vertex.y < minPoint.y) minPoint.y = vertex.y;
+				if (vertex.z < minPoint.z) minPoint.z = vertex.z;
+				if (vertex.x > maxPoint.x) maxPoint.x = vertex.x;
+				if (vertex.y > maxPoint.y) maxPoint.y = vertex.y;
+				if (vertex.z > maxPoint.z) maxPoint.z = vertex.z;
 			}
 		}
 
 		// Create bounding box
-		if (min_point.x < max_point.x) {
-			ComponentBoundingBox* bounding_box = game_object->CreateComponent<ComponentBoundingBox>();
-			bounding_box->SetLocalBoundingBox(AABB(min_point, max_point));
-			bounding_box->CalculateWorldBoundingBox();
+		if (minPoint.x < maxPoint.x) {
+			ComponentBoundingBox* boundingBox = gameObject->CreateComponent<ComponentBoundingBox>();
+			boundingBox->SetLocalBoundingBox(AABB(minPoint, maxPoint));
+			boundingBox->CalculateWorldBoundingBox();
 		}
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(ai_scene, materials, node->mChildren[i], game_object, float4x4::identity);
+			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity);
 		}
 	}
 }
 
-bool SceneImporter::ImportScene(const char* file_path, GameObject* parent) {
+bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	// Timer to measure importing a scene
 	MSTimer timer;
 	timer.Start();
 
 	// Check for extension support
-	std::string extension = App->files->GetFileExtension(file_path);
+	std::string extension = App->files->GetFileExtension(filePath);
 	if (!aiIsExtensionSupported(extension.c_str())) {
 		LOG("Extension is not supported by assimp: \"%s\".", extension);
 		return false;
 	}
 
 	// Import scene
-	LOG("Importing scene from path: \"%s\".", file_path);
-	const aiScene* ai_scene = aiImportFile(file_path, aiProcessPreset_TargetRealtime_MaxQuality);
+	LOG("Importing scene from path: \"%s\".", filePath);
+	const aiScene* assimpScene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 	DEFER {
-		aiReleaseImport(ai_scene);
+		aiReleaseImport(assimpScene);
 	};
-	if (!ai_scene) {
-		LOG("Error importing scene: %s", file_path, aiGetErrorString());
+	if (!assimpScene) {
+		LOG("Error importing scene: %s", filePath, aiGetErrorString());
 		return false;
 	}
 
 	// Load materials
-	LOG("Importing %i materials...", ai_scene->mNumMaterials);
+	LOG("Importing %i materials...", assimpScene->mNumMaterials);
 	std::vector<Material> materials;
-	materials.reserve(ai_scene->mNumMaterials);
-	for (unsigned int i = 0; i < ai_scene->mNumMaterials; ++i) {
+	materials.reserve(assimpScene->mNumMaterials);
+	for (unsigned int i = 0; i < assimpScene->mNumMaterials; ++i) {
 		LOG("Loading material %i...", i);
-		aiMaterial* ai_material = ai_scene->mMaterials[i];
-		aiString material_file_path;
+		aiMaterial* assimpMaterial = assimpScene->mMaterials[i];
+		aiString materialFilePath;
 		aiTextureMapping mapping;
 		aiColor4D color;
-		unsigned uv_index;
+		unsigned uvIndex;
 		Material material;
-		if (ai_material->GetTexture(aiTextureType_DIFFUSE, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS) {
+		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
 			// Check if the material is valid for our purposes
 			assert(mapping == aiTextureMapping_UV);
-			assert(uv_index == 0);
+			assert(uvIndex == 0);
 
 			// Try to load from the path given in the model file
 			LOG("Trying to import diffuse texture...");
-			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
+			Texture* texture = TextureImporter::ImportTexture(materialFilePath.C_Str());
 
 			// Try to load relative to the model folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to model folder...");
-				std::string model_folder_path = App->files->GetFileFolder(file_path);
-				std::string model_folder_material_file_path = model_folder_path + "/" + material_file_path.C_Str();
-				texture = TextureImporter::ImportTexture(model_folder_material_file_path.c_str());
+				std::string modelFolderPath = App->files->GetFileFolder(filePath);
+				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
+				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
 			}
 
 			// Try to load relative to the textures folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to textures folder...");
-				std::string material_file = App->files->GetFileNameAndExtension(material_file_path.C_Str());
-				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file;
-				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
+				std::string materialFile = App->files->GetFileNameAndExtension(materialFilePath.C_Str());
+				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFile;
+				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
 			}
 
 			if (texture == nullptr) {
 				LOG("Unable to find diffuse texture file.");
 			} else {
 				LOG("Diffuse texture imported successfuly.");
-				material.has_diffuse_map = true;
-				material.diffuse_map = texture;
+				material.hasDiffuseMap = true;
+				material.diffuseMap = texture;
 				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);
 			}
@@ -190,37 +188,37 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent) {
 			LOG("Diffuse texture not found.");
 		}
 
-		if (ai_material->GetTexture(aiTextureType_SPECULAR, 0, &material_file_path, &mapping, &uv_index) == AI_SUCCESS) {
+		if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
 			// Check if the material is valid for our purposes
 			assert(mapping == aiTextureMapping_UV);
-			assert(uv_index == 0);
+			assert(uvIndex == 0);
 
 			// Try to load from the path given in the model file
 			LOG("Trying to import specular texture...");
-			Texture* texture = TextureImporter::ImportTexture(material_file_path.C_Str());
+			Texture* texture = TextureImporter::ImportTexture(materialFilePath.C_Str());
 
 			// Try to load relative to the model folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to model folder...");
-				std::string model_folder_path = App->files->GetFileFolder(file_path);
-				std::string model_folder_material_file_path = model_folder_path + "/" + material_file_path.C_Str();
-				texture = TextureImporter::ImportTexture(model_folder_material_file_path.c_str());
+				std::string modelFolderPath = App->files->GetFileFolder(filePath);
+				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
+				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
 			}
 
 			// Try to load relative to the textures folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to textures folder...");
-				std::string material_file_name = App->files->GetFileName(material_file_path.C_Str());
-				std::string textures_folder_material_file_dir = std::string(TEXTURES_PATH) + "/" + material_file_name + TEXTURE_EXTENSION;
-				texture = TextureImporter::ImportTexture(textures_folder_material_file_dir.c_str());
+				std::string materialFileName = App->files->GetFileName(materialFilePath.C_Str());
+				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
+				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
 			}
 
 			if (texture == nullptr) {
 				LOG("Unable to find specular texture file.");
 			} else {
 				LOG("Specular texture imported successfuly.");
-				material.has_specular_map = true;
-				material.specular_map = texture;
+				material.hasSpecularMap = true;
+				material.specularMap = texture;
 				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);
 			}
@@ -228,9 +226,9 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent) {
 			LOG("Specular texture not found.");
 		}
 
-		ai_material->Get(AI_MATKEY_COLOR_DIFFUSE, material.diffuse_color);
-		ai_material->Get(AI_MATKEY_COLOR_SPECULAR, material.specular_color);
-		ai_material->Get(AI_MATKEY_SHININESS, material.shininess);
+		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, material.diffuseColor);
+		assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, material.specularColor);
+		assimpMaterial->Get(AI_MATKEY_SHININESS, material.shininess);
 
 		LOG("Material imported.");
 		materials.push_back(material);
@@ -238,25 +236,25 @@ bool SceneImporter::ImportScene(const char* file_path, GameObject* parent) {
 
 	// Create scene tree
 	LOG("Importing scene tree.");
-	ImportNode(ai_scene, materials, ai_scene->mRootNode, parent, float4x4::identity);
+	ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
 
-	unsigned time_ms = timer.Stop();
-	LOG("Scene imported in %ums.", time_ms);
+	unsigned timeMs = timer.Stop();
+	LOG("Scene imported in %ums.", timeMs);
 	return true;
 }
 
-bool SceneImporter::LoadScene(const char* file_name) {
+bool SceneImporter::LoadScene(const char* fileName) {
 	// Clear scene
 	App->scene->ClearScene();
-	App->editor->selected_object = nullptr;
+	App->editor->selectedGameObject = nullptr;
 
 	// Timer to measure loading a scene
 	MSTimer timer;
 	timer.Start();
 
 	// Read from file
-	std::string file_path = std::string(SCENES_PATH) + "/" + file_name + SCENE_EXTENSION;
-	Buffer<char> buffer = App->files->Load(file_path.c_str());
+	std::string filePath = std::string(SCENES_PATH) + "/" + fileName + SCENE_EXTENSION;
+	Buffer<char> buffer = App->files->Load(filePath.c_str());
 
 	if (buffer.Size() == 0) return false;
 
@@ -267,92 +265,92 @@ bool SceneImporter::LoadScene(const char* file_name) {
 		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
 		return false;
 	}
-	JsonValue j_scene(document, document);
+	JsonValue jScene(document, document);
 
 	// Load GameObjects
-	JsonValue j_game_objects = j_scene[JSON_TAG_GAMEOBJECTS];
-	unsigned j_game_objects_size = j_game_objects.Size();
-	Buffer<UID> ids(j_game_objects_size);
-	for (unsigned i = 0; i < j_game_objects_size; ++i) {
-		JsonValue j_game_object = j_game_objects[i];
+	JsonValue jGameObjects = jScene[JSON_TAG_GAMEOBJECTS];
+	unsigned jGameObjectsSize = jGameObjects.Size();
+	Buffer<UID> ids(jGameObjectsSize);
+	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
+		JsonValue jGameObject = jGameObjects[i];
 
-		GameObject* game_object = App->scene->game_objects.Obtain();
-		game_object->Load(j_game_object);
+		GameObject* gameObject = App->scene->gameObjects.Obtain();
+		gameObject->Load(jGameObject);
 
-		UID id = game_object->GetID();
-		App->scene->game_objects_id_map[id] = game_object;
+		UID id = gameObject->GetID();
+		App->scene->gameObjectsIdMap[id] = gameObject;
 		ids[i] = id;
 	}
 
 	// Post-load
-	App->scene->root = App->scene->GetGameObject(j_scene[JSON_TAG_ROOT_ID]);
-	for (unsigned i = 0; i < j_game_objects_size; ++i) {
-		JsonValue j_game_object = j_game_objects[i];
+	App->scene->root = App->scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
+	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
+		JsonValue jGameObject = jGameObjects[i];
 
 		UID id = ids[i];
-		GameObject* game_object = App->scene->GetGameObject(id);
-		game_object->PostLoad(j_game_object);
+		GameObject* gameObject = App->scene->GetGameObject(id);
+		gameObject->PostLoad(jGameObject);
 	}
 
 	// Init components
-	for (unsigned i = 0; i < j_game_objects_size; ++i) {
-		JsonValue j_game_object = j_game_objects[i];
+	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
+		JsonValue jGameObject = jGameObjects[i];
 
 		UID id = ids[i];
-		GameObject* game_object = App->scene->GetGameObject(id);
-		game_object->InitComponents();
+		GameObject* gameObject = App->scene->GetGameObject(id);
+		gameObject->InitComponents();
 	}
 
 	// Quadtree generation
-	JsonValue j_quadtree_bounds = j_scene[JSON_TAG_QUADTREE_BOUNDS];
-	App->scene->quadtree_bounds = {{j_quadtree_bounds[0], j_quadtree_bounds[1]}, {j_quadtree_bounds[2], j_quadtree_bounds[3]}};
-	App->scene->quadtree_max_depth = j_scene[JSON_TAG_QUADTREE_MAX_DEPTH];
-	App->scene->quadtree_elements_per_node = j_scene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
+	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
+	App->scene->quadtreeBounds = {{jQuadtreeBounds[0], jQuadtreeBounds[1]}, {jQuadtreeBounds[2], jQuadtreeBounds[3]}};
+	App->scene->quadtreeMaxDepth = jScene[JSON_TAG_QUADTREE_MAX_DEPTH];
+	App->scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
 	App->scene->RebuildQuadtree();
 
-	unsigned time_ms = timer.Stop();
-	LOG("Scene loaded in %ums.", time_ms);
+	unsigned timeMs = timer.Stop();
+	LOG("Scene loaded in %ums.", timeMs);
 	return true;
 }
 
-bool SceneImporter::SaveScene(const char* file_name) {
+bool SceneImporter::SaveScene(const char* fileName) {
 	// Create document
 	rapidjson::Document document;
 	document.SetObject();
-	JsonValue j_scene(document, document);
+	JsonValue jScene(document, document);
 
 	// Save scene information
-	j_scene[JSON_TAG_ROOT_ID] = App->scene->root->GetID();
-	JsonValue j_quadtree_bounds = j_scene[JSON_TAG_QUADTREE_BOUNDS];
-	j_quadtree_bounds[0] = App->scene->quadtree_bounds.minPoint.x;
-	j_quadtree_bounds[1] = App->scene->quadtree_bounds.minPoint.y;
-	j_quadtree_bounds[2] = App->scene->quadtree_bounds.maxPoint.x;
-	j_quadtree_bounds[3] = App->scene->quadtree_bounds.maxPoint.y;
-	j_scene[JSON_TAG_QUADTREE_MAX_DEPTH] = App->scene->quadtree_max_depth;
-	j_scene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = App->scene->quadtree_elements_per_node;
+	jScene[JSON_TAG_ROOT_ID] = App->scene->root->GetID();
+	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
+	jQuadtreeBounds[0] = App->scene->quadtreeBounds.minPoint.x;
+	jQuadtreeBounds[1] = App->scene->quadtreeBounds.minPoint.y;
+	jQuadtreeBounds[2] = App->scene->quadtreeBounds.maxPoint.x;
+	jQuadtreeBounds[3] = App->scene->quadtreeBounds.maxPoint.y;
+	jScene[JSON_TAG_QUADTREE_MAX_DEPTH] = App->scene->quadtreeMaxDepth;
+	jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = App->scene->quadtreeElementsPerNode;
 
 	// Save GameObjects
-	JsonValue j_game_objects = j_scene[JSON_TAG_GAMEOBJECTS];
+	JsonValue jGameObjects = jScene[JSON_TAG_GAMEOBJECTS];
 	unsigned i = 0;
-	for (const GameObject& game_object : App->scene->game_objects) {
-		JsonValue j_game_object = j_game_objects[i];
+	for (const GameObject& gameObject : App->scene->gameObjects) {
+		JsonValue jGameObject = jGameObjects[i];
 
-		GameObject* parent = game_object.GetParent();
-		j_game_object[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
+		GameObject* parent = gameObject.GetParent();
+		jGameObject[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
 
-		game_object.Save(j_game_object);
+		gameObject.Save(jGameObject);
 
 		i += 1;
 	}
 
 	// Write document to buffer
-	rapidjson::StringBuffer string_buffer;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(string_buffer);
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
 	document.Accept(writer);
 
 	// Save to file
-	std::string file_path = std::string(SCENES_PATH) + "/" + file_name + SCENE_EXTENSION;
-	App->files->Save(file_path.c_str(), string_buffer.GetString(), string_buffer.GetSize());
+	std::string filePath = std::string(SCENES_PATH) + "/" + fileName + SCENE_EXTENSION;
+	App->files->Save(filePath.c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
 
 	return true;
 }

@@ -40,20 +40,20 @@
 
 #include "Utils/Leaks.h"
 
-static aiLogStream log_stream = {nullptr, nullptr};
+static aiLogStream logStream = {nullptr, nullptr};
 
 static void AssimpLogCallback(const char* message, char* user) {
-	std::string message_str = message;
-	std::string final_message_str = message_str.substr(0, message_str.find_last_of('\n'));
-	LOG(final_message_str.c_str());
+	std::string messageStr = message;
+	std::string finalMessageStr = messageStr.substr(0, messageStr.find_last_of('\n'));
+	LOG(finalMessageStr.c_str());
 }
 
 bool ModuleScene::Init() {
-	game_objects.Allocate(10000);
+	gameObjects.Allocate(10000);
 
 #ifdef _DEBUG
-	log_stream.callback = AssimpLogCallback;
-	aiAttachLogStream(&log_stream);
+	logStream.callback = AssimpLogCallback;
+	aiAttachLogStream(&logStream);
 #endif
 
 	return true;
@@ -71,7 +71,7 @@ bool ModuleScene::Start() {
 
 	// Load skybox
 	// clang-format off
-	float skybox_vertices[] = {
+	float skyboxVertices[] = {
 		// Front (x, y, z)
 		-1.0f,  1.0f, -1.0f,
 		-1.0f, -1.0f, -1.0f,
@@ -122,23 +122,23 @@ bool ModuleScene::Start() {
 	}; // clang-format on
 
 	// Skybox VAO
-	glGenVertexArrays(1, &skybox_vao);
-	glGenBuffers(1, &skybox_vbo);
-	glBindVertexArray(skybox_vao);
-	glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skybox_vertices), &skybox_vertices, GL_STATIC_DRAW);
+	glGenVertexArrays(1, &skyboxVao);
+	glGenBuffers(1, &skyboxVbo);
+	glBindVertexArray(skyboxVao);
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
 	glBindVertexArray(0);
 
-	skybox_cube_map = App->resources->ObtainCubeMap();
-	skybox_cube_map->file_names[0] = "right";
-	skybox_cube_map->file_names[1] = "left";
-	skybox_cube_map->file_names[2] = "top";
-	skybox_cube_map->file_names[3] = "bottom";
-	skybox_cube_map->file_names[4] = "front";
-	skybox_cube_map->file_names[5] = "back";
-	TextureImporter::LoadCubeMap(skybox_cube_map);
+	skyboxCubeMap = App->resources->ObtainCubeMap();
+	skyboxCubeMap->fileNames[0] = "right";
+	skyboxCubeMap->fileNames[1] = "left";
+	skyboxCubeMap->fileNames[2] = "top";
+	skyboxCubeMap->fileNames[3] = "bottom";
+	skyboxCubeMap->fileNames[4] = "front";
+	skyboxCubeMap->fileNames[5] = "back";
+	TextureImporter::LoadCubeMap(skyboxCubeMap);
 
 	return true;
 }
@@ -147,20 +147,20 @@ UpdateStatus ModuleScene::Update() {
 	BROFILER_CATEGORY("ModuleScene - Update", Profiler::Color::Green)
 
 	// Load scene/fbx if one gets dropped
-	const char* dropped_file_path = App->input->GetDroppedFilePath();
-	if (dropped_file_path != nullptr) {
-		std::string dropped_file_extension = App->files->GetFileExtension(dropped_file_path);
-		std::string dropped_file_name = App->files->GetFileName(dropped_file_path);
-		if (dropped_file_extension == SCENE_EXTENSION) {
-			SceneImporter::LoadScene(dropped_file_name.c_str());
+	const char* droppedFilePath = App->input->GetDroppedFilePath();
+	if (droppedFilePath != nullptr) {
+		std::string droppedFileExtension = App->files->GetFileExtension(droppedFilePath);
+		std::string droppedFileName = App->files->GetFileName(droppedFilePath);
+		if (droppedFileExtension == SCENE_EXTENSION) {
+			SceneImporter::LoadScene(droppedFileName.c_str());
 
 			LOG("Scene loaded");
-		} else if (dropped_file_extension == ".fbx") {
-			SceneImporter::ImportScene(dropped_file_path, root);
+		} else if (droppedFileExtension == ".fbx") {
+			SceneImporter::ImportScene(droppedFilePath, root);
 
 			LOG("Scene imported");
-		} else if (dropped_file_extension == ".png" || dropped_file_extension == ".tif" || dropped_file_extension == ".dds") {
-			Texture* texture = TextureImporter::ImportTexture(dropped_file_path);
+		} else if (droppedFileExtension == ".png" || droppedFileExtension == ".tif" || droppedFileExtension == ".dds") {
+			Texture* texture = TextureImporter::ImportTexture(droppedFilePath);
 			TextureImporter::LoadTexture(texture);
 
 			LOG("Texture imported");
@@ -170,16 +170,16 @@ UpdateStatus ModuleScene::Update() {
 	}
 
 	// Update GameObjects
-	for (GameObject& game_object : game_objects) {
-		game_object.Update();
+	for (GameObject& gameObject : gameObjects) {
+		gameObject.Update();
 	}
 
 	return UpdateStatus::CONTINUE;
 }
 
 bool ModuleScene::CleanUp() {
-	glDeleteVertexArrays(1, &skybox_vao);
-	glDeleteBuffers(1, &skybox_vbo);
+	glDeleteVertexArrays(1, &skyboxVao);
+	glDeleteBuffers(1, &skyboxVbo);
 
 	ClearScene();
 
@@ -196,31 +196,31 @@ void ModuleScene::CreateEmptyScene() {
 	// Create Scene root node
 	root = CreateGameObject(nullptr);
 	root->name = "Scene";
-	ComponentTransform* scene_transform = root->CreateComponent<ComponentTransform>();
-	scene_transform->SetPosition(float3(0, 0, 0));
-	scene_transform->SetRotation(Quat::identity);
-	scene_transform->SetScale(float3(1, 1, 1));
+	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
+	sceneTransform->SetPosition(float3(0, 0, 0));
+	sceneTransform->SetRotation(Quat::identity);
+	sceneTransform->SetScale(float3(1, 1, 1));
 	root->InitComponents();
 
 	// Create Directional Light
-	GameObject* dir_light = CreateGameObject(root);
-	dir_light->name = "Directional Light";
-	ComponentTransform* dir_light_transform = dir_light->CreateComponent<ComponentTransform>();
-	dir_light_transform->SetPosition(float3(0, 300, 0));
-	dir_light_transform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
-	dir_light_transform->SetScale(float3(1, 1, 1));
-	ComponentLight* dir_light_light = dir_light->CreateComponent<ComponentLight>();
-	dir_light->InitComponents();
+	GameObject* dirLight = CreateGameObject(root);
+	dirLight->name = "Directional Light";
+	ComponentTransform* dirLightTransform = dirLight->CreateComponent<ComponentTransform>();
+	dirLightTransform->SetPosition(float3(0, 300, 0));
+	dirLightTransform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
+	dirLightTransform->SetScale(float3(1, 1, 1));
+	ComponentLight* dirLightLight = dirLight->CreateComponent<ComponentLight>();
+	dirLight->InitComponents();
 
 	// Create Game Camera
-	GameObject* game_camera = CreateGameObject(root);
-	game_camera->name = "Game Camera";
-	ComponentTransform* game_camera_transform = game_camera->CreateComponent<ComponentTransform>();
-	game_camera_transform->SetPosition(float3(2, 3, -5));
-	game_camera_transform->SetRotation(Quat::identity);
-	game_camera_transform->SetScale(float3(1, 1, 1));
-	ComponentCamera* game_camera_camera = game_camera->CreateComponent<ComponentCamera>();
-	game_camera->InitComponents();
+	GameObject* gameCamera = CreateGameObject(root);
+	gameCamera->name = "Game Camera";
+	ComponentTransform* gameCameraTransform = gameCamera->CreateComponent<ComponentTransform>();
+	gameCameraTransform->SetPosition(float3(2, 3, -5));
+	gameCameraTransform->SetRotation(Quat::identity);
+	gameCameraTransform->SetScale(float3(1, 1, 1));
+	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
+	gameCamera->InitComponents();
 }
 
 void ModuleScene::ClearScene() {
@@ -228,70 +228,70 @@ void ModuleScene::ClearScene() {
 	root = nullptr;
 	quadtree.Clear();
 
-	assert(game_objects.Count() == 0);
+	assert(gameObjects.Count() == 0);
 }
 
 void ModuleScene::RebuildQuadtree() {
-	quadtree.Initialize(quadtree_bounds, quadtree_max_depth, quadtree_elements_per_node);
-	for (GameObject& game_object : game_objects) {
-		ComponentBoundingBox* bounding_box = game_object.GetComponent<ComponentBoundingBox>();
-		if (bounding_box == nullptr) continue;
+	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
+	for (GameObject& gameObject : gameObjects) {
+		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
+		if (boundingBox == nullptr) continue;
 
-		bounding_box->CalculateWorldBoundingBox();
-		const AABB& world_aabb = bounding_box->GetWorldAABB();
-		quadtree.Add(&game_object, AABB2D(world_aabb.minPoint.xz(), world_aabb.maxPoint.xz()));
-		game_object.is_in_quadtree = true;
+		boundingBox->CalculateWorldBoundingBox();
+		const AABB& worldAABB = boundingBox->GetWorldAABB();
+		quadtree.Add(&gameObject, AABB2D(worldAABB.minPoint.xz(), worldAABB.maxPoint.xz()));
+		gameObject.isInQuadtree = true;
 	}
 	quadtree.Optimize();
 }
 
 void ModuleScene::ClearQuadtree() {
 	quadtree.Clear();
-	for (GameObject& game_object : game_objects) {
-		game_object.is_in_quadtree = false;
+	for (GameObject& gameObject : gameObjects) {
+		gameObject.isInQuadtree = false;
 	}
 }
 
 GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
-	GameObject* game_object = game_objects.Obtain();
-	game_object->Init();
-	game_object->SetParent(parent);
-	game_objects_id_map[game_object->GetID()] = game_object;
+	GameObject* gameObject = gameObjects.Obtain();
+	gameObject->Init();
+	gameObject->SetParent(parent);
+	gameObjectsIdMap[gameObject->GetID()] = gameObject;
 
-	return game_object;
+	return gameObject;
 }
 
-GameObject* ModuleScene::DuplicateGameObject(GameObject* game_object) {
+GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject) {
 	// TODO: Duplicate Game Objects
-	return game_object;
+	return gameObject;
 }
 
-void ModuleScene::DestroyGameObject(GameObject* game_object) {
-	if (game_object == nullptr) return;
+void ModuleScene::DestroyGameObject(GameObject* gameObject) {
+	if (gameObject == nullptr) return;
 
 	// We need a copy because we are invalidating the iterator by removing GameObjects
-	std::vector<GameObject*> children = game_object->GetChildren();
+	std::vector<GameObject*> children = gameObject->GetChildren();
 	for (GameObject* child : children) {
 		DestroyGameObject(child);
 	}
 
-	if (game_object->is_in_quadtree) {
-		quadtree.Remove(game_object);
+	if (gameObject->isInQuadtree) {
+		quadtree.Remove(gameObject);
 	}
 
-	game_objects_id_map.erase(game_object->GetID());
-	game_object->id = 0;
-	for (Component* component : game_object->components) {
+	gameObjectsIdMap.erase(gameObject->GetID());
+	gameObject->id = 0;
+	for (Component* component : gameObject->components) {
 		delete component;
 	}
-	game_object->components.clear();
-	game_object->Enable();
-	game_object->SetParent(nullptr);
-	game_objects.Release(game_object);
+	gameObject->components.clear();
+	gameObject->Enable();
+	gameObject->SetParent(nullptr);
+	gameObjects.Release(gameObject);
 }
 
 GameObject* ModuleScene::GetGameObject(UID id) const {
-	if (game_objects_id_map.count(id) == 0) return nullptr;
+	if (gameObjectsIdMap.count(id) == 0) return nullptr;
 
-	return game_objects_id_map.at(id);
+	return gameObjectsIdMap.at(id);
 }

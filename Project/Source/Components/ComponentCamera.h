@@ -11,8 +11,8 @@ public:
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
-	void Save(JsonValue j_component) const override;
-	void Load(JsonValue j_component) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
 	Frustum BuildDefaultFrustum() const;
 
@@ -20,6 +20,6 @@ public:
 	Frustum frustum = BuildDefaultFrustum();
 
 private:
-	bool active_camera = false;
-	bool culling_camera = false;
+	bool activeCamera = false;
+	bool cullingCamera = false;
 };

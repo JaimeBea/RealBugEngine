@@ -22,24 +22,24 @@ public:
 
 public:
 	void* context = nullptr;
-	unsigned render_texture = 0;
-	unsigned depth_renderbuffer = 0;
+	unsigned renderTexture = 0;
+	unsigned depthRenderbuffer = 0;
 	unsigned framebuffer = 0;
 
-	unsigned viewport_width = 0;
-	unsigned viewport_height = 0;
+	unsigned viewportWidth = 0;
+	unsigned viewportHeight = 0;
 
-	float3 clear_color = {0.1f, 0.1f, 0.1f};
+	float3 clearColor = {0.1f, 0.1f, 0.1f};
 
-	bool draw_quadtree = true;
-	bool draw_all_bounding_boxes = false;
-	bool skybox_active = true;
-	float3 ambient_color = {0.0f, 0.0f, 0.0f};
+	bool drawQuadtree = true;
+	bool drawAllBoundingBoxes = false;
+	bool skyboxActive = true;
+	float3 ambientColor = {0.0f, 0.0f, 0.0f};
 
 private:
 	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
 	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);
-	void DrawGameObject(GameObject* game_object);
+	void DrawGameObject(GameObject* gameObject);
 	void DrawSkyBox();
 };
