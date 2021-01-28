@@ -37,7 +37,8 @@ void PanelScene::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dockMainId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_BORDER_ALL " ") + name;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	if (ImGui::Begin(windowName.c_str(), &enabled, ImGuiWindowFlags_MenuBar)) {
+	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
+	if (ImGui::Begin(windowName.c_str(), &enabled, flags)) {
 		// MenuBar Scene
 		if (ImGui::BeginMenuBar()) {
 			// Play / Pause / Step buttons
