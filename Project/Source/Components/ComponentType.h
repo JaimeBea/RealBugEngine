@@ -9,9 +9,9 @@ class Component;
 *    3. Add the new component to the CreateComponentByType function in ComponentType.cpp
 */
 
-#define REGISTER_COMPONENT(component_class, component_type)  \
-	static const ComponentType static_type = component_type; \
-	component_class(GameObject& owner, bool active) : Component(static_type, owner, active) {}
+#define REGISTER_COMPONENT(componentClass, componentType)  \
+	static const ComponentType staticType = componentType; \
+	componentClass(GameObject& owner, bool active) : Component(staticType, owner, active) {}
 
 enum class ComponentType {
 	// SERIALIZATION: IDs should be consistent between versions (don't change what an ID means)
@@ -24,4 +24,4 @@ enum class ComponentType {
 	LIGHT = 6,
 };
 
-Component* CreateComponentByType(GameObject& game_object, ComponentType type, bool active = true);
+Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active = true);

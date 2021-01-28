@@ -8,6 +8,6 @@ public:
 
 public:
 	bool running = false;
-	unsigned int start_time = 0;
-	unsigned int delta_time = 0;
+	unsigned int startTime = 0;
+	unsigned int deltaTime = 0;
 };

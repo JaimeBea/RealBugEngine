@@ -32,59 +32,59 @@ void ComponentTransform::Update() {
 void ComponentTransform::OnEditorUpdate() {
 	float3 pos = position;
 	float3 scl = scale;
-	float3 rot = local_euler_angles;
+	float3 rot = localEulerAngles;
 
 	if (ImGui::CollapsingHeader("Transformation")) {
-		ImGui::TextColored(App->editor->title_color, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->drag_speed2f, -inf, inf)) {
+		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 			SetPosition(pos);
 		}
-		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->drag_speed2f, 0, inf)) {
+		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 			SetScale(scl);
 		}
 
-		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->drag_speed2f, -inf, inf)) {
+		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 			SetRotation(rot);
 		}
 		ImGui::Separator();
 	}
 }
 
-void ComponentTransform::Save(JsonValue j_component) const {
-	JsonValue j_position = j_component[JSON_TAG_POSITION];
-	j_position[0] = position.x;
-	j_position[1] = position.y;
-	j_position[2] = position.z;
+void ComponentTransform::Save(JsonValue jComponent) const {
+	JsonValue jPosition = jComponent[JSON_TAG_POSITION];
+	jPosition[0] = position.x;
+	jPosition[1] = position.y;
+	jPosition[2] = position.z;
 
-	JsonValue j_rotation = j_component[JSON_TAG_ROTATION];
-	j_rotation[0] = rotation.x;
-	j_rotation[1] = rotation.y;
-	j_rotation[2] = rotation.z;
-	j_rotation[3] = rotation.w;
+	JsonValue jRotation = jComponent[JSON_TAG_ROTATION];
+	jRotation[0] = rotation.x;
+	jRotation[1] = rotation.y;
+	jRotation[2] = rotation.z;
+	jRotation[3] = rotation.w;
 
-	JsonValue j_scale = j_component[JSON_TAG_SCALE];
-	j_scale[0] = scale.x;
-	j_scale[1] = scale.y;
-	j_scale[2] = scale.z;
+	JsonValue jScale = jComponent[JSON_TAG_SCALE];
+	jScale[0] = scale.x;
+	jScale[1] = scale.y;
+	jScale[2] = scale.z;
 
-	JsonValue j_local_euler_angles = j_component[JSON_TAG_LOCAL_EULER_ANGLES];
-	j_local_euler_angles[0] = local_euler_angles.x;
-	j_local_euler_angles[1] = local_euler_angles.y;
-	j_local_euler_angles[2] = local_euler_angles.z;
+	JsonValue jLocalEulerAngles = jComponent[JSON_TAG_LOCAL_EULER_ANGLES];
+	jLocalEulerAngles[0] = localEulerAngles.x;
+	jLocalEulerAngles[1] = localEulerAngles.y;
+	jLocalEulerAngles[2] = localEulerAngles.z;
 }
 
-void ComponentTransform::Load(JsonValue j_component) {
-	JsonValue j_position = j_component[JSON_TAG_POSITION];
-	position.Set(j_position[0], j_position[1], j_position[2]);
+void ComponentTransform::Load(JsonValue jComponent) {
+	JsonValue jPosition = jComponent[JSON_TAG_POSITION];
+	position.Set(jPosition[0], jPosition[1], jPosition[2]);
 
-	JsonValue j_rotation = j_component[JSON_TAG_ROTATION];
-	rotation.Set(j_rotation[0], j_rotation[1], j_rotation[2], j_rotation[3]);
+	JsonValue jRotation = jComponent[JSON_TAG_ROTATION];
+	rotation.Set(jRotation[0], jRotation[1], jRotation[2], jRotation[3]);
 
-	JsonValue j_scale = j_component[JSON_TAG_SCALE];
-	scale.Set(j_scale[0], j_scale[1], j_scale[2]);
+	JsonValue jScale = jComponent[JSON_TAG_SCALE];
+	scale.Set(jScale[0], jScale[1], jScale[2]);
 
-	JsonValue j_local_euler_angles = j_component[JSON_TAG_LOCAL_EULER_ANGLES];
-	local_euler_angles.Set(j_local_euler_angles[0], j_local_euler_angles[1], j_local_euler_angles[2]);
+	JsonValue jLocalEulerAngles = jComponent[JSON_TAG_LOCAL_EULER_ANGLES];
+	localEulerAngles.Set(jLocalEulerAngles[0], jLocalEulerAngles[1], jLocalEulerAngles[2]);
 
 	dirty = true;
 }
@@ -93,17 +93,17 @@ void ComponentTransform::InvalidateHierarchy() {
 	Invalidate();
 
 	for (GameObject* child : GetOwner().GetChildren()) {
-		ComponentTransform* child_transform = child->GetComponent<ComponentTransform>();
-		if (child_transform != nullptr) {
-			child_transform->Invalidate();
+		ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
+		if (childTransform != nullptr) {
+			childTransform->Invalidate();
 		}
 	}
 }
 
 void ComponentTransform::Invalidate() {
 	dirty = true;
-	ComponentBoundingBox* bounding_box = GetOwner().GetComponent<ComponentBoundingBox>();
-	if (bounding_box) bounding_box->Invalidate();
+	ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
+	if (boundingBox) boundingBox->Invalidate();
 }
 
 void ComponentTransform::SetPosition(float3 position_) {
@@ -116,7 +116,7 @@ void ComponentTransform::SetPosition(float3 position_) {
 
 void ComponentTransform::SetRotation(Quat rotation_) {
 	rotation = rotation_;
-	local_euler_angles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().components) {
 		component->OnTransformUpdate();
@@ -125,7 +125,7 @@ void ComponentTransform::SetRotation(Quat rotation_) {
 
 void ComponentTransform::SetRotation(float3 rotation_) {
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
-	local_euler_angles = rotation_;
+	localEulerAngles = rotation_;
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().components) {
 		component->OnTransformUpdate();
@@ -142,16 +142,16 @@ void ComponentTransform::SetScale(float3 scale_) {
 
 void ComponentTransform::CalculateGlobalMatrix(bool force) {
 	if (force || dirty) {
-		local_matrix = float4x4::FromTRS(position, rotation, scale);
+		localMatrix = float4x4::FromTRS(position, rotation, scale);
 
 		GameObject* parent = GetOwner().GetParent();
 		if (parent != nullptr) {
-			ComponentTransform* parent_transform = parent->GetComponent<ComponentTransform>();
+			ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
 
-			parent_transform->CalculateGlobalMatrix();
-			global_matrix = parent_transform->global_matrix * local_matrix;
+			parentTransform->CalculateGlobalMatrix();
+			globalMatrix = parentTransform->globalMatrix * localMatrix;
 		} else {
-			global_matrix = local_matrix;
+			globalMatrix = localMatrix;
 		}
 
 		dirty = false;
@@ -171,11 +171,11 @@ float3 ComponentTransform::GetScale() const {
 }
 
 const float4x4& ComponentTransform::GetLocalMatrix() const {
-	return local_matrix;
+	return localMatrix;
 }
 
 const float4x4& ComponentTransform::GetGlobalMatrix() const {
-	return global_matrix;
+	return globalMatrix;
 }
 
 bool ComponentTransform::GetDirty() const {

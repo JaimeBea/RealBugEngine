@@ -8,7 +8,7 @@ public:
 	bool CleanUp() override;
 
 public:
-	unsigned default_program = 0;
-	unsigned phong_pbr_program = 0;
-	unsigned skybox_program = 0;
+	unsigned defaultProgram = 0;
+	unsigned phongPbrProgram = 0;
+	unsigned skyboxProgram = 0;
 };

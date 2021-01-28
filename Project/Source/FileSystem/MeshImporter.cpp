@@ -16,41 +16,41 @@
 
 #include "Utils/Leaks.h"
 
-Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index) {
+Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	// Timer to measure importing a mesh
 	MSTimer timer;
 	timer.Start();
 
 	// Create mesh
 	Mesh* mesh = App->resources->meshes.Obtain();
-	mesh->num_vertices = ai_mesh->mNumVertices;
-	mesh->num_indices = ai_mesh->mNumFaces * 3;
-	mesh->material_index = ai_mesh->mMaterialIndex;
+	mesh->numVertices = assimpMesh->mNumVertices;
+	mesh->numIndices = assimpMesh->mNumFaces * 3;
+	mesh->materialIndex = assimpMesh->mMaterialIndex;
 
 	// Save to custom format buffer
-	unsigned position_size = sizeof(float) * 3;
-	unsigned normal_size = sizeof(float) * 3;
-	unsigned uv_size = sizeof(float) * 2;
-	unsigned index_size = sizeof(unsigned);
+	unsigned positionSize = sizeof(float) * 3;
+	unsigned normalSize = sizeof(float) * 3;
+	unsigned uvSize = sizeof(float) * 2;
+	unsigned indexSize = sizeof(unsigned);
 
-	unsigned header_size = sizeof(unsigned) * 2;
-	unsigned vertex_size = position_size + normal_size + uv_size;
-	unsigned vertex_buffer_size = vertex_size * mesh->num_vertices;
-	unsigned index_buffer_size = index_size * mesh->num_indices;
+	unsigned headerSize = sizeof(unsigned) * 2;
+	unsigned vertexSize = positionSize + normalSize + uvSize;
+	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
+	unsigned indexBufferSize = indexSize * mesh->numIndices;
 
-	size_t size = header_size + vertex_buffer_size + index_buffer_size;
+	size_t size = headerSize + vertexBufferSize + indexBufferSize;
 	Buffer<char> buffer = Buffer<char>(size);
 	char* cursor = buffer.Data();
 
-	*((unsigned*) cursor) = mesh->num_vertices;
+	*((unsigned*) cursor) = mesh->numVertices;
 	cursor += sizeof(unsigned);
-	*((unsigned*) cursor) = mesh->num_indices;
+	*((unsigned*) cursor) = mesh->numIndices;
 	cursor += sizeof(unsigned);
 
-	for (unsigned i = 0; i < ai_mesh->mNumVertices; ++i) {
-		aiVector3D& vertex = ai_mesh->mVertices[i];
-		aiVector3D& normal = ai_mesh->mNormals[i];
-		aiVector3D* texture_coords = ai_mesh->mTextureCoords[0];
+	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
+		aiVector3D& vertex = assimpMesh->mVertices[i];
+		aiVector3D& normal = assimpMesh->mNormals[i];
+		aiVector3D* textureCoords = assimpMesh->mTextureCoords[0];
 
 		*((float*) cursor) = vertex.x;
 		cursor += sizeof(float);
@@ -64,18 +64,18 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index) {
 		cursor += sizeof(float);
 		*((float*) cursor) = normal.z;
 		cursor += sizeof(float);
-		*((float*) cursor) = texture_coords != nullptr ? texture_coords[i].x : 0;
+		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].x : 0;
 		cursor += sizeof(float);
-		*((float*) cursor) = texture_coords != nullptr ? texture_coords[i].y : 0;
+		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].y : 0;
 		cursor += sizeof(float);
 	}
 
-	for (unsigned i = 0; i < ai_mesh->mNumFaces; ++i) {
-		aiFace& ai_face = ai_mesh->mFaces[i];
+	for (unsigned i = 0; i < assimpMesh->mNumFaces; ++i) {
+		aiFace& assimpFace = assimpMesh->mFaces[i];
 
 		// Assume triangles = 3 indices per face
-		if (ai_face.mNumIndices != 3) {
-			LOG("Found a face with %i vertices. Discarded.", ai_face.mNumIndices);
+		if (assimpFace.mNumIndices != 3) {
+			LOG("Found a face with %i vertices. Discarded.", assimpFace.mNumIndices);
 
 			*((unsigned*) cursor) = 0;
 			cursor += sizeof(unsigned);
@@ -86,24 +86,24 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* ai_mesh, unsigned index) {
 			continue;
 		}
 
-		*((unsigned*) cursor) = ai_face.mIndices[0];
+		*((unsigned*) cursor) = assimpFace.mIndices[0];
 		cursor += sizeof(unsigned);
-		*((unsigned*) cursor) = ai_face.mIndices[1];
+		*((unsigned*) cursor) = assimpFace.mIndices[1];
 		cursor += sizeof(unsigned);
-		*((unsigned*) cursor) = ai_face.mIndices[2];
+		*((unsigned*) cursor) = assimpFace.mIndices[2];
 		cursor += sizeof(unsigned);
 	}
 
 	// Save buffer to file
 
-	std::string file_name = std::string(ai_mesh->mName.C_Str()) + std::to_string(index);
-	mesh->file_name = file_name;
-	std::string file_path = std::string(MESHES_PATH) + "/" + file_name + MESH_EXTENSION;
+	std::string fileName = std::string(assimpMesh->mName.C_Str()) + std::to_string(index);
+	mesh->fileName = fileName;
+	std::string file_path = std::string(MESHES_PATH) + "/" + fileName + MESH_EXTENSION;
 	LOG("Saving mesh to \"%s\".", file_path.c_str());
 	App->files->Save(file_path.c_str(), buffer);
 
-	unsigned time_ms = timer.Stop();
-	LOG("Mesh imported in %ums", time_ms);
+	unsigned timeMs = timer.Stop();
+	LOG("Mesh imported in %ums", timeMs);
 	return mesh;
 }
 
@@ -114,37 +114,37 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	MSTimer timer;
 	timer.Start();
 
-	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
+	std::string filePath = std::string(MESHES_PATH) + "/" + mesh->fileName + MESH_EXTENSION;
 
-	LOG("Loading mesh from path: \"%s\".", file_path.c_str());
+	LOG("Loading mesh from path: \"%s\".", filePath.c_str());
 
 	// Load file
-	Buffer<char> buffer = App->files->Load(file_path.c_str());
+	Buffer<char> buffer = App->files->Load(filePath.c_str());
 	char* cursor = buffer.Data();
 
 	// Header
-	mesh->num_vertices = *((unsigned*) cursor);
+	mesh->numVertices = *((unsigned*) cursor);
 	cursor += sizeof(unsigned);
-	mesh->num_indices = *((unsigned*) cursor);
+	mesh->numIndices = *((unsigned*) cursor);
 	cursor += sizeof(unsigned);
 
-	unsigned position_size = sizeof(float) * 3;
-	unsigned normal_size = sizeof(float) * 3;
-	unsigned uv_size = sizeof(float) * 2;
-	unsigned index_size = sizeof(unsigned);
+	unsigned positionSize = sizeof(float) * 3;
+	unsigned normalSize = sizeof(float) * 3;
+	unsigned uvSize = sizeof(float) * 2;
+	unsigned indexSize = sizeof(unsigned);
 
-	unsigned vertex_size = position_size + normal_size + uv_size;
-	unsigned vertex_buffer_size = vertex_size * mesh->num_vertices;
-	unsigned index_buffer_size = index_size * mesh->num_indices;
+	unsigned vertexSize = positionSize + normalSize + uvSize;
+	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
+	unsigned indexBufferSize = indexSize * mesh->numIndices;
 
 	// Vertices
 	float* vertices = (float*) cursor;
-	cursor += vertex_size * mesh->num_vertices;
+	cursor += vertexSize * mesh->numVertices;
 
 	// Indices
 	unsigned* indices = (unsigned*) cursor;
 
-	LOG("Loading %i vertices...", mesh->num_vertices);
+	LOG("Loading %i vertices...", mesh->numVertices);
 
 	// Create VAO
 	glGenVertexArrays(1, &mesh->vao);
@@ -156,43 +156,43 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
 
 	// Load VBO
-	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, GL_STATIC_DRAW);
 
 	// Load EBO
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_size, indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBufferSize, indices, GL_STATIC_DRAW);
 
 	// Load vertex attributes
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertex_size, (void*) position_size);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertex_size, (void*) (position_size + normal_size));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*) 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*) positionSize);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexSize, (void*) (positionSize + normalSize));
 
 	// Unbind VAO
 	glBindVertexArray(0);
 
-	unsigned time_ms = timer.Stop();
-	LOG("Mesh loaded in %ums", time_ms);
+	unsigned timeMs = timer.Stop();
+	LOG("Mesh loaded in %ums", timeMs);
 }
 
 std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float4x4& model) {
-	std::string file_path = std::string(MESHES_PATH) + "/" + mesh->file_name + MESH_EXTENSION;
+	std::string filePath = std::string(MESHES_PATH) + "/" + mesh->fileName + MESH_EXTENSION;
 
 	// Load file
-	Buffer<char> buffer = App->files->Load(file_path.c_str());
+	Buffer<char> buffer = App->files->Load(filePath.c_str());
 	char* cursor = buffer.Data();
 
 	// Header
-	unsigned num_vertices = *((unsigned*) cursor);
+	unsigned numVertices = *((unsigned*) cursor);
 	cursor += sizeof(unsigned);
-	unsigned num_indices = *((unsigned*) cursor);
+	unsigned numIndices = *((unsigned*) cursor);
 	cursor += sizeof(unsigned);
 
 	// Vertices
 	std::vector<float3> vertices;
-	for (unsigned i = 0; i < num_vertices; i++) {
+	for (unsigned i = 0; i < numVertices; i++) {
 		float vertex[3] = {};
 		vertex[0] = *((float*) cursor);
 		cursor += sizeof(float);
@@ -204,16 +204,16 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 	}
 
 	std::vector<Triangle> triangles;
-	triangles.reserve(num_indices / 3);
-	for (unsigned i = 0; i < num_indices / 3; i++) {
-		unsigned triange_indices[3] = {};
-		triange_indices[0] = *((unsigned*) cursor);
+	triangles.reserve(numIndices / 3);
+	for (unsigned i = 0; i < numIndices / 3; i++) {
+		unsigned triangeIndices[3] = {};
+		triangeIndices[0] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
-		triange_indices[1] = *((unsigned*) cursor);
+		triangeIndices[1] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
-		triange_indices[2] = *((unsigned*) cursor);
+		triangeIndices[2] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
-		triangles.push_back(Triangle(vertices[triange_indices[0]], vertices[triange_indices[1]], vertices[triange_indices[2]]));
+		triangles.push_back(Triangle(vertices[triangeIndices[0]], vertices[triangeIndices[1]], vertices[triangeIndices[2]]));
 	}
 
 	return triangles;

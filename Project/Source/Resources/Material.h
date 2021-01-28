@@ -11,20 +11,20 @@ enum class ShaderType {
 
 class Material {
 public:
-	ShaderType material_type = ShaderType::PHONG;
+	ShaderType materialType = ShaderType::PHONG;
 
 	// Phong
 
-	bool has_diffuse_map = false;
-	float3 diffuse_color = {0.137f, 0.263f, 0.424f};
-	Texture* diffuse_map = nullptr;
+	bool hasDiffuseMap = false;
+	float3 diffuseColor = {0.137f, 0.263f, 0.424f};
+	Texture* diffuseMap = nullptr;
 
-	bool has_specular_map = false;
-	float3 specular_color = {1.0f, 1.0f, 1.0f};
-	Texture* specular_map = nullptr;
+	bool hasSpecularMap = false;
+	float3 specularColor = {1.0f, 1.0f, 1.0f};
+	Texture* specularMap = nullptr;
 
 	float shininess = 300;
-	bool has_shininess_in_alpha_channel = false;
+	bool hasShininessInAlphaChannel = false;
 
 	float3 ambient = {0.0f, 0.0f, 0.0f};
 };

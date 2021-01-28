@@ -21,15 +21,15 @@ Application* App = nullptr;
 
 int main(int argc, char** argv) {
 #ifdef _DEBUG
-	_CrtMemState mem_state;
-	_CrtMemCheckpoint(&mem_state);
+	_CrtMemState memState;
+	_CrtMemCheckpoint(&memState);
 #endif
 
 	// Initialize logging
-	log_string = new std::string();
+	logString = new std::string();
 
 	// Game loop
-	int main_return = EXIT_FAILURE;
+	int mainReturn = EXIT_FAILURE;
 	MainState state = MainState::CREATION;
 	while (state != MainState::EXIT) {
 		BROFILER_FRAME("Main");
@@ -62,14 +62,14 @@ int main(int argc, char** argv) {
 			break;
 
 		case MainState::UPDATE: {
-			UpdateStatus update_return = App->Update();
+			UpdateStatus updateReturn = App->Update();
 
-			if (update_return == UpdateStatus::ERROR) {
+			if (updateReturn == UpdateStatus::ERROR) {
 				LOG("Application Update exits with error -----");
 				state = MainState::EXIT;
 			}
 
-			if (update_return == UpdateStatus::STOP) {
+			if (updateReturn == UpdateStatus::STOP) {
 				state = MainState::FINISH;
 			}
 			break;
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
 				LOG("Application CleanUp exits with error -----");
 			} else {
 				LOG("Application CleanUp completed successfuly -----");
-				main_return = EXIT_SUCCESS;
+				mainReturn = EXIT_SUCCESS;
 			}
 			state = MainState::EXIT;
 			break;
@@ -91,11 +91,11 @@ int main(int argc, char** argv) {
 	LOG("Bye :)\n");
 
 	RELEASE(App);
-	RELEASE(log_string);
+	RELEASE(logString);
 
 #ifdef _DEBUG
-	_CrtMemDumpAllObjectsSince(&mem_state);
+	_CrtMemDumpAllObjectsSince(&memState);
 #endif
 
-	return main_return;
+	return mainReturn;
 }

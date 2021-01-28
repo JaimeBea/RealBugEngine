@@ -6,32 +6,32 @@
 
 #include "Leaks.h"
 
-void log(const char file[], int line, const char* format, ...) {
-	static char tmp_string[4096];
-	static char tmp_string2[4096];
+void Log(const char file[], int line, const char* format, ...) {
+	static char tmpString[4096];
+	static char tmpString2[4096];
 	static va_list ap;
 
 	// Construct the string from variable arguments
 	va_start(ap, format);
-	vsprintf_s(tmp_string, 4096, format, ap);
+	vsprintf_s(tmpString, 4096, format, ap);
 	va_end(ap);
-	sprintf_s(tmp_string2, 4096, "%s(%d) : %s\n", file, line, tmp_string);
-	OutputDebugString(tmp_string2);
+	sprintf_s(tmpString2, 4096, "%s(%d) : %s\n", file, line, tmpString);
+	OutputDebugString(tmpString2);
 
-	log_string->append(tmp_string2);
+	logString->append(tmpString2);
 }
 
-void log_delta_ms(float delta_ms) {
-	float fps = 1000.0f / delta_ms;
-	fps_log_index -= 1;
-	if (fps_log_index < 0) {
-		fps_log_index = FPS_LOG_SIZE - 1;
+void LogDeltaMS(float deltaMs) {
+	float fps = 1000.0f / deltaMs;
+	fpsLogIndex -= 1;
+	if (fpsLogIndex < 0) {
+		fpsLogIndex = FPS_LOG_SIZE - 1;
 	}
-	fps_log[fps_log_index] = fps;
-	ms_log[fps_log_index] = delta_ms;
+	fpsLog[fpsLogIndex] = fps;
+	msLog[fpsLogIndex] = deltaMs;
 }
 
-std::string* log_string = nullptr;
-int fps_log_index = FPS_LOG_SIZE - 1;
-float fps_log[FPS_LOG_SIZE] = {0};
-float ms_log[FPS_LOG_SIZE] = {0};
+std::string* logString = nullptr;
+int fpsLogIndex = FPS_LOG_SIZE - 1;
+float fpsLog[FPS_LOG_SIZE] = {0};
+float msLog[FPS_LOG_SIZE] = {0};

@@ -17,13 +17,13 @@ PanelConsole::PanelConsole()
 	: Panel("Console", true) {}
 
 void PanelConsole::Update() {
-	ImGui::SetNextWindowDockID(App->editor->dock_down_id, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowDockID(App->editor->dockDownId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FK_TERMINAL " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		// Output
-		const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
-		ImGui::TextUnformattedWithColorMD(log_string->c_str());
+		const float footerHeightToReserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footerHeightToReserve), false, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::TextUnformattedWithColorMD(logString->c_str());
 		if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
 			ImGui::SetScrollHereY(1.0f);
 		}
@@ -32,17 +32,17 @@ void PanelConsole::Update() {
 		ImGui::Separator();
 
 		// Command-line
-		bool reclaim_focus = false;
-		char InputBuf[256] = {0};
-		ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
-		if (ImGui::InputText("Input", InputBuf, IM_ARRAYSIZE(InputBuf), input_text_flags, &ExecuteCommand)) {
-			log_string->append("$FFB86CFF # ");
-			log_string->append(InputBuf);
-			log_string->append("\n");
-			reclaim_focus = true;
+		bool reclaimFocus = false;
+		char inputBuf[256] = {0};
+		ImGuiInputTextFlags inputTextFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
+		if (ImGui::InputText("Input", inputBuf, IM_ARRAYSIZE(inputBuf), inputTextFlags, &ExecuteCommand)) {
+			logString->append("$FFB86CFF # ");
+			logString->append(inputBuf);
+			logString->append("\n");
+			reclaimFocus = true;
 		}
 		ImGui::SetItemDefaultFocus();
-		if (reclaim_focus) {
+		if (reclaimFocus) {
 			ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
 		}
 	}

@@ -15,12 +15,12 @@ public:
 	void Update() override;
 
 private:
-	float2 framebuffer_size = {0.0f, 0.0f};
+	float2 framebufferSize = {0.0f, 0.0f};
 
 	//ImGuizmo
-	ImGuizmo::OPERATION current_guizmo_operation = ImGuizmo::TRANSLATE;
-	ImGuizmo::MODE current_guizmo_mode = ImGuizmo::WORLD;
+	ImGuizmo::OPERATION currentGuizmoOperation = ImGuizmo::TRANSLATE;
+	ImGuizmo::MODE currentGuizmoMode = ImGuizmo::WORLD;
 
-	bool use_snap = false;
+	bool useSnap = false;
 	float snap[3] = {1.f, 1.f, 1.f};
 };

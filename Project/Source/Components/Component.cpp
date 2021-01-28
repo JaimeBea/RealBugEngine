@@ -19,9 +19,9 @@ void Component::OnTransformUpdate() {}
 
 void Component::OnEditorUpdate() {}
 
-void Component::Save(JsonValue j_component) const {}
+void Component::Save(JsonValue jComponent) const {}
 
-void Component::Load(JsonValue j_component) {}
+void Component::Load(JsonValue jComponent) {}
 
 void Component::Enable() {
 	active = true;

@@ -28,24 +28,24 @@ public:
 
 	void RemoveComponent(Component* component);
 
-	void SetParent(GameObject* game_object);
+	void SetParent(GameObject* gameObject);
 	GameObject* GetParent() const;
 
-	void AddChild(GameObject* game_object);
-	void RemoveChild(GameObject* game_object);
+	void AddChild(GameObject* gameObject);
+	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
-	bool IsDescendantOf(GameObject* game_object);
+	bool IsDescendantOf(GameObject* gameObject);
 
-	void Save(JsonValue j_game_object) const;
-	void Load(JsonValue j_game_object);
-	void PostLoad(JsonValue j_game_object);
+	void Save(JsonValue jGameObject) const;
+	void Load(JsonValue jGameObject);
+	void PostLoad(JsonValue jGameObject);
 
 public:
 	UID id = 0;
 	std::string name = "GameObject";
 	std::vector<Component*> components;
 
-	bool is_in_quadtree = false;
+	bool isInQuadtree = false;
 
 	// Auxiliary variable to help with iterating on the Quadtree
 	bool flag = false;
@@ -66,7 +66,7 @@ inline T* GameObject::CreateComponent(bool active) {
 template<class T>
 inline T* GameObject::GetComponent() const {
 	for (Component* component : components) {
-		if (component->GetType() == T::static_type) {
+		if (component->GetType() == T::staticType) {
 			return (T*) component;
 		}
 	}
@@ -76,13 +76,13 @@ inline T* GameObject::GetComponent() const {
 
 template<class T>
 inline std::vector<T*> GameObject::GetComponents() const {
-	std::vector<T*> aux_components;
+	std::vector<T*> auxComponents;
 
 	for (Component* component : components) {
-		if (component->GetType() == T::static_type) {
-			aux_components.push_back((T*) component);
+		if (component->GetType() == T::staticType) {
+			auxComponents.push_back((T*) component);
 		}
 	}
 
-	return aux_components;
+	return auxComponents;
 }

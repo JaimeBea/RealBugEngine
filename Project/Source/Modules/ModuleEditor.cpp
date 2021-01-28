@@ -21,6 +21,9 @@
 
 #include "Utils/Leaks.h"
 
+static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
+static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
+
 static void ApplyCustomStyle() {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
@@ -90,15 +93,12 @@ static void ApplyCustomStyle() {
 
 	// Merge in icons from Font Awesome and Fork Awesome
 	ImGui::GetIO().Fonts->AddFontDefault();
-	ImFontConfig icons_config;
-	icons_config.MergeMode = true;
-	icons_config.PixelSnapH = true;
+	ImFontConfig iconsConfig;
+	iconsConfig.MergeMode = true;
+	iconsConfig.PixelSnapH = true;
 
-	static const ImWchar icons_ranges_fa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
-	ImGui::GetIO().Fonts->AddFontFromFileTTF("Fonts/" FONT_ICON_FILE_NAME_FAS, 12.0f, &icons_config, icons_ranges_fa);
-
-	static const ImWchar icons_ranges_fk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
-	ImGui::GetIO().Fonts->AddFontFromFileTTF("Fonts/" FONT_ICON_FILE_NAME_FK, 12.0f, &icons_config, icons_ranges_fk);
+	ImGui::GetIO().Fonts->AddFontFromFileTTF("Fonts/" FONT_ICON_FILE_NAME_FAS, 12.0f, &iconsConfig, iconsRangesFa);
+	ImGui::GetIO().Fonts->AddFontFromFileTTF("Fonts/" FONT_ICON_FILE_NAME_FK, 12.0f, &iconsConfig, iconsRangesFk);
 }
 
 bool ModuleEditor::Init() {
@@ -130,12 +130,12 @@ bool ModuleEditor::Start() {
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(1.0f, 1.0f, 1.0f, 0.10f));
 	ImGui::PushStyleColor(ImGuiCol_PlotHistogram, (ImVec4) ImColor(0.54f, 0.43f, 0.12f, 0.97f));
 
-	panels.push_back(&panel_scene);
-	panels.push_back(&panel_console);
-	panels.push_back(&panel_configuration);
-	panels.push_back(&panel_hierarchy);
-	panels.push_back(&panel_inspector);
-	panels.push_back(&panel_about);
+	panels.push_back(&panelScene);
+	panels.push_back(&panelConsole);
+	panels.push_back(&panelConfiguration);
+	panels.push_back(&panelHierarchy);
+	panels.push_back(&panelInspector);
+	panels.push_back(&panelAbout);
 
 	return true;
 }
@@ -161,25 +161,25 @@ UpdateStatus ModuleEditor::Update() {
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("File")) {
 		if (ImGui::MenuItem("New")) {
-			modal_to_open = Modal::NEW_SCENE;
+			modalToOpen = Modal::NEW_SCENE;
 		}
 		if (ImGui::MenuItem("Load")) {
-			modal_to_open = Modal::LOAD_SCENE;
+			modalToOpen = Modal::LOAD_SCENE;
 		}
 		if (ImGui::MenuItem("Save")) {
-			modal_to_open = Modal::SAVE_SCENE;
+			modalToOpen = Modal::SAVE_SCENE;
 		}
 		if (ImGui::MenuItem("Quit")) {
-			modal_to_open = Modal::QUIT;
+			modalToOpen = Modal::QUIT;
 		}
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu("View")) {
-		ImGui::MenuItem(panel_scene.name, "", &panel_scene.enabled);
-		ImGui::MenuItem(panel_console.name, "", &panel_console.enabled);
-		ImGui::MenuItem(panel_inspector.name, "", &panel_inspector.enabled);
-		ImGui::MenuItem(panel_hierarchy.name, "", &panel_hierarchy.enabled);
-		ImGui::MenuItem(panel_configuration.name, "", &panel_configuration.enabled);
+		ImGui::MenuItem(panelScene.name, "", &panelScene.enabled);
+		ImGui::MenuItem(panelConsole.name, "", &panelConsole.enabled);
+		ImGui::MenuItem(panelInspector.name, "", &panelInspector.enabled);
+		ImGui::MenuItem(panelHierarchy.name, "", &panelHierarchy.enabled);
+		ImGui::MenuItem(panelConfiguration.name, "", &panelConfiguration.enabled);
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu("Help")) {
@@ -192,13 +192,13 @@ UpdateStatus ModuleEditor::Update() {
 		if (ImGui::MenuItem("Report a bug")) {
 			App->RequestBrowser("https://github.com/TBD-org/TBD-Engine/issues");
 		}
-		ImGui::MenuItem(panel_about.name, "", &panel_about.enabled);
+		ImGui::MenuItem(panelAbout.name, "", &panelAbout.enabled);
 		ImGui::EndMenu();
 	}
 	ImGui::EndMainMenuBar();
 
 	// Modals
-	switch (modal_to_open) {
+	switch (modalToOpen) {
 	case Modal::NEW_SCENE:
 		ImGui::OpenPopup("New scene");
 		break;
@@ -212,7 +212,7 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::OpenPopup("Quit");
 		break;
 	}
-	modal_to_open = Modal::NONE;
+	modalToOpen = Modal::NONE;
 
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("New scene")) {
@@ -229,9 +229,9 @@ UpdateStatus ModuleEditor::Update() {
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Load scene")) {
-		ImGui::InputText("File name", file_name_buffer, sizeof(file_name_buffer));
+		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
 		if (ImGui::Button("Load")) {
-			SceneImporter::LoadScene(file_name_buffer);
+			SceneImporter::LoadScene(fileNameBuffer);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
@@ -243,9 +243,9 @@ UpdateStatus ModuleEditor::Update() {
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Save scene")) {
 		ImGui::SetItemDefaultFocus();
-		ImGui::InputText("File name", file_name_buffer, sizeof(file_name_buffer));
+		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
 		if (ImGui::Button("Save")) {
-			SceneImporter::SaveScene(file_name_buffer);
+			SceneImporter::SaveScene(fileNameBuffer);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
@@ -269,31 +269,31 @@ UpdateStatus ModuleEditor::Update() {
 
 	// Docking
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGuiID dock_space_id = ImGui::GetID("DockSpace");
+	ImGuiID dockSpaceId = ImGui::GetID("DockSpace");
 
-	if (!ImGui::DockBuilderGetNode(dock_space_id)) {
-		ImGui::DockBuilderAddNode(dock_space_id);
-		ImGui::DockBuilderSetNodeSize(dock_space_id, viewport->GetWorkSize());
+	if (!ImGui::DockBuilderGetNode(dockSpaceId)) {
+		ImGui::DockBuilderAddNode(dockSpaceId);
+		ImGui::DockBuilderSetNodeSize(dockSpaceId, viewport->GetWorkSize());
 
-		dock_main_id = dock_space_id;
-		dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.25f, nullptr, &dock_main_id);
-		dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.33f, nullptr, &dock_main_id);
-		dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.3f, nullptr, &dock_main_id);
+		dockMainId = dockSpaceId;
+		dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.25f, nullptr, &dockMainId);
+		dockRightId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.33f, nullptr, &dockMainId);
+		dockDownId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
 	}
 
 	ImGui::SetNextWindowPos(viewport->GetWorkPos());
 	ImGui::SetNextWindowSize(viewport->GetWorkSize());
 
-	ImGuiWindowFlags dock_space_window_flags = 0;
-	dock_space_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
-	dock_space_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	ImGuiWindowFlags dockSpaceWindowFlags = 0;
+	dockSpaceWindowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+	dockSpaceWindowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-	ImGui::Begin("DockSpace", nullptr, dock_space_window_flags);
+	ImGui::Begin("DockSpace", nullptr, dockSpaceWindowFlags);
 	ImGui::PopStyleVar(3);
-	ImGui::DockSpace(dock_space_id);
+	ImGui::DockSpace(dockSpaceId);
 	ImGui::End();
 
 	// Panels

@@ -61,15 +61,15 @@ UID GameObject::GetID() {
 	return id;
 }
 
-void GameObject::RemoveComponent(Component* to_remove) {
+void GameObject::RemoveComponent(Component* toRemove) {
 	for (Component* component : components) {
-		if (component == to_remove) {
-			components.erase(std::remove(components.begin(), components.end(), to_remove), components.end());
+		if (component == toRemove) {
+			components.erase(std::remove(components.begin(), components.end(), toRemove), components.end());
 		}
 	}
 }
 
-void GameObject::SetParent(GameObject* game_object) {
+void GameObject::SetParent(GameObject* gameObject) {
 	if (parent != nullptr) {
 		bool found = false;
 		for (std::vector<GameObject*>::iterator it = parent->children.begin(); it != parent->children.end(); ++it) {
@@ -81,9 +81,9 @@ void GameObject::SetParent(GameObject* game_object) {
 		}
 		assert(found);
 	}
-	parent = game_object;
-	if (game_object != nullptr) {
-		game_object->children.push_back(this);
+	parent = gameObject;
+	if (gameObject != nullptr) {
+		gameObject->children.push_back(this);
 	}
 }
 
@@ -91,62 +91,62 @@ GameObject* GameObject::GetParent() const {
 	return parent;
 }
 
-void GameObject::AddChild(GameObject* game_object) {
-	game_object->SetParent(this);
+void GameObject::AddChild(GameObject* gameObject) {
+	gameObject->SetParent(this);
 }
 
-void GameObject::RemoveChild(GameObject* game_object) {
-	game_object->SetParent(nullptr);
+void GameObject::RemoveChild(GameObject* gameObject) {
+	gameObject->SetParent(nullptr);
 }
 
 const std::vector<GameObject*>& GameObject::GetChildren() const {
 	return children;
 }
 
-bool GameObject::IsDescendantOf(GameObject* game_object) {
+bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	if (GetParent() == nullptr) return false;
-	if (GetParent() == game_object) return true;
-	return GetParent()->IsDescendantOf(game_object);
+	if (GetParent() == gameObject) return true;
+	return GetParent()->IsDescendantOf(gameObject);
 }
 
-void GameObject::Save(JsonValue j_game_object) const {
-	j_game_object[JSON_TAG_ID] = id;
-	j_game_object[JSON_TAG_NAME] = name.c_str();
-	j_game_object[JSON_TAG_ACTIVE] = active;
-	j_game_object[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
+void GameObject::Save(JsonValue jGameObject) const {
+	jGameObject[JSON_TAG_ID] = id;
+	jGameObject[JSON_TAG_NAME] = name.c_str();
+	jGameObject[JSON_TAG_ACTIVE] = active;
+	jGameObject[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
 
-	JsonValue j_components = j_game_object[JSON_TAG_COMPONENTS];
+	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
-		JsonValue j_component = j_components[i];
+		JsonValue jComponent = jComponents[i];
 		Component& component = *components[i];
 
-		j_component[JSON_TAG_TYPE] = (unsigned) component.GetType();
-		j_component[JSON_TAG_ACTIVE] = component.IsActive();
-		component.Save(j_component);
+		jComponent[JSON_TAG_TYPE] = (unsigned) component.GetType();
+		jComponent[JSON_TAG_ACTIVE] = component.IsActive();
+		component.Save(jComponent);
 	}
 }
 
-void GameObject::Load(JsonValue j_game_object) {
-	id = j_game_object[JSON_TAG_ID];
-	name = j_game_object[JSON_TAG_NAME];
-	active = j_game_object[JSON_TAG_ACTIVE];
+void GameObject::Load(JsonValue jGameObject) {
+	id = jGameObject[JSON_TAG_ID];
+	name = jGameObject[JSON_TAG_NAME];
+	active = jGameObject[JSON_TAG_ACTIVE];
 
-	JsonValue j_components = j_game_object[JSON_TAG_COMPONENTS];
-	for (unsigned i = 0; i < j_components.Size(); ++i) {
-		JsonValue j_component = j_components[i];
+	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
+	for (unsigned i = 0; i < jComponents.Size(); ++i) {
+		JsonValue jComponent = jComponents[i];
 
-		ComponentType type = (ComponentType)(unsigned) j_component[JSON_TAG_TYPE];
-		bool active = j_component[JSON_TAG_ACTIVE];
+		ComponentType type = (ComponentType)(unsigned) jComponent[JSON_TAG_TYPE];
+		bool active = jComponent[JSON_TAG_ACTIVE];
 
 		Component* component = CreateComponentByType(*this, type);
-		component->Load(j_component);
+		component->Load(jComponent);
 	}
 
-	is_in_quadtree = false;
+	isInQuadtree = false;
 }
 
-void GameObject::PostLoad(JsonValue j_game_object) {
-	UID parent_id = j_game_object[JSON_TAG_PARENT_ID];
-	GameObject* parent = App->scene->GetGameObject(parent_id);
+void GameObject::PostLoad(JsonValue jGameObject) {
+	UID parentId = jGameObject[JSON_TAG_PARENT_ID];
+	GameObject* parent = App->scene->GetGameObject(parentId);
 	SetParent(parent);
 }

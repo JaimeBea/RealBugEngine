@@ -10,12 +10,12 @@
 
 #include "Utils/Leaks.h"
 
-Buffer<char> ModuleFiles::Load(const char* file_path) const {
+Buffer<char> ModuleFiles::Load(const char* filePath) const {
 	Buffer<char> buffer = Buffer<char>();
 
-	FILE* file = fopen(file_path, "rb");
+	FILE* file = fopen(filePath, "rb");
 	if (!file) {
-		LOG("Error loading file %s (%s).\n", file_path, strerror(errno));
+		LOG("Error loading file %s (%s).\n", filePath, strerror(errno));
 		return buffer;
 	}
 	DEFER {
@@ -34,14 +34,14 @@ Buffer<char> ModuleFiles::Load(const char* file_path) const {
 	return buffer;
 }
 
-bool ModuleFiles::Save(const char* file_path, const Buffer<char>& buffer, bool append) const {
-	return Save(file_path, buffer.Data(), buffer.Size(), append);
+bool ModuleFiles::Save(const char* filePath, const Buffer<char>& buffer, bool append) const {
+	return Save(filePath, buffer.Data(), buffer.Size(), append);
 }
 
-bool ModuleFiles::Save(const char* file_path, const char* buffer, size_t size, bool append) const {
-	FILE* file = fopen(file_path, append ? "ab" : "wb");
+bool ModuleFiles::Save(const char* filePath, const char* buffer, size_t size, bool append) const {
+	FILE* file = fopen(filePath, append ? "ab" : "wb");
 	if (!file) {
-		LOG("Error saving file %s (%s).\n", file_path, strerror(errno));
+		LOG("Error saving file %s (%s).\n", filePath, strerror(errno));
 		return nullptr;
 	}
 	DEFER {
@@ -53,87 +53,87 @@ bool ModuleFiles::Save(const char* file_path, const char* buffer, size_t size, b
 	return true;
 }
 
-void ModuleFiles::CreateFolder(const char* folder_path) const {
-	CreateDirectory(folder_path, nullptr);
+void ModuleFiles::CreateFolder(const char* folderPath) const {
+	CreateDirectory(folderPath, nullptr);
 }
 
-void ModuleFiles::EraseFolder(const char* folder_path) const {
-	RemoveDirectory(folder_path);
+void ModuleFiles::EraseFolder(const char* folderPath) const {
+	RemoveDirectory(folderPath);
 }
 
-void ModuleFiles::EraseFile(const char* file_path) const {
-	remove(file_path);
+void ModuleFiles::EraseFile(const char* filePath) const {
+	remove(filePath);
 }
 
-std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folder_path) const {
-	std::string folder_path_ex = std::string(folder_path) + "\\*";
-	std::vector<std::string> file_paths;
+std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
+	std::string folderPathEx = std::string(folderPath) + "\\*";
+	std::vector<std::string> filePaths;
 	WIN32_FIND_DATA data;
-	HANDLE handle = FindFirstFile(folder_path_ex.c_str(), &data);
-	if (handle == INVALID_HANDLE_VALUE) return file_paths;
+	HANDLE handle = FindFirstFile(folderPathEx.c_str(), &data);
+	if (handle == INVALID_HANDLE_VALUE) return filePaths;
 	unsigned i = 0;
 	do {
 		if (i >= 2) // Ignore '.' and '..'
 		{
-			file_paths.push_back(data.cFileName);
+			filePaths.push_back(data.cFileName);
 		}
 		i++;
 	} while (FindNextFile(handle, &data));
 	FindClose(handle);
-	return file_paths;
+	return filePaths;
 }
 
-std::string ModuleFiles::GetFileNameAndExtension(const char* file_path) const {
-	const char* last_slash = strrchr(file_path, '/');
-	const char* last_backslash = strrchr(file_path, '\\');
-	const char* last_separator = Max(last_slash, last_backslash);
+std::string ModuleFiles::GetFileNameAndExtension(const char* filePath) const {
+	const char* lastSlash = strrchr(filePath, '/');
+	const char* lastBackslash = strrchr(filePath, '\\');
+	const char* lastSeparator = Max(lastSlash, lastBackslash);
 
-	if (last_separator == nullptr) {
-		return file_path;
+	if (lastSeparator == nullptr) {
+		return filePath;
 	}
 
-	const char* file_name_and_extension = last_separator + 1;
-	return file_name_and_extension;
+	const char* fileNameAndExtension = lastSeparator + 1;
+	return fileNameAndExtension;
 }
 
-std::string ModuleFiles::GetFileName(const char* file_path) const {
-	const char* last_slash = strrchr(file_path, '/');
-	const char* last_backslash = strrchr(file_path, '\\');
-	const char* last_separator = Max(last_slash, last_backslash);
+std::string ModuleFiles::GetFileName(const char* filePath) const {
+	const char* lastSlash = strrchr(filePath, '/');
+	const char* lastBackslash = strrchr(filePath, '\\');
+	const char* lastSeparator = Max(lastSlash, lastBackslash);
 
-	const char* file_name = last_separator == nullptr ? file_path : last_separator + 1;
-	const char* last_dot = strrchr(file_name, '.');
+	const char* fileName = lastSeparator == nullptr ? filePath : lastSeparator + 1;
+	const char* lastDot = strrchr(fileName, '.');
 
-	if (last_dot == nullptr || last_dot == file_name) {
-		return file_name;
+	if (lastDot == nullptr || lastDot == fileName) {
+		return fileName;
 	}
 
-	return std::string(file_name).substr(0, last_dot - file_name);
+	return std::string(fileName).substr(0, lastDot - fileName);
 }
 
-std::string ModuleFiles::GetFileExtension(const char* file_path) const {
-	const char* last_slash = strrchr(file_path, '/');
-	const char* last_backslash = strrchr(file_path, '\\');
-	const char* last_separator = Max(last_slash, last_backslash);
-	const char* last_dot = strrchr(file_path, '.');
+std::string ModuleFiles::GetFileExtension(const char* filePath) const {
+	const char* lastSlash = strrchr(filePath, '/');
+	const char* lastBackslash = strrchr(filePath, '\\');
+	const char* lastSeparator = Max(lastSlash, lastBackslash);
+	const char* lastDot = strrchr(filePath, '.');
 
-	if (last_dot == nullptr || last_dot == file_path || last_dot < last_separator || last_dot == last_separator + 1) {
+	if (lastDot == nullptr || lastDot == filePath || lastDot < lastSeparator || lastDot == lastSeparator + 1) {
 		return std::string();
 	}
 
-	std::string extension = std::string(last_dot);
+	std::string extension = std::string(lastDot);
 	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 	return extension;
 }
 
-std::string ModuleFiles::GetFileFolder(const char* file_path) const {
-	const char* last_slash = strrchr(file_path, '/');
-	const char* last_backslash = strrchr(file_path, '\\');
-	const char* last_separator = Max(last_slash, last_backslash);
+std::string ModuleFiles::GetFileFolder(const char* filePath) const {
+	const char* lastSlash = strrchr(filePath, '/');
+	const char* lastBackslash = strrchr(filePath, '\\');
+	const char* lastSeparator = Max(lastSlash, lastBackslash);
 
-	if (last_separator == nullptr) {
+	if (lastSeparator == nullptr) {
 		return std::string();
 	}
 
-	return std::string(file_path).substr(0, last_separator - file_path);
+	return std::string(filePath).substr(0, lastSeparator - filePath);
 }

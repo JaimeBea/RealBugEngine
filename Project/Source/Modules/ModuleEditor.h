@@ -33,32 +33,31 @@ public:
 	bool CleanUp() override;
 
 public:
-	Modal modal_to_open = Modal::NONE;
+	Modal modalToOpen = Modal::NONE;
 
-	unsigned dock_space_id = 0;
-	unsigned dock_main_id = 0;
-	unsigned dock_left_id = 0;
-	unsigned dock_right_id = 0;
-	unsigned dock_down_id = 0;
+	unsigned dockMainId = 0;
+	unsigned dockLeftId = 0;
+	unsigned dockRightId = 0;
+	unsigned dockDownId = 0;
 
 	std::vector<Panel*> panels;
 
-	PanelScene panel_scene;
-	PanelConsole panel_console;
-	PanelConfiguration panel_configuration;
-	PanelInspector panel_inspector;
-	PanelHierarchy panel_hierarchy;
-	PanelAbout panel_about;
+	PanelScene panelScene;
+	PanelConsole panelConsole;
+	PanelConfiguration panelConfiguration;
+	PanelInspector panelInspector;
+	PanelHierarchy panelHierarchy;
+	PanelAbout panelAbout;
 
-	GameObject* selected_object = nullptr;
+	GameObject* selectedGameObject = nullptr;
 
-	ImVec4 title_color = ImVec4(0.35f, 0.69f, 0.87f, 1.0f);
-	ImVec4 text_color = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
-	float drag_speed1f = 0.5f;
-	float drag_speed2f = 0.05f;
-	float drag_speed3f = 0.005f;
-	float drag_speed5f = 0.00005f;
+	ImVec4 titleColor = ImVec4(0.35f, 0.69f, 0.87f, 1.0f);
+	ImVec4 textColor = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+	float dragSpeed1f = 0.5f;
+	float dragSpeed2f = 0.05f;
+	float dragSpeed3f = 0.005f;
+	float dragSpeed5f = 0.00005f;
 
 private:
-	char file_name_buffer[32] = {'\0'};
+	char fileNameBuffer[32] = {'\0'};
 };

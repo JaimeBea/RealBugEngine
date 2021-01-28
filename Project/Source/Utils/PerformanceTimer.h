@@ -8,6 +8,6 @@ public:
 
 public:
 	bool running = false;
-	unsigned long long start_count = 0;
-	unsigned long long delta_time = 0;
+	unsigned long long startCount = 0;
+	unsigned long long deltaTime = 0;
 };

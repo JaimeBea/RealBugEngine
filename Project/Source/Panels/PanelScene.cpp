@@ -28,15 +28,13 @@ PanelScene::PanelScene()
 	: Panel("Scene", true) {}
 
 void PanelScene::Update() {
-	float imguizmo_size = 100;
-
 	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT)) {
-		if (App->input->GetKey(SDL_SCANCODE_W)) current_guizmo_operation = ImGuizmo::TRANSLATE; // W key
-		if (App->input->GetKey(SDL_SCANCODE_E)) current_guizmo_operation = ImGuizmo::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R)) current_guizmo_operation = ImGuizmo::SCALE; // R key
+		if (App->input->GetKey(SDL_SCANCODE_W)) currentGuizmoOperation = ImGuizmo::TRANSLATE; // W key
+		if (App->input->GetKey(SDL_SCANCODE_E)) currentGuizmoOperation = ImGuizmo::ROTATE;
+		if (App->input->GetKey(SDL_SCANCODE_R)) currentGuizmoOperation = ImGuizmo::SCALE; // R key
 	}
 
-	ImGui::SetNextWindowDockID(App->editor->dock_main_id, ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowDockID(App->editor->dockMainId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_BORDER_ALL " ") + name;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	if (ImGui::Begin(windowName.c_str(), &enabled, ImGuiWindowFlags_MenuBar)) {
@@ -71,32 +69,32 @@ void PanelScene::Update() {
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 			ImGui::SameLine();
 
-			if (ImGui::RadioButton("Translate", current_guizmo_operation == ImGuizmo::TRANSLATE)) current_guizmo_operation = ImGuizmo::TRANSLATE;
+			if (ImGui::RadioButton("Translate", currentGuizmoOperation == ImGuizmo::TRANSLATE)) currentGuizmoOperation = ImGuizmo::TRANSLATE;
 			ImGui::SameLine();
-			if (ImGui::RadioButton("Rotate", current_guizmo_operation == ImGuizmo::ROTATE)) current_guizmo_operation = ImGuizmo::ROTATE;
+			if (ImGui::RadioButton("Rotate", currentGuizmoOperation == ImGuizmo::ROTATE)) currentGuizmoOperation = ImGuizmo::ROTATE;
 			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", current_guizmo_operation == ImGuizmo::SCALE)) current_guizmo_operation = ImGuizmo::SCALE;
+			if (ImGui::RadioButton("Scale", currentGuizmoOperation == ImGuizmo::SCALE)) currentGuizmoOperation = ImGuizmo::SCALE;
 
-			if (current_guizmo_operation != ImGuizmo::SCALE) {
+			if (currentGuizmoOperation != ImGuizmo::SCALE) {
 				ImGui::SameLine();
 				ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 				ImGui::SameLine();
-				if (ImGui::RadioButton("Local", current_guizmo_mode == ImGuizmo::LOCAL)) current_guizmo_mode = ImGuizmo::LOCAL;
+				if (ImGui::RadioButton("Local", currentGuizmoMode == ImGuizmo::LOCAL)) currentGuizmoMode = ImGuizmo::LOCAL;
 				ImGui::SameLine();
-				if (ImGui::RadioButton("World", current_guizmo_mode == ImGuizmo::WORLD)) current_guizmo_mode = ImGuizmo::WORLD;
+				if (ImGui::RadioButton("World", currentGuizmoMode == ImGuizmo::WORLD)) currentGuizmoMode = ImGuizmo::WORLD;
 			}
 
 			ImGui::SameLine();
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 			ImGui::SameLine();
 
-			ImGui::TextColored(App->editor->title_color, "Snap");
+			ImGui::TextColored(App->editor->titleColor, "Snap");
 			ImGui::SameLine();
-			ImGui::Checkbox("##snap", &use_snap);
+			ImGui::Checkbox("##snap", &useSnap);
 			ImGui::SameLine();
 
 			ImGui::PushItemWidth(150);
-			switch (current_guizmo_operation) {
+			switch (currentGuizmoOperation) {
 			case ImGuizmo::TRANSLATE:
 				ImGui::InputFloat3("Snap", &snap[0]);
 				break;
@@ -114,20 +112,20 @@ void PanelScene::Update() {
 
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (App->renderer->viewport_width != size.x || App->renderer->viewport_height != size.y) {
+		if (App->renderer->viewportWidth != size.x || App->renderer->viewportHeight != size.y) {
 			App->camera->ViewportResized((int) size.x, (int) size.y);
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
-			framebuffer_size = {
+			framebufferSize = {
 				size.x,
 				size.y,
 			};
 		}
 
-		ImVec2 framebuffer_position = ImGui::GetWindowPos();
-		framebuffer_position.y += (ImGui::GetWindowHeight() - size.y);
+		ImVec2 framebufferPosition = ImGui::GetWindowPos();
+		framebufferPosition.y += (ImGui::GetWindowHeight() - size.y);
 		
 		// Draw
-		ImGui::Image((void*) App->renderer->render_texture, size, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*) App->renderer->renderTexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
 		// Capture input
 		if (ImGui::IsWindowFocused()) {
@@ -142,41 +140,41 @@ void PanelScene::Update() {
 			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
 				ImGui::CaptureMouseFromApp(true);
 				ImGuiIO& io = ImGui::GetIO();
-				float2 mouse_pos_normalized;
-				mouse_pos_normalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebuffer_position.x) / (size.x), 1.0f));
-				mouse_pos_normalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebuffer_position.y) / (size.y), 1.0f));
-				App->camera->CalculateFrustumNearestObject(mouse_pos_normalized);
+				float2 mousePosNormalized;
+				mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
+				mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
+				App->camera->CalculateFrustumNearestObject(mousePosNormalized);
 			}
 			ImGui::CaptureMouseFromApp(false);
 		}
 
-		float view_manipulate_right = framebuffer_position.x + framebuffer_size.x;
-		float view_manipulate_top = framebuffer_position.y;
+		float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
+		float viewManipulateTop = framebufferPosition.y;
 		ImGuizmo::SetDrawlist();
-		ImGuizmo::SetRect(framebuffer_position.x, framebuffer_position.y, framebuffer_size.x, framebuffer_size.y);
+		ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
 
-		Frustum& engine_frustum = App->camera->GetEngineFrustum();
-		float4x4 camera_view = float4x4(engine_frustum.ViewMatrix()).Transposed();
-		float4x4 camera_projection = engine_frustum.ProjectionMatrix().Transposed();
+		Frustum& engineFrustum = App->camera->GetEngineFrustum();
+		float4x4 cameraView = float4x4(engineFrustum.ViewMatrix()).Transposed();
+		float4x4 cameraProjection = engineFrustum.ProjectionMatrix().Transposed();
 
-		GameObject* selected_object = App->editor->selected_object;
-		if (selected_object) {
-			ComponentTransform* transform = selected_object->GetComponent<ComponentTransform>();
-			GameObject* parent = selected_object->GetParent();
-			float4x4 inverse_parent_matrix = float4x4::identity;
+		GameObject* selectedGameObject = App->editor->selectedGameObject;
+		if (selectedGameObject) {
+			ComponentTransform* transform = selectedGameObject->GetComponent<ComponentTransform>();
+			GameObject* parent = selectedGameObject->GetParent();
+			float4x4 inverseParentMatrix = float4x4::identity;
 			if (parent != nullptr) {
-				ComponentTransform* parent_transform = parent->GetComponent<ComponentTransform>();
-				inverse_parent_matrix = parent_transform->GetGlobalMatrix().Inverted();
+				ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
+				inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
 			}
-			float4x4 global_matrix = transform->GetGlobalMatrix().Transposed();
+			float4x4 globalMatrix = transform->GetGlobalMatrix().Transposed();
 
-			if (ImGuizmo::Manipulate(camera_view.ptr(), camera_projection.ptr(), current_guizmo_operation, current_guizmo_mode, global_matrix.ptr(), NULL, use_snap ? snap : NULL)) {
-				float4x4 local_matrix = inverse_parent_matrix * global_matrix.Transposed();
+			if (ImGuizmo::Manipulate(cameraView.ptr(), cameraProjection.ptr(), currentGuizmoOperation, currentGuizmoMode, globalMatrix.ptr(), NULL, useSnap ? snap : NULL)) {
+				float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
 
 				float3 translation;
 				Quat rotation;
 				float3 scale;
-				local_matrix.Decompose(translation, rotation, scale);
+				localMatrix.Decompose(translation, rotation, scale);
 
 				transform->SetPosition(translation);
 				transform->SetScale(scale);
@@ -184,10 +182,11 @@ void PanelScene::Update() {
 			}
 		}
 
-		ImGuizmo::ViewManipulate(camera_view.ptr(), 4, ImVec2(view_manipulate_right - imguizmo_size, view_manipulate_top), ImVec2(imguizmo_size, imguizmo_size), 0x10101010);
+		float viewManipulateSize = 100;
+		ImGuizmo::ViewManipulate(cameraView.ptr(), 4, ImVec2(viewManipulateRight - viewManipulateSize, viewManipulateTop), ImVec2(viewManipulateSize, viewManipulateSize), 0x10101010);
 
-		float4x4 new_camera_view = camera_view.InverseTransposed();
-		App->camera->engine_camera_frustum.SetFrame(new_camera_view.Col(3).xyz(), -new_camera_view.Col(2).xyz(), new_camera_view.Col(1).xyz());
+		float4x4 newCameraView = cameraView.InverseTransposed();
+		App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
 
 		ImGui::End();
 		ImGui::PopStyleVar();

@@ -15,6 +15,6 @@ private:
 	void UpdateHierarchyNode(GameObject* game_object);
 
 private:
-	int window_width = 0;
-	int window_height = 0;
+	int windowWidth = 0;
+	int windowHeight = 0;
 };

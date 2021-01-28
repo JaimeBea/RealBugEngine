@@ -43,13 +43,13 @@ public:
 	ModuleInput* input = nullptr;
 	ModuleEditor* editor = nullptr;
 	ModulePrograms* programs = nullptr;
-	ModuleDebugDraw* debug_draw = nullptr;
+	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
 
 	// Application Configuration
 
-	char app_name[20] = "TBD Engine";
+	char appName[20] = "TBD Engine";
 	char organization[20] = "";
 
 private:

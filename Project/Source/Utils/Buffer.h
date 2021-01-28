@@ -18,9 +18,9 @@ public:
 
 	Buffer(Buffer<T>&& buffer)
 		: size(buffer.size) {
-		char* old_data = data;
+		char* oldData = data;
 		data = buffer.data;
-		buffer.data = old_data;
+		buffer.data = oldData;
 	}
 
 	~Buffer() {
@@ -49,9 +49,9 @@ public:
 
 	Buffer<T>& operator=(Buffer<T>&& buffer) {
 		size = buffer.size;
-		T* old_data = data;
+		T* oldData = data;
 		data = buffer.data;
-		buffer.data = old_data;
+		buffer.data = oldData;
 
 		return *this;
 	}

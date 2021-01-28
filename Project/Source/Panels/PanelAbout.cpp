@@ -15,18 +15,18 @@ void PanelAbout::Update() {
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FK_INFO_CIRCLE " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::TextColored(App->editor->title_color, "TBD Engine");
+		ImGui::TextColored(App->editor->titleColor, "TBD Engine");
 		ImGui::Separator();
-		ImGui::TextColored(App->editor->title_color, u8"By TBD org.");
+		ImGui::TextColored(App->editor->titleColor, u8"By TBD org.");
 		ImGui::Text("Engine developed during the Master in Advanced Programming for AAA Video Games by UPC.");
 		ImGui::Text("Engine licensed under the MIT License.");
 		ImGui::Separator();
 
-		ImVec2 child_size = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 6);
+		ImVec2 childSize = ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 6);
 
-		ImGui::Checkbox("Libraries", &show_library);
-		if (show_library) {
-			ImGui::BeginChildFrame(ImGui::GetID("cfg_infos"), child_size);
+		ImGui::Checkbox("Libraries", &showLibrary);
+		if (showLibrary) {
+			ImGui::BeginChildFrame(ImGui::GetID("cfg_infos"), childSize);
 			ImGui::Text("MathGeoLib v1.5 ");
 			ImGui::Text("Simple DirectMedia Layer (SDL) v2.0");
 			ImGui::Text("ImGui Docking");

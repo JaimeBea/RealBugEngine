@@ -8,8 +8,8 @@ public:
 	REGISTER_COMPONENT(ComponentMaterial, ComponentType::MATERIAL);
 
 	void OnEditorUpdate() override;
-	void Save(JsonValue j_component) const override;
-	void Load(JsonValue j_component) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
 public:
 	GameObject* light = nullptr;

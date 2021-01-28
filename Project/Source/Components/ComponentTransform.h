@@ -14,8 +14,8 @@ public:
 	void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
-	void Save(JsonValue j_component) const override;
-	void Load(JsonValue j_component) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
 	void InvalidateHierarchy();
 	void Invalidate();
@@ -39,9 +39,9 @@ private:
 	Quat rotation = Quat::identity;
 	float3 scale = float3::one;
 
-	float3 local_euler_angles = float3::zero;
+	float3 localEulerAngles = float3::zero;
 
 	bool dirty = true;
-	float4x4 local_matrix = float4x4::identity;
-	float4x4 global_matrix = float4x4::identity;
+	float4x4 localMatrix = float4x4::identity;
+	float4x4 globalMatrix = float4x4::identity;
 };

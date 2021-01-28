@@ -26,9 +26,9 @@ bool ModuleWindow::Init() {
 
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
-	SDL_DisplayMode desktop_display_mode;
-	SDL_GetDesktopDisplayMode(0, &desktop_display_mode);
-	window = SDL_CreateWindow(App->app_name, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktop_display_mode.w - 100, desktop_display_mode.h - 100, flags);
+	SDL_DisplayMode desktopDisplayMode;
+	SDL_GetDesktopDisplayMode(0, &desktopDisplayMode);
+	window = SDL_CreateWindow(App->appName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktopDisplayMode.w - 100, desktopDisplayMode.h - 100, flags);
 	if (window == NULL) {
 		LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 		return false;
@@ -37,15 +37,15 @@ bool ModuleWindow::Init() {
 	surface = SDL_GetWindowSurface(window);
 
 	// Create a list with all the available display modes
-	int display_mode_num = SDL_GetNumDisplayModes(SDL_GetWindowDisplayIndex(window));
-	for (int i = 0; i < display_mode_num; ++i) {
-		SDL_DisplayMode display_mode;
-		SDL_GetDisplayMode(SDL_GetWindowDisplayIndex(window), i, &display_mode);
-		display_modes.push_back(display_mode);
+	int displayModeNum = SDL_GetNumDisplayModes(SDL_GetWindowDisplayIndex(window));
+	for (int i = 0; i < displayModeNum; ++i) {
+		SDL_DisplayMode displayMode;
+		SDL_GetDisplayMode(SDL_GetWindowDisplayIndex(window), i, &displayMode);
+		displayModes.push_back(displayMode);
 	}
 
 	// Set the current display mode to the first one
-	SDL_SetWindowDisplayMode(window, &display_modes[current_display_mode]);
+	SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
 
 	return true;
 }
@@ -72,15 +72,15 @@ void ModuleWindow::SetWindowMode(WindowMode mode) {
 		SDL_SetWindowBordered(window, SDL_FALSE);
 		break;
 	case WindowMode::FULLSCREEN:
-		SDL_SetWindowDisplayMode(window, &display_modes[current_display_mode]);
+		SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 		break;
 	case WindowMode::FULLSCREEN_DESKTOP:
-		SDL_SetWindowDisplayMode(window, &display_modes[current_display_mode]);
+		SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
 		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 		break;
 	}
-	window_mode = mode;
+	windowMode = mode;
 }
 
 void ModuleWindow::SetResizable(bool resizable) {
@@ -92,14 +92,14 @@ void ModuleWindow::SetResizable(bool resizable) {
 }
 
 void ModuleWindow::SetCurrentDisplayMode(int index) {
-	SDL_SetWindowDisplayMode(window, &display_modes[index]);
-	current_display_mode = index;
+	SDL_SetWindowDisplayMode(window, &displayModes[index]);
+	currentDisplayMode = index;
 }
 
 void ModuleWindow::SetSize(int width, int height) {
-	int display_index = SDL_GetWindowDisplayIndex(window);
+	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_SetWindowSize(window, width, height);
-	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(display_index), SDL_WINDOWPOS_CENTERED_DISPLAY(display_index));
+	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex));
 }
 
 void ModuleWindow::SetBrightness(float brightness) {
@@ -111,7 +111,7 @@ void ModuleWindow::SetTitle(const char* title) {
 }
 
 WindowMode ModuleWindow::GetWindowMode() const {
-	return window_mode;
+	return windowMode;
 }
 
 bool ModuleWindow::GetMaximized() const {
@@ -123,7 +123,7 @@ bool ModuleWindow::GetResizable() const {
 }
 
 int ModuleWindow::GetCurrentDisplayMode() const {
-	return current_display_mode;
+	return currentDisplayMode;
 }
 
 int ModuleWindow::GetWidth() const {

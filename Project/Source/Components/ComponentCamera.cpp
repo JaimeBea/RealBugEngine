@@ -25,7 +25,7 @@
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
 
 void ComponentCamera::DrawGizmos() {
-	if (active_camera) return;
+	if (activeCamera) return;
 
 	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
@@ -41,76 +41,76 @@ void ComponentCamera::OnTransformUpdate() {
 
 void ComponentCamera::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Camera")) {
-		if (ImGui::Checkbox("Main Camera", &active_camera)) {
-			App->camera->ChangeActiveFrustum(frustum, active_camera);
+		if (ImGui::Checkbox("Main Camera", &activeCamera)) {
+			App->camera->ChangeActiveFrustum(frustum, activeCamera);
 		}
 		ImGui::Separator();
 
 		vec front = frustum.Front();
 		vec up = frustum.Up();
-		ImGui::TextColored(App->editor->title_color, "Frustum");
+		ImGui::TextColored(App->editor->titleColor, "Frustum");
 		ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-		float near_plane = frustum.NearPlaneDistance();
-		float far_plane = frustum.FarPlaneDistance();
-		if (ImGui::DragFloat("Near Plane", &near_plane, 0.1f, 0.0f, far_plane, "%.2f")) {
-			frustum.SetViewPlaneDistances(near_plane, far_plane);
+		float nearPlane = frustum.NearPlaneDistance();
+		float farPlane = frustum.FarPlaneDistance();
+		if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
+			frustum.SetViewPlaneDistances(nearPlane, farPlane);
 		}
-		if (ImGui::DragFloat("Far Plane", &far_plane, 1.0f, near_plane, inf, "%.2f")) {
-			frustum.SetViewPlaneDistances(near_plane, far_plane);
+		if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
+			frustum.SetViewPlaneDistances(nearPlane, farPlane);
 		}
 		float fov = frustum.VerticalFov();
 		if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
 			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 		}
-		if (ImGui::Checkbox("Frustum Culling", &culling_camera)) {
-			App->camera->ChangeCullingFrustum(frustum, culling_camera);
+		if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
+			App->camera->ChangeCullingFrustum(frustum, cullingCamera);
 		}
 	}
 }
 
-void ComponentCamera::Save(JsonValue j_component) const {
-	JsonValue j_frustum = j_component[JSON_TAG_FRUSTRUM];
-	JsonValue j_pos = j_frustum[JSON_TAG_POS];
-	j_pos[0] = frustum.Pos().x;
-	j_pos[1] = frustum.Pos().y;
-	j_pos[2] = frustum.Pos().z;
-	JsonValue j_up = j_frustum[JSON_TAG_UP];
-	j_up[0] = frustum.Up().x;
-	j_up[1] = frustum.Up().y;
-	j_up[2] = frustum.Up().z;
-	JsonValue j_front = j_frustum[JSON_TAG_FRONT];
-	j_front[0] = frustum.Front().x;
-	j_front[1] = frustum.Front().y;
-	j_front[2] = frustum.Front().z;
-	j_frustum[JSON_TAG_NEAR_PLANE_DISTANCE] = frustum.NearPlaneDistance();
-	j_frustum[JSON_TAG_FAR_PLANE_DISTANCE] = frustum.FarPlaneDistance();
-	j_frustum[JSON_TAG_HORIZONTAL_FOV] = frustum.HorizontalFov();
-	j_frustum[JSON_TAG_VERTICAL_FOV] = frustum.VerticalFov();
+void ComponentCamera::Save(JsonValue jComponent) const {
+	JsonValue jFrustum = jComponent[JSON_TAG_FRUSTRUM];
+	JsonValue jPos = jFrustum[JSON_TAG_POS];
+	jPos[0] = frustum.Pos().x;
+	jPos[1] = frustum.Pos().y;
+	jPos[2] = frustum.Pos().z;
+	JsonValue jUp = jFrustum[JSON_TAG_UP];
+	jUp[0] = frustum.Up().x;
+	jUp[1] = frustum.Up().y;
+	jUp[2] = frustum.Up().z;
+	JsonValue jFront = jFrustum[JSON_TAG_FRONT];
+	jFront[0] = frustum.Front().x;
+	jFront[1] = frustum.Front().y;
+	jFront[2] = frustum.Front().z;
+	jFrustum[JSON_TAG_NEAR_PLANE_DISTANCE] = frustum.NearPlaneDistance();
+	jFrustum[JSON_TAG_FAR_PLANE_DISTANCE] = frustum.FarPlaneDistance();
+	jFrustum[JSON_TAG_HORIZONTAL_FOV] = frustum.HorizontalFov();
+	jFrustum[JSON_TAG_VERTICAL_FOV] = frustum.VerticalFov();
 
-	j_component[JSON_TAG_CAMERA_SELECTED] = active_camera;
+	jComponent[JSON_TAG_CAMERA_SELECTED] = activeCamera;
 }
 
-void ComponentCamera::Load(JsonValue j_component) {
-	JsonValue j_frustum = j_component[JSON_TAG_FRUSTRUM];
-	JsonValue j_pos = j_frustum[JSON_TAG_POS];
-	JsonValue j_up = j_frustum[JSON_TAG_UP];
-	JsonValue j_front = j_frustum[JSON_TAG_FRONT];
-	frustum.SetFrame(vec(j_pos[0], j_pos[1], j_pos[2]), vec(j_front[0], j_front[1], j_front[2]), vec(j_up[0], j_up[1], j_up[2]));
-	frustum.SetViewPlaneDistances(j_frustum[JSON_TAG_NEAR_PLANE_DISTANCE], j_frustum[JSON_TAG_FAR_PLANE_DISTANCE]);
-	frustum.SetPerspective(j_frustum[JSON_TAG_HORIZONTAL_FOV], j_frustum[JSON_TAG_VERTICAL_FOV]);
+void ComponentCamera::Load(JsonValue jComponent) {
+	JsonValue jFrustum = jComponent[JSON_TAG_FRUSTRUM];
+	JsonValue jPos = jFrustum[JSON_TAG_POS];
+	JsonValue jUp = jFrustum[JSON_TAG_UP];
+	JsonValue jFront = jFrustum[JSON_TAG_FRONT];
+	frustum.SetFrame(vec(jPos[0], jPos[1], jPos[2]), vec(jFront[0], jFront[1], jFront[2]), vec(jUp[0], jUp[1], jUp[2]));
+	frustum.SetViewPlaneDistances(jFrustum[JSON_TAG_NEAR_PLANE_DISTANCE], jFrustum[JSON_TAG_FAR_PLANE_DISTANCE]);
+	frustum.SetPerspective(jFrustum[JSON_TAG_HORIZONTAL_FOV], jFrustum[JSON_TAG_VERTICAL_FOV]);
 
-	active_camera = j_component[JSON_TAG_CAMERA_SELECTED];
+	activeCamera = jComponent[JSON_TAG_CAMERA_SELECTED];
 }
 
 Frustum ComponentCamera::BuildDefaultFrustum() const {
-	Frustum new_frustum;
-	new_frustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
-	new_frustum.SetViewPlaneDistances(0.1f, 200.0f);
-	new_frustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
-	new_frustum.SetFront(vec::unitZ);
-	new_frustum.SetUp(vec::unitY);
-	new_frustum.SetPos(vec::zero);
-	return new_frustum;
+	Frustum newFrustum;
+	newFrustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
+	newFrustum.SetViewPlaneDistances(0.1f, 200.0f);
+	newFrustum.SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+	newFrustum.SetFront(vec::unitZ);
+	newFrustum.SetUp(vec::unitY);
+	newFrustum.SetPos(vec::zero);
+	return newFrustum;
 }
