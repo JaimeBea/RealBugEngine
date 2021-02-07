@@ -7,5 +7,5 @@ in vec2 uv0;
 out vec3 color;
 
 void main() {
-	color = texture(diffuseTexture, uv0).xyz;
+	color = texture(diffuseTexture, uv0).rgb;
 }
