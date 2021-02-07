@@ -161,15 +161,17 @@ void PanelScene::Update() {
 		GameObject* selectedGameObject = App->editor->selectedGameObject;
 		if (selectedGameObject) {
 			ComponentTransform* transform = selectedGameObject->GetComponent<ComponentTransform>();
-			GameObject* parent = selectedGameObject->GetParent();
-			float4x4 inverseParentMatrix = float4x4::identity;
-			if (parent != nullptr) {
-				ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
-				inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
-			}
 			float4x4 globalMatrix = transform->GetGlobalMatrix().Transposed();
 
-			if (ImGuizmo::Manipulate(cameraView.ptr(), cameraProjection.ptr(), currentGuizmoOperation, currentGuizmoMode, globalMatrix.ptr(), NULL, useSnap ? snap : NULL)) {
+			ImGuizmo::Manipulate(cameraView.ptr(), cameraProjection.ptr(), currentGuizmoOperation, currentGuizmoMode, globalMatrix.ptr(), NULL, useSnap ? snap : NULL);
+
+			if (ImGuizmo::IsUsing()) {
+				GameObject* parent = selectedGameObject->GetParent();
+				float4x4 inverseParentMatrix = float4x4::identity;
+				if (parent != nullptr) {
+					ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
+					inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
+				}
 				float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
 
 				float3 translation;
@@ -177,9 +179,17 @@ void PanelScene::Update() {
 				float3 scale;
 				localMatrix.Decompose(translation, rotation, scale);
 
-				transform->SetPosition(translation);
-				transform->SetScale(scale);
-				transform->SetRotation(rotation);
+				switch (currentGuizmoOperation) {
+				case ImGuizmo::TRANSLATE:
+					transform->SetPosition(translation);
+					break;
+				case ImGuizmo::ROTATE:
+					transform->SetRotation(rotation);
+					break;
+				case ImGuizmo::SCALE:
+					transform->SetScale(scale);
+					break;
+				}
 			}
 		}
 
