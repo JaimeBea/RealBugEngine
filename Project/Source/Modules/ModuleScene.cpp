@@ -228,7 +228,8 @@ void ModuleScene::ClearScene() {
 	root = nullptr;
 	quadtree.Clear();
 
-	assert(gameObjects.Count() == 0);
+	assert(gameObjects.Count() == 0); // There should be no GameObjects outside the scene hierarchy
+	gameObjects.ReleaseAll(); // This looks redundant, but it resets the free list so that GameObject order is mantained when saving/loading
 }
 
 void ModuleScene::RebuildQuadtree() {
