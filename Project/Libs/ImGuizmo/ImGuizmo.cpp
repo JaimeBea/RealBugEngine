@@ -1665,7 +1665,7 @@ namespace ImGuizmo
          const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, pickupPlan);
          vec_t localPos = gContext.mRayOrigin + gContext.mRayVector * len - gContext.mModel.v.position;
 
-         if (Dot(Normalized(localPos), gContext.mRayVector) > FLT_EPSILON)
+         if (Dot(Normalized(localPos), gContext.mRayVector) < FLT_EPSILON)
          {
             continue;
          }
@@ -1673,7 +1673,7 @@ namespace ImGuizmo
          idealPosOnCircle.TransformVector(gContext.mModelInverse);
          ImVec2 idealPosOnCircleScreen = worldToPos(idealPosOnCircle * gContext.mScreenFactor, gContext.mMVP);
 
-         //gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, 0xFFFFFFFF);
+         gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, 0xFFFFFFFF);
          ImVec2 distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
 
          float distance = makeVect(distanceOnScreen).Length();
