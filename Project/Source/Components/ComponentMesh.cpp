@@ -210,16 +210,16 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 		program = App->programs->phongPbrProgram;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "diffuse_color"), 1, materials[mesh->materialIndex]->material.diffuseColor.ptr());
-		glUniform3fv(glGetUniformLocation(program, "specular_color"), 1, materials[mesh->materialIndex]->material.specularColor.ptr());
+		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, materials[mesh->materialIndex]->material.diffuseColor.ptr());
+		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, materials[mesh->materialIndex]->material.specularColor.ptr());
 		glUniform1f(glGetUniformLocation(program, "shininess"), materials[mesh->materialIndex]->material.shininess);
 
 		int hasDiffuseMap = (materials[mesh->materialIndex]->material.hasDiffuseMap) ? 1 : 0;
 		int hasSpecularMap = (materials[mesh->materialIndex]->material.hasSpecularMap) ? 1 : 0;
 		int hasShininessInAlphaChannel = (materials[mesh->materialIndex]->material.hasShininessInAlphaChannel) ? 1 : 0;
-		glUniform1i(glGetUniformLocation(program, "has_diffuse_map"), hasDiffuseMap);
-		glUniform1i(glGetUniformLocation(program, "has_specular_map"), hasSpecularMap);
-		glUniform1i(glGetUniformLocation(program, "shininess_alpha"), hasShininessInAlphaChannel);
+		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
+		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
+		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
 
 		glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambientColor.ptr());
 
@@ -228,7 +228,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform3fv(glGetUniformLocation(program, "light.directional.color"), 1, directionalLight->color.ptr());
 			glUniform1f(glGetUniformLocation(program, "light.directional.intensity"), directionalLight->intensity);
 		}
-		glUniform1i(glGetUniformLocation(program, "light.directional.is_active"), directionalLight ? 1 : 0);
+		glUniform1i(glGetUniformLocation(program, "light.directional.isActive"), directionalLight ? 1 : 0);
 
 		if (pointLightsVector.size() > 0) {
 			glUniform3fv(glGetUniformLocation(program, "light.points[0].pos"), 1, pointLightsVector[0]->pos.ptr());
@@ -294,7 +294,7 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.points[7].kl"), pointLightsVector[7]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.points[7].kq"), pointLightsVector[7]->kq);
 		}
-		glUniform1i(glGetUniformLocation(program, "light.num_points"), pointLightsVector.size());
+		glUniform1i(glGetUniformLocation(program, "light.numPoints"), pointLightsVector.size());
 
 		if (spotLightsVector.size() > 0) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[0].pos"), 1, spotLightsVector[0]->pos.ptr());
@@ -304,8 +304,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[0].kc"), spotLightsVector[0]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[0].kl"), spotLightsVector[0]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[0].kq"), spotLightsVector[0]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].inner_angle"), spotLightsVector[0]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].outer_angle"), spotLightsVector[0]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[0].innerAngle"), spotLightsVector[0]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[0].outerAngle"), spotLightsVector[0]->outerAngle);
 		}
 		if (spotLightsVector.size() > 1) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[1].pos"), 1, spotLightsVector[1]->pos.ptr());
@@ -315,8 +315,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[1].kc"), spotLightsVector[1]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[1].kl"), spotLightsVector[1]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[1].kq"), spotLightsVector[1]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].inner_angle"), spotLightsVector[1]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].outer_angle"), spotLightsVector[1]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[1].innerAngle"), spotLightsVector[1]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[1].outerAngle"), spotLightsVector[1]->outerAngle);
 		}
 		if (spotLightsVector.size() > 2) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[2].pos"), 1, spotLightsVector[2]->pos.ptr());
@@ -326,8 +326,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[2].kc"), spotLightsVector[2]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[2].kl"), spotLightsVector[2]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[2].kq"), spotLightsVector[2]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].inner_angle"), spotLightsVector[2]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].outer_angle"), spotLightsVector[2]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[2].innerAngle"), spotLightsVector[2]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[2].outerAngle"), spotLightsVector[2]->outerAngle);
 		}
 		if (spotLightsVector.size() > 3) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[3].pos"), 1, spotLightsVector[3]->pos.ptr());
@@ -337,8 +337,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[3].kc"), spotLightsVector[3]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[3].kl"), spotLightsVector[3]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[3].kq"), spotLightsVector[3]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].inner_angle"), spotLightsVector[3]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].outer_angle"), spotLightsVector[3]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[3].innerAngle"), spotLightsVector[3]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[3].outerAngle"), spotLightsVector[3]->outerAngle);
 		}
 		if (spotLightsVector.size() > 4) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[4].pos"), 1, spotLightsVector[4]->pos.ptr());
@@ -348,8 +348,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[4].kc"), spotLightsVector[4]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[4].kl"), spotLightsVector[4]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[4].kq"), spotLightsVector[4]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].inner_angle"), spotLightsVector[4]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].outer_angle"), spotLightsVector[4]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[4].innerAngle"), spotLightsVector[4]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[4].outerAngle"), spotLightsVector[4]->outerAngle);
 		}
 		if (spotLightsVector.size() > 5) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[5].pos"), 1, spotLightsVector[5]->pos.ptr());
@@ -359,8 +359,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[5].kc"), spotLightsVector[5]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[5].kl"), spotLightsVector[5]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[5].kq"), spotLightsVector[5]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].inner_angle"), spotLightsVector[5]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].outer_angle"), spotLightsVector[5]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[5].innerAngle"), spotLightsVector[5]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[5].outerAngle"), spotLightsVector[5]->outerAngle);
 		}
 		if (spotLightsVector.size() > 6) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[6].pos"), 1, spotLightsVector[6]->pos.ptr());
@@ -370,8 +370,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[6].kc"), spotLightsVector[6]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[6].kl"), spotLightsVector[6]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[6].kq"), spotLightsVector[6]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].inner_angle"), spotLightsVector[6]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].outer_angle"), spotLightsVector[6]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[6].innerAngle"), spotLightsVector[6]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[6].outerAngle"), spotLightsVector[6]->outerAngle);
 		}
 		if (spotLightsVector.size() > 7) {
 			glUniform3fv(glGetUniformLocation(program, "light.spots[7].pos"), 1, spotLightsVector[7]->pos.ptr());
@@ -381,12 +381,12 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 			glUniform1f(glGetUniformLocation(program, "light.spots[7].kc"), spotLightsVector[7]->kc);
 			glUniform1f(glGetUniformLocation(program, "light.spots[7].kl"), spotLightsVector[7]->kl);
 			glUniform1f(glGetUniformLocation(program, "light.spots[7].kq"), spotLightsVector[7]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].inner_angle"), spotLightsVector[7]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].outer_angle"), spotLightsVector[7]->outerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[7].innerAngle"), spotLightsVector[7]->innerAngle);
+			glUniform1f(glGetUniformLocation(program, "light.spots[7].outerAngle"), spotLightsVector[7]->outerAngle);
 		}
-		glUniform1i(glGetUniformLocation(program, "light.num_spots"), spotLightsVector.size());
+		glUniform1i(glGetUniformLocation(program, "light.numSpots"), spotLightsVector.size());
 
-		glUniform3fv(glGetUniformLocation(program, "view_pos"), 1, App->camera->GetPosition().ptr());
+		glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
 	} else {
 		glUseProgram(program);
 	}
@@ -394,8 +394,8 @@ void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
-	glUniform1i(glGetUniformLocation(program, "diffuse_map"), 0);
-	glUniform1i(glGetUniformLocation(program, "specular_map"), 1);
+	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
+	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, glTextureDiffuse);
