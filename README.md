@@ -1,4 +1,4 @@
-# TBD-Engine
+# Tesseract Game Engine
 
 Basic engine created for UPC's Master in Advanced Programming for AAA Videogames.
 

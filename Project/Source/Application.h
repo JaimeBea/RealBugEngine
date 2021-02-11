@@ -49,7 +49,7 @@ public:
 
 	// Application Configuration
 
-	char appName[20] = "TBD Engine";
+	char appName[20] = "Tesseract";
 	char organization[20] = "";
 
 private:

@@ -15,7 +15,7 @@ void PanelAbout::Update() {
 	ImGui::SetNextWindowSize(ImVec2(400.0f, 200.0f), ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FK_INFO_CIRCLE " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ImGui::TextColored(App->editor->titleColor, "TBD Engine");
+		ImGui::TextColored(App->editor->titleColor, "Tesseract Engine");
 		ImGui::Separator();
 		ImGui::TextColored(App->editor->titleColor, u8"By TBD org.");
 		ImGui::Text("Engine developed during the Master in Advanced Programming for AAA Video Games by UPC.");
