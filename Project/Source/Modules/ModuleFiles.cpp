@@ -13,6 +13,7 @@
 
 bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
+	PHYSFS_mount(".", nullptr, 0);
 
 	return true;
 }
