@@ -3,12 +3,25 @@
 #include "Globals.h"
 #include "Utils/Logging.h"
 
+#include "physfs.h"
 #include "Math/MathFunc.h"
 #include <string.h>
 #include <windows.h>
 #include <algorithm>
 
 #include "Utils/Leaks.h"
+
+bool ModuleFiles::Init() {
+	PHYSFS_init(nullptr);
+
+	return true;
+}
+
+bool ModuleFiles::CleanUp() {
+	PHYSFS_deinit();
+
+	return true;
+}
 
 Buffer<char> ModuleFiles::Load(const char* filePath) const {
 	Buffer<char> buffer = Buffer<char>();

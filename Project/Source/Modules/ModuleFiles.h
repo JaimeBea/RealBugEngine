@@ -8,6 +8,9 @@
 
 class ModuleFiles : public Module {
 public:
+	bool Init() override;
+	bool CleanUp() override;
+
 	Buffer<char> Load(const char* filePath) const;
 	bool Save(const char* filePath, const Buffer<char>& buffer, bool append = false) const;
 	bool Save(const char* filePath, const char* buffer, size_t size, bool append = false) const;
