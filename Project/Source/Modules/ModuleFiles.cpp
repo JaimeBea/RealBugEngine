@@ -14,6 +14,7 @@
 bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
 	PHYSFS_mount(".", nullptr, 0);
+	PHYSFS_setWriteDir(".");
 
 	return true;
 }
@@ -27,22 +28,28 @@ bool ModuleFiles::CleanUp() {
 Buffer<char> ModuleFiles::Load(const char* filePath) const {
 	Buffer<char> buffer = Buffer<char>();
 
-	FILE* file = fopen(filePath, "rb");
+	PHYSFS_File* file = PHYSFS_openRead(filePath);
 	if (!file) {
-		LOG("Error loading file %s (%s).\n", filePath, strerror(errno));
+		LOG("Error opening file %s (%s).\n", filePath, PHYSFS_getLastError());
 		return buffer;
 	}
 	DEFER {
-		fclose(file);
+		PHYSFS_close(file);
 	};
 
-	fseek(file, 0, SEEK_END);
-	size_t size = ftell(file);
-	rewind(file);
+	PHYSFS_sint64 size = PHYSFS_fileLength(file);
+	if (size < 0) {
+		LOG("File size couldn't be determined for %s (%s).\n", filePath, PHYSFS_getLastError());
+		return buffer;
+	}
 
 	buffer.Allocate(size + 1);
 	char* data = buffer.Data();
-	fread(data, sizeof(char), size, file);
+	PHYSFS_sint64 numBytes = PHYSFS_readBytes(file, data, size);
+	if (numBytes < size) {
+		LOG("Error reading file %s (%s).\n", filePath, PHYSFS_getLastError());
+		return buffer;
+	}
 	data[size] = '\0';
 
 	return buffer;
@@ -53,16 +60,20 @@ bool ModuleFiles::Save(const char* filePath, const Buffer<char>& buffer, bool ap
 }
 
 bool ModuleFiles::Save(const char* filePath, const char* buffer, size_t size, bool append) const {
-	FILE* file = fopen(filePath, append ? "ab" : "wb");
+	PHYSFS_File* file = append ? PHYSFS_openAppend(filePath) : PHYSFS_openWrite(filePath);
 	if (!file) {
 		LOG("Error saving file %s (%s).\n", filePath, strerror(errno));
-		return nullptr;
+		return false;
 	}
 	DEFER {
-		fclose(file);
+		PHYSFS_close(file);
 	};
 
-	fwrite(buffer, sizeof(char), size, file);
+	PHYSFS_sint64 numBytes = PHYSFS_writeBytes(file, buffer, size);
+	if (numBytes < size) {
+		LOG("Error writing to file %s (%s).\n", filePath, PHYSFS_getLastError());
+		return false;
+	}
 
 	return true;
 }
