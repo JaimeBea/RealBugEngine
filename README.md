@@ -1,4 +1,4 @@
-# RealBugEngine
+# Tesseract Game Engine
 
 Basic engine created for UPC's Master in Advanced Programming for AAA Videogames.
 
@@ -129,9 +129,13 @@ _Jaime Bea Pérez-Zubizarreta_ (https://github.com/JaimeBea)
 
 _Lowy Solé Franquesa_ (http://github.com/lowysole)
 
+_Jordi Gil Gonzalez_ (https://jordi-gil.github.io/)
+
+_Cristian Ferrer Galan_ (https://github.com/Yonimevicio)
+
 ## Github
 
-https://github.com/JaimeBea/RealBugEngine
+https://github.com/TBD-org/TBD-Engine
 
 ## License
 

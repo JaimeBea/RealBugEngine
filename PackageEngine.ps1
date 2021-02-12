@@ -1,4 +1,4 @@
-${EngineName} = "RealBugEngine"
+${EngineName} = "Tesseract"
 ${Version} = "0.0.2"
 
 ${ReleaseDir} = "Build/Release"

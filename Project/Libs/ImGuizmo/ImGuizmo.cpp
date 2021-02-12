@@ -1665,7 +1665,7 @@ namespace ImGuizmo
          const float len = IntersectRayPlane(gContext.mRayOrigin, gContext.mRayVector, pickupPlan);
          vec_t localPos = gContext.mRayOrigin + gContext.mRayVector * len - gContext.mModel.v.position;
 
-         if (Dot(Normalized(localPos), gContext.mRayVector) > FLT_EPSILON)
+         if (Dot(Normalized(localPos), gContext.mRayVector) < FLT_EPSILON)
          {
             continue;
          }
