@@ -99,10 +99,10 @@ bool ModuleFiles::IsDirectory(const char* path) const {
 }
 
 std::vector<std::string> ModuleFiles::GetDrives() const {
-	DWORD mask =  GetLogicalDrives();
+	DWORD mask = GetLogicalDrives();
 	std::vector<std::string> drives;
 	for (int i = 0; i < 26; ++i) {
-		if (!(mask & (1<<i))) continue;
+		if (!(mask & (1 << i))) continue;
 
 		char letter = 'A' + i;
 		std::string drive = std::string() + letter + ":\\";
@@ -114,7 +114,6 @@ std::vector<std::string> ModuleFiles::GetDrives() const {
 
 std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
 	std::vector<std::string> filePaths;
-	std::string file;
 	char** rc = PHYSFS_enumerateFiles(folderPath);
 	for (char** i = rc; *i != NULL; i++) {
 		filePaths.push_back(*i);
