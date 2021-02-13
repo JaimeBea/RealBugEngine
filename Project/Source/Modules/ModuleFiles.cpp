@@ -82,27 +82,34 @@ void ModuleFiles::CreateFolder(const char* folderPath) const {
 	if (!PHYSFS_mkdir(folderPath)) LOG(PHYSFS_getLastError());
 }
 
-void Delete(const char* path) {
-	if (!PHYSFS_delete(path)) { 
-		LOG(PHYSFS_getLastError()); 
+void ModuleFiles::Erase(const char* path) const {
+	if (!PHYSFS_delete(path)) {
+		LOG(PHYSFS_getLastError());
 	}
 }
 
-void ModuleFiles::EraseFolder(const char* folderPath) const {
-	if (PHYSFS_isDirectory(folderPath)) {
-		Delete(folderPath);
-	}
+bool ModuleFiles::Exists(const char* path) const {
+	return PHYSFS_exists(path);
 }
 
-void ModuleFiles::EraseFile(const char* filePath) const {
-	if (!PHYSFS_isDirectory(filePath)) {
-		Delete(filePath);
-	}
-	
+bool ModuleFiles::IsDirectory(const char* path) const {
+	PHYSFS_Stat fileStats;
+	PHYSFS_stat(path, &fileStats);
+	return fileStats.filetype == PHYSFS_FileType::PHYSFS_FILETYPE_DIRECTORY;
 }
 
-bool ModuleFiles::Exist(const char* filePath) const {
-	return PHYSFS_exists(filePath);
+std::vector<std::string> ModuleFiles::GetDrives() const {
+	DWORD mask =  GetLogicalDrives();
+	std::vector<std::string> drives;
+	for (int i = 0; i < 26; ++i) {
+		if (!(mask & (1<<i))) continue;
+
+		char letter = 'A' + i;
+		std::string drive = std::string() + letter + ":\\";
+		drives.push_back(drive);
+	}
+
+	return drives;
 }
 
 std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
@@ -115,7 +122,6 @@ std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) c
 	PHYSFS_freeList(rc);
 	return filePaths;
 }
-
 
 std::string ModuleFiles::GetFileNameAndExtension(const char* filePath) const {
 	const char* lastSlash = strrchr(filePath, '/');
@@ -170,4 +176,10 @@ std::string ModuleFiles::GetFileFolder(const char* filePath) const {
 	}
 
 	return std::string(filePath).substr(0, lastSeparator - filePath);
+}
+
+std::string ModuleFiles::GetAbsolutePath(const char* filePath) const {
+	char buff[FILENAME_MAX];
+	GetModuleFileName(NULL, buff, FILENAME_MAX);
+	return std::string(buff) + filePath;
 }
