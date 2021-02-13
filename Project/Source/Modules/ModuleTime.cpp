@@ -102,7 +102,7 @@ void ModuleTime::StopGame() {
 
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
 	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
-	App->files->EraseFile(tempSceneFilePath.c_str());
+	App->files->Erase(tempSceneFilePath.c_str());
 
 	gameStarted = false;
 	gameRunning = false;

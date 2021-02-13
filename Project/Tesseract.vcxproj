@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileDialog.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
     <ClInclude Include="Libs\imgui\imgui_utils.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileDialog.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_dir.c" />

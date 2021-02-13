@@ -6,6 +6,7 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleFiles.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -118,6 +119,7 @@ bool ModuleEditor::Init() {
 	}
 
 	ApplyCustomStyle();
+	sprintf(dialogCurrentSelectedPath, App->files->GetAbsolutePath(".").c_str());
 
 	return true;
 }
@@ -229,23 +231,18 @@ UpdateStatus ModuleEditor::Update() {
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Load scene")) {
-		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
-		if (ImGui::Button("Load")) {
-			SceneImporter::LoadScene(fileNameBuffer);
+		if (FileDialog()) {
+			SceneImporter::LoadScene(App->files->GetFileName(selectedFile.c_str()).c_str());
 			ImGui::CloseCurrentPopup();
 		}
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel")) {
-			ImGui::CloseCurrentPopup();
-		}
+
 		ImGui::EndPopup();
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Save scene")) {
 		ImGui::SetItemDefaultFocus();
-		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
-		if (ImGui::Button("Save")) {
-			SceneImporter::SaveScene(fileNameBuffer);
+		if (FileDialog()) {
+			SceneImporter::SaveScene(App->files->GetFileName(selectedFile.c_str()).c_str());
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
@@ -336,4 +333,58 @@ bool ModuleEditor::CleanUp() {
 	ImGui::DestroyContext();
 
 	return true;
+}
+
+bool ModuleEditor::FileDialog() {
+	std::string currentDrive = std::string() + dialogCurrentSelectedPath[0] + ":";
+	ImGui::PushItemWidth(4 * ImGui::GetFontSize());
+	if (ImGui::BeginCombo("##Drives", currentDrive.c_str())) {
+		std::vector<std::string> drives = App->files->GetDrives();
+		for (std::string& drive : drives) {
+			if (ImGui::Selectable(drive.c_str(), currentDrive[0] == drive[0])) {
+				sprintf(dialogCurrentSelectedPath, drive.c_str());
+			}
+		}
+		ImGui::EndCombo();
+	}
+	ImGui::PopItemWidth();
+	ImGui::SameLine();
+	ImGui::PushItemWidth(-1);
+	ImGui::InputText("##route", dialogCurrentSelectedPath, FILENAME_MAX);
+	ImGui::PopItemWidth();
+	float reserveHeight = ImGui::GetFrameHeightWithSpacing();
+
+	ImGui::BeginChild("FileExplorer", ImVec2(0, -reserveHeight), true);
+	for (std::string& file : App->files->GetFilesInFolder(dialogCurrentSelectedPath)) {
+		std::string icon = ICON_FK_FILE;
+		std::string absoluteFilePath = std::string(dialogCurrentSelectedPath) + "\\" + file;
+		bool isDirectory = App->files->IsDirectory(absoluteFilePath.c_str());
+		if (isDirectory) icon = ICON_FK_FOLDER;
+
+		std::string selectableLabel = std::string(icon + " ") + file;
+		if (ImGui::Selectable(selectableLabel.c_str())) {
+			if (isDirectory && (selectedFile == absoluteFilePath)) {
+				if (file == "..") {
+					sprintf(dialogCurrentSelectedPath, App->files->GetFileFolder(dialogCurrentSelectedPath).c_str());
+				} else{
+					sprintf(dialogCurrentSelectedPath, absoluteFilePath.c_str());
+				}
+			} 
+			selectedFile = absoluteFilePath;
+		}
+	}
+	ImGui::EndChild();
+
+	ImGui::LabelText("##selectedFile", selectedFile.c_str(), FILENAME_MAX);
+	ImGui::SameLine();
+	if (ImGui::Button("Accept")) {
+		ImGui::CloseCurrentPopup();
+		return true;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Cancel")) {
+		ImGui::CloseCurrentPopup();
+	}
+
+	return false;
 }

@@ -93,9 +93,9 @@ bool ModuleFiles::Exists(const char* path) const {
 }
 
 bool ModuleFiles::IsDirectory(const char* path) const {
-	PHYSFS_Stat fileStats;
-	PHYSFS_stat(path, &fileStats);
-	return fileStats.filetype == PHYSFS_FileType::PHYSFS_FILETYPE_DIRECTORY;
+
+	DWORD ftyp = GetFileAttributesA(path);
+	return ftyp & FILE_ATTRIBUTE_DIRECTORY;
 }
 
 std::vector<std::string> ModuleFiles::GetDrives() const {
@@ -105,7 +105,7 @@ std::vector<std::string> ModuleFiles::GetDrives() const {
 		if (!(mask & (1 << i))) continue;
 
 		char letter = 'A' + i;
-		std::string drive = std::string() + letter + ":\\";
+		std::string drive = std::string() + letter + ":";
 		drives.push_back(drive);
 	}
 
@@ -113,14 +113,23 @@ std::vector<std::string> ModuleFiles::GetDrives() const {
 }
 
 std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
+	std::string folderPathEx = std::string(folderPath) + "\\*";
 	std::vector<std::string> filePaths;
-	char** rc = PHYSFS_enumerateFiles(folderPath);
-	for (char** i = rc; *i != NULL; i++) {
-		filePaths.push_back(*i);
-	}
-	PHYSFS_freeList(rc);
+	WIN32_FIND_DATA data;
+	HANDLE handle = FindFirstFile(folderPathEx.c_str(), &data);
+	if (handle == INVALID_HANDLE_VALUE) return filePaths;
+	unsigned i = 0;
+	do {
+		if (i >= 1) // Ignore '.'
+		{
+			filePaths.push_back(data.cFileName);
+		}
+		i++;
+	} while (FindNextFile(handle, &data));
+	FindClose(handle);
 	return filePaths;
 }
+
 
 std::string ModuleFiles::GetFileNameAndExtension(const char* filePath) const {
 	const char* lastSlash = strrchr(filePath, '/');

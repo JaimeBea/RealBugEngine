@@ -59,5 +59,9 @@ public:
 	float dragSpeed5f = 0.00005f;
 
 private:
-	char fileNameBuffer[32] = {'\0'};
+	bool FileDialog();
+
+private:
+	std::string selectedFile = "";
+	char dialogCurrentSelectedPath[FILENAME_MAX] = "";
 };
