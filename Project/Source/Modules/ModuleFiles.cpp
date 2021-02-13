@@ -79,34 +79,43 @@ bool ModuleFiles::Save(const char* filePath, const char* buffer, size_t size, bo
 }
 
 void ModuleFiles::CreateFolder(const char* folderPath) const {
-	CreateDirectory(folderPath, nullptr);
+	if (!PHYSFS_mkdir(folderPath)) LOG(PHYSFS_getLastError());
+}
+
+void Delete(const char* path) {
+	if (!PHYSFS_delete(path)) { 
+		LOG(PHYSFS_getLastError()); 
+	}
 }
 
 void ModuleFiles::EraseFolder(const char* folderPath) const {
-	RemoveDirectory(folderPath);
+	if (PHYSFS_isDirectory(folderPath)) {
+		Delete(folderPath);
+	}
 }
 
 void ModuleFiles::EraseFile(const char* filePath) const {
-	remove(filePath);
+	if (!PHYSFS_isDirectory(filePath)) {
+		Delete(filePath);
+	}
+	
+}
+
+bool ModuleFiles::Exist(const char* filePath) const {
+	return PHYSFS_exists(filePath);
 }
 
 std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
-	std::string folderPathEx = std::string(folderPath) + "\\*";
 	std::vector<std::string> filePaths;
-	WIN32_FIND_DATA data;
-	HANDLE handle = FindFirstFile(folderPathEx.c_str(), &data);
-	if (handle == INVALID_HANDLE_VALUE) return filePaths;
-	unsigned i = 0;
-	do {
-		if (i >= 2) // Ignore '.' and '..'
-		{
-			filePaths.push_back(data.cFileName);
-		}
-		i++;
-	} while (FindNextFile(handle, &data));
-	FindClose(handle);
+	std::string file;
+	char** rc = PHYSFS_enumerateFiles(folderPath);
+	for (char** i = rc; *i != NULL; i++) {
+		filePaths.push_back(*i);
+	}
+	PHYSFS_freeList(rc);
 	return filePaths;
 }
+
 
 std::string ModuleFiles::GetFileNameAndExtension(const char* filePath) const {
 	const char* lastSlash = strrchr(filePath, '/');

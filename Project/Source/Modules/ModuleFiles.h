@@ -19,8 +19,9 @@ public:
 	void EraseFolder(const char* folderPath) const;
 	void EraseFile(const char* filePath) const;
 
-	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
+	bool Exist(const char* filePath) const;
 
+	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
 	std::string GetFileNameAndExtension(const char* filePath) const;
 	std::string GetFileName(const char* filePath) const;
 	std::string GetFileExtension(const char* filePath) const;
