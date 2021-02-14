@@ -7,7 +7,7 @@
 #include "FileSystem/MeshImporter.h"
 #include "Resources/GameObject.h"
 #include "Components/ComponentBoundingBox.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
@@ -278,8 +278,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	float minDistance = inf;
 	float distance = 0;
 	for (GameObject* gameObject : intersectingObjects) {
-		std::vector<ComponentMesh*> meshes = gameObject->GetComponents<ComponentMesh>();
-		for (ComponentMesh* mesh : meshes) {
+		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
+		for (ComponentMeshRenderer* mesh : meshes) {
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
 			std::vector<Triangle> triangles = MeshImporter::ExtractMeshTriangles(mesh->mesh, model);
 			for (Triangle& triangle : triangles) {

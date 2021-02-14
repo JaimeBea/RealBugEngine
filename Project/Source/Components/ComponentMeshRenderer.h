@@ -10,9 +10,9 @@
 class ComponentMaterial;
 struct aiMesh;
 
-class ComponentMesh : public Component {
+class ComponentMeshRenderer : public Component {
 public:
-	REGISTER_COMPONENT(ComponentMesh, ComponentType::MESH);
+	REGISTER_COMPONENT(ComponentMeshRenderer, ComponentType::MESH);
 
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;

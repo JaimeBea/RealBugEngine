@@ -10,7 +10,7 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMaterial.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
@@ -72,7 +72,7 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 			LOG("Importing mesh %i", i);
 			aiMesh* assimpMesh = assimpScene->mMeshes[node->mMeshes[i]];
 
-			ComponentMesh* mesh = gameObject->CreateComponent<ComponentMesh>();
+			ComponentMeshRenderer* mesh = gameObject->CreateComponent<ComponentMeshRenderer>();
 			mesh->mesh = MeshImporter::ImportMesh(assimpMesh, i);
 			mesh->mesh->materialIndex = i;
 

@@ -135,7 +135,7 @@ _Cristian Ferrer Galan_ (https://github.com/Yonimevicio)
 
 ## Github
 
-https://github.com/TBD-org/TBD-Engine
+https://github.com/TBD-org/Tesseract
 
 ## License
 

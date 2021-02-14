@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentMaterial.h"
@@ -339,7 +339,7 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 
 void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
-	std::vector<ComponentMesh*> meshes = gameObject->GetComponents<ComponentMesh>();
+	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	std::vector<ComponentMaterial*> materials = gameObject->GetComponents<ComponentMaterial>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
@@ -347,7 +347,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 		boundingBox->DrawBoundingBox();
 	}
 
-	for (ComponentMesh* mesh : meshes) {
+	for (ComponentMeshRenderer* mesh : meshes) {
 		mesh->Draw(materials, transform->GetGlobalMatrix());
 	}
 }

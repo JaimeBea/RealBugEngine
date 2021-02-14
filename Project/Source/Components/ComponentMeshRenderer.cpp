@@ -1,4 +1,4 @@
-#include "ComponentMesh.h"
+#include "ComponentMeshRenderer.h"
 
 #include "Globals.h"
 #include "Application.h"
@@ -26,7 +26,7 @@
 #define JSON_TAG_FILENAME "FileName"
 #define JSON_TAG_MATERIAL_INDEX "MaterialIndex"
 
-void ComponentMesh::OnEditorUpdate() {
+void ComponentMeshRenderer::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Mesh")) {
 		bool active = IsActive();
 
@@ -59,12 +59,12 @@ void ComponentMesh::OnEditorUpdate() {
 	}
 }
 
-void ComponentMesh::Save(JsonValue jComponent) const {
+void ComponentMeshRenderer::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_FILENAME] = mesh->fileName.c_str();
 	jComponent[JSON_TAG_MATERIAL_INDEX] = mesh->materialIndex;
 }
 
-void ComponentMesh::Load(JsonValue jComponent) {
+void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	std::string fileName = jComponent[JSON_TAG_FILENAME];
 	for (Mesh& otherMesh : App->resources->meshes) {
 		if (otherMesh.fileName == fileName) {
@@ -81,7 +81,7 @@ void ComponentMesh::Load(JsonValue jComponent) {
 	MeshImporter::LoadMesh(mesh);
 }
 
-void ComponentMesh::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& modelMatrix) const {
+void ComponentMeshRenderer::Draw(const std::vector<ComponentMaterial*>& materials, const float4x4& modelMatrix) const {
 	if (!IsActive()) return;
 
 	unsigned program = App->programs->defaultProgram;

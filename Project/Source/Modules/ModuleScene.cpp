@@ -11,7 +11,7 @@
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentMaterial.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"

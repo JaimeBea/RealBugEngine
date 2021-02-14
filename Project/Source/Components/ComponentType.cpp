@@ -2,7 +2,7 @@
 
 #include "Resources/GameObject.h"
 #include "Components/ComponentTransform.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentMaterial.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
@@ -15,7 +15,7 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 	case ComponentType::TRANSFORM:
 		return owner.CreateComponent<ComponentTransform>(active);
 	case ComponentType::MESH:
-		return owner.CreateComponent<ComponentMesh>(active);
+		return owner.CreateComponent<ComponentMeshRenderer>(active);
 	case ComponentType::MATERIAL:
 		return owner.CreateComponent<ComponentMaterial>(active);
 	case ComponentType::BOUNDING_BOX:
