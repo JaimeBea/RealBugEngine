@@ -9,7 +9,6 @@
 #include "Resources/Material.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
-#include "Components/ComponentMaterial.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleScene.h"
@@ -79,13 +78,12 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 			// TODO: Move mesh loading to a better place
 			MeshImporter::LoadMesh(mesh->mesh);
 
-			ComponentMaterial* material = gameObject->CreateComponent<ComponentMaterial>();
 			if (materials.size() > 0) {
 				if (assimpMesh->mMaterialIndex >= materials.size()) {
-					material->material = materials.front();
+					mesh->material = materials.front();
 					LOG("Invalid material found", assimpMesh->mMaterialIndex);
 				} else {
-					material->material = materials[assimpMesh->mMaterialIndex];
+					mesh->material = materials[assimpMesh->mMaterialIndex];
 				}
 			}
 

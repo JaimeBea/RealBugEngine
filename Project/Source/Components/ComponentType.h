@@ -18,10 +18,9 @@ enum class ComponentType {
 	UNKNOWN = 0,
 	TRANSFORM = 1,
 	MESH = 2,
-	MATERIAL = 3,
-	BOUNDING_BOX = 4,
-	CAMERA = 5,
-	LIGHT = 6,
+	BOUNDING_BOX = 3,
+	CAMERA = 4,
+	LIGHT = 5,
 };
 
 Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active = true);

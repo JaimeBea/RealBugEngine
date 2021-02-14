@@ -50,7 +50,6 @@
     <ClInclude Include="Source\Components\ComponentCamera.h" />
     <ClInclude Include="Source\Components\ComponentLight.h" />
     <ClInclude Include="Source\Components\ComponentBoundingBox.h" />
-    <ClInclude Include="Source\Components\ComponentMaterial.h" />
     <ClInclude Include="Source\Components\ComponentMeshRenderer.h" />
     <ClInclude Include="Source\Components\ComponentType.h" />
     <ClInclude Include="Source\Components\ComponentTransform.h" />
@@ -183,7 +182,6 @@
     <ClCompile Include="Source\Components\ComponentCamera.cpp" />
     <ClCompile Include="Source\Components\ComponentLight.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox.cpp" />
-    <ClCompile Include="Source\Components\ComponentMaterial.cpp" />
     <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
     <ClCompile Include="Source\Components\ComponentTransform.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
