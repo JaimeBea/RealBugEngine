@@ -1,6 +1,6 @@
 #include "ComponentType.h"
 
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"

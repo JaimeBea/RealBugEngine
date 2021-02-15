@@ -5,7 +5,7 @@
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
@@ -281,6 +281,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 		for (ComponentMeshRenderer* mesh : meshes) {
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
+			// TODO: (Mesh resource) extract triangles from the mesh
+			/*
 			std::vector<Triangle> triangles = MeshImporter::ExtractMeshTriangles(mesh->mesh, model);
 			for (Triangle& triangle : triangles) {
 				if (ray.Intersects(triangle, &distance, NULL)) {
@@ -290,6 +292,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 					}
 				}
 			}
+			*/
 		}
 	}
 

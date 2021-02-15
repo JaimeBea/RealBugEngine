@@ -1,7 +1,7 @@
 #include "ComponentTransform.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Modules/ModuleEditor.h"

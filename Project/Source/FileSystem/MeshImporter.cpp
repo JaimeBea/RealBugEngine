@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
-#include "Resources/Mesh.h"
+#include "Resources/ResourceMesh.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 
@@ -15,6 +15,8 @@
 #include <vector>
 
 #include "Utils/Leaks.h"
+
+/*
 
 Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	// Timer to measure importing a mesh
@@ -226,3 +228,5 @@ void MeshImporter::UnloadMesh(Mesh* mesh) {
 	glDeleteBuffers(1, &mesh->vbo);
 	glDeleteBuffers(1, &mesh->ebo);
 }
+
+*/

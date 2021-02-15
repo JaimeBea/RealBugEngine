@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"

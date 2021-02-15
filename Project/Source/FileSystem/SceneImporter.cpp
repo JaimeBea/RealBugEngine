@@ -1,12 +1,12 @@
 #include "SceneImporter.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
-#include "Resources/GameObject.h"
-#include "Resources/Material.h"
+#include "Resources/ResourceMaterial.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
@@ -31,6 +31,8 @@
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
+
+/*
 
 static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
 	std::string name = node->mName.C_Str();
@@ -352,3 +354,5 @@ bool SceneImporter::SaveScene(const char* fileName) {
 
 	return true;
 }
+
+*/

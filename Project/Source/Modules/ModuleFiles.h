@@ -16,13 +16,17 @@ public:
 	bool Save(const char* filePath, const char* buffer, size_t size, bool append = false) const;
 
 	void CreateFolder(const char* folderPath) const;
+	void Copy(const char* path, const char* newPath);
 	void Erase(const char* path) const;
 
 	bool Exists(const char* filePath) const;
 	bool IsDirectory(const char* path) const;
 	std::vector<std::string> GetDrives() const;
 
+	long long GetLocalFileModificationTime(const char* path) const;
+
 	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
+	std::vector<std::string> GetFilesInLocalFolder(const char* folderPath) const;
 	std::string GetFileNameAndExtension(const char* filePath) const;
 	std::string GetFileName(const char* filePath) const;
 	std::string GetFileExtension(const char* filePath) const;

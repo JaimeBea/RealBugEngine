@@ -4,8 +4,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
-#include "Resources/Texture.h"
-#include "Resources/CubeMap.h"
+#include "Resources/ResourceTexture.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 
@@ -14,6 +13,8 @@
 #include "GL/glew.h"
 
 #include "Utils/Leaks.h"
+
+/*
 
 Texture* TextureImporter::ImportTexture(const char* filePath) {
 	// Timer to measure importing a texture
@@ -226,3 +227,5 @@ void TextureImporter::UnloadCubeMap(CubeMap* cubeMap) {
 
 	glDeleteTextures(1, &cubeMap->glTexture);
 }
+
+*/

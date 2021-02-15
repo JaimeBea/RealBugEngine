@@ -1,5 +1,7 @@
 #pragma once
 
+/*
+
 class Texture;
 class CubeMap;
 
@@ -12,3 +14,5 @@ namespace TextureImporter {
 	void LoadCubeMap(CubeMap* cubeMap);
 	void UnloadCubeMap(CubeMap* cubeMap);
 }; // namespace TextureImporter
+
+*/

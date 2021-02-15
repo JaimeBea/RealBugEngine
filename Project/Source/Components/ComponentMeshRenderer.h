@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Component.h"
-#include "Resources/Mesh.h"
-#include "Resources/Material.h"
+#include "Resources/ResourceMesh.h"
+#include "Resources/ResourceMaterial.h"
 
 #include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
@@ -21,9 +21,9 @@ public:
 	void Draw(const float4x4& modelMatrix) const;
 
 public:
-	Mesh* mesh = nullptr;
-	Material material;
-
+	ResourceMesh* mesh = nullptr;
+	ResourceMaterial* material = nullptr;
+	 
 private:
 	bool bbActive = false;
 };

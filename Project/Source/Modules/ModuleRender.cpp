@@ -351,6 +351,8 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::DrawSkyBox() {
+	// TODO: (Texture resource) Make skybox work
+	/*
 	if (skyboxActive) {
 		glDepthFunc(GL_LEQUAL);
 
@@ -368,4 +370,5 @@ void ModuleRender::DrawSkyBox() {
 
 		glDepthFunc(GL_LESS);
 	}
+	*/
 }

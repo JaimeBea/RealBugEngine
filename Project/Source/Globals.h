@@ -12,12 +12,14 @@ enum class UpdateStatus {
 #define RADTODEG 1.0f / DEGTORAD
 
 // Files -----------
+#define ASSETS_PATH "Assets"
 #define TEXTURES_PATH "Library/Textures"
 #define MESHES_PATH "Library/Meshes"
 #define SCENES_PATH "Library/Scenes"
 #define TEXTURE_EXTENSION ".dds"
 #define MESH_EXTENSION ".mesh"
 #define SCENE_EXTENSION ".scene"
+#define META_EXTENSION ".meta"
 
 // Configuration -----------
 #define GLSL_VERSION "#version 330"

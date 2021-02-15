@@ -1,7 +1,7 @@
 #include "ComponentBoundingBox.h"
 
 #include "Utils/Logging.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 
 #include "debugdraw.h"

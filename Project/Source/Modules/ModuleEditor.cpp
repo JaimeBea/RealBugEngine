@@ -228,6 +228,8 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndPopup();
 	}
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	// TODO: (Scene resource) Loading and saving scenes
+	/*
 	if (ImGui::BeginPopupModal("Load scene")) {
 		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
 		if (ImGui::Button("Load")) {
@@ -254,6 +256,7 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndPopup();
 	}
+	*/
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Quit")) {
 		ImGui::Text("Do you really want to quit?");

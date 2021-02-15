@@ -17,6 +17,8 @@ public:
 	float GetTimeSinceStartup() const;
 	float GetRealTimeSinceStartup() const;
 
+	long long GetCurrentTimestamp() const;
+
 	float GetTimeScale() const;
 	void SetTimeScale(float timeScale);
 

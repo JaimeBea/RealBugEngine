@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Modules/Module.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Utils/UID.h"
 #include "Utils/Pool.h"
 #include "Utils/Quadtree.h"
@@ -43,8 +43,11 @@ public:
 	unsigned quadtreeMaxDepth = 4;
 	unsigned quadtreeElementsPerNode = 200;
 
+	// TODO: (Texture resource) Make skybox work
+	/*
 	// Skybox
 	unsigned skyboxVao = 0;
 	unsigned skyboxVbo = 0;
 	CubeMap* skyboxCubeMap = 0;
+	*/
 };

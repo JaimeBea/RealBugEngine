@@ -1,5 +1,7 @@
 #pragma once
 
+/*
+
 class GameObject;
 
 namespace SceneImporter {
@@ -7,3 +9,5 @@ namespace SceneImporter {
 	bool LoadScene(const char* fileName);
 	bool SaveScene(const char* fileName);
 } // namespace SceneImporter
+
+*/

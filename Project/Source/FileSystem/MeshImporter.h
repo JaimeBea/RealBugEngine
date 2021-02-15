@@ -4,6 +4,8 @@
 #include "Geometry/Triangle.h"
 #include <vector>
 
+/*
+
 class Mesh;
 struct aiMesh;
 
@@ -13,3 +15,5 @@ namespace MeshImporter {
 	std::vector<Triangle> ExtractMeshTriangles(Mesh* mesh, const float4x4& model);
 	void UnloadMesh(Mesh* mesh);
 }; // namespace MeshImporter
+
+*/

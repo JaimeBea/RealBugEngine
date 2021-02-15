@@ -6,8 +6,7 @@
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
-#include "Resources/Texture.h"
-#include "Resources/CubeMap.h"
+#include "Resources/ResourceTexture.h"
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
@@ -66,7 +65,8 @@ bool ModuleScene::Start() {
 
 	CreateEmptyScene();
 
-	SceneImporter::LoadScene("survival_shooter");
+	// TODO: (Scene resource) Load default scene
+	// SceneImporter::LoadScene("survival_shooter");
 
 	// Load skybox
 	// clang-format off
@@ -121,6 +121,8 @@ bool ModuleScene::Start() {
 	}; // clang-format on
 
 	// Skybox VAO
+	// TODO: (Texture resource) Make skybox work
+	/*
 	glGenVertexArrays(1, &skyboxVao);
 	glGenBuffers(1, &skyboxVbo);
 	glBindVertexArray(skyboxVao);
@@ -138,35 +140,13 @@ bool ModuleScene::Start() {
 	skyboxCubeMap->fileNames[4] = "front";
 	skyboxCubeMap->fileNames[5] = "back";
 	TextureImporter::LoadCubeMap(skyboxCubeMap);
+	*/
 
 	return true;
 }
 
 UpdateStatus ModuleScene::Update() {
 	BROFILER_CATEGORY("ModuleScene - Update", Profiler::Color::Green)
-
-	// Load scene/fbx if one gets dropped
-	const char* droppedFilePath = App->input->GetDroppedFilePath();
-	if (droppedFilePath != nullptr) {
-		std::string droppedFileExtension = App->files->GetFileExtension(droppedFilePath);
-		std::string droppedFileName = App->files->GetFileName(droppedFilePath);
-		if (droppedFileExtension == SCENE_EXTENSION) {
-			SceneImporter::LoadScene(droppedFileName.c_str());
-
-			LOG("Scene loaded");
-		} else if (droppedFileExtension == ".fbx") {
-			SceneImporter::ImportScene(droppedFilePath, root);
-
-			LOG("Scene imported");
-		} else if (droppedFileExtension == ".png" || droppedFileExtension == ".tif" || droppedFileExtension == ".dds") {
-			Texture* texture = TextureImporter::ImportTexture(droppedFilePath);
-			TextureImporter::LoadTexture(texture);
-
-			LOG("Texture imported");
-		}
-
-		App->input->ReleaseDroppedFilePath();
-	}
 
 	// Update GameObjects
 	for (GameObject& gameObject : gameObjects) {
@@ -177,8 +157,11 @@ UpdateStatus ModuleScene::Update() {
 }
 
 bool ModuleScene::CleanUp() {
+	// TODO: (Texture resource) make skybox work
+	/*
 	glDeleteVertexArrays(1, &skyboxVao);
 	glDeleteBuffers(1, &skyboxVbo);
+	*/
 
 	ClearScene();
 
