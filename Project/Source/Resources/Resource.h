@@ -10,7 +10,7 @@ public:
 	Resource(UID id, std::string localFilePath);
 	virtual ~Resource();
 
-	virtual void Import();
+	virtual bool Import();
 	virtual void Delete();
 
 	virtual void SaveImportSettings(JsonValue jMeta);
@@ -26,7 +26,7 @@ protected:
 	virtual void Load();
 	virtual void Unload();
 
-private:
+protected:
 	UID id = 0;
 	std::string localFilePath = "";
 	int referenceCount = 0;

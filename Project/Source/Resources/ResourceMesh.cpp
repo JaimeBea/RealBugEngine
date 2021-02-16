@@ -2,7 +2,8 @@
 
 ResourceMesh::ResourceMesh(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
 
-void ResourceMesh::Import() {
+bool ResourceMesh::Import() {
+	return true;
 }
 
 void ResourceMesh::Delete() {

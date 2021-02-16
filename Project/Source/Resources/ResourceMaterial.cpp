@@ -2,7 +2,8 @@
 
 ResourceMaterial::ResourceMaterial(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
 
-void ResourceMaterial::Import() {
+bool ResourceMaterial::Import() {
+	return true;
 }
 
 void ResourceMaterial::Delete() {

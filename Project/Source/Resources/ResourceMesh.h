@@ -8,7 +8,7 @@ class ResourceMesh : public Resource {
 public:
 	ResourceMesh(UID id, std::string localFilePath);
 
-	void Import() override;
+	bool Import() override;
 	void Delete() override;
 
 public:

@@ -6,7 +6,7 @@ class ResourceScene : public Resource {
 public:
 	ResourceScene(UID id, std::string localFilePath);
 
-	void Import() override;
+	bool Import() override;
 	void Delete() override;
 
 protected:

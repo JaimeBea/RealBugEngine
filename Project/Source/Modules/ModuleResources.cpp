@@ -150,6 +150,7 @@ void ModuleResources::CheckForNewFilesRecursive(const char* path) {
 					rapidjson::Document document;
 					validMetaFile = ReadMetaFile(metaFilePath.c_str(), document);
 					JsonValue jMeta(document, document);
+					unsigned long long id = jMeta["ID"];
 					if (validMetaFile) {
 						Resource* resource = CreateNewResource(filePath.c_str());
 						if (resource != nullptr) {
@@ -184,7 +185,7 @@ Resource* ModuleResources::CreateNewResource(const char* path) {
 	} else if (extension == ".fbx" || extension == ".obj") {
 		// Model files
 		// TODO: Make multiple resources being created possible
-	} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds") {
+	} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 		// Texture files
 		resource = new ResourceTexture(id, path);
 		resources.emplace(id, resource);

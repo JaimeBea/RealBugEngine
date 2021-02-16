@@ -2,7 +2,8 @@
 
 ResourceScene::ResourceScene(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
 
-void ResourceScene::Import() {
+bool ResourceScene::Import() {
+	return true;
 }
 
 void ResourceScene::Delete() {

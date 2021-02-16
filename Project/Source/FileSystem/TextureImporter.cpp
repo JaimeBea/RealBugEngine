@@ -13,7 +13,6 @@
 #include "GL/glew.h"
 
 #include "Utils/Leaks.h"
-
 /*
 
 Texture* TextureImporter::ImportTexture(const char* filePath) {
@@ -227,5 +226,4 @@ void TextureImporter::UnloadCubeMap(CubeMap* cubeMap) {
 
 	glDeleteTextures(1, &cubeMap->glTexture);
 }
-
 */

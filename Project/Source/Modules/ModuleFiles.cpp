@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include "Utils/Leaks.h"
+#define DATA_FOLDER "Library/Metadata/"
 
 bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
@@ -76,6 +77,26 @@ bool ModuleFiles::Save(const char* filePath, const char* buffer, size_t size, bo
 	}
 
 	return true;
+}
+
+std::string ModuleFiles::GenerateMetaPath(UID id) const {
+
+	std::string strId = std::to_string(id);
+	std::string metaFolder = DATA_FOLDER + strId.substr(0, 2);
+
+	if (!Exists(metaFolder.c_str())) {
+		CreateFolder(metaFolder.c_str());
+	}
+
+	return metaFolder + "/" + strId;
+}
+
+bool ModuleFiles::SaveById(UID id, const char* buffer, size_t size) const {
+	return Save(GenerateMetaPath(id).c_str(), buffer, size);
+}
+
+bool ModuleFiles::SaveById(UID id, const Buffer<char>& buffer) const {
+	return Save(GenerateMetaPath(id).c_str(), buffer);
 }
 
 void ModuleFiles::CreateFolder(const char* folderPath) const {

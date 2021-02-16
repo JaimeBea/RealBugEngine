@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Resources/Resource.h"
+#include "Resource.h"
 
 #include <string>
 
@@ -8,7 +8,7 @@ class ResourceTexture : public Resource {
 public:
 	ResourceTexture(UID id, std::string localFilePath);
 
-	void Import() override;
+	bool Import() override;
 	void Delete() override;
 
 protected:

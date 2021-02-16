@@ -2,7 +2,8 @@
 
 ResourceShader::ResourceShader(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
 
-void ResourceShader::Import() {
+bool ResourceShader::Import() {
+	return true;
 }
 
 void ResourceShader::Delete() {

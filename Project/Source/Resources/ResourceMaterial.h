@@ -10,7 +10,7 @@ class ResourceMaterial : public Resource {
 public:
 	ResourceMaterial(UID id, std::string localFilePath);
 
-	void Import() override;
+	bool Import() override;
 	void Delete() override;
 
 public:

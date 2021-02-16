@@ -12,7 +12,9 @@ Resource::Resource(UID id_, std::string localFilePath_)
 
 Resource::~Resource() {}
 
-void Resource::Import() {}
+bool Resource::Import() {
+	return true;
+}
 
 void Resource::Delete() {}
 
@@ -22,6 +24,7 @@ void Resource::SaveImportSettings(JsonValue jMeta) {
 }
 
 void Resource::LoadImportSettings(JsonValue jMeta) {
+	unsigned long long id = jMeta[JSON_TAG_ID];
 	id = jMeta[JSON_TAG_ID];
 }
 
