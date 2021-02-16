@@ -32,6 +32,11 @@
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
 
+bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
+	// TODO: (Scene resource) Import scenes to custom resource file
+	return false;
+}
+
 /*
 
 static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {

@@ -20,6 +20,9 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_lzmasdk.h" />
     <ClInclude Include="Libs\PhysicsFS\physfs_miniz.h" />
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
+    <ClInclude Include="Source\FileSystem\MaterialImporter.h" />
+    <ClInclude Include="Source\FileSystem\ModelImporter.h" />
+    <ClInclude Include="Source\FileSystem\ShaderImporter.h" />
     <ClInclude Include="Source\Resources\ResourceScene.h" />
     <ClInclude Include="Source\Resources\ResourceShader.h" />
     <ClInclude Include="Source\Resources\Resource.h" />
@@ -184,6 +187,9 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_windows.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_winrt.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
+    <ClCompile Include="Source\FileSystem\MaterialImporter.cpp" />
+    <ClCompile Include="Source\FileSystem\ModelImporter.cpp" />
+    <ClCompile Include="Source\FileSystem\ShaderImporter.cpp" />
     <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Application.cpp" />
