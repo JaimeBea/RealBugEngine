@@ -22,6 +22,7 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
     <ClInclude Include="Source\Globals.h" />
     <ClInclude Include="Source\Application.h" />
+    <ClInclude Include="Source\Modules\ModuleUserInterface.h" />
     <ClInclude Include="Source\Utils\Leaks.h" />
     <ClInclude Include="Source\Utils\Logging.h" />
     <ClInclude Include="Source\Utils\Buffer.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Modules\ModuleUserInterface.cpp" />
     <ClCompile Include="Source\Utils\Logging.cpp" />
     <ClCompile Include="Source\Utils\MSTimer.cpp" />
     <ClCompile Include="Source\Utils\PerformanceTimer.cpp" />
