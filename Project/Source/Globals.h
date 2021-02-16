@@ -13,11 +13,13 @@ enum class UpdateStatus {
 
 // Files -----------
 #define ASSETS_PATH "Assets"
+#define DATA_PATH "Library/Data/"
 #define TEXTURES_PATH "Library/Textures"
 #define MESHES_PATH "Library/Meshes"
 #define SCENES_PATH "Library/Scenes"
 #define TEXTURE_EXTENSION ".dds"
 #define MESH_EXTENSION ".mesh"
+#define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
 #define META_EXTENSION ".meta"
 

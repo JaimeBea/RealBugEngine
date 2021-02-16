@@ -8,10 +8,10 @@
 
 class ResourceMaterial : public Resource {
 public:
-	ResourceMaterial(UID id, std::string localFilePath);
+	ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath);
 
-	bool Import() override;
-	void Delete() override;
+	void Load() override;
+	void Unload() override;
 
 public:
 	ResourceShader* shaderType = nullptr;
@@ -30,8 +30,4 @@ public:
 	bool hasShininessInAlphaChannel = false;
 
 	float3 ambient = {0.0f, 0.0f, 0.0f};
-
-protected:
-	void Load() override;
-	void Unload() override;
 };

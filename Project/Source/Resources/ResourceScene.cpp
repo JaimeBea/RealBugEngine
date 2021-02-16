@@ -1,13 +1,7 @@
 #include "ResourceScene.h"
 
-ResourceScene::ResourceScene(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
-
-bool ResourceScene::Import() {
-	return true;
-}
-
-void ResourceScene::Delete() {
-}
+ResourceScene::ResourceScene(UID id, const char* assetFilePath, const char* resourceFilePath)
+	: Resource(id, assetFilePath, resourceFilePath) {}
 
 void ResourceScene::Load() {
 }

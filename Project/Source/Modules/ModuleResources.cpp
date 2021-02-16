@@ -35,7 +35,7 @@ bool ReadMetaFile(const char* filePath, rapidjson::Document& document) {
 	}
 
 	// Parse document from file
-	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
+	document.Parse<rapidjson::kParseNanAndInfFlag>(buffer.Data());
 	if (document.HasParseError()) {
 		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
 		return false;
@@ -74,46 +74,66 @@ UpdateStatus ModuleResources::Update() {
 
 	timeAccumulator += App->time->GetRealTimeDeltaTime();
 	if (fileCopied || timeAccumulator >= timeBetweenUpdates) {
-		// Check if any resource file has been modified / deleted
+		// Check if any asset file has been modified / deleted
 		std::vector<UID> resourcesToRemove;
 		for (std::pair<const UID, Resource*>& entry : resources) {
 			Resource* resource = entry.second;
-			std::string filePath = resource->GetLocalFilePath();
-			std::string metaFilePath = filePath + META_EXTENSION;
+			const std::string& resourceFilePath = resource->GetResourceFilePath();
+			const std::string& assetFilePath = resource->GetAssetFilePath();
+			std::string metaFilePath = assetFilePath + META_EXTENSION;
 
-			// Remove old files
-			if (!App->files->Exists(filePath.c_str())) {
+			// Check for deleted assets
+			if (!App->files->Exists(assetFilePath.c_str())) {
 				resourcesToRemove.push_back(entry.first);
 				continue;
 			}
 
-			// Check for modified files
-			if (App->files->Exists(metaFilePath.c_str())) {
+			// Check for deleted, invalid or outdated meta files
+			if (!App->files->Exists(metaFilePath.c_str())) {
+				resourcesToRemove.push_back(entry.first);
+				continue;
+			} else {
 				rapidjson::Document document;
 				bool success = ReadMetaFile(metaFilePath.c_str(), document);
 				JsonValue jMeta(document, document);
 				if (success) {
-					long long timestamp = jMeta["Timestamp"];
-					if (App->files->GetLocalFileModificationTime(filePath.c_str()) > timestamp) {
-						resource->Import();
+					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
+					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+						// ASK: What happens when we update an asset?
+						resourcesToRemove.push_back(entry.first);
+						continue;
 					}
 				} else {
-					resource->Import();
+					resourcesToRemove.push_back(entry.first);
+					continue;
 				}
+			}
+
+			// Check for deleted resources
+			if (!App->files->Exists(resourceFilePath.c_str())) {
+				ImportAsset(assetFilePath.c_str());
 			}
 		}
 		for (UID id : resourcesToRemove) {
 			Resource* resource = resources[id];
-			std::string filePath = resource->GetLocalFilePath();
-			std::string metaFilePath = filePath + META_EXTENSION;
-			App->files->Erase(metaFilePath.c_str());
-			resource->Delete();
+
+			const std::string& assetFilePath = resource->GetAssetFilePath();
+			const std::string& resourceFilePath = resource->GetResourceFilePath();
+			std::string metaFilePath = assetFilePath + META_EXTENSION;
+			if (App->files->Exists(metaFilePath.c_str())) {
+				App->files->Erase(metaFilePath.c_str());
+			}
+			if (App->files->Exists(resourceFilePath.c_str())) {
+				App->files->Erase(resourceFilePath.c_str());
+			}
+
+			resource->Unload();
 			delete resource;
 			resources.erase(id);
 		}
 
-		// Check if any resource files have been added
-		CheckForNewFilesRecursive(ASSETS_PATH);
+		// Check if there are any new assets
+		CheckForNewAssetsRecursive(ASSETS_PATH);
 
 		timeAccumulator = 0.0f;
 	}
@@ -136,60 +156,87 @@ Resource* ModuleResources::GetResourceByID(UID id) {
 	return resources[id];
 }
 
-void ModuleResources::CheckForNewFilesRecursive(const char* path) {
+std::string ModuleResources::GenerateResourcePath(UID id) const {
+	std::string strId = std::to_string(id);
+	std::string metaFolder = DATA_PATH + strId.substr(0, 2);
+
+	if (!App->files->Exists(metaFolder.c_str())) {
+		App->files->CreateFolder(metaFolder.c_str());
+	}
+
+	return metaFolder + "/" + strId;
+}
+
+void ModuleResources::CheckForNewAssetsRecursive(const char* path) {
 	for (std::string& file : App->files->GetFilesInLocalFolder(path)) {
 		std::string filePath = std::string(path) + "/" + file;
-		if (App->files->IsDirectory(file.c_str())) {
-			CheckForNewFilesRecursive(filePath.c_str());
-		} else {
-			// Check if the file is not in resource_files
-			if (resource_files.find(filePath.c_str()) == resource_files.end()) {
-				std::string metaFilePath = filePath + META_EXTENSION;
-				bool validMetaFile = App->files->Exists(metaFilePath.c_str());
-				if (validMetaFile) {
-					rapidjson::Document document;
-					validMetaFile = ReadMetaFile(metaFilePath.c_str(), document);
-					JsonValue jMeta(document, document);
-					unsigned long long id = jMeta["ID"];
-					if (validMetaFile) {
-						Resource* resource = CreateNewResource(filePath.c_str());
-						if (resource != nullptr) {
-							resource->LoadImportSettings(jMeta);
-							resource->Import();
-						}
-					}
-				}
-
-				if (!validMetaFile) {
-					rapidjson::Document document;
-					JsonValue jMeta(document, document);
-					Resource* resource = CreateNewResource(filePath.c_str());
-					if (resource != nullptr) {
-						resource->Import();
-						resource->SaveImportSettings(jMeta);
-						SaveMetaFile(metaFilePath.c_str(), document);
-					}
-				}
-			}
+		std::string extension = App->files->GetFileExtension(file.c_str());
+		if (App->files->IsDirectory(filePath.c_str())) {
+			CheckForNewAssetsRecursive(filePath.c_str());
+		} else if (extension != META_EXTENSION) {
+			ImportAsset(filePath.c_str());
 		}
 	}
 }
 
-Resource* ModuleResources::CreateNewResource(const char* path) {
-	std::string extension = App->files->GetFileExtension(path);
-
-	Resource* resource = nullptr;
-	UID id = GenerateUID();
-	if (extension == SCENE_EXTENSION) {
-		// Scene files
-	} else if (extension == ".fbx" || extension == ".obj") {
-		// Model files
-		// TODO: Make multiple resources being created possible
-	} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
-		// Texture files
-		resource = new ResourceTexture(id, path);
-		resources.emplace(id, resource);
+void ModuleResources::ImportAsset(const char* filePath) {
+	std::string extension = App->files->GetFileExtension(filePath);
+	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
+	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
+	bool validResourceFiles = true;
+	if (validMetaFile) {
+		rapidjson::Document document;
+		validMetaFile = ReadMetaFile(metaFilePath.c_str(), document);
+		JsonValue jMeta(document, document);
+		if (validMetaFile) {
+			JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+			for (unsigned i = 0; i < jResourceIds.Size(); ++i) {
+				UID id = jResourceIds[i];
+				std::string resourcePath = GenerateResourcePath(id);
+				if (!App->files->Exists(resourcePath.c_str())) {
+					validResourceFiles = false;
+					break;
+				}
+			}
+		}
 	}
 
-	return resource;
+	if (!validMetaFile || !validResourceFiles) {
+		bool validResourceFiles = true;
+		rapidjson::Document document;
+		JsonValue jMeta(document, document);
+		UID id;
+		if (App->files->Exists(metaFilePath.c_str())) {
+			ReadMetaFile(metaFilePath.c_str(), document);
+			id = jMeta[JSON_TAG_RESOURCE_IDS][0];
+		} else {
+			id = GenerateUID();
+		}
+
+		Resource* resource = nullptr;
+		bool assetImported = true;
+		if (extension == SCENE_EXTENSION) {
+			// Scene files
+			// SceneImporter::ImportScene(filePath, jMeta);
+			// ASK: How should we handle scenes?
+		} else if (extension == MATERIAL_EXTENSION) {
+			// Material files
+			// MaterialImporter::ImportMaterial(filePath, jMeta);
+		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
+			// Shader files
+			// ShaderImporter::ImportShader(filePath, jMeta);
+		} else if (extension == ".fbx" || extension == ".obj") {
+			// Model files
+			// ModelImporter::ImportModel(filePath, jMeta);
+		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
+			// Texture files
+			TextureImporter::ImportTexture(filePath, jMeta);
+		} else {
+			assetImported = false;
+		}
+
+		if (!validMetaFile && assetImported) {
+			SaveMetaFile(metaFilePath.c_str(), document);
+		}
+	}
 }

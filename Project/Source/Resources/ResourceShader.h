@@ -4,12 +4,8 @@
 
 class ResourceShader : public Resource {
 public:
-	ResourceShader(UID id, std::string localFilePath);
+	ResourceShader(UID id, const char* assetFilePath, const char* resourceFilePath);
 
-	bool Import() override;
-	void Delete() override;
-
-protected:
 	void Load() override;
 	void Unload() override;
 };

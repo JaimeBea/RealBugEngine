@@ -6,12 +6,8 @@
 
 class ResourceTexture : public Resource {
 public:
-	ResourceTexture(UID id, std::string localFilePath);
+	ResourceTexture(UID id, const char* assetFilePath, const char* resourceFilePath);
 
-	bool Import() override;
-	void Delete() override;
-
-protected:
 	void Load() override;
 	void Unload() override;
 

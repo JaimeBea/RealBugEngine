@@ -1,13 +1,7 @@
 #include "ResourceShader.h"
 
-ResourceShader::ResourceShader(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
-
-bool ResourceShader::Import() {
-	return true;
-}
-
-void ResourceShader::Delete() {
-}
+ResourceShader::ResourceShader(UID id, const char* assetFilePath, const char* resourceFilePath)
+	: Resource(id, assetFilePath, resourceFilePath) {}
 
 void ResourceShader::Load() {
 }

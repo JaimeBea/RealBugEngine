@@ -3,30 +3,12 @@
 #include "Application.h"
 #include "Modules/ModuleTime.h"
 
-#define JSON_TAG_ID "ID"
-#define JSON_TAG_TIMESTAMP "Timestamp"
-
-Resource::Resource(UID id_, std::string localFilePath_)
+Resource::Resource(UID id_, const char* assetFilePath_, const char* resourceFilePath_)
 	: id(id_)
-	, localFilePath(localFilePath_) {}
+	, assetFilePath(assetFilePath_)
+	, resourceFilePath(resourceFilePath_) {}
 
 Resource::~Resource() {}
-
-bool Resource::Import() {
-	return true;
-}
-
-void Resource::Delete() {}
-
-void Resource::SaveImportSettings(JsonValue jMeta) {
-	jMeta[JSON_TAG_ID] = id;
-	jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
-}
-
-void Resource::LoadImportSettings(JsonValue jMeta) {
-	unsigned long long id = jMeta[JSON_TAG_ID];
-	id = jMeta[JSON_TAG_ID];
-}
 
 void Resource::IncreaseReferenceCount() {
 	if (referenceCount == 0) {
@@ -48,8 +30,12 @@ UID Resource::GetId() {
 	return id;
 }
 
-const std::string& Resource::GetLocalFilePath() {
-	return localFilePath;
+const std::string& Resource::GetAssetFilePath() {
+	return assetFilePath;
+}
+
+const std::string& Resource::GetResourceFilePath() {
+	return resourceFilePath;
 }
 
 void Resource::Load() {}

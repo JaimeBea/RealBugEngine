@@ -4,12 +4,8 @@
 
 class ResourceScene : public Resource {
 public:
-	ResourceScene(UID id, std::string localFilePath);
+	ResourceScene(UID id, const char* assetFilePath, const char* resourceFilePath);
 
-	bool Import() override;
-	void Delete() override;
-
-protected:
 	void Load() override;
 	void Unload() override;
 };

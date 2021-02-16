@@ -1,13 +1,7 @@
 #include "ResourceMesh.h"
 
-ResourceMesh::ResourceMesh(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
-
-bool ResourceMesh::Import() {
-	return true;
-}
-
-void ResourceMesh::Delete() {
-}
+ResourceMesh::ResourceMesh(UID id, const char* assetFilePath, const char* resourceFilePath)
+	: Resource(id, assetFilePath, resourceFilePath) {}
 
 void ResourceMesh::Load() {
 }

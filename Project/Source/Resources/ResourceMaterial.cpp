@@ -1,13 +1,7 @@
 #include "ResourceMaterial.h"
 
-ResourceMaterial::ResourceMaterial(UID id, std::string localFilePath) : Resource(id, localFilePath) {}
-
-bool ResourceMaterial::Import() {
-	return true;
-}
-
-void ResourceMaterial::Delete() {
-}
+ResourceMaterial::ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath)
+	: Resource(id, assetFilePath, resourceFilePath) {}
 
 void ResourceMaterial::Load() {
 }

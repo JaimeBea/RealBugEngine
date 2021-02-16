@@ -1,18 +1,7 @@
 #pragma once
 
-/*
-
-class Texture;
-class CubeMap;
+#include "FileSystem/JsonValue.h"
 
 namespace TextureImporter {
-	Texture* ImportTexture(const char* filePath);
-	void LoadTexture(Texture* texture);
-	void UnloadTexture(Texture* texture);
-
-	CubeMap* ImportCubeMap(const char* filePaths[6]);
-	void LoadCubeMap(CubeMap* cubeMap);
-	void UnloadCubeMap(CubeMap* cubeMap);
+	bool ImportTexture(const char* filePath, JsonValue jMeta);
 }; // namespace TextureImporter
-
-*/
