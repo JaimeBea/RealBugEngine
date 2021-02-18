@@ -281,9 +281,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 		for (ComponentMeshRenderer* mesh : meshes) {
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
-			// TODO: (Mesh resource) extract triangles from the mesh
-			/*
-			std::vector<Triangle> triangles = MeshImporter::ExtractMeshTriangles(mesh->mesh, model);
+			std::vector<Triangle> triangles = mesh->mesh->ExtractTriangles(model);
 			for (Triangle& triangle : triangles) {
 				if (ray.Intersects(triangle, &distance, NULL)) {
 					if (distance < minDistance) {
@@ -292,7 +290,6 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 					}
 				}
 			}
-			*/
 		}
 	}
 
