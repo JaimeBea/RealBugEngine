@@ -9,7 +9,6 @@
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
 #include "FileSystem/JsonValue.h"
-#include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
