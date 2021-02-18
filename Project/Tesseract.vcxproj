@@ -37,7 +37,6 @@
     <ClInclude Include="Source\Utils\Pool.h" />
     <ClInclude Include="Source\Utils\Quadtree.h" />
     <ClInclude Include="Source\FileSystem\JsonValue.h" />
-    <ClInclude Include="Source\FileSystem\MeshImporter.h" />
     <ClInclude Include="Source\FileSystem\SceneImporter.h" />
     <ClInclude Include="Source\FileSystem\TextureImporter.h" />
     <ClInclude Include="Source\GameObject.h" />
@@ -203,7 +202,6 @@
     <ClCompile Include="Source\Utils\PerformanceTimer.cpp" />
     <ClCompile Include="Source\Utils\UID.cpp" />
     <ClCompile Include="Source\FileSystem\JsonValue.cpp" />
-    <ClCompile Include="Source\FileSystem\MeshImporter.cpp" />
     <ClCompile Include="Source\FileSystem\SceneImporter.cpp" />
     <ClCompile Include="Source\FileSystem\TextureImporter.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />

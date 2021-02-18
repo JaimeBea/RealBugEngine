@@ -11,7 +11,7 @@
 
 #include "assimp/mesh.h"
 
-ResourceMesh* ImportMesh(const char* modelFilePath, const aiMesh* assimpMesh, JsonValue jMeta) {
+ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* assimpMesh, unsigned resourceIndex) {
 	// Timer to measure importing a mesh
 	MSTimer timer;
 	timer.Start();
@@ -90,7 +90,7 @@ ResourceMesh* ImportMesh(const char* modelFilePath, const aiMesh* assimpMesh, Js
 	// Create mesh
 	ResourceMesh* mesh = App->resources->CreateResource<ResourceMesh>(modelFilePath);
 	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[0] = mesh->GetId();
+	jResourceIds[resourceIndex] = mesh->GetId();
 
 	// Save buffer to file
 	const std::string& resourceFilePath = mesh->GetResourceFilePath();
@@ -99,8 +99,6 @@ ResourceMesh* ImportMesh(const char* modelFilePath, const aiMesh* assimpMesh, Js
 		LOG("Failed to save mesh resource.");
 		return false;
 	}
-
-	jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Mesh imported in %ums", timeMs);
