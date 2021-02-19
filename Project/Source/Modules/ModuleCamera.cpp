@@ -160,14 +160,6 @@ bool ModuleCamera::CleanUp() {
 	return true;
 }
 
-void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change) {
-	if (change) {
-		activeFrustum = &frustum;
-	} else {
-		activeFrustum = &engineCameraFrustum;
-	}
-}
-
 void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	MSTimer timer;
 	timer.Start();
@@ -218,6 +210,14 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	}
 
 	LOG("Ray Tracing in %ums", timer.Stop());
+}
+
+void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change) {
+	if (change) {
+		activeFrustum = &frustum;
+	} else {
+		activeFrustum = &engineCameraFrustum;
+	}
 }
 
 void ModuleCamera::ChangeCullingFrustum(Frustum& frustum, bool change) {
