@@ -160,10 +160,6 @@ bool ModuleCamera::CleanUp() {
 	return true;
 }
 
-void ModuleCamera::ViewportResized(int width, int height) {
-	SetAspectRatio(width / (float) height);
-}
-
 void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change) {
 	if (change) {
 		activeFrustum = &frustum;
@@ -315,6 +311,10 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 	vec modelCenter = boundingSphere.pos;
 	SetPosition(cameraPosition);
 	LookAt(modelCenter.x, modelCenter.y, modelCenter.z);
+}
+
+void ModuleCamera::ViewportResized(int width, int height) {
+	SetAspectRatio(width / (float) height);
 }
 
 void ModuleCamera::SetFOV(float hFov) {

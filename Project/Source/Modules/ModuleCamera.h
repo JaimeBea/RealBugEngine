@@ -15,7 +15,7 @@ class GameObject;
 
 struct FrustumPlanes {
 	float3 points[8]; // 0: ftl, 1: ftr, 2: fbl, 3: fbr, 4: ntl, 5: ntr, 6: nbl, 7: nbr. (far/near, top/bottom, left/right).
-	Plane planes[6]; // left, right, up, down, front, back
+	Plane planes[6];  // left, right, up, down, front, back
 };
 
 class ModuleCamera : public Module {
@@ -25,12 +25,11 @@ public:
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
-	void ViewportResized(int width, int height);
 	void CalculateFrustumNearestObject(float2 pos);
 	void ChangeActiveFrustum(Frustum& frustum, bool change);
 	void ChangeCullingFrustum(Frustum& frustum, bool change);
 	void CalculateFrustumPlanes();
-	
+
 	// ------ Camera Movement ------ //
 	void Translate(const vec& translation);
 	void Zoom(float amount);
@@ -39,6 +38,7 @@ public:
 	void Focus(const GameObject* gameObject);
 
 	// ---------- Setters ---------- //
+	void ViewportResized(int width, int height); // Called when
 	void SetFOV(float hFov);
 	void SetAspectRatio(float aspectRatio);
 	void SetPlaneDistances(float nearPlane, float farPlane);
