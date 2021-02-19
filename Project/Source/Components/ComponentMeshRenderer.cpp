@@ -79,7 +79,6 @@ std::string OpenDialog(const char* _filters, const char* _dir, int* _size) {
 void ComponentMeshRenderer::DrawFrame(int frameId, unsigned int texId, TextureType texType) {
 	float2 image_size(24, 24);
 
-
 	ImGui::BeginChildFrame(frameId, ImVec2(32, 32));
 
 	float2 window_size(ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
@@ -89,9 +88,10 @@ void ComponentMeshRenderer::DrawFrame(int frameId, unsigned int texId, TextureTy
 	if (ImGui::IsItemClicked()) {
 		int size;
 		std::string fn;
+		// This will be substituted by the filesystem open dialog.
 		fn = OpenDialog("Texture Files\0*.dds;", ".\\Library\\Textures\\", &size);
 		if (!fn.empty()) {
-			Texture* texture = new Texture();
+			Texture* texture = App->resources->ObtainTexture();
 			texture->fileName = fn.substr(fn.find_last_of('\\') + 1, fn.size() - fn.find_last_of('\\') - 5);
 			LOG(texture->fileName.c_str())
 			TextureImporter::LoadTexture(texture);
@@ -199,15 +199,23 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			{
 				//Diffuse
 				{
-					DrawFrame(1, material.diffuseMap->glTexture, TextureType::DIFFUSE_MAP);
+					DrawFrame(1, material.diffuseMap?material.diffuseMap->glTexture:0, TextureType::DIFFUSE_MAP);
 					ImGui::SameLine();
 					ImGui::Text("Diffuse");
+					if (ImGui::Button("No map##diffuse")) {
+						material.diffuseMap = nullptr;
+						material.hasDiffuseMap = false;
+					}
 				}
 				//Specular
 				{
-					DrawFrame(2, material.specularMap->glTexture, TextureType::SPECULAR_MAP);
+					DrawFrame(2, material.specularMap?material.specularMap->glTexture:0, TextureType::SPECULAR_MAP);
 					ImGui::SameLine();
 					ImGui::Text("Specular");
+					if (ImGui::Button("No map##diffuse")) {
+						material.specularMap = nullptr;
+						material.hasSpecularMap = false;
+					}
 				}
 
 				ImGui::Text("Smoothness");
@@ -230,10 +238,14 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				ImGui::PopID();
 
 				ImGui::NewLine();
+				ImGui::NewLine();
+
 				std::string id_cs("##color_s");
 				ImGui::PushID(id_cs.c_str());
 				ImGui::ColorEdit3("", &material.specularColor[0], ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoInputs);
 				ImGui::PopID();
+
+				ImGui::NewLine();
 				ImGui::NewLine();
 
 				std::string id_s("##smooth_");
@@ -269,13 +281,13 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			if (material.diffuseMap != nullptr) {
 				if (ImGui::BeginTabItem("Diffuse##map")) {
 					ImGui::TextColored(App->editor->titleColor, "Diffuse Texture");
-					ImGui::TextWrapped("Size:##diffuse");
+					ImGui::TextWrapped("Size:");
 					ImGui::SameLine();
 					int width;
 					int height;
 					glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
 					glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-					ImGui::TextWrapped("%d x %d##diffuse", width, height);
+					ImGui::TextWrapped("%d x %d", width, height);
 					ImGui::Image((void*) material.diffuseMap->glTexture, ImVec2(200, 200));
 					ImGui::EndTabItem();
 				}
@@ -283,13 +295,13 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			if (material.specularMap != nullptr) {
 				if (ImGui::BeginTabItem("Specular##map")) {
 					ImGui::TextColored(App->editor->titleColor, "Specular Texture");
-					ImGui::TextWrapped("Size:##specular");
+					ImGui::TextWrapped("Size:");
 					ImGui::SameLine();
 					int width;
 					int height;
 					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
 					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-					ImGui::TextWrapped("%d x %d##specular", width, height);
+					ImGui::TextWrapped("%d x %d", width, height);
 					ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
 					ImGui::EndTabItem();
 				}
@@ -297,6 +309,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			ImGui::EndTabBar();
 		}
 	}
+
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
