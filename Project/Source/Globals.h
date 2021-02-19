@@ -4,7 +4,7 @@
 enum class UpdateStatus {
 	CONTINUE,
 	STOP,
-	ERROR
+	FAIL
 };
 
 // Constants -----------

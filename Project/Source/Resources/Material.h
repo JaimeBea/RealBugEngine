@@ -24,7 +24,9 @@ public:
 	Texture* specularMap = nullptr;
 
 	float shininess = 300;
-	bool hasShininessInAlphaChannel = false;
+	int hasShininessInAlphaChannel = 0;
 
 	float3 ambient = {0.0f, 0.0f, 0.0f};
+
+	float smoothness = 0.1;
 };

@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 		case MainState::UPDATE: {
 			UpdateStatus updateReturn = App->Update();
 
-			if (updateReturn == UpdateStatus::ERROR) {
+			if (updateReturn == UpdateStatus::FAIL) {
 				LOG("Application Update exits with error -----");
 				state = MainState::EXIT;
 			}

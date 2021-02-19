@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Resources/Mesh.h"
 #include "Resources/Material.h"
+#include "Resources/Texture.h"
 
 #include "Math/float4x4.h"
 #include "Geometry/Sphere.h"
@@ -19,6 +20,9 @@ public:
 	void Load(JsonValue jComponent) override;
 
 	void Draw(const float4x4& modelMatrix) const;
+
+private:
+	void DrawFrame(int frameId, unsigned int texId, TextureType texType);
 
 public:
 	Mesh* mesh = nullptr;
