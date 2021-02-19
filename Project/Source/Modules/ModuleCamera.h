@@ -20,28 +20,33 @@ struct FrustumPlanes {
 
 class ModuleCamera : public Module {
 public:
+	// ------- Core Functions ------ //
 	bool Init() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
 	void ViewportResized(int width, int height);
+	void CalculateFrustumNearestObject(float2 pos);
+	void ChangeActiveFrustum(Frustum& frustum, bool change);
+	void ChangeCullingFrustum(Frustum& frustum, bool change);
+	void CalculateFrustumPlanes();
+	
+	// ------ Camera Movement ------ //
+	void Translate(const vec& translation);
+	void Zoom(float amount);
+	void Rotate(const float3x3& rotationMatrix);
+	void LookAt(float x, float y, float z);
+	void Focus(const GameObject* gameObject);
 
+	// ---------- Setters ---------- //
 	void SetFOV(float hFov);
 	void SetAspectRatio(float aspectRatio);
 	void SetPlaneDistances(float nearPlane, float farPlane);
 	void SetPosition(const vec& position);
 	void SetPosition(float x, float y, float z);
 	void SetOrientation(const float3x3& rotationMatrix);
-	void Translate(const vec& translation);
-	void Zoom(float amount);
-	void Rotate(const float3x3& rotationMatrix);
-	void LookAt(float x, float y, float z);
-	void Focus(const GameObject* gameObject);
-	void CalculateFrustumNearestObject(float2 pos);
-	void ChangeActiveFrustum(Frustum& frustum, bool change);
-	void ChangeCullingFrustum(Frustum& frustum, bool change);
-	void CalculateFrustumPlanes();
 
+	// ---------- Getters ---------- //
 	vec GetFront() const;
 	vec GetUp() const;
 	vec GetWorldRight() const;

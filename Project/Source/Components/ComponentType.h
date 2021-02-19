@@ -9,6 +9,9 @@ class Component;
 *    3. Add the new component to the CreateComponentByType function in ComponentType.cpp
 */
 
+// REGISTER_COMPONENT builds the data structures common to all Components.
+// This includes the Constructor.
+//TODO: include destructor and list of components by type
 #define REGISTER_COMPONENT(componentClass, componentType)  \
 	static const ComponentType staticType = componentType; \
 	componentClass(GameObject& owner, bool active) : Component(staticType, owner, active) {}

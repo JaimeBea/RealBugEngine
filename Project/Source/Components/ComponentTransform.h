@@ -39,7 +39,7 @@ public:
 
 private:
 	float3 position = float3::zero;			// Position of the GameObject in world coordinates.
-	Quat rotation = Quat::identity;			// Rotation of the GameObject as a Quaternion
+	Quat rotation = Quat::identity;			// Rotation of the GameObject as a Quaternion.
 	float3 localEulerAngles = float3::zero; // Rotation of the GameObject as euler angles.
 	float3 scale = float3::one;				// Scale of the GameObject.
 
