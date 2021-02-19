@@ -84,12 +84,17 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY")) {
 			if (!gameObject->IsDescendantOf(App->editor->selectedGameObject)) {
+				// multiplicar per inversa
+				// obtenir parent global matrix
+				// inverse
+				// inverse * global local
+				// set
 				App->editor->selectedGameObject->SetParent(gameObject);
 				ComponentTransform* transform = App->editor->selectedGameObject->GetComponent<ComponentTransform>();
 				transform->InvalidateHierarchy();
 				transform->CalculateGlobalMatrix();
 			}
-		}
+		} 
 		ImGui::EndDragDropTarget();
 	}
 

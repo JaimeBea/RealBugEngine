@@ -95,7 +95,7 @@ void ComponentTransform::InvalidateHierarchy() {
 	for (GameObject* child : GetOwner().GetChildren()) {
 		ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
 		if (childTransform != nullptr) {
-			childTransform->Invalidate();
+			childTransform->InvalidateHierarchy();
 		}
 	}
 }
