@@ -16,9 +16,11 @@ enum class WindowMode {
 
 class ModuleWindow : public Module {
 public:
+	// ------- Core Functions ------ //
 	bool Init() override;
 	bool CleanUp() override;
 
+	// ---------- Setters ---------- //
 	void SetWindowMode(WindowMode mode);
 	void SetResizable(bool resizable);
 	void SetCurrentDisplayMode(int index);
@@ -26,6 +28,7 @@ public:
 	void SetBrightness(float brightness);
 	void SetTitle(const char* title);
 
+	// ---------- Getters ---------- //
 	WindowMode GetWindowMode() const;
 	bool GetMaximized() const;
 	bool GetResizable() const;

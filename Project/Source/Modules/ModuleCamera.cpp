@@ -334,7 +334,7 @@ void ModuleCamera::SetPosition(const vec& position) {
 }
 
 void ModuleCamera::SetPosition(float x, float y, float z) {
-	SetPosition(vec(x, y, z));
+	activeFrustum->SetPos(vec(x, y, z));
 }
 
 void ModuleCamera::SetOrientation(const float3x3& rotationMatrix) {
