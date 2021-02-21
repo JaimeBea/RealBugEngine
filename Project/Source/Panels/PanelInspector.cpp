@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Resources/GameObject.h"
 #include "Components/Component.h"
+#include "Components/ComponentType.h"
 #include "Modules/ModuleEditor.h"
 
 #include "Math/float3.h"
@@ -51,6 +52,24 @@ void PanelInspector::Update() {
 				ImGui::PushID(component);
 				component->OnEditorUpdate();
 				ImGui::PopID();
+			}
+			// Add New Components
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Separator();
+			ImGui::Spacing();
+			ImGui::Spacing();
+			if (ImGui::Button("Add New Component", ImVec2(ImGui::GetContentRegionAvail().x, 25))) { ImGui::OpenPopup("AddComponentPopup"); }
+			if (ImGui::BeginPopup("AddComponentPopup")) {
+				// TODO: Missing functionality for meshRenderer with Bounding Box and Material
+				ComponentType type = ComponentType::UNKNOWN;
+				if (ImGui::MenuItem("Transform")) type = ComponentType::TRANSFORM;
+				if (ImGui::MenuItem("Mesh Renderer")) type = ComponentType::MESH;
+				if (ImGui::MenuItem("Camera")) type = ComponentType::CAMERA;
+				if (ImGui::MenuItem("Light")) type = ComponentType::LIGHT;
+
+				if (type != ComponentType::UNKNOWN) CreateComponentByType(selected, type);
+				ImGui::EndPopup();
 			}
 		}
 	}
