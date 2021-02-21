@@ -19,6 +19,7 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
 #include "Panels/PanelHierarchy.h"
 
@@ -38,6 +39,7 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
+#include "UI/EventSystem/Event.h"
 
 static aiLogStream logStream = {nullptr, nullptr};
 
@@ -288,6 +290,10 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	gameObject->Enable();
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
+
+	Event ev = Event(Event::EventType::GameObject_Destroyed);
+	ev.objPtr.ptr = gameObject;
+	App->BroadCastEvent(ev);
 }
 
 GameObject* ModuleScene::GetGameObject(UID id) const {

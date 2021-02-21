@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Utils/MSTimer.h"
-
 #include <vector>
 
 enum class UpdateStatus;
@@ -20,7 +19,8 @@ class ModulePrograms;
 class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
-
+class ModuleEventSystem;
+struct Event;
 class Application {
 public:
 	Application();
@@ -32,6 +32,7 @@ public:
 	bool CleanUp();
 
 	void RequestBrowser(char* url);
+	void BroadCastEvent(const Event& e);
 
 public:
 	ModuleHardwareInfo* hardware = nullptr;
@@ -46,7 +47,7 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
-
+	ModuleEventSystem* eventSystem = nullptr;
 	// Application Configuration
 
 	char appName[20] = "Tesseract";

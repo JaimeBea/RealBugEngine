@@ -22,6 +22,7 @@
 #include "GL/glew.h"
 #include "SDL.h"
 #include "Brofiler.h"
+#include "UI/EventSystem/Event.h"
 
 #include "Utils/Leaks.h"
 
@@ -110,12 +111,12 @@ bool ModuleRender::Init() {
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 
-#ifdef _DEBUG
-	glEnable(GL_DEBUG_OUTPUT);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr);
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
-#endif
+	//#ifdef _DEBUG
+	//	glEnable(GL_DEBUG_OUTPUT);
+	//	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	//	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr);
+	//	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
+	//#endif
 
 	glGenFramebuffers(1, &framebuffer);
 	glGenRenderbuffers(1, &depthRenderbuffer);
@@ -255,6 +256,12 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 		};
 		dd::box(points, dd::colors::White);
 	}
+}
+
+void ModuleRender::RecieveEvent(const Event& ev) {
+	//if (ev.type == Event::EventType::GameObject_Destroyed) {
+	//	App->scene->quadtree.root.Remove(App->scene->quadtree, ev.objPtr.ptr);
+	//}
 }
 
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {

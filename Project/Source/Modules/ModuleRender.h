@@ -19,6 +19,7 @@ public:
 	void ViewportResized(int width, int height);
 
 	void SetVSync(bool vsync);
+	void RecieveEvent(const Event& ev) override;
 
 public:
 	void* context = nullptr;
