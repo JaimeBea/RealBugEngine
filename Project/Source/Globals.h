@@ -26,6 +26,9 @@ enum class UpdateStatus {
 // Configuration -----------
 #define GLSL_VERSION "#version 330"
 
+// Threads
+#define TIME_BETWEEN_RESOURCE_UPDATES_MS 300
+
 // Delete helpers -----------
 #define RELEASE(x)          \
 	{                       \

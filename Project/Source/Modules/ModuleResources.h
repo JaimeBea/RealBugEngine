@@ -7,6 +7,8 @@
 
 #include <unordered_set>
 #include <unordered_map>
+#include <thread>
+#include <mutex>
 
 #define JSON_TAG_RESOURCE_IDS "ResourceIds"
 #define JSON_TAG_TIMESTAMP "Timestamp"
@@ -23,16 +25,15 @@ public:
 	template<typename T>
 	T* CreateResource(const char* assetFilePath);
 
-public:
-	float timeBetweenUpdates = 1.0f;
-
 private:
-	void CheckForNewAssetsRecursive(const char* path);
-	void ImportAsset(const char* filePath);
+	void UpdateAsync();
 
 private:
 	std::unordered_map<UID, Resource*> resources;
-	float timeAccumulator = 0.0f;
+	std::mutex resourcesMutex;
+
+	std::thread importThread;
+	bool stopImportThread = false;
 };
 
 template<typename T>
@@ -40,6 +41,8 @@ inline T* ModuleResources::CreateResource(const char* assetFilePath) {
 	UID id = GenerateUID();
 	std::string resourceFilePath = GenerateResourcePath(id);
 	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
+	resourcesMutex.lock();
 	resources.emplace(id, resource);
+	resourcesMutex.unlock();
 	return resource;
 }
