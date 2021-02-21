@@ -4,7 +4,6 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
-#include "FileSystem/MeshImporter.h"
 #include "GameObject.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"

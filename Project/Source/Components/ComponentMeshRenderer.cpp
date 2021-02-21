@@ -3,7 +3,6 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "GameObject.h"
 #include "Resources/ResourceTexture.h"
