@@ -93,7 +93,8 @@ void ModuleFiles::Erase(const char* path) const {
 }
 
 bool ModuleFiles::Exists(const char* path) const {
-	return PHYSFS_exists(path);
+	PHYSFS_Stat fileStats;
+	return PHYSFS_stat(path, &fileStats) != 0;
 }
 
 bool ModuleFiles::IsDirectory(const char* path) const {
