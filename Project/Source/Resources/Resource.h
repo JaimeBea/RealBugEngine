@@ -12,9 +12,9 @@ public:
 	void IncreaseReferenceCount();
 	void DecreaseReferenceCount();
 
-	UID GetId();
-	const std::string& GetAssetFilePath();
-	const std::string& GetResourceFilePath();
+	UID GetId() const;
+	const std::string& GetAssetFilePath() const;
+	const std::string& GetResourceFilePath() const;
 
 	virtual void Load();
 	virtual void Unload();
