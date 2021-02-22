@@ -109,6 +109,22 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
+bool GameObject::AddComponent(ComponentType type) {
+	if (ExistsComponentOfType(type)) return false;
+	CreateComponentByType(*this, type);
+	InitComponents();
+	return true;
+}
+
+bool GameObject::ExistsComponentOfType(ComponentType type) {
+	for (Component* component : components) {
+		if (component->GetType() == type) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_ID] = id;
 	jGameObject[JSON_TAG_NAME] = name.c_str();

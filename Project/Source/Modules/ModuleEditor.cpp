@@ -211,11 +211,15 @@ UpdateStatus ModuleEditor::Update() {
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");
 		break;
+	case Modal::COMPONENT_EXISTS:
+		ImGui::OpenPopup("Already existing Component");
+		break;
 	}
 	modalToOpen = Modal::NONE;
 
+	// NEW SCENE MODAL
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("New scene")) {
+	if (ImGui::BeginPopupModal("New scene", nullptr, ImGuiWindowFlags_NoResize)) {
 		ImGui::Text("Do you wish to create a new scene?");
 		if (ImGui::Button("New scene")) {
 			App->scene->CreateEmptyScene();
@@ -227,8 +231,9 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndPopup();
 	}
+	// LOAD SCENE MODAL
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Load scene")) {
+	if (ImGui::BeginPopupModal("Load scene", nullptr, ImGuiWindowFlags_NoResize)) {
 		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
 		if (ImGui::Button("Load")) {
 			SceneImporter::LoadScene(fileNameBuffer);
@@ -240,8 +245,9 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndPopup();
 	}
+	// SAVE SCENE MODAL
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Save scene")) {
+	if (ImGui::BeginPopupModal("Save scene", nullptr, ImGuiWindowFlags_NoResize)) {
 		ImGui::SetItemDefaultFocus();
 		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
 		if (ImGui::Button("Save")) {
@@ -254,13 +260,24 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndPopup();
 	}
+	// QUIT MODAL
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Quit")) {
+	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize)) {
 		ImGui::Text("Do you really want to quit?");
 		if (ImGui::Button("Quit")) {
 			return UpdateStatus::STOP;
 		}
 		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	// ALREADY EXISTING COMPONENT MODAL
+	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Already existing Component", nullptr, ImGuiWindowFlags_NoResize)) {
+		ImGui::PushTextWrapPos();
+		ImGui::Text("A Component of this type already exists in this GameObject.\nMultiple instances of this type of Component are not allowed in the same GameObject.");
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}

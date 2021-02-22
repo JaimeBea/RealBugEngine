@@ -61,14 +61,16 @@ void PanelInspector::Update() {
 			ImGui::Spacing();
 			if (ImGui::Button("Add New Component", ImVec2(ImGui::GetContentRegionAvail().x, 25))) { ImGui::OpenPopup("AddComponentPopup"); }
 			if (ImGui::BeginPopup("AddComponentPopup")) {
-				// TODO: Missing functionality for meshRenderer with Bounding Box and Material
-				ComponentType type = ComponentType::UNKNOWN;
-				if (ImGui::MenuItem("Transform")) type = ComponentType::TRANSFORM;
-				if (ImGui::MenuItem("Mesh Renderer")) type = ComponentType::MESH;
-				if (ImGui::MenuItem("Camera")) type = ComponentType::CAMERA;
-				if (ImGui::MenuItem("Light")) type = ComponentType::LIGHT;
-
-				if (type != ComponentType::UNKNOWN) CreateComponentByType(selected, type);
+				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
+				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
+				if (ImGui::MenuItem("Transform"))
+					if (!selected->AddComponent(ComponentType::TRANSFORM)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				if (ImGui::MenuItem("Mesh Renderer"))
+					if (!selected->AddComponent(ComponentType::MESH)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				if (ImGui::MenuItem("Camera"))
+					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				if (ImGui::MenuItem("Light"))
+					if (!selected->AddComponent(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 				ImGui::EndPopup();
 			}
 		}
