@@ -326,6 +326,12 @@ UpdateStatus ModuleEditor::Update() {
 UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
 
+	// Deleting Components
+	if (panelInspector.GetCompToDelete()) {
+		selectedGameObject->RemoveComponent(panelInspector.GetCompToDelete());
+		panelInspector.SetCompToDelete(nullptr);
+	}
+
 	// Draw to default frame buffer (main window)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glEnable(GL_DEPTH_TEST);

@@ -20,6 +20,7 @@ PanelInspector::PanelInspector()
 	: Panel("Inspector", true) {}
 
 void PanelInspector::Update() {
+	ImGui::ShowDemoWindow();
 	ImGui::SetNextWindowDockID(App->editor->dockRightId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_CUBE " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
@@ -48,11 +49,54 @@ void PanelInspector::Update() {
 
 			ImGui::Separator();
 
+			// Show Component info
+			static std::string Cname = "";
 			for (Component* component : selected->components) {
+				switch (component->GetType()) {
+				case ComponentType::TRANSFORM:
+					Cname = "Transformation";
+					break;
+				case ComponentType::MESH:
+					Cname = "Mesh Renderer";
+					break;
+				case ComponentType::CAMERA:
+					Cname = "Camera";
+					break;
+				case ComponentType::LIGHT:
+					Cname = "Light";
+					break;
+				case ComponentType::BOUNDING_BOX:
+					Cname = "Bounding Box";
+					break;
+				default:
+					Cname = "";
+					break;
+				}
+			
 				ImGui::PushID(component);
-				component->OnEditorUpdate();
+				bool headerOpen = ImGui::CollapsingHeader(Cname.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
+				ImGui::SameLine();
+				if (ImGui::GetWindowWidth() > 170)
+					ImGui::Indent(ImGui::GetWindowWidth() - 85);
+				if (ImGui::Button("Options")) {
+					ImGui::OpenPopup("Component Options");
+				}
+				if (ImGui::GetWindowWidth() > 170)
+					ImGui::Unindent(ImGui::GetWindowWidth() - 85);
+
+				if (headerOpen)
+					component->OnEditorUpdate();
+
+				if (ImGui::BeginPopup("Component Options")) {
+					ImGui::TextUnformatted("Id:");
+					if (ImGui::MenuItem("Remove Component")) {
+						compToDelete = component;
+					}
+					ImGui::EndPopup();
+				}
 				ImGui::PopID();
 			}
+
 			// Add New Components
 			ImGui::Spacing();
 			ImGui::Spacing();
@@ -63,17 +107,24 @@ void PanelInspector::Update() {
 			if (ImGui::BeginPopup("AddComponentPopup")) {
 				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
 				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
-				if (ImGui::MenuItem("Transform"))
-					if (!selected->AddComponent(ComponentType::TRANSFORM)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 				if (ImGui::MenuItem("Mesh Renderer"))
-					if (!selected->AddComponent(ComponentType::MESH)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					selected->AddComponent(ComponentType::MESH);
 				if (ImGui::MenuItem("Camera"))
 					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 				if (ImGui::MenuItem("Light"))
 					if (!selected->AddComponent(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
 		}
 	}
 	ImGui::End();
+}
+
+Component* PanelInspector::GetCompToDelete() {
+	return compToDelete;
+}
+
+void PanelInspector::SetCompToDelete(Component* comp) {
+	compToDelete = comp;
 }

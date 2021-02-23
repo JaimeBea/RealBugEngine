@@ -40,7 +40,8 @@
 #define JSON_TAG_AMBIENT "Ambient"
 
 void ComponentMeshRenderer::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Mesh")) {
+	// MESH
+	if (ImGui::TreeNode("Mesh")) {
 		bool active = IsActive();
 
 		if (ImGui::Checkbox("Active", &active)) {
@@ -60,18 +61,10 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		ImGui::TextWrapped("Num Triangles: ");
 		ImGui::SameLine();
 		ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);
-		ImGui::Separator();
-		ImGui::TextColored(App->editor->titleColor, "Bounding Box");
-
-		ImGui::Checkbox("Draw", &bbActive);
-		if (bbActive) {
-			ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-			boundingBox->DrawBoundingBox();
-		}
-		ImGui::Separator();
+		ImGui::TreePop();
 	}
-
-	if (ImGui::CollapsingHeader("Material")) {
+	// MATERIAL
+	if (ImGui::TreeNode("Material")) {
 		ImGui::TextColored(App->editor->titleColor, "Shader");
 
 		// Material types
@@ -257,6 +250,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
 			ImGui::Separator();
 		}
+		ImGui::TreePop();
 	}
 }
 

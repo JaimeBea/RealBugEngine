@@ -10,6 +10,7 @@ public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX);
 
 	void OnTransformUpdate() override;
+	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 
@@ -27,4 +28,6 @@ private:
 	bool dirty = true;
 	AABB worldAABB = {{0, 0, 0}, {0, 0, 0}};
 	OBB worldOBB = {worldAABB};
+
+	bool bbActive = false;
 };
