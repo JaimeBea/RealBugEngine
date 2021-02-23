@@ -50,12 +50,6 @@ void ComponentLight::OnEditorUpdate() {
 	if (ImGui::Checkbox("Active", &active)) {
 		active ? Enable() : Disable();
 	}
-	ImGui::SameLine();
-	if (ImGui::Button("Remove")) {
-		// TODO: Fix me
-		//selected->RemoveComponent(material);
-		//continue;
-	}
 	ImGui::Separator();
 
 	ImGui::Checkbox("Draw Gizmos", &drawGizmos);

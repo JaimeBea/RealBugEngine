@@ -40,20 +40,13 @@
 #define JSON_TAG_AMBIENT "Ambient"
 
 void ComponentMeshRenderer::OnEditorUpdate() {
+	bool active = IsActive();
+	if (ImGui::Checkbox("Active", &active)) {
+		active ? Enable() : Disable();
+	}
+	ImGui::Separator();
 	// MESH
 	if (ImGui::TreeNode("Mesh")) {
-		bool active = IsActive();
-
-		if (ImGui::Checkbox("Active", &active)) {
-			active ? Enable() : Disable();
-		}
-		ImGui::SameLine();
-
-		if (ImGui::Button("Remove")) {
-			// TODO: Add delete Component tool
-		}
-		ImGui::Separator();
-
 		ImGui::TextColored(App->editor->titleColor, "Geometry");
 		ImGui::TextWrapped("Num Vertices: ");
 		ImGui::SameLine();
@@ -226,29 +219,30 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			ImGui::EndCombo();
 		}
 		ImGui::Separator();
-		if (material.diffuseMap != nullptr) {
-			ImGui::TextColored(App->editor->titleColor, "Diffuse Texture");
-			ImGui::TextWrapped("Size:##diffuse");
-			ImGui::SameLine();
-			int width;
-			int height;
-			glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-			ImGui::TextWrapped("%d x %d##diffuse", width, height);
-			ImGui::Image((void*) material.diffuseMap->glTexture, ImVec2(200, 200));
-			ImGui::Separator();
-		}
-		if (material.specularMap != nullptr) {
-			ImGui::TextColored(App->editor->titleColor, "Specular Texture");
-			ImGui::TextWrapped("Size:##specular");
-			ImGui::SameLine();
-			int width;
-			int height;
-			glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-			ImGui::TextWrapped("%d x %d##specular", width, height);
-			ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
-			ImGui::Separator();
+		if (ImGui::BeginTabBar("MyTabBar")) {
+			if (material.diffuseMap != nullptr) {
+				if (ImGui::BeginTabItem("Diffuse Texture", nullptr, ImGuiTabItemFlags_None)) {
+					int width;
+					int height;
+					glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+					glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+					ImGui::TextWrapped("Size: %d x %d", width, height);
+					ImGui::Image((void*) material.diffuseMap->glTexture, ImVec2(200, 200));
+					ImGui::EndTabItem();
+				}
+			}
+			if (material.specularMap != nullptr) {
+				if (ImGui::BeginTabItem("Specular Texture", nullptr, ImGuiTabItemFlags_None)) {
+					int width;
+					int height;
+					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+					ImGui::TextWrapped("Size: %d x %d", width, height);
+					ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
+					ImGui::EndTabItem();
+				}
+			}
+			ImGui::EndTabBar();
 		}
 		ImGui::TreePop();
 	}

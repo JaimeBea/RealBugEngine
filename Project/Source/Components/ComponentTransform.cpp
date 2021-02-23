@@ -45,7 +45,6 @@ void ComponentTransform::OnEditorUpdate() {
 	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetRotation(rot);
 	}
-	ImGui::Separator();
 }
 
 void ComponentTransform::Save(JsonValue jComponent) const {

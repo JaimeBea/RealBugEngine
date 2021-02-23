@@ -43,6 +43,9 @@ void ComponentCamera::OnEditorUpdate() {
 	if (ImGui::Checkbox("Main Camera", &activeCamera)) {
 		App->camera->ChangeActiveFrustum(frustum, activeCamera);
 	}
+	if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
+		App->camera->ChangeCullingFrustum(frustum, cullingCamera);
+	}
 	ImGui::Separator();
 
 	vec front = frustum.Front();
@@ -62,9 +65,6 @@ void ComponentCamera::OnEditorUpdate() {
 	float fov = frustum.VerticalFov();
 	if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
 		frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
-	}
-	if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
-		App->camera->ChangeCullingFrustum(frustum, cullingCamera);
 	}
 }
 

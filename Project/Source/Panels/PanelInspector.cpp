@@ -72,28 +72,28 @@ void PanelInspector::Update() {
 					Cname = "";
 					break;
 				}
-			
+
 				ImGui::PushID(component);
 				bool headerOpen = ImGui::CollapsingHeader(Cname.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
+
+				// Options BUTTON (in the same line and at the end of the line)
 				ImGui::SameLine();
-				if (ImGui::GetWindowWidth() > 170)
-					ImGui::Indent(ImGui::GetWindowWidth() - 85);
-				if (ImGui::Button("Options")) {
-					ImGui::OpenPopup("Component Options");
-				}
-				if (ImGui::GetWindowWidth() > 170)
-					ImGui::Unindent(ImGui::GetWindowWidth() - 85);
+				if (ImGui::GetWindowWidth() > 170) ImGui::Indent(ImGui::GetWindowWidth() - 85);
+				if (ImGui::Button("Options")) ImGui::OpenPopup("Component Options");
+				if (ImGui::GetWindowWidth() > 170) ImGui::Unindent(ImGui::GetWindowWidth() - 85);
 
-				if (headerOpen)
-					component->OnEditorUpdate();
-
+				// Options POPUP
 				if (ImGui::BeginPopup("Component Options")) {
-					ImGui::TextUnformatted("Id:");
-					if (ImGui::MenuItem("Remove Component")) {
-						compToDelete = component;
+					if (component->GetType() != ComponentType::TRANSFORM) {
+						if (ImGui::MenuItem("Remove Component")) compToDelete = component;
 					}
+					// More menu items ...
 					ImGui::EndPopup();
 				}
+
+				// Show Component info
+				if (headerOpen) component->OnEditorUpdate();
+				
 				ImGui::PopID();
 			}
 
@@ -108,7 +108,7 @@ void PanelInspector::Update() {
 				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
 				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
 				if (ImGui::MenuItem("Mesh Renderer"))
-					selected->AddComponent(ComponentType::MESH);
+					selected->AddComponent(ComponentType::MESH); // TODO: Add more than 1 mesh renderer? or all meshes inside the same component?
 				if (ImGui::MenuItem("Camera"))
 					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 				if (ImGui::MenuItem("Light"))
