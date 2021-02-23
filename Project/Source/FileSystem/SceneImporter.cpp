@@ -215,7 +215,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 				LOG("Unable to find specular texture file.");
 			} else {
 				LOG("Specular texture imported successfuly.");
-				material.hasSpecularMap = true;
+				material.hasSpecularOrMetalMap = true;
 				material.specularMap = texture;
 				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);

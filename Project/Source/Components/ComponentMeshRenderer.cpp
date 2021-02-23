@@ -44,6 +44,7 @@
 #define JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
 #define JSON_TAG_AMBIENT "Ambient"
 
+// THIS FUNCTION WILL BE REPLACED WITH THE CORRESPONDING FROM FILESYSTEM
 std::string OpenDialog(const char* _filters, const char* _dir, int* _size) {
 	char path[MAX_PATH];
 	_fullpath(path, NULL, MAX_PATH);
@@ -103,7 +104,7 @@ void ComponentMeshRenderer::DrawFrame(int frameId, unsigned int texId, TextureTy
 				break;
 			case TextureType::SPECULAR_MAP:
 				material.specularMap = texture;
-				material.hasSpecularMap = true;
+				material.hasSpecularOrMetalMap = true;
 				break;
 			case TextureType::NORMAL_MAP:
 				break;
@@ -178,7 +179,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		ImGui::TextColored(App->editor->titleColor, "Shader");
 
 		// Material types
-		const char* materialTypes[] = {"Standard", "Phong"};
+		const char* materialTypes[] = {"Standard (specular settings)", "Standard"};
 		const char* materialTypesCurrent = materialTypes[(int) material.materialType];
 		if (ImGui::BeginCombo("Type", materialTypesCurrent)) {
 			for (int n = 0; n < IM_ARRAYSIZE(materialTypes); ++n) {
@@ -193,7 +194,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			ImGui::EndCombo();
 			ImGui::Text("");
 		}
-		if (material.materialType == ShaderType::PHONG) {
+		if (material.materialType == ShaderType::STANDARD_SPECULAR) {
 			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 			//First Column with the text names of widgets
 			{
@@ -212,19 +213,58 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					DrawFrame(2, material.specularMap?material.specularMap->glTexture:0, TextureType::SPECULAR_MAP);
 					ImGui::SameLine();
 					ImGui::Text("Specular");
-					if (ImGui::Button("No map##diffuse")) {
+					if (ImGui::Button("No map##specular")) {
 						material.specularMap = nullptr;
-						material.hasSpecularMap = false;
+						material.hasSpecularOrMetalMap = false;
 					}
 				}
+			}
 
-				ImGui::Text("Smoothness");
+			ImGui::NextColumn();
+			//Second column with the widgets
+			{
+				std::string id_cd("##color_d");
+				ImGui::PushID(id_cd.c_str());
+				ImGui::ColorEdit4("", &material.diffuseColor[0], ImGuiColorEditFlags_NoInputs);
+				ImGui::PopID();
 
-				//Normal
+				ImGui::NewLine();
+				ImGui::NewLine();
+
+				if (!material.hasSpecularOrMetalMap) {
+					std::string id_cs("##color_s");
+					ImGui::PushID(id_cs.c_str());
+					ImGui::ColorEdit4("", &material.specularColor[0], ImGuiColorEditFlags_NoInputs);
+					ImGui::PopID();
+				} else {
+					ImGui::NewLine();
+				}
+			}
+			ImGui::EndColumns();
+
+		} else if (material.materialType == ShaderType::STANDARD) {
+			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
+			//First Column with the text names of widgets
+			{
+				//Diffuse
 				{
-					DrawFrame(3, 0, TextureType::NORMAL_MAP);
+					DrawFrame(1, material.diffuseMap ? material.diffuseMap->glTexture : 0, TextureType::DIFFUSE_MAP);
 					ImGui::SameLine();
-					ImGui::Text("Normal");
+					ImGui::Text("Diffuse");
+					if (ImGui::Button("No map##diffuse")) {
+						material.diffuseMap = nullptr;
+						material.hasDiffuseMap = false;
+					}
+				}
+				//Specular
+				{
+					DrawFrame(2, material.specularMap ? material.specularMap->glTexture : 0, TextureType::SPECULAR_MAP);
+					ImGui::SameLine();
+					ImGui::Text("Metallic");
+					if (ImGui::Button("No map##metallic")) {
+						material.specularMap = nullptr;
+						material.hasSpecularOrMetalMap = false;
+					}
 				}
 			}
 
@@ -234,36 +274,35 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				std::string id_cd("##color_d");
 				//id_c.append();
 				ImGui::PushID(id_cd.c_str());
-				ImGui::ColorEdit3("", &material.diffuseColor[0], ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoInputs);
+				ImGui::ColorEdit4("", &material.diffuseColor[0], ImGuiColorEditFlags_NoInputs);
 				ImGui::PopID();
 
 				ImGui::NewLine();
 				ImGui::NewLine();
 
-				std::string id_cs("##color_s");
-				ImGui::PushID(id_cs.c_str());
-				ImGui::ColorEdit3("", &material.specularColor[0], ImGuiColorEditFlags_NoAlpha | ImGuiColorEditFlags_NoInputs);
-				ImGui::PopID();
-
-				ImGui::NewLine();
-				ImGui::NewLine();
-
-				std::string id_s("##smooth_");
-				//id_s.append(_uuid);
-				ImGui::PushID(id_s.c_str());
-				ImGui::SliderFloat(id_s.c_str(), &material.smoothness, 0, 1);
-				ImGui::PopID();
+				if (!material.hasSpecularOrMetalMap) {
+					std::string id_m("##metalness");
+					ImGui::PushID(id_m.c_str());
+					ImGui::SliderFloat("", &material.metallic, 0, 1);
+					ImGui::PopID();
+				} else {
+					ImGui::NewLine();
+				}
 			}
 			ImGui::EndColumns();
 
-			// Shininess Combo
-			const char* shininessItems[] = {"Shininess Value", "Specular Alpha", "Diffuse Alpha"};
-			const char* shininessItemCurrent = shininessItems[material.hasShininessInAlphaChannel];
-			if (ImGui::BeginCombo("##shininess", shininessItemCurrent)) {
-				for (int n = 0; n < IM_ARRAYSIZE(shininessItems); ++n) {
-					bool isSelected = (shininessItemCurrent == shininessItems[n]);
-					if (ImGui::Selectable(shininessItems[n], isSelected)) {
-						material.hasShininessInAlphaChannel = n;
+		}
+		ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
+		{
+			ImGui::Text("Smoothness");
+			// Smoothness combo
+			const char* smoothnessItems[] = {"Diffuse Alpha", "Specular Alpha"};
+			const char* smoothnessItemCurrent = smoothnessItems[material.hasSmoothnessInAlphaChannel];
+			if (ImGui::BeginCombo("##smoothness", smoothnessItemCurrent)) {
+				for (int n = 0; n < IM_ARRAYSIZE(smoothnessItems); ++n) {
+					bool isSelected = (smoothnessItemCurrent == smoothnessItems[n]);
+					if (ImGui::Selectable(smoothnessItems[n], isSelected)) {
+						material.hasSmoothnessInAlphaChannel = n;
 					}
 					if (isSelected) {
 						ImGui::SetItemDefaultFocus();
@@ -271,12 +310,23 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				}
 				ImGui::EndCombo();
 			}
-			if (shininessItemCurrent == shininessItems[0]) {
-				ImGui::DragFloat("Shininess##shininess", &material.shininess, App->editor->dragSpeed3f, 0.0f, 1000.0f);
-			}
 		}
-		ImGui::Separator();
+		ImGui::NextColumn();
+		{
+			ImGui::NewLine();
+			std::string id_s("##smooth_");
+			ImGui::PushID(id_s.c_str());
+			ImGui::SliderFloat(id_s.c_str(), &material.smoothness, 0, 1);
+			ImGui::PopID();
+		}
+		ImGui::EndColumns();
 
+		// Normal
+		DrawFrame(3, 0, TextureType::NORMAL_MAP);
+		ImGui::SameLine();
+		ImGui::Text("Normal");
+
+		ImGui::Separator();
 		if (ImGui::BeginTabBar("Textures")) {
 			if (material.diffuseMap != nullptr) {
 				if (ImGui::BeginTabItem("Diffuse##map")) {
@@ -327,15 +377,15 @@ void ComponentMeshRenderer::Save(JsonValue jComponent) const {
 	jDiffuseColor[2] = material.diffuseColor.z;
 	if (material.hasDiffuseMap) jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuseMap->fileName.c_str();
 
-	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = material.hasSpecularMap;
+	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = material.hasSpecularOrMetalMap;
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
 	jSpecularColor[0] = material.specularColor.x;
 	jSpecularColor[1] = material.specularColor.y;
 	jSpecularColor[2] = material.specularColor.z;
-	if (material.hasSpecularMap) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
+	if (material.hasSpecularOrMetalMap) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
 
 	jMaterial[JSON_TAG_SHININESS] = material.shininess;
-	jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.hasShininessInAlphaChannel;
+	jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.hasSmoothnessInAlphaChannel;
 
 	JsonValue jAmbient = jMaterial[JSON_TAG_AMBIENT];
 	jAmbient[0] = material.ambient.x;
@@ -385,10 +435,10 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 		material.diffuseMap = nullptr;
 	}
 
-	material.hasSpecularMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
+	material.hasSpecularOrMetalMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
 	material.specularColor.Set(jSpecularColor[0], jSpecularColor[1], jSpecularColor[2]);
-	if (material.hasSpecularMap) {
+	if (material.hasSpecularOrMetalMap) {
 		std::string specularFileName = jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
 		for (Texture& texture : App->resources->textures) {
 			if (texture.fileName == specularFileName) {
@@ -408,7 +458,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	}
 
 	material.shininess = jMaterial[JSON_TAG_SHININESS];
-	material.hasShininessInAlphaChannel = jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
+	material.hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
 
 	JsonValue jAmbient = jMaterial[JSON_TAG_AMBIENT];
 	material.ambient.Set(jAmbient[0], jAmbient[1], jAmbient[2]);
@@ -435,7 +485,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	if (material.materialType == ShaderType::PHONG) {
+	if (material.materialType == ShaderType::STANDARD) {
 		float farPointDistance = 0;
 		ComponentLight* farPointLight = nullptr;
 		float farSpotDistance = 0;
@@ -544,8 +594,8 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		glUniform1f(glGetUniformLocation(program, "shininess"), material.shininess);
 
 		int hasDiffuseMap = (material.hasDiffuseMap) ? 1 : 0;
-		int hasSpecularMap = (material.hasSpecularMap) ? 1 : 0;
-		int hasShininessInAlphaChannel = material.hasShininessInAlphaChannel;
+		int hasSpecularMap = (material.hasSpecularOrMetalMap) ? 1 : 0;
+		int hasShininessInAlphaChannel = material.hasSmoothnessInAlphaChannel;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);

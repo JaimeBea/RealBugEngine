@@ -5,13 +5,13 @@
 class Texture;
 
 enum class ShaderType {
-	STANDARD,
-	PHONG
+	STANDARD_SPECULAR,
+	STANDARD
 };
 
 class Material {
 public:
-	ShaderType materialType = ShaderType::PHONG;
+	ShaderType materialType = ShaderType::STANDARD_SPECULAR;
 
 	// Phong
 
@@ -19,14 +19,15 @@ public:
 	float3 diffuseColor = {0.137f, 0.263f, 0.424f};
 	Texture* diffuseMap = nullptr;
 
-	bool hasSpecularMap = false;
+	bool hasSpecularOrMetalMap = false;
+	float metallic = 1.f;
 	float3 specularColor = {1.0f, 1.0f, 1.0f};
 	Texture* specularMap = nullptr;
 
 	float shininess = 300;
-	int hasShininessInAlphaChannel = 0;
+	int hasSmoothnessInAlphaChannel = 0;
 
 	float3 ambient = {0.0f, 0.0f, 0.0f};
 
-	float smoothness = 0.1;
+	float smoothness = 0.3;
 };
