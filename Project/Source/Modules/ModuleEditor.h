@@ -58,10 +58,8 @@ public:
 	float dragSpeed3f = 0.005f;
 	float dragSpeed5f = 0.00005f;
 
-private:
-	bool FileDialog();
 
 private:
 	std::string selectedFile = "";
-	char dialogCurrentSelectedPath[FILENAME_MAX] = "";
+
 };

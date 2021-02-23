@@ -11,6 +11,7 @@
 
 #include "Utils/Leaks.h"
 
+
 bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
 	PHYSFS_mount(".", nullptr, 0);
@@ -112,17 +113,31 @@ std::vector<std::string> ModuleFiles::GetDrives() const {
 	return drives;
 }
 
-std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
+std::vector<std::string> ModuleFiles::GetFileExtensions(AllowedExtensionsFlag ext) const {
+	std::vector<std::string> filters;
+	for (int i = (int)ext, pos = 0; i > 0; i >>= 1, ++pos) {
+		if (i & 1) {
+			filters.push_back(extensions[pos]);
+		}
+	}
+	return filters;
+}
+
+std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath, AllowedExtensionsFlag extFilter) const {
 	std::string folderPathEx = std::string(folderPath) + "\\*";
 	std::vector<std::string> filePaths;
 	WIN32_FIND_DATA data;
 	HANDLE handle = FindFirstFile(folderPathEx.c_str(), &data);
 	if (handle == INVALID_HANDLE_VALUE) return filePaths;
+	bool filter = (extFilter != AllowedExtensionsFlag::ALL);
+	std::vector<std::string> allowedExt = GetFileExtensions(extFilter);
 	unsigned i = 0;
 	do {
 		if (i >= 1) // Ignore '.'
 		{
-			filePaths.push_back(data.cFileName);
+			if (IsDirectory((std::string(folderPath) + "\\" + data.cFileName).c_str()) || (!filter) || (std::find(allowedExt.begin(), allowedExt.end(), GetFileExtension(data.cFileName)) != allowedExt.end())) {
+				filePaths.push_back(data.cFileName);
+			}
 		}
 		i++;
 	} while (FindNextFile(handle, &data));
@@ -184,6 +199,11 @@ std::string ModuleFiles::GetFileFolder(const char* filePath) const {
 	}
 
 	return std::string(filePath).substr(0, lastSeparator - filePath);
+}
+
+std::string ModuleFiles::UpOneLevel(const char* filePath) const {
+	std::string path = filePath;
+	return path.substr(0, path.find_last_of("\\"));
 }
 
 std::string ModuleFiles::GetAbsolutePath(const char* filePath) const {
