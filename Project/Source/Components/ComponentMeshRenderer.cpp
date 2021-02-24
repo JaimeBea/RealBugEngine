@@ -219,7 +219,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			ImGui::EndCombo();
 		}
 		ImGui::Separator();
-		if (ImGui::BeginTabBar("MyTabBar")) {
+		if (ImGui::BeginTabBar("TexturesTab")) {
 			if (material.diffuseMap != nullptr) {
 				if (ImGui::BeginTabItem("Diffuse Texture", nullptr, ImGuiTabItemFlags_None)) {
 					int width;
