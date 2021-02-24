@@ -22,10 +22,7 @@ void ComponentBoundingBox::OnTransformUpdate() {
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 	ImGui::Checkbox("Draw", &bbActive);
-	if (bbActive) {
-		ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-		boundingBox->DrawBoundingBox();
-	}
+	if (bbActive) DrawBoundingBox();
 }
 
 void ComponentBoundingBox::Save(JsonValue jComponent) const {

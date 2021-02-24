@@ -327,9 +327,9 @@ UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
 
 	// Deleting Components
-	if (panelInspector.GetCompToDelete()) {
-		selectedGameObject->RemoveComponent(panelInspector.GetCompToDelete());
-		panelInspector.SetCompToDelete(nullptr);
+	if (panelInspector.GetComponentToDelete()) {
+		selectedGameObject->RemoveComponent(panelInspector.GetComponentToDelete());
+		panelInspector.SetComponentToDelete(nullptr);
 	}
 
 	// Draw to default frame buffer (main window)

@@ -10,9 +10,9 @@ public:
 
 	void Update() override;
 
-	Component* GetCompToDelete();
-	void SetCompToDelete(Component* comp);
+	Component* GetComponentToDelete() const;
+	void SetComponentToDelete(Component* comp);
 
 private:
-	Component* compToDelete = nullptr; // Setted in PanelInspector, when using the button "Delete" on the Component Options menu. If not nullptr, the PostUpdate() will delete the component it points to.
+	Component* componentToDelete = nullptr; // Setted in PanelInspector, when using the button "Delete" on the Component Options menu. If not nullptr, the PostUpdate() will delete the component it points to.
 };

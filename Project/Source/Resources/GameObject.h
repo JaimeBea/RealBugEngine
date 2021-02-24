@@ -35,8 +35,8 @@ public:
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
-	bool AddComponent(ComponentType type);			// Functionality for the Add Component button in the inspector.
-	bool ExistsComponentOfType(ComponentType type); // Checks if this GameObject has a Component of type 'type'
+	bool AddComponent(ComponentType type);		 // Functionality for the Add Component button in the inspector.
+	bool HasComponent(ComponentType type) const; // Checks if this GameObject has a Component of type 'type'
 
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);

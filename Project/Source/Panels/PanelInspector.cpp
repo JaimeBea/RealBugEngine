@@ -23,7 +23,7 @@ PanelInspector::PanelInspector()
 void PanelInspector::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dockRightId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_CUBE " ") + name;
-	std::string optionsSymbol = std::string(ICON_FK_COG " ");
+	std::string optionsSymbol = std::string(ICON_FK_COG);
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		GameObject* selected = App->editor->selectedGameObject;
 		if (selected != nullptr) {
@@ -51,46 +51,46 @@ void PanelInspector::Update() {
 			ImGui::Separator();
 
 			// Show Component info
-			static std::string Cname = "";
+			std::string cName = "";
 			for (Component* component : selected->components) {
 				switch (component->GetType()) {
 				case ComponentType::TRANSFORM:
-					Cname = "Transformation";
+					cName = "Transformation";
 					break;
 				case ComponentType::MESH:
-					Cname = "Mesh Renderer";
+					cName = "Mesh Renderer";
 					break;
 				case ComponentType::CAMERA:
-					Cname = "Camera";
+					cName = "Camera";
 					break;
 				case ComponentType::LIGHT:
-					Cname = "Light";
+					cName = "Light";
 					break;
 				case ComponentType::BOUNDING_BOX:
-					Cname = "Bounding Box";
+					cName = "Bounding Box";
 					break;
 				default:
-					Cname = "";
+					cName = "";
 					break;
 				}
 
 				ImGui::PushID(component);
 
-				bool headerOpen = ImGui::CollapsingHeader(Cname.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
+				bool headerOpen = ImGui::CollapsingHeader(cName.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
 
 				// Options BUTTON (in the same line and at the end of the line)
 				ImGui::SameLine();
-				if (ImGui::GetWindowWidth() > 170) ImGui::Indent(ImGui::GetWindowWidth() - 40);
+				if (ImGui::GetWindowWidth() > 170) ImGui::Indent(ImGui::GetWindowWidth() - 43);
 				if (ImGui::Button(optionsSymbol.c_str())) ImGui::OpenPopup("Component Options");
-						// More Component buttons (edit the Indention)...
-				if (ImGui::GetWindowWidth() > 170) ImGui::Unindent(ImGui::GetWindowWidth() - 40);
+				// More Component buttons (edit the Indention)...
+				if (ImGui::GetWindowWidth() > 170) ImGui::Unindent(ImGui::GetWindowWidth() - 43);
 
 				// Options POPUP
 				if (ImGui::BeginPopup("Component Options")) {
 					if (component->GetType() != ComponentType::TRANSFORM) {
-						if (ImGui::MenuItem("Remove Component")) compToDelete = component;
+						if (ImGui::MenuItem("Remove Component")) componentToDelete = component;
 					}
-						// More Options items ...
+					// More Options items ...
 					ImGui::EndPopup();
 				}
 
@@ -110,12 +110,15 @@ void PanelInspector::Update() {
 			if (ImGui::BeginPopup("AddComponentPopup")) {
 				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
 				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
-				if (ImGui::MenuItem("Mesh Renderer"))
+				if (ImGui::MenuItem("Mesh Renderer")) {
 					selected->AddComponent(ComponentType::MESH); // TODO: Add more than 1 mesh renderer? or all meshes inside the same component?
-				if (ImGui::MenuItem("Camera"))
+				}
+				if (ImGui::MenuItem("Camera")) {
 					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				if (ImGui::MenuItem("Light"))
+				}
+				if (ImGui::MenuItem("Light")) {
 					if (!selected->AddComponent(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
@@ -124,10 +127,10 @@ void PanelInspector::Update() {
 	ImGui::End();
 }
 
-Component* PanelInspector::GetCompToDelete() {
-	return compToDelete;
+Component* PanelInspector::GetComponentToDelete() const {
+	return componentToDelete;
 }
 
-void PanelInspector::SetCompToDelete(Component* comp) {
-	compToDelete = comp;
+void PanelInspector::SetComponentToDelete(Component* comp) {
+	componentToDelete = comp;
 }
