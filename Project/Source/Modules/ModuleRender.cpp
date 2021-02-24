@@ -3,10 +3,9 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
-#include "Components/ComponentMaterial.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
@@ -339,16 +338,15 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 
 void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
-	std::vector<ComponentMesh*> meshes = gameObject->GetComponents<ComponentMesh>();
-	std::vector<ComponentMaterial*> materials = gameObject->GetComponents<ComponentMaterial>();
+	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
 	if (boundingBox && drawAllBoundingBoxes) {
 		boundingBox->DrawBoundingBox();
 	}
 
-	for (ComponentMesh* mesh : meshes) {
-		mesh->Draw(materials, transform->GetGlobalMatrix());
+	for (ComponentMeshRenderer* mesh : meshes) {
+		mesh->Draw(transform->GetGlobalMatrix());
 	}
 }
 

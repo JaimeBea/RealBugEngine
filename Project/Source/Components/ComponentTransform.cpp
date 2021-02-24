@@ -106,6 +106,24 @@ void ComponentTransform::Invalidate() {
 	if (boundingBox) boundingBox->Invalidate();
 }
 
+void ComponentTransform::CalculateGlobalMatrix(bool force) {
+	if (force || dirty) {
+		localMatrix = float4x4::FromTRS(position, rotation, scale);
+
+		GameObject* parent = GetOwner().GetParent();
+		if (parent != nullptr) {
+			ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
+
+			parentTransform->CalculateGlobalMatrix();
+			globalMatrix = parentTransform->globalMatrix * localMatrix;
+		} else {
+			globalMatrix = localMatrix;
+		}
+
+		dirty = false;
+	}
+}
+
 void ComponentTransform::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
@@ -137,24 +155,6 @@ void ComponentTransform::SetScale(float3 scale_) {
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().components) {
 		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::CalculateGlobalMatrix(bool force) {
-	if (force || dirty) {
-		localMatrix = float4x4::FromTRS(position, rotation, scale);
-
-		GameObject* parent = GetOwner().GetParent();
-		if (parent != nullptr) {
-			ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
-
-			parentTransform->CalculateGlobalMatrix();
-			globalMatrix = parentTransform->globalMatrix * localMatrix;
-		} else {
-			globalMatrix = localMatrix;
-		}
-
-		dirty = false;
 	}
 }
 

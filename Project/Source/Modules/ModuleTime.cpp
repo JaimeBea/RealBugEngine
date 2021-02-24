@@ -56,6 +56,14 @@ void ModuleTime::WaitForEndOfFrame() {
 	}
 }
 
+bool ModuleTime::HasGameStarted() const {
+	return gameStarted;
+}
+
+bool ModuleTime::IsGameRunning() const {
+	return gameRunning;
+}
+
 float ModuleTime::GetDeltaTime() const {
 	return timeDeltaMs / 1000.0f;
 }
@@ -80,12 +88,8 @@ void ModuleTime::SetTimeScale(float timeScale) {
 	timeScale = std::max(0.0f, timeScale);
 }
 
-bool ModuleTime::HasGameStarted() const {
-	return gameStarted;
-}
-
-bool ModuleTime::IsGameRunning() const {
-	return gameRunning;
+unsigned int ModuleTime::GetFrameCount() const {
+	return frameCount;
 }
 
 void ModuleTime::StartGame() {
@@ -102,7 +106,7 @@ void ModuleTime::StopGame() {
 
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
 	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
-	App->files->EraseFile(tempSceneFilePath.c_str());
+	App->files->Erase(tempSceneFilePath.c_str());
 
 	gameStarted = false;
 	gameRunning = false;
@@ -129,8 +133,4 @@ void ModuleTime::StepGame() {
 	if (gameRunning) PauseGame();
 
 	gameStepOnce = true;
-}
-
-unsigned int ModuleTime::GetFrameCount() const {
-	return frameCount;
 }

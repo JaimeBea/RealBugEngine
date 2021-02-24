@@ -5,12 +5,13 @@
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
+#include "FileSystem/AnimationImporter.h"
 #include "Resources/GameObject.h"
 #include "Resources/Material.h"
+#include "Resources/ResourceAnimation.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
-#include "Components/ComponentMaterial.h"
-#include "Components/ComponentMesh.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
@@ -72,20 +73,19 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 			LOG("Importing mesh %i", i);
 			aiMesh* assimpMesh = assimpScene->mMeshes[node->mMeshes[i]];
 
-			ComponentMesh* mesh = gameObject->CreateComponent<ComponentMesh>();
+			ComponentMeshRenderer* mesh = gameObject->CreateComponent<ComponentMeshRenderer>();
 			mesh->mesh = MeshImporter::ImportMesh(assimpMesh, i);
 			mesh->mesh->materialIndex = i;
 
 			// TODO: Move mesh loading to a better place
 			MeshImporter::LoadMesh(mesh->mesh);
 
-			ComponentMaterial* material = gameObject->CreateComponent<ComponentMaterial>();
 			if (materials.size() > 0) {
 				if (assimpMesh->mMaterialIndex >= materials.size()) {
-					material->material = materials.front();
+					mesh->material = materials.front();
 					LOG("Invalid material found", assimpMesh->mMaterialIndex);
 				} else {
-					material->material = materials[assimpMesh->mMaterialIndex];
+					mesh->material = materials[assimpMesh->mMaterialIndex];
 				}
 			}
 
@@ -237,6 +237,14 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	// Create scene tree
 	LOG("Importing scene tree.");
 	ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
+
+	// Load animations
+	LOG("Importing animations");
+	//std::vector<ResourceAnimation*> animations
+	for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+		ResourceAnimation *animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i]);
+		//animations.push_back(animation);
+	}
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);

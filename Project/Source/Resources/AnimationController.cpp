@@ -31,6 +31,7 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 	float lambda = 1 - decimal;
 	pos = float3::Lerp(channelFound->GetPosition(intPart), channelFound->GetPosition(intPart + 1), lambda);
 	quat = Interpolate(channelFound->GetRotation(intPart), channelFound->GetRotation(intPart + 1), lambda);*/
+	return true;
 }
 
 void AnimationController::Play() {

@@ -15,33 +15,38 @@ class GameObject;
 
 struct FrustumPlanes {
 	float3 points[8]; // 0: ftl, 1: ftr, 2: fbl, 3: fbr, 4: ntl, 5: ntr, 6: nbl, 7: nbr. (far/near, top/bottom, left/right).
-	Plane planes[6]; // left, right, up, down, front, back
+	Plane planes[6];  // left, right, up, down, front, back
 };
 
 class ModuleCamera : public Module {
 public:
+	// ------- Core Functions ------ //
 	bool Init() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
-	void ViewportResized(int width, int height);
+	void CalculateFrustumNearestObject(float2 pos);			  // Mouse Picking function. Detects the nearest object to the camera and selects it on a mouse left click. 'pos' is the x,y coordinates of the clicked pixel on the viewport.
+	void ChangeActiveFrustum(Frustum& frustum, bool change);  // Called from the Inspector, on a ComponentCamera. Changes the Engine camera to that Component if 'change'=true, and back to the default camera if false.
+	void ChangeCullingFrustum(Frustum& frustum, bool change); // Called from the Inspector, on a ComponentCamera. Changes the camera that will perform the frustum culling.
+	void CalculateFrustumPlanes();							  // Calculates the geometry of the 'planes' and 'points' that define the frustum, from the 'cullingFrustum' properties.
 
+	// ------ Camera Movement ------ //
+	void Translate(const vec& translation);		 // Move the frustum origin to the specified world position.
+	void Zoom(float amount);					 // Modifies the 'focusDistance'. This variable modifies the frustum.Front() vector length, to zoom in and out.
+	void Rotate(const float3x3& rotationMatrix); // Modifies the frustum.Front() and frustum.Up() directions, to rotate the camera.
+	void LookAt(float x, float y, float z);		 // Rotates the camera to look at a specified point.
+	void Focus(const GameObject* gameObject);	 // Mixes LookAt() and Translate() to place the camera near, and looking at the selected GameObject.
+
+	// ---------- Setters ---------- //
+	void ViewportResized(int width, int height); // Called when the viewport panel changes size.
 	void SetFOV(float hFov);
 	void SetAspectRatio(float aspectRatio);
 	void SetPlaneDistances(float nearPlane, float farPlane);
 	void SetPosition(const vec& position);
 	void SetPosition(float x, float y, float z);
 	void SetOrientation(const float3x3& rotationMatrix);
-	void Translate(const vec& translation);
-	void Zoom(float amount);
-	void Rotate(const float3x3& rotationMatrix);
-	void LookAt(float x, float y, float z);
-	void Focus(const GameObject* gameObject);
-	void CalculateFrustumNearestObject(float2 pos);
-	void ChangeActiveFrustum(Frustum& frustum, bool change);
-	void ChangeCullingFrustum(Frustum& frustum, bool change);
-	void CalculateFrustumPlanes();
 
+	// ---------- Getters ---------- //
 	vec GetFront() const;
 	vec GetUp() const;
 	vec GetWorldRight() const;
@@ -60,20 +65,18 @@ public:
 	const FrustumPlanes& GetFrustumPlanes() const;
 
 public:
-	float movementSpeed = 0.4f;
-	float rotationSpeed = 0.2f;
-	float zoomSpeed = 0.001f;
-	float shiftMultiplier = 5.0f;
-	Frustum engineCameraFrustum = Frustum();
+	float movementSpeed = 0.4f;				 // Deltatime multiplier for the camera movement speed.
+	float rotationSpeed = 0.2f;				 // Deltatime multiplier for the camera rotation speed.
+	float zoomSpeed = 0.001f;				 // Deltatime multiplier for the camera zooming speed.
+	float shiftMultiplier = 5.0f;			 // Multiplier of the previows three, applied when the SHIFT key is pressed.
+	Frustum engineCameraFrustum = Frustum(); // Default Engine frustum.
 
 private:
-	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects);
+	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects); // Subfunction of CalculateFrustumNearestObject(). Checks the Quatree for the GameObjects which BoundingBox intersect with the click (ray).
 
 private:
-	float focusDistance = 0.0f;
-
-	Frustum* activeFrustum = &engineCameraFrustum;
-	Frustum* cullingFrustum = &engineCameraFrustum;
-
-	FrustumPlanes frustumPlanes = FrustumPlanes();
+	float focusDistance = 0.0f;						// frustum.Front() multiplier. Defines the zooming of the camera.
+	Frustum* activeFrustum = &engineCameraFrustum;	// The Engine camera that the scene is rendered from. Any camera in the scene can be set as active.
+	Frustum* cullingFrustum = &engineCameraFrustum; // The camera that is performing frustum culling. Might be different from 'activeFrustum'.
+	FrustumPlanes frustumPlanes = FrustumPlanes();	// Geometry of the frustum
 };
