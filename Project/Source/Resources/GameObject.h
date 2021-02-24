@@ -15,7 +15,6 @@ public:
 	void InitComponents();
 	void Update();
 	void DrawGizmos();
-	void CleanUp();
 	void Enable();
 	void Disable();
 	bool IsActive() const;
