@@ -196,9 +196,9 @@ void ModuleScene::CreateEmptyScene() {
 	root = CreateGameObject(nullptr);
 	root->name = "Scene";
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
-	sceneTransform->SetPosition(float3(0, 0, 0));
+	/*sceneTransform->SetPosition(float3(0, 0, 0));
 	sceneTransform->SetRotation(Quat::identity);
-	sceneTransform->SetScale(float3(1, 1, 1));
+	sceneTransform->SetScale(float3(1, 1, 1));*/
 	root->InitComponents();
 
 	// Create Directional Light
