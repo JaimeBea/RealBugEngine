@@ -58,9 +58,23 @@ bool FontImporter::LoadFont(std::string fontPath) {
 		characters.insert(std::pair<char, Character>(c, character));
 	}
 
+	//Reset pixel storage mode to default
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
 	//Release resources used by freetype
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 
+}
+
+Character FontImporter::GetCharacter(char c) {
+	return characters[c];
+}
+
+void FontImporter::GetCharactersInString(std::string sentence, std::vector<Character>& charsInSentence) {
+
+	for (std::string::const_iterator i = sentence.begin(); i != sentence.end(); ++i) {
+		charsInSentence.push_back(characters[*i]);
+	}
 }
 
