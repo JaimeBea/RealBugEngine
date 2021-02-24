@@ -14,6 +14,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModulePrograms.h"
+#include "Modules/ModuleEventSystem.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -123,6 +124,8 @@ bool ModuleRender::Init() {
 	glGenTextures(1, &renderTexture);
 
 	ViewportResized(200, 200);
+
+	App->eventSystem->AddObserverToEvent(Event::EventType::GameObject_Destroyed, this);
 
 	return true;
 }

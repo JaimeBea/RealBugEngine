@@ -33,12 +33,6 @@ void ModuleEventSystem::ProcessEvent(Event& e) {
 }
 
 bool ModuleEventSystem::Init() {
-	//	//GameObject Destroyed Event
-	std::vector<Module*> gameObjectDestroyedMapVector;
-	gameObjectDestroyedMapVector.push_back(App->scene);
-	gameObjectDestroyedMapVector.push_back((Module*) App->renderer);
-	observerMap[Event::EventType::GameObject_Destroyed] = gameObjectDestroyedMapVector;
-
 	return true;
 }
 
@@ -53,6 +47,19 @@ UpdateStatus ModuleEventSystem::Update() {
 
 UpdateStatus ModuleEventSystem::PostUpdate() {
 	return UpdateStatus::CONTINUE;
+}
+
+void ModuleEventSystem::AddObserverToEvent(Event::EventType type, Module* moduleToAdd) {
+	observerMap[type].push_back(moduleToAdd);
+}
+
+void ModuleEventSystem::RemoveObserverFromEvent(Event::EventType type, Module* moduleToRemove) {
+	for (std::vector<Module*>::iterator it = observerMap[type].begin(); it != observerMap[type].end(); ++it) {
+		if (*it == moduleToRemove) {
+			observerMap[type].erase(it);
+			return;
+		}
+	}
 }
 
 bool ModuleEventSystem::CleanUp() {
