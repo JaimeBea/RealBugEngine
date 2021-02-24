@@ -5,8 +5,10 @@
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
+#include "FileSystem/AnimationImporter.h"
 #include "Resources/GameObject.h"
 #include "Resources/Material.h"
+#include "Resources/ResourceAnimation.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
@@ -235,6 +237,14 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	// Create scene tree
 	LOG("Importing scene tree.");
 	ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
+
+	// Load animations
+	LOG("Importing animations");
+	//std::vector<ResourceAnimation*> animations
+	for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+		ResourceAnimation *animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i]);
+		//animations.push_back(animation);
+	}
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);
