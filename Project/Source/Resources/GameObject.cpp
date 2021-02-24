@@ -109,14 +109,14 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-bool GameObject::AddComponent(const ComponentType type) {
+bool GameObject::AddComponent(ComponentType type) {
 	if (HasComponent(type)) return false;
 	CreateComponentByType(*this, type);
 	InitComponents();
 	return true;
 }
 
-bool GameObject::HasComponent(const ComponentType type) const {
+bool GameObject::HasComponent(ComponentType type) const {
 	for (Component* component : components) {
 		if (component->GetType() == type) {
 			return true;
