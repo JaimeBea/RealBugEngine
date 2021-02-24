@@ -13,6 +13,7 @@
 #include "GL/glew.h"
 #include "imgui.h"
 #include "IconsFontAwesome5.h"
+#include "IconsForkAwesome.h"
 
 #include "Utils/Leaks.h"
 
@@ -20,9 +21,9 @@ PanelInspector::PanelInspector()
 	: Panel("Inspector", true) {}
 
 void PanelInspector::Update() {
-	ImGui::ShowDemoWindow();
 	ImGui::SetNextWindowDockID(App->editor->dockRightId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_CUBE " ") + name;
+	std::string optionsSymbol = std::string(ICON_FK_COG " ");
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		GameObject* selected = App->editor->selectedGameObject;
 		if (selected != nullptr) {
@@ -74,26 +75,28 @@ void PanelInspector::Update() {
 				}
 
 				ImGui::PushID(component);
+
 				bool headerOpen = ImGui::CollapsingHeader(Cname.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
 
 				// Options BUTTON (in the same line and at the end of the line)
 				ImGui::SameLine();
-				if (ImGui::GetWindowWidth() > 170) ImGui::Indent(ImGui::GetWindowWidth() - 85);
-				if (ImGui::Button("Options")) ImGui::OpenPopup("Component Options");
-				if (ImGui::GetWindowWidth() > 170) ImGui::Unindent(ImGui::GetWindowWidth() - 85);
+				if (ImGui::GetWindowWidth() > 170) ImGui::Indent(ImGui::GetWindowWidth() - 40);
+				if (ImGui::Button(optionsSymbol.c_str())) ImGui::OpenPopup("Component Options");
+						// More Component buttons (edit the Indention)...
+				if (ImGui::GetWindowWidth() > 170) ImGui::Unindent(ImGui::GetWindowWidth() - 40);
 
 				// Options POPUP
 				if (ImGui::BeginPopup("Component Options")) {
 					if (component->GetType() != ComponentType::TRANSFORM) {
 						if (ImGui::MenuItem("Remove Component")) compToDelete = component;
 					}
-					// More menu items ...
+						// More Options items ...
 					ImGui::EndPopup();
 				}
 
 				// Show Component info
 				if (headerOpen) component->OnEditorUpdate();
-				
+
 				ImGui::PopID();
 			}
 
