@@ -296,21 +296,38 @@ void ModuleCamera::LookAt(float x, float y, float z) {
 }
 
 void ModuleCamera::Focus(const GameObject* gameObject) {
-	if (gameObject == nullptr) return;
-
-	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
-	if (!boundingBox) return;
-	const AABB& worldBoundingBox = boundingBox->GetWorldAABB();
-	if (!worldBoundingBox.IsFinite()) return;
-
-	Sphere boundingSphere = worldBoundingBox.MinimalEnclosingSphere();
-	float minHalfAngle = Min(activeFrustum->HorizontalFov(), activeFrustum->VerticalFov()) * 0.5f;
-	float relativeDistance = boundingSphere.r / Sin(minHalfAngle);
-	vec cameraDirection = -activeFrustum->Front().Normalized();
-	vec cameraPosition = boundingSphere.pos + (cameraDirection * relativeDistance);
-	vec modelCenter = boundingSphere.pos;
-	SetPosition(cameraPosition);
-	LookAt(modelCenter.x, modelCenter.y, modelCenter.z);
+	vec modelCenter;
+	float distance;
+	if (gameObject == nullptr) {
+		// Focus origin
+		modelCenter = float3::zero;
+		distance = 30.f;
+	} else {
+		// Focus a GameObject
+		if (gameObject->GetComponent<ComponentMeshRenderer>() != nullptr) {
+			// If the GO has Mesh, focus on that mesh
+			modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+			distance = gameObject->GetComponent<ComponentBoundingBox>()->GetWorldOBB().Size().Length();
+		} else {
+			// If it doesn't have Mesh, focus on its children's Meshes
+			if (gameObject->HasChildren()) {
+				float3 minPoint = float3::inf, maxPoint = -float3::inf;
+				for (GameObject* child : gameObject->GetChildren()) {
+					if (child->GetComponent<ComponentMeshRenderer>() != nullptr) {
+						minPoint = minPoint.Min(child->GetComponent<ComponentBoundingBox>()->GetWorldOBB().MinimalEnclosingAABB().minPoint);
+						maxPoint = maxPoint.Max(child->GetComponent<ComponentBoundingBox>()->GetWorldOBB().MinimalEnclosingAABB().maxPoint);
+					}
+				}
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				distance = (maxPoint - minPoint).Length();
+			} else {
+				// But if it doesn't have children, simply return its position as center and the default distance
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				distance = 30.f;
+			}
+		}
+	}
+	SetPosition(modelCenter - GetFront() * distance);
 }
 
 void ModuleCamera::ViewportResized(int width, int height) {

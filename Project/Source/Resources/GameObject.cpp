@@ -125,6 +125,10 @@ bool GameObject::HasComponent(ComponentType type) const {
 	return false;
 }
 
+bool GameObject::HasChildren() const {
+	return !children.empty();
+}
+
 void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_ID] = id;
 	jGameObject[JSON_TAG_NAME] = name.c_str();
