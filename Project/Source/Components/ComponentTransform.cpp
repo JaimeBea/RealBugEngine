@@ -34,19 +34,16 @@ void ComponentTransform::OnEditorUpdate() {
 	float3 scl = scale;
 	float3 rot = localEulerAngles;
 
-	if (ImGui::CollapsingHeader("Transformation")) {
-		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetPosition(pos);
-		}
-		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
-			SetScale(scl);
-		}
+	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetPosition(pos);
+	}
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
+		SetScale(scl);
+	}
 
-		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetRotation(rot);
-		}
-		ImGui::Separator();
+	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetRotation(rot);
 	}
 }
 

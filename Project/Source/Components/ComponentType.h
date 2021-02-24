@@ -10,6 +10,7 @@ class Component;
 *    2. Add REGISTER_COMPONENT to the .h of the new component
 *    3. Add the new component to the includes above
 *    4. Add the new component to the CreateComponentByType function in ComponentType.cpp
+*    5. Add the "Add Component" functionality in PanelInspector.cpp (ln. 62)
 */
 
 // REGISTER_COMPONENT builds the data structures common to all Components.
