@@ -10,12 +10,6 @@ struct Character {
 	unsigned int advance;
 };
 
-class FontImporter {
-public:
-	bool LoadFont(std::string fontPath); //Loads font from the given path.
-	Character GetCharacter(char c); //Returns the Character that matches the given one or null otherwise.
-	void GetCharactersInString(std::string sentence, std::vector<Character>& charsInSentence); //Fills the given vector with the characters that match the given string.
-	
-private:
-	std::unordered_map<char, Character> characters; //Stores all the characters from the loaded font.
-};
+namespace FontImporter {
+	void LoadFont(std::string fontPath, std::unordered_map<char, Character>& characters); //Loads font from the given path in the given map.	
+}; //namespace FontImporter

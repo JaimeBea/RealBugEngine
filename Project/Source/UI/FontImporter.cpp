@@ -6,14 +6,14 @@
 #include "freetype/freetype.h"
 #include "GL/glew.h"
 
-bool FontImporter::LoadFont(std::string fontPath) {
+void FontImporter::LoadFont(std::string fontPath, std::unordered_map<char, Character>& characters) {
 	
 	FT_Library ft;
 
 	//Initiate freetype library.
 	if (FT_Init_FreeType(&ft)) {
 		LOG("Could not init FreeType library.");
-		return false;
+		return;
 	}
 
 	FT_Face face;
@@ -21,7 +21,7 @@ bool FontImporter::LoadFont(std::string fontPath) {
 	//Load font as a face
 	if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
 		LOG("Could not load the font.");
-		return false;
+		return;
 	}
 
 	//Set the font size to extract the characters. Setting with to 0 allows to dinamically calculate the width based on the given height.
@@ -66,15 +66,3 @@ bool FontImporter::LoadFont(std::string fontPath) {
 	FT_Done_FreeType(ft);
 
 }
-
-Character FontImporter::GetCharacter(char c) {
-	return characters[c];
-}
-
-void FontImporter::GetCharactersInString(std::string sentence, std::vector<Character>& charsInSentence) {
-
-	for (std::string::const_iterator i = sentence.begin(); i != sentence.end(); ++i) {
-		charsInSentence.push_back(characters[*i]);
-	}
-}
-
