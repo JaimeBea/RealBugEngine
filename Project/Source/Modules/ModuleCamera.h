@@ -31,11 +31,12 @@ public:
 	void CalculateFrustumPlanes();							  // Calculates the geometry of the 'planes' and 'points' that define the frustum, from the 'cullingFrustum' properties.
 
 	// ------ Camera Movement ------ //
-	void Translate(const vec& translation);		 // Move the frustum origin to the specified world position.
-	void Zoom(float amount);					 // Modifies the 'focusDistance'. This variable modifies the frustum.Front() vector length, to zoom in and out.
-	void Rotate(const float3x3& rotationMatrix); // Modifies the frustum.Front() and frustum.Up() directions, to rotate the camera.
-	void LookAt(float x, float y, float z);		 // Rotates the camera to look at a specified point.
-	void Focus(const GameObject* gameObject);	 // Mixes LookAt() and Translate() to place the camera near, and looking at the selected GameObject.
+	void Translate(const vec& translation);																	// Move the frustum origin to the specified world position.
+	void Zoom(float amount);																				// Modifies the 'focusDistance'. This variable modifies the frustum.Front() vector length, to zoom in and out.
+	void Rotate(const float3x3& rotationMatrix);															// Modifies the frustum.Front() and frustum.Up() directions, to rotate the camera.
+	void LookAt(float x, float y, float z);																	// Rotates the camera to look at a specified point.
+	void Focus(const GameObject* gameObject);																// Mixes LookAt() and Translate() to place the camera near, and looking at the selected GameObject.
+	void CalculateExtremePointsRecursive(const GameObject* gameObject, float3& minPoint, float3& maxPoint); // Subfunction of Focus(). Calculates the max and min corners of the box containing all the children in the hirerachy of gameObject.
 
 	// ---------- Setters ---------- //
 	void ViewportResized(int width, int height); // Called when the viewport panel changes size.
