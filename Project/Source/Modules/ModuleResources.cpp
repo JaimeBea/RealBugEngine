@@ -9,6 +9,7 @@
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
 #include "FileSystem/JsonValue.h"
+#include "FileSystem/SceneImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
@@ -93,8 +94,7 @@ void ImportAsset(const char* filePath) {
 		bool assetImported = true;
 		if (extension == SCENE_EXTENSION) {
 			// Scene files
-			// SceneImporter::ImportScene(filePath, jMeta);
-			// ASK: How should we handle scenes?
+			SceneImporter::ImportScene(filePath, jMeta);
 		} else if (extension == MATERIAL_EXTENSION) {
 			// Material files
 			// MaterialImporter::ImportMaterial(filePath, jMeta);
@@ -112,6 +112,7 @@ void ImportAsset(const char* filePath) {
 		}
 
 		if (!validMetaFile && assetImported) {
+			jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 			SaveMetaFile(metaFilePath.c_str(), document);
 		}
 	}

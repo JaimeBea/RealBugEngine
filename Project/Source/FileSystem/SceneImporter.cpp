@@ -1,39 +1,52 @@
 #include "SceneImporter.h"
 
 #include "Application.h"
-#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
-#include "FileSystem/TextureImporter.h"
-#include "Resources/ResourceMaterial.h"
+#include "Resources/ResourceScene.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Modules/ModuleFiles.h"
-#include "Modules/ModuleScene.h"
-#include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
 
-#include "assimp/scene.h"
-#include "assimp/cimport.h"
-#include "assimp/postprocess.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
-#include <string>
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_GAMEOBJECTS "GameObjects"
-#define JSON_TAG_ROOT_ID "RootId"
-#define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
-#define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
-#define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
-#define JSON_TAG_PARENT_ID "ParentId"
-
 bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
-	// TODO: (Scene resource) Import scenes to custom resource file
-	return false;
+	LOG("Importing scene from path: \"%s\".", filePath);
+
+	// Read from file
+	Buffer<char> buffer = App->files->Load(filePath);
+	if (buffer.Size() == 0) {
+		LOG("Error reading meta file %s", filePath);
+		return false;
+	}
+
+	// Parse document from file
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
+	if (document.HasParseError()) {
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return false;
+	}
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Create scene
+	ResourceScene* scene = App->resources->CreateResource<ResourceScene>(filePath);
+	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+	jResourceIds[0] = scene->GetId();
+
+	// Save to file
+	App->files->Save(scene->GetResourceFilePath().c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
+	return true;
 }
 
 /*
