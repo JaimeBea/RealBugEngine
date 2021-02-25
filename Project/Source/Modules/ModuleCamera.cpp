@@ -296,7 +296,7 @@ void ModuleCamera::LookAt(float x, float y, float z) {
 }
 
 void ModuleCamera::Focus(const GameObject* gameObject) {
-	vec modelCenter;
+	float3 modelCenter;
 	float distance;
 	if (gameObject == nullptr) {
 		// Focus origin
