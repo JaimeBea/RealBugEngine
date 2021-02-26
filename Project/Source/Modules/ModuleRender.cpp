@@ -6,6 +6,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
@@ -177,6 +178,11 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+
+	// Draw Animations
+	for (GameObject& gameObject : App->scene->gameObjects) {
+		DrawAniamtion(&gameObject);
+	}
 
 	return UpdateStatus::CONTINUE;
 }
@@ -367,5 +373,19 @@ void ModuleRender::DrawSkyBox() {
 		glBindVertexArray(0);
 
 		glDepthFunc(GL_LESS);
+	}
+}
+
+void ModuleRender::DrawAniamtion(GameObject* gameObject, bool hasAnimation) {
+	ComponentAnimation* animationComponent = gameObject->GetComponent<ComponentAnimation>();
+	if (animationComponent || hasAnimation) {
+		for (GameObject* childen : gameObject->GetChildren()) {
+			ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
+			if (transform) {
+				dd::sphere(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 1);
+				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Blue);
+			}
+			DrawAniamtion(childen, true);
+		}
 	}
 }

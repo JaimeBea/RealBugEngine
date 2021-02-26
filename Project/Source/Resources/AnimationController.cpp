@@ -1,10 +1,14 @@
 #include "AnimationController.h"
 #include "ResourceAnimation.h"
 #include "Math/float3.h"
+#include "Modules/ModuleTime.h"
+#include "Application.h"
 
 AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 	: animationResource(resourceAnimation) {
-
+	currentTime = 0;
+	loop = true;
+	running = true;
 }
 
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
@@ -31,6 +35,10 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 		return false;
 	}
 
+	if (strcmp(name, "Hips") == 0) {
+		int auxxxxxxxxx = 1;
+	}
+
 	if (decimal <= 0.001f) {
 		pos = channel->second.tranlation;
 		quat = channel->second.rotation;
@@ -40,6 +48,8 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 	float lambda = 1 - decimal;
 	pos = float3::Lerp(channel->second.tranlation, channelNext->second.tranlation, lambda);
 	quat = Interpolate(channel->second.rotation, channelNext->second.rotation, lambda);
+
+	
 	return true;
 }
 
@@ -52,7 +62,7 @@ void AnimationController::Stop() {
 }
 
 void AnimationController::Update() {
-	//currentTime = elapsedTime; 
+	currentTime = App->time->GetTimeSinceStartup(); 
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {

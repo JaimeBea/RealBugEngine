@@ -14,7 +14,11 @@ void ComponentAnimation::OnUpdate() {
 	//Update gameobjects matrix
 	for (GameObject* child : GetOwner().GetChildren()) {
 		if (child->name == "Ctrl_Grp") {
-			UpdateAnimations(child);
+			for (GameObject* child2 : child->GetChildren()) {
+				if (child2->name == "Root") {
+					UpdateAnimations(child2);
+				}
+			}
 		}
 	}
 }
@@ -24,24 +28,28 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		return;
 	}
 	//find gameobject in hash
-	float3 position;
-	Quat rotation;
+	float3 position = float3::zero;
+	Quat rotation = Quat::identity;
 	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
+	if (gameObject->name == "Hips") {
+		int aux = 0;
+	}
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
 	if (componentTransform && result) {
 		float3 parentPosition = float3::zero;
 		Quat parentRotation = Quat::identity;
+		float3 parentScale = float3::zero;
 		
 		if (gameObject->GetParent()) {
 			ComponentTransform* parentComponentTransform = gameObject->GetParent()->GetComponent<ComponentTransform>();
 			if (parentComponentTransform) {
-				parentPosition = parentComponentTransform->GetPosition();
-				parentRotation = parentComponentTransform->GetRotation();
+				parentComponentTransform->GetGlobalMatrix().Decompose(parentPosition, parentRotation, parentScale);
 			}
 		}
 		
 		componentTransform->SetPosition(parentPosition + position);
 		componentTransform->SetRotation(parentRotation * rotation);
+		componentTransform->CalculateGlobalMatrix(true);
 	}
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations( child );
@@ -50,4 +58,5 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 void ComponentAnimation::Update() {
 	OnUpdate();
+	animationController->Update();
 }
