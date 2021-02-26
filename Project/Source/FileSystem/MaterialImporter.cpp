@@ -17,6 +17,8 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/document.h"
 
+#include "Utils/Leaks.h"
+
 #define JSON_TAG_SHADER "shader"
 #define JSON_TAG_DIFFUSE_COLOR "diffuseColor"
 #define JSON_TAG_DIFFUSE_MAP "diffuseMap"

@@ -7,6 +7,48 @@
 #include "Math/float3.h"
 
 class ResourceMaterial : public Resource {
+public:
+	ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath);
+
+	void Load() override;
+	void Unload() override;
+
+	ResourceShader* GetShader() {
+		return shader;
+	};
+
+	float4 GetDiffuseColor() {
+		return diffuseColor;
+	};
+
+	ResourceTexture* GetDiffuseMap() {
+		return diffuseMap;
+	};
+
+	float4 GetSpecularColor() {
+		return specularColor;
+	};
+
+	ResourceTexture* GetSpecularMap() {
+		return specularMap;
+	};
+
+	ResourceTexture* GetMetallicMap() {
+		return metallicMap;
+	};
+
+	ResourceTexture* GetNormalMap() {
+		return normalMap;
+	};
+
+	float Getsmoothness() {
+		return smoothness;
+	};
+
+	bool HasSmoothnessInAlphaChannel() {
+		return hasSmoothnessInAlphaChannel;
+	};
+
 private:
 	// Material shader
 	ResourceShader* shader = nullptr;
@@ -28,46 +70,4 @@ private:
 	// Smoothness
 	float smoothness = 300;
 	bool hasSmoothnessInAlphaChannel = false;
-
-public:
-	ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath);
-
-	void Load() override;
-	void Unload() override;
-
-	ResourceShader* GetShader() {
-		return shader;
-	};
-
-	float4 GetDiffuseColor() {
-		return diffuseColor;
-	};
-
-	inline ResourceTexture* GetDiffuseMap() {
-		return diffuseMap;
-	};
-
-	float4 GetSpecularColor() {
-		return specularColor;
-	};
-
-	inline ResourceTexture* GetSpecularMap() {
-		return specularMap;
-	};
-
-	inline ResourceTexture* GetMetallicMap() {
-		return metallicMap;
-	};
-
-	inline ResourceTexture* GetNormalMap() {
-		return normalMap;
-	};
-
-	float Getsmoothness() {
-		return smoothness;
-	};
-
-	bool HasSmoothnessInAlphaChannel() {
-		return hasSmoothnessInAlphaChannel;
-	};
 };
