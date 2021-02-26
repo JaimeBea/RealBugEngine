@@ -11,9 +11,12 @@ void ComponentAnimation::OnPlay() {
 }
 
 void ComponentAnimation::OnUpdate() {
-
 	//Update gameobjects matrix
-	UpdateAnimations(&GetOwner());
+	for (GameObject* child : GetOwner().GetChildren()) {
+		if (child->name == "Ctrl_Grp") {
+			UpdateAnimations(child);
+		}
+	}
 }
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
@@ -26,10 +29,21 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
 	if (componentTransform && result) {
-		componentTransform->SetPosition(position);
-		componentTransform->SetRotation(rotation);
+		float3 parentPosition = float3::zero;
+		Quat parentRotation = Quat::identity;
+		
+		if (gameObject->GetParent()) {
+			ComponentTransform* parentComponentTransform = gameObject->GetParent()->GetComponent<ComponentTransform>();
+			if (parentComponentTransform) {
+				parentPosition = parentComponentTransform->GetPosition();
+				parentRotation = parentComponentTransform->GetRotation();
+			}
+		}
+		
+		componentTransform->SetPosition(parentPosition + position);
+		componentTransform->SetRotation(parentRotation * rotation);
 	}
-	for (GameObject* child : GetOwner().GetChildren()) {
+	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations( child );
 	}
 }

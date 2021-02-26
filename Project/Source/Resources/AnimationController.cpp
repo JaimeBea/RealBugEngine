@@ -34,7 +34,7 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 	if (decimal <= 0.001f) {
 		pos = channel->second.tranlation;
 		quat = channel->second.rotation;
-		return false;
+		return true;
 	} 
 
 	float lambda = 1 - decimal;
