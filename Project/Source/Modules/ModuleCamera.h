@@ -76,7 +76,7 @@ private:
 	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects); // Subfunction of CalculateFrustumNearestObject(). Checks the Quatree for the GameObjects which BoundingBox intersect with the click (ray).
 
 private:
-	float focusDistance = 0.0f;						// frustum.Front() multiplier. Defines the zooming of the camera.
+	float focusDistance = 0.0f;						// Defines the distance the camera is placed on Focus(), and to what point the camera orbits on Orbit().
 	Frustum* activeFrustum = &engineCameraFrustum;	// The Engine camera that the scene is rendered from. Any camera in the scene can be set as active.
 	Frustum* cullingFrustum = &engineCameraFrustum; // The camera that is performing frustum culling. Might be different from 'activeFrustum'.
 	FrustumPlanes frustumPlanes = FrustumPlanes();	// Geometry of the frustum
