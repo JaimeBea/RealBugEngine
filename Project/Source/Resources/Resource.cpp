@@ -26,15 +26,15 @@ void Resource::DecreaseReferenceCount() {
 	}
 }
 
-UID Resource::GetId() {
+UID Resource::GetId() const {
 	return id;
 }
 
-const std::string& Resource::GetAssetFilePath() {
+const std::string& Resource::GetAssetFilePath() const {
 	return assetFilePath;
 }
 
-const std::string& Resource::GetResourceFilePath() {
+const std::string& Resource::GetResourceFilePath() const {
 	return resourceFilePath;
 }
 

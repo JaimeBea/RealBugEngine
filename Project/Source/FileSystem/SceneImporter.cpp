@@ -4,7 +4,6 @@
 #include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
-#include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "Resources/ResourceMaterial.h"
 #include "Components/ComponentTransform.h"

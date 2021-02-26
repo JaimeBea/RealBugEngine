@@ -9,7 +9,6 @@
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
 #include "FileSystem/JsonValue.h"
-#include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
 #include "Modules/ModuleTime.h"
@@ -24,6 +23,8 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
 #include <string>
+#include <future>
+#include <chrono>
 
 #include "Utils/Leaks.h"
 
@@ -55,132 +56,7 @@ void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 	App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
 }
 
-bool ModuleResources::Init() {
-	ilInit();
-	iluInit();
-
-	return true;
-}
-
-UpdateStatus ModuleResources::Update() {
-	// Copy dropped file to assets folder
-	const char* droppedFilePath = App->input->GetDroppedFilePath();
-	bool fileCopied = false;
-	if (droppedFilePath != nullptr) {
-		std::string newFilePath = std::string(ASSETS_PATH) + "/" + App->files->GetFileNameAndExtension(droppedFilePath);
-		App->files->Copy(droppedFilePath, newFilePath.c_str());
-		App->input->ReleaseDroppedFilePath();
-		fileCopied = true;
-	}
-
-	timeAccumulator += App->time->GetRealTimeDeltaTime();
-	if (fileCopied || timeAccumulator >= timeBetweenUpdates) {
-		// Check if any asset file has been modified / deleted
-		std::vector<UID> resourcesToRemove;
-		for (std::pair<const UID, Resource*>& entry : resources) {
-			Resource* resource = entry.second;
-			const std::string& resourceFilePath = resource->GetResourceFilePath();
-			const std::string& assetFilePath = resource->GetAssetFilePath();
-			std::string metaFilePath = assetFilePath + META_EXTENSION;
-
-			// Check for deleted assets
-			if (!App->files->Exists(assetFilePath.c_str())) {
-				resourcesToRemove.push_back(entry.first);
-				continue;
-			}
-
-			// Check for deleted, invalid or outdated meta files
-			if (!App->files->Exists(metaFilePath.c_str())) {
-				resourcesToRemove.push_back(entry.first);
-				continue;
-			} else {
-				rapidjson::Document document;
-				bool success = ReadMetaFile(metaFilePath.c_str(), document);
-				JsonValue jMeta(document, document);
-				if (success) {
-					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
-						// ASK: What happens when we update an asset?
-						resourcesToRemove.push_back(entry.first);
-						continue;
-					}
-				} else {
-					resourcesToRemove.push_back(entry.first);
-					continue;
-				}
-			}
-
-			// Check for deleted resources
-			if (!App->files->Exists(resourceFilePath.c_str())) {
-				ImportAsset(assetFilePath.c_str());
-			}
-		}
-		for (UID id : resourcesToRemove) {
-			Resource* resource = resources[id];
-
-			const std::string& assetFilePath = resource->GetAssetFilePath();
-			const std::string& resourceFilePath = resource->GetResourceFilePath();
-			std::string metaFilePath = assetFilePath + META_EXTENSION;
-			if (App->files->Exists(metaFilePath.c_str())) {
-				App->files->Erase(metaFilePath.c_str());
-			}
-			if (App->files->Exists(resourceFilePath.c_str())) {
-				App->files->Erase(resourceFilePath.c_str());
-			}
-
-			resource->Unload();
-			delete resource;
-			resources.erase(id);
-		}
-
-		// Check if there are any new assets
-		CheckForNewAssetsRecursive(ASSETS_PATH);
-
-		timeAccumulator = 0.0f;
-	}
-
-	return UpdateStatus::CONTINUE;
-}
-
-bool ModuleResources::CleanUp() {
-	for (std::pair<const UID, Resource*>& entry : resources) {
-		RELEASE(entry.second);
-	}
-
-	return true;
-}
-
-Resource* ModuleResources::GetResourceByID(UID id) {
-	if (resources.find(id) == resources.end()) {
-		return nullptr;
-	}
-	return resources[id];
-}
-
-std::string ModuleResources::GenerateResourcePath(UID id) const {
-	std::string strId = std::to_string(id);
-	std::string metaFolder = DATA_PATH + strId.substr(0, 2);
-
-	if (!App->files->Exists(metaFolder.c_str())) {
-		App->files->CreateFolder(metaFolder.c_str());
-	}
-
-	return metaFolder + "/" + strId;
-}
-
-void ModuleResources::CheckForNewAssetsRecursive(const char* path) {
-	for (std::string& file : App->files->GetFilesInLocalFolder(path)) {
-		std::string filePath = std::string(path) + "/" + file;
-		std::string extension = App->files->GetFileExtension(file.c_str());
-		if (App->files->IsDirectory(filePath.c_str())) {
-			CheckForNewAssetsRecursive(filePath.c_str());
-		} else if (extension != META_EXTENSION) {
-			ImportAsset(filePath.c_str());
-		}
-	}
-}
-
-void ModuleResources::ImportAsset(const char* filePath) {
+void ImportAsset(const char* filePath) {
 	std::string extension = App->files->GetFileExtension(filePath);
 	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
 	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
@@ -193,7 +69,7 @@ void ModuleResources::ImportAsset(const char* filePath) {
 			JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
 			for (unsigned i = 0; i < jResourceIds.Size(); ++i) {
 				UID id = jResourceIds[i];
-				std::string resourcePath = GenerateResourcePath(id);
+				std::string resourcePath = App->resources->GenerateResourcePath(id);
 				if (!App->files->Exists(resourcePath.c_str())) {
 					validResourceFiles = false;
 					break;
@@ -239,5 +115,146 @@ void ModuleResources::ImportAsset(const char* filePath) {
 		if (!validMetaFile && assetImported) {
 			SaveMetaFile(metaFilePath.c_str(), document);
 		}
+	}
+}
+
+void CheckForNewAssetsRecursive(const char* path) {
+	for (std::string& file : App->files->GetFilesInLocalFolder(path)) {
+		std::string filePath = std::string(path) + "/" + file;
+		std::string extension = App->files->GetFileExtension(file.c_str());
+		if (App->files->IsDirectory(filePath.c_str())) {
+			CheckForNewAssetsRecursive(filePath.c_str());
+		} else if (extension != META_EXTENSION) {
+			ImportAsset(filePath.c_str());
+		}
+	}
+}
+
+bool ModuleResources::Init() {
+	ilInit();
+	iluInit();
+
+	stopImportThread = false;
+	importThread = std::thread(&ModuleResources::UpdateAsync, this);
+
+	return true;
+}
+
+UpdateStatus ModuleResources::Update() {
+	// Copy dropped file to assets folder
+	const char* droppedFilePath = App->input->GetDroppedFilePath();
+	if (droppedFilePath != nullptr) {
+		std::string newFilePath = std::string(ASSETS_PATH) + "/" + App->files->GetFileNameAndExtension(droppedFilePath);
+		App->files->Copy(droppedFilePath, newFilePath.c_str());
+		App->input->ReleaseDroppedFilePath();
+	}
+
+	return UpdateStatus::CONTINUE;
+}
+
+bool ModuleResources::CleanUp() {
+	stopImportThread = true;
+	importThread.join();
+
+	for (std::pair<const UID, Resource*>& entry : resources) {
+		RELEASE(entry.second);
+	}
+
+	return true;
+}
+
+Resource* ModuleResources::GetResourceByID(UID id) {
+	resourcesMutex.lock();
+	Resource* resource = resources.find(id) != resources.end() ? resources[id] : nullptr;
+	resourcesMutex.unlock();
+	return resource;
+}
+
+std::string ModuleResources::GenerateResourcePath(UID id) const {
+	std::string strId = std::to_string(id);
+	std::string metaFolder = DATA_PATH + strId.substr(0, 2);
+
+	if (!App->files->Exists(metaFolder.c_str())) {
+		App->files->CreateFolder(metaFolder.c_str());
+	}
+
+	return metaFolder + "/" + strId;
+}
+
+void ModuleResources::UpdateAsync() {
+	while (!stopImportThread) {
+		// Check if any asset file has been modified / deleted
+		std::vector<UID> resourcesToRemove;
+		std::vector<UID> resourcesToReimport;
+		for (std::pair<const UID, Resource*>& entry : resources) {
+			Resource* resource = entry.second;
+			const std::string& resourceFilePath = resource->GetResourceFilePath();
+			const std::string& assetFilePath = resource->GetAssetFilePath();
+			std::string metaFilePath = assetFilePath + META_EXTENSION;
+
+			// Check for deleted assets
+			if (!App->files->Exists(assetFilePath.c_str())) {
+				resourcesToRemove.push_back(entry.first);
+				continue;
+			}
+
+			// Check for deleted, invalid or outdated meta files
+			if (!App->files->Exists(metaFilePath.c_str())) {
+				resourcesToRemove.push_back(entry.first);
+				continue;
+			} else {
+				rapidjson::Document document;
+				bool success = ReadMetaFile(metaFilePath.c_str(), document);
+				JsonValue jMeta(document, document);
+				if (success) {
+					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
+					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+						// ASK: What happens when we update an asset?
+						resourcesToRemove.push_back(entry.first);
+						continue;
+					}
+				} else {
+					resourcesToRemove.push_back(entry.first);
+					continue;
+				}
+			}
+
+			// Check for deleted resources
+			if (!App->files->Exists(resourceFilePath.c_str())) {
+				resourcesToReimport.push_back(entry.first);
+			}
+		}
+		for (UID id : resourcesToReimport) {
+			Resource* resource = resources[id];
+
+			const std::string& resourceFilePath = resource->GetResourceFilePath();
+			const std::string& assetFilePath = resource->GetAssetFilePath();
+
+			if (!App->files->Exists(resourceFilePath.c_str())) {
+				ImportAsset(assetFilePath.c_str());
+			}
+		}
+		for (UID id : resourcesToRemove) {
+			Resource* resource = resources[id];
+
+			const std::string& assetFilePath = resource->GetAssetFilePath();
+			const std::string& resourceFilePath = resource->GetResourceFilePath();
+			std::string metaFilePath = assetFilePath + META_EXTENSION;
+			if (App->files->Exists(metaFilePath.c_str())) {
+				App->files->Erase(metaFilePath.c_str());
+			}
+			if (App->files->Exists(resourceFilePath.c_str())) {
+				App->files->Erase(resourceFilePath.c_str());
+			}
+
+			resource->Unload();
+			delete resource;
+			resources.erase(id);
+		}
+
+		// Check if there are any new assets
+		CheckForNewAssetsRecursive(ASSETS_PATH);
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(TIME_BETWEEN_RESOURCE_UPDATES_MS));
 	}
 }
