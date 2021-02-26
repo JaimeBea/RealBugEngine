@@ -15,7 +15,6 @@
 
 #include "Utils/Leaks.h"
 
-
 bool TextureImporter::ImportTexture(const char* filePath, JsonValue jMeta) {
 	LOG("Importing texture from path: \"%s\".", filePath);
 
@@ -70,7 +69,6 @@ bool TextureImporter::ImportTexture(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 	return true;
 }
 
