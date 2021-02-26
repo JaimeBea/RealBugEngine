@@ -13,21 +13,61 @@ public:
 	void Load() override;
 	void Unload() override;
 
-public:
-	ResourceShader* shaderType = nullptr;
+	ResourceShader* GetShader() {
+		return shader;
+	};
 
-	// Phong
+	float4 GetDiffuseColor() {
+		return diffuseColor;
+	};
 
-	bool hasDiffuseMap = false;
-	float3 diffuseColor = {0.137f, 0.263f, 0.424f};
+	ResourceTexture* GetDiffuseMap() {
+		return diffuseMap;
+	};
+
+	float4 GetSpecularColor() {
+		return specularColor;
+	};
+
+	ResourceTexture* GetSpecularMap() {
+		return specularMap;
+	};
+
+	ResourceTexture* GetMetallicMap() {
+		return metallicMap;
+	};
+
+	ResourceTexture* GetNormalMap() {
+		return normalMap;
+	};
+
+	float Getsmoothness() {
+		return smoothness;
+	};
+
+	bool HasSmoothnessInAlphaChannel() {
+		return hasSmoothnessInAlphaChannel;
+	};
+
+private:
+	// Material shader
+	ResourceShader* shader = nullptr;
+
+	// Diffuse
+	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
 	ResourceTexture* diffuseMap = nullptr;
 
-	bool hasSpecularMap = false;
-	float3 specularColor = {1.0f, 1.0f, 1.0f};
+	// Specular
+	float4 specularColor = {1.0f, 1.0f, 1.0f, 1.0f};
 	ResourceTexture* specularMap = nullptr;
 
-	float shininess = 300;
-	bool hasShininessInAlphaChannel = false;
+	// Metalness
+	ResourceTexture* metallicMap = nullptr;
 
-	float3 ambient = {0.0f, 0.0f, 0.0f};
+	// Normal
+	ResourceTexture* normalMap = nullptr;
+
+	// Smoothness
+	float smoothness = 300;
+	bool hasSmoothnessInAlphaChannel = false;
 };
