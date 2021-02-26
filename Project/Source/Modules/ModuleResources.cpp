@@ -11,6 +11,7 @@
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
+#include "FileSystem/MaterialImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -221,7 +222,7 @@ void ModuleResources::ImportAsset(const char* filePath) {
 			// ASK: How should we handle scenes?
 		} else if (extension == MATERIAL_EXTENSION) {
 			// Material files
-			// MaterialImporter::ImportMaterial(filePath, jMeta);
+			MaterialImporter::ImportMaterial(filePath, jMeta);
 		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
 			// Shader files
 			// ShaderImporter::ImportShader(filePath, jMeta);
