@@ -1,36 +1,45 @@
 #include "AnimationController.h"
+#include "ResourceAnimation.h"
 #include "Math/float3.h"
+
+AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
+	: animationResource(resourceAnimation) {
+
+}
+
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
-	/*if (animationResource == nullptr) {
-		return 0;
-	}*/
+	if (animationResource == nullptr) {
+		return false;
+	}	
 
-	//find in hash by name
-
-	//channelFound = animationResource->find(name);
-	//if (!channelFound){
-	//	return 0;
-	//}
-
-/*	if (loop) {
-		currentTime = currentTime % animationResource->GetDuration();
+	if (loop) {
+		currentTime = currentTime % animationResource->duration;
 	} else {
-		currentTime = currentTime > animationResource->GetDuration() ? animationResource->GetDuration() : currentTime;
+		currentTime = currentTime > animationResource->duration ? animationResource->duration : currentTime;
 	}
 
-	float currentSample = currentTime * (animationResource->GetNumSamples() - 1) / animationResource->GetDuration() ;
+	float currentSample = currentTime * (animationResource->keyFrames.size() - 1) / animationResource->duration;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
 
+	//find in hash by name
+	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = animationResource->keyFrames[intPart].channels.find(name);
+	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = animationResource->keyFrames[intPart +1].channels.find(name);
+
+	if (channel == animationResource->keyFrames[intPart].channels.end() &&
+		channelNext == animationResource->keyFrames[intPart + 1].channels.end()) {
+		return false;
+	}
+
 	if (decimal <= 0.001f) {
-		pos = channelFound->GetPosition(intPart);
-		quat = channelFound->GetRotation(intPart);
-		return;
+		pos = channel->second.tranlation;
+		quat = channel->second.rotation;
+		return false;
 	} 
 
 	float lambda = 1 - decimal;
-	pos = float3::Lerp(channelFound->GetPosition(intPart), channelFound->GetPosition(intPart + 1), lambda);
-	quat = Interpolate(channelFound->GetRotation(intPart), channelFound->GetRotation(intPart + 1), lambda);*/
+	pos = float3::Lerp(channel->second.tranlation, channelNext->second.tranlation, lambda);
+	quat = Interpolate(channel->second.rotation, channelNext->second.rotation, lambda);
 	return true;
 }
 

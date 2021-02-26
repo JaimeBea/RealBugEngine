@@ -35,5 +35,5 @@ public:
 
 	std::vector<KeyFrameChannels> keyFrames;
 
-	float duration = 0;
+	unsigned int duration = 0;
 };

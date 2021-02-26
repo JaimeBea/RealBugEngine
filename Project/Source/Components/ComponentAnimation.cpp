@@ -13,7 +13,7 @@ void ComponentAnimation::OnPlay() {
 void ComponentAnimation::OnUpdate() {
 
 	//Update gameobjects matrix
-	//UpdateAnimations(&GetOwner());
+	UpdateAnimations(&GetOwner());
 }
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
