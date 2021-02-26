@@ -11,23 +11,12 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
 
-#include <assimp/material.h>
 #include "rapidjson/error/en.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/document.h"
 
 #include "Utils/Leaks.h"
-
-#define JSON_TAG_SHADER "shader"
-#define JSON_TAG_DIFFUSE_COLOR "diffuseColor"
-#define JSON_TAG_DIFFUSE_MAP "diffuseMap"
-#define JSON_TAG_SPECULAR_COLOR "specularColor"
-#define JSON_TAG_SPECULAR_MAP "specularMap"
-#define JSON_TAG_METALLIC_MAP "metallicMap"
-#define JSON_TAG_NORMAL_MAP "normalMap"
-#define JSON_TAG_SMOOTHNESS "smoothness"
-#define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "hasSmoothnessInAlphaChannel"
 
 bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	LOG("Importing material from path: \"%s\".", filePath);
