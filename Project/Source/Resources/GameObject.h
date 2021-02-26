@@ -36,6 +36,7 @@ public:
 	bool IsDescendantOf(GameObject* gameObject);
 	bool AddComponent(ComponentType type);		 // Functionality for the Add Component button in the inspector.
 	bool HasComponent(ComponentType type) const; // Checks if this GameObject has a Component of type 'type'
+	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);
