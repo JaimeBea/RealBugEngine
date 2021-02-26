@@ -336,6 +336,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 				distance = 30.f;
 			}
 			SetPosition(modelCenter - GetFront() * distance);
+			focusDistance = (modelCenter - activeFrustum->Pos()).Length();
 		}
 	}
 }
