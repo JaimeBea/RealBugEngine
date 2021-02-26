@@ -6,6 +6,7 @@
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
 #include "Resources/GameObject.h"
+#include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
@@ -301,7 +302,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 		SetPosition(float3::zero - GetFront() * 30.f);
 	} else {
 		// Focus a GameObject
-		if (gameObject->GetComponent<ComponentMeshRenderer>() != nullptr) {
+		if (gameObject->HasComponent(ComponentType::MESH)) {
 			// If the GO has Mesh, focus on that mesh
 			ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 			if (!boundingBox) return;
@@ -341,7 +342,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 
 void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject, float3& minPoint, float3& maxPoint) {
 	for (GameObject* child : gameObject->GetChildren()) {
-		if (child->GetComponent<ComponentMeshRenderer>() != nullptr) {
+		if (child->HasComponent(ComponentType::MESH)) {
 			ComponentBoundingBox* childBoundingBox = child->GetComponent<ComponentBoundingBox>();
 			if (childBoundingBox->GetWorldOBB().MinimalEnclosingAABB().IsFinite()) {
 				minPoint = minPoint.Min(childBoundingBox->GetWorldAABB().minPoint);
