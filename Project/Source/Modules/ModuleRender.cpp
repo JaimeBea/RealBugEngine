@@ -381,7 +381,10 @@ void ModuleRender::DrawAniamtion(GameObject* gameObject, bool hasAnimation) {
 	if (animationComponent || hasAnimation) {
 		for (GameObject* childen : gameObject->GetChildren()) {
 			ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
-			if (transform) {
+			if (transform && gameObject->name != "RootNode" && gameObject->name != "Ctrl_Grp" && gameObject->name != "Root") {
+				if (gameObject->name == "RootNode") {
+					bool wtf = true;
+				}
 				//dd::sphere(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 1);
 				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
 				dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);

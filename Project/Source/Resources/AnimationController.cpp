@@ -37,19 +37,6 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 		return false;
 	}
 
-	if (strcmp(name, "Hips") == 0) {
-		int auxxxxxxxxx = 1;
-		//std::string s = std::string
-		LOG("currentSample: %i", currentSample);
-		pos = channel->second.tranlation;
-		quat = channel->second.rotation;
-		float3 euler = quat.ToEulerXYZ().Mul(RADTODEG);
-		float3 parentRot = float3(0, 90, -90);
-		euler = euler + parentRot;
-		quat = Quat::FromEulerXYZ(euler.x * DEGTORAD, euler.y * DEGTORAD, euler.z * DEGTORAD);
-		return true;
-	}
-
 	if (decimal <= 0.001f) {
 		pos = channel->second.tranlation;
 		quat = channel->second.rotation;

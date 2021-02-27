@@ -21,8 +21,15 @@ ResourceAnimation* AnimationImporter::ImportAnimation(const aiAnimation* aiAnim)
 		aiNodeAnim* aiChannel = aiAnim->mChannels[i];
 		std::string channelName(aiChannel->mNodeName.C_Str());
 
+		unsigned int type = 0; // 0 = normal, 1 = translation, 2 = rotation
 		size_t pos = channelName.find("_$AssimpFbx$");
 		if (pos != std::string::npos) {
+			size_t tran = channelName.find("Translation");
+			if (tran != std::string::npos) {
+				type = 1;
+			} else {
+				type = 2;
+			}
 			channelName = channelName.substr(0, pos);
 		}
 
@@ -34,8 +41,8 @@ ResourceAnimation* AnimationImporter::ImportAnimation(const aiAnimation* aiAnim)
 			aiVector3D aiV3D = (aiChannel->mNumPositionKeys > 1) ? aiChannel->mPositionKeys[j].mValue : aiChannel->mPositionKeys[0].mValue;
 
 			ResourceAnimation::Channel channel = anim->keyFrames[frame].channels[channelName];
-			channel.rotation = channel.rotation * Quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
-			channel.tranlation = channel.tranlation + float3(aiV3D.x, aiV3D.y, aiV3D.z);
+			if (type == 0 || type == 2) channel.rotation = channel.rotation * Quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
+			if (type == 0 || type == 1) channel.tranlation = channel.tranlation + float3(aiV3D.x, aiV3D.y, aiV3D.z);
 
 			anim->keyFrames[frame++].channels[channelName] = channel;
 
