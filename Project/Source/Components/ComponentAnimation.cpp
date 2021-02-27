@@ -30,26 +30,19 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	//find gameobject in hash
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
+	float3 scale = float3::one;
 	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
 	if (gameObject->name == "Hips") {
 		int aux = 0;
 	}
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
 	if (componentTransform && result) {
-		float3 parentPosition = float3::zero;
-		Quat parentRotation = Quat::identity;
-		float3 parentScale = float3::zero;
-		
-		if (gameObject->GetParent()) {
-			ComponentTransform* parentComponentTransform = gameObject->GetParent()->GetComponent<ComponentTransform>();
-			if (parentComponentTransform) {
-				parentComponentTransform->GetGlobalMatrix().Decompose(parentPosition, parentRotation, parentScale);
-			}
+		if (!position.Equals(float3::zero)) {
+			componentTransform->SetPosition(position);
 		}
-		
-		componentTransform->SetPosition(parentPosition + position);
-		componentTransform->SetRotation(parentRotation * rotation);
-		componentTransform->CalculateGlobalMatrix(true);
+		if (!rotation.Equals(Quat::identity)) {
+			componentTransform->SetRotation(rotation);
+		}
 	}
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations( child );

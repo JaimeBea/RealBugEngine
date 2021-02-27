@@ -382,8 +382,9 @@ void ModuleRender::DrawAniamtion(GameObject* gameObject, bool hasAnimation) {
 		for (GameObject* childen : gameObject->GetChildren()) {
 			ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
 			if (transform) {
-				dd::sphere(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 1);
-				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Blue);
+				//dd::sphere(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 1);
+				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
+				dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);
 			}
 			DrawAniamtion(childen, true);
 		}

@@ -3,6 +3,8 @@
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"
 #include "Application.h"
+#include "Utils/Logging.h"
+#include "Globals.h"
 
 AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 	: animationResource(resourceAnimation) {
@@ -17,12 +19,12 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 	}	
 
 	if (loop) {
-		currentTime = currentTime % animationResource->duration;
+		currentTime = currentTime % (animationResource->keyFrames.size() - 1);
 	} else {
 		currentTime = currentTime > animationResource->duration ? animationResource->duration : currentTime;
 	}
 
-	float currentSample = currentTime * (animationResource->keyFrames.size() - 1) / animationResource->duration;
+	int currentSample = currentTime;//*(animationResource->keyFrames.size() - 1) / animationResource->duration;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
 
@@ -37,6 +39,15 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 
 	if (strcmp(name, "Hips") == 0) {
 		int auxxxxxxxxx = 1;
+		//std::string s = std::string
+		LOG("currentSample: %i", currentSample);
+		pos = channel->second.tranlation;
+		quat = channel->second.rotation;
+		float3 euler = quat.ToEulerXYZ().Mul(RADTODEG);
+		float3 parentRot = float3(0, 90, -90);
+		euler = euler + parentRot;
+		quat = Quat::FromEulerXYZ(euler.x * DEGTORAD, euler.y * DEGTORAD, euler.z * DEGTORAD);
+		return true;
 	}
 
 	if (decimal <= 0.001f) {
@@ -62,7 +73,9 @@ void AnimationController::Stop() {
 }
 
 void AnimationController::Update() {
-	currentTime = App->time->GetTimeSinceStartup(); 
+	//currentTime = App->time->GetTimeSinceStartup(); 
+	currentTime = App->time->GetFrameCount(); 
+	//currentTime = 0; 
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {
