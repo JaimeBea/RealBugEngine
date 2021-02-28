@@ -181,7 +181,7 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw Animations
 	for (GameObject& gameObject : App->scene->gameObjects) {
-		DrawAniamtion(&gameObject);
+		DrawAnimation(&gameObject);
 	}
 
 	return UpdateStatus::CONTINUE;
@@ -376,7 +376,7 @@ void ModuleRender::DrawSkyBox() {
 	}
 }
 
-void ModuleRender::DrawAniamtion(GameObject* gameObject, bool hasAnimation) {
+void ModuleRender::DrawAnimation(GameObject* gameObject, bool hasAnimation) {
 	ComponentAnimation* animationComponent = gameObject->GetComponent<ComponentAnimation>();
 	if (animationComponent || hasAnimation) {
 		for (GameObject* childen : gameObject->GetChildren()) {
@@ -385,11 +385,11 @@ void ModuleRender::DrawAniamtion(GameObject* gameObject, bool hasAnimation) {
 				if (gameObject->name == "RootNode") {
 					bool wtf = true;
 				}
-				//dd::sphere(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 1);
+				dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
 				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
-				dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);
+				//dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);
 			}
-			DrawAniamtion(childen, true);
+			DrawAnimation(childen, true);
 		}
 	}
 }

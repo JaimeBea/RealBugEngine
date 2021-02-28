@@ -48,6 +48,7 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 		}
 	} else { // Normal node
 		// Create GameObject
+
 		GameObject* gameObject = App->scene->CreateGameObject(parent);
 
 		// Load name
@@ -245,7 +246,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	LOG("Importing animations");
 	std::vector<ResourceAnimation*> animations;
 	for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
-		ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i]);
+		ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
 		animations.push_back(animation);
 	}
 
