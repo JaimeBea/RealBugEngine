@@ -52,17 +52,17 @@ static unsigned CreateShader( unsigned type, const char* filePath) {
 	return shaderId;
 }
 
-static unsigned CreateProgram(const char* vertexShaderFilePath) {
+static unsigned CreateProgram(const char* shaderFilePath) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
 	LOG("Compiling Vertex...");
-	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, vertexShaderFilePath);
+	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, shaderFilePath);
 	DEFER {
 		glDeleteShader(vertexShader);
 	};
 	LOG("Compiling Fragment...");
-	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, vertexShaderFilePath);
+	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, shaderFilePath);
 	DEFER {
 		glDeleteShader(fragmentShader);
 	};
