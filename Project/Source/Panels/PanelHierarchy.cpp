@@ -92,12 +92,13 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				float4x4 parentGlobalMatrix = parentTransform->GetGlobalMatrix();
 				float3 parentScale = float3(parentGlobalMatrix.Col3(0).Length(), parentGlobalMatrix.Col3(1).Length(), parentGlobalMatrix.Col3(2).Length());
 				// 2. Invert the new parent global matrix with the fastest possible method
-				if (parentScale.Equals(float3::one)) // No scaling
+				if (parentScale.Equals(float3::one)) { // No scaling
 					parentGlobalMatrix.InverseOrthonormal();
-				else if (parentScale.xxx().Equals(parentScale)) // Uniform scaling
+				} else if (parentScale.xxx().Equals(parentScale)) { // Uniform scaling
 					parentGlobalMatrix.InverseOrthogonalUniformScale();
-				else // Non-uniform scaling
+				} else { // Non-uniform scaling
 					parentGlobalMatrix.InverseColOrthogonal();
+				}
 				// 3. New local matrix
 				transform->SetTRS(parentGlobalMatrix * childGlobalMatrix);
 

@@ -147,6 +147,10 @@ void ComponentTransform::SetTRS(float4x4& newTransform_) {
 	newTransform_.Orthonormalize3();
 	rotation = Quat(newTransform_.SubMatrix(3, 3));
 	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
+	InvalidateHierarchy();
+	for (Component* component : GetOwner().components) {
+		component->OnTransformUpdate();
+	}
 }
 
 void ComponentTransform::CalculateGlobalMatrix(bool force) {
