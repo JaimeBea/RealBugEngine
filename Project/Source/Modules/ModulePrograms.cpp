@@ -14,7 +14,7 @@ static unsigned CreateShader( unsigned type, const char* filePath) {
 	LOG("Creating shader from file: \"%s\"...", filePath);
 
 	Buffer<char> sourceBuffer = App->files->Load(filePath);
-	std::string source = sourceBuffer.Data();
+	char* source = sourceBuffer.Data();
 
 	unsigned shaderId = glCreateShader(type);
 	if (shaderId == 0) {
@@ -26,8 +26,8 @@ static unsigned CreateShader( unsigned type, const char* filePath) {
 
 	std::string shaderDefine = (type == GL_VERTEX_SHADER) ? defineVertexShader : defineFragmentShader;
 
-	GLchar const * shaderStrings[3] = {v.c_str(),shaderDefine.c_str(), source.c_str()};
-	GLint shaderStringLengths[3] = {v.size(),shaderDefine.size(), source.size()};
+	GLchar const * shaderStrings[3] = {v.c_str(),shaderDefine.c_str(), source};
+	GLint shaderStringLengths[3] = {v.size(),shaderDefine.size(), strlen(source)};
 
 	glShaderSource(shaderId, 3, shaderStrings, shaderStringLengths);
 	glCompileShader(shaderId);
