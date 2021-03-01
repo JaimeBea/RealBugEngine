@@ -104,6 +104,6 @@ bool ModulePrograms::Start() {
 bool ModulePrograms::CleanUp() {
 	glDeleteProgram(defaultProgram);
 	glDeleteProgram(phongPbrProgram);
-	/*glDeleteProgram(skyboxProgram);*/
+	glDeleteProgram(skyboxProgram);
 	return true;
 }
