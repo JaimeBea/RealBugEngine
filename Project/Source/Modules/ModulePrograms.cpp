@@ -21,23 +21,19 @@ static unsigned CreateShader( unsigned type, const char* filePath) {
 		return 0;
 	}
 	std::string v = "#version 460\n";
-	std::string DefineVertexShader   = "#define VERTEX  \n";
-	std::string DefineFragmentShader = "#define FRAGMENT\n";
+	std::string defineVertexShader   = "#define VERTEX  \n";
+	std::string defineFragmentShader = "#define FRAGMENT\n";
 
-	std::string ShaderDefine = (type == GL_VERTEX_SHADER) ? DefineVertexShader : DefineFragmentShader;
+	std::string shaderDefine = (type == GL_VERTEX_SHADER) ? defineVertexShader : defineFragmentShader;
 
-	GLchar const * ShaderStrings[3] = {v.c_str(),ShaderDefine.c_str(), source.c_str()};
-	GLint ShaderStringLengths[3] = {v.size(),ShaderDefine.size(), source.size()};
+	GLchar const * shaderStrings[3] = {v.c_str(),shaderDefine.c_str(), source.c_str()};
+	GLint shaderStringLengths[3] = {v.size(),shaderDefine.size(), source.size()};
 
-	//strcat(ShaderDefine, source);
-
-	glShaderSource(shaderId, 3, ShaderStrings, ShaderStringLengths);
-
+	glShaderSource(shaderId, 3, shaderStrings, shaderStringLengths);
 	glCompileShader(shaderId);
 
 	int res = GL_FALSE;
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &res);
-
 
 	if (res == GL_FALSE) {
 		int len = 0;
@@ -51,7 +47,6 @@ static unsigned CreateShader( unsigned type, const char* filePath) {
 		}
 		return 0;
 	}
-
 
 	LOG("Shader created successfuly.");
 	return shaderId;
