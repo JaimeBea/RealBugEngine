@@ -9,25 +9,22 @@
 
 #include "Utils/Leaks.h"
 
-static unsigned CreateShader( unsigned type, const char* filePath) {
-
+static unsigned CreateShader(unsigned type, const char* filePath) {
 	LOG("Creating shader from file: \"%s\"...", filePath);
 
 	Buffer<char> sourceBuffer = App->files->Load(filePath);
-	std::string source = sourceBuffer.Data();
-
 	unsigned shaderId = glCreateShader(type);
 	if (shaderId == 0) {
 		return 0;
 	}
 	std::string v = "#version 460\n";
-	std::string defineVertexShader   = "#define VERTEX  \n";
+	std::string defineVertexShader = "#define VERTEX  \n";
 	std::string defineFragmentShader = "#define FRAGMENT\n";
 
 	std::string shaderDefine = (type == GL_VERTEX_SHADER) ? defineVertexShader : defineFragmentShader;
 
-	GLchar const * shaderStrings[3] = {v.c_str(),shaderDefine.c_str(), source.c_str()};
-	GLint shaderStringLengths[3] = {v.size(),shaderDefine.size(), source.size()};
+	GLchar const* shaderStrings[3] = {v.c_str(), shaderDefine.c_str(), sourceBuffer.Data()};
+	GLint shaderStringLengths[3] = {v.size(), shaderDefine.size(), sourceBuffer.Size()};
 
 	glShaderSource(shaderId, 3, shaderStrings, shaderStringLengths);
 	glCompileShader(shaderId);
