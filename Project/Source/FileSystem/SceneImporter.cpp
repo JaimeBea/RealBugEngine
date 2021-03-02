@@ -5,11 +5,15 @@
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
+#include "FileSystem/AnimationImporter.h"
 #include "Resources/GameObject.h"
 #include "Resources/Material.h"
+#include "Resources/ResourceAnimation.h"
+#include "Resources/AnimationController.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
@@ -32,7 +36,7 @@
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
 
-static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
+static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform, std::vector<ResourceAnimation*> animations) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
@@ -40,10 +44,11 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform);
+			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform, animations);
 		}
 	} else { // Normal node
 		// Create GameObject
+
 		GameObject* gameObject = App->scene->CreateGameObject(parent);
 
 		// Load name
@@ -108,8 +113,13 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity);
-		}
+			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity, animations);
+		}		
+
+		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
+		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
+		animationComponet->animationController = new AnimationController(animations[0]);
+		int aux = 0;
 	}
 }
 
@@ -232,9 +242,19 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		materials.push_back(material);
 	}
 
+	// Load animations
+	LOG("Importing animations");
+	std::vector<ResourceAnimation*> animations;
+	for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+		ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
+		animations.push_back(animation);
+	}
+
 	// Create scene tree
 	LOG("Importing scene tree.");
-	ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
+	ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity, animations);
+
+	
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);

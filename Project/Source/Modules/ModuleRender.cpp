@@ -6,6 +6,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
@@ -175,6 +176,11 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+
+	// Draw Animations
+	for (GameObject& gameObject : App->scene->gameObjects) {
+		DrawAnimation(&gameObject);
+	}
 
 	return UpdateStatus::CONTINUE;
 }
@@ -365,5 +371,23 @@ void ModuleRender::DrawSkyBox() {
 		glBindVertexArray(0);
 
 		glDepthFunc(GL_LESS);
+	}
+}
+
+void ModuleRender::DrawAnimation(GameObject* gameObject, bool hasAnimation) {
+	ComponentAnimation* animationComponent = gameObject->GetComponent<ComponentAnimation>();
+	if (animationComponent || hasAnimation) {
+		for (GameObject* childen : gameObject->GetChildren()) {
+			ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
+			if (transform && gameObject->name != "RootNode" && gameObject->name != "Ctrl_Grp" && gameObject->name != "Root") {
+				if (gameObject->name == "RootNode") {
+					bool wtf = true;
+				}
+				dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
+				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
+				//dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);
+			}
+			DrawAnimation(childen, true);
+		}
 	}
 }
