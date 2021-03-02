@@ -82,11 +82,6 @@ void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
 }
 
 bool ModulePrograms::Start() {
-	// Should be deleted
-	/*defaultProgram = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
-	phongPbrProgram = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
-	skyboxProgram = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");*/
-
 	return true;
 }
 
