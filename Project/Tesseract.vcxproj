@@ -282,6 +282,9 @@
     <None Include="..\Game\Shaders\phong_vertex.glsl" />
     <None Include="..\Game\Shaders\skybox_fragment.glsl" />
     <None Include="..\Game\Shaders\skybox_vertex.glsl" />
+    <None Include="..\Game\Shaders\standardMetallicFragment.glsl" />
+    <None Include="..\Game\Shaders\standardSpecularFragment.glsl" />
+    <None Include="..\Game\Shaders\standardVertex.glsl" />
     <None Include="..\LICENSE" />
     <None Include="..\PackageEngine.bat" />
     <None Include="..\PackageEngine.ps1" />
