@@ -144,19 +144,13 @@ void ComponentMeshRenderer::DrawFrame(int frameId, unsigned int texId, TextureTy
 }
 
 void ComponentMeshRenderer::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Mesh")) {
-		bool active = IsActive();
-
-		if (ImGui::Checkbox("Active", &active)) {
-			active ? Enable() : Disable();
-		}
-		ImGui::SameLine();
-
-		if (ImGui::Button("Remove")) {
-			// TODO: Add delete Component tool
-		}
-		ImGui::Separator();
-
+	bool active = IsActive();
+	if (ImGui::Checkbox("Active", &active)) {
+		active ? Enable() : Disable();
+	}
+	ImGui::Separator();
+	// MESH
+	if (ImGui::TreeNode("Mesh")) {
 		ImGui::TextColored(App->editor->titleColor, "Geometry");
 		ImGui::TextWrapped("Num Vertices: ");
 		ImGui::SameLine();
@@ -164,18 +158,10 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		ImGui::TextWrapped("Num Triangles: ");
 		ImGui::SameLine();
 		ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);
-		ImGui::Separator();
-		ImGui::TextColored(App->editor->titleColor, "Bounding Box");
-
-		ImGui::Checkbox("Draw", &bbActive);
-		if (bbActive) {
-			ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-			boundingBox->DrawBoundingBox();
-		}
-		ImGui::Separator();
+		ImGui::TreePop();
 	}
-
-	if (ImGui::CollapsingHeader("Material")) {
+	// MATERIAL
+	if (ImGui::TreeNode("Material")) {
 		ImGui::TextColored(App->editor->titleColor, "Shader");
 
 		// Material types
@@ -358,6 +344,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			}
 			ImGui::EndTabBar();
 		}
+		ImGui::TreePop();
 	}
 
 }
@@ -377,15 +364,15 @@ void ComponentMeshRenderer::Save(JsonValue jComponent) const {
 	jDiffuseColor[2] = material.diffuseColor.z;
 	if (material.hasDiffuseMap) jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuseMap->fileName.c_str();
 
-	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = material.hasSpecularOrMetalMap;
+	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = material.hasSpecularMap;
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
 	jSpecularColor[0] = material.specularColor.x;
 	jSpecularColor[1] = material.specularColor.y;
 	jSpecularColor[2] = material.specularColor.z;
-	if (material.hasSpecularOrMetalMap) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
+	if (material.hasSpecularMap) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
 
 	jMaterial[JSON_TAG_SHININESS] = material.shininess;
-	jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.hasSmoothnessInAlphaChannel;
+	jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.hasShininessInAlphaChannel;
 
 	JsonValue jAmbient = jMaterial[JSON_TAG_AMBIENT];
 	jAmbient[0] = material.ambient.x;
@@ -435,10 +422,10 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 		material.diffuseMap = nullptr;
 	}
 
-	material.hasSpecularOrMetalMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
+	material.hasSpecularMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
 	material.specularColor.Set(jSpecularColor[0], jSpecularColor[1], jSpecularColor[2]);
-	if (material.hasSpecularOrMetalMap) {
+	if (material.hasSpecularMap) {
 		std::string specularFileName = jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
 		for (Texture& texture : App->resources->textures) {
 			if (texture.fileName == specularFileName) {
@@ -458,7 +445,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	}
 
 	material.shininess = jMaterial[JSON_TAG_SHININESS];
-	material.hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
+	material.hasShininessInAlphaChannel = jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
 
 	JsonValue jAmbient = jMaterial[JSON_TAG_AMBIENT];
 	material.ambient.Set(jAmbient[0], jAmbient[1], jAmbient[2]);

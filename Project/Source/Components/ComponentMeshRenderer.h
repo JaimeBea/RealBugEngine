@@ -27,7 +27,4 @@ private:
 public:
 	Mesh* mesh = nullptr;
 	Material material;
-
-private:
-	bool bbActive = false;
 };

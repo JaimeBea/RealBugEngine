@@ -11,7 +11,7 @@ AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: false
 AlignEscapedNewlines: Left
 AlignOperands: true
-AlignTrailingComments: false
+AlignTrailingComments: true
 
 AllowAllArgumentsOnNextLine: false
 AllowAllConstructorInitializersOnNextLine: false
