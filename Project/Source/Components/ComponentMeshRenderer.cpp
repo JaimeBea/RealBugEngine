@@ -274,20 +274,16 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActive()) return;
-
-	// TODO: (Material resource) Render depending on the shader
-	// TODO: (Shader resource) Render depending on the shader
-	/*
-	unsigned program = App->programs->defaultProgram;
+	unsigned int program = material->GetShader()->GetShaderProgram();
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
 	unsigned glTextureDiffuse = 0;
 	unsigned glTextureSpecular = 0;
 
-	ResourceTexture* diffuse = material->diffuseMap;
+	ResourceTexture* diffuse = material->GetDiffuseMap();
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-	ResourceTexture* specular = material->specularMap;
+	ResourceTexture* specular = material->GetSpecularMap();
 	glTextureSpecular = specular ? specular->glTexture : 0;
 
 	ComponentLight* directionalLight = nullptr;
@@ -296,7 +292,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	if (material->materialType == ShaderType::PHONG) {
+	if (material->GetShader()->GetShaderType() == ShaderType::PHONG) {
 		float farPointDistance = 0;
 		ComponentLight* farPointLight = nullptr;
 		float farSpotDistance = 0;
@@ -397,16 +393,13 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 			}
 		}
 
-		program = App->programs->phongPbrProgram;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
-		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
-		glUniform1f(glGetUniformLocation(program, "shininess"), material->shininess);
-
-		int hasDiffuseMap = (material->hasDiffuseMap) ? 1 : 0;
-		int hasSpecularMap = (material->hasSpecularMap) ? 1 : 0;
-		int hasShininessInAlphaChannel = (material->hasShininessInAlphaChannel) ? 1 : 0;
+		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->GetDiffuseColor().ptr());
+		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->GetSpecularColor().ptr());
+		int hasDiffuseMap = (material->HasDiffuseMap()) ? 1 : 0;
+		int hasSpecularMap = (material->HasSpecularMap()) ? 1 : 0;
+		int hasShininessInAlphaChannel = (material->HasSmoothnessInAlphaChannel()) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
@@ -595,5 +588,4 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
-	*/
 }

@@ -12,6 +12,7 @@
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
+#include "FileSystem/ShaderImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -101,7 +102,7 @@ void ImportAsset(const char* filePath) {
 			MaterialImporter::ImportMaterial(filePath, jMeta);
 		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
 			// Shader files
-			// ShaderImporter::ImportShader(filePath, jMeta);
+			 ShaderImporter::ImportShader(filePath, jMeta);
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
 			// ModelImporter::ImportModel(filePath, jMeta);
