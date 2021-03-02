@@ -92,7 +92,8 @@ static unsigned CreateProgram(const char* shaderFilePath) {
 
 bool ModulePrograms::Start() {
 	defaultProgram = CreateProgram("Shaders/test.glsl");
-	phongPbrProgram = CreateProgram("Shaders/phong.glsl");
+	standardProgram = CreateProgram("Shaders/standardMetallic.glsl");
+	standardSpecularProgram = CreateProgram("Shaders/standardSpecular.glsl");
 	skyboxProgram = CreateProgram("Shaders/skybox.glsl");
 
 	return true;
@@ -100,7 +101,8 @@ bool ModulePrograms::Start() {
 
 bool ModulePrograms::CleanUp() {
 	glDeleteProgram(defaultProgram);
-	glDeleteProgram(phongPbrProgram);
+	glDeleteProgram(standardProgram);
+	glDeleteProgram(standardSpecularProgram);
 	glDeleteProgram(skyboxProgram);
 	return true;
 }

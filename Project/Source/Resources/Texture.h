@@ -5,6 +5,7 @@
 enum TextureType {
 	DIFFUSE_MAP,
 	SPECULAR_MAP,
+	METALLIC_MAP,
 	NORMAL_MAP
 };
 

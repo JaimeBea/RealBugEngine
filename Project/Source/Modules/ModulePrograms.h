@@ -9,6 +9,7 @@ public:
 
 public:
 	unsigned defaultProgram = 0;
-	unsigned phongPbrProgram = 0;
+	unsigned standardProgram = 0;
+	unsigned standardSpecularProgram = 0;
 	unsigned skyboxProgram = 0;
 };

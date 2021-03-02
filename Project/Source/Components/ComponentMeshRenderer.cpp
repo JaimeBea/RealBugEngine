@@ -40,9 +40,10 @@
 #define JSON_TAG_HAS_SPECULAR_MAP "HasSpecularMap"
 #define JSON_TAG_SPECULAR_COLOR "SpecularColor"
 #define JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME "SpecularMapFileName"
-#define JSON_TAG_SHININESS "Shininess"
-#define JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
-#define JSON_TAG_AMBIENT "Ambient"
+#define JSON_TAG_SMOOTHNESS "Smoothness"
+#define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
+#define JSON_TAG_METALLIC_MAP_FILE_NAME "MetallicMapFileName"
+#define JSON_TAG_METALLIC "Metallic"
 
 // THIS FUNCTION WILL BE REPLACED WITH THE CORRESPONDING FROM FILESYSTEM
 std::string OpenDialog(const char* _filters, const char* _dir, int* _size) {
@@ -100,11 +101,12 @@ void ComponentMeshRenderer::DrawFrame(int frameId, unsigned int texId, TextureTy
 			switch (texType) {
 			case TextureType::DIFFUSE_MAP:
 				material.diffuseMap = texture;
-				material.hasDiffuseMap = true;
 				break;
 			case TextureType::SPECULAR_MAP:
 				material.specularMap = texture;
-				material.hasSpecularOrMetalMap = true;
+				break;
+			case TextureType::METALLIC_MAP:
+				material.metallicMap = texture;
 				break;
 			case TextureType::NORMAL_MAP:
 				break;
@@ -186,22 +188,20 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			{
 				//Diffuse
 				{
-					DrawFrame(1, material.diffuseMap?material.diffuseMap->glTexture:0, TextureType::DIFFUSE_MAP);
+					DrawFrame(1, material.diffuseMap ? material.diffuseMap->glTexture : 0, TextureType::DIFFUSE_MAP);
 					ImGui::SameLine();
 					ImGui::Text("Diffuse");
 					if (ImGui::Button("No map##diffuse")) {
 						material.diffuseMap = nullptr;
-						material.hasDiffuseMap = false;
 					}
 				}
 				//Specular
 				{
-					DrawFrame(2, material.specularMap?material.specularMap->glTexture:0, TextureType::SPECULAR_MAP);
+					DrawFrame(2, material.specularMap ? material.specularMap->glTexture : 0, TextureType::SPECULAR_MAP);
 					ImGui::SameLine();
 					ImGui::Text("Specular");
 					if (ImGui::Button("No map##specular")) {
 						material.specularMap = nullptr;
-						material.hasSpecularOrMetalMap = false;
 					}
 				}
 			}
@@ -217,7 +217,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				ImGui::NewLine();
 				ImGui::NewLine();
 
-				if (!material.hasSpecularOrMetalMap) {
+				if (material.specularMap == nullptr) {
 					std::string id_cs("##color_s");
 					ImGui::PushID(id_cs.c_str());
 					ImGui::ColorEdit4("", &material.specularColor[0], ImGuiColorEditFlags_NoInputs);
@@ -239,17 +239,15 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::Text("Diffuse");
 					if (ImGui::Button("No map##diffuse")) {
 						material.diffuseMap = nullptr;
-						material.hasDiffuseMap = false;
 					}
 				}
 				//Specular
 				{
-					DrawFrame(2, material.specularMap ? material.specularMap->glTexture : 0, TextureType::SPECULAR_MAP);
+					DrawFrame(2, material.metallicMap ? material.metallicMap->glTexture : 0, TextureType::METALLIC_MAP);
 					ImGui::SameLine();
 					ImGui::Text("Metallic");
 					if (ImGui::Button("No map##metallic")) {
-						material.specularMap = nullptr;
-						material.hasSpecularOrMetalMap = false;
+						material.metallicMap = nullptr;
 					}
 				}
 			}
@@ -266,7 +264,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				ImGui::NewLine();
 				ImGui::NewLine();
 
-				if (!material.hasSpecularOrMetalMap) {
+				if (material.metallicMap == nullptr) {
 					std::string id_m("##metalness");
 					ImGui::PushID(id_m.c_str());
 					ImGui::SliderFloat("", &material.metallic, 0, 1);
@@ -276,7 +274,6 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				}
 			}
 			ImGui::EndColumns();
-
 		}
 		ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 		{
@@ -346,7 +343,6 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		}
 		ImGui::TreePop();
 	}
-
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
@@ -357,27 +353,26 @@ void ComponentMeshRenderer::Save(JsonValue jComponent) const {
 
 	JsonValue jMaterial = jComponent[JSON_TAG_MATERIAL];
 
-	jMaterial[JSON_TAG_HAS_DIFFUSE_MAP] = material.hasDiffuseMap;
 	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
 	jDiffuseColor[0] = material.diffuseColor.x;
 	jDiffuseColor[1] = material.diffuseColor.y;
 	jDiffuseColor[2] = material.diffuseColor.z;
-	if (material.hasDiffuseMap) jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuseMap->fileName.c_str();
+	jDiffuseColor[3] = material.diffuseColor.w;
+	if (material.diffuseMap != nullptr) jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuseMap->fileName.c_str();
 
-	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = material.hasSpecularMap;
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
 	jSpecularColor[0] = material.specularColor.x;
 	jSpecularColor[1] = material.specularColor.y;
 	jSpecularColor[2] = material.specularColor.z;
-	if (material.hasSpecularMap) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
+	jSpecularColor[3] = material.specularColor.w;
 
-	jMaterial[JSON_TAG_SHININESS] = material.shininess;
-	jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL] = material.hasShininessInAlphaChannel;
+	if (material.specularMap != nullptr) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
 
-	JsonValue jAmbient = jMaterial[JSON_TAG_AMBIENT];
-	jAmbient[0] = material.ambient.x;
-	jAmbient[1] = material.ambient.y;
-	jAmbient[2] = material.ambient.z;
+	jMaterial[JSON_TAG_METALLIC] = material.metallic;
+	if (material.metallicMap != nullptr) jMaterial[JSON_TAG_METALLIC_MAP_FILE_NAME] = material.metallicMap->fileName.c_str();
+
+	jMaterial[JSON_TAG_SMOOTHNESS] = material.smoothness;
+	jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL] = material.hasSmoothnessInAlphaChannel;
 }
 
 void ComponentMeshRenderer::Load(JsonValue jComponent) {
@@ -400,11 +395,10 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 
 	JsonValue jMaterial = jComponent[JSON_TAG_MATERIAL];
 
-	material.hasDiffuseMap = jMaterial[JSON_TAG_HAS_DIFFUSE_MAP];
 	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
-	material.diffuseColor.Set(jDiffuseColor[0], jDiffuseColor[1], jDiffuseColor[2]);
-	if (material.hasDiffuseMap) {
-		std::string diffuseFileName = jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME];
+	material.diffuseColor.Set(jDiffuseColor[0], jDiffuseColor[1], jDiffuseColor[2], jDiffuseColor[3]);
+	std::string diffuseFileName = jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME];
+	if (!diffuseFileName.empty()) {
 		for (Texture& texture : App->resources->textures) {
 			if (texture.fileName == diffuseFileName) {
 				material.diffuseMap = &texture;
@@ -422,11 +416,10 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 		material.diffuseMap = nullptr;
 	}
 
-	material.hasSpecularMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
-	material.specularColor.Set(jSpecularColor[0], jSpecularColor[1], jSpecularColor[2]);
-	if (material.hasSpecularMap) {
-		std::string specularFileName = jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
+	material.specularColor.Set(jSpecularColor[0], jSpecularColor[1], jSpecularColor[2], jSpecularColor[3]);
+	std::string specularFileName = jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
+	if (!specularFileName.empty()) {
 		for (Texture& texture : App->resources->textures) {
 			if (texture.fileName == specularFileName) {
 				material.specularMap = &texture;
@@ -444,315 +437,182 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 		material.specularMap = nullptr;
 	}
 
-	material.shininess = jMaterial[JSON_TAG_SHININESS];
-	material.hasShininessInAlphaChannel = jMaterial[JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL];
+	material.metallic = jMaterial[JSON_TAG_METALLIC];
+	std::string metallicFileName = jMaterial[JSON_TAG_METALLIC_MAP_FILE_NAME];
+	if (!metallicFileName.empty()) {
+		for (Texture& texture : App->resources->textures) {
+			if (texture.fileName == metallicFileName) {
+				material.metallicMap = &texture;
+			}
+		}
+		if (material.metallicMap == nullptr) {
+			material.metallicMap = App->resources->ObtainTexture();
+			material.metallicMap->fileName = metallicFileName;
+		}
 
-	JsonValue jAmbient = jMaterial[JSON_TAG_AMBIENT];
-	material.ambient.Set(jAmbient[0], jAmbient[1], jAmbient[2]);
+		TextureImporter::UnloadTexture(material.metallicMap);
+		TextureImporter::LoadTexture(material.metallicMap);
+	} else if (material.metallicMap != nullptr) {
+		App->resources->ReleaseTexture(material.metallicMap);
+		material.metallicMap = nullptr;
+	}
+
+	material.smoothness = jMaterial[JSON_TAG_SMOOTHNESS];
+	material.hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL];
 }
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActive()) return;
 
-	unsigned program = App->programs->defaultProgram;
-
-	float4x4 viewMatrix = App->camera->GetViewMatrix();
-	float4x4 projMatrix = App->camera->GetProjectionMatrix();
-	unsigned glTextureDiffuse = 0;
-	unsigned glTextureSpecular = 0;
-
-	Texture* diffuse = material.diffuseMap;
-	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-	Texture* specular = material.specularMap;
-	glTextureSpecular = specular ? specular->glTexture : 0;
-
+	// Light controlling
 	ComponentLight* directionalLight = nullptr;
 	std::vector<ComponentLight*> pointLightsVector;
 	std::vector<float> pointDistancesVector;
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	if (material.materialType == ShaderType::STANDARD) {
-		float farPointDistance = 0;
-		ComponentLight* farPointLight = nullptr;
-		float farSpotDistance = 0;
-		ComponentLight* farSpotLight = nullptr;
+	float farPointDistance = 0;
+	ComponentLight* farPointLight = nullptr;
+	float farSpotDistance = 0;
+	ComponentLight* farSpotLight = nullptr;
 
-		for (GameObject& object : App->scene->gameObjects) {
-			ComponentLight* light = object.GetComponent<ComponentLight>();
-			if (light == nullptr) continue;
+	for (GameObject& object : App->scene->gameObjects) {
+		ComponentLight* light = object.GetComponent<ComponentLight>();
+		if (light == nullptr) continue;
 
-			if (light->lightType == LightType::DIRECTIONAL) {
-				// It takes the first actived Directional Light inside the Pool
-				if (light->IsActive() && directionalLight == nullptr) {
-					directionalLight = light;
-					continue;
-				}
-			} else if (light->lightType == LightType::POINT) {
-				if (light->IsActive()) {
-					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
-					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
-					float distance = Distance(meshPosition, lightPosition);
-					if (pointLightsVector.size() < 8) {
-						pointDistancesVector.push_back(distance);
-						pointLightsVector.push_back(light);
+		if (light->lightType == LightType::DIRECTIONAL) {
+			// It takes the first actived Directional Light inside the Pool
+			if (light->IsActive() && directionalLight == nullptr) {
+				directionalLight = light;
+				continue;
+			}
+		} else if (light->lightType == LightType::POINT) {
+			if (light->IsActive()) {
+				float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
+				float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
+				float distance = Distance(meshPosition, lightPosition);
+				if (pointLightsVector.size() < 8) {
+					pointDistancesVector.push_back(distance);
+					pointLightsVector.push_back(light);
 
-						if (distance > farPointDistance) {
-							farPointLight = light;
-							farPointDistance = distance;
+					if (distance > farPointDistance) {
+						farPointLight = light;
+						farPointDistance = distance;
+					}
+				} else {
+					if (distance < farPointDistance) {
+						int count = 0;
+						int selected = -1;
+						for (float pointDistance : pointDistancesVector) {
+							if (pointDistance == farPointDistance) selected = count;
+							count += 1;
 						}
-					} else {
-						if (distance < farPointDistance) {
-							int count = 0;
-							int selected = -1;
-							for (float pointDistance : pointDistancesVector) {
-								if (pointDistance == farPointDistance) selected = count;
-								count += 1;
+
+						pointLightsVector[selected] = light;
+						pointDistancesVector[selected] = distance;
+
+						count = 0;
+						selected = -1;
+						float maxDistance = 0;
+						for (float pointDistance : pointDistancesVector) {
+							if (pointDistance > maxDistance) {
+								maxDistance = pointDistance;
+								selected = count;
 							}
-
-							pointLightsVector[selected] = light;
-							pointDistancesVector[selected] = distance;
-
-							count = 0;
-							selected = -1;
-							float maxDistance = 0;
-							for (float pointDistance : pointDistancesVector) {
-								if (pointDistance > maxDistance) {
-									maxDistance = pointDistance;
-									selected = count;
-								}
-								count += 1;
-							}
-
-							farPointDistance = maxDistance;
-							farPointLight = pointLightsVector[selected];
+							count += 1;
 						}
+
+						farPointDistance = maxDistance;
+						farPointLight = pointLightsVector[selected];
 					}
 				}
-			} else if (light->lightType == LightType::SPOT) {
-				if (light->IsActive()) {
-					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
-					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
-					float distance = Distance(meshPosition, lightPosition);
-					if (spotLightsVector.size() < 8) {
-						spotDistancesVector.push_back(distance);
-						spotLightsVector.push_back(light);
+			}
+		} else if (light->lightType == LightType::SPOT) {
+			if (light->IsActive()) {
+				float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
+				float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
+				float distance = Distance(meshPosition, lightPosition);
+				if (spotLightsVector.size() < 8) {
+					spotDistancesVector.push_back(distance);
+					spotLightsVector.push_back(light);
 
-						if (distance > farSpotDistance) {
-							farSpotLight = light;
-							farSpotDistance = distance;
+					if (distance > farSpotDistance) {
+						farSpotLight = light;
+						farSpotDistance = distance;
+					}
+				} else {
+					if (distance < farSpotDistance) {
+						int count = 0;
+						int selected = -1;
+						for (float spotDistance : spotDistancesVector) {
+							if (spotDistance == farSpotDistance) selected = count;
+							count += 1;
 						}
-					} else {
-						if (distance < farSpotDistance) {
-							int count = 0;
-							int selected = -1;
-							for (float spotDistance : spotDistancesVector) {
-								if (spotDistance == farSpotDistance) selected = count;
-								count += 1;
+
+						spotLightsVector[selected] = light;
+						spotDistancesVector[selected] = distance;
+
+						count = 0;
+						selected = -1;
+						float maxDistance = 0;
+						for (float spotDistance : spotDistancesVector) {
+							if (spotDistance > maxDistance) {
+								maxDistance = spotDistance;
+								selected = count;
 							}
-
-							spotLightsVector[selected] = light;
-							spotDistancesVector[selected] = distance;
-
-							count = 0;
-							selected = -1;
-							float maxDistance = 0;
-							for (float spotDistance : spotDistancesVector) {
-								if (spotDistance > maxDistance) {
-									maxDistance = spotDistance;
-									selected = count;
-								}
-								count += 1;
-							}
-
-							farSpotDistance = maxDistance;
-							farSpotLight = spotLightsVector[selected];
+							count += 1;
 						}
+
+						farSpotDistance = maxDistance;
+						farSpotLight = spotLightsVector[selected];
 					}
 				}
 			}
 		}
+	}
 
-		program = App->programs->phongPbrProgram;
+	unsigned program = App->programs->defaultProgram;
+
+	float4x4 viewMatrix = App->camera->GetViewMatrix();
+	float4x4 projMatrix = App->camera->GetProjectionMatrix();
+
+	unsigned glTextureDiffuse = 0;
+	Texture* diffuse = material.diffuseMap;
+	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
+
+	if (material.materialType == ShaderType::STANDARD_SPECULAR) {
+		unsigned glTextureSpecular = 0;
+		Texture* specular = material.specularMap;
+		glTextureSpecular = specular ? specular->glTexture : 0;
+
+		program = App->programs->standardSpecularProgram;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material.diffuseColor.ptr());
 		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material.specularColor.ptr());
-		glUniform1f(glGetUniformLocation(program, "shininess"), material.shininess);
-
-		int hasDiffuseMap = (material.hasDiffuseMap) ? 1 : 0;
-		int hasSpecularMap = (material.hasSpecularOrMetalMap) ? 1 : 0;
-		int hasShininessInAlphaChannel = material.hasSmoothnessInAlphaChannel;
-		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
+		int hasSpecularMap = (material.specularMap !=  nullptr) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
-		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
 
-		glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambientColor.ptr());
+		glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, glTextureSpecular);
 
-		if (directionalLight != nullptr) {
-			glUniform3fv(glGetUniformLocation(program, "light.directional.direction"), 1, directionalLight->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.directional.color"), 1, directionalLight->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.directional.intensity"), directionalLight->intensity);
-		}
-		glUniform1i(glGetUniformLocation(program, "light.directional.isActive"), directionalLight ? 1 : 0);
+	} else if (material.materialType == ShaderType::STANDARD) {
+		unsigned glTextureMetallic = 0;
+		Texture* metallic = material.metallicMap;
+		glTextureMetallic = metallic ? metallic->glTexture : 0;
 
-		if (pointLightsVector.size() > 0) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[0].pos"), 1, pointLightsVector[0]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[0].color"), 1, pointLightsVector[0]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[0].intensity"), pointLightsVector[0]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[0].kc"), pointLightsVector[0]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[0].kl"), pointLightsVector[0]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[0].kq"), pointLightsVector[0]->kq);
-		}
-		if (pointLightsVector.size() > 1) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[1].pos"), 1, pointLightsVector[1]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[1].color"), 1, pointLightsVector[1]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[1].intensity"), pointLightsVector[1]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[1].kc"), pointLightsVector[1]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[1].kl"), pointLightsVector[1]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[1].kq"), pointLightsVector[1]->kq);
-		}
-		if (pointLightsVector.size() > 2) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[2].pos"), 1, pointLightsVector[2]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[2].color"), 1, pointLightsVector[2]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[2].intensity"), pointLightsVector[2]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[2].kc"), pointLightsVector[2]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[2].kl"), pointLightsVector[2]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[2].kq"), pointLightsVector[2]->kq);
-		}
-		if (pointLightsVector.size() > 3) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[3].pos"), 1, pointLightsVector[3]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[3].color"), 1, pointLightsVector[3]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[3].intensity"), pointLightsVector[3]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[3].kc"), pointLightsVector[3]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[3].kl"), pointLightsVector[3]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[3].kq"), pointLightsVector[3]->kq);
-		}
-		if (pointLightsVector.size() > 4) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[4].pos"), 1, pointLightsVector[4]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[4].color"), 1, pointLightsVector[4]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[4].intensity"), pointLightsVector[4]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[4].kc"), pointLightsVector[4]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[4].kl"), pointLightsVector[4]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[4].kq"), pointLightsVector[4]->kq);
-		}
-		if (pointLightsVector.size() > 5) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[5].pos"), 1, pointLightsVector[5]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[5].color"), 1, pointLightsVector[5]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[5].intensity"), pointLightsVector[5]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[5].kc"), pointLightsVector[5]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[5].kl"), pointLightsVector[5]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[5].kq"), pointLightsVector[5]->kq);
-		}
-		if (pointLightsVector.size() > 6) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[6].pos"), 1, pointLightsVector[6]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[6].color"), 1, pointLightsVector[6]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[6].intensity"), pointLightsVector[6]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[6].kc"), pointLightsVector[6]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[6].kl"), pointLightsVector[6]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[6].kq"), pointLightsVector[6]->kq);
-		}
-		if (pointLightsVector.size() > 7) {
-			glUniform3fv(glGetUniformLocation(program, "light.points[7].pos"), 1, pointLightsVector[7]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.points[7].color"), 1, pointLightsVector[7]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.points[7].intensity"), pointLightsVector[7]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.points[7].kc"), pointLightsVector[7]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.points[7].kl"), pointLightsVector[7]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.points[7].kq"), pointLightsVector[7]->kq);
-		}
-		glUniform1i(glGetUniformLocation(program, "light.numPoints"), pointLightsVector.size());
+		program = App->programs->standardProgram;
+		glUseProgram(program);
 
-		if (spotLightsVector.size() > 0) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[0].pos"), 1, spotLightsVector[0]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[0].direction"), 1, spotLightsVector[0]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[0].color"), 1, spotLightsVector[0]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].intensity"), spotLightsVector[0]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].kc"), spotLightsVector[0]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].kl"), spotLightsVector[0]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].kq"), spotLightsVector[0]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].innerAngle"), spotLightsVector[0]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[0].outerAngle"), spotLightsVector[0]->outerAngle);
-		}
-		if (spotLightsVector.size() > 1) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[1].pos"), 1, spotLightsVector[1]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[1].direction"), 1, spotLightsVector[1]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[1].color"), 1, spotLightsVector[1]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].intensity"), spotLightsVector[1]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].kc"), spotLightsVector[1]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].kl"), spotLightsVector[1]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].kq"), spotLightsVector[1]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].innerAngle"), spotLightsVector[1]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[1].outerAngle"), spotLightsVector[1]->outerAngle);
-		}
-		if (spotLightsVector.size() > 2) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[2].pos"), 1, spotLightsVector[2]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[2].direction"), 1, spotLightsVector[2]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[2].color"), 1, spotLightsVector[2]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].intensity"), spotLightsVector[2]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].kc"), spotLightsVector[2]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].kl"), spotLightsVector[2]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].kq"), spotLightsVector[2]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].innerAngle"), spotLightsVector[2]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[2].outerAngle"), spotLightsVector[2]->outerAngle);
-		}
-		if (spotLightsVector.size() > 3) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[3].pos"), 1, spotLightsVector[3]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[3].direction"), 1, spotLightsVector[3]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[3].color"), 1, spotLightsVector[3]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].intensity"), spotLightsVector[3]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].kc"), spotLightsVector[3]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].kl"), spotLightsVector[3]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].kq"), spotLightsVector[3]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].innerAngle"), spotLightsVector[3]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[3].outerAngle"), spotLightsVector[3]->outerAngle);
-		}
-		if (spotLightsVector.size() > 4) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[4].pos"), 1, spotLightsVector[4]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[4].direction"), 1, spotLightsVector[4]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[4].color"), 1, spotLightsVector[4]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].intensity"), spotLightsVector[4]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].kc"), spotLightsVector[4]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].kl"), spotLightsVector[4]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].kq"), spotLightsVector[4]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].innerAngle"), spotLightsVector[4]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[4].outerAngle"), spotLightsVector[4]->outerAngle);
-		}
-		if (spotLightsVector.size() > 5) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[5].pos"), 1, spotLightsVector[5]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[5].direction"), 1, spotLightsVector[5]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[5].color"), 1, spotLightsVector[5]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].intensity"), spotLightsVector[5]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].kc"), spotLightsVector[5]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].kl"), spotLightsVector[5]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].kq"), spotLightsVector[5]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].innerAngle"), spotLightsVector[5]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[5].outerAngle"), spotLightsVector[5]->outerAngle);
-		}
-		if (spotLightsVector.size() > 6) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[6].pos"), 1, spotLightsVector[6]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[6].direction"), 1, spotLightsVector[6]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[6].color"), 1, spotLightsVector[6]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].intensity"), spotLightsVector[6]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].kc"), spotLightsVector[6]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].kl"), spotLightsVector[6]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].kq"), spotLightsVector[6]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].innerAngle"), spotLightsVector[6]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[6].outerAngle"), spotLightsVector[6]->outerAngle);
-		}
-		if (spotLightsVector.size() > 7) {
-			glUniform3fv(glGetUniformLocation(program, "light.spots[7].pos"), 1, spotLightsVector[7]->pos.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[7].direction"), 1, spotLightsVector[7]->direction.ptr());
-			glUniform3fv(glGetUniformLocation(program, "light.spots[7].color"), 1, spotLightsVector[7]->color.ptr());
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].intensity"), spotLightsVector[7]->intensity);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].kc"), spotLightsVector[7]->kc);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].kl"), spotLightsVector[7]->kl);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].kq"), spotLightsVector[7]->kq);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].innerAngle"), spotLightsVector[7]->innerAngle);
-			glUniform1f(glGetUniformLocation(program, "light.spots[7].outerAngle"), spotLightsVector[7]->outerAngle);
-		}
-		glUniform1i(glGetUniformLocation(program, "light.numSpots"), spotLightsVector.size());
+		glUniform1f(glGetUniformLocation(program, "metalness"), material.metallic);
 
-		glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
+		int hasMetallicMap = (material.metallicMap != nullptr) ? 1 : 0;
+		glUniform1i(glGetUniformLocation(program, "hasMetallicMap"), hasMetallicMap);
+
+		glUniform1i(glGetUniformLocation(program, "metallicMap"), 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, glTextureMetallic);
+
 	} else {
 		glUseProgram(program);
 	}
@@ -760,13 +620,182 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
+
 	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
-	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
+	glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material.diffuseColor.ptr());
+	glUniform1f(glGetUniformLocation(program, "smoothness"), material.smoothness);
+	glUniform1i(glGetUniformLocation(program, "hasSmoothnessAlpha"), material.hasSmoothnessInAlphaChannel);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, glTextureDiffuse);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, glTextureSpecular);
+
+	// Lights uniforms setting
+	glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambientColor.ptr());
+
+	if (directionalLight != nullptr) {
+		glUniform3fv(glGetUniformLocation(program, "light.directional.direction"), 1, directionalLight->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.directional.color"), 1, directionalLight->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.directional.intensity"), directionalLight->intensity);
+	}
+	glUniform1i(glGetUniformLocation(program, "light.directional.isActive"), directionalLight ? 1 : 0);
+
+	if (pointLightsVector.size() > 0) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[0].pos"), 1, pointLightsVector[0]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[0].color"), 1, pointLightsVector[0]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[0].intensity"), pointLightsVector[0]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[0].kc"), pointLightsVector[0]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[0].kl"), pointLightsVector[0]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[0].kq"), pointLightsVector[0]->kq);
+	}
+	if (pointLightsVector.size() > 1) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[1].pos"), 1, pointLightsVector[1]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[1].color"), 1, pointLightsVector[1]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[1].intensity"), pointLightsVector[1]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[1].kc"), pointLightsVector[1]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[1].kl"), pointLightsVector[1]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[1].kq"), pointLightsVector[1]->kq);
+	}
+	if (pointLightsVector.size() > 2) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[2].pos"), 1, pointLightsVector[2]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[2].color"), 1, pointLightsVector[2]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[2].intensity"), pointLightsVector[2]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[2].kc"), pointLightsVector[2]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[2].kl"), pointLightsVector[2]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[2].kq"), pointLightsVector[2]->kq);
+	}
+	if (pointLightsVector.size() > 3) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[3].pos"), 1, pointLightsVector[3]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[3].color"), 1, pointLightsVector[3]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[3].intensity"), pointLightsVector[3]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[3].kc"), pointLightsVector[3]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[3].kl"), pointLightsVector[3]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[3].kq"), pointLightsVector[3]->kq);
+	}
+	if (pointLightsVector.size() > 4) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[4].pos"), 1, pointLightsVector[4]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[4].color"), 1, pointLightsVector[4]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[4].intensity"), pointLightsVector[4]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[4].kc"), pointLightsVector[4]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[4].kl"), pointLightsVector[4]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[4].kq"), pointLightsVector[4]->kq);
+	}
+	if (pointLightsVector.size() > 5) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[5].pos"), 1, pointLightsVector[5]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[5].color"), 1, pointLightsVector[5]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[5].intensity"), pointLightsVector[5]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[5].kc"), pointLightsVector[5]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[5].kl"), pointLightsVector[5]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[5].kq"), pointLightsVector[5]->kq);
+	}
+	if (pointLightsVector.size() > 6) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[6].pos"), 1, pointLightsVector[6]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[6].color"), 1, pointLightsVector[6]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[6].intensity"), pointLightsVector[6]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[6].kc"), pointLightsVector[6]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[6].kl"), pointLightsVector[6]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[6].kq"), pointLightsVector[6]->kq);
+	}
+	if (pointLightsVector.size() > 7) {
+		glUniform3fv(glGetUniformLocation(program, "light.points[7].pos"), 1, pointLightsVector[7]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.points[7].color"), 1, pointLightsVector[7]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.points[7].intensity"), pointLightsVector[7]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.points[7].kc"), pointLightsVector[7]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.points[7].kl"), pointLightsVector[7]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.points[7].kq"), pointLightsVector[7]->kq);
+	}
+	glUniform1i(glGetUniformLocation(program, "light.numPoints"), pointLightsVector.size());
+
+	if (spotLightsVector.size() > 0) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[0].pos"), 1, spotLightsVector[0]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[0].direction"), 1, spotLightsVector[0]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[0].color"), 1, spotLightsVector[0]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[0].intensity"), spotLightsVector[0]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[0].kc"), spotLightsVector[0]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[0].kl"), spotLightsVector[0]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[0].kq"), spotLightsVector[0]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[0].innerAngle"), spotLightsVector[0]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[0].outerAngle"), spotLightsVector[0]->outerAngle);
+	}
+	if (spotLightsVector.size() > 1) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[1].pos"), 1, spotLightsVector[1]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[1].direction"), 1, spotLightsVector[1]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[1].color"), 1, spotLightsVector[1]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[1].intensity"), spotLightsVector[1]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[1].kc"), spotLightsVector[1]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[1].kl"), spotLightsVector[1]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[1].kq"), spotLightsVector[1]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[1].innerAngle"), spotLightsVector[1]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[1].outerAngle"), spotLightsVector[1]->outerAngle);
+	}
+	if (spotLightsVector.size() > 2) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[2].pos"), 1, spotLightsVector[2]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[2].direction"), 1, spotLightsVector[2]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[2].color"), 1, spotLightsVector[2]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[2].intensity"), spotLightsVector[2]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[2].kc"), spotLightsVector[2]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[2].kl"), spotLightsVector[2]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[2].kq"), spotLightsVector[2]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[2].innerAngle"), spotLightsVector[2]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[2].outerAngle"), spotLightsVector[2]->outerAngle);
+	}
+	if (spotLightsVector.size() > 3) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[3].pos"), 1, spotLightsVector[3]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[3].direction"), 1, spotLightsVector[3]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[3].color"), 1, spotLightsVector[3]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[3].intensity"), spotLightsVector[3]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[3].kc"), spotLightsVector[3]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[3].kl"), spotLightsVector[3]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[3].kq"), spotLightsVector[3]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[3].innerAngle"), spotLightsVector[3]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[3].outerAngle"), spotLightsVector[3]->outerAngle);
+	}
+	if (spotLightsVector.size() > 4) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[4].pos"), 1, spotLightsVector[4]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[4].direction"), 1, spotLightsVector[4]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[4].color"), 1, spotLightsVector[4]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[4].intensity"), spotLightsVector[4]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[4].kc"), spotLightsVector[4]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[4].kl"), spotLightsVector[4]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[4].kq"), spotLightsVector[4]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[4].innerAngle"), spotLightsVector[4]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[4].outerAngle"), spotLightsVector[4]->outerAngle);
+	}
+	if (spotLightsVector.size() > 5) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[5].pos"), 1, spotLightsVector[5]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[5].direction"), 1, spotLightsVector[5]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[5].color"), 1, spotLightsVector[5]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[5].intensity"), spotLightsVector[5]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[5].kc"), spotLightsVector[5]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[5].kl"), spotLightsVector[5]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[5].kq"), spotLightsVector[5]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[5].innerAngle"), spotLightsVector[5]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[5].outerAngle"), spotLightsVector[5]->outerAngle);
+	}
+	if (spotLightsVector.size() > 6) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[6].pos"), 1, spotLightsVector[6]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[6].direction"), 1, spotLightsVector[6]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[6].color"), 1, spotLightsVector[6]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[6].intensity"), spotLightsVector[6]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[6].kc"), spotLightsVector[6]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[6].kl"), spotLightsVector[6]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[6].kq"), spotLightsVector[6]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[6].innerAngle"), spotLightsVector[6]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[6].outerAngle"), spotLightsVector[6]->outerAngle);
+	}
+	if (spotLightsVector.size() > 7) {
+		glUniform3fv(glGetUniformLocation(program, "light.spots[7].pos"), 1, spotLightsVector[7]->pos.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[7].direction"), 1, spotLightsVector[7]->direction.ptr());
+		glUniform3fv(glGetUniformLocation(program, "light.spots[7].color"), 1, spotLightsVector[7]->color.ptr());
+		glUniform1f(glGetUniformLocation(program, "light.spots[7].intensity"), spotLightsVector[7]->intensity);
+		glUniform1f(glGetUniformLocation(program, "light.spots[7].kc"), spotLightsVector[7]->kc);
+		glUniform1f(glGetUniformLocation(program, "light.spots[7].kl"), spotLightsVector[7]->kl);
+		glUniform1f(glGetUniformLocation(program, "light.spots[7].kq"), spotLightsVector[7]->kq);
+		glUniform1f(glGetUniformLocation(program, "light.spots[7].innerAngle"), spotLightsVector[7]->innerAngle);
+		glUniform1f(glGetUniformLocation(program, "light.spots[7].outerAngle"), spotLightsVector[7]->outerAngle);
+	}
+	glUniform1i(glGetUniformLocation(program, "light.numSpots"), spotLightsVector.size());
+
+	glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
 
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);

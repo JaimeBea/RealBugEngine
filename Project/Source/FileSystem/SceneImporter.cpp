@@ -177,7 +177,6 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 				LOG("Unable to find diffuse texture file.");
 			} else {
 				LOG("Diffuse texture imported successfuly.");
-				material.hasDiffuseMap = true;
 				material.diffuseMap = texture;
 				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);
@@ -215,7 +214,6 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 				LOG("Unable to find specular texture file.");
 			} else {
 				LOG("Specular texture imported successfuly.");
-				material.hasSpecularOrMetalMap = true;
 				material.specularMap = texture;
 				// TODO: Move load to a better place
 				TextureImporter::LoadTexture(texture);
@@ -226,7 +224,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 
 		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, material.diffuseColor);
 		assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, material.specularColor);
-		assimpMaterial->Get(AI_MATKEY_SHININESS, material.shininess);
+		assimpMaterial->Get(AI_MATKEY_SHININESS, material.smoothness);
 
 		LOG("Material imported.");
 		materials.push_back(material);

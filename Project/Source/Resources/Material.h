@@ -13,21 +13,22 @@ class Material {
 public:
 	ShaderType materialType = ShaderType::STANDARD_SPECULAR;
 
-	// Phong
-
-	bool hasDiffuseMap = false;
-	float3 diffuseColor = {0.137f, 0.263f, 0.424f};
+	// Diffuse
+	float4 diffuseColor = {1.f, 1.f, 1.f, 1.0f};
 	Texture* diffuseMap = nullptr;
 
-	bool hasSpecularOrMetalMap = false;
+	// Metalness
 	float metallic = 1.f;
-	float3 specularColor = {1.0f, 1.0f, 1.0f};
+	Texture* metallicMap = nullptr;
+
+	// Specular
+	float4 specularColor = {0.0f, 0.0f, 0.0f, 1.0f};
 	Texture* specularMap = nullptr;
 
-	float shininess = 300;
-	int hasSmoothnessInAlphaChannel = 0;
+	// Normal
+	Texture* normalMap = nullptr;
 
-	float3 ambient = {0.0f, 0.0f, 0.0f};
-
+	// Smoothness
 	float smoothness = 0.3;
+	int hasSmoothnessInAlphaChannel = 0;
 };
