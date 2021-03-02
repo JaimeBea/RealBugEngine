@@ -8,4 +8,7 @@ public:
 
 	void Load() override;
 	void Unload() override;
+
+private:
+	unsigned int shaderProgram;
 };
