@@ -49,6 +49,14 @@ public:
 		return hasSmoothnessInAlphaChannel;
 	};
 
+	bool HasSpecularMap() {
+		return hasSpecularMap;
+	}
+
+	bool HasDiffuseMap() {
+		return hasDiffuseMap;
+	}
+
 private:
 	// Material shader
 	ResourceShader* shader = nullptr;
@@ -70,4 +78,6 @@ private:
 	// Smoothness
 	float smoothness = 300;
 	bool hasSmoothnessInAlphaChannel = false;
+	bool hasSpecularMap = false;
+	bool hasDiffuseMap = false;
 };

@@ -21,21 +21,12 @@
 #include "Utils/Leaks.h"
 
 bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
-	// TODO: (Shader resource) Import shaders to a custom resource file
-	LOG("Importing texture from path: \"%s\".", filePath);
+	LOG("Importing Shader from path: \"%s\".", filePath);
 
 	MSTimer timer;
 	timer.Start();
 	Buffer<char> buffer = App->files->Load(filePath);
 	if (buffer.Size() == 0) return false;
-
-	rapidjson::Document document;
-
-	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
-	if (document.HasParseError()) {
-		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
-		return false;
-	}
 
 	ResourceShader* shaderResource = App->resources->CreateResource<ResourceShader>(filePath);
 	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
