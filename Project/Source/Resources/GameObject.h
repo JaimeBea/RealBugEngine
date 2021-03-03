@@ -34,8 +34,8 @@ public:
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
-	bool AddComponent(ComponentType type);		 // Functionality for the Add Component button in the inspector.
-	bool HasComponent(ComponentType type) const; // Checks if this GameObject has a Component of type 'type'
+	bool AddComponentFromInspector(ComponentType type); // Functionality for the Add Component button in the inspector.
+	bool HasComponent(ComponentType type) const;		// Checks if this GameObject has a Component of type 'type'
 	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;
@@ -49,8 +49,7 @@ public:
 
 	bool isInQuadtree = false;
 
-	// Auxiliary variable to help with iterating on the Quadtree
-	bool flag = false;
+	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree
 
 private:
 	bool active = true;

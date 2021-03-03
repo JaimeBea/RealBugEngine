@@ -86,13 +86,20 @@ void ComponentTransform::Load(JsonValue jComponent) {
 	dirty = true;
 }
 
+void ComponentTransform::DuplicateComponent(GameObject& owner) {
+	ComponentTransform* component = (ComponentTransform*)CreateComponentByType(owner, this->GetType());
+	component->SetPosition(this->GetPosition());
+	component->SetRotation(this->GetRotation());
+	component->SetScale(this->GetScale());
+}
+
 void ComponentTransform::InvalidateHierarchy() {
 	Invalidate();
 
 	for (GameObject* child : GetOwner().GetChildren()) {
 		ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
 		if (childTransform != nullptr) {
-			childTransform->Invalidate();
+			childTransform->InvalidateHierarchy();
 		}
 	}
 }

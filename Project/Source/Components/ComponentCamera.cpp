@@ -102,6 +102,11 @@ void ComponentCamera::Load(JsonValue jComponent) {
 	activeCamera = jComponent[JSON_TAG_CAMERA_SELECTED];
 }
 
+void ComponentCamera::DuplicateComponent(GameObject& owner) {
+	ComponentCamera* component = (ComponentCamera*) CreateComponentByType(owner, this->GetType());
+	component->frustum = this->frustum;
+}
+
 Frustum ComponentCamera::BuildDefaultFrustum() const {
 	Frustum newFrustum;
 	newFrustum.SetKind(FrustumSpaceGL, FrustumRightHanded);

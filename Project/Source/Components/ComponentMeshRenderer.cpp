@@ -350,6 +350,12 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	material.ambient.Set(jAmbient[0], jAmbient[1], jAmbient[2]);
 }
 
+void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
+	ComponentMeshRenderer* component = (ComponentMeshRenderer*) CreateComponentByType(owner, this->GetType());
+	component->mesh = this->mesh;
+	component->material = this->material;
+}
+
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActive()) return;
 

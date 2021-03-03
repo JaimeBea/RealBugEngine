@@ -111,13 +111,13 @@ void PanelInspector::Update() {
 				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
 				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
 				if (ImGui::MenuItem("Mesh Renderer")) {
-					selected->AddComponent(ComponentType::MESH); // TODO: Add more than 1 mesh renderer? or all meshes inside the same component?
+					selected->AddComponentFromInspector(ComponentType::MESH); // TODO: Add more than 1 mesh renderer? or all meshes inside the same component?
 				}
 				if (ImGui::MenuItem("Camera")) {
-					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					if (!selected->AddComponentFromInspector(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 				}
 				if (ImGui::MenuItem("Light")) {
-					if (!selected->AddComponent(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					if (!selected->AddComponentFromInspector(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 				}
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();

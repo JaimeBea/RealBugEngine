@@ -25,6 +25,8 @@ void Component::Save(JsonValue jComponent) const {}
 
 void Component::Load(JsonValue jComponent) {}
 
+void Component::DuplicateComponent(GameObject& owner) {}
+
 void Component::Enable() {
 	active = true;
 }

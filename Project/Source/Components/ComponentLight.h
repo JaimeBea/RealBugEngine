@@ -20,6 +20,7 @@ public:
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	void DuplicateComponent(GameObject& owner) override;
 
 public:
 	bool drawGizmos = true;						  // If true, the Gizmos will be drawn on DrawGizmos().

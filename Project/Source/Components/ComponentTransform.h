@@ -17,6 +17,7 @@ public:
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	void DuplicateComponent(GameObject& owner) override;
 
 	void InvalidateHierarchy();						// Marks all the hierarchy of the owner GameObject as 'dirty'
 	void Invalidate();								// Marks this Transform and the BoundingBox of the GameObject as 'dirty'. Used also in the InvalidateHierarchy() recursion.

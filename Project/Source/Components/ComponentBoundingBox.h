@@ -14,6 +14,7 @@ public:
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	void DuplicateComponent(GameObject& owner) override;
 
 	void CalculateWorldBoundingBox(bool force = false); // Recalculates the OBB when the transform of the GameObject has changed. Called on OnTransformUpdate().
 	void DrawBoundingBox();								// Send to render the edges of the worldOBB.
@@ -23,9 +24,10 @@ public:
 	void SetLocalBoundingBox(const AABB& boundingBox);
 
 	// ---------- Getters ---------- //
-	const OBB& GetWorldOBB() const;
+	const AABB& GetLocalAABB() const;
 	const AABB& GetWorldAABB() const;
-
+	const OBB& GetWorldOBB() const;
+	
 private:
 	AABB localAABB = {{0, 0, 0}, {0, 0, 0}}; // Axis Aligned Bounding Box, local to the GameObject
 	AABB worldAABB = {{0, 0, 0}, {0, 0, 0}}; // Axis Aligned Bounding Box in world coordinates. Used for Culling and other camera calculations.

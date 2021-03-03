@@ -144,3 +144,18 @@ void ComponentLight::Load(JsonValue jComponent) {
 	JsonValue jOuterAngle = jComponent[JSON_TAG_OUTER_ANGLE];
 	outerAngle = jOuterAngle;
 }
+
+void ComponentLight::DuplicateComponent(GameObject& owner) {
+	ComponentLight* component = (ComponentLight*) CreateComponentByType(owner, this->GetType());
+	component->drawGizmos = this->drawGizmos;
+	component->lightType = this->lightType;
+	component->pos = this->pos;
+	component->direction = this->direction;
+	component->color = this->color;
+	component->intensity = this->intensity;
+	component->kc = this->kc;
+	component->kl = this->kl;
+	component->kq = this->kq;
+	component->innerAngle = this->innerAngle;
+	component->outerAngle = this->outerAngle;
+}
