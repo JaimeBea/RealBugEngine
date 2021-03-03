@@ -8,6 +8,7 @@ class GameObject;
 class Component {
 public:
 	Component(ComponentType type, GameObject& owner, bool active);
+	virtual ~Component();
 
 	// ------- Core Functions ------ //
 	virtual void Init();						   // Performs the initialisations of the Component that are detached from the constructora. Called from owner->InitComponents().

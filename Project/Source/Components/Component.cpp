@@ -9,6 +9,8 @@ Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	, owner(owner_)
 	, active(active_) {}
 
+Component::~Component() {}
+
 void Component::Init() {}
 
 void Component::Update() {}

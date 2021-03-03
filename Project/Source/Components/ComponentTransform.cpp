@@ -34,19 +34,16 @@ void ComponentTransform::OnEditorUpdate() {
 	float3 scl = scale;
 	float3 rot = localEulerAngles;
 
-	if (ImGui::CollapsingHeader("Transformation")) {
-		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetPosition(pos);
-		}
-		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
-			SetScale(scl);
-		}
+	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetPosition(pos);
+	}
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
+		SetScale(scl);
+	}
 
-		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetRotation(rot);
-		}
-		ImGui::Separator();
+	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetRotation(rot);
 	}
 }
 
@@ -95,7 +92,7 @@ void ComponentTransform::InvalidateHierarchy() {
 	for (GameObject* child : GetOwner().GetChildren()) {
 		ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
 		if (childTransform != nullptr) {
-			childTransform->Invalidate();
+			childTransform->InvalidateHierarchy();
 		}
 	}
 }
@@ -116,6 +113,7 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
+      globalMatrix.Orthogonalize3();
 		} else {
 			globalMatrix = localMatrix;
 		}
@@ -152,6 +150,19 @@ void ComponentTransform::SetRotation(float3 rotation_) {
 
 void ComponentTransform::SetScale(float3 scale_) {
 	scale = scale_;
+	InvalidateHierarchy();
+	for (Component* component : GetOwner().components) {
+		component->OnTransformUpdate();
+	}
+}
+
+void ComponentTransform::SetTRS(float4x4& newTransform_) {
+	position = newTransform_.Col3(3);
+	newTransform_.Orthogonalize3();
+	scale = float3(newTransform_.Col3(0).Length(), newTransform_.Col3(1).Length(), newTransform_.Col3(2).Length());
+	newTransform_.Orthonormalize3();
+	rotation = Quat(newTransform_.SubMatrix(3, 3));
+	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().components) {
 		component->OnTransformUpdate();
