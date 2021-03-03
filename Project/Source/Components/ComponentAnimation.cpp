@@ -51,6 +51,6 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 }
 
 void ComponentAnimation::Update() {
-	OnUpdate();
 	animationController->Update();
+	OnUpdate();
 }

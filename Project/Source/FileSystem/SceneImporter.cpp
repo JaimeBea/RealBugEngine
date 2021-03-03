@@ -36,20 +36,21 @@
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
 
-static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform, std::vector<ResourceAnimation*> animations) {
+static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
+
+	GameObject* gameObject = nullptr;
 
 	if (name.find("$AssimpFbx$") != std::string::npos) { // Auxiliary node
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform, animations);
+			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform);
 		}
 	} else { // Normal node
 		// Create GameObject
-
-		GameObject* gameObject = App->scene->CreateGameObject(parent);
+		gameObject = App->scene->CreateGameObject(parent);
 
 		// Load name
 		gameObject->name = name;
@@ -113,14 +114,11 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity, animations);
-		}		
-
-		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
-		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
-		animationComponet->animationController = new AnimationController(animations[0]);
-		int aux = 0;
+			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity);
+		}
 	}
+
+	return gameObject;
 }
 
 bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
@@ -240,21 +238,24 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 
 		LOG("Material imported.");
 		materials.push_back(material);
-	}
-
-	// Load animations
-	LOG("Importing animations");
-	std::vector<ResourceAnimation*> animations;
-	for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
-		ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
-		animations.push_back(animation);
-	}
+	}	
 
 	// Create scene tree
 	LOG("Importing scene tree.");
-	ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity, animations);
+	GameObject* gameObject = ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
 
-	
+	// Load animations
+	if (assimpScene->mNumAnimations > 0) {
+		LOG("Importing animations");
+		std::vector<ResourceAnimation*> animations;
+		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+			ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
+			animations.push_back(animation);
+		}
+		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
+		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
+		animationComponet->animationController = new AnimationController(animations[0]);
+	}
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);
