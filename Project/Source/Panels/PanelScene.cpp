@@ -126,7 +126,7 @@ void PanelScene::Update() {
 
 		ImVec2 framebufferPosition = ImGui::GetWindowPos();
 		framebufferPosition.y += (ImGui::GetWindowHeight() - size.y);
-		
+
 		// Draw
 		ImGui::Image((void*) App->renderer->renderTexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
