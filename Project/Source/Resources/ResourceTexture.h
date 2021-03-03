@@ -3,6 +3,7 @@
 #include "Resource.h"
 
 #include <string>
+#include <GL/glew.h>
 
 class ResourceTexture : public Resource {
 public:
@@ -12,5 +13,5 @@ public:
 	void Unload() override;
 
 public:
-	unsigned glTexture = 0;
+	const GLuint glTexture = 0;
 };
