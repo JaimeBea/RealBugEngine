@@ -26,12 +26,13 @@ void GameObject::InitComponents() {
 }
 
 void GameObject::Update() {
-	for (Component* component : components) {
-		component->Update();
-	}
-
-	for (GameObject* child : children) {
-		child->Update();
+	if (IsActiveInHierarchy()) {
+		for (Component* component : components) {
+			component->Update();
+		}
+		for (GameObject* child : children) {
+			child->Update();
+		}
 	}
 }
 
@@ -54,6 +55,12 @@ void GameObject::Disable() {
 }
 
 bool GameObject::IsActive() const {
+	return active;
+}
+
+bool GameObject::IsActiveInHierarchy() const {
+	if (parent) return parent->IsActiveInHierarchy() && active;
+
 	return active;
 }
 
@@ -141,7 +148,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 		Component& component = *components[i];
 
 		jComponent[JSON_TAG_TYPE] = (unsigned) component.GetType();
-		jComponent[JSON_TAG_ACTIVE] = component.IsActive();
+		jComponent[JSON_TAG_ACTIVE] = component.IsEnabled();
 		component.Save(jComponent);
 	}
 }

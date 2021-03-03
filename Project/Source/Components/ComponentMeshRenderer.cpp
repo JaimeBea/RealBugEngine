@@ -40,8 +40,8 @@
 #define JSON_TAG_AMBIENT "Ambient"
 
 void ComponentMeshRenderer::OnEditorUpdate() {
-	bool active = IsActive();
-	if (ImGui::Checkbox("Active", &active)) {
+	bool active = IsEnabled();
+	if (ImGui::Checkbox("Enabled", &active)) {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
@@ -351,7 +351,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 }
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
-	if (!IsActive()) return;
+	if (!IsActiveAndEnabled()) return;
 
 	unsigned program = App->programs->defaultProgram;
 
@@ -383,12 +383,12 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 			if (light->lightType == LightType::DIRECTIONAL) {
 				// It takes the first actived Directional Light inside the Pool
-				if (light->IsActive() && directionalLight == nullptr) {
+				if (light->IsActiveAndEnabled() && directionalLight == nullptr) {
 					directionalLight = light;
 					continue;
 				}
 			} else if (light->lightType == LightType::POINT) {
-				if (light->IsActive()) {
+				if (light->IsActiveAndEnabled()) {
 					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(meshPosition, lightPosition);
@@ -429,7 +429,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 					}
 				}
 			} else if (light->lightType == LightType::SPOT) {
-				if (light->IsActive()) {
+				if (light->IsActiveAndEnabled()) {
 					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(meshPosition, lightPosition);

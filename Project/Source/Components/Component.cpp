@@ -3,11 +3,11 @@
 #include "FileSystem/JsonValue.h"
 
 #include "Utils/Leaks.h"
-
+#include "Resources/GameObject.h"
 Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	: type(type_)
 	, owner(owner_)
-	, active(active_) {}
+	, enabled(active_) {}
 
 Component::~Component() {}
 
@@ -26,11 +26,11 @@ void Component::Save(JsonValue jComponent) const {}
 void Component::Load(JsonValue jComponent) {}
 
 void Component::Enable() {
-	active = true;
+	enabled = true;
 }
 
 void Component::Disable() {
-	active = false;
+	enabled = false;
 }
 
 ComponentType Component::GetType() const {
@@ -41,6 +41,10 @@ GameObject& Component::GetOwner() const {
 	return owner;
 }
 
-bool Component::IsActive() const {
-	return active;
+bool Component::IsEnabled() const {
+	return enabled;
+}
+
+bool Component::IsActiveAndEnabled() const {
+	return enabled && owner.IsActiveInHierarchy();
 }

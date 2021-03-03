@@ -29,7 +29,7 @@ void ComponentLight::OnTransformUpdate() {
 }
 
 void ComponentLight::DrawGizmos() {
-	if (IsActive() && drawGizmos) {
+	if (IsActiveAndEnabled() && drawGizmos) {
 		if (lightType == LightType::DIRECTIONAL) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 			dd::cone(transform->GetPosition(), direction * 200, dd::colors::White, 1.0f, 1.0f);
@@ -46,7 +46,7 @@ void ComponentLight::DrawGizmos() {
 }
 
 void ComponentLight::OnEditorUpdate() {
-	bool active = IsActive();
+	bool active = IsEnabled();
 	if (ImGui::Checkbox("Active", &active)) {
 		active ? Enable() : Disable();
 	}
