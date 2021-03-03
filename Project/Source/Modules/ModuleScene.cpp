@@ -259,23 +259,22 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
 	return gameObject;
 }
 
-GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject) {
-	GameObject* newGO = CreateGameObject(gameObject->GetParent());	// ID and parent are set here
+GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject* parent) {
+	GameObject* newGO = CreateGameObject(parent); // ID and parent are set here
 	// Copy Game Object members
-	newGO->name = gameObject->name;
+	newGO->name = gameObject->name + " (copy)";
 
 	// Copy the components
 	for (Component* component : gameObject->components) {
 		component->DuplicateComponent(*newGO);
-		//copy component values
 	}
-
+	newGO->InitComponents();
 	// Duplicate recursively its children
 	for (GameObject* child : gameObject->GetChildren()) {
-
+		DuplicateGameObject(child, newGO);
 	}
 	
-	// Add to quadtree
+	// TODO: Add to quadtree
 	return newGO;
 }
 

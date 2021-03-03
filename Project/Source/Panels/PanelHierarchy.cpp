@@ -52,7 +52,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
-				App->scene->DuplicateGameObject(gameObject);
+				App->scene->DuplicateGameObject(gameObject, gameObject->GetParent());
 			}
 
 			ImGui::Separator();

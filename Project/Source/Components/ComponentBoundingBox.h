@@ -10,6 +10,7 @@ public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
+	void Update() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
@@ -27,7 +28,7 @@ public:
 	const AABB& GetLocalAABB() const;
 	const AABB& GetWorldAABB() const;
 	const OBB& GetWorldOBB() const;
-	
+
 private:
 	AABB localAABB = {{0, 0, 0}, {0, 0, 0}}; // Axis Aligned Bounding Box, local to the GameObject
 	AABB worldAABB = {{0, 0, 0}, {0, 0, 0}}; // Axis Aligned Bounding Box in world coordinates. Used for Culling and other camera calculations.

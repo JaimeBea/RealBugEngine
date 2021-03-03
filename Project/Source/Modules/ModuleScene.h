@@ -28,7 +28,7 @@ public:
 
 	// --- GameObject Management --- //
 	GameObject* CreateGameObject(GameObject* parent);
-	GameObject* DuplicateGameObject(GameObject* parent);
+	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
