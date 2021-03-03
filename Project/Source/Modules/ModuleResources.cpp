@@ -102,7 +102,7 @@ void ImportAsset(const char* filePath) {
 			MaterialImporter::ImportMaterial(filePath, jMeta);
 		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
 			// Shader files
-			 ShaderImporter::ImportShader(filePath, jMeta);
+			ShaderImporter::ImportShader(filePath, jMeta);
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
 			// ModelImporter::ImportModel(filePath, jMeta);
