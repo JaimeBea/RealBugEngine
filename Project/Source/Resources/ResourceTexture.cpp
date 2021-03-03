@@ -14,6 +14,12 @@ ResourceTexture::ResourceTexture(UID id, const char* assetFilePath, const char* 
 	: Resource(id, assetFilePath, resourceFilePath) {}
 
 void ResourceTexture::Load() {
+	// Timer to measure loading a texture
+	MSTimer timer;
+	timer.Start();
+
+	LOG("Loading texture from path: \"%s\".", this->GetAssetFilePath().c_str());
+
 	// Generate image handler
 	unsigned image;
 	ilGenImages(1, &image);
@@ -21,26 +27,26 @@ void ResourceTexture::Load() {
 		ilDeleteImages(1, &image);
 	};
 
+	// Load image
 	ilBindImage(image);
-	bool imageLoaded = ilLoadImage(this->GetAssetFilePath().c_str());
+	bool imageLoaded = ilLoad(IL_DDS, this->GetAssetFilePath().c_str());
 	if (!imageLoaded) {
 		LOG("Failed to load image.");
 		return;
 	}
-	bool imageConverted = ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-	if (!imageConverted) {
-		LOG("Failed to convert image.");
-		return;
-	}
 
-	// Flip image if neccessary
-	ILinfo info;
-	iluGetImageInfo(&info);
-	if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
-		iluFlipImage();
-	}
+	// Generate texture from image
+	glGenTextures(1, &glTexture);
+	glBindTexture(GL_TEXTURE_2D, glTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
+
+	// Generate mipmaps and set filtering and wrapping
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	unsigned timeMs = timer.Stop();
+	LOG("Texture loaded in %ums.", timeMs);
 }
 
 void ResourceTexture::Unload() {
-	glDeleteTextures(1, glTexture);
+	glDeleteTextures(1, &glTexture);
 }
