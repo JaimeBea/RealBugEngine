@@ -233,10 +233,8 @@ void ModuleScene::ClearScene() {
 
 void ModuleScene::RebuildQuadtree() {
 	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
-	for (GameObject& gameObject : gameObjects) {
-		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
-		if (boundingBox == nullptr) continue;
-
+	for (ComponentBoundingBox* boundingBox : ComponentBoundingBox::GetComponents()) {
+		GameObject& gameObject = boundingBox->GetOwner();
 		boundingBox->CalculateWorldBoundingBox();
 		const AABB& worldAABB = boundingBox->GetWorldAABB();
 		quadtree.Add(&gameObject, AABB2D(worldAABB.minPoint.xz(), worldAABB.maxPoint.xz()));

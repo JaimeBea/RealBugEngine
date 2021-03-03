@@ -15,7 +15,6 @@ public:
 	void InitComponents();
 	void Update();
 	void DrawGizmos();
-	void CleanUp();
 	void Enable();
 	void Disable();
 	bool IsActive() const;
@@ -35,6 +34,9 @@ public:
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
+	bool AddComponent(ComponentType type);		 // Functionality for the Add Component button in the inspector.
+	bool HasComponent(ComponentType type) const; // Checks if this GameObject has a Component of type 'type'
+	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);
@@ -70,7 +72,6 @@ inline T* GameObject::GetComponent() const {
 			return (T*) component;
 		}
 	}
-
 	return nullptr;
 }
 

@@ -6,6 +6,7 @@
 #include "Utils/MSTimer.h"
 #include "FileSystem/MeshImporter.h"
 #include "Resources/GameObject.h"
+#include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
@@ -296,21 +297,61 @@ void ModuleCamera::LookAt(float x, float y, float z) {
 }
 
 void ModuleCamera::Focus(const GameObject* gameObject) {
-	if (gameObject == nullptr) return;
+	if (gameObject == nullptr) {
+		// Focus origin
+		SetPosition(float3::zero - GetFront() * 30.f);
+	} else {
+		// Focus a GameObject
+		if (gameObject->HasComponent(ComponentType::MESH)) {
+			// If the GO has Mesh, focus on that mesh
+			ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
+			if (!boundingBox) return;
+			const AABB& worldBoundingBox = boundingBox->GetWorldAABB();
+			if (!worldBoundingBox.IsFinite()) return;
 
-	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
-	if (!boundingBox) return;
-	const AABB& worldBoundingBox = boundingBox->GetWorldAABB();
-	if (!worldBoundingBox.IsFinite()) return;
+			Sphere boundingSphere = worldBoundingBox.MinimalEnclosingSphere();
+			float minHalfAngle = Min(activeFrustum->HorizontalFov(), activeFrustum->VerticalFov()) * 0.5f;
+			float relativeDistance = boundingSphere.r / Sin(minHalfAngle);
+			vec cameraDirection = -activeFrustum->Front().Normalized();
+			vec cameraPosition = boundingSphere.pos + (cameraDirection * relativeDistance);
+			vec modelCenter = boundingSphere.pos;
+			SetPosition(cameraPosition);
+			LookAt(modelCenter.x, modelCenter.y, modelCenter.z);
+		} else {
+			// If it doesn't have Mesh, focus on its children's Meshes. (Looks down all the hierarchy)
+			float3 modelCenter;
+			float distance;
+			if (gameObject->HasChildren()) {
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				float3 minPoint = float3::inf, maxPoint = -float3::inf;
+				CalculateExtremePointsRecursive(gameObject, minPoint, maxPoint);
+				if (minPoint.IsFinite() && maxPoint.IsFinite()) {
+					distance = (maxPoint - minPoint).Length();
+				} else {
+					distance = 30.f;
+				}
+			} else {
+				// But if it doesn't have children, simply return its position as center and the default distance
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				distance = 30.f;
+			}
+			SetPosition(modelCenter - GetFront() * distance);
+			focusDistance = (modelCenter - activeFrustum->Pos()).Length();
+		}
+	}
+}
 
-	Sphere boundingSphere = worldBoundingBox.MinimalEnclosingSphere();
-	float minHalfAngle = Min(activeFrustum->HorizontalFov(), activeFrustum->VerticalFov()) * 0.5f;
-	float relativeDistance = boundingSphere.r / Sin(minHalfAngle);
-	vec cameraDirection = -activeFrustum->Front().Normalized();
-	vec cameraPosition = boundingSphere.pos + (cameraDirection * relativeDistance);
-	vec modelCenter = boundingSphere.pos;
-	SetPosition(cameraPosition);
-	LookAt(modelCenter.x, modelCenter.y, modelCenter.z);
+void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject, float3& minPoint, float3& maxPoint) {
+	for (GameObject* child : gameObject->GetChildren()) {
+		if (child->HasComponent(ComponentType::MESH)) {
+			ComponentBoundingBox* childBoundingBox = child->GetComponent<ComponentBoundingBox>();
+			if (childBoundingBox->GetWorldOBB().MinimalEnclosingAABB().IsFinite()) {
+				minPoint = minPoint.Min(childBoundingBox->GetWorldAABB().minPoint);
+				maxPoint = maxPoint.Max(childBoundingBox->GetWorldAABB().maxPoint);
+			}
+		}
+		if (child->HasChildren()) CalculateExtremePointsRecursive(child, minPoint, maxPoint);
+	}
 }
 
 void ModuleCamera::ViewportResized(int width, int height) {
