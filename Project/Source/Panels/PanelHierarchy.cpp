@@ -44,6 +44,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 
 	ImGui::PushID(label);
 	if (ImGui::BeginPopupContextItem("Options")) {
+		App->editor->selectedGameObject = gameObject;
 		if (gameObject != App->scene->root) {
 			if (ImGui::Selectable("Delete")) {
 				App->scene->DestroyGameObject(gameObject);

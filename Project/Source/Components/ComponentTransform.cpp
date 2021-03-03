@@ -34,19 +34,16 @@ void ComponentTransform::OnEditorUpdate() {
 	float3 scl = scale;
 	float3 rot = localEulerAngles;
 
-	if (ImGui::CollapsingHeader("Transformation")) {
-		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetPosition(pos);
-		}
-		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
-			SetScale(scl);
-		}
+	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetPosition(pos);
+	}
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
+		SetScale(scl);
+	}
 
-		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetRotation(rot);
-		}
-		ImGui::Separator();
+	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetRotation(rot);
 	}
 }
 
@@ -106,6 +103,25 @@ void ComponentTransform::Invalidate() {
 	if (boundingBox) boundingBox->Invalidate();
 }
 
+void ComponentTransform::CalculateGlobalMatrix(bool force) {
+	if (force || dirty) {
+		localMatrix = float4x4::FromTRS(position, rotation, scale);
+
+		GameObject* parent = GetOwner().GetParent();
+		if (parent != nullptr) {
+			ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
+
+			parentTransform->CalculateGlobalMatrix();
+			globalMatrix = parentTransform->globalMatrix * localMatrix;
+      globalMatrix.Orthogonalize3();
+		} else {
+			globalMatrix = localMatrix;
+		}
+
+		dirty = false;
+	}
+}
+
 void ComponentTransform::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
@@ -150,25 +166,6 @@ void ComponentTransform::SetTRS(float4x4& newTransform_) {
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().components) {
 		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::CalculateGlobalMatrix(bool force) {
-	if (force || dirty) {
-		localMatrix = float4x4::FromTRS(position, rotation, scale);
-
-		GameObject* parent = GetOwner().GetParent();
-		if (parent != nullptr) {
-			ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
-
-			parentTransform->CalculateGlobalMatrix();
-			globalMatrix = parentTransform->globalMatrix * localMatrix;
-			globalMatrix.Orthogonalize3();
-		} else {
-			globalMatrix = localMatrix;
-		}
-
-		dirty = false;
 	}
 }
 
