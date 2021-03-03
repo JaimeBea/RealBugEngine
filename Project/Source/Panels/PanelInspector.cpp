@@ -69,6 +69,9 @@ void PanelInspector::Update() {
 				case ComponentType::BOUNDING_BOX:
 					cName = "Bounding Box";
 					break;
+				case ComponentType::ANIMATION:
+					cName = "Animation";
+					break;
 				default:
 					cName = "";
 					break;
