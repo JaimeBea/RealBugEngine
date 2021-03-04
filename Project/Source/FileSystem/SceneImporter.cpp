@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
+#include "Utils/FileDialog.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "Resources/GameObject.h"
@@ -121,7 +122,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	timer.Start();
 
 	// Check for extension support
-	std::string extension = App->files->GetFileExtension(filePath);
+	std::string extension = FileDialog::GetFileExtension(filePath);
 	if (!aiIsExtensionSupported(extension.c_str())) {
 		LOG("Extension is not supported by assimp: \"%s\".", extension);
 		return false;
@@ -162,7 +163,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the model folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to model folder...");
-				std::string modelFolderPath = App->files->GetFileFolder(filePath);
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
 				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
 				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
 			}
@@ -170,7 +171,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the textures folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to textures folder...");
-				std::string materialFile = App->files->GetFileNameAndExtension(materialFilePath.C_Str());
+				std::string materialFile = FileDialog::GetFileNameAndExtension(materialFilePath.C_Str());
 				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFile;
 				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
 			}
@@ -200,7 +201,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the model folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to model folder...");
-				std::string modelFolderPath = App->files->GetFileFolder(filePath);
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
 				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
 				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
 			}
@@ -208,7 +209,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the textures folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to textures folder...");
-				std::string materialFileName = App->files->GetFileName(materialFilePath.C_Str());
+				std::string materialFileName = FileDialog::GetFileName(materialFilePath.C_Str());
 				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
 				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
 			}

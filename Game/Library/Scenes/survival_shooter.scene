@@ -135,17 +135,17 @@
                 {
                     "Type": 6,
                     "Active": true,
-                    "Direction": [
-                        -0.05146452784538269,
-                        -0.9894348978996277,
-                        0.13553571701049806
-                    ],
+                    "LightType": 0,
                     "Color": [
                         1.0,
                         1.0,
                         1.0
                     ],
-                    "Intensity": 1.0
+                    "Intensity": 1.0,
+                    "Kl": 0.0,
+                    "Kq": 0.0,
+                    "InnerAngle": 0.0,
+                    "OuterAngle": 0.0
                 }
             ]
         },

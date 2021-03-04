@@ -23,7 +23,6 @@
 #include "Utils/Leaks.h"
 #include "Utils/FileDialog.h"
 
-
 static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
 
@@ -206,10 +205,10 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::OpenPopup("New scene");
 		break;
 	case Modal::LOAD_SCENE:
-		FileDialog::Init("Load scene",(AllowedExtensionsFlag::ALL),"D:\\MASTER\\TBD-Engine\\Game\\Library\\Scenes");
+		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), "D:\\MASTER\\TBD-Engine\\Game\\Library\\Scenes");
 		break;
 	case Modal::SAVE_SCENE:
-		ImGui::OpenPopup("Save scene");
+		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), "D:\\MASTER\\TBD-Engine\\Game\\Library\\Scenes");
 		break;
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");
@@ -217,7 +216,7 @@ UpdateStatus ModuleEditor::Update() {
 	}
 	modalToOpen = Modal::NONE;
 
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("New scene")) {
 		ImGui::Text("Do you wish to create a new scene?");
 		if (ImGui::Button("New scene")) {
@@ -231,26 +230,16 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndPopup();
 	}
 
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	std::string selectedFile;
-	if (FileDialog::OpenDialog(selectedFile)) {
-			SceneImporter::LoadScene(App->files->GetFileName(selectedFile.c_str()).c_str());
-			ImGui::CloseCurrentPopup();
-		}
+	if (FileDialog::OpenDialog("Load scene", selectedFile)) {
+		SceneImporter::LoadScene(FileDialog::GetFileName(selectedFile.c_str()).c_str());
+		ImGui::CloseCurrentPopup();
+	}
 
-	//ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	//if (ImGui::BeginPopupModal("Save scene")) {
-	//	ImGui::SetItemDefaultFocus();
-	//	if (FileDialog::OpenDialog(selectedFile)) {
-	//		SceneImporter::SaveScene(App->files->GetFileName(selectedFile.c_str()).c_str());
-	//		ImGui::CloseCurrentPopup();
-	//	}
-	//	ImGui::SameLine();
-	//	if (ImGui::Button("Cancel")) {
-	//		ImGui::CloseCurrentPopup();
-	//	}
-	//	ImGui::EndPopup();
-	//}
+	if (FileDialog::OpenDialog("Save scene", selectedFile)) {
+		SceneImporter::SaveScene(FileDialog::GetFileName(selectedFile.c_str()).c_str());
+		ImGui::CloseCurrentPopup();
+	}
 
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Quit")) {
