@@ -41,10 +41,10 @@ GameObject& Component::GetOwner() const {
 	return owner;
 }
 
-bool Component::IsEnabled() const {
+bool Component::IsActive() const {
 	return active;
 }
 
-bool Component::IsActiveAndEnabled() const {
+bool Component::IsActiveInHierarchy() const {
 	return active && owner.IsActiveInHierarchy();
 }

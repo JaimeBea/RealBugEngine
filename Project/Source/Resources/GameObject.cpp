@@ -148,7 +148,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 		Component& component = *components[i];
 
 		jComponent[JSON_TAG_TYPE] = (unsigned) component.GetType();
-		jComponent[JSON_TAG_ACTIVE] = component.IsEnabled();
+		jComponent[JSON_TAG_ACTIVE] = component.IsActive();
 		component.Save(jComponent);
 	}
 }

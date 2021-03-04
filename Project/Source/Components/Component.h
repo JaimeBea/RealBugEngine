@@ -26,12 +26,12 @@ public:
 	// ---------- Getters ---------- //
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;
-	bool IsEnabled() const;
-	bool IsActiveAndEnabled() const;
+	bool IsActive() const;
+	bool IsActiveInHierarchy() const;
 
 private:
 	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.
 	GameObject& owner;							 // References the GameObject this Component applies its functionality to. Its 'parent'.
 
-	bool active = true; // Visibility of the Component. If enabled is false the GameObject behaves as if this Component doesn't exist.
+	bool active = true; // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
 };

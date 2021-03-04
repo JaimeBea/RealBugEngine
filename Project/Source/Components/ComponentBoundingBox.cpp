@@ -22,11 +22,11 @@ void ComponentBoundingBox::OnTransformUpdate() {
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 
-	bool active = IsEnabled();
+	bool active = IsActive();
 
 	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
 
-	if (IsEnabled()) DrawBoundingBox();
+	if (IsActive()) DrawBoundingBox();
 }
 
 void ComponentBoundingBox::Save(JsonValue jComponent) const {
