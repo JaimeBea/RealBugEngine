@@ -351,7 +351,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 }
 
 void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
-	ComponentMeshRenderer* component = (ComponentMeshRenderer*) CreateComponentByType(owner, this->GetType());
+	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
 	component->mesh = this->mesh;
 	component->material = this->material;
 }

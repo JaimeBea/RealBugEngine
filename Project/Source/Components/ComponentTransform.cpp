@@ -87,7 +87,7 @@ void ComponentTransform::Load(JsonValue jComponent) {
 }
 
 void ComponentTransform::DuplicateComponent(GameObject& owner) {
-	ComponentTransform* component = (ComponentTransform*)CreateComponentByType(owner, this->GetType());
+	ComponentTransform* component = owner.CreateComponent<ComponentTransform>();
 	component->SetPosition(this->GetPosition());
 	component->SetRotation(this->GetRotation());
 	component->SetScale(this->GetScale());
