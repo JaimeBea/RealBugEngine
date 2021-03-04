@@ -3,8 +3,6 @@
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"
 #include "Application.h"
-#include "Utils/Logging.h"
-#include "Globals.h"
 
 #include "Utils/Leaks.h"
 
@@ -18,23 +16,18 @@ AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
 	if (animationResource == nullptr) {
 		return false;
-	}
+	}	
 
-	if (loop) {
-		currentTime = currentTime % (animationResource->keyFrames.size() - 1);
-	} else {
-		currentTime = currentTime > animationResource->duration ? animationResource->duration : currentTime;
-	}
-
-	float currentSample = currentTime; //( currentTime * (animationResource->keyFrames.size() - 1) ) / animationResource->duration;
+	float currentSample = (currentTime * (animationResource->keyFrames.size() - 1)) / animationResource->duration;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
 
 	//find in hash by name
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = animationResource->keyFrames[intPart].channels.find(name);
-	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = animationResource->keyFrames[intPart + 1].channels.find(name);
+	unsigned int idNext = intPart == (animationResource->keyFrames.size() - 1) ? 0 : intPart + 1;
+	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = animationResource->keyFrames[idNext].channels.find(name);	
 
-	if (channel == animationResource->keyFrames[intPart].channels.end() && channelNext == animationResource->keyFrames[intPart + 1].channels.end()) {
+	if (channel == animationResource->keyFrames[intPart].channels.end() && channelNext == animationResource->keyFrames[idNext].channels.end()) {
 		return false;
 	}
 
@@ -54,9 +47,12 @@ void AnimationController::Stop() {
 }
 
 void AnimationController::Update() {
-	//currentTime = currentTime + App->time->GetDeltaTime();
-	currentTime = App->time->GetFrameCount();
-	//currentTime = 0;
+	currentTime += App->time->GetDeltaTime();
+	if (loop) {
+		currentTime = currentTime > animationResource->duration ? 0 : currentTime;
+	} else {
+		currentTime = currentTime > animationResource->duration ? animationResource->duration : currentTime;
+	}
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {

@@ -1,10 +1,22 @@
 #include "ComponentAnimation.h"
+
+#include "Application.h"
 #include "Resources/GameObject.h"
 #include "Resources/AnimationController.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
+#include "Modules/ModuleEditor.h"
 
 #include "Utils/Leaks.h"
+
+void ComponentAnimation::Update() {
+	animationController->Update();
+	OnUpdate();
+}
+
+void ComponentAnimation::OnEditorUpdate() {
+	ImGui::TextColored(App->editor->titleColor, "Animation");
+}
 
 void ComponentAnimation::OnStop() {
 	animationController->Stop();
@@ -48,9 +60,4 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations(child);
 	}
-}
-
-void ComponentAnimation::Update() {
-	OnUpdate();
-	animationController->Update();
 }
