@@ -120,6 +120,7 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
+      globalMatrix.Orthogonalize3();
 		} else {
 			globalMatrix = localMatrix;
 		}
@@ -156,6 +157,19 @@ void ComponentTransform::SetRotation(float3 rotation_) {
 
 void ComponentTransform::SetScale(float3 scale_) {
 	scale = scale_;
+	InvalidateHierarchy();
+	for (Component* component : GetOwner().components) {
+		component->OnTransformUpdate();
+	}
+}
+
+void ComponentTransform::SetTRS(float4x4& newTransform_) {
+	position = newTransform_.Col3(3);
+	newTransform_.Orthogonalize3();
+	scale = float3(newTransform_.Col3(0).Length(), newTransform_.Col3(1).Length(), newTransform_.Col3(2).Length());
+	newTransform_.Orthonormalize3();
+	rotation = Quat(newTransform_.SubMatrix(3, 3));
+	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().components) {
 		component->OnTransformUpdate();

@@ -29,6 +29,7 @@ public:
 	void SetRotation(Quat rotation);
 	void SetRotation(float3 rotation);
 	void SetScale(float3 scale);
+	void SetTRS(float4x4& newTransform);
 
 	// ---------- Getters ---------- //
 	float3 GetPosition() const;
