@@ -7,7 +7,7 @@
 Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	: type(type_)
 	, owner(owner_)
-	, enabled(active_) {}
+	, active(active_) {}
 
 Component::~Component() {}
 
@@ -26,11 +26,11 @@ void Component::Save(JsonValue jComponent) const {}
 void Component::Load(JsonValue jComponent) {}
 
 void Component::Enable() {
-	enabled = true;
+	active = true;
 }
 
 void Component::Disable() {
-	enabled = false;
+	active = false;
 }
 
 ComponentType Component::GetType() const {
@@ -42,9 +42,9 @@ GameObject& Component::GetOwner() const {
 }
 
 bool Component::IsEnabled() const {
-	return enabled;
+	return active;
 }
 
 bool Component::IsActiveAndEnabled() const {
-	return enabled && owner.IsActiveInHierarchy();
+	return active && owner.IsActiveInHierarchy();
 }
