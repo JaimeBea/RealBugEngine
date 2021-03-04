@@ -17,6 +17,13 @@
 
 void GameObject::Init() {
 	id = GenerateUID();
+	name = "GameObject";
+	components.clear();
+	isInQuadtree = false;
+	flag = false;
+	active = true;
+	parent = nullptr;
+	children.clear();
 }
 
 void GameObject::InitComponents() {

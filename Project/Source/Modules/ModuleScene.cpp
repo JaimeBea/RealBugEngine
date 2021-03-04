@@ -273,8 +273,6 @@ GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject*
 	for (GameObject* child : gameObject->GetChildren()) {
 		DuplicateGameObject(child, newGO);
 	}
-	
-	// TODO: Add to quadtree
 	return newGO;
 }
 
@@ -297,7 +295,6 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 		delete component;
 	}
 	gameObject->components.clear();
-	gameObject->Enable();
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 }
