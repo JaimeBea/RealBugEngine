@@ -64,7 +64,7 @@ bool GameObject::IsActiveInHierarchy() const {
 	return active;
 }
 
-UID GameObject::GetID() {
+UID GameObject::GetID() const {
 	return id;
 }
 

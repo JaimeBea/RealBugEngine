@@ -19,7 +19,7 @@ public:
 	void Disable();
 	bool IsActive() const;
 	bool IsActiveInHierarchy() const;
-	UID GetID();
+	UID GetID() const;
 
 	template<class T> T* CreateComponent(bool active = true);
 	template<class T> T* GetComponent() const;

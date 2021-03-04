@@ -22,9 +22,9 @@ void ComponentBoundingBox::OnTransformUpdate() {
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 
-	bool bbActive = IsEnabled();
+	bool active = IsEnabled();
 
-	if (ImGui::Checkbox("Draw", &bbActive)) bbActive ? Enable() : Disable();
+	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
 
 	if (IsEnabled()) DrawBoundingBox();
 }

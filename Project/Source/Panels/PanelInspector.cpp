@@ -38,7 +38,7 @@ void PanelInspector::Update() {
 			}
 			bool active = selected->IsActive();
 			if (ImGui::Checkbox("Active##game_object", &active)) {
-				//EventSystem would generate an event here
+				// TODO: EventSystem would generate an event here
 				if (active) {
 					selected->Enable();
 				} else {
