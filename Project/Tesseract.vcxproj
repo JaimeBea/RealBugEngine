@@ -20,6 +20,8 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_lzmasdk.h" />
     <ClInclude Include="Libs\PhysicsFS\physfs_miniz.h" />
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
+    <ClInclude Include="Source\Resources\ResourceSkybox.h" />
+    <ClInclude Include="Source\FileSystem\SkyboxImporter.h" />
     <ClInclude Include="Source\FileSystem\MaterialImporter.h" />
     <ClInclude Include="Source\FileSystem\ModelImporter.h" />
     <ClInclude Include="Source\FileSystem\ShaderImporter.h" />
@@ -186,6 +188,8 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_windows.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_winrt.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
+    <ClCompile Include="Source\Resources\ResourceSkybox.cpp" />
+    <ClCompile Include="Source\FileSystem\SkyboxImporter.cpp" />
     <ClCompile Include="Source\FileSystem\MaterialImporter.cpp" />
     <ClCompile Include="Source\FileSystem\ModelImporter.cpp" />
     <ClCompile Include="Source\FileSystem\ShaderImporter.cpp" />
