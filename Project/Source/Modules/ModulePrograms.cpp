@@ -37,16 +37,16 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 	return shaderId;
 }
 
-static unsigned CreateProgram(const char* vertexShaderFilePath, const char* fragmentShaderFilePath) {
+unsigned ModulePrograms::CreateProgram(const char* ShaderFilePath) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
 	LOG("Compiling shaders...");
-	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, vertexShaderFilePath);
+	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, ShaderFilePath);
 	DEFER {
 		glDeleteShader(vertexShader);
 	};
-	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, fragmentShaderFilePath);
+	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, ShaderFilePath);
 	DEFER {
 		glDeleteShader(fragmentShader);
 	};
@@ -77,11 +77,11 @@ static unsigned CreateProgram(const char* vertexShaderFilePath, const char* frag
 	return programId;
 }
 
-bool ModulePrograms::Start() {
-	defaultProgram = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
-	phongPbrProgram = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
-	skyboxProgram = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
+void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
+	glDeleteProgram(IdProgram);
+}
 
+bool ModulePrograms::Start() {
 	return true;
 }
 
