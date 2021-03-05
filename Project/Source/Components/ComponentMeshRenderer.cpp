@@ -397,8 +397,8 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->GetDiffuseColor().ptr());
 		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->GetSpecularColor().ptr());
-		int hasDiffuseMap = (material->HasDiffuseMap()) ? 1 : 0;
-		int hasSpecularMap = (material->HasSpecularMap()) ? 1 : 0;
+		int hasDiffuseMap = (material->GetDiffuseMap()) ? 1 : 0;
+		int hasSpecularMap = (material->GetSpecularMap()) ? 1 : 0;
 		int hasShininessInAlphaChannel = (material->HasSmoothnessInAlphaChannel()) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
