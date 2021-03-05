@@ -400,13 +400,11 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		program = App->programs->phongPbrProgram;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
-		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
-		glUniform1f(glGetUniformLocation(program, "shininess"), material->shininess);
-
-		int hasDiffuseMap = (material->hasDiffuseMap) ? 1 : 0;
-		int hasSpecularMap = (material->hasSpecularMap) ? 1 : 0;
-		int hasShininessInAlphaChannel = (material->hasShininessInAlphaChannel) ? 1 : 0;
+		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->GetDiffuseColor().ptr());
+		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->GetSpecularColor().ptr());
+		int hasDiffuseMap = (material->GetDiffuseMap()) ? 1 : 0;
+		int hasSpecularMap = (material->GetSpecularMap()) ? 1 : 0;
+		int hasShininessInAlphaChannel = (material->HasSmoothnessInAlphaChannel()) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
