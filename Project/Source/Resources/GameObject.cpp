@@ -26,12 +26,13 @@ void GameObject::InitComponents() {
 }
 
 void GameObject::Update() {
-	for (Component* component : components) {
-		component->Update();
-	}
-
-	for (GameObject* child : children) {
-		child->Update();
+	if (IsActiveInHierarchy()) {
+		for (Component* component : components) {
+			component->Update();
+		}
+		for (GameObject* child : children) {
+			child->Update();
+		}
 	}
 }
 
@@ -57,7 +58,13 @@ bool GameObject::IsActive() const {
 	return active;
 }
 
-UID GameObject::GetID() {
+bool GameObject::IsActiveInHierarchy() const {
+	if (parent) return parent->IsActiveInHierarchy() && active;
+
+	return active;
+}
+
+UID GameObject::GetID() const {
 	return id;
 }
 

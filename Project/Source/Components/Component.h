@@ -27,6 +27,7 @@ public:
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;
 	bool IsActive() const;
+	bool IsActiveInHierarchy() const;
 
 private:
 	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.

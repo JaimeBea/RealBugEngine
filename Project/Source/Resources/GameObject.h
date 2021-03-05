@@ -18,8 +18,8 @@ public:
 	void Enable();
 	void Disable();
 	bool IsActive() const;
-
-	UID GetID();
+	bool IsActiveInHierarchy() const;
+	UID GetID() const;
 
 	template<class T> T* CreateComponent(bool active = true);
 	template<class T> T* GetComponent() const;
