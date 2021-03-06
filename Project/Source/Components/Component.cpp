@@ -1,6 +1,7 @@
 #include "Component.h"
 
 #include "FileSystem/JsonValue.h"
+#include "Resources/GameObject.h"
 
 #include "Utils/Leaks.h"
 
@@ -48,4 +49,8 @@ UID Component::GetID() const {
 
 bool Component::IsActive() const {
 	return active;
+}
+
+bool Component::IsActiveInHierarchy() const {
+	return active && owner->IsActiveInHierarchy();
 }

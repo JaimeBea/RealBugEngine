@@ -17,8 +17,12 @@
 
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
-	ImGui::Checkbox("Draw", &bbActive);
-	if (bbActive) DrawBoundingBox();
+
+	bool active = IsActive();
+
+	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
+
+	if (IsActive()) DrawBoundingBox();
 }
 
 void ComponentBoundingBox::Save(JsonValue jComponent) const {

@@ -34,13 +34,15 @@ void GameObject::InitComponents() {
 }
 
 void GameObject::Update() {
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
-		component->Update();
-	}
+	if (IsActiveInHierarchy()) {
+		for (const std::pair<ComponentType, UID>& pair : components) {
+			Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+			component->Update();
+		}
 
-	for (GameObject* child : children) {
-		child->Update();
+		for (GameObject* child : children) {
+			child->Update();
+		}
 	}
 }
 
@@ -67,6 +69,12 @@ bool GameObject::IsActive() const {
 	return active;
 }
 
+bool GameObject::IsActiveInHierarchy() const {
+	if (parent) return parent->IsActiveInHierarchy() && active;
+
+	return active;
+}
+
 void GameObject::Destroy() {
 	while (!components.empty()) {
 		std::pair<ComponentType, UID> pair = components.back();
@@ -76,7 +84,7 @@ void GameObject::Destroy() {
 	SetParent(nullptr);
 }
 
-UID GameObject::GetID() {
+UID GameObject::GetID() const {
 	return id;
 }
 

@@ -31,19 +31,22 @@ void PanelInspector::Update() {
 			ImGui::SameLine();
 			ImGui::TextColored(App->editor->textColor, "%llu", selected->GetID());
 
-			char name[100];
-			sprintf_s(name, 100, "%s", selected->name.c_str());
-			if (ImGui::InputText("Name", name, 100)) {
-				selected->name = name;
-			}
 			bool active = selected->IsActive();
-			if (ImGui::Checkbox("Active##game_object", &active)) {
+			if (ImGui::Checkbox("##game_object", &active)) {
+				// TODO: EventSystem would generate an event here
 				if (active) {
 					selected->Enable();
 				} else {
 					selected->Disable();
 				}
 			}
+			ImGui::SameLine();
+			char name[100];
+			sprintf_s(name, 100, "%s", selected->name.c_str());
+			if (ImGui::InputText("", name, 100)) {
+				selected->name = name;
+			}
+
 			// TODO: Fix Me
 			ImGui::SameLine();
 			HelpMarker("To Fix it.");
