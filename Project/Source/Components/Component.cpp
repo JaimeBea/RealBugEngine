@@ -4,9 +4,10 @@
 
 #include "Utils/Leaks.h"
 
-Component::Component(ComponentType type_, GameObject& owner_, bool active_)
+Component::Component(ComponentType type_, GameObject* owner_, UID id_, bool active_)
 	: type(type_)
 	, owner(owner_)
+	, id(id_)
 	, active(active_) {}
 
 Component::~Component() {}
@@ -38,7 +39,11 @@ ComponentType Component::GetType() const {
 }
 
 GameObject& Component::GetOwner() const {
-	return owner;
+	return *owner;
+}
+
+UID Component::GetID() const {
+	return id;
 }
 
 bool Component::IsActive() const {

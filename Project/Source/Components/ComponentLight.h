@@ -12,9 +12,10 @@ enum class LightType {
 
 class ComponentLight : public Component {
 public:
-	REGISTER_COMPONENT(ComponentLight, ComponentType::LIGHT); // Refer to ComponentType for the Constructor
+	REGISTER_COMPONENT(ComponentLight, ComponentType::LIGHT, false); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
+	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;

@@ -302,7 +302,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 		SetPosition(float3::zero - GetFront() * 30.f);
 	} else {
 		// Focus a GameObject
-		if (gameObject->HasComponent(ComponentType::MESH)) {
+		if (gameObject->HasComponent<ComponentMeshRenderer>()) {
 			// If the GO has Mesh, focus on that mesh
 			ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 			if (!boundingBox) return;
@@ -343,7 +343,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 
 void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject, float3& minPoint, float3& maxPoint) {
 	for (GameObject* child : gameObject->GetChildren()) {
-		if (child->HasComponent(ComponentType::MESH)) {
+		if (child->HasComponent<ComponentMeshRenderer>()) {
 			ComponentBoundingBox* childBoundingBox = child->GetComponent<ComponentBoundingBox>();
 			if (childBoundingBox->GetWorldOBB().MinimalEnclosingAABB().IsFinite()) {
 				minPoint = minPoint.Min(childBoundingBox->GetWorldAABB().minPoint);

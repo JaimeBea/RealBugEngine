@@ -7,15 +7,14 @@
 
 class ComponentBoundingBox : public Component {
 public:
-	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX); // Refer to ComponentType for the Constructor
+	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX, false); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
-	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 
-	void CalculateWorldBoundingBox(bool force = false); // Recalculates the OBB when the transform of the GameObject has changed. Called on OnTransformUpdate().
+	void CalculateWorldBoundingBox(bool force = false); // Recalculates the OBB when the transform of the GameObject has changed.
 	void DrawBoundingBox();								// Send to render the edges of the worldOBB.
 
 	// ---------- Setters ---------- //
@@ -23,8 +22,8 @@ public:
 	void SetLocalBoundingBox(const AABB& boundingBox);
 
 	// ---------- Getters ---------- //
-	const OBB& GetWorldOBB() const;
-	const AABB& GetWorldAABB() const;
+	const OBB& GetWorldOBB();
+	const AABB& GetWorldAABB();
 
 private:
 	AABB localAABB = {{0, 0, 0}, {0, 0, 0}}; // Axis Aligned Bounding Box, local to the GameObject

@@ -6,9 +6,10 @@
 
 class ComponentCamera : public Component {
 public:
-	REGISTER_COMPONENT(ComponentCamera, ComponentType::CAMERA); // Refer to ComponentType for the Constructor
+	REGISTER_COMPONENT(ComponentCamera, ComponentType::CAMERA, false); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
+	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;

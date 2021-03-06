@@ -1,13 +1,14 @@
 #pragma once
 
-#include "ComponentType.h"
+#include "Components/ComponentType.h"
+#include "Utils/UID.h"
 
 class JsonValue;
 class GameObject;
 
 class Component {
 public:
-	Component(ComponentType type, GameObject& owner, bool active);
+	Component(ComponentType type, GameObject* owner, UID id, bool active);
 	virtual ~Component();
 
 	// ------- Core Functions ------ //
@@ -26,11 +27,12 @@ public:
 	// ---------- Getters ---------- //
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;
+	UID GetID() const;
 	bool IsActive() const;
 
 private:
 	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.
-	GameObject& owner;							 // References the GameObject this Component applies its functionality to. Its 'parent'.
-
-	bool active = true; // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
+	GameObject* owner = nullptr;				 // References the GameObject this Component applies its functionality to. Its 'parent'.
+	UID id = 0;									 // Unique identifier for the component
+	bool active = true;							 // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
 };

@@ -12,7 +12,7 @@ struct aiMesh;
 
 class ComponentMeshRenderer : public Component {
 public:
-	REGISTER_COMPONENT(ComponentMeshRenderer, ComponentType::MESH);
+	REGISTER_COMPONENT(ComponentMeshRenderer, ComponentType::MESH_RENDERER, true);
 
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;

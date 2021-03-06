@@ -15,10 +15,6 @@
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX "LocalBoundingBox"
 
-void ComponentBoundingBox::OnTransformUpdate() {
-	CalculateWorldBoundingBox(true);
-}
-
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 	ImGui::Checkbox("Draw", &bbActive);
@@ -60,6 +56,8 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force) {
 }
 
 void ComponentBoundingBox::DrawBoundingBox() {
+	CalculateWorldBoundingBox();
+
 	float3 points[8];
 	worldOBB.GetCornerPoints(points);
 
@@ -79,10 +77,12 @@ void ComponentBoundingBox::Invalidate() {
 	dirty = true;
 }
 
-const OBB& ComponentBoundingBox::GetWorldOBB() const {
+const OBB& ComponentBoundingBox::GetWorldOBB() {
+	CalculateWorldBoundingBox();
 	return worldOBB;
 }
 
-const AABB& ComponentBoundingBox::GetWorldAABB() const {
+const AABB& ComponentBoundingBox::GetWorldAABB() {
+	CalculateWorldBoundingBox();
 	return worldAABB;
 }
