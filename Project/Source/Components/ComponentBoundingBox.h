@@ -10,7 +10,6 @@ public:
 	REGISTER_COMPONENT(ComponentBoundingBox, ComponentType::BOUNDING_BOX); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
-	void Update() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;

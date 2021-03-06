@@ -15,10 +15,6 @@
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX "LocalBoundingBox"
 
-void ComponentBoundingBox::Update() {
-	CalculateWorldBoundingBox();
-}
-
 void ComponentBoundingBox::OnTransformUpdate() {
 	CalculateWorldBoundingBox(true);
 }
