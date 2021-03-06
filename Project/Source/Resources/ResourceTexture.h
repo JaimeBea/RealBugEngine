@@ -12,5 +12,5 @@ public:
 	void Unload() override;
 
 public:
-	unsigned glTexture = 0;
+	unsigned int glTexture = 0;
 };
