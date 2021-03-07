@@ -219,14 +219,17 @@ UpdateStatus ModuleEditor::Update() {
 	}
 	modalToOpen = Modal::NONE;
 
-	ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("New scene")) {
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("New scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
 		ImGui::Text("Do you wish to create a new scene?");
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 140);
 		if (ImGui::Button("New scene")) {
 			App->scene->CreateEmptyScene();
 			ImGui::CloseCurrentPopup();
 		}
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
@@ -244,13 +247,16 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::CloseCurrentPopup();
 	}
 
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize)) {
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
 		ImGui::Text("Do you really want to quit?");
-		if (ImGui::Button("Quit")) {
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Quit", ImVec2(50, 20))) {
 			return UpdateStatus::STOP;
 		}
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}

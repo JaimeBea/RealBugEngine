@@ -61,8 +61,6 @@ public:
 	float dragSpeed3f = 0.005f;
 	float dragSpeed5f = 0.00005f;
 
-
 private:
 	std::string selectedFile = "";
-
 };

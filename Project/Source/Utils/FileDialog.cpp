@@ -1,11 +1,12 @@
 #include "FileDialog.h"
 
-#include "imgui.h"
 #include "Application.h"
 
+#include "imgui.h"
 #include "IconsForkAwesome.h"
 
 #include "Math/MathFunc.h"
+
 #include <algorithm>
 #include <windows.h>
 #include <vector>

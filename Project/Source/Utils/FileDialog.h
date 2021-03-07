@@ -15,6 +15,7 @@ namespace FileDialog {
 	std::vector<std::string> GetDrives();
 	std::vector<std::string> GetFilesInFolder(const char* folderPath, AllowedExtensionsFlag extFilter = AllowedExtensionsFlag::ALL);
 	std::vector<std::string> GetFileExtensions(AllowedExtensionsFlag ext);
+
 	std::string GetFileNameAndExtension(const char* filePath);
 	std::string GetFileName(const char* filePath);
 	std::string GetFileExtension(const char* filePath);
