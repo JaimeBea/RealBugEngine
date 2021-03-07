@@ -10,36 +10,40 @@ class GameObject;
 
 class ModuleRender : public Module {
 public:
+	// ------- Core Functions ------ //
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
 
-	void ViewportResized(int width, int height);
-
-	void SetVSync(bool vsync);
+	void ViewportResized(int width, int height); // Resets the GL FrameBuffer. Called when the PanelViewport is resized.
+	void SetVSync(bool vsync);					 // Activates or deactivates Vertical Sync.
 
 public:
-	void* context = nullptr;
+	void* context = nullptr; // SDL context.
+
+	// - Render Buffer GL pointers - //
 	unsigned renderTexture = 0;
 	unsigned depthRenderbuffer = 0;
 	unsigned framebuffer = 0;
 
+	// ------- Viewport Size ------- //
 	unsigned viewportWidth = 0;
 	unsigned viewportHeight = 0;
 
-	float3 clearColor = {0.1f, 0.1f, 0.1f};
-
+	// -- Debugging Tools Toggles -- //
 	bool drawQuadtree = true;
 	bool drawAllBoundingBoxes = false;
 	bool skyboxActive = true;
-	float3 ambientColor = {0.0f, 0.0f, 0.0f};
+
+	float3 ambientColor = {0.0f, 0.0f, 0.0f}; // Color of ambient Light
+	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
 
 private:
-	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
-	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
-	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);
-	void DrawGameObject(GameObject* gameObject);
-	void DrawSkyBox();
+	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb); // Draws the quadrtee nodes if 'drawQuadtree' is set to true.
+	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
+	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
+	void DrawGameObject(GameObject* gameObject);											// ??
+	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
 };

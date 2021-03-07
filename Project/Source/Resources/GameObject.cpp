@@ -26,12 +26,13 @@ void GameObject::InitComponents() {
 }
 
 void GameObject::Update() {
-	for (Component* component : components) {
-		component->Update();
-	}
-
-	for (GameObject* child : children) {
-		child->Update();
+	if (IsActiveInHierarchy()) {
+		for (Component* component : components) {
+			component->Update();
+		}
+		for (GameObject* child : children) {
+			child->Update();
+		}
 	}
 }
 
@@ -57,7 +58,13 @@ bool GameObject::IsActive() const {
 	return active;
 }
 
-UID GameObject::GetID() {
+bool GameObject::IsActiveInHierarchy() const {
+	if (parent) return parent->IsActiveInHierarchy() && active;
+
+	return active;
+}
+
+UID GameObject::GetID() const {
 	return id;
 }
 
@@ -107,6 +114,26 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	if (GetParent() == nullptr) return false;
 	if (GetParent() == gameObject) return true;
 	return GetParent()->IsDescendantOf(gameObject);
+}
+
+bool GameObject::AddComponent(ComponentType type) {
+	if (HasComponent(type)) return false;
+	CreateComponentByType(*this, type);
+	InitComponents();
+	return true;
+}
+
+bool GameObject::HasComponent(ComponentType type) const {
+	for (Component* component : components) {
+		if (component->GetType() == type) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool GameObject::HasChildren() const {
+	return !children.empty();
 }
 
 void GameObject::Save(JsonValue jGameObject) const {

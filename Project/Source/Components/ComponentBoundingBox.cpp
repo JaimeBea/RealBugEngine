@@ -1,8 +1,12 @@
+#pragma once
 #include "ComponentBoundingBox.h"
 
+#include "Globals.h"
+#include "Application.h"
 #include "Utils/Logging.h"
 #include "Resources/GameObject.h"
 #include "Components/ComponentTransform.h"
+#include "Modules/ModuleEditor.h"
 
 #include "debugdraw.h"
 #include "Math/float3x3.h"
@@ -13,6 +17,16 @@
 
 void ComponentBoundingBox::OnTransformUpdate() {
 	CalculateWorldBoundingBox(true);
+}
+
+void ComponentBoundingBox::OnEditorUpdate() {
+	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
+
+	bool active = IsActive();
+
+	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
+
+	if (IsActive()) DrawBoundingBox();
 }
 
 void ComponentBoundingBox::Save(JsonValue jComponent) const {

@@ -11,8 +11,7 @@
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
-#include "Components/ComponentMesh.h"
-#include "Components/ComponentMaterial.h"
+#include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Modules/ModuleInput.h"
@@ -197,9 +196,9 @@ void ModuleScene::CreateEmptyScene() {
 	root = CreateGameObject(nullptr);
 	root->name = "Scene";
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
-	sceneTransform->SetPosition(float3(0, 0, 0));
+	/*sceneTransform->SetPosition(float3(0, 0, 0));
 	sceneTransform->SetRotation(Quat::identity);
-	sceneTransform->SetScale(float3(1, 1, 1));
+	sceneTransform->SetScale(float3(1, 1, 1));*/
 	root->InitComponents();
 
 	// Create Directional Light
@@ -234,10 +233,8 @@ void ModuleScene::ClearScene() {
 
 void ModuleScene::RebuildQuadtree() {
 	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
-	for (GameObject& gameObject : gameObjects) {
-		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
-		if (boundingBox == nullptr) continue;
-
+	for (ComponentBoundingBox* boundingBox : ComponentBoundingBox::GetComponents()) {
+		GameObject& gameObject = boundingBox->GetOwner();
 		boundingBox->CalculateWorldBoundingBox();
 		const AABB& worldAABB = boundingBox->GetWorldAABB();
 		quadtree.Add(&gameObject, AABB2D(worldAABB.minPoint.xz(), worldAABB.maxPoint.xz()));

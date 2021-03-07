@@ -1,13 +1,15 @@
 #include "Component.h"
 
 #include "FileSystem/JsonValue.h"
+#include "Resources/GameObject.h"
 
 #include "Utils/Leaks.h"
-
 Component::Component(ComponentType type_, GameObject& owner_, bool active_)
 	: type(type_)
 	, owner(owner_)
 	, active(active_) {}
+
+Component::~Component() {}
 
 void Component::Init() {}
 
@@ -41,4 +43,8 @@ GameObject& Component::GetOwner() const {
 
 bool Component::IsActive() const {
 	return active;
+}
+
+bool Component::IsActiveInHierarchy() const {
+	return active && owner.IsActiveInHierarchy();
 }

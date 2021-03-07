@@ -213,6 +213,9 @@ UpdateStatus ModuleEditor::Update() {
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");
 		break;
+	case Modal::COMPONENT_EXISTS:
+		ImGui::OpenPopup("Already existing Component");
+		break;
 	}
 	modalToOpen = Modal::NONE;
 
@@ -242,12 +245,22 @@ UpdateStatus ModuleEditor::Update() {
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Quit")) {
+	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize)) {
 		ImGui::Text("Do you really want to quit?");
 		if (ImGui::Button("Quit")) {
 			return UpdateStatus::STOP;
 		}
 		ImGui::SameLine();
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+	// ALREADY EXISTING COMPONENT MODAL
+	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Already existing Component", nullptr, ImGuiWindowFlags_NoResize)) {
+		ImGui::PushTextWrapPos();
+		ImGui::Text("A Component of this type already exists in this GameObject.\nMultiple instances of this type of Component are not allowed in the same GameObject.");
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
@@ -295,6 +308,12 @@ UpdateStatus ModuleEditor::Update() {
 
 UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
+
+	// Deleting Components
+	if (panelInspector.GetComponentToDelete()) {
+		selectedGameObject->RemoveComponent(panelInspector.GetComponentToDelete());
+		panelInspector.SetComponentToDelete(nullptr);
+	}
 
 	// Draw to default frame buffer (main window)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
