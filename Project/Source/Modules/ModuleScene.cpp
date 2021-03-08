@@ -231,7 +231,7 @@ void ModuleScene::ClearScene() {
 
 void ModuleScene::RebuildQuadtree() {
 	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
-	for (ComponentBoundingBox& boundingBox : App->scene->boundingBoxComponents) {
+	for (ComponentBoundingBox& boundingBox : boundingBoxComponents) {
 		GameObject& gameObject = boundingBox.GetOwner();
 		boundingBox.CalculateWorldBoundingBox();
 		const AABB& worldAABB = boundingBox.GetWorldAABB();
@@ -276,7 +276,8 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	}
 
 	gameObjectsIdMap.erase(gameObject->GetID());
-	gameObject->Destroy();
+	gameObject->DestroyComponents();
+	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 }
 

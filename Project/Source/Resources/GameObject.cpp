@@ -75,13 +75,12 @@ bool GameObject::IsActiveInHierarchy() const {
 	return active;
 }
 
-void GameObject::Destroy() {
+void GameObject::DestroyComponents() {
 	while (!components.empty()) {
 		std::pair<ComponentType, UID> pair = components.back();
 		RemoveComponentByTypeAndId(pair.first, pair.second);
 		components.pop_back();
 	}
-	SetParent(nullptr);
 }
 
 UID GameObject::GetID() const {

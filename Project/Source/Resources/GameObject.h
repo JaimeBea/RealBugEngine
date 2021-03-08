@@ -16,11 +16,12 @@ public:
 	void InitComponents();
 	void Update();
 	void DrawGizmos();
+	void DestroyComponents();
+
 	void Enable();
 	void Disable();
 	bool IsActive() const;
 	bool IsActiveInHierarchy() const;
-	void Destroy();
 
 	UID GetID() const;
 
