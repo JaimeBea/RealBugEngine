@@ -60,10 +60,8 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force) {
 }
 
 void ComponentBoundingBox::DrawBoundingBox() {
-	CalculateWorldBoundingBox();
-
 	float3 points[8];
-	worldOBB.GetCornerPoints(points);
+	GetWorldOBB().GetCornerPoints(points);
 
 	// Reorder points for drawing
 	float3 aux;
