@@ -55,7 +55,7 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 		float3 position;
 		Quat rotation;
 		float3 scale;
-		matrix.Decompose(position, rotation, scale);
+		matrix.Decompose(position, rotation, scale);// TODO: this fails on non-uniform scale
 		transform->SetPosition(position);
 		transform->SetRotation(rotation);
 		transform->SetScale(scale);

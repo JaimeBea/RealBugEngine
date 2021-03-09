@@ -59,10 +59,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 			}
 
-			ImGui::Selectable("Duplicate");
-			ImGui::SameLine();
-			HelpMarker("To implement");
-			// TODO: Duplicate Objects
+			if (ImGui::Selectable("Duplicate")) {
+				App->scene->DuplicateGameObject(gameObject, gameObject->GetParent());
+			}
 
 			ImGui::Separator();
 		}

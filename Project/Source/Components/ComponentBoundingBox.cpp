@@ -43,6 +43,12 @@ void ComponentBoundingBox::Load(JsonValue jComponent) {
 	dirty = true;
 }
 
+void ComponentBoundingBox::DuplicateComponent(GameObject& owner) {
+	ComponentBoundingBox* component = owner.CreateComponent<ComponentBoundingBox>();
+	component->SetLocalBoundingBox(this->GetLocalAABB());
+	component->bbActive = this->bbActive;
+}
+
 void ComponentBoundingBox::SetLocalBoundingBox(const AABB& boundingBox) {
 	localAABB = boundingBox;
 	dirty = true;
@@ -87,4 +93,8 @@ const OBB& ComponentBoundingBox::GetWorldOBB() {
 const AABB& ComponentBoundingBox::GetWorldAABB() {
 	CalculateWorldBoundingBox();
 	return worldAABB;
+}
+
+const OBB& ComponentBoundingBox::GetWorldOBB() const {
+	return worldOBB;
 }

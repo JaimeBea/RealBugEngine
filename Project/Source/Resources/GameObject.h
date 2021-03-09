@@ -39,6 +39,7 @@ public:
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
+	bool HasComponent(ComponentType type) const;		// TODO: REMOVE THIS FUNC IF DEPRECATED. Checks if this GameObject has a Component of type 'type'
 	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;
@@ -51,8 +52,7 @@ public:
 
 	bool isInQuadtree = false;
 
-	// Auxiliary variable to help with iterating on the Quadtree
-	bool flag = false;
+	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree
 
 private:
 	Component* GetComponentByTypeAndId(ComponentType type, UID componentId) const;

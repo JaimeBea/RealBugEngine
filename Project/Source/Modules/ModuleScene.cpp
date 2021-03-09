@@ -257,9 +257,21 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
 	return gameObject;
 }
 
-GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject) {
-	// TODO: Duplicate Game Objects
-	return gameObject;
+GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject* parent) {
+	GameObject* newGO = CreateGameObject(parent); // ID and parent are set here
+	// Copy Game Object members
+	newGO->name = gameObject->name + " (copy)";
+
+	// Copy the components
+	for (Component* component : gameObject->components) {
+		component->DuplicateComponent(*newGO);
+	}
+	newGO->InitComponents();
+	// Duplicate recursively its children
+	for (GameObject* child : gameObject->GetChildren()) {
+		DuplicateGameObject(child, newGO);
+	}
+	return newGO;
 }
 
 void ModuleScene::DestroyGameObject(GameObject* gameObject) {

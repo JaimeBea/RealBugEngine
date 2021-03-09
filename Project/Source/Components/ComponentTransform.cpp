@@ -75,6 +75,13 @@ void ComponentTransform::Load(JsonValue jComponent) {
 	dirty = true;
 }
 
+void ComponentTransform::DuplicateComponent(GameObject& owner) {
+	ComponentTransform* component = owner.CreateComponent<ComponentTransform>();
+	component->SetPosition(this->GetPosition());
+	component->SetRotation(this->GetRotation());
+	component->SetScale(this->GetScale());
+}
+
 void ComponentTransform::InvalidateHierarchy() {
 	Invalidate();
 
@@ -110,38 +117,39 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 	}
 }
 
+void ComponentTransform::TransformChanged() {
+	for (Component* component : GetOwner().components) {
+		component->OnTransformUpdate();
+	}
+	for (GameObject* child : GetOwner().GetChildren()) {
+		child->GetComponent<ComponentTransform>()->TransformChanged();
+	}
+}
+
 void ComponentTransform::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetRotation(Quat rotation_) {
 	rotation = rotation_;
 	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetRotation(float3 rotation_) {
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetScale(float3 scale_) {
 	scale = scale_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetTRS(float4x4& newTransform_) {
@@ -152,9 +160,7 @@ void ComponentTransform::SetTRS(float4x4& newTransform_) {
 	rotation = Quat(newTransform_.SubMatrix(3, 3));
 	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 float3 ComponentTransform::GetPosition() const {
