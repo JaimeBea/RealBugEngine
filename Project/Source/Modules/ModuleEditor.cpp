@@ -25,7 +25,7 @@
 
 static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
-
+std::string gamePath;
 static void ApplyCustomStyle() {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
@@ -119,6 +119,10 @@ bool ModuleEditor::Init() {
 		io.ConfigDockingTransparentPayload = true;
 	}
 
+	TCHAR NPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, NPath);
+	gamePath = NPath;
+
 	ApplyCustomStyle();
 
 	return true;
@@ -205,10 +209,10 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::OpenPopup("New scene");
 		break;
 	case Modal::LOAD_SCENE:
-		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), "D:\\MASTER\\TBD-Engine\\Game\\Library\\Scenes");
+		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), gamePath + "\\Library\\Scenes");
 		break;
 	case Modal::SAVE_SCENE:
-		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), "D:\\MASTER\\TBD-Engine\\Game\\Library\\Scenes");
+		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), gamePath + "\\Library\\Scenes");
 		break;
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");

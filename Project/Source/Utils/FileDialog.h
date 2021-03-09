@@ -21,6 +21,5 @@ namespace FileDialog {
 	std::string GetFileExtension(const char* filePath);
 	std::string GetFileFolder(const char* filePath);
 	std::string GetAbsolutePath(const char* filePath);
-	std::string UpOneLevel(const char* filePath);
 
 }; // namespace FileDialog

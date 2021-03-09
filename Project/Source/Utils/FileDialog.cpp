@@ -108,7 +108,7 @@ bool FileDialog::OpenDialog(const std::string& title, std::string& selectedPath)
 				if (isDirectory) {
 					if ((selectedPath_ == absoluteFilePath)) {
 						if (file == "..") {
-							sprintf(currentSelectedPath_, UpOneLevel(currentSelectedPath_).c_str());
+							sprintf(currentSelectedPath_, GetFileFolder(currentSelectedPath_).c_str());
 						} else {
 							sprintf(currentSelectedPath_, absoluteFilePath.c_str());
 						}
@@ -157,7 +157,7 @@ bool FileDialog::OpenDialog(const std::string& title, std::string& selectedPath)
 			return true;
 		}
 
-		if (OverrideAlertDialog(GetFileNameAndExtension(selectedPath.c_str()))) {};
+		OverrideAlertDialog(GetFileNameAndExtension(selectedPath.c_str()));
 		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
@@ -204,16 +204,13 @@ std::vector<std::string> FileDialog::GetFilesInFolder(const char* folderPath, Al
 	if (handle == INVALID_HANDLE_VALUE) return filePaths;
 	bool filter = (extFilter != AllowedExtensionsFlag::ALL);
 	std::vector<std::string> allowedExt = GetFileExtensions(extFilter);
-	unsigned i = 0;
-	do {
-		if (i >= 1) // Ignore '.'
-		{
-			if (IsDirectory((std::string(folderPath) + "\\" + data.cFileName).c_str()) || (!filter) || (std::find(allowedExt.begin(), allowedExt.end(), GetFileExtension(data.cFileName)) != allowedExt.end())) {
-				filePaths.push_back(data.cFileName);
-			}
+
+	while (FindNextFile(handle, &data)) {
+		if (IsDirectory((std::string(folderPath) + "\\" + data.cFileName).c_str()) || (!filter) || (std::find(allowedExt.begin(), allowedExt.end(), GetFileExtension(data.cFileName)) != allowedExt.end())) {
+			filePaths.push_back(data.cFileName);
 		}
-		i++;
-	} while (FindNextFile(handle, &data));
+	};
+
 	FindClose(handle);
 	return filePaths;
 }
@@ -271,11 +268,6 @@ std::string FileDialog::GetFileFolder(const char* filePath) {
 	}
 
 	return std::string(filePath).substr(0, lastSeparator - filePath);
-}
-
-std::string FileDialog::UpOneLevel(const char* filePath) {
-	std::string path = filePath;
-	return path.substr(0, path.find_last_of("\\"));
 }
 
 std::string FileDialog::GetAbsolutePath(const char* filePath) {
