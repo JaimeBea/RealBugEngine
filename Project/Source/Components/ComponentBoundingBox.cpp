@@ -15,14 +15,14 @@
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX "LocalBoundingBox"
 
-void ComponentBoundingBox::OnTransformUpdate() {
-	CalculateWorldBoundingBox(true);
-}
-
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
-	ImGui::Checkbox("Draw", &bbActive);
-	if (bbActive) DrawBoundingBox();
+
+	bool active = IsActive();
+
+	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
+
+	if (IsActive()) DrawBoundingBox();
 }
 
 void ComponentBoundingBox::Save(JsonValue jComponent) const {
@@ -67,7 +67,7 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force) {
 
 void ComponentBoundingBox::DrawBoundingBox() {
 	float3 points[8];
-	worldOBB.GetCornerPoints(points);
+	GetWorldOBB().GetCornerPoints(points);
 
 	// Reorder points for drawing
 	float3 aux;
@@ -85,11 +85,13 @@ void ComponentBoundingBox::Invalidate() {
 	dirty = true;
 }
 
-const AABB& ComponentBoundingBox::GetLocalAABB() const {
-	return localAABB;
+const OBB& ComponentBoundingBox::GetWorldOBB() {
+	CalculateWorldBoundingBox();
+	return worldOBB;
 }
 
-const AABB& ComponentBoundingBox::GetWorldAABB() const {
+const AABB& ComponentBoundingBox::GetWorldAABB() {
+	CalculateWorldBoundingBox();
 	return worldAABB;
 }
 

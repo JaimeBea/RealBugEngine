@@ -18,32 +18,37 @@
 void GameObject::Init() {
 	id = GenerateUID();
 	name = "GameObject";
-	components.clear();
 	isInQuadtree = false;
 	flag = false;
 	active = true;
 	parent = nullptr;
+	components.clear();
 	children.clear();
 }
 
 void GameObject::InitComponents() {
-	for (Component* component : components) {
+	for (const std::pair<ComponentType, UID>& pair : components) {
+		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
 		component->Init();
 	}
 }
 
 void GameObject::Update() {
-	for (Component* component : components) {
-		component->Update();
-	}
+	if (IsActiveInHierarchy()) {
+		for (const std::pair<ComponentType, UID>& pair : components) {
+			Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+			component->Update();
+		}
 
-	for (GameObject* child : children) {
-		child->Update();
+		for (GameObject* child : children) {
+			child->Update();
+		}
 	}
 }
 
 void GameObject::DrawGizmos() {
-	for (Component* component : components) {
+	for (const std::pair<ComponentType, UID>& pair : components) {
+		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
 		component->DrawGizmos();
 	}
 
@@ -64,15 +69,42 @@ bool GameObject::IsActive() const {
 	return active;
 }
 
-UID GameObject::GetID() {
+bool GameObject::IsActiveInHierarchy() const {
+	if (parent) return parent->IsActiveInHierarchy() && active;
+
+	return active;
+}
+
+UID GameObject::GetID() const {
 	return id;
 }
 
-void GameObject::RemoveComponent(Component* toRemove) {
-	for (Component* component : components) {
-		if (component == toRemove) {
-			components.erase(std::remove(components.begin(), components.end(), toRemove), components.end());
+std::vector<Component*> GameObject::GetComponents() const {
+	std::vector<Component*> auxComponents;
+
+	for (const std::pair<ComponentType, UID>& pair : components) {
+		auxComponents.push_back(GetComponentByTypeAndId(pair.first, pair.second));
+	}
+
+	return auxComponents;
+}
+
+
+void GameObject::RemoveComponent(Component* component) {
+	for (auto it = components.begin(); it != components.end(); ++it) {
+		if (it->second == component->GetID()) {
+			RemoveComponentByTypeAndId(it->first, it->second);
+			components.erase(it);
+			break;
 		}
+	}
+}
+
+void GameObject::RemoveComponents() {
+	while (!components.empty()) {
+		std::pair<ComponentType, UID> pair = components.back();
+		RemoveComponentByTypeAndId(pair.first, pair.second);
+		components.pop_back();
 	}
 }
 
@@ -116,13 +148,6 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-bool GameObject::AddComponentFromInspector(ComponentType type) {
-	if (HasComponent(type)) return false;
-	CreateComponentByType(*this, type);
-	InitComponents();
-	return true;
-}
-
 bool GameObject::HasComponent(ComponentType type) const {
 	for (Component* component : components) {
 		if (component->GetType() == type) {
@@ -145,11 +170,13 @@ void GameObject::Save(JsonValue jGameObject) const {
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
 		JsonValue jComponent = jComponents[i];
-		Component& component = *components[i];
+		std::pair<ComponentType, UID> pair = components[i];
+		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
 
-		jComponent[JSON_TAG_TYPE] = (unsigned) component.GetType();
-		jComponent[JSON_TAG_ACTIVE] = component.IsActive();
-		component.Save(jComponent);
+		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
+		jComponent[JSON_TAG_ID] = component->GetID();
+		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
+		component->Save(jComponent);
 	}
 }
 
@@ -163,9 +190,11 @@ void GameObject::Load(JsonValue jGameObject) {
 		JsonValue jComponent = jComponents[i];
 
 		ComponentType type = (ComponentType)(unsigned) jComponent[JSON_TAG_TYPE];
+		UID componentId = jComponent[JSON_TAG_ID];
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
-		Component* component = CreateComponentByType(*this, type);
+		components.push_back(std::pair<ComponentType, UID>(type, componentId));
+		Component* component = CreateComponentByTypeAndId(type, componentId);
 		component->Load(jComponent);
 	}
 
@@ -176,4 +205,76 @@ void GameObject::PostLoad(JsonValue jGameObject) {
 	UID parentId = jGameObject[JSON_TAG_PARENT_ID];
 	GameObject* parent = App->scene->GetGameObject(parentId);
 	SetParent(parent);
+}
+
+Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID componentId) const {
+	switch (type) {
+	case ComponentType::TRANSFORM:
+		if (!App->scene->transformComponents.Has(componentId)) return nullptr;
+		return &App->scene->transformComponents.Get(componentId);
+	case ComponentType::MESH_RENDERER:
+		if (!App->scene->meshRendererComponents.Has(componentId)) return nullptr;
+		return &App->scene->meshRendererComponents.Get(componentId);
+	case ComponentType::BOUNDING_BOX:
+		if (!App->scene->boundingBoxComponents.Has(componentId)) return nullptr;
+		return &App->scene->boundingBoxComponents.Get(componentId);
+	case ComponentType::CAMERA:
+		if (!App->scene->cameraComponents.Has(componentId)) return nullptr;
+		return &App->scene->cameraComponents.Get(componentId);
+	case ComponentType::LIGHT:
+		if (!App->scene->lightComponents.Has(componentId)) return nullptr;
+		return &App->scene->lightComponents.Get(componentId);
+	default:
+		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
+		assert(false);
+		return nullptr;
+	}
+}
+
+Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID componentId) {
+	switch (type) {
+	case ComponentType::TRANSFORM:
+		return &App->scene->transformComponents.Put(componentId, ComponentTransform(this, componentId, active));
+	case ComponentType::MESH_RENDERER:
+		return &App->scene->meshRendererComponents.Put(componentId, ComponentMeshRenderer(this, componentId, active));
+	case ComponentType::BOUNDING_BOX:
+		return &App->scene->boundingBoxComponents.Put(componentId, ComponentBoundingBox(this, componentId, active));
+	case ComponentType::CAMERA:
+		return &App->scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
+	case ComponentType::LIGHT:
+		return &App->scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
+	default:
+		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
+		assert(false);
+		return nullptr;
+	}
+}
+
+void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
+	switch (type) {
+	case ComponentType::TRANSFORM:
+		if (!App->scene->transformComponents.Has(componentId)) return;
+		App->scene->transformComponents.Remove(componentId);
+		break;
+	case ComponentType::MESH_RENDERER:
+		if (!App->scene->meshRendererComponents.Has(componentId)) return;
+		App->scene->meshRendererComponents.Remove(componentId);
+		break;
+	case ComponentType::BOUNDING_BOX:
+		if (!App->scene->boundingBoxComponents.Has(componentId)) return;
+		App->scene->boundingBoxComponents.Remove(componentId);
+		break;
+	case ComponentType::CAMERA:
+		if (!App->scene->cameraComponents.Has(componentId)) return;
+		App->scene->cameraComponents.Remove(componentId);
+		break;
+	case ComponentType::LIGHT:
+		if (!App->scene->lightComponents.Has(componentId)) return;
+		App->scene->lightComponents.Remove(componentId);
+		break;
+	default:
+		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);
+		assert(false);
+		break;
+	}
 }

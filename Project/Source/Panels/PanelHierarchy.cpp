@@ -12,6 +12,9 @@
 
 #include "Utils/Leaks.h"
 
+static ImVec4 grey = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+static ImVec4 white = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+
 PanelHierarchy::PanelHierarchy()
 	: Panel("Hierarchy", true) {}
 
@@ -40,7 +43,12 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	bool isSelected = App->editor->selectedGameObject == gameObject;
 	if (isSelected) flags |= ImGuiTreeNodeFlags_Selected;
 
+	//White for active gameobjects, gray for disabled objects, if a parent is not active, children are inherently not active
+	ImGui::PushStyleColor(0, gameObject->IsActiveInHierarchy() ? white : grey);
+
 	bool open = ImGui::TreeNodeEx(label, flags);
+
+	ImGui::PopStyleColor();
 
 	ImGui::PushID(label);
 	if (ImGui::BeginPopupContextItem("Options")) {

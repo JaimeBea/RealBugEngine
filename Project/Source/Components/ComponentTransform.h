@@ -9,11 +9,9 @@
 
 class ComponentTransform : public Component {
 public:
-	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM); // Refer to ComponentType for the Constructor
+	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM, false); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
-	void Init() override;
-	void Update() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
@@ -25,7 +23,7 @@ public:
 	void TransformChanged();						// It is called on a SetPosition/Rotation/Scale(), and signals the onTransformUpdate() to all other components. It has recursivity to all the 'owner' GameObject children.
 
 	// ---------- Setters ---------- //
-	// This setters will broadcast the OnTransformUpdate() signal to the Components.
+	// These setters will broadcast the OnTransformUpdate() signal to the Components.
 	void SetPosition(float3 position);
 	void SetRotation(Quat rotation);
 	void SetRotation(float3 rotation);
@@ -36,9 +34,8 @@ public:
 	float3 GetPosition() const;
 	Quat GetRotation() const;
 	float3 GetScale() const;
-	const float4x4& GetLocalMatrix() const;
-	const float4x4& GetGlobalMatrix() const;
-	bool GetDirty() const;
+	const float4x4& GetLocalMatrix();
+	const float4x4& GetGlobalMatrix();
 
 private:
 	float3 position = float3::zero;			// Position of the GameObject in world coordinates.
@@ -49,5 +46,5 @@ private:
 	float4x4 localMatrix = float4x4::identity;	// Transform Matrix in local coordinates from its parent gameobject.
 	float4x4 globalMatrix = float4x4::identity; // Transform Matrix in world coordinates.
 
-	bool dirty = true; // If set to true CalculateGlobalMatrix() will update the Transform on the next frame. Otherwise, it will skip the calculations.
+	bool dirty = true; // If set to true CalculateGlobalMatrix() will update the Transform when called. Otherwise, it will skip the calculations.
 };

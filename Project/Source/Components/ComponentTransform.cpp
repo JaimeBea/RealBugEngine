@@ -18,15 +18,6 @@
 #define JSON_TAG_SCALE "Scale"
 #define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
 
-void ComponentTransform::Init() {
-	CalculateGlobalMatrix();
-	TransformChanged();
-}
-
-void ComponentTransform::Update() {
-	CalculateGlobalMatrix();
-}
-
 void ComponentTransform::OnEditorUpdate() {
 	float3 pos = position;
 	float3 scl = scale;
@@ -118,7 +109,6 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
-      globalMatrix.Orthogonalize3();
 		} else {
 			globalMatrix = localMatrix;
 		}
@@ -185,14 +175,12 @@ float3 ComponentTransform::GetScale() const {
 	return scale;
 }
 
-const float4x4& ComponentTransform::GetLocalMatrix() const {
+const float4x4& ComponentTransform::GetLocalMatrix() {
+	CalculateGlobalMatrix();
 	return localMatrix;
 }
 
-const float4x4& ComponentTransform::GetGlobalMatrix() const {
+const float4x4& ComponentTransform::GetGlobalMatrix() {
+	CalculateGlobalMatrix();
 	return globalMatrix;
-}
-
-bool ComponentTransform::GetDirty() const {
-	return dirty;
 }
