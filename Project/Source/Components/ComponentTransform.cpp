@@ -118,7 +118,7 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 }
 
 void ComponentTransform::TransformChanged() {
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 	for (GameObject* child : GetOwner().GetChildren()) {
