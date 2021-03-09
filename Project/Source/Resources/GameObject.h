@@ -39,7 +39,6 @@ public:
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
-	bool HasComponent(ComponentType type) const;		// TODO: REMOVE THIS FUNC IF DEPRECATED. Checks if this GameObject has a Component of type 'type'
 	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;

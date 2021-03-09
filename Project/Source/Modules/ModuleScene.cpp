@@ -263,7 +263,7 @@ GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject*
 	newGO->name = gameObject->name + " (copy)";
 
 	// Copy the components
-	for (Component* component : gameObject->components) {
+	for (Component* component : gameObject->GetComponents()) {
 		component->DuplicateComponent(*newGO);
 	}
 	newGO->InitComponents();
