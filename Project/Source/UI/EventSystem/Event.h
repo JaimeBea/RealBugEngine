@@ -12,7 +12,7 @@ public:
 		} point2d;
 	};
 
-	enum EventType {
+	enum class EventType {
 		GameObject_Destroyed,
 		File_Dropped,
 		Pressed_Play,
@@ -20,24 +20,28 @@ public:
 		Pressed_Resume,
 		Pressed_Step,
 		Pressed_Stop,
+		Button_Pressed,
+
 	} type;
 
 	static const char* TypeToString(EventType v) {
 		switch (v) {
-		case GameObject_Destroyed:
+		case EventType::GameObject_Destroyed:
 			return "GameObject destroyed";
-		case File_Dropped:
+		case EventType::File_Dropped:
 			return "File dropped";
-		case Pressed_Play:
+		case EventType::Pressed_Play:
 			return "Pressed play";
-		case Pressed_Pause:
+		case EventType::Pressed_Pause:
 			return "Pressed pause";
-		case Pressed_Resume:
+		case EventType::Pressed_Resume:
 			return "Pressed resume";
-		case Pressed_Step:
+		case EventType::Pressed_Step:
 			return "Pressed step";
-		case Pressed_Stop:
+		case EventType::Pressed_Stop:
 			return "Pressed stop";
+		case EventType::Button_Pressed:
+			return "Pressed button";
 		default:
 			return "Unkown event type";
 		}

@@ -26,6 +26,8 @@
     <ClInclude Include="Source\Modules\ModuleEventSystem.h" />
     <ClInclude Include="Source\Modules\ModuleUserInterface.h" />
     <ClInclude Include="Source\UI\EventSystem\Event.h" />
+    <ClInclude Include="Source\UI\Selectables\Button.h" />
+    <ClInclude Include="Source\UI\Selectables\Selectable.h" />
     <ClInclude Include="Source\Utils\Leaks.h" />
     <ClInclude Include="Source\Utils\Logging.h" />
     <ClInclude Include="Source\Utils\Buffer.h" />
@@ -191,6 +193,8 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleUserInterface.cpp" />
+    <ClCompile Include="Source\UI\Selectables\Button.cpp" />
+    <ClCompile Include="Source\UI\Selectables\Selectable.cpp" />
     <ClCompile Include="Source\Utils\Logging.cpp" />
     <ClCompile Include="Source\Utils\MSTimer.cpp" />
     <ClCompile Include="Source\Utils\PerformanceTimer.cpp" />

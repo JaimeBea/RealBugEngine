@@ -6,7 +6,7 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
-
+#include "Modules/ModuleUserInterface.h"
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 #include "Brofiler.h"
@@ -101,6 +101,9 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_KEYUP:
 			keyboard[event.key.keysym.scancode] = KS_UP;
+			break;
+		case SDL_MOUSEMOTION:
+			App->userInterface->OnMouseMovementDetected(mouse);
 			break;
 		}
 	}

@@ -17,8 +17,8 @@ public:
 	virtual void Save(JsonValue jComponent) const;
 	virtual void Load(JsonValue jComponent);
 
-	void Enable();
-	void Disable();
+	virtual void Enable();
+	virtual void Disable();
 
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;

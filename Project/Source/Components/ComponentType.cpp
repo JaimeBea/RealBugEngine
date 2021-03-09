@@ -6,6 +6,7 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "UI/Selectables/Selectable.h"
 
 #include "Utils/Leaks.h"
 
@@ -21,6 +22,8 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 		return owner.CreateComponent<ComponentCamera>(active);
 	case ComponentType::LIGHT:
 		return owner.CreateComponent<ComponentLight>(active);
+	case ComponentType::SELECTABLE:
+		return owner.CreateComponent<Selectable>(active);
 	default:
 		return nullptr;
 	}
