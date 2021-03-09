@@ -28,6 +28,10 @@ void ComponentLight::OnTransformUpdate() {
 	direction = transform->GetRotation() * float3::unitZ;
 }
 
+void ComponentLight::Init() {
+	OnTransformUpdate();
+}
+
 void ComponentLight::DrawGizmos() {
 	if (IsActiveInHierarchy() && drawGizmos) {
 		if (lightType == LightType::DIRECTIONAL) {

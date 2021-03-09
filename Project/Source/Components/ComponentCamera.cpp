@@ -24,6 +24,10 @@
 #define JSON_TAG_VERTICAL_FOV "VerticalFov"
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
 
+void ComponentCamera::Init() {
+	OnTransformUpdate();
+}
+
 void ComponentCamera::DrawGizmos() {
 	if (activeCamera) return;
 

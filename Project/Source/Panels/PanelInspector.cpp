@@ -55,12 +55,12 @@ void PanelInspector::Update() {
 
 			// Show Component info
 			std::string cName = "";
-			for (Component* component : selected->components) {
+			for (Component* component : selected->GetComponents()) {
 				switch (component->GetType()) {
 				case ComponentType::TRANSFORM:
 					cName = "Transformation";
 					break;
-				case ComponentType::MESH:
+				case ComponentType::MESH_RENDERER:
 					cName = "Mesh Renderer";
 					break;
 				case ComponentType::CAMERA:
@@ -112,15 +112,29 @@ void PanelInspector::Update() {
 			if (ImGui::Button("Add New Component", ImVec2(ImGui::GetContentRegionAvail().x, 25))) { ImGui::OpenPopup("AddComponentPopup"); }
 			if (ImGui::BeginPopup("AddComponentPopup")) {
 				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
-				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
 				if (ImGui::MenuItem("Mesh Renderer")) {
-					selected->AddComponent(ComponentType::MESH); // TODO: Add more than 1 mesh renderer? or all meshes inside the same component?
+					ComponentMeshRenderer* meshRenderer = selected->CreateComponent<ComponentMeshRenderer>();
+					if (meshRenderer != nullptr) {
+						meshRenderer->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
 				}
 				if (ImGui::MenuItem("Camera")) {
-					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					ComponentCamera* camera = selected->CreateComponent<ComponentCamera>();
+					if (camera != nullptr) {
+						camera->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
 				}
 				if (ImGui::MenuItem("Light")) {
-					if (!selected->AddComponent(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					ComponentLight* light = selected->CreateComponent<ComponentLight>();
+					if (light != nullptr) {
+						light->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
 				}
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();

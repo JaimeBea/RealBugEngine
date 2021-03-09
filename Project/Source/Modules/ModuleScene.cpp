@@ -169,9 +169,7 @@ UpdateStatus ModuleScene::Update() {
 	}
 
 	// Update GameObjects
-	for (GameObject& gameObject : gameObjects) {
-		gameObject.Update();
-	}
+	root->Update();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -228,15 +226,15 @@ void ModuleScene::ClearScene() {
 	quadtree.Clear();
 
 	assert(gameObjects.Count() == 0); // There should be no GameObjects outside the scene hierarchy
-	gameObjects.ReleaseAll(); // This looks redundant, but it resets the free list so that GameObject order is mantained when saving/loading
+	gameObjects.ReleaseAll();		  // This looks redundant, but it resets the free list so that GameObject order is mantained when saving/loading
 }
 
 void ModuleScene::RebuildQuadtree() {
 	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
-	for (ComponentBoundingBox* boundingBox : ComponentBoundingBox::GetComponents()) {
-		GameObject& gameObject = boundingBox->GetOwner();
-		boundingBox->CalculateWorldBoundingBox();
-		const AABB& worldAABB = boundingBox->GetWorldAABB();
+	for (ComponentBoundingBox& boundingBox : boundingBoxComponents) {
+		GameObject& gameObject = boundingBox.GetOwner();
+		boundingBox.CalculateWorldBoundingBox();
+		const AABB& worldAABB = boundingBox.GetWorldAABB();
 		quadtree.Add(&gameObject, AABB2D(worldAABB.minPoint.xz(), worldAABB.maxPoint.xz()));
 		gameObject.isInQuadtree = true;
 	}
@@ -278,12 +276,7 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	}
 
 	gameObjectsIdMap.erase(gameObject->GetID());
-	gameObject->id = 0;
-	for (Component* component : gameObject->components) {
-		delete component;
-	}
-	gameObject->components.clear();
-	gameObject->Enable();
+	gameObject->RemoveComponents();
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 }

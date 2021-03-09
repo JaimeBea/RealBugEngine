@@ -158,6 +158,7 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
+    <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
@@ -212,7 +213,6 @@
     <ClCompile Include="Source\Components\ComponentBoundingBox.cpp" />
     <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
     <ClCompile Include="Source\Components\ComponentTransform.cpp" />
-    <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Panels\Panel.cpp" />
     <ClCompile Include="Source\Panels\PanelAbout.cpp" />
     <ClCompile Include="Source\Panels\PanelConfiguration.cpp" />
