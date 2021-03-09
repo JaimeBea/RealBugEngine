@@ -276,7 +276,7 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	}
 
 	gameObjectsIdMap.erase(gameObject->GetID());
-	gameObject->DestroyComponents();
+	gameObject->RemoveComponents();
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 }

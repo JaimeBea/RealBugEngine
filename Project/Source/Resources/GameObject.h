@@ -16,7 +16,6 @@ public:
 	void InitComponents();
 	void Update();
 	void DrawGizmos();
-	void DestroyComponents();
 
 	void Enable();
 	void Disable();
@@ -31,6 +30,7 @@ public:
 	template<class T> std::vector<T*> GetComponents() const;
 	std::vector<Component*> GetComponents() const;
 	void RemoveComponent(Component* component);
+	void RemoveComponents();
 
 	void SetParent(GameObject* gameObject);
 	GameObject* GetParent() const;

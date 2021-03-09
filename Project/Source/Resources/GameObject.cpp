@@ -75,14 +75,6 @@ bool GameObject::IsActiveInHierarchy() const {
 	return active;
 }
 
-void GameObject::DestroyComponents() {
-	while (!components.empty()) {
-		std::pair<ComponentType, UID> pair = components.back();
-		RemoveComponentByTypeAndId(pair.first, pair.second);
-		components.pop_back();
-	}
-}
-
 UID GameObject::GetID() const {
 	return id;
 }
@@ -105,6 +97,14 @@ void GameObject::RemoveComponent(Component* component) {
 			components.erase(it);
 			break;
 		}
+	}
+}
+
+void GameObject::RemoveComponents() {
+	while (!components.empty()) {
+		std::pair<ComponentType, UID> pair = components.back();
+		RemoveComponentByTypeAndId(pair.first, pair.second);
+		components.pop_back();
 	}
 }
 
