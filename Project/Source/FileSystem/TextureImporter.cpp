@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
+#include "Utils/FileDialog.h"
 #include "Resources/Texture.h"
 #include "Resources/CubeMap.h"
 #include "Modules/ModuleResources.h"
@@ -52,7 +53,7 @@ Texture* TextureImporter::ImportTexture(const char* filePath) {
 	Texture* texture = App->resources->ObtainTexture();
 
 	// Save texture to custom DDS file
-	texture->fileName = App->files->GetFileName(filePath);
+	texture->fileName = FileDialog::GetFileName(filePath);
 	std::string ddsFilePath = std::string(TEXTURES_PATH) + "/" + texture->fileName + TEXTURE_EXTENSION;
 
 	LOG("Saving image to \"%s\".", ddsFilePath.c_str());
@@ -160,7 +161,7 @@ CubeMap* TextureImporter::ImportCubeMap(const char* filePaths[6]) {
 		}
 
 		// Save texture to custom DDS file
-		cubeMap->fileNames[i] = App->files->GetFileName(filePath);
+		cubeMap->fileNames[i] = FileDialog::GetFileName(filePath);
 		std::string ddsFilePath = std::string(TEXTURES_PATH) + "/" + cubeMap->fileNames[i] + TEXTURE_EXTENSION;
 
 		LOG("Saving image to \"%s\".", ddsFilePath.c_str());

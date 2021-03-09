@@ -6,6 +6,7 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleFiles.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -20,10 +21,11 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
+#include "Utils/FileDialog.h"
 
 static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
-
+static std::string gamePath;
 static void ApplyCustomStyle() {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
@@ -117,6 +119,10 @@ bool ModuleEditor::Init() {
 		io.ConfigDockingTransparentPayload = true;
 	}
 
+	TCHAR NPath[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, NPath);
+	gamePath = NPath;
+
 	ApplyCustomStyle();
 
 	return true;
@@ -203,10 +209,10 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::OpenPopup("New scene");
 		break;
 	case Modal::LOAD_SCENE:
-		ImGui::OpenPopup("Load scene");
+		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), gamePath + "\\Library\\Scenes");
 		break;
 	case Modal::SAVE_SCENE:
-		ImGui::OpenPopup("Save scene");
+		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), gamePath + "\\Library\\Scenes");
 		break;
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");
@@ -217,57 +223,44 @@ UpdateStatus ModuleEditor::Update() {
 	}
 	modalToOpen = Modal::NONE;
 
-	// NEW SCENE MODAL
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("New scene", nullptr, ImGuiWindowFlags_NoResize)) {
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("New scene", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
 		ImGui::Text("Do you wish to create a new scene?");
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 140);
 		if (ImGui::Button("New scene")) {
 			App->scene->CreateEmptyScene();
 			ImGui::CloseCurrentPopup();
 		}
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
 	}
-	// LOAD SCENE MODAL
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Load scene", nullptr, ImGuiWindowFlags_NoResize)) {
-		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
-		if (ImGui::Button("Load")) {
-			SceneImporter::LoadScene(fileNameBuffer);
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel")) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
+
+	std::string selectedFile;
+	if (FileDialog::OpenDialog("Load scene", selectedFile)) {
+		SceneImporter::LoadScene(FileDialog::GetFileName(selectedFile.c_str()).c_str());
+		ImGui::CloseCurrentPopup();
 	}
-	// SAVE SCENE MODAL
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Save scene", nullptr, ImGuiWindowFlags_NoResize)) {
-		ImGui::SetItemDefaultFocus();
-		ImGui::InputText("File name", fileNameBuffer, sizeof(fileNameBuffer));
-		if (ImGui::Button("Save")) {
-			SceneImporter::SaveScene(fileNameBuffer);
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("Cancel")) {
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
+
+	if (FileDialog::OpenDialog("Save scene", selectedFile)) {
+		SceneImporter::SaveScene(FileDialog::GetFileName(selectedFile.c_str()).c_str());
+		ImGui::CloseCurrentPopup();
 	}
-	// QUIT MODAL
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize)) {
+
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
 		ImGui::Text("Do you really want to quit?");
-		if (ImGui::Button("Quit")) {
+		ImGui::NewLine();
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Quit", ImVec2(50, 20))) {
 			return UpdateStatus::STOP;
 		}
-		ImGui::SameLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}

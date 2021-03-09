@@ -62,5 +62,5 @@ public:
 	float dragSpeed5f = 0.00005f;
 
 private:
-	char fileNameBuffer[32] = {'\0'}; // Buffer to show the name of the GameObject at the beginning of the Inspector
+	std::string selectedFile = "";
 };

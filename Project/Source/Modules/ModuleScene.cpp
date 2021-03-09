@@ -38,7 +38,7 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
-
+#include "Utils/FileDialog.h"
 static aiLogStream logStream = {nullptr, nullptr};
 
 static void AssimpLogCallback(const char* message, char* user) {
@@ -148,8 +148,8 @@ UpdateStatus ModuleScene::Update() {
 	// Load scene/fbx if one gets dropped
 	const char* droppedFilePath = App->input->GetDroppedFilePath();
 	if (droppedFilePath != nullptr) {
-		std::string droppedFileExtension = App->files->GetFileExtension(droppedFilePath);
-		std::string droppedFileName = App->files->GetFileName(droppedFilePath);
+		std::string droppedFileExtension = FileDialog::GetFileExtension(droppedFilePath);
+		std::string droppedFileName = FileDialog::GetFileName(droppedFilePath);
 		if (droppedFileExtension == SCENE_EXTENSION) {
 			SceneImporter::LoadScene(droppedFileName.c_str());
 
