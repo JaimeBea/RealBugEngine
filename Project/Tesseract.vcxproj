@@ -22,8 +22,10 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
     <ClInclude Include="Source\FileSystem\MaterialImporter.h" />
     <ClInclude Include="Source\FileSystem\ModelImporter.h" />
+    <ClInclude Include="Source\FileSystem\ScriptImporter.h" />
     <ClInclude Include="Source\FileSystem\ShaderImporter.h" />
     <ClInclude Include="Source\Resources\ResourceScene.h" />
+    <ClInclude Include="Source\Resources\ResourceScript.h" />
     <ClInclude Include="Source\Resources\ResourceShader.h" />
     <ClInclude Include="Source\Resources\Resource.h" />
     <ClInclude Include="Source\Globals.h" />
@@ -188,6 +190,7 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
     <ClCompile Include="Source\FileSystem\MaterialImporter.cpp" />
     <ClCompile Include="Source\FileSystem\ModelImporter.cpp" />
+    <ClCompile Include="Source\FileSystem\ScriptImporter.cpp" />
     <ClCompile Include="Source\FileSystem\ShaderImporter.cpp" />
     <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -195,6 +198,7 @@
     <ClCompile Include="Source\Resources\ResourceMaterial.cpp" />
     <ClCompile Include="Source\Resources\ResourceMesh.cpp" />
     <ClCompile Include="Source\Resources\ResourceScene.cpp" />
+    <ClCompile Include="Source\Resources\ResourceScript.cpp" />
     <ClCompile Include="Source\Resources\ResourceShader.cpp" />
     <ClCompile Include="Source\Resources\ResourceTexture.cpp" />
     <ClCompile Include="Source\Utils\Logging.cpp" />
