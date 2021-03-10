@@ -9,6 +9,10 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_ANIMATION_CONTROLLER "AnimationController"
+#define JSON_TAG_RESOURCE_ANIMATION "ResourceAnimation"
+
+
 void ComponentAnimation::Update() {
 	animationController->Update();
 	OnUpdate();
@@ -16,6 +20,24 @@ void ComponentAnimation::Update() {
 
 void ComponentAnimation::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Animation");
+}
+
+void ComponentAnimation::Save(JsonValue jComponent) const {
+	// TODO
+	/*JsonValue jAnimationController = jComponent[JSON_TAG_ANIMATION_CONTROLLER];
+	jAnimationController = animationController;
+
+	JsonValue jResourceAnimation = jComponent[JSON_TAG_RESOURCE_ANIMATION];
+	jResourceAnimation = animationResource;*/
+}
+
+void ComponentAnimation::Load(JsonValue jComponent) {
+	// TODO
+	/*JsonValue jAnimationController = jComponent[JSON_TAG_ANIMATION_CONTROLLER];
+	animationController = jAnimationController;
+
+	JsonValue jResourceAnimation = jComponent[JSON_TAG_RESOURCE_ANIMATION];
+	animationResource = jResourceAnimation;*/
 }
 
 void ComponentAnimation::OnStop() {

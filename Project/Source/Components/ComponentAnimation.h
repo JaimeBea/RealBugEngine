@@ -14,8 +14,8 @@ public:
 	void OnEditorUpdate() override;
 	//void DrawGizmos() override; 
 	//void OnTransformUpdate() override;
-	//void Save(JsonValue jComponent) const override;
-	//void Load(JsonValue jComponent) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override; 
 
 	void OnStop();
 	void OnPlay();
