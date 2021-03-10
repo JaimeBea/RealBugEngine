@@ -282,12 +282,13 @@ void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, co
 				GameObject* gameObject = element->object;
 				if (!gameObject->flag) {
 					ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
-					const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
-					const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
-					if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
-						DrawGameObject(gameObject);
+					if (boundingBox) {
+						const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
+						const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+						if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
+							DrawGameObject(gameObject);
+						}
 					}
-
 					gameObject->flag = true;
 				}
 				element = element->next;
