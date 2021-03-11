@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Utils\FileDialog.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
     <ClInclude Include="Libs\imgui\imgui_utils.h" />
@@ -162,8 +163,10 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
+    <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_dir.c" />
@@ -224,7 +227,6 @@
     <ClCompile Include="Source\Components\ComponentBoundingBox.cpp" />
     <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
     <ClCompile Include="Source\Components\ComponentTransform.cpp" />
-    <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Panels\Panel.cpp" />
     <ClCompile Include="Source\Panels\PanelAbout.cpp" />
     <ClCompile Include="Source\Panels\PanelConfiguration.cpp" />

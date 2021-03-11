@@ -17,6 +17,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 18273531637045346548,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -50,6 +51,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 15899132042726209382,
                     "Active": true,
                     "Position": [
                         219.55990600585938,
@@ -75,6 +77,7 @@
                 },
                 {
                     "Type": 4,
+                    "Id": 12535691131977607284,
                     "Active": true,
                     "Frustum": {
                         "Pos": [
@@ -109,6 +112,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 13671987726295775166,
                     "Active": true,
                     "Position": [
                         92.75239562988281,
@@ -134,18 +138,19 @@
                 },
                 {
                     "Type": 5,
+                    "Id": 5383536494774126692,
                     "Active": true,
-                    "Direction": [
-                        -0.05146452784538269,
-                        -0.9894348978996277,
-                        0.13553571701049806
-                    ],
+                    "LightType": 0,
                     "Color": [
                         1.0,
                         1.0,
                         1.0
                     ],
-                    "Intensity": 1.0
+                    "Intensity": 1.0,
+                    "Kl": 0.0,
+                    "Kq": 0.0,
+                    "InnerAngle": 0.0,
+                    "OuterAngle": 0.0
                 }
             ]
         },
@@ -157,6 +162,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 12537863304935168681,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -182,36 +188,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 5124761691180865118,
                     "Active": true,
                     "FileName": "Sides",
                     "MaterialIndex": 0,
-                    "Material": 
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "PlanksDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "PlanksSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "PlanksDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "PlanksSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
                     }
                 },
                 {
                     "Type": 3,
+                    "Id": 8177902496838612663,
                     "Active": true,
                     "LocalBoundingBox": [
                         -40.650142669677737,
@@ -232,6 +239,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 4376960826100521370,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -265,6 +273,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 1057239294896273457,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -290,36 +299,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 15086161652901644203,
                     "Active": true,
                     "FileName": "Base",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "PlanksDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "PlanksSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "PlanksDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "PlanksSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 9168173188435074302,
                     "Active": true,
                     "LocalBoundingBox": [
                         -40.650142669677737,
@@ -340,6 +350,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 10038459720423337769,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -365,36 +376,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 12566896206426409801,
                     "Active": true,
                     "FileName": "Planks",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "PlanksDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "PlanksSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "PlanksDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "PlanksSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 914065212233115054,
                     "Active": true,
                     "LocalBoundingBox": [
                         -82.52242279052735,
@@ -415,6 +427,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 14383020553468056986,
                     "Active": true,
                     "Position": [
                         -722.6061401367188,
@@ -440,36 +453,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 12352584391742312789,
                     "Active": true,
                     "FileName": "Clock.Clock",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "ClockDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "ClockSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "ClockDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "ClockSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 6752335159299160057,
                     "Active": true,
                     "LocalBoundingBox": [
                         2083.0595703125,
@@ -490,6 +504,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 10653045015829555316,
                     "Active": true,
                     "Position": [
                         1202.70166015625,
@@ -515,36 +530,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 6104799319992235263,
                     "Active": true,
                     "FileName": "Drawers",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "DrawersDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "DrawersSpecular",
-                            "Shininess": 7.999998092651367,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "DrawersDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "DrawersSpecular",
+                        "Shininess": 7.999998092651367,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 9744269639605650570,
                     "Active": true,
                     "LocalBoundingBox": [
                         -601.1292724609375,
@@ -565,6 +581,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 14715750630603389,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -590,36 +607,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 6261450111767736789,
                     "Active": true,
                     "FileName": "Firetruck",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "FiretruckDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "FiretruckSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }   
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "FiretruckDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "FiretruckSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 3701534651566763533,
                     "Active": true,
                     "LocalBoundingBox": [
                         3069.349365234375,
@@ -640,6 +658,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 14364774335350625789,
                     "Active": true,
                     "Position": [
                         4177.166015625,
@@ -665,36 +684,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 16019039681767835663,
                     "Active": true,
                     "FileName": "Hearse",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "HearseDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "HearseSpecular",
-                            "Shininess": 7.999998092651367,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "HearseDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "HearseSpecular",
+                        "Shininess": 7.999998092651367,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 6003207481051626105,
                     "Active": true,
                     "LocalBoundingBox": [
                         -102.79621887207031,
@@ -715,6 +735,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 12040365887776899562,
                     "Active": true,
                     "Position": [
                         3364.9248046875,
@@ -740,36 +761,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 3760241012120064478,
                     "Active": true,
                     "FileName": "Robot",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "RobotDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "RobotSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "RobotDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "RobotSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 17812580883914070094,
                     "Active": true,
                     "LocalBoundingBox": [
                         -290.029052734375,
@@ -790,6 +812,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 18148676278956801863,
                     "Active": true,
                     "Position": [
                         926.6600952148438,
@@ -815,36 +838,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 11671056461402769618,
                     "Active": true,
                     "FileName": "SpinningTop",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "SpinningTopDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "SpinningTopDiffuse",
-                            "Shininess": 100.0,
-                            "HasShininessInAlphaChannel": false,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "SpinningTopDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "SpinningTopDiffuse",
+                        "Shininess": 100.0,
+                        "HasShininessInAlphaChannel": false,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 14793167142029248068,
                     "Active": true,
                     "LocalBoundingBox": [
                         -100.39217376708985,
@@ -865,6 +889,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 4961986921489267467,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -890,36 +915,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 1438422572713500397,
                     "Active": true,
                     "FileName": "Wall",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "WallDiffuse1",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "WallSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "WallDiffuse1",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "WallSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 17395257405944593773,
                     "Active": true,
                     "LocalBoundingBox": [
                         -282.92962646484377,
@@ -940,6 +966,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 7264195078587979921,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -965,34 +992,35 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 15017049710175831835,
                     "Active": true,
                     "FileName": "Stars",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": false,
-                            "DiffuseColor": [
-                                0.8973984122276306,
-                                0.936274528503418,
-                                0.6058247089385986
-                            ],
-                            "HasSpecularMap": false,
-                            "SpecularColor": [
-                                0.5245097875595093,
-                                0.5245084762573242,
-                                0.524504542350769
-                            ],
-                            "Shininess": 300.0,
-                            "HasShininessInAlphaChannel": false,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": false,
+                        "DiffuseColor": [
+                            0.8973984122276306,
+                            0.936274528503418,
+                            0.6058247089385986
+                        ],
+                        "HasSpecularMap": false,
+                        "SpecularColor": [
+                            0.5245097875595093,
+                            0.5245084762573242,
+                            0.524504542350769
+                        ],
+                        "Shininess": 300.0,
+                        "HasShininessInAlphaChannel": false,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 9887298804821508574,
                     "Active": true,
                     "LocalBoundingBox": [
                         -41.0417366027832,
@@ -1013,6 +1041,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 9652712616710831137,
                     "Active": true,
                     "Position": [
                         2243.26318359375,
@@ -1046,6 +1075,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 16688551446775243755,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -1071,36 +1101,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 17012798995277102142,
                     "Active": true,
                     "FileName": "Gun",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "GunDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "GunSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "GunDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "GunSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 8671674212003718155,
                     "Active": true,
                     "LocalBoundingBox": [
                         -32.89970779418945,
@@ -1121,6 +1152,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 12589936461031588487,
                     "Active": true,
                     "Position": [
                         0.0,
@@ -1146,37 +1178,37 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 13716335926615794292,
                     "Active": true,
                     "FileName": "Player",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "Active": true,
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "PlayerDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "PlayerSpecular",
-                            "Shininess": 2.0,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "PlayerDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "PlayerSpecular",
+                        "Shininess": 2.0,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 10926519115843536696,
                     "Active": true,
                     "LocalBoundingBox": [
                         -89.48932647705078,
@@ -1197,6 +1229,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 11329040510994816188,
                     "Active": true,
                     "Position": [
                         325.4021911621094,
@@ -1222,66 +1255,67 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 15023912848661255201,
                     "Active": true,
                     "FileName": "Zombunny0",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "ZomBunnyDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "ZomBunnySpecular",
-                            "Shininess": 7.999998092651367,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "ZomBunnyDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "ZomBunnySpecular",
+                        "Shininess": 7.999998092651367,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 2,
+                    "Id": 8751781821542950248,
                     "Active": true,
                     "FileName": "Zombunny1",
                     "MaterialIndex": 1,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "ZomBunnyDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "ZomBunnySpecular",
-                            "Shininess": 15.999996185302735,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "ZomBunnyDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "ZomBunnySpecular",
+                        "Shininess": 15.999996185302735,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 9302948720629632095,
                     "Active": true,
                     "LocalBoundingBox": [
                         -76.11719512939453,
@@ -1302,6 +1336,7 @@
             "Components": [
                 {
                     "Type": 1,
+                    "Id": 10762056426751651063,
                     "Active": true,
                     "Position": [
                         4294.64501953125,
@@ -1327,66 +1362,67 @@
                 },
                 {
                     "Type": 2,
+                    "Id": 8400007922288972435,
                     "Active": true,
                     "FileName": "Dollhouse0",
                     "MaterialIndex": 0,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "DollhouseDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "DollhouseSpecular",
-                            "Shininess": 3.999999523162842,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "DollhouseDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "DollhouseSpecular",
+                        "Shininess": 3.999999523162842,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 2,
+                    "Id": 16998949063447787618,
                     "Active": true,
                     "FileName": "Dollhouse1",
                     "MaterialIndex": 1,
-                    "Material":
-                        {
-                            "HasDiffuseMap": true,
-                            "DiffuseColor": [
-                                0.13699999451637269,
-                                0.2630000114440918,
-                                0.42399999499320986
-                            ],
-                            "DiffuseMapFileName": "DollhouseDiffuse",
-                            "HasSpecularMap": true,
-                            "SpecularColor": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "SpecularMapFileName": "DollhouseSpecular",
-                            "Shininess": 3.999999523162842,
-                            "HasShininessInAlphaChannel": true,
-                            "Ambient": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        }
+                    "Material": {
+                        "HasDiffuseMap": true,
+                        "DiffuseColor": [
+                            0.13699999451637269,
+                            0.2630000114440918,
+                            0.42399999499320986
+                        ],
+                        "DiffuseMapFileName": "DollhouseDiffuse",
+                        "HasSpecularMap": true,
+                        "SpecularColor": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpecularMapFileName": "DollhouseSpecular",
+                        "Shininess": 3.999999523162842,
+                        "HasShininessInAlphaChannel": true,
+                        "Ambient": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
                 },
                 {
                     "Type": 3,
+                    "Id": 1587252350345214826,
                     "Active": true,
                     "LocalBoundingBox": [
                         -304.3537902832031,

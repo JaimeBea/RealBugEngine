@@ -39,19 +39,13 @@
 #define JSON_TAG_AMBIENT "Ambient"
 
 void ComponentMeshRenderer::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Mesh")) {
-		bool active = IsActive();
-
-		if (ImGui::Checkbox("Active", &active)) {
-			active ? Enable() : Disable();
-		}
-		ImGui::SameLine();
-
-		if (ImGui::Button("Remove")) {
-			// TODO: Add delete Component tool
-		}
-		ImGui::Separator();
-
+	bool active = IsActive();
+	if (ImGui::Checkbox("Active", &active)) {
+		active ? Enable() : Disable();
+	}
+	ImGui::Separator();
+	// MESH
+	if (ImGui::TreeNode("Mesh")) {
 		ImGui::TextColored(App->editor->titleColor, "Geometry");
 		ImGui::TextWrapped("Num Vertices: ");
 		ImGui::SameLine();
@@ -272,9 +266,16 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	material = (ResourceMaterial*) App->resources->GetResourceByID(jComponent[JSON_TAG_MATERIAL_ID]);
 }
 
+void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
+	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
+	component->mesh = this->mesh;
+	component->material = this->material;
+}
+
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
-	if (!IsActive()) return;
-	unsigned int program = material->GetShader()->GetShaderProgram();
+	if (!IsActiveInHierarchy()) return;
+
+	unsigned program = material->GetShader()->GetShaderProgram();
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
@@ -304,12 +305,12 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 			if (light->lightType == LightType::DIRECTIONAL) {
 				// It takes the first actived Directional Light inside the Pool
-				if (light->IsActive() && directionalLight == nullptr) {
+				if (light->IsActiveInHierarchy() && directionalLight == nullptr) {
 					directionalLight = light;
 					continue;
 				}
 			} else if (light->lightType == LightType::POINT) {
-				if (light->IsActive()) {
+				if (light->IsActiveInHierarchy()) {
 					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(meshPosition, lightPosition);
@@ -350,7 +351,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 					}
 				}
 			} else if (light->lightType == LightType::SPOT) {
-				if (light->IsActive()) {
+				if (light->IsActiveInHierarchy()) {
 					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(meshPosition, lightPosition);

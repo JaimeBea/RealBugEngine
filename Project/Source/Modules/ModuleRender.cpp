@@ -148,15 +148,13 @@ UpdateStatus ModuleRender::Update() {
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (GameObject& gameObject : App->scene->gameObjects) {
+	for (ComponentBoundingBox& boundingBox : App->scene->boundingBoxComponents) {
+		GameObject& gameObject = boundingBox.GetOwner();
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
-		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
-		if (boundingBox == nullptr) continue;
-
-		const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
-		const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+		const AABB& gameObjectAABB = boundingBox.GetWorldAABB();
+		const OBB& gameObjectOBB = boundingBox.GetWorldOBB();
 		if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
 			DrawGameObject(&gameObject);
 		}

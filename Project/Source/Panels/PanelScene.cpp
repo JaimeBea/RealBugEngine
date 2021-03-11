@@ -83,6 +83,8 @@ void PanelScene::Update() {
 				if (ImGui::RadioButton("Local", currentGuizmoMode == ImGuizmo::LOCAL)) currentGuizmoMode = ImGuizmo::LOCAL;
 				ImGui::SameLine();
 				if (ImGui::RadioButton("World", currentGuizmoMode == ImGuizmo::WORLD)) currentGuizmoMode = ImGuizmo::WORLD;
+			} else {
+				currentGuizmoMode = ImGuizmo::LOCAL;
 			}
 
 			ImGui::SameLine();
@@ -100,10 +102,10 @@ void PanelScene::Update() {
 				ImGui::InputFloat3("Snap", &snap[0]);
 				break;
 			case ImGuizmo::ROTATE:
-				ImGui::InputFloat("Angle Snap", &snap[0]);
+				ImGui::InputFloat("Snap Angle", &snap[0]);
 				break;
 			case ImGuizmo::SCALE:
-				ImGui::InputFloat("Scale Snap", &snap[0]);
+				ImGui::InputFloat("Snap Scale", &snap[0]);
 				break;
 			}
 			ImGui::PopItemWidth();
