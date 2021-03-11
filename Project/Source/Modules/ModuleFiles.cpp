@@ -78,10 +78,6 @@ void ModuleFiles::CreateFolder(const char* folderPath) const {
 	if (!PHYSFS_mkdir(folderPath)) LOG(PHYSFS_getLastError());
 }
 
-void ModuleFiles::Copy(const char* path, const char* newPath) {
-	CopyFile(path, newPath, false);
-}
-
 void ModuleFiles::Erase(const char* path) const {
 	if (!PHYSFS_delete(path)) {
 		LOG("Can't erase file %s. (%s)\n", path, PHYSFS_getLastError());

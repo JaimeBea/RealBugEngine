@@ -1,7 +1,7 @@
 #include "Component.h"
 
 #include "FileSystem/JsonValue.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 
 #include "Utils/Leaks.h"
 

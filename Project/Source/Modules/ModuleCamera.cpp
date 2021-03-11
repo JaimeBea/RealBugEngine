@@ -5,7 +5,6 @@
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
 #include "GameObject.h"
-#include "FileSystem/MeshImporter.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"

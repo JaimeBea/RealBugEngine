@@ -27,7 +27,6 @@ public:
 	bool Save(const char* filePath, const Buffer<char>& buffer, bool append = false) const;
 	bool Save(const char* filePath, const char* buffer, size_t size, bool append = false) const;
 	void CreateFolder(const char* folderPath) const;
-	void Copy(const char* path, const char* newPath);
 	void Erase(const char* path) const;
 
 	bool Exists(const char* filePath) const;
