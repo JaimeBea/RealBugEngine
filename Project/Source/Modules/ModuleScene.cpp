@@ -169,9 +169,7 @@ UpdateStatus ModuleScene::Update() {
 	}
 
 	// Update GameObjects
-	for (GameObject& gameObject : gameObjects) {
-		gameObject.Update();
-	}
+	root->Update(); // Only update root and he will update all his children gameObjects
 
 	return UpdateStatus::CONTINUE;
 }
