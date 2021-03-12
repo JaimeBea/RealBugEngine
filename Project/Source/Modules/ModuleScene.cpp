@@ -7,6 +7,7 @@
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceSkybox.h"
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
@@ -64,61 +65,60 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(SCENES_PATH);
 
 	CreateEmptyScene();
-
 	// TODO: (Scene resource) Load default scene
 	// SceneImporter::LoadScene("survival_shooter");
 
 	// Load skybox
 	// clang-format off
-	float skyboxVertices[] = {
-		// Front (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-	
-		// Left (x, y, z)
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-		
-		// Right (x, y, z)
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 
-		// Back (x, y, z)
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-	
-		// Top (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-		
-		// Bottom (x, y, z)
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	}; // clang-format on
+	//float skyboxVertices[] = {
+	//	// Front (x, y, z)
+	//	-1.0f,  1.0f, -1.0f,
+	//	-1.0f, -1.0f, -1.0f,
+	//	 1.0f, -1.0f, -1.0f,
+	//	 1.0f, -1.0f, -1.0f,
+	//	 1.0f,  1.0f, -1.0f,
+	//	-1.0f,  1.0f, -1.0f,
+
+	//	// Left (x, y, z)
+	//	-1.0f, -1.0f,  1.0f,
+	//	-1.0f, -1.0f, -1.0f,
+	//	-1.0f,  1.0f, -1.0f,
+	//	-1.0f,  1.0f, -1.0f,
+	//	-1.0f,  1.0f,  1.0f,
+	//	-1.0f, -1.0f,  1.0f,
+
+	//	// Right (x, y, z)
+	//	 1.0f, -1.0f, -1.0f,
+	//	 1.0f, -1.0f,  1.0f,
+	//	 1.0f,  1.0f,  1.0f,
+	//	 1.0f,  1.0f,  1.0f,
+	//	 1.0f,  1.0f, -1.0f,
+	//	 1.0f, -1.0f, -1.0f,
+
+	//	// Back (x, y, z)
+	//	-1.0f, -1.0f,  1.0f,
+	//	-1.0f,  1.0f,  1.0f,
+	//	 1.0f,  1.0f,  1.0f,
+	//	 1.0f,  1.0f,  1.0f,
+	//	 1.0f, -1.0f,  1.0f,
+	//	-1.0f, -1.0f,  1.0f,
+
+	//	// Top (x, y, z)
+	//	-1.0f,  1.0f, -1.0f,
+	//	 1.0f,  1.0f, -1.0f,
+	//	 1.0f,  1.0f,  1.0f,
+	//	 1.0f,  1.0f,  1.0f,
+	//	-1.0f,  1.0f,  1.0f,
+	//	-1.0f,  1.0f, -1.0f,
+
+	//	// Bottom (x, y, z)
+	//	-1.0f, -1.0f, -1.0f,
+	//	-1.0f, -1.0f,  1.0f,
+	//	 1.0f, -1.0f, -1.0f,
+	//	 1.0f, -1.0f, -1.0f,
+	//	-1.0f, -1.0f,  1.0f,
+	//	 1.0f, -1.0f,  1.0f
+	//}; // clang-format on
 
 	// Skybox VAO
 	// TODO: (Texture resource) Make skybox work

@@ -8,10 +8,12 @@
 #include "Resources/ResourceScene.h"
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceSkybox.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
+#include "FileSystem/SkyboxImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -105,6 +107,9 @@ void ImportAsset(const char* filePath) {
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
 			// ModelImporter::ImportModel(filePath, jMeta);
+		} else if (extension == ".sky") {
+			// Skybox files
+			SkyboxImporter::ImportSkybox(filePath, jMeta);
 		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
