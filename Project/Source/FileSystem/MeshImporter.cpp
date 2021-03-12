@@ -10,6 +10,7 @@
 #include "assimp/mesh.h"
 #include "Math/float3.h"
 #include "Math/float4.h"
+#include "Math/Quat.h"
 #include "GL/glew.h"
 #include <list>
 #include <vector>
@@ -26,19 +27,26 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	mesh->numVertices = assimpMesh->mNumVertices;
 	mesh->numIndices = assimpMesh->mNumFaces * 3;
 	mesh->materialIndex = assimpMesh->mMaterialIndex;
+	mesh->numBones = assimpMesh->mNumBones;
+	mesh->attaches = std::vector<Mesh::Attach>(mesh->numVertices);
+	mesh->bones = std::vector<Mesh::Bone>(mesh->numBones);
 
 	// Save to custom format buffer
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
 	unsigned uvSize = sizeof(float) * 2;
 	unsigned indexSize = sizeof(unsigned);
+	unsigned attachSize = sizeof(Mesh::Attach);
+	unsigned boneSize = sizeof(Mesh::Bone);
 
 	unsigned headerSize = sizeof(unsigned) * 2;
 	unsigned vertexSize = positionSize + normalSize + uvSize;
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
+	unsigned bonesBufferSize = boneSize * mesh->numBones;
+	unsigned attachesBufferSize = attachSize * mesh->numVertices;
 
-	size_t size = headerSize + vertexBufferSize + indexBufferSize;
+	size_t size = headerSize + vertexBufferSize + indexBufferSize + bonesBufferSize + attachesBufferSize;
 	Buffer<char> buffer = Buffer<char>(size);
 	char* cursor = buffer.Data();
 
@@ -46,6 +54,79 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	cursor += sizeof(unsigned);
 	*((unsigned*) cursor) = mesh->numIndices;
 	cursor += sizeof(unsigned);
+	*((unsigned*) cursor) = mesh->numBones;
+	cursor += sizeof(unsigned);
+
+	std::vector<Mesh::Attach> attaches = std::vector<Mesh::Attach>(mesh->numVertices);
+	for (unsigned i = 0; i < assimpMesh->mNumBones; ++i) {
+		aiBone* aiBone = assimpMesh->mBones[i];
+
+		*((char**) cursor) = aiBone->mName.data;
+		cursor += sizeof(char*);
+
+		//Transform
+		aiVector3D position, scaling;
+		aiQuaternion rotation;
+		aiBone->mOffsetMatrix.Decompose(scaling, rotation, position);
+
+		//Position
+		*((float*) cursor) = position.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = position.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = position.z;
+		cursor += sizeof(float);
+
+		// Scaling
+		*((float*) cursor) = scaling.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = scaling.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = scaling.z;
+		cursor += sizeof(float);
+
+		// Rotation
+		*((float*) cursor) = rotation.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = rotation.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = rotation.z;
+		cursor += sizeof(float);
+		*((float*) cursor) = rotation.w;
+		cursor += sizeof(float);
+
+		for (unsigned j = 0; j < aiBone->mNumWeights; j++) {
+			aiVertexWeight vtxWeight = aiBone->mWeights[j];
+
+			attaches[vtxWeight.mVertexId].numBones++;
+			attaches[vtxWeight.mVertexId].bones[attaches[vtxWeight.mVertexId].numBones] = i;
+			attaches[vtxWeight.mVertexId].weights[attaches[vtxWeight.mVertexId].numBones] = vtxWeight.mWeight;
+		}
+	}
+
+	// TODO: Move to vertices loop when moved to GPU
+	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
+		*((unsigned*) cursor) = attaches[i].numBones;
+		cursor += sizeof(unsigned);
+
+		*((unsigned*) cursor) = attaches[i].bones[0];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[1];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[2];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[3];
+		cursor += sizeof(unsigned);
+
+		*((float*) cursor) = attaches[i].weights[0];
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[1];
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[2];
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[3];
+		cursor += sizeof(float);
+	}
 
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
 		aiVector3D& vertex = assimpMesh->mVertices[i];
@@ -127,6 +208,8 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	cursor += sizeof(unsigned);
 	mesh->numIndices = *((unsigned*) cursor);
 	cursor += sizeof(unsigned);
+	mesh->numBones = *((unsigned*) cursor);
+	cursor += sizeof(unsigned);
 
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
@@ -136,6 +219,68 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	unsigned vertexSize = positionSize + normalSize + uvSize;
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
+
+	// Bones
+	for (unsigned i = 0; i < mesh->numBones; i++) {
+		float3 position, scaling;
+		Quat rotation;
+
+		char* name = *((char**) cursor);
+		cursor += sizeof(char*);
+
+		//Position
+		position.x = *((float*) cursor);
+		cursor += sizeof(float);
+		position.y = *((float*) cursor);
+		cursor += sizeof(float);
+		position.z = *((float*) cursor);
+		cursor += sizeof(float);
+
+		// Scaling
+		scaling.x = *((float*) cursor);
+		cursor += sizeof(float);
+		scaling.y = *((float*) cursor);
+		cursor += sizeof(float);
+		scaling.z = *((float*) cursor);
+		cursor += sizeof(float);
+
+		// Rotation
+		rotation.x = *((float*) cursor);
+		cursor += sizeof(float);
+		rotation.y = *((float*) cursor);
+		cursor += sizeof(float);
+		rotation.z = *((float*) cursor);
+		cursor += sizeof(float);
+		rotation.w = *((float*) cursor);
+		cursor += sizeof(float);
+
+		mesh->bones[i].transform = float4x4::FromTRS(position, rotation, scaling);
+		mesh->bones[i].boneName = name;
+	}
+
+	// Attaches
+	for (unsigned i = 0; i < mesh->numVertices; i++) {
+		mesh->attaches[i].numBones = *((unsigned*) cursor);
+		cursor += sizeof(unsigned);
+
+		mesh->attaches[i].bones[0] = *((unsigned*) cursor);
+		cursor += sizeof(unsigned);
+		mesh->attaches[i].bones[1] = *((unsigned*) cursor);
+		cursor += sizeof(unsigned);
+		mesh->attaches[i].bones[2] = *((unsigned*) cursor);
+		cursor += sizeof(unsigned);
+		mesh->attaches[i].bones[3] = *((unsigned*) cursor);
+		cursor += sizeof(unsigned);
+
+		mesh->attaches[i].weights[0] = *((float*) cursor);
+		cursor += sizeof(float);
+		mesh->attaches[i].weights[1] = *((float*) cursor);
+		cursor += sizeof(float);
+		mesh->attaches[i].weights[2] = *((float*) cursor);
+		cursor += sizeof(float);
+		mesh->attaches[i].weights[3] = *((float*) cursor);
+		cursor += sizeof(float);
+	}
 
 	// Vertices
 	float* vertices = (float*) cursor;
@@ -156,7 +301,7 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
 
 	// Load VBO
-	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, (mesh->numBones > 0) ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
 
 	// Load EBO
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBufferSize, indices, GL_STATIC_DRAW);

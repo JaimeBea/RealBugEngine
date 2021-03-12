@@ -135,7 +135,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 
 	// Import scene
 	LOG("Importing scene from path: \"%s\".", filePath);
-	const aiScene* assimpScene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
+	const aiScene* assimpScene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_LimitBoneWeights);
 	DEFER {
 		aiReleaseImport(assimpScene);
 	};

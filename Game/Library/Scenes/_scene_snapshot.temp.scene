@@ -1,5 +1,5 @@
 {
-    "RootId": 6614524744939159298,
+    "RootId": 15608535896263676540,
     "QuadtreeBounds": [
         -50.0,
         -300.0,
@@ -11,7 +11,7 @@
     "GameObjects": [
         {
             "ParentId": 0,
-            "Id": 6614524744939159298,
+            "Id": 15608535896263676540,
             "Name": "Scene",
             "Active": true,
             "Components": [
@@ -35,75 +35,16 @@
                         1.0
                     ],
                     "LocalEulerAngles": [
-                        -0.0,
                         0.0,
-                        -0.0
+                        0.0,
+                        0.0
                     ]
                 }
             ]
         },
         {
-            "ParentId": 6614524744939159298,
-            "Id": 12895609559912635326,
-            "Name": "Game Camera",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        219.55990600585938,
-                        51.42576217651367,
-                        -225.1400604248047
-                    ],
-                    "Rotation": [
-                        0.1433226764202118,
-                        -0.38489389419555666,
-                        0.060636620968580249,
-                        0.9097464084625244
-                    ],
-                    "Scale": [
-                        1.0000004768371583,
-                        1.0,
-                        1.0000005960464478
-                    ],
-                    "LocalEulerAngles": [
-                        24.890682220458986,
-                        -43.07307052612305,
-                        17.581878662109376
-                    ]
-                },
-                {
-                    "Type": 4,
-                    "Active": true,
-                    "Frustum": {
-                        "Pos": [
-                            219.55990600585938,
-                            51.42576217651367,
-                            -225.1400604248047
-                        ],
-                        "Up": [
-                            -0.22065594792366029,
-                            0.9515635967254639,
-                            0.214097261428833
-                        ],
-                        "Front": [
-                            -0.6829304695129395,
-                            -0.30745190382003786,
-                            0.6626306176185608
-                        ],
-                        "NearPlaneDistance": 0.10000000149011612,
-                        "FarPlaneDistance": 500.0,
-                        "HorizontalFov": 1.8401020765304566,
-                        "VerticalFov": 1.3113912343978882
-                    },
-                    "CameraSelected": false
-                }
-            ]
-        },
-        {
-            "ParentId": 6614524744939159298,
-            "Id": 2397930828329429764,
+            "ParentId": 15608535896263676540,
+            "Id": 5454646671056458227,
             "Name": "Directional Light",
             "Active": true,
             "Components": [
@@ -111,25 +52,25 @@
                     "Type": 1,
                     "Active": true,
                     "Position": [
-                        92.75239562988281,
-                        299.0420837402344,
-                        -228.45559692382813
+                        0.0,
+                        300.0,
+                        0.0
                     ],
                     "Rotation": [
-                        0.6571574211120606,
-                        -0.019397325813770295,
-                        -0.016921354457736017,
-                        0.7533137202262878
+                        0.7071068286895752,
+                        0.0,
+                        0.0,
+                        0.7071068286895752
                     ],
                     "Scale": [
-                        0.9999991655349731,
-                        0.9999891519546509,
-                        0.9999858736991882
+                        1.0,
+                        1.0,
+                        1.0
                     ],
                     "LocalEulerAngles": [
-                        82.20000457763672,
-                        -2.9500036239624025,
-                        9.617699561204063e-7
+                        90.00000762939453,
+                        0.0,
+                        -0.0
                     ]
                 },
                 {
@@ -142,26 +83,26 @@
                         1.0
                     ],
                     "Intensity": 1.0,
-                    "Kl": 0.0,
-                    "Kq": 0.0,
-                    "InnerAngle": 0.0,
-                    "OuterAngle": 0.0
+                    "Kl": 0.04500000178813934,
+                    "Kq": 0.007499999832361937,
+                    "InnerAngle": 0.2617993950843811,
+                    "OuterAngle": 0.5235987901687622
                 }
             ]
         },
         {
-            "ParentId": 6060483668355403380,
-            "Id": 7767485825950742997,
-            "Name": "Sides",
+            "ParentId": 15608535896263676540,
+            "Id": 3024256790399026164,
+            "Name": "Game Camera",
             "Active": true,
             "Components": [
                 {
                     "Type": 1,
                     "Active": true,
                     "Position": [
-                        0.0,
-                        0.0,
-                        0.0
+                        2.0,
+                        3.0,
+                        -5.0
                     ],
                     "Rotation": [
                         0.0,
@@ -181,1209 +122,36 @@
                     ]
                 },
                 {
-                    "Type": 2,
+                    "Type": 4,
                     "Active": true,
-                    "FileName": "Sides",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
+                    "Frustum": {
+                        "Pos": [
+                            2.0,
+                            3.0,
+                            -5.0
                         ],
-                        "DiffuseMapFileName": "PlanksDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
+                        "Up": [
+                            0.0,
                             1.0,
-                            1.0,
+                            0.0
+                        ],
+                        "Front": [
+                            0.0,
+                            0.0,
                             1.0
                         ],
-                        "SpecularMapFileName": "PlanksSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -40.650142669677737,
-                        -2359.530029296875,
-                        -4940.123046875,
-                        4940.4892578125,
-                        -42.9381103515625,
-                        -18.5028076171875
-                    ]
+                        "NearPlaneDistance": 0.10000000149011612,
+                        "FarPlaneDistance": 200.0,
+                        "HorizontalFov": 1.5707963705062867,
+                        "VerticalFov": 1.3113912343978882
+                    },
+                    "CameraSelected": false
                 }
             ]
         },
         {
-            "ParentId": 6614524744939159298,
-            "Id": 6060483668355403380,
-            "Name": "Room",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        0.05000000074505806,
-                        0.05000000074505806,
-                        0.05000000074505806
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 13082384710312709307,
-            "Name": "Base",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Base",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "PlanksDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "PlanksSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -40.650142669677737,
-                        -42.938323974609378,
-                        -4940.123046875,
-                        4940.4892578125,
-                        -15.8513822555542,
-                        -18.5028076171875
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 10756913155005525317,
-            "Name": "Planks",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Planks",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "PlanksDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "PlanksSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -82.52242279052735,
-                        -63.307151794433597,
-                        -4958.263671875,
-                        4956.6884765625,
-                        7.684663772583008,
-                        68.612060546875
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 17862895412995589536,
-            "Name": "Clock",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        -722.6061401367188,
-                        1375.317626953125,
-                        396.7903137207031
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Clock.Clock",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "ClockDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "ClockSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        2083.0595703125,
-                        -1.6269073486328126,
-                        -880.9620971679688,
-                        2422.88232421875,
-                        337.6552734375,
-                        -634.7769775390625
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 12623481096224182410,
-            "Name": "Drawers",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        1202.70166015625,
-                        0.0,
-                        -438.19793701171877
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Drawers",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "DrawersDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "DrawersSpecular",
-                        "Shininess": 7.999998092651367,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -601.1292724609375,
-                        0.6881561279296875,
-                        -593.8424072265625,
-                        601.1292724609375,
-                        1367.788818359375,
-                        373.50982666015627
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 13523549495249028714,
-            "Name": "Firetruck",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Firetruck",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "FiretruckDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "FiretruckSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        3069.349365234375,
-                        -1.03948974609375,
-                        -1541.6727294921876,
-                        3469.510009765625,
-                        229.81710815429688,
-                        -977.926025390625
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 6295967215944257441,
-            "Name": "Hearse",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        4177.166015625,
-                        0.0,
-                        -2315.189453125
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Hearse",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "HearseDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "HearseSpecular",
-                        "Shininess": 7.999998092651367,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -102.79621887207031,
-                        -0.00004348754737293348,
-                        -324.2380676269531,
-                        102.79621887207031,
-                        186.87110900878907,
-                        324.2380676269531
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 9891660602242793289,
-            "Name": "Robot",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        3364.9248046875,
-                        -30.076274871826173,
-                        -3023.01171875
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Robot",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "RobotDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "RobotSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -290.029052734375,
-                        -0.6617431640625,
-                        -286.1816711425781,
-                        128.22744750976563,
-                        164.53408813476563,
-                        327.0084228515625
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 11682258658186867125,
-            "Name": "SpinningTop",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        926.6600952148438,
-                        1370.2088623046876,
-                        802.53125
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "SpinningTop",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "SpinningTopDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "SpinningTopDiffuse",
-                        "Shininess": 100.0,
-                        "HasShininessInAlphaChannel": false,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -100.39217376708985,
-                        0.159271240234375,
-                        -1452.52197265625,
-                        34.399322509765628,
-                        147.80194091796876,
-                        -1297.49609375
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 1404513456099559712,
-            "Name": "Wall",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        1.2273406982421876,
-                        0.0
-                    ],
-                    "Rotation": [
-                        3.637978460147018e-11,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0000001192092896,
-                        1.0000001192092896
-                    ],
-                    "LocalEulerAngles": [
-                        4.168816403193887e-9,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Wall",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "WallDiffuse1",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "WallSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -282.92962646484377,
-                        -3.433213233947754,
-                        -4941.87255859375,
-                        4941.87158203125,
-                        4161.3056640625,
-                        72.7421875
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 2832366368628698602,
-            "Name": "Stars",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Stars",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": false,
-                        "DiffuseColor": [
-                            0.8973984122276306,
-                            0.936274528503418,
-                            0.6058247089385986
-                        ],
-                        "HasSpecularMap": false,
-                        "SpecularColor": [
-                            0.5245097875595093,
-                            0.5245084762573242,
-                            0.524504542350769
-                        ],
-                        "Shininess": 300.0,
-                        "HasShininessInAlphaChannel": false,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -41.0417366027832,
-                        463.11578369140627,
-                        -4832.98291015625,
-                        4823.857421875,
-                        3459.12744140625,
-                        42.344749450683597
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 1818724161004697139,
-            "Name": "Baby Player",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        2243.26318359375,
-                        -0.17330169677734376,
-                        -3871.28173828125
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.7446029186248779,
-                        0.0,
-                        0.6675077676773071
-                    ],
-                    "Scale": [
-                        7.75227165222168,
-                        7.75227165222168,
-                        7.75227165222168
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        96.25,
-                        -0.0
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 1818724161004697139,
-            "Id": 2327561080867841361,
-            "Name": "Gun",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.0,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Gun",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "GunDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "GunSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -32.89970779418945,
-                        12.014476776123047,
-                        -38.15906524658203,
-                        -24.022411346435548,
-                        54.90476608276367,
-                        101.53285217285156
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 1818724161004697139,
-            "Id": 11823642481949944225,
-            "Name": "Player",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        0.0,
-                        0.028208956122398378,
-                        0.0
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Player",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "PlayerDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "PlayerSpecular",
-                        "Shininess": 2.0,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -89.48932647705078,
-                        -0.032199859619140628,
-                        -62.85764694213867,
-                        30.660633087158204,
-                        131.46469116210938,
-                        29.071054458618165
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 2518854770959213534,
-            "Name": "Zombunny",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        325.4021911621094,
-                        -1.8400764465332032,
-                        -4244.626953125
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.6104907989501953,
-                        0.0,
-                        0.7920233607292175
-                    ],
-                    "Scale": [
-                        8.12315559387207,
-                        8.123148918151856,
-                        8.12315559387207
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        75.25000762939453,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Zombunny0",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "ZomBunnyDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "ZomBunnySpecular",
-                        "Shininess": 7.999998092651367,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Zombunny1",
-                    "MaterialIndex": 1,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "ZomBunnyDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "ZomBunnySpecular",
-                        "Shininess": 15.999996185302735,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -76.11719512939453,
-                        -0.33393901586532595,
-                        -35.7611083984375,
-                        76.11719512939453,
-                        148.1706085205078,
-                        37.818817138671878
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6060483668355403380,
-            "Id": 14334575072367567235,
-            "Name": "Dollhouse",
-            "Active": true,
-            "Components": [
-                {
-                    "Type": 1,
-                    "Active": true,
-                    "Position": [
-                        4294.64501953125,
-                        0.0,
-                        -376.0500793457031
-                    ],
-                    "Rotation": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "Scale": [
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "LocalEulerAngles": [
-                        -0.0,
-                        0.0,
-                        -0.0
-                    ]
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Dollhouse0",
-                    "MaterialIndex": 0,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "DollhouseDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "DollhouseSpecular",
-                        "Shininess": 3.999999523162842,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 2,
-                    "Active": true,
-                    "FileName": "Dollhouse1",
-                    "MaterialIndex": 1,
-                    "Material": {
-                        "HasDiffuseMap": true,
-                        "DiffuseColor": [
-                            0.13699999451637269,
-                            0.2630000114440918,
-                            0.42399999499320986
-                        ],
-                        "DiffuseMapFileName": "DollhouseDiffuse",
-                        "HasSpecularMap": true,
-                        "SpecularColor": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpecularMapFileName": "DollhouseSpecular",
-                        "Shininess": 3.999999523162842,
-                        "HasShininessInAlphaChannel": true,
-                        "Ambient": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
-                },
-                {
-                    "Type": 3,
-                    "Active": true,
-                    "LocalBoundingBox": [
-                        -304.3537902832031,
-                        -2.836273193359375,
-                        -298.99072265625,
-                        304.3538818359375,
-                        1054.16357421875,
-                        298.99072265625
-                    ]
-                }
-            ]
-        },
-        {
-            "ParentId": 6614524744939159298,
-            "Id": 15622820466500635984,
+            "ParentId": 15608535896263676540,
+            "Id": 6142809238855663595,
             "Name": "RootNode",
             "Active": true,
             "Components": [
@@ -1419,8 +187,8 @@
             ]
         },
         {
-            "ParentId": 15622820466500635984,
-            "Id": 13847749894771267810,
+            "ParentId": 6142809238855663595,
+            "Id": 1328324233302583506,
             "Name": "Zombunny",
             "Active": true,
             "Components": [
@@ -1514,16 +282,12 @@
                         148.1706085205078,
                         37.818817138671878
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 15622820466500635984,
-            "Id": 7924543713976823261,
+            "ParentId": 6142809238855663595,
+            "Id": 5846851240795388655,
             "Name": "Ctrl_Grp",
             "Active": true,
             "Components": [
@@ -1551,16 +315,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7924543713976823261,
-            "Id": 3664164071490567648,
+            "ParentId": 5846851240795388655,
+            "Id": 12340533348591514039,
             "Name": "Root",
             "Active": true,
             "Components": [
@@ -1588,16 +348,12 @@
                         0.0,
                         90.00000762939453
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 3664164071490567648,
-            "Id": 12095561492322207161,
+            "ParentId": 12340533348591514039,
+            "Id": 4092597357464814301,
             "Name": "Hips",
             "Active": true,
             "Components": [
@@ -1625,16 +381,12 @@
                         85.23634338378906,
                         29.05427360534668
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 12095561492322207161,
-            "Id": 7955826491996199993,
+            "ParentId": 4092597357464814301,
+            "Id": 5882213690844047937,
             "Name": "Spine",
             "Active": true,
             "Components": [
@@ -1662,16 +414,12 @@
                         -13.357329368591309,
                         2.7674038410186769
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 11203695737720710405,
+            "ParentId": 5882213690844047937,
+            "Id": 9961337022615527271,
             "Name": "Head",
             "Active": true,
             "Components": [
@@ -1699,16 +447,12 @@
                         7.316944599151611,
                         -4.338451385498047
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11203695737720710405,
-            "Id": 1735490708478127171,
+            "ParentId": 9961337022615527271,
+            "Id": 7503229569255577169,
             "Name": "HeadEnd",
             "Active": true,
             "Components": [
@@ -1736,16 +480,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11203695737720710405,
-            "Id": 11627610472701991797,
+            "ParentId": 9961337022615527271,
+            "Id": 10352430718557451973,
             "Name": "LeftEar",
             "Active": true,
             "Components": [
@@ -1773,16 +513,12 @@
                         51.31739044189453,
                         27.392210006713868
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11627610472701991797,
-            "Id": 4736447099382764630,
+            "ParentId": 10352430718557451973,
+            "Id": 15110098123405199104,
             "Name": "LeftEarEnd",
             "Active": true,
             "Components": [
@@ -1810,16 +546,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11203695737720710405,
-            "Id": 17335431686571965330,
+            "ParentId": 9961337022615527271,
+            "Id": 13832131425502318122,
             "Name": "RightEar",
             "Active": true,
             "Components": [
@@ -1847,16 +579,12 @@
                         30.419904708862306,
                         13.483019828796387
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 17335431686571965330,
-            "Id": 185343841522819032,
+            "ParentId": 13832131425502318122,
+            "Id": 4416703917717210927,
             "Name": "RightEarEnd",
             "Active": true,
             "Components": [
@@ -1884,16 +612,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 2423695960274465223,
+            "ParentId": 5882213690844047937,
+            "Id": 3847559637981876121,
             "Name": "LeftUpperArm",
             "Active": true,
             "Components": [
@@ -1921,16 +645,12 @@
                         27.061901092529298,
                         -96.50471496582031
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 2423695960274465223,
-            "Id": 14085126024711998551,
+            "ParentId": 3847559637981876121,
+            "Id": 6077774920241229368,
             "Name": "LeftLowerArm",
             "Active": true,
             "Components": [
@@ -1958,16 +678,12 @@
                         -0.9322652220726013,
                         -0.26971933245658877
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 14085126024711998551,
-            "Id": 14139819073255212740,
+            "ParentId": 6077774920241229368,
+            "Id": 7302647963241575895,
             "Name": "LeftWrist",
             "Active": true,
             "Components": [
@@ -1995,16 +711,12 @@
                         -0.44590672850608828,
                         0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 14139819073255212740,
-            "Id": 147730347021998550,
+            "ParentId": 7302647963241575895,
+            "Id": 587241993795915503,
             "Name": "LeftWristEnd",
             "Active": true,
             "Components": [
@@ -2032,16 +744,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 11043606438960614187,
+            "ParentId": 5882213690844047937,
+            "Id": 14888116832342483954,
             "Name": "LeftUpperArmFK",
             "Active": true,
             "Components": [
@@ -2069,16 +777,12 @@
                         27.061901092529298,
                         -96.50471496582031
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11043606438960614187,
-            "Id": 10729767876934230302,
+            "ParentId": 14888116832342483954,
+            "Id": 39049124987824273,
             "Name": "LeftLowerArmFK",
             "Active": true,
             "Components": [
@@ -2106,16 +810,12 @@
                         -0.9322652220726013,
                         -0.26971933245658877
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 10729767876934230302,
-            "Id": 9707630501677506557,
+            "ParentId": 39049124987824273,
+            "Id": 4008279272702499751,
             "Name": "LeftWristFK",
             "Active": true,
             "Components": [
@@ -2143,16 +843,12 @@
                         -0.44590672850608828,
                         0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 11924108646059578525,
+            "ParentId": 5882213690844047937,
+            "Id": 12548140131085791376,
             "Name": "LeftUpperArmIK",
             "Active": true,
             "Components": [
@@ -2180,16 +876,12 @@
                         54.37928771972656,
                         3.778885841369629
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11924108646059578525,
-            "Id": 2545069216366235974,
+            "ParentId": 12548140131085791376,
+            "Id": 1582399665921178109,
             "Name": "LeftLowerArmIK",
             "Active": true,
             "Components": [
@@ -2203,7 +895,7 @@
                     ],
                     "Rotation": [
                         0.0,
-                        0.0,
+                        2.83136557754915e-7,
                         0.0,
                         1.0
                     ],
@@ -2214,19 +906,15 @@
                     ],
                     "LocalEulerAngles": [
                         -0.0,
-                        0.0,
+                        0.000032445059332530948,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 2545069216366235974,
-            "Id": 9296564992345046416,
+            "ParentId": 1582399665921178109,
+            "Id": 17734496855290180889,
             "Name": "LeftWristIK",
             "Active": true,
             "Components": [
@@ -2254,16 +942,12 @@
                         17.83832359313965,
                         168.28050231933595
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 5608891386924862844,
+            "ParentId": 5882213690844047937,
+            "Id": 14192535537275632505,
             "Name": "RightUpperArm",
             "Active": true,
             "Components": [
@@ -2291,16 +975,12 @@
                         21.218002319335939,
                         -102.30509948730469
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 5608891386924862844,
-            "Id": 12813374533563636064,
+            "ParentId": 14192535537275632505,
+            "Id": 13446664559163315984,
             "Name": "RightLowerArm",
             "Active": true,
             "Components": [
@@ -2328,16 +1008,12 @@
                         1.0773950815200806,
                         0.20543615520000459
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 12813374533563636064,
-            "Id": 17542833279969372399,
+            "ParentId": 13446664559163315984,
+            "Id": 2694330657507932806,
             "Name": "RightWrist",
             "Active": true,
             "Components": [
@@ -2365,16 +1041,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 17542833279969372399,
-            "Id": 13797585345734746233,
+            "ParentId": 2694330657507932806,
+            "Id": 6223204556618977745,
             "Name": "RightWristEnd",
             "Active": true,
             "Components": [
@@ -2402,16 +1074,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 2489473276026745424,
+            "ParentId": 5882213690844047937,
+            "Id": 9746560179454593693,
             "Name": "RightUpperArmFK",
             "Active": true,
             "Components": [
@@ -2439,16 +1107,12 @@
                         21.218002319335939,
                         -102.30509948730469
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 2489473276026745424,
-            "Id": 6762628715472545790,
+            "ParentId": 9746560179454593693,
+            "Id": 2553282833858722918,
             "Name": "RightLowerArmFK",
             "Active": true,
             "Components": [
@@ -2476,16 +1140,12 @@
                         1.0773950815200806,
                         0.20543615520000459
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 6762628715472545790,
-            "Id": 9240994824781878545,
+            "ParentId": 2553282833858722918,
+            "Id": 7933287707381143680,
             "Name": "RightWristFK",
             "Active": true,
             "Components": [
@@ -2513,16 +1173,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 7955826491996199993,
-            "Id": 16569780832379828593,
+            "ParentId": 5882213690844047937,
+            "Id": 9938884989328087308,
             "Name": "RightUpperArmIK",
             "Active": true,
             "Components": [
@@ -2550,16 +1206,12 @@
                         67.34166717529297,
                         -13.1437406539917
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 16569780832379828593,
-            "Id": 11533125297694404995,
+            "ParentId": 9938884989328087308,
+            "Id": 9747832172024273714,
             "Name": "RightLowerArmIK",
             "Active": true,
             "Components": [
@@ -2587,16 +1239,12 @@
                         58.36386489868164,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 11533125297694404995,
-            "Id": 11561449299630212646,
+            "ParentId": 9747832172024273714,
+            "Id": 13652503308627629912,
             "Name": "RightWristIK",
             "Active": true,
             "Components": [
@@ -2624,16 +1272,12 @@
                         -19.085918426513673,
                         158.8711700439453
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 12095561492322207161,
-            "Id": 15708974163378923606,
+            "ParentId": 4092597357464814301,
+            "Id": 1598385668548177275,
             "Name": "LeftLeg",
             "Active": true,
             "Components": [
@@ -2661,16 +1305,12 @@
                         1.1344215869903565,
                         -9.918724686031055e-8
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 15708974163378923606,
-            "Id": 10325790585693369139,
+            "ParentId": 1598385668548177275,
+            "Id": 14207049229303206274,
             "Name": "LeftFoot",
             "Active": true,
             "Components": [
@@ -2698,16 +1338,12 @@
                         -0.5476142764091492,
                         -0.9935094118118286
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 10325790585693369139,
-            "Id": 11781985241778317920,
+            "ParentId": 14207049229303206274,
+            "Id": 2979471305066859429,
             "Name": "LeftFootEnd",
             "Active": true,
             "Components": [
@@ -2735,16 +1371,12 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 12095561492322207161,
-            "Id": 13092053247635770837,
+            "ParentId": 4092597357464814301,
+            "Id": 8864491710204428057,
             "Name": "RightLeg",
             "Active": true,
             "Components": [
@@ -2772,16 +1404,12 @@
                         1.1344215869903565,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 13092053247635770837,
-            "Id": 13353831481934664847,
+            "ParentId": 8864491710204428057,
+            "Id": 16518073099771782332,
             "Name": "RightFoot",
             "Active": true,
             "Components": [
@@ -2809,16 +1437,12 @@
                         -0.5476142764091492,
                         -0.9935094118118286
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         },
         {
-            "ParentId": 13353831481934664847,
-            "Id": 18159924027071863981,
+            "ParentId": 16518073099771782332,
+            "Id": 111390326014164117,
             "Name": "RightFootEnd",
             "Active": true,
             "Components": [
@@ -2846,10 +1470,6 @@
                         0.0,
                         -0.0
                     ]
-                },
-                {
-                    "Type": 6,
-                    "Active": true
                 }
             ]
         }
