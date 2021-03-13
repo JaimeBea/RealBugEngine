@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Components\ComponentCanvas.h" />
+    <ClInclude Include="Source\Components\ComponentCanvasRenderer.h" />
     <ClInclude Include="Source\UI\FontImporter.h" />
     <ClInclude Include="Source\Components\ComponentImage.h" />
     <ClInclude Include="Source\Modules\ModuleUI.h" />
@@ -167,6 +169,8 @@
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Components\ComponentCanvas.cpp" />
+    <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />
     <ClCompile Include="Source\UI\FontImporter.cpp" />
     <ClCompile Include="Source\Components\ComponentImage.cpp" />
     <ClCompile Include="Source\Modules\ModuleUI.cpp" />

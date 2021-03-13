@@ -39,9 +39,9 @@ void ComponentTransform2D::OnEditorUpdate() {
 			SetScale(scl);
 		}
 
-		float3 rot = rotation;
+		float3 rot = rotation.ToEulerXYZ();
 		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetRotation(rot);
+			SetRotation(Quat::FromEulerXYZ(rot.x * DEGTORAD, rot.y * DEGTORAD, rot.z * DEGTORAD));
 		}
 
 		ImGui::Separator();
@@ -56,7 +56,7 @@ void ComponentTransform2D::SetSize(float2 size_) {
 	size = size_;
 }
 
-void ComponentTransform2D::SetRotation(float3 rotation_) {
+void ComponentTransform2D::SetRotation(Quat rotation_) {
 	rotation = rotation_;
 }
 
@@ -70,4 +70,9 @@ void ComponentTransform2D::SetAnchorX(float2 anchorX_) {
 
 void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	anchorY = anchorY_;
+}
+
+float4x4 ComponentTransform2D::GetGlobalMatrix() {
+
+	return float4x4::FromTRS(position, rotation, scale);
 }
