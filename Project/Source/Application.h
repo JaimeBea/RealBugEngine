@@ -19,8 +19,11 @@ class ModulePrograms;
 class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
+class ModuleUI;
 class ModuleEventSystem;
 struct Event;
+
+
 class Application {
 public:
 	Application();
@@ -47,6 +50,7 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
+	ModuleUI* uiEditor = nullptr;
 	ModuleEventSystem* eventSystem = nullptr;
 	// Application Configuration
 
