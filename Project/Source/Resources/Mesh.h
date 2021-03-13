@@ -27,6 +27,7 @@ public:
 	unsigned numIndices = 0;
 	unsigned materialIndex = 0;
 	unsigned numBones = 0;
+	float* vertices;
 	std::vector<Mesh::Attach> attaches; // For each vertex, we store the bone indices and wights that this vertex is related.
 	std::vector<Mesh::Bone> bones;		// The bones and it's transform from a Mesh
 };

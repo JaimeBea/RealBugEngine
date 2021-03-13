@@ -98,14 +98,17 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 		for (unsigned j = 0; j < aiBone->mNumWeights; j++) {
 			aiVertexWeight vtxWeight = aiBone->mWeights[j];
 
-			attaches[vtxWeight.mVertexId].numBones++;
 			attaches[vtxWeight.mVertexId].bones[attaches[vtxWeight.mVertexId].numBones] = i;
 			attaches[vtxWeight.mVertexId].weights[attaches[vtxWeight.mVertexId].numBones] = vtxWeight.mWeight;
+			attaches[vtxWeight.mVertexId].numBones++;
 		}
 	}
 
 	// TODO: Move to vertices loop when moved to GPU
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
+
+		float weight = attaches[i].weights[0] + attaches[i].weights[1] + attaches[i].weights[2] + attaches[i].weights[3];
+
 		*((unsigned*) cursor) = attaches[i].numBones;
 		cursor += sizeof(unsigned);
 
@@ -118,13 +121,13 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 		*((unsigned*) cursor) = attaches[i].bones[3];
 		cursor += sizeof(unsigned);
 
-		*((float*) cursor) = attaches[i].weights[0];
+		*((float*) cursor) = attaches[i].weights[0] / weight;
 		cursor += sizeof(float);
-		*((float*) cursor) = attaches[i].weights[1];
+		*((float*) cursor) = attaches[i].weights[1] / weight;
 		cursor += sizeof(float);
-		*((float*) cursor) = attaches[i].weights[2];
+		*((float*) cursor) = attaches[i].weights[2] / weight;
 		cursor += sizeof(float);
-		*((float*) cursor) = attaches[i].weights[3];
+		*((float*) cursor) = attaches[i].weights[3] / weight;
 		cursor += sizeof(float);
 	}
 
@@ -259,6 +262,7 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	}
 
 	// Attaches
+	// TODO: Delete when move it to GPU
 	for (unsigned i = 0; i < mesh->numVertices; i++) {
 		mesh->attaches[i].numBones = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
@@ -283,8 +287,9 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	}
 
 	// Vertices
-	float* vertices = (float*) cursor;
-	cursor += vertexSize * mesh->numVertices;
+	mesh->vertices = (float*) malloc(vertexBufferSize);
+	memcpy_s(mesh->vertices, vertexBufferSize, (float*) cursor, vertexBufferSize);
+	cursor += vertexBufferSize;
 
 	// Indices
 	unsigned* indices = (unsigned*) cursor;
@@ -301,7 +306,7 @@ void MeshImporter::LoadMesh(Mesh* mesh) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->ebo);
 
 	// Load VBO
-	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, (mesh->numBones > 0) ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, mesh->vertices, (mesh->numBones > 0) ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
 	// Load EBO
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBufferSize, indices, GL_STATIC_DRAW);
@@ -366,6 +371,8 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 void MeshImporter::UnloadMesh(Mesh* mesh) {
 	if (!mesh->vao) return;
+
+	free(mesh->vertices);
 
 	glDeleteVertexArrays(1, &mesh->vao);
 	glDeleteBuffers(1, &mesh->vbo);

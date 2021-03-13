@@ -26,6 +26,7 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
 #include <string>
+#include <unordered_map>
 
 #include "Utils/Leaks.h"
 
@@ -119,6 +120,28 @@ static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Mate
 	}
 
 	return gameObject;
+}
+
+static void SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	
+	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
+		
+		meshRenderer->goBones = goBones;
+	}
+
+	for (GameObject *child : node->GetChildren()) {
+		SaveBones(child, goBones);
+	}
+
+}
+
+static void CacheBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+
+	for (GameObject* child : node->GetChildren()) {
+		goBones[child->name] = child;
+		CacheBones(child, goBones);
+	}
+
 }
 
 bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
@@ -244,6 +267,8 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	LOG("Importing scene tree.");
 	GameObject* gameObject = ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
 
+	int numBones = 0;
+
 	// Load animations
 	if (assimpScene->mNumAnimations > 0) {
 		LOG("Importing animations");
@@ -255,7 +280,25 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
 		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
 		animationComponet->animationController = new AnimationController(animations[0]);
+		numBones = animations[0]->keyFrames[0].channels.size();
 	}
+
+	std::unordered_map<std::string, GameObject*> goBones;
+
+	for (GameObject *child : gameObject->GetChildren()) {
+		if (child->name == "Ctrl_Grp") {
+			// The Ctrl_Grp only have one child. "Root"
+			CacheBones(child, goBones);
+		}
+	}
+
+	for (GameObject* child : gameObject->GetChildren()) {
+		if (child->name != "Ctrl_Grp") {
+			SaveBones(child, goBones);
+			goBones[child->name] = child;
+		}
+	}
+
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);

@@ -11,11 +11,13 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleTime.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
@@ -350,8 +352,12 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	material.ambient.Set(jAmbient[0], jAmbient[1], jAmbient[2]);
 }
 
-void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
+void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	if (!IsActive()) return;
+
+	if (mesh->numBones > 0 && App->time->IsGameRunning()) {
+		SkinningCPU();
+	}
 
 	unsigned program = App->programs->defaultProgram;
 
@@ -670,4 +676,52 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
+}
+
+void ComponentMeshRenderer::SkinningCPU() {
+	// Bind VBO buffer to iterate over vertex information
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+
+	float* vertices = (float*) glMapBufferRange(GL_ARRAY_BUFFER, 0, mesh->numVertices * 8, GL_MAP_WRITE_BIT);
+
+	for (unsigned i = 0, vtxcount = 0; vtxcount < mesh->numVertices; i += 8, ++vtxcount) {
+		float4 position(mesh->vertices[i + 0], mesh->vertices[i + 1], mesh->vertices[i + 2], 1);
+		float4 normal(mesh->vertices[i + 3], mesh->vertices[i + 4], mesh->vertices[i + 5], 1);
+
+		Mesh::Attach attachedInformation = mesh->attaches[vtxcount];
+
+		float4 resPosition = float4::zero;
+		float4 resNormal = float4::zero;
+
+		for (unsigned j = 0; j < attachedInformation.numBones; ++j) {
+			Mesh::Bone bone = mesh->bones[attachedInformation.bones[j]];
+			float weightJ = attachedInformation.weights[j];
+
+			const float4x4& inverseOffsetMatrix = bone.transform;
+
+			// In this case, I can assume that the bone name is already stored in the map, so the find is not necessary
+			const float4x4& boneTransform = goBones[bone.boneName]->GetComponent<ComponentTransform>()->GetGlobalMatrix();
+			const float4x4& invertedParentModelTransform = GetOwner().GetParent()->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted();
+
+			float4x4 boneGameObjectTransform = invertedParentModelTransform * boneTransform;
+
+			resPosition += weightJ * (boneGameObjectTransform * (inverseOffsetMatrix * position));
+			//boneGameObjectTransform.InverseTranspose();
+			resNormal += weightJ * (boneGameObjectTransform * (inverseOffsetMatrix * normal));
+		}
+
+		// Position
+		vertices[i + 0] = resPosition.x;
+		vertices[i + 1] = resPosition.y;
+		vertices[i + 2] = resPosition.z;
+
+		// Normal
+		vertices[i + 3] = resNormal.x;
+		vertices[i + 4] = resNormal.y;
+		vertices[i + 5] = resNormal.z;
+	}
+
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
