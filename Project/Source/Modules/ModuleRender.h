@@ -19,6 +19,8 @@ public:
 	void ViewportResized(int width, int height);
 
 	void SetVSync(bool vsync);
+	void EnableOrtographicRender();
+	void DisableOrtographicRender();
 	void RecieveEvent(const Event& ev) override;
 
 public:
@@ -43,4 +45,5 @@ private:
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);
 	void DrawGameObject(GameObject* gameObject);
 	void DrawSkyBox();
+	void RenderUI() const;
 };

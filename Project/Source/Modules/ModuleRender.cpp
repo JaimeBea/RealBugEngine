@@ -179,6 +179,8 @@ UpdateStatus ModuleRender::Update() {
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
+	RenderUI();
+
 	return UpdateStatus::CONTINUE;
 }
 
@@ -222,6 +224,19 @@ void ModuleRender::ViewportResized(int width, int height) {
 
 void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
+}
+
+void ModuleRender::EnableOrtographicRender() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+}
+
+void ModuleRender::DisableOrtographicRender() {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	// TODO
+	//gluPerspective()
 }
 
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
@@ -375,4 +390,19 @@ void ModuleRender::DrawSkyBox() {
 
 		glDepthFunc(GL_LESS);
 	}
+}
+
+void ModuleRender::RenderUI() const {
+	// ENABLE ORTOGRAPHIC RENDERING
+
+	glMatrixMode(GL_PROJECTION);
+	//glPushMatrix();		// this might no be needed
+	glLoadIdentity();
+	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+
+
+
+	// DISABLE ORTOGRAPHIC RENDERING
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
