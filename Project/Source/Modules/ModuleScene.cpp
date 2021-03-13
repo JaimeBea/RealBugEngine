@@ -14,6 +14,8 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentTransform2D.h"
+#include "Components/ComponentImage.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -66,9 +68,14 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(MESHES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
-	CreateEmptyScene();
+	//CreateEmptyScene();
+	GameObject* go = gameObjects.Obtain();
+	go->CreateComponent<ComponentTransform2D>();
+	go->CreateComponent<ComponentImage>();
+	go->GetComponent<ComponentImage>()->SetTexture(TextureImporter::ImportTexture("C:\\Users\\mange\\Desktop\\sp.jpg"));
+	root->AddChild(go);
 
-	SceneImporter::LoadScene("survival_shooter");
+	//SceneImporter::LoadScene("survival_shooter");
 
 	// Load skybox
 	// clang-format off
@@ -183,7 +190,7 @@ bool ModuleScene::CleanUp() {
 	glDeleteBuffers(1, &skyboxVbo);
 
 	ClearScene();
-
+	
 #ifdef _DEBUG
 	aiDetachAllLogStreams();
 #endif

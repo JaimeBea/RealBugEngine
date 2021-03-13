@@ -6,6 +6,7 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleUI.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -195,6 +196,17 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panelAbout.name, "", &panelAbout.enabled);
 		ImGui::EndMenu();
 	}
+
+	if (ImGui::BeginMenu("UI Editor")) {
+		if (ImGui::MenuItem("Open")) {
+			App->uiEditor->StartUI();
+		}
+		if (ImGui::MenuItem("Exit")) {
+			App->uiEditor->EndUI();
+		}
+		ImGui::EndMenu();
+	}
+
 	ImGui::EndMainMenuBar();
 
 	// Modals
@@ -254,6 +266,7 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndPopup();
 	}
+
 	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Quit")) {
 		ImGui::Text("Do you really want to quit?");

@@ -61,6 +61,8 @@ bool ModuleCamera::Init() {
 	activeFrustum->SetFront(vec::unitZ);
 	activeFrustum->SetUp(vec::unitY);
 
+	editorFrustum->SetOrthographic(400, 400);
+
 	SetPosition(vec(2, 3, -5));
 	LookAt(0, 0, 0);
 
