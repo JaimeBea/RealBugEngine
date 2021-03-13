@@ -37,7 +37,7 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 	return shaderId;
 }
 
-static unsigned CreateProgram(const char* vertexShaderFilePath, const char* fragmentShaderFilePath) {
+unsigned ModulePrograms::CreateProgram(const char* vertexShaderFilePath, const char* fragmentShaderFilePath) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end

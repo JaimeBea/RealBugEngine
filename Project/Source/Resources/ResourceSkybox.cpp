@@ -5,6 +5,7 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleCamera.h"
+#include "Modules/ModulePrograms.h"
 #include "Utils/Logging.h"
 #include "IL/il.h"
 #include "IL/ilu.h"
@@ -12,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 
+#define JSON_TAG_SHADER "shader"
 ResourceSkybox::ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath)
 	: Resource(id, assetFilePath, resourceFilePath) {
 }
@@ -24,8 +26,11 @@ void ResourceSkybox::ReadPath() {
 		files.push_back(imgPath);
 	}
 }
-void ResourceSkybox::Load() {
+void ResourceSkybox::Load(JsonValue jComponent) {
 	ReadPath();
+	shader = (ResourceShader*) App->resources->GetResourceByID(jComponent[JSON_TAG_SHADER]);
+	/*programSky = App->programs->CreateProgram(this->GetAssetFilePath().c_str(), this->GetAssetFilePath().c_str());*/
+	programSky = App->programs->CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
 	skyboxVAO = 0;
 	skyboxVBO = 0;
 	vbo = 0;

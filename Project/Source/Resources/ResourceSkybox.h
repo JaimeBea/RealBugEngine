@@ -6,12 +6,14 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <Resources/ResourceShader.h>
+#include <FileSystem/JsonValue.h>
 
 class ResourceSkybox : public Resource {
 public:
 	ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath);
 
-	void Load() override;
+	void Load(JsonValue jComponent);
 	void Unload() override;
 	void Draw();
 	void ReadPath();
@@ -139,8 +141,9 @@ public:
 
 private:
 	std::vector<std::string> files;
+	ResourceShader* shader;
 	unsigned int skyboxVAO, skyboxVBO;
 	unsigned int vbo, vao, ebo;
+	//delete after undestand how to link a resouceshader//
 	unsigned int programSky;
-	unsigned int glCubeMap;
 };
