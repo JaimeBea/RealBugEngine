@@ -35,7 +35,10 @@
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
-
+//Check to delete
+#include "Resources/ResourceStateMachine.h"
+#include "Resources/ResourceStates.h"
+#include "Resources/TransitionResource.h"
 static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
@@ -255,6 +258,22 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
 		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
 		animationComponet->animationController = new AnimationController(animations[0]);
+
+		ResourceStateMachine resourceStateMachine;
+		std::string sState1 = "State1";
+		std::string sState2 = "State2";
+
+		ResourceStates *state = resourceStateMachine.AddState(sState1);
+		ResourceStates* state2 =  resourceStateMachine.AddState(sState2);
+		std::string tName1 = "s1Ts2";
+		std::string tName2 = "s2Ts1";
+
+		resourceStateMachine.AddTransition(state, state2, 10, tName1);
+		resourceStateMachine.AddTransition(state2, state, 5, tName2);
+		
+		resourceStateMachine.ChangeState(tName1);
+		resourceStateMachine.ChangeState(tName2);
+		resourceStateMachine.GetCurrentState();
 	}
 
 	unsigned timeMs = timer.Stop();

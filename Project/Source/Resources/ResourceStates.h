@@ -7,7 +7,7 @@ class TransitionResource;
 class ResourceStates {
 
 public:
-	std::string name;
-	Clip* clip;
-	std::unordered_map<std::string, TransitionResource>transitions;
+	ResourceStates(std::string &name,Clip *clip);
+	std::string name = "";
+	Clip* clip = nullptr;
 };

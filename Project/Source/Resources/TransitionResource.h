@@ -1,12 +1,19 @@
 #pragma once
 #include <string>
-
-class ResourceState;
+class ResourceStates;
 class TransitionResource {
 
 public:
-	ResourceState* source;
-	ResourceState* target;
-	std::string trigger;
-	unsigned int interpolationDuration;
+	TransitionResource(ResourceStates* mSource, ResourceStates* mTarget, std::string& mTrigger, unsigned int mInterpolation)
+		: source(mSource)
+		, target(mTarget)
+		, trigger(mTrigger)
+		, interpolationDuration(mInterpolation)
+	{
+
+	}
+	ResourceStates* source = nullptr;
+	ResourceStates* target = nullptr;
+	std::string trigger = "";
+	unsigned int interpolationDuration = 0;
 };
