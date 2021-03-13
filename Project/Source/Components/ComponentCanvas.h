@@ -12,10 +12,6 @@ class ComponentCanvas : public Component {
 public:
 	REGISTER_COMPONENT(ComponentCanvas, ComponentType::CANVAS);
 
-	void Render(float width, float height);
+	void Render();
 	void RenderGameObject(GameObject* gameObject);
-
-private:
-	float2 canvasScreenSize = float2::zero;
-	float2 canvasScreenPosition = float2::zero;
 };

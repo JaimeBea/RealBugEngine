@@ -14,6 +14,8 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentCanvas.h"
+#include "Components/ComponentCanvasRenderer.h"
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentImage.h"
 #include "Modules/ModuleInput.h"
@@ -23,6 +25,7 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUI.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -68,14 +71,32 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(MESHES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
-	//CreateEmptyScene();
-	GameObject* go = gameObjects.Obtain();
-	go->CreateComponent<ComponentTransform2D>();
-	go->CreateComponent<ComponentImage>();
-	go->GetComponent<ComponentImage>()->SetTexture(TextureImporter::ImportTexture("C:\\Users\\mange\\Desktop\\sp.jpg"));
-	root->AddChild(go);
+	CreateEmptyScene();
 
-	//SceneImporter::LoadScene("survival_shooter");
+	SceneImporter::LoadScene("survival_shooter");
+
+	GameObject* canvas = gameObjects.Obtain();
+	canvas->CreateComponent<ComponentCanvas>();
+	canvas->CreateComponent<ComponentTransform>();
+	canvas->name = "canvas";
+
+	GameObject* canvasRenderer = gameObjects.Obtain();
+	canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
+	canvasRenderer->CreateComponent<ComponentTransform>();
+	canvasRenderer->CreateComponent<ComponentTransform2D>();
+	canvasRenderer->CreateComponent<ComponentImage>();
+	canvasRenderer->GetComponent<ComponentImage>()->SetTexture(TextureImporter::ImportTexture("C:\\Users\\mange\\Desktop\\sp.png"));
+	canvasRenderer->name = "canvas renderer";
+
+	canvas->AddChild(canvasRenderer);
+
+	root->AddChild(canvas);
+	App->uiEditor->canvas = canvas;
+
+	canvas->Init();
+	canvas->InitComponents();
+	canvasRenderer->Init();
+	canvasRenderer->InitComponents();
 
 	// Load skybox
 	// clang-format off
@@ -190,7 +211,7 @@ bool ModuleScene::CleanUp() {
 	glDeleteBuffers(1, &skyboxVbo);
 
 	ClearScene();
-	
+
 #ifdef _DEBUG
 	aiDetachAllLogStreams();
 #endif

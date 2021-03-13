@@ -2,6 +2,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Modules/ModuleRender.h"
+#include "Components/ComponentCanvas.h"
 #include "GL/glew.h"
 
 
@@ -13,12 +14,13 @@ bool ModuleUI::Start() {
 	return true;
 }
 
-UpdateStatus ModuleUI::Update() {
-	// Change to ortho perspective
-	//App->renderer->EnableOrtographicRender();
+void ModuleUI::Render() {
+	//GameObject* canvasRenderer = canvas->GetChildren()[0];
+	if (canvas != nullptr) {
+		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
+		canvas->GetComponent<ComponentCanvas>()->Render();
 
-
-	return UpdateStatus::CONTINUE;
+	}
 }
 
 bool ModuleUI::CleanUp() {

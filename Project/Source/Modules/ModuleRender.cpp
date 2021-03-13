@@ -14,6 +14,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModulePrograms.h"
+#include "Modules/ModuleUI.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -174,12 +175,13 @@ UpdateStatus ModuleRender::Update() {
 	// Draw quadtree
 	if (drawQuadtree) {
 		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+		RenderUI();
+
 	}
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
-	RenderUI();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -392,17 +394,17 @@ void ModuleRender::DrawSkyBox() {
 	}
 }
 
-void ModuleRender::RenderUI() const {
+void ModuleRender::RenderUI() {
 	// ENABLE ORTOGRAPHIC RENDERING
 
-	glMatrixMode(GL_PROJECTION);
-	//glPushMatrix();		// this might no be needed
-	glLoadIdentity();
-	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+	//glMatrixMode(GL_PROJECTION);
+	////glPushMatrix();		// this might no be needed
+	//glLoadIdentity();
+	//glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
 
-
+	App->uiEditor->Render();
 
 	// DISABLE ORTOGRAPHIC RENDERING
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 }

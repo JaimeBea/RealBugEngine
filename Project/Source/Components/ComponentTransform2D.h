@@ -8,7 +8,7 @@
 
 class ComponentTransform2D : public Component {
 public:
-	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM);
+	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM2D);
 	void Update() override;
 	void OnEditorUpdate() override;
 	

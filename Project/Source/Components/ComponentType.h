@@ -24,7 +24,8 @@ enum class ComponentType {
 	UI = 6,
 	CANVAS = 7,
 	CANVASRENDERER = 8,
-
+	IMAGE,
+	TRANSFORM2D
 };
 
 Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active = true);

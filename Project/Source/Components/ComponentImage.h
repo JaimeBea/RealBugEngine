@@ -5,7 +5,7 @@
 
 class ComponentImage : public Component {
 public:
-	REGISTER_COMPONENT(ComponentImage, ComponentType::UI);
+	REGISTER_COMPONENT(ComponentImage, ComponentType::IMAGE);
 
 	~ComponentImage();
 

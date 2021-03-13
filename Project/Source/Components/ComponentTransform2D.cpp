@@ -39,7 +39,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 			SetScale(scl);
 		}
 
-		float3 rot = rotation.ToEulerXYZ();
+		float3 rot = rotation.ToEulerXYZ() * RADTODEG;
 		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 			SetRotation(Quat::FromEulerXYZ(rot.x * DEGTORAD, rot.y * DEGTORAD, rot.z * DEGTORAD));
 		}

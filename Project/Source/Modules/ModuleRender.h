@@ -45,5 +45,5 @@ private:
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);
 	void DrawGameObject(GameObject* gameObject);
 	void DrawSkyBox();
-	void RenderUI() const;
+	void RenderUI();
 };

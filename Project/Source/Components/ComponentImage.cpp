@@ -69,6 +69,8 @@ void ComponentImage::Draw(const float4x4& modelMatrix) const {
 	glUseProgram(program);
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	glBindVertexArray(0);
 }
 
 void ComponentImage::SetTexture(Texture* text) {
