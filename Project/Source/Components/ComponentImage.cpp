@@ -55,6 +55,7 @@ void ComponentImage::Draw(const float4x4& modelMatrix) const {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
+	glUseProgram(program);
 
 	//float4x4 model = float4x4::identity;
 	float4x4 view = App->camera->GetViewMatrix();
@@ -66,7 +67,6 @@ void ComponentImage::Draw(const float4x4& modelMatrix) const {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	glUseProgram(program);
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
