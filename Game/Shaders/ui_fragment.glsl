@@ -1,11 +1,12 @@
 #version 460
 
-in vec3 texcoords;
+in vec2 uv0;
 
-uniform samplerCube cubemap;
+uniform sampler2D diffuse;
 
 out vec4 outColor;
 
-void main() {
-	outColor = texture(cubemap, texcoords);
+void main()
+{
+ color = texture2D(diffuse, uv0);
 }
