@@ -1,4 +1,4 @@
-#include "ResourceScene.h"
+#include "ResourcePrefab.h"
 
 #include "Application.h"
 #include "Modules/ModuleScene.h"
@@ -10,20 +10,12 @@
 
 #define JSON_TAG_GAMEOBJECTS "GameObjects"
 #define JSON_TAG_ROOT_ID "RootId"
-#define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
-#define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
-#define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
-#define JSON_TAG_PARENT_ID "ParentId"
 
-ResourceScene::ResourceScene(UID id, const char* assetFilePath, const char* resourceFilePath)
+ResourcePrefab::ResourcePrefab(UID id, const char* assetFilePath, const char* resourceFilePath)
 	: Resource(id, assetFilePath, resourceFilePath) {}
 
-void ResourceScene::BuildScene() {
-	// Clear scene
-	App->scene->ClearScene();
-	App->editor->selectedGameObject = nullptr;
-
-	// Timer to measure loading a scene
+void ResourcePrefab::BuildPrefab(GameObject* parent) {
+	// Timer to measure loading a prefab
 	MSTimer timer;
 	timer.Start();
 
@@ -75,13 +67,6 @@ void ResourceScene::BuildScene() {
 		GameObject* gameObject = App->scene->GetGameObject(id);
 		gameObject->InitComponents();
 	}
-
-	// Quadtree generation
-	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
-	App->scene->quadtreeBounds = {{jQuadtreeBounds[0], jQuadtreeBounds[1]}, {jQuadtreeBounds[2], jQuadtreeBounds[3]}};
-	App->scene->quadtreeMaxDepth = jScene[JSON_TAG_QUADTREE_MAX_DEPTH];
-	App->scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
-	App->scene->RebuildQuadtree();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene built in %ums.", timeMs);
