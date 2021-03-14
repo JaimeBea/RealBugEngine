@@ -5,8 +5,12 @@ class ResourceAnimation;
 
 class AnimationController {
 public:
-	AnimationController(ResourceAnimation* resourceAnimation);
-	bool GetTransform(const char *name, float3& pos, Quat &quat );
+	AnimationController();
+
+	void SetAnimation(ResourceAnimation* animation);
+
+	bool GetTransform(const char* name, float3& pos, Quat& quat);
+
 	void Play();
 	void Stop();
 	void Update();

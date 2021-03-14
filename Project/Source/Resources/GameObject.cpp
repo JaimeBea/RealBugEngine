@@ -91,6 +91,14 @@ GameObject* GameObject::GetParent() const {
 	return parent;
 }
 
+void GameObject::SetRootBone(GameObject* gameObject) {
+	rootBoneHierarchy = gameObject;
+}
+
+GameObject* GameObject::GetRootBone() const {
+	return rootBoneHierarchy;
+}
+
 void GameObject::AddChild(GameObject* gameObject) {
 	gameObject->SetParent(this);
 }
@@ -107,6 +115,22 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	if (GetParent() == nullptr) return false;
 	if (GetParent() == gameObject) return true;
 	return GetParent()->IsDescendantOf(gameObject);
+}
+
+GameObject* GameObject::GetDescendant(std::string name) const {
+
+	for (GameObject* child : children) {
+		if (child->name == name) {
+			return child;
+		}
+		else {
+			GameObject *gameObject = child->GetDescendant(name);
+			if (gameObject != nullptr) return gameObject;
+		}
+			
+	}
+
+	return nullptr;
 }
 
 bool GameObject::AddComponent(ComponentType type) {

@@ -29,11 +29,15 @@ public:
 
 	void SetParent(GameObject* gameObject);
 	GameObject* GetParent() const;
+	
+	void SetRootBone(GameObject* gameObject);
+	GameObject* GetRootBone() const;
 
 	void AddChild(GameObject* gameObject);
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
+	GameObject* GetDescendant(std::string name) const;
 	bool AddComponent(ComponentType type);		 // Functionality for the Add Component button in the inspector.
 	bool HasComponent(ComponentType type) const; // Checks if this GameObject has a Component of type 'type'
 	bool HasChildren() const;
@@ -55,6 +59,7 @@ public:
 private:
 	bool active = true;
 	GameObject* parent = nullptr;
+	GameObject* rootBoneHierarchy = nullptr;
 	std::vector<GameObject*> children;
 };
 

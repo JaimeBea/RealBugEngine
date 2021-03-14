@@ -26,16 +26,12 @@ void ComponentAnimation::OnPlay() {
 }
 
 void ComponentAnimation::OnUpdate() {
-	//Update gameobjects matrix
-	for (GameObject* child : GetOwner().GetChildren()) {
-		if (child->name == "Ctrl_Grp") {
-			// One iteration loop
-			for (GameObject* child2 : child->GetChildren()) {
-				if (child2->name == "Root") {
-					UpdateAnimations(child2);
-				}
-			}
-		}
+	// Update gameobjects matrix
+
+	GameObject* rootBone = GetOwner().GetRootBone();
+
+	for (GameObject* child : rootBone->GetChildren()) {
+		UpdateAnimations(child);
 	}
 }
 

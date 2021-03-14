@@ -5,6 +5,7 @@
 #include "Utils/Logging.h"
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
+#include "FileSystem/AnimationImporter.h"
 #include "Modules/ModuleFiles.h"
 
 #include "IL/il.h"
@@ -18,6 +19,8 @@ bool ModuleResources::Init() {
 	textures.Allocate(100);
 	cubeMaps.Allocate(10);
 	meshes.Allocate(1000);
+	animations.Allocate(10);
+	animationControllers.Allocate(10);
 
 	ilInit();
 	iluInit();
@@ -58,6 +61,23 @@ void ModuleResources::ReleaseMesh(Mesh* mesh) {
 	meshes.Release(mesh);
 }
 
+ResourceAnimation* ModuleResources::ObtainAnimation() {
+	return animations.Obtain();
+}
+
+void ModuleResources::ReleaseAnimation(ResourceAnimation* animation) {
+	AnimationImporter::UnloadAnimation(animation);
+	animations.Release(animation);
+}
+
+AnimationController* ModuleResources::ObtainAnimationController() {
+	return animationControllers.Obtain();
+}
+
+void ModuleResources::ReleaseAnimationController(AnimationController* animationController) {
+	animationControllers.Release(animationController);
+}
+
 void ModuleResources::ReleaseAll() {
 	for (Texture& texture : textures) {
 		ReleaseTexture(&texture);
@@ -69,6 +89,14 @@ void ModuleResources::ReleaseAll() {
 
 	for (Mesh& mesh : meshes) {
 		ReleaseMesh(&mesh);
+	}
+
+	for (ResourceAnimation& animation : animations) {
+		ReleaseAnimation(&animation);
+	}
+
+	for (AnimationController& animationController : animationControllers) {
+		ReleaseAnimationController(&animationController);
 	}
 }
 

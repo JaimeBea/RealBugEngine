@@ -25,15 +25,10 @@ public:
 	//ResourceAnimation(UID id, const char* assetFilePath, const char* resourceFilePath);
 	ResourceAnimation() {}
 
-	void Load();   //override;
-	void Unload(); //override;
-
-	//void SetDuration(float duration);
-
 public:
 	std::string name = "";
 
 	std::vector<KeyFrameChannels> keyFrames;
 
-	unsigned int duration = 0;
+	float duration = 0.0f;
 };

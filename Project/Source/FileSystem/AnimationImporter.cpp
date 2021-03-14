@@ -1,17 +1,21 @@
 #include "AnimationImporter.h"
 
+#include "Application.h"
+#include "Modules/ModuleResources.h"
 #include "Resources/ResourceAnimation.h"
 
 #include "assimp/scene.h"
 #include "assimp/anim.h"
 #include "Math/float4x4.h"
 
+#include "Utils/Leaks.h"
+
 ResourceAnimation* AnimationImporter::ImportAnimation(const aiAnimation* aiAnim, const aiScene* assimpScene) {
 	float ticks = static_cast<float>(aiAnim->mTicksPerSecond);
 	float duration = static_cast<float>(aiAnim->mDuration);
 	float durationInSeconds = ticks > 0 ? (duration / ticks) : 0;
 
-	ResourceAnimation* anim = new ResourceAnimation();
+	ResourceAnimation* anim = App->resources->ObtainAnimation();
 	anim->duration = durationInSeconds;
 	anim->name = aiAnim->mName.C_Str();
 
@@ -62,4 +66,8 @@ ResourceAnimation* AnimationImporter::ImportAnimation(const aiAnimation* aiAnim,
 		}
 	}
 	return anim;
+}
+
+void AnimationImporter::UnloadAnimation(ResourceAnimation* animation) {
+	animation->keyFrames.clear();
 }

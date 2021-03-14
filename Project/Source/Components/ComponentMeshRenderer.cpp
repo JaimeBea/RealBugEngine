@@ -294,8 +294,9 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	}
 	mesh->materialIndex = jComponent[JSON_TAG_MATERIAL_INDEX];
 
+	// TODO: Recache the Bones?
 	MeshImporter::UnloadMesh(mesh);
-	MeshImporter::LoadMesh(mesh);
+	MeshImporter::LoadMesh(mesh, goBones);
 
 	// TODO: Load using Material Importer
 
@@ -686,7 +687,7 @@ void ComponentMeshRenderer::SkinningCPU() {
 
 	for (unsigned i = 0, vtxcount = 0; vtxcount < mesh->numVertices; i += 8, ++vtxcount) {
 		float4 position(mesh->vertices[i + 0], mesh->vertices[i + 1], mesh->vertices[i + 2], 1);
-		float4 normal(mesh->vertices[i + 3], mesh->vertices[i + 4], mesh->vertices[i + 5], 1);
+		float4 normal(mesh->vertices[i + 3], mesh->vertices[i + 4], mesh->vertices[i + 5], 0);
 
 		Mesh::Attach attachedInformation = mesh->attaches[vtxcount];
 
@@ -700,13 +701,14 @@ void ComponentMeshRenderer::SkinningCPU() {
 			const float4x4& inverseOffsetMatrix = bone.transform;
 
 			// In this case, I can assume that the bone name is already stored in the map, so the find is not necessary
-			const float4x4& boneTransform = goBones[bone.boneName]->GetComponent<ComponentTransform>()->GetGlobalMatrix();
-			const float4x4& invertedParentModelTransform = GetOwner().GetParent()->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted();
+			const float4x4& boneTransform = goBones[bone.boneName]->GetComponent<ComponentTransform>()->GetGlobalMatrix(); // Have the root node
+			const GameObject* parent = GetOwner().GetParent();
+			const GameObject* rootBone = parent->GetRootBone();
+			const float4x4& invertedRootBone = (rootBone != nullptr && rootBone->GetParent() != parent) ? rootBone->GetParent()->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
 
-			float4x4 boneGameObjectTransform = invertedParentModelTransform * boneTransform;
+			float4x4 boneGameObjectTransform = invertedRootBone * boneTransform;
 
 			resPosition += weightJ * (boneGameObjectTransform * (inverseOffsetMatrix * position));
-			//boneGameObjectTransform.InverseTranspose();
 			resNormal += weightJ * (boneGameObjectTransform * (inverseOffsetMatrix * normal));
 		}
 
@@ -715,7 +717,9 @@ void ComponentMeshRenderer::SkinningCPU() {
 		vertices[i + 1] = resPosition.y;
 		vertices[i + 2] = resPosition.z;
 
+		
 		// Normal
+		resNormal.Normalize();
 		vertices[i + 3] = resNormal.x;
 		vertices[i + 4] = resNormal.y;
 		vertices[i + 5] = resNormal.z;

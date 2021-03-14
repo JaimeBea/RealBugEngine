@@ -6,11 +6,12 @@
 
 #include "Utils/Leaks.h"
 
-AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
-	: animationResource(resourceAnimation) {
-	currentTime = 0;
-	loop = true;
-	running = true;
+AnimationController::AnimationController() : currentTime(0), loop(true), running(true) {
+
+}
+
+void AnimationController::SetAnimation(ResourceAnimation* animation) {
+	animationResource = animation;
 }
 
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
