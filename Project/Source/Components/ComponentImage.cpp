@@ -46,7 +46,7 @@ void ComponentImage::DestroyVBO() {
 	glDeleteBuffers(1, &vbo);
 }
 
-void ComponentImage::Draw(const float4x4& modelMatrix) const {
+void ComponentImage::Draw(const float4x4& modelMatrix) {
 
 	unsigned int program = App->programs->uiProgram;
 
@@ -68,9 +68,10 @@ void ComponentImage::Draw(const float4x4& modelMatrix) const {
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	// 1 triangle to draw = 3 vertices
+	glBindTexture(GL_TEXTURE_2D, texture->glTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void ComponentImage::SetTexture(Texture* text) {

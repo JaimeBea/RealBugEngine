@@ -85,7 +85,9 @@ bool ModuleScene::Start() {
 	canvasRenderer->CreateComponent<ComponentTransform>();
 	canvasRenderer->CreateComponent<ComponentTransform2D>();
 	canvasRenderer->CreateComponent<ComponentImage>();
-	canvasRenderer->GetComponent<ComponentImage>()->SetTexture(TextureImporter::ImportTexture("C:\\Users\\mange\\Desktop\\sp.png"));
+	Texture* lenna = TextureImporter::ImportTexture("C:\\Users\\magri\\Desktop\\Lenna_(test_image).png");
+	TextureImporter::LoadTexture(lenna);
+	canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
 	canvasRenderer->name = "canvas renderer";
 
 	canvas->AddChild(canvasRenderer);

@@ -12,12 +12,13 @@ public:
 	void Init() override;
 	void Update() override;
 
-	void Draw(const float4x4& modelMatrix) const;
+	void Draw(const float4x4& modelMatrix);
 	void SetTexture(Texture* text);
 
 private:
 	Texture* texture;
 	unsigned int vbo;
+	unsigned int renderedTexture = 0;
 
 	void CreateVBO();
 	void DestroyVBO();
