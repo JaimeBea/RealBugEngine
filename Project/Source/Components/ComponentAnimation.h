@@ -7,6 +7,9 @@ class ResourceAnimation;
 class ResourceStateMachine;
 class ResourceTransition;
 
+#include <string>
+
+
 class ComponentAnimation : public Component {
 public:
 	REGISTER_COMPONENT(ComponentAnimation, ComponentType::ANIMATION); // Refer to ComponentType for the Constructor
@@ -32,5 +35,5 @@ public:
 private:
 	void UpdateAnimations(GameObject *gameObject);
 
-	std::vector<ResourceTransition> currentTransitions;
+	std::vector<ResourceTransition*> currentTransitions;
 };

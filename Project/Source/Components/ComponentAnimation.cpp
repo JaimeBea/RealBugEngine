@@ -64,12 +64,10 @@ void ComponentAnimation::OnUpdate() {
 }
 
 void ComponentAnimation::OnTrigger(std::string trigger) {
-	for
-		each(ResourceTransition transition in stateMachineResource->transitions) {
-			if (transition.trigger == trigger) {
-				currentTransitions.push_back(transition);
-			}
-		}
+	ResourceTransition* transition = stateMachineResource->FindTransitionGivenName(trigger);
+	if (transition != nullptr) {
+		currentTransitions.push_back(transition);
+	}
 }
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
@@ -81,10 +79,8 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
 
-	for
-		each(ResourceTransition transition in currentTransitions) {
-		//interpolateTransition(transition.source, transition.target, postion, rotation);
-		
+	for(ResourceTransition* transition : currentTransitions) {
+		//interpolateTransition(transition.source, transition.target, postion, rotation);		
 	}
 
 	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
