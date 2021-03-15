@@ -81,20 +81,20 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
 
-	for(ResourceTransition* transition : currentTransitions) {
-		//interpolateTransition(transition.source, transition.target, postion, rotation);
-		animationController->GetTransform(transition->source->clip, gameObject->name.c_str(), position, rotation);
-		animationController->GetTransform(transition->target->clip, gameObject->name.c_str(), position, rotation);
-		interpolation(t1, t2);
+	bool result;
+	std::vector<ResourceTransition*> toDelete;
+	if (currentTransitions.size() > 0) {
+		for (ResourceTransition* transition : currentTransitions) {
+			result &= animationController->InterpolateTransitions(transition->source->clip, transition->target->clip, transition->interpolationDuration, transition->currentDuration, gameObject->name.c_str(), position, rotation);
+
+			if (transition->interpolationDuration == transition->currentDuration) {
+				toDelete.push_back(transition);
+				//stateMachineResource->SetCurrentState(transition->target);
+			}
+		}
+	} else {
+		result = animationController->GetTransform(stateMachineResource->GetCurrentState()->clip, gameObject->name.c_str(), position, rotation);
 	}
-
-	stateMachineResource->GetCurrentState();
-
-	///
-	
-	///
-
-	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
 
@@ -106,4 +106,6 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations(child);
 	}
+
+	animationController->SetAnimationResource(stateMachineResource->GetCurrentState()->clip->animation); // Update current animation resource
 }

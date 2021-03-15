@@ -1,6 +1,7 @@
 #include "AnimationController.h"
 #include "ResourceAnimation.h"
 #include "ResourceStateMachine.h"
+#include "Clip.h"
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"
 #include "Application.h"
@@ -15,20 +16,20 @@ AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 }
 
 bool AnimationController::GetTransform(Clip* clip, const char* name, float3& pos, Quat& quat) {
-	if (animationResource == nullptr) {
+	if (clip->animation == nullptr) {
 		return false;
 	}	
-
-	float currentSample = (currentTime * (animationResource->keyFrames.size() - 1)) / animationResource->duration;
+	
+	float currentSample = (currentTime * (clip->animation->keyFrames.size() - 1)) / clip->animation->duration;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
 
 	//find in hash by name
-	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = animationResource->keyFrames[intPart].channels.find(name);
-	unsigned int idNext = intPart == (animationResource->keyFrames.size() - 1) ? 0 : intPart + 1;
-	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = animationResource->keyFrames[idNext].channels.find(name);	
+	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = clip->animation->keyFrames[intPart].channels.find(name);
+	unsigned int idNext = intPart == (clip->animation->keyFrames.size() - 1) ? 0 : intPart + 1;
+	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = clip->animation->keyFrames[idNext].channels.find(name);	
 
-	if (channel == animationResource->keyFrames[intPart].channels.end() && channelNext == animationResource->keyFrames[idNext].channels.end()) {
+	if (channel == clip->animation->keyFrames[intPart].channels.end() && channelNext == clip->animation->keyFrames[idNext].channels.end()) {
 		return false;
 	}
 
@@ -56,11 +57,19 @@ void AnimationController::Update() {
 	}
 }
 
-void AnimationController::InterpolateTransitions(Clip* source, Clip* target, unsigned int interpolationTime, const char* name, float3& pos, Quat& quat) {
+bool AnimationController::InterpolateTransitions(Clip* source, Clip* target, unsigned int interpolationTime, float& currentTransitionTime, const char* name, float3& pos, Quat& quat) {
 	float3 sourcePos, targetPos;
 	Quat sourceQuat, targetQuat;
-	GetTransform(source, name, pos, quat);
-	GetTransform(target, name, pos, quat);
+	GetTransform(source, name, sourcePos, sourceQuat);
+	GetTransform(target, name, targetPos, targetQuat);
+
+	float lambda = 1 - (interpolationTime - currentTransitionTime) / interpolationTime;
+	pos = float3::Lerp(sourcePos, targetPos, lambda); // 0 = source, 1 = target
+	quat = Interpolate(sourceQuat, targetQuat, lambda);
+
+	currentTransitionTime += App->time->GetDeltaTime();
+
+	return true;
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {

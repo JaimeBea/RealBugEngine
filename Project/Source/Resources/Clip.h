@@ -5,6 +5,7 @@
 class ResourceAnimation;
 
 class Clip {
+public:
 	std::string name;
 	ResourceAnimation* animation;
 	bool loop;

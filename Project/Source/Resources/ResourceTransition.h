@@ -17,4 +17,5 @@ public:
 	ResourceStates* target = nullptr;
 	std::string trigger = "";
 	unsigned int interpolationDuration = 0;
+	float currentDuration;
 };
