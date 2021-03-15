@@ -14,7 +14,7 @@ AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 	running = true;
 }
 
-bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
+bool AnimationController::GetTransform(Clip* clip, const char* name, float3& pos, Quat& quat) {
 	if (animationResource == nullptr) {
 		return false;
 	}	
@@ -54,6 +54,13 @@ void AnimationController::Update() {
 	} else {
 		currentTime = currentTime > animationResource->duration ? animationResource->duration : currentTime;
 	}
+}
+
+void AnimationController::InterpolateTransitions(Clip* source, Clip* target, unsigned int interpolationTime, const char* name, float3& pos, Quat& quat) {
+	float3 sourcePos, targetPos;
+	Quat sourceQuat, targetQuat;
+	GetTransform(source, name, pos, quat);
+	GetTransform(target, name, pos, quat);
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {

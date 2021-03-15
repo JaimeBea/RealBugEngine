@@ -5,6 +5,8 @@
 #include "Resources/AnimationController.h"
 #include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceTransition.h"
+#include "Resources/ResourceStates.h"
+#include "Resources/Clip.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
@@ -80,8 +82,17 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	Quat rotation = Quat::identity;
 
 	for(ResourceTransition* transition : currentTransitions) {
-		//interpolateTransition(transition.source, transition.target, postion, rotation);		
+		//interpolateTransition(transition.source, transition.target, postion, rotation);
+		animationController->GetTransform(transition->source->clip, gameObject->name.c_str(), position, rotation);
+		animationController->GetTransform(transition->target->clip, gameObject->name.c_str(), position, rotation);
+		interpolation(t1, t2);
 	}
+
+	stateMachineResource->GetCurrentState();
+
+	///
+	
+	///
 
 	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
 
