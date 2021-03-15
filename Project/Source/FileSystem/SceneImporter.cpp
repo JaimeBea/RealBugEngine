@@ -24,7 +24,7 @@ bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 	// Read from file
 	Buffer<char> buffer = App->files->Load(filePath);
 	if (buffer.Size() == 0) {
-		LOG("Error reading meta file %s", filePath);
+		LOG("Error loading scene %s", filePath);
 		return false;
 	}
 

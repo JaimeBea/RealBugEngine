@@ -23,23 +23,29 @@
 bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 	LOG("Importing Shader from path: \"%s\".", filePath);
 
+	// Timer to measure importing a shader
 	MSTimer timer;
 	timer.Start();
-	Buffer<char> buffer = App->files->Load(filePath);
-	if (buffer.Size() == 0) return false;
 
+	// Read from file
+	Buffer<char> buffer = App->files->Load(filePath);
+	if (buffer.Size() == 0) {
+		LOG("Error loading shader %s", filePath);
+		return false;
+	}
+
+	// Create shader resource
 	ResourceShader* shaderResource = App->resources->CreateResource<ResourceShader>(filePath);
 	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
 	jResourceIds[0] = shaderResource->GetId();
 
+	// Save to file
 	const std::string& resourceFilePath = shaderResource->GetResourceFilePath();
 	bool saved = App->files->Save(resourceFilePath.c_str(), buffer);
 	if (!saved) {
 		LOG("Failed to save shader resource.");
 		return false;
 	}
-
-	jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Shader imported in %ums", timeMs);
