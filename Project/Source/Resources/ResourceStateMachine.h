@@ -4,7 +4,7 @@
 
 class ResourceStates;
 class ResourceTransition;
-//class AnimationClips;
+class Clip;
 
 class ResourceStateMachine {
 private:
@@ -19,8 +19,11 @@ public:
 	ResourceStateMachine();
 	ResourceStates* AddState(std::string name); //Missing clip parameter
 	void AddTransition(ResourceStates* from, ResourceStates* to,unsigned int interpolation, std::string& name );
-	//void AddTrigger(std::string &name, ResourceStates *state);
-	void ChangeState(std::string &name);
+	ResourceTransition* GetValidTransition(std::string& name);
 	ResourceTransition* FindTransitionGivenName(std::string& name);
 	ResourceStates* GetCurrentState();
+
+	void SetCurrentState(ResourceStates *newState) {
+		currentState = newState;
+	}
 };

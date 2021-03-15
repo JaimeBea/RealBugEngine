@@ -3,9 +3,9 @@
 #include "Application.h"
 #include "Resources/GameObject.h"
 #include "Resources/AnimationController.h"
-#include "Resources/ResourceStateMachine.h"
+//#include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceTransition.h"
-#include "Resources/ResourceStates.h"
+//#include "Resources/ResourceStates.h"
 #include "Resources/Clip.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
@@ -65,8 +65,8 @@ void ComponentAnimation::OnUpdate() {
 	}
 }
 
-void ComponentAnimation::OnTrigger(std::string trigger) {
-	ResourceTransition* transition = stateMachineResource->FindTransitionGivenName(trigger);
+void ComponentAnimation::SendTrigger(std::string trigger) {
+	ResourceTransition* transition = stateMachineResource->GetValidTransition(trigger);
 	if (transition != nullptr) {
 		currentTransitions.push_back(transition);
 	}
@@ -89,7 +89,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 			if (transition->interpolationDuration == transition->currentDuration) {
 				toDelete.push_back(transition);
-				//stateMachineResource->SetCurrentState(transition->target);
+				stateMachineResource->SetCurrentState(transition->target);
 			}
 		}
 	} else {
@@ -108,4 +108,5 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	}
 
 	animationController->SetAnimationResource(stateMachineResource->GetCurrentState()->clip->animation); // Update current animation resource
+
 }

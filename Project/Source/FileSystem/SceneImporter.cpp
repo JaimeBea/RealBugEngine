@@ -256,25 +256,30 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
 			animations.push_back(animation);
 		}
-		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
-		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
-		animationComponet->animationController = new AnimationController(animations[0]);
 
+		//Setting machine state
 		ResourceStateMachine resourceStateMachine;
 		std::string sState1 = "State1";
 		std::string sState2 = "State2";
 
-		ResourceStates *state = resourceStateMachine.AddState(sState1);
-		ResourceStates* state2 =  resourceStateMachine.AddState(sState2);
+		ResourceStates* state = resourceStateMachine.AddState(sState1);
+		ResourceStates* state2 = resourceStateMachine.AddState(sState2);
 		std::string tName1 = "s1Ts2";
 		std::string tName2 = "s2Ts1";
 
 		resourceStateMachine.AddTransition(state, state2, 10, tName1);
 		resourceStateMachine.AddTransition(state2, state, 5, tName2);
+
+		ComponentAnimation* animationComponent = gameObject->CreateComponent<ComponentAnimation>();
+		animationComponent->animationResource = animations[0]; // TODO improve form multiple animations
+		animationComponent->animationController = new AnimationController(animations[0]);
+		animationComponent->stateMachineResource = &resourceStateMachine;
+		animationComponent->SendTrigger(tName1);
+		animationComponent->SendTrigger(tName2);
 		
-		resourceStateMachine.ChangeState(tName1);
-		resourceStateMachine.ChangeState(tName2);
-		resourceStateMachine.GetCurrentState();
+		//resourceStateMachine.ChangeState(tName1);
+		//resourceStateMachine.ChangeState(tName2);
+		//esourceStateMachine.GetCurrentState();
 	}
 
 	unsigned timeMs = timer.Stop();
