@@ -5,7 +5,6 @@ ResourceStateMachine::ResourceStateMachine() {
 }
 
 
-
 ResourceStates* ResourceStateMachine::AddState(std::string name) {
 	//Checking for unique name
 	ResourceTransition* transition = FindTransitionGivenName(name);
@@ -31,25 +30,24 @@ void ResourceStateMachine::AddTransition(ResourceStates* from, ResourceStates* t
 }
 
 
-void ResourceStateMachine::ChangeState(std::string& transitionName) {
+ResourceTransition* ResourceStateMachine::GetValidTransition(std::string& transitionName) {
 
 	if (transitions.empty()) {
-		return;
+		return nullptr;
 	}
 	
 
 	ResourceTransition* transition = FindTransitionGivenName(transitionName);
 	if (transition) {
-
 		//check able movement
 		if (GetCurrentState() == nullptr || GetCurrentState() == transition->source) {
-			currentState = transition->target;
-		} else {
-			//movement not valid
+			return transition;
 		}
-
+		//else {
+			//movement not valid
+		//}
 	}
-	
+	return nullptr;
 }
 
 ResourceTransition* ResourceStateMachine::FindTransitionGivenName(std::string& name) {

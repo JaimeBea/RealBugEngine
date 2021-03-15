@@ -3,9 +3,9 @@
 #include "Application.h"
 #include "Resources/GameObject.h"
 #include "Resources/AnimationController.h"
-#include "Resources/ResourceStateMachine.h"
+//#include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceTransition.h"
-#include "Resources/ResourceStates.h"
+//#include "Resources/ResourceStates.h"
 #include "Resources/Clip.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
@@ -65,8 +65,8 @@ void ComponentAnimation::OnUpdate() {
 	}
 }
 
-void ComponentAnimation::OnTrigger(std::string trigger) {
-	ResourceTransition* transition = stateMachineResource->FindTransitionGivenName(trigger);
+void ComponentAnimation::SendTrigger(std::string trigger) {
+	ResourceTransition* transition = stateMachineResource->GetValidTransition(trigger);
 	if (transition != nullptr) {
 		currentTransitions.push_back(transition);
 	}
@@ -85,7 +85,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		//interpolateTransition(transition.source, transition.target, postion, rotation);
 		animationController->GetTransform(transition->source->clip, gameObject->name.c_str(), position, rotation);
 		animationController->GetTransform(transition->target->clip, gameObject->name.c_str(), position, rotation);
-		interpolation(t1, t2);
+		//interpolation(t1, t2);
 	}
 
 	stateMachineResource->GetCurrentState();
@@ -94,7 +94,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	
 	///
 
-	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
+	/*bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
 
@@ -105,5 +105,5 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations(child);
-	}
+	}*/
 }
