@@ -257,8 +257,8 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_MESH_ID] = mesh->GetId();
-	jComponent[JSON_TAG_MATERIAL_ID] = material->GetId();
+	jComponent[JSON_TAG_MESH_ID] = mesh != nullptr ? mesh->GetId() : 0;
+	jComponent[JSON_TAG_MATERIAL_ID] = material != nullptr ? material->GetId() : 0;
 }
 
 void ComponentMeshRenderer::Load(JsonValue jComponent) {
@@ -274,6 +274,8 @@ void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActiveInHierarchy()) return;
+	if (mesh == nullptr) return;
+	if (material == nullptr) return;
 
 	unsigned program = material->GetShader()->GetShaderProgram();
 

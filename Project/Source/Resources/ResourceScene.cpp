@@ -13,6 +13,8 @@
 #define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
+#define JSON_TAG_ID "Id"
+#define JSON_TAG_NAME "Name"
 #define JSON_TAG_PARENT_ID "ParentId"
 
 ResourceScene::ResourceScene(UID id, const char* assetFilePath, const char* resourceFilePath)
@@ -44,35 +46,36 @@ void ResourceScene::BuildScene() {
 
 	// Load GameObjects
 	JsonValue jGameObjects = jScene[JSON_TAG_GAMEOBJECTS];
-	unsigned jGameObjectsSize = jGameObjects.Size();
-	Buffer<UID> ids(jGameObjectsSize);
-	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
+	unsigned numGameObjects = jGameObjects.Size();
+	Buffer<GameObject*> gameObjects(numGameObjects);
+	for (unsigned i = 0; i < numGameObjects; ++i) {
 		JsonValue jGameObject = jGameObjects[i];
 
 		GameObject* gameObject = App->scene->gameObjects.Obtain();
+		gameObject->Init();
 		gameObject->Load(jGameObject);
-
-		UID id = gameObject->GetID();
-		App->scene->gameObjectsIdMap[id] = gameObject;
-		ids[i] = id;
+		gameObjects[i] = gameObject;
 	}
 
 	// Post-load
 	App->scene->root = App->scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
-	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
+	for (unsigned i = 0; i < numGameObjects; ++i) {
 		JsonValue jGameObject = jGameObjects[i];
+		GameObject* gameObject = gameObjects[i];
 
-		UID id = ids[i];
-		GameObject* gameObject = App->scene->GetGameObject(id);
-		gameObject->PostLoad(jGameObject);
+		UID id = gameObject->GetID();
+		std::string name = jGameObject[JSON_TAG_NAME];
+		UID parentId = jGameObject[JSON_TAG_PARENT_ID];
+		gameObject->id = id;
+		gameObject->name = name;
+		App->scene->gameObjectsIdMap[id] = gameObject;
+		gameObject->SetParent(App->scene->GetGameObject(parentId));
 	}
 
 	// Init components
-	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
+	for (unsigned i = 0; i < numGameObjects; ++i) {
+		GameObject* gameObject = gameObjects[i];
 
-		UID id = ids[i];
-		GameObject* gameObject = App->scene->GetGameObject(id);
 		gameObject->InitComponents();
 	}
 

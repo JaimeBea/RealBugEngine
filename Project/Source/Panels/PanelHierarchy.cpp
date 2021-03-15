@@ -67,8 +67,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		}
 
 		if (ImGui::Selectable("Create Empty")) {
-			GameObject* newGameObject = App->scene->CreateGameObject(gameObject);
-			newGameObject->name = "Game Object";
+			GameObject* newGameObject = App->scene->CreateGameObject(gameObject, GenerateUID(), "Game Object");
 			ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 			transform->SetPosition(float3(0, 0, 0));
 			transform->SetRotation(Quat::identity);

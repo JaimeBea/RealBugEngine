@@ -11,6 +11,8 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Resources/ResourceMesh.h"
 #include "Resources/ResourceMaterial.h"
+#include "Resources/ResourceTexture.h"
+#include "Resources/ResourcePrefab.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
@@ -19,9 +21,13 @@
 #include "assimp/scene.h"
 #include "assimp/cimport.h"
 #include "assimp/postprocess.h"
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/error/en.h"
 
+#define JSON_TAG_ROOT "Root"
 
-ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* assimpMesh, unsigned resourceIndex) {
+ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* assimpMesh, unsigned& resourceIndex) {
 	// Timer to measure importing a mesh
 	MSTimer timer;
 	timer.Start();
@@ -106,16 +112,17 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 	const std::string& resourceFilePath = mesh->GetResourceFilePath();
 	bool saved = App->files->Save(resourceFilePath.c_str(), buffer);
 	if (!saved) {
-		LOG("Failed to save mesh resource.");
+		LOG("Failed to save meshRenderer resource.");
 		return false;
 	}
 
+	resourceIndex += 1;
 	unsigned timeMs = timer.Stop();
 	LOG("Mesh imported in %ums", timeMs);
 	return mesh;
 }
 
-void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const std::vector<ResourceMaterial*>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
+void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform, unsigned& resourceIndex) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
@@ -123,14 +130,11 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(modelFilePath, jMeta, assimpScene, materials, node->mChildren[i], parent, transform);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], parent, transform, resourceIndex);
 		}
 	} else { // Normal node
 		// Create GameObject
-		GameObject* gameObject = App->scene->CreateGameObject(parent);
-
-		// Load name
-		gameObject->name = name;
+		GameObject* gameObject = App->scene->CreateGameObject(parent, GenerateUID(), name.c_str());
 
 		// Load transform
 		ComponentTransform* transform = gameObject->CreateComponent<ComponentTransform>();
@@ -151,23 +155,11 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 
 		// Load meshes
 		for (unsigned int i = 0; i < node->mNumMeshes; ++i) {
-			LOG("Importing mesh %i", i);
+			LOG("Importing meshRenderer %i", i);
 			aiMesh* assimpMesh = assimpScene->mMeshes[node->mMeshes[i]];
 
-			ComponentMeshRenderer* mesh = gameObject->CreateComponent<ComponentMeshRenderer>();
-			mesh->mesh = ImportMesh(modelFilePath, jMeta, assimpMesh, i);
-
-			// TODO: Move mesh loading to a better place
-			mesh->mesh->Load();
-
-			if (materials.size() > 0) {
-				if (assimpMesh->mMaterialIndex >= materials.size()) {
-					mesh->material = materials.front();
-					LOG("Invalid material found", assimpMesh->mMaterialIndex);
-				} else {
-					mesh->material = materials[assimpMesh->mMaterialIndex];
-				}
-			}
+			ComponentMeshRenderer* meshRenderer = gameObject->CreateComponent<ComponentMeshRenderer>();
+			meshRenderer->mesh = ImportMesh(modelFilePath, jMeta, assimpMesh, resourceIndex);
 
 			// Update min and max points
 			for (unsigned int j = 0; j < assimpMesh->mNumVertices; ++j) {
@@ -190,15 +182,15 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(modelFilePath, jMeta, assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], gameObject, float4x4::identity, resourceIndex);
 		}
 	}
 }
 
 bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
-	// TODO: (Mesh resource) Import models
+	// TODO: Load materials
 
-	// Timer to measure importing a scene
+	// Timer to measure importing a model
 	MSTimer timer;
 	timer.Start();
 
@@ -209,7 +201,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	// Import scene
+	// Import model
 	LOG("Importing scene from path: \"%s\".", filePath);
 	const aiScene* assimpScene = aiImportFile(filePath, aiProcessPreset_TargetRealtime_MaxQuality);
 	DEFER {
@@ -220,111 +212,52 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	// TODO: (Material resource) Import models
-	// TODO: (Texture resource) Import models
-	/*
-	// Load materials
-	LOG("Importing %i materials...", assimpScene->mNumMaterials);
-	std::vector<Material> materials;
-	materials.reserve(assimpScene->mNumMaterials);
-	for (unsigned int i = 0; i < assimpScene->mNumMaterials; ++i) {
-		LOG("Loading material %i...", i);
-		aiMaterial* assimpMaterial = assimpScene->mMaterials[i];
-		aiString materialFilePath;
-		aiTextureMapping mapping;
-		aiColor4D color;
-		unsigned uvIndex;
-		Material material;
-		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
-			// Check if the material is valid for our purposes
-			assert(mapping == aiTextureMapping_UV);
-			assert(uvIndex == 0);
-
-			// Try to load from the path given in the model file
-			LOG("Trying to import diffuse texture...");
-			Texture* texture = TextureImporter::ImportTexture(materialFilePath.C_Str());
-
-			// Try to load relative to the model folder
-			if (texture == nullptr) {
-				LOG("Trying to import texture relative to model folder...");
-				std::string modelFolderPath = App->files->GetFileFolder(filePath);
-				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
-				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
-			}
-
-			// Try to load relative to the textures folder
-			if (texture == nullptr) {
-				LOG("Trying to import texture relative to textures folder...");
-				std::string materialFile = App->files->GetFileNameAndExtension(materialFilePath.C_Str());
-				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFile;
-				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
-			}
-
-			if (texture == nullptr) {
-				LOG("Unable to find diffuse texture file.");
-			} else {
-				LOG("Diffuse texture imported successfuly.");
-				material.hasDiffuseMap = true;
-				material.diffuseMap = texture;
-				// TODO: Move load to a better place
-				TextureImporter::LoadTexture(texture);
-			}
-		} else {
-			LOG("Diffuse texture not found.");
-		}
-
-		if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
-			// Check if the material is valid for our purposes
-			assert(mapping == aiTextureMapping_UV);
-			assert(uvIndex == 0);
-
-			// Try to load from the path given in the model file
-			LOG("Trying to import specular texture...");
-			Texture* texture = TextureImporter::ImportTexture(materialFilePath.C_Str());
-
-			// Try to load relative to the model folder
-			if (texture == nullptr) {
-				LOG("Trying to import texture relative to model folder...");
-				std::string modelFolderPath = App->files->GetFileFolder(filePath);
-				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
-				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
-			}
-
-			// Try to load relative to the textures folder
-			if (texture == nullptr) {
-				LOG("Trying to import texture relative to textures folder...");
-				std::string materialFileName = App->files->GetFileName(materialFilePath.C_Str());
-				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
-				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
-			}
-
-			if (texture == nullptr) {
-				LOG("Unable to find specular texture file.");
-			} else {
-				LOG("Specular texture imported successfuly.");
-				material.hasSpecularMap = true;
-				material.specularMap = texture;
-				// TODO: Move load to a better place
-				TextureImporter::LoadTexture(texture);
-			}
-		} else {
-			LOG("Specular texture not found.");
-		}
-
-		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, material.diffuseColor);
-		assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, material.specularColor);
-		assimpMaterial->Get(AI_MATKEY_SHININESS, material.shininess);
-
-		LOG("Material imported.");
-		materials.push_back(material);
-	}
-
-	// Create scene tree
+	// Import nodes
 	LOG("Importing scene tree.");
-	ImportNode(filePath, jMeta, assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
-	*/
+	unsigned resourceIndex = 0;
+	GameObject* root = App->scene->CreateGameObject(nullptr, GenerateUID(), "Root");
+	root->CreateComponent<ComponentTransform>();
+	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, root, float4x4::identity, resourceIndex);
+
+	// Save prefab
+	SavePrefab(filePath, jMeta, root->GetChildren()[0], resourceIndex);
+
+	// Delete temporary GameObject
+	App->scene->DestroyGameObject(root);
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);
+	return true;
+}
+
+bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject* root, unsigned& resourceIndex) {
+	// Create document
+	rapidjson::Document document;
+	document.SetObject();
+	JsonValue jScene(document, document);
+
+	// Save GameObjects
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	root->SavePrototype(jRoot);
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Create prefab resource
+	ResourcePrefab* prefabResource = App->resources->CreateResource<ResourcePrefab>(filePath);
+	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+	jResourceIds[resourceIndex] = prefabResource->GetId();
+	resourceIndex += 1;
+
+	// Save to file
+	const std::string& resourceFilePath = prefabResource->GetResourceFilePath();
+	bool saved = App->files->Save(resourceFilePath.c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
+	if (!saved) {
+		LOG("Failed to save prefab resource.");
+		return false;
+	}
+
 	return true;
 }

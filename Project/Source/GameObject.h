@@ -43,11 +43,13 @@ public:
 
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);
-	void PostLoad(JsonValue jGameObject);
+
+	void SavePrototype(JsonValue jGameObject) const;
+	void LoadPrototype(JsonValue jGameObject);
 
 public:
 	UID id = 0;
-	std::string name = "GameObject";
+	std::string name = "";
 
 	bool isInQuadtree = false;
 

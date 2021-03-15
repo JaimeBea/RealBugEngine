@@ -34,7 +34,7 @@ public:
 	void ClearQuadtree();	 // Resets the Quadrtee as empty, and removes all GameObjects from it.
 
 	// --- GameObject Management --- //
-	GameObject* CreateGameObject(GameObject* parent);
+	GameObject* CreateGameObject(GameObject* parent, UID id, const char* name);
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;

@@ -16,17 +16,22 @@
 class ModuleResources : public Module {
 public:
 	bool Init() override;
+	bool Start() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
 	Resource* GetResourceByID(UID id);
 	std::string GenerateResourcePath(UID id) const;
 
+	bool ImportAsset(const char* filePath);
+
 	template<typename T>
 	T* CreateResource(const char* assetFilePath);
 
 private:
 	void UpdateAsync();
+
+	void CheckForNewAssetsRecursive(const char* path);
 
 private:
 	std::unordered_map<UID, Resource*> resources;

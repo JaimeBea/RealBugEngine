@@ -174,8 +174,7 @@ void ModuleScene::CreateEmptyScene() {
 	ClearScene();
 
 	// Create Scene root node
-	root = CreateGameObject(nullptr);
-	root->name = "Scene";
+	root = CreateGameObject(nullptr, GenerateUID(), "Scene");
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
 	/*sceneTransform->SetPosition(float3(0, 0, 0));
 	sceneTransform->SetRotation(Quat::identity);
@@ -183,8 +182,7 @@ void ModuleScene::CreateEmptyScene() {
 	root->InitComponents();
 
 	// Create Directional Light
-	GameObject* dirLight = CreateGameObject(root);
-	dirLight->name = "Directional Light";
+	GameObject* dirLight = CreateGameObject(root, GenerateUID(), "Directional Light");
 	ComponentTransform* dirLightTransform = dirLight->CreateComponent<ComponentTransform>();
 	dirLightTransform->SetPosition(float3(0, 300, 0));
 	dirLightTransform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
@@ -193,8 +191,7 @@ void ModuleScene::CreateEmptyScene() {
 	dirLight->InitComponents();
 
 	// Create Game Camera
-	GameObject* gameCamera = CreateGameObject(root);
-	gameCamera->name = "Game Camera";
+	GameObject* gameCamera = CreateGameObject(root, GenerateUID(), "Game Camera");
 	ComponentTransform* gameCameraTransform = gameCamera->CreateComponent<ComponentTransform>();
 	gameCameraTransform->SetPosition(float3(2, 3, -5));
 	gameCameraTransform->SetRotation(Quat::identity);
@@ -231,19 +228,19 @@ void ModuleScene::ClearQuadtree() {
 	}
 }
 
-GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
+GameObject* ModuleScene::CreateGameObject(GameObject* parent, UID id, const char* name) {
 	GameObject* gameObject = gameObjects.Obtain();
 	gameObject->Init();
+	gameObject->id = id;
+	gameObject->name = name;
+	gameObjectsIdMap[id] = gameObject;
 	gameObject->SetParent(parent);
-	gameObjectsIdMap[gameObject->GetID()] = gameObject;
 
 	return gameObject;
 }
 
 GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject* parent) {
-	GameObject* newGO = CreateGameObject(parent); // ID and parent are set here
-	// Copy Game Object members
-	newGO->name = gameObject->name + " (copy)";
+	GameObject* newGO = CreateGameObject(parent, GenerateUID(), (gameObject->name + " (copy)").c_str());
 
 	// Copy the components
 	for (Component* component : gameObject->GetComponents()) {

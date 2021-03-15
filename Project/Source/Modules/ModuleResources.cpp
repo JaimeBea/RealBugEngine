@@ -11,6 +11,7 @@
 #include "Resources/ResourceTexture.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
+#include "FileSystem/ModelImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/ShaderImporter.h"
@@ -59,84 +60,14 @@ void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 	App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
 }
 
-void ImportAsset(const char* filePath) {
-	std::string extension = FileDialog::GetFileExtension(filePath);
-	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
-	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
-	bool validResourceFiles = true;
-	if (validMetaFile) {
-		rapidjson::Document document;
-		validMetaFile = ReadMetaFile(metaFilePath.c_str(), document);
-		JsonValue jMeta(document, document);
-		if (validMetaFile) {
-			JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-			for (unsigned i = 0; i < jResourceIds.Size(); ++i) {
-				UID id = jResourceIds[i];
-				std::string resourcePath = App->resources->GenerateResourcePath(id);
-				if (!App->files->Exists(resourcePath.c_str())) {
-					validResourceFiles = false;
-					break;
-				}
-			}
-		}
-	}
-
-	if (!validMetaFile || !validResourceFiles) {
-		bool validResourceFiles = true;
-		rapidjson::Document document;
-		JsonValue jMeta(document, document);
-		UID id;
-		if (App->files->Exists(metaFilePath.c_str())) {
-			ReadMetaFile(metaFilePath.c_str(), document);
-			id = jMeta[JSON_TAG_RESOURCE_IDS][0];
-		} else {
-			id = GenerateUID();
-		}
-
-		Resource* resource = nullptr;
-		bool assetImported = true;
-		if (extension == SCENE_EXTENSION) {
-			// Scene files
-			SceneImporter::ImportScene(filePath, jMeta);
-		} else if (extension == MATERIAL_EXTENSION) {
-			// Material files
-			MaterialImporter::ImportMaterial(filePath, jMeta);
-		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
-			// Shader files
-			ShaderImporter::ImportShader(filePath, jMeta);
-		} else if (extension == ".fbx" || extension == ".obj") {
-			// Model files
-			// ModelImporter::ImportModel(filePath, jMeta);
-		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
-			// Texture files
-			TextureImporter::ImportTexture(filePath, jMeta);
-		} else {
-			assetImported = false;
-		}
-
-		if (!validMetaFile && assetImported) {
-			jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
-			SaveMetaFile(metaFilePath.c_str(), document);
-		}
-	}
-}
-
-void CheckForNewAssetsRecursive(const char* path) {
-	for (std::string& file : FileDialog::GetFilesInFolder(path)) {
-		std::string filePath = std::string(path) + "/" + file;
-		std::string extension = FileDialog::GetFileExtension(file.c_str());
-		if (App->files->IsDirectory(filePath.c_str())) {
-			CheckForNewAssetsRecursive(filePath.c_str());
-		} else if (extension != META_EXTENSION) {
-			ImportAsset(filePath.c_str());
-		}
-	}
-}
-
 bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
 
+	return true;
+}
+
+bool ModuleResources::Start() {
 	stopImportThread = false;
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);
 
@@ -182,6 +113,73 @@ std::string ModuleResources::GenerateResourcePath(UID id) const {
 	}
 
 	return metaFolder + "/" + strId;
+}
+
+bool ModuleResources::ImportAsset(const char* filePath) {
+	if (!App->files->Exists(filePath)) return false;
+
+	bool assetImported = true;
+
+	std::string extension = FileDialog::GetFileExtension(filePath);
+	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
+	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
+	bool validResourceFiles = true;
+	if (validMetaFile) {
+		rapidjson::Document document;
+		validMetaFile = ReadMetaFile(metaFilePath.c_str(), document);
+		JsonValue jMeta(document, document);
+		if (validMetaFile) {
+			JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+			for (unsigned i = 0; i < jResourceIds.Size(); ++i) {
+				UID id = jResourceIds[i];
+				std::string resourcePath = App->resources->GenerateResourcePath(id);
+				if (!App->files->Exists(resourcePath.c_str())) {
+					validResourceFiles = false;
+					break;
+				}
+			}
+		}
+	}
+
+	if (!validMetaFile || !validResourceFiles) {
+		bool validResourceFiles = true;
+		rapidjson::Document document;
+		JsonValue jMeta(document, document);
+		UID id;
+		if (App->files->Exists(metaFilePath.c_str())) {
+			ReadMetaFile(metaFilePath.c_str(), document);
+			id = jMeta[JSON_TAG_RESOURCE_IDS][0];
+		} else {
+			id = GenerateUID();
+		}
+
+		Resource* resource = nullptr;
+		if (extension == SCENE_EXTENSION) {
+			// Scene files
+			SceneImporter::ImportScene(filePath, jMeta);
+		} else if (extension == MATERIAL_EXTENSION) {
+			// Material files
+			MaterialImporter::ImportMaterial(filePath, jMeta);
+		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
+			// Shader files
+			ShaderImporter::ImportShader(filePath, jMeta);
+		} else if (extension == ".fbx" || extension == ".obj") {
+			// Model files
+			ModelImporter::ImportModel(filePath, jMeta);
+		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
+			// Texture files
+			TextureImporter::ImportTexture(filePath, jMeta);
+		} else {
+			assetImported = false;
+		}
+
+		if (!validMetaFile && assetImported) {
+			jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
+			SaveMetaFile(metaFilePath.c_str(), document);
+		}
+	}
+
+	return assetImported;
 }
 
 void ModuleResources::UpdateAsync() {
@@ -259,5 +257,17 @@ void ModuleResources::UpdateAsync() {
 		CheckForNewAssetsRecursive(ASSETS_PATH);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(TIME_BETWEEN_RESOURCE_UPDATES_MS));
+	}
+}
+
+void ModuleResources::CheckForNewAssetsRecursive(const char* path) {
+	for (std::string& file : FileDialog::GetFilesInFolder(path)) {
+		std::string filePath = std::string(path) + "/" + file;
+		std::string extension = FileDialog::GetFileExtension(file.c_str());
+		if (App->files->IsDirectory(filePath.c_str())) {
+			CheckForNewAssetsRecursive(filePath.c_str());
+		} else if (extension != META_EXTENSION) {
+			ImportAsset(filePath.c_str());
+		}
 	}
 }
