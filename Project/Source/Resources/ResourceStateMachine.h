@@ -2,14 +2,15 @@
 #include <list>
 
 class ResourceStates;
+class ResourceTransition;
 //class AnimationClips;
 class ResourceStateMachine {
 
-private:
+public:
 	//List<AnimationClips> clips;
 	std::list<ResourceStates> states;
 	std::list<ResourceStates> triggers;
-	std::list<ResourceStates> transitions;
+	std::list<ResourceTransition> transitions;
 
 	ResourceStates *currentState;
 

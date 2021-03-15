@@ -2,7 +2,7 @@
 #include <string>
 
 class ResourceState;
-class TransitionResource {
+class ResourceTransition {
 
 public:
 	ResourceState* source;

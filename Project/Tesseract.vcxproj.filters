@@ -119,7 +119,8 @@
     <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
     <ClCompile Include="Source\Resources\ResourceStateMachine.cpp" />
     <ClCompile Include="Source\Resources\ResourceStates.cpp" />
-    <ClCompile Include="Source\Resources\TransitionResource.cpp" />
+    <ClCompile Include="Source\Resources\Clip.cpp" />
+    <ClCompile Include="Source\Resources\ResourceTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -275,7 +276,8 @@
     <ClInclude Include="Source\Components\ComponentMeshRenderer.h" />
     <ClInclude Include="Source\Resources\ResourceStateMachine.h" />
     <ClInclude Include="Source\Resources\ResourceStates.h" />
-    <ClInclude Include="Source\Resources\TransitionResource.h" />
+    <ClInclude Include="Source\Resources\Clip.h" />
+    <ClInclude Include="Source\Resources\ResourceTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Game\Shaders\default_fragment.glsl" />

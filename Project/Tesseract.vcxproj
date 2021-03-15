@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Resources\Clip.h" />
     <ClInclude Include="Source\Resources\ResourceStates.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />
     <ClInclude Include="Source\FileSystem\AnimationImporter.h" />
@@ -164,9 +165,10 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
-    <ClInclude Include="Source\Resources\TransitionResource.h" />
+    <ClInclude Include="Source\Resources\ResourceTransition.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Resources\Clip.cpp" />
     <ClCompile Include="Source\Resources\ResourceStates.cpp" />
     <ClCompile Include="Source\Components\ComponentAnimation.cpp" />
     <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
@@ -285,7 +287,7 @@
     <ClCompile Include="Libs\MathGeoLib\Math\SSEMath.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
-    <ClCompile Include="Source\Resources\TransitionResource.cpp" />
+    <ClCompile Include="Source\Resources\ResourceTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Game\Shaders\default_fragment.glsl" />

@@ -1,5 +1,6 @@
 #include "AnimationController.h"
 #include "ResourceAnimation.h"
+#include "ResourceStateMachine.h"
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"
 #include "Application.h"

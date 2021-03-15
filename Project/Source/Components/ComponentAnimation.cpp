@@ -3,6 +3,8 @@
 #include "Application.h"
 #include "Resources/GameObject.h"
 #include "Resources/AnimationController.h"
+#include "Resources/ResourceStateMachine.h"
+#include "Resources/ResourceTransition.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
@@ -61,6 +63,15 @@ void ComponentAnimation::OnUpdate() {
 	}
 }
 
+void ComponentAnimation::OnTrigger(std::string trigger) {
+	for
+		each(ResourceTransition transition in stateMachineResource->transitions) {
+			if (transition.trigger == trigger) {
+				currentTransitions.push_back(transition);
+			}
+		}
+}
+
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	if (gameObject == nullptr) {
 		return;
@@ -69,6 +80,12 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	//find gameobject in hash
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
+
+	for
+		each(ResourceTransition transition in currentTransitions) {
+		//interpolateTransition(transition.source, transition.target, postion, rotation);
+		
+	}
 
 	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
 
