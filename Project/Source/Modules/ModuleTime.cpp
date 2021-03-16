@@ -9,6 +9,7 @@
 #include "UI/EventSystem/Event.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
+#include "ModuleEventSystem.h"
 
 #include "Utils/Leaks.h"
 
@@ -16,6 +17,15 @@
 
 ModuleTime::ModuleTime() {
 	timer.Start();
+}
+
+bool ModuleTime::Init() {
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Pause, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Play, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Resume, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Step, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Stop, this);
+	return true;
 }
 
 UpdateStatus ModuleTime::PreUpdate() {

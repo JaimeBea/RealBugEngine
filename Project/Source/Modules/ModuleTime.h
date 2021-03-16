@@ -28,7 +28,7 @@ public:
 	void PauseGame();
 	void ResumeGame();
 	void StepGame();
-
+	bool Init() override;
 	unsigned int GetFrameCount() const;
 	void RecieveEvent(const Event& e) override;
 

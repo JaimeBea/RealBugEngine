@@ -33,6 +33,8 @@ public:
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
+	void AddObserverToEvent(Event::EventType type, Module* moduleToAdd);
+	void RemoveObserverFromEvent(Event::EventType type, Module* moduletoRemove);
 	void AddEvent(const Event& newEvent);
 	bool CleanUp() override;
 	void SetSelected(Selectable* newSelected);
