@@ -3,4 +3,6 @@
 class GameObject;
 class Button : public Selectable {
 	Button(GameObject&);
+	~Button();
+	void OnPressed();
 };

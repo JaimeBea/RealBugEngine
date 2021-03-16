@@ -291,9 +291,7 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 
-	Event ev = Event(Event::EventType::GameObject_Destroyed);
-	ev.objPtr.ptr = gameObject;
-	App->BroadCastEvent(ev);
+	App->BroadCastEvent(Event(Event::EventType::GameObject_Destroyed, gameObject));
 }
 
 GameObject* ModuleScene::GetGameObject(UID id) const {

@@ -21,6 +21,7 @@ public:
 		Pressed_Step,
 		Pressed_Stop,
 		Button_Pressed,
+		Mouse_Moved,
 
 	} type;
 
@@ -50,6 +51,17 @@ public:
 	Event(EventType aType)
 		: type(aType) {
 	}
+	Event(EventType aType, float2 aFloat2)
+		: type(aType) {
+		point2d.x = aFloat2.x;
+		point2d.y = aFloat2.y;
+	}
+
+	Event(EventType aType, GameObject* obj)
+		: type(aType) {
+		objPtr.ptr = obj;
+	}
+
 	~Event() {
 	}
 };

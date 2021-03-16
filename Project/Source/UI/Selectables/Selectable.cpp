@@ -146,6 +146,9 @@ void Selectable::Enable() {
 
 void Selectable::Disable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
+	if (selected) {
+		App->eventSystem->SetSelected(nullptr);
+	}
 
 	//Subtitute my position in vector with last element of vector
 	App->eventSystem->m_Selectables[selectableIndex] = App->eventSystem->m_Selectables[App->eventSystem->m_Selectables.size()];

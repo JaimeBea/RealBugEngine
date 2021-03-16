@@ -6,7 +6,7 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
-
+#include "UI/EventSystem/Event.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
 
@@ -133,4 +133,26 @@ void ModuleTime::StepGame() {
 
 unsigned int ModuleTime::GetFrameCount() const {
 	return frameCount;
+}
+
+void ModuleTime::RecieveEvent(const Event& e) {
+	switch (e.type) {
+	case Event::EventType::Pressed_Play:
+		StartGame();
+		break;
+	case Event::EventType::Pressed_Stop:
+		StopGame();
+		break;
+	case Event::EventType::Pressed_Resume:
+		ResumeGame();
+		break;
+	case Event::EventType::Pressed_Pause:
+		PauseGame();
+		break;
+	case Event::EventType::Pressed_Step:
+		StepGame();
+		break;
+	default:
+		break;
+	}
 }

@@ -2,8 +2,12 @@
 #include <Math/float2.h>
 #include <vector>
 #include <Components/Component.h>
+#include "UI/EventSystem/Interfaces/IPointerEnterHandler.h"
+#include "UI/EventSystem/Interfaces/IPointerExitHandler.h"
+#include "UI/EventSystem/Interfaces/IMoveHandler.h"
 class ModuleEventSystem;
-class Selectable : public Component {
+class Selectable : public Component
+	 {
 public:
 	enum class NavigationType {
 		NONE,

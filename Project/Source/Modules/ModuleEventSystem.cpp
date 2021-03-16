@@ -6,7 +6,9 @@
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
-ModuleEventSystem::ModuleEventSystem() {
+ModuleEventSystem::ModuleEventSystem()
+	: currentSelected(nullptr)
+	, firstSelected(nullptr) {
 }
 
 ModuleEventSystem ::~ModuleEventSystem() {
@@ -35,11 +37,33 @@ void ModuleEventSystem::ProcessEvent(Event& e) {
 }
 
 bool ModuleEventSystem::Init() {
-	//	//GameObject Destroyed Event
+	SetSelected(firstSelected);
+
+	//GameObject Destroyed Event listeners
 	std::vector<Module*> gameObjectDestroyedMapVector;
 	gameObjectDestroyedMapVector.push_back(App->scene);
 	gameObjectDestroyedMapVector.push_back((Module*) App->renderer);
 	observerMap[Event::EventType::GameObject_Destroyed] = gameObjectDestroyedMapVector;
+
+	std::vector<Module*> pressedPlayMapVector;
+	pressedPlayMapVector.push_back((Module*) App->time);
+	observerMap[Event::EventType::Pressed_Play] = pressedPlayMapVector;
+
+	std::vector<Module*> pressedStopMapVector;
+	pressedStopMapVector.push_back((Module*) App->time);
+	observerMap[Event::EventType::Pressed_Stop] = pressedStopMapVector;
+
+	std::vector<Module*> pressedPauseMapVector;
+	pressedPauseMapVector.push_back((Module*) App->time);
+	observerMap[Event::EventType::Pressed_Pause] = pressedPauseMapVector;
+
+	std::vector<Module*> pressedStepMapVector;
+	pressedStepMapVector.push_back((Module*) App->time);
+	observerMap[Event::EventType::Pressed_Step] = pressedStepMapVector;
+
+	std::vector<Module*> pressedResumeMapVector;
+	pressedResumeMapVector.push_back((Module*) App->time);
+	observerMap[Event::EventType::Pressed_Resume] = pressedResumeMapVector;
 
 	return true;
 }
@@ -59,4 +83,14 @@ UpdateStatus ModuleEventSystem::PostUpdate() {
 
 bool ModuleEventSystem::CleanUp() {
 	return true;
+}
+
+void ModuleEventSystem::SetSelected(Selectable* newSelected) {
+	if (currentSelected != nullptr) {
+		currentSelected->OnDeselect();
+	}
+	currentSelected = newSelected;
+	if (newSelected != nullptr) {
+		newSelected->OnSelect();
+	}
 }

@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\UI\EventSystem\Interfaces\IMoveHandler.h" />
+    <ClInclude Include="Source\UI\EventSystem\Interfaces\IPointerEnterHandler.h" />
+    <ClInclude Include="Source\UI\EventSystem\Interfaces\IPointerExitHandler.h" />
     <ClInclude Include="Source\UI\FontImporter.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />

@@ -35,7 +35,3 @@ void ModuleUserInterface::GetCharactersInString(std::string font, std::string se
 		charsInSentence.push_back(fonts[font][*i]);
 	}
 }
-
-void ModuleUserInterface::OnMouseMovementDetected(float2 mousePos) {
-	//LOG("%f,%f", mousePos.x, mousePos.y);
-}

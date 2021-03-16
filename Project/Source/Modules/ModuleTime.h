@@ -30,6 +30,7 @@ public:
 	void StepGame();
 
 	unsigned int GetFrameCount() const;
+	void RecieveEvent(const Event& e) override;
 
 public:
 	int maxFps = 60;
