@@ -39,19 +39,13 @@
 #define JSON_TAG_AMBIENT "Ambient"
 
 void ComponentMeshRenderer::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Mesh")) {
-		bool active = IsActive();
-
-		if (ImGui::Checkbox("Active", &active)) {
-			active ? Enable() : Disable();
-		}
-		ImGui::SameLine();
-
-		if (ImGui::Button("Remove")) {
-			// TODO: Add delete Component tool
-		}
-		ImGui::Separator();
-
+	bool active = IsActive();
+	if (ImGui::Checkbox("Active", &active)) {
+		active ? Enable() : Disable();
+	}
+	ImGui::Separator();
+	// MESH
+	if (ImGui::TreeNode("Mesh")) {
 		ImGui::TextColored(App->editor->titleColor, "Geometry");
 		ImGui::TextWrapped("Num Vertices: ");
 		ImGui::SameLine();
@@ -272,22 +266,25 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	material = (ResourceMaterial*) App->resources->GetResourceByID(jComponent[JSON_TAG_MATERIAL_ID]);
 }
 
-void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
-	if (!IsActive()) return;
+void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
+	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
+	component->mesh = this->mesh;
+	component->material = this->material;
+}
 
-	// TODO: (Material resource) Render depending on the shader
-	// TODO: (Shader resource) Render depending on the shader
-	/*
-	unsigned program = App->programs->defaultProgram;
+void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
+	if (!IsActiveInHierarchy()) return;
+
+	unsigned program = material->GetShader()->GetShaderProgram();
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
 	unsigned glTextureDiffuse = 0;
 	unsigned glTextureSpecular = 0;
 
-	ResourceTexture* diffuse = material->diffuseMap;
+	ResourceTexture* diffuse = material->GetDiffuseMap();
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-	ResourceTexture* specular = material->specularMap;
+	ResourceTexture* specular = material->GetSpecularMap();
 	glTextureSpecular = specular ? specular->glTexture : 0;
 
 	ComponentLight* directionalLight = nullptr;
@@ -296,7 +293,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	if (material->materialType == ShaderType::PHONG) {
+	if (material->GetShader()->GetShaderType() == ShaderType::PHONG) {
 		float farPointDistance = 0;
 		ComponentLight* farPointLight = nullptr;
 		float farSpotDistance = 0;
@@ -308,12 +305,12 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 			if (light->lightType == LightType::DIRECTIONAL) {
 				// It takes the first actived Directional Light inside the Pool
-				if (light->IsActive() && directionalLight == nullptr) {
+				if (light->IsActiveInHierarchy() && directionalLight == nullptr) {
 					directionalLight = light;
 					continue;
 				}
 			} else if (light->lightType == LightType::POINT) {
-				if (light->IsActive()) {
+				if (light->IsActiveInHierarchy()) {
 					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(meshPosition, lightPosition);
@@ -354,7 +351,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 					}
 				}
 			} else if (light->lightType == LightType::SPOT) {
-				if (light->IsActive()) {
+				if (light->IsActiveInHierarchy()) {
 					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
 					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
 					float distance = Distance(meshPosition, lightPosition);
@@ -397,16 +394,13 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 			}
 		}
 
-		program = App->programs->phongPbrProgram;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
-		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
-		glUniform1f(glGetUniformLocation(program, "shininess"), material->shininess);
-
-		int hasDiffuseMap = (material->hasDiffuseMap) ? 1 : 0;
-		int hasSpecularMap = (material->hasSpecularMap) ? 1 : 0;
-		int hasShininessInAlphaChannel = (material->hasShininessInAlphaChannel) ? 1 : 0;
+		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->GetDiffuseColor().ptr());
+		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->GetSpecularColor().ptr());
+		int hasDiffuseMap = (material->GetDiffuseMap()) ? 1 : 0;
+		int hasSpecularMap = (material->GetSpecularMap()) ? 1 : 0;
+		int hasShininessInAlphaChannel = (material->HasSmoothnessInAlphaChannel()) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
@@ -595,5 +589,4 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
-	*/
 }

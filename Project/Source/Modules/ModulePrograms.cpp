@@ -13,40 +13,52 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 	LOG("Creating shader from file: \"%s\"...", filePath);
 
 	Buffer<char> sourceBuffer = App->files->Load(filePath);
-	char* source = sourceBuffer.Data();
-
 	unsigned shaderId = glCreateShader(type);
-	glShaderSource(shaderId, 1, &source, 0);
+	if (shaderId == 0) {
+		return 0;
+	}
+	std::string v = "#version 460\n";
+	std::string defineVertexShader = "#define VERTEX  \n";
+	std::string defineFragmentShader = "#define FRAGMENT\n";
 
+	std::string shaderDefine = (type == GL_VERTEX_SHADER) ? defineVertexShader : defineFragmentShader;
+
+	GLchar const* shaderStrings[3] = {v.c_str(), shaderDefine.c_str(), sourceBuffer.Data()};
+	GLint shaderStringLengths[3] = {v.size(), shaderDefine.size(), sourceBuffer.Size()};
+
+	glShaderSource(shaderId, 3, shaderStrings, shaderStringLengths);
 	glCompileShader(shaderId);
 
 	int res = GL_FALSE;
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &res);
+
 	if (res == GL_FALSE) {
 		int len = 0;
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &len);
-		if (len > 0) {
+
+		if (len > 1) {
 			int written = 0;
 			Buffer<char> info = Buffer<char>(len);
 			glGetShaderInfoLog(shaderId, len, &written, info.Data());
 			LOG("Log Info: %s", info.Data());
 		}
+		return 0;
 	}
 
 	LOG("Shader created successfuly.");
 	return shaderId;
 }
 
-unsigned ModulePrograms::CreateProgram(const char* vertexShaderFilePath, const char* fragmentShaderFilePath) {
+unsigned ModulePrograms::CreateProgram(const char* ShaderFilePath) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
 	LOG("Compiling shaders...");
-	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, vertexShaderFilePath);
+	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, ShaderFilePath);
 	DEFER {
 		glDeleteShader(vertexShader);
 	};
-	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, fragmentShaderFilePath);
+	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, ShaderFilePath);
 	DEFER {
 		glDeleteShader(fragmentShader);
 	};
@@ -77,11 +89,11 @@ unsigned ModulePrograms::CreateProgram(const char* vertexShaderFilePath, const c
 	return programId;
 }
 
-bool ModulePrograms::Start() {
-	defaultProgram = CreateProgram("Shaders/default_vertex.glsl", "Shaders/default_fragment.glsl");
-	phongPbrProgram = CreateProgram("Shaders/phong_pbr_vertex.glsl", "Shaders/phong_pbr_fragment.glsl");
-	skyboxProgram = CreateProgram("Shaders/skybox_vertex.glsl", "Shaders/skybox_fragment.glsl");
+void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
+	glDeleteProgram(IdProgram);
+}
 
+bool ModulePrograms::Start() {
 	return true;
 }
 

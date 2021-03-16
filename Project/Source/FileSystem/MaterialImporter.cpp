@@ -59,5 +59,5 @@ bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	unsigned timeMs = timer.Stop();
 	LOG("Material imported in %ums", timeMs);
 
-	return false;
+	return true;
 }

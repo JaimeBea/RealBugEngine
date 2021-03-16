@@ -38,7 +38,7 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
-
+#include "Utils/FileDialog.h"
 static aiLogStream logStream = {nullptr, nullptr};
 
 static void AssimpLogCallback(const char* message, char* user) {
@@ -73,9 +73,7 @@ UpdateStatus ModuleScene::Update() {
 	BROFILER_CATEGORY("ModuleScene - Update", Profiler::Color::Green)
 
 	// Update GameObjects
-	for (GameObject& gameObject : gameObjects) {
-		gameObject.Update();
-	}
+	root->Update();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -103,9 +101,9 @@ void ModuleScene::CreateEmptyScene() {
 	root = CreateGameObject(nullptr);
 	root->name = "Scene";
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
-	sceneTransform->SetPosition(float3(0, 0, 0));
+	/*sceneTransform->SetPosition(float3(0, 0, 0));
 	sceneTransform->SetRotation(Quat::identity);
-	sceneTransform->SetScale(float3(1, 1, 1));
+	sceneTransform->SetScale(float3(1, 1, 1));*/
 	root->InitComponents();
 
 	// Create Directional Light
@@ -135,17 +133,15 @@ void ModuleScene::ClearScene() {
 	quadtree.Clear();
 
 	assert(gameObjects.Count() == 0); // There should be no GameObjects outside the scene hierarchy
-	gameObjects.ReleaseAll(); // This looks redundant, but it resets the free list so that GameObject order is mantained when saving/loading
+	gameObjects.ReleaseAll();		  // This looks redundant, but it resets the free list so that GameObject order is mantained when saving/loading
 }
 
 void ModuleScene::RebuildQuadtree() {
 	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
-	for (GameObject& gameObject : gameObjects) {
-		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
-		if (boundingBox == nullptr) continue;
-
-		boundingBox->CalculateWorldBoundingBox();
-		const AABB& worldAABB = boundingBox->GetWorldAABB();
+	for (ComponentBoundingBox& boundingBox : boundingBoxComponents) {
+		GameObject& gameObject = boundingBox.GetOwner();
+		boundingBox.CalculateWorldBoundingBox();
+		const AABB& worldAABB = boundingBox.GetWorldAABB();
 		quadtree.Add(&gameObject, AABB2D(worldAABB.minPoint.xz(), worldAABB.maxPoint.xz()));
 		gameObject.isInQuadtree = true;
 	}
@@ -168,9 +164,21 @@ GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
 	return gameObject;
 }
 
-GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject) {
-	// TODO: Duplicate Game Objects
-	return gameObject;
+GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject* parent) {
+	GameObject* newGO = CreateGameObject(parent); // ID and parent are set here
+	// Copy Game Object members
+	newGO->name = gameObject->name + " (copy)";
+
+	// Copy the components
+	for (Component* component : gameObject->GetComponents()) {
+		component->DuplicateComponent(*newGO);
+	}
+	newGO->InitComponents();
+	// Duplicate recursively its children
+	for (GameObject* child : gameObject->GetChildren()) {
+		DuplicateGameObject(child, newGO);
+	}
+	return newGO;
 }
 
 void ModuleScene::DestroyGameObject(GameObject* gameObject) {
@@ -187,12 +195,7 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	}
 
 	gameObjectsIdMap.erase(gameObject->GetID());
-	gameObject->id = 0;
-	for (Component* component : gameObject->components) {
-		delete component;
-	}
-	gameObject->components.clear();
-	gameObject->Enable();
+	gameObject->RemoveComponents();
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 }

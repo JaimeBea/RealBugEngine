@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
+#include "Utils/FileDialog.h"
 #include "Resources/ResourceMaterial.h"
 #include "Resources/ResourceMesh.h"
 #include "Resources/ResourceScene.h"
@@ -14,6 +15,7 @@
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/SkyboxImporter.h"
+#include "FileSystem/ShaderImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -60,7 +62,7 @@ void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 }
 
 void ImportAsset(const char* filePath) {
-	std::string extension = App->files->GetFileExtension(filePath);
+	std::string extension = FileDialog::GetFileExtension(filePath);
 	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
 	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
 	bool validResourceFiles = true;
@@ -103,7 +105,7 @@ void ImportAsset(const char* filePath) {
 			MaterialImporter::ImportMaterial(filePath, jMeta);
 		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
 			// Shader files
-			// ShaderImporter::ImportShader(filePath, jMeta);
+			ShaderImporter::ImportShader(filePath, jMeta);
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
 			// ModelImporter::ImportModel(filePath, jMeta);
@@ -125,9 +127,9 @@ void ImportAsset(const char* filePath) {
 }
 
 void CheckForNewAssetsRecursive(const char* path) {
-	for (std::string& file : App->files->GetFilesInLocalFolder(path)) {
+	for (std::string& file : FileDialog::GetFilesInFolder(path)) {
 		std::string filePath = std::string(path) + "/" + file;
-		std::string extension = App->files->GetFileExtension(file.c_str());
+		std::string extension = FileDialog::GetFileExtension(file.c_str());
 		if (App->files->IsDirectory(filePath.c_str())) {
 			CheckForNewAssetsRecursive(filePath.c_str());
 		} else if (extension != META_EXTENSION) {
@@ -150,8 +152,8 @@ UpdateStatus ModuleResources::Update() {
 	// Copy dropped file to assets folder
 	const char* droppedFilePath = App->input->GetDroppedFilePath();
 	if (droppedFilePath != nullptr) {
-		std::string newFilePath = std::string(ASSETS_PATH) + "/" + App->files->GetFileNameAndExtension(droppedFilePath);
-		App->files->Copy(droppedFilePath, newFilePath.c_str());
+		std::string newFilePath = std::string(ASSETS_PATH) + "/" + FileDialog::GetFileNameAndExtension(droppedFilePath);
+		FileDialog::Copy(droppedFilePath, newFilePath.c_str());
 		App->input->ReleaseDroppedFilePath();
 	}
 

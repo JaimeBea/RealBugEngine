@@ -4,10 +4,6 @@
 #include "Utils/Logging.h"
 
 #include "physfs.h"
-#include "Math/MathFunc.h"
-#include <string.h>
-#include <windows.h>
-#include <algorithm>
 
 #include "Utils/Leaks.h"
 
@@ -82,10 +78,6 @@ void ModuleFiles::CreateFolder(const char* folderPath) const {
 	if (!PHYSFS_mkdir(folderPath)) LOG(PHYSFS_getLastError());
 }
 
-void ModuleFiles::Copy(const char* path, const char* newPath) {
-	CopyFile(path, newPath, false);
-}
-
 void ModuleFiles::Erase(const char* path) const {
 	if (!PHYSFS_delete(path)) {
 		LOG("Can't erase file %s. (%s)\n", path, PHYSFS_getLastError());
@@ -107,99 +99,4 @@ long long ModuleFiles::GetLocalFileModificationTime(const char* path) const {
 	PHYSFS_Stat fileStats;
 	PHYSFS_stat(path, &fileStats);
 	return fileStats.modtime;
-}
-
-std::vector<std::string> ModuleFiles::GetDrives() const {
-	DWORD mask = GetLogicalDrives();
-	std::vector<std::string> drives;
-	for (int i = 0; i < 26; ++i) {
-		if (!(mask & (1 << i))) continue;
-
-		char letter = 'A' + i;
-		std::string drive = std::string() + letter + ":\\";
-		drives.push_back(drive);
-	}
-
-	return drives;
-}
-
-std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
-	std::vector<std::string> filePaths;
-	char** rc = PHYSFS_enumerateFiles(folderPath);
-	for (char** i = rc; *i != NULL; i++) {
-		filePaths.push_back(*i);
-	}
-	PHYSFS_freeList(rc);
-	return filePaths;
-}
-
-std::vector<std::string> ModuleFiles::GetFilesInLocalFolder(const char* folderPath) const {
-	std::vector<std::string> filePaths;
-	char** rc = PHYSFS_enumerateFiles(folderPath);
-	for (char** i = rc; *i != NULL; ++i) {
-		filePaths.push_back(*i);
-	}
-	PHYSFS_freeList(rc);
-	return filePaths;
-}
-
-std::string ModuleFiles::GetFileNameAndExtension(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-
-	if (lastSeparator == nullptr) {
-		return filePath;
-	}
-
-	const char* fileNameAndExtension = lastSeparator + 1;
-	return fileNameAndExtension;
-}
-
-std::string ModuleFiles::GetFileName(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-
-	const char* fileName = lastSeparator == nullptr ? filePath : lastSeparator + 1;
-	const char* lastDot = strrchr(fileName, '.');
-
-	if (lastDot == nullptr || lastDot == fileName) {
-		return fileName;
-	}
-
-	return std::string(fileName).substr(0, lastDot - fileName);
-}
-
-std::string ModuleFiles::GetFileExtension(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-	const char* lastDot = strrchr(filePath, '.');
-
-	if (lastDot == nullptr || lastDot == filePath || lastDot < lastSeparator || lastDot == lastSeparator + 1) {
-		return std::string();
-	}
-
-	std::string extension = std::string(lastDot);
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-	return extension;
-}
-
-std::string ModuleFiles::GetFileFolder(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-
-	if (lastSeparator == nullptr) {
-		return std::string();
-	}
-
-	return std::string(filePath).substr(0, lastSeparator - filePath);
-}
-
-std::string ModuleFiles::GetAbsolutePath(const char* filePath) const {
-	char buff[FILENAME_MAX];
-	GetModuleFileName(NULL, buff, FILENAME_MAX);
-	return std::string(buff) + filePath;
 }

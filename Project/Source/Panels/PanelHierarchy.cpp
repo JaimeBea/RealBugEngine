@@ -12,6 +12,9 @@
 
 #include "Utils/Leaks.h"
 
+static ImVec4 grey = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+static ImVec4 white = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+
 PanelHierarchy::PanelHierarchy()
 	: Panel("Hierarchy", true) {}
 
@@ -40,20 +43,25 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	bool isSelected = App->editor->selectedGameObject == gameObject;
 	if (isSelected) flags |= ImGuiTreeNodeFlags_Selected;
 
+	//White for active gameobjects, gray for disabled objects, if a parent is not active, children are inherently not active
+	ImGui::PushStyleColor(0, gameObject->IsActiveInHierarchy() ? white : grey);
+
 	bool open = ImGui::TreeNodeEx(label, flags);
+
+	ImGui::PopStyleColor();
 
 	ImGui::PushID(label);
 	if (ImGui::BeginPopupContextItem("Options")) {
+		App->editor->selectedGameObject = gameObject;
 		if (gameObject != App->scene->root) {
 			if (ImGui::Selectable("Delete")) {
 				App->scene->DestroyGameObject(gameObject);
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 			}
 
-			ImGui::Selectable("Duplicate");
-			ImGui::SameLine();
-			HelpMarker("To implement");
-			// TODO: Duplicate Objects
+			if (ImGui::Selectable("Duplicate")) {
+				App->scene->DuplicateGameObject(gameObject, gameObject->GetParent());
+			}
 
 			ImGui::Separator();
 		}
@@ -84,8 +92,25 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY")) {
 			if (!gameObject->IsDescendantOf(App->editor->selectedGameObject)) {
-				App->editor->selectedGameObject->SetParent(gameObject);
 				ComponentTransform* transform = App->editor->selectedGameObject->GetComponent<ComponentTransform>();
+				ComponentTransform* parentTransform = gameObject->GetComponent<ComponentTransform>();
+				// Recompute local matrix to maintain global position
+				// 1. Get current matrix
+				float4x4 childGlobalMatrix = transform->GetGlobalMatrix();
+				float4x4 parentGlobalMatrix = parentTransform->GetGlobalMatrix();
+				float3 parentScale = float3(parentGlobalMatrix.Col3(0).Length(), parentGlobalMatrix.Col3(1).Length(), parentGlobalMatrix.Col3(2).Length());
+				// 2. Invert the new parent global matrix with the fastest possible method
+				if (parentScale.Equals(float3::one)) { // No scaling
+					parentGlobalMatrix.InverseOrthonormal();
+				} else if (parentScale.xxx().Equals(parentScale)) { // Uniform scaling
+					parentGlobalMatrix.InverseOrthogonalUniformScale();
+				} else { // Non-uniform scaling
+					parentGlobalMatrix.InverseColOrthogonal();
+				}
+				// 3. New local matrix
+				transform->SetTRS(parentGlobalMatrix * childGlobalMatrix);
+
+				App->editor->selectedGameObject->SetParent(gameObject);
 				transform->InvalidateHierarchy();
 				transform->CalculateGlobalMatrix();
 			}

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Resources/Resource.h"
+enum class ShaderType { PHONG };
+
 
 class ResourceShader : public Resource {
 public:
@@ -8,4 +10,15 @@ public:
 
 	void Load() override;
 	void Unload() override;
+
+	unsigned int GetShaderProgram() {
+		return shaderProgram;
+	}
+	ShaderType GetShaderType() {
+		return shaderType; 
+	}
+
+private:
+	unsigned int shaderProgram;
+	ShaderType shaderType;
 };

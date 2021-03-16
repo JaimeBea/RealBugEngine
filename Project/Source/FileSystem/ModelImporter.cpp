@@ -5,6 +5,7 @@
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
 #include "Utils/MSTimer.h"
+#include "Utils/FileDialog.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
@@ -202,7 +203,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	timer.Start();
 
 	// Check for extension support
-	std::string extension = App->files->GetFileExtension(filePath);
+	std::string extension = FileDialog::GetFileExtension(filePath);
 	if (!aiIsExtensionSupported(extension.c_str())) {
 		LOG("Extension is not supported by assimp: \"%s\".", extension);
 		return false;
