@@ -364,7 +364,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	if (!IsActive()) return;
 
-	if (mesh->numBones > 0 && App->time->IsGameRunning()) {
+	if (mesh->numBones > 0 && App->time->GetDeltaTime() > 0) {
 		SkinningCPU();
 	}
 
@@ -725,7 +725,7 @@ void ComponentMeshRenderer::SkinningCPU() {
 		vertices[i + 1] = resPosition.y;
 		vertices[i + 2] = resPosition.z;
 
-		
+
 		// Normal
 		resNormal.Normalize();
 		vertices[i + 3] = resNormal.x;
