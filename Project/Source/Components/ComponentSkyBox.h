@@ -27,8 +27,5 @@ public:
 
 private:
 	ResourceSkybox* skybox;
-	unsigned int skyboxVAO, skyboxVBO;
-	unsigned int vbo, vao, ebo;
-	unsigned int programSky;
 	unsigned int glCubeMap;
 };

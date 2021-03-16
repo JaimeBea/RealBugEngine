@@ -22,7 +22,7 @@ void ComponentSkyBox::Draw() {
 	glUniformMatrix4fv(glGetUniformLocation(programSky, "view"), 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(programSky, "proj"), 1, GL_TRUE, &proj[0][0]);
 
-	glBindVertexArray(skyboxVAO);
+	glBindVertexArray(skybox->GetVao());
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, glCubeMap);
 	glDrawArrays(GL_TRIANGLES, 0, 36);

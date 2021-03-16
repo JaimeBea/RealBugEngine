@@ -21,7 +21,12 @@ public:
 	ResourceShader* GetShader() {
 		return shader;
 	};
-
+	unsigned int GetVao() {
+		return skyboxVAO;
+	};
+	unsigned int GetVbo() {
+		return skyboxVBO;
+	};
 	float skyboxVertices[108] {
 		// positions
 		-1.0f,
