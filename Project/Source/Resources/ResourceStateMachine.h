@@ -17,7 +17,7 @@ private:
 
 public:
 	ResourceStateMachine();
-	ResourceStates* AddState(std::string name); //Missing clip parameter
+	ResourceStates* AddState(std::string name,Clip *clip); //Missing clip parameter
 	void AddTransition(ResourceStates* from, ResourceStates* to,unsigned int interpolation, std::string& name );
 	ResourceTransition* GetValidTransition(std::string& name);
 	ResourceTransition* FindTransitionGivenName(std::string& name);

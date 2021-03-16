@@ -5,14 +5,14 @@ ResourceStateMachine::ResourceStateMachine() {
 }
 
 
-ResourceStates* ResourceStateMachine::AddState(std::string name) {
+ResourceStates* ResourceStateMachine::AddState(std::string name,Clip *clip) {
 	//Checking for unique name
 	ResourceTransition* transition = FindTransitionGivenName(name);
 	if (transition) {
 		return nullptr;
 	}
 
-	ResourceStates *state = new ResourceStates(name,nullptr);
+	ResourceStates *state = new ResourceStates(name,clip);
 	states.push_back(state);
 
 	return state;
