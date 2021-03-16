@@ -147,6 +147,5 @@ private:
 	std::vector<std::string> files;
 	ResourceShader* shader;
 	unsigned int skyboxVAO, skyboxVBO;
-	unsigned int vbo, vao, ebo;
 	//delete after undestand how to link a resouceshader//
 };
