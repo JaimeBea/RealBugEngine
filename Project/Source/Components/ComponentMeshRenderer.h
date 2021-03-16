@@ -15,12 +15,14 @@ public:
 	REGISTER_COMPONENT(ComponentMeshRenderer, ComponentType::MESH);
 
 	void OnEditorUpdate() override;
+	void Init() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 
 	void Draw(const float4x4& modelMatrix);
 
 private:
+	
 	void SkinningCPU();
 
 public:

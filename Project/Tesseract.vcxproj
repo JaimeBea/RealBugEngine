@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\FileSystem\AnimationControllerImporter.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />
     <ClInclude Include="Source\FileSystem\AnimationImporter.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\FileSystem\AnimationControllerImporter.cpp" />
     <ClCompile Include="Source\Components\ComponentAnimation.cpp" />
     <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
     <ClCompile Include="Source\FileSystem\AnimationImporter.cpp" />

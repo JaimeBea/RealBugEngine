@@ -6,6 +6,7 @@
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/AnimationImporter.h"
+#include "FileSystem/AnimationControllerImporter.h"
 #include "Resources/GameObject.h"
 #include "Resources/Material.h"
 #include "Resources/ResourceAnimation.h"
@@ -270,13 +271,13 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
 			animations.push_back(animation);
+			//App->resourcers[UID] = animation;
 		}
-		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
+		ComponentAnimation* animationComponent = gameObject->CreateComponent<ComponentAnimation>();
 		// TODO: Improve form multiple animations
-		animationComponet->animationResource = animations[0];
 		// TODO: Remove the new by using the pool of resources when merged with the resource
-		animationComponet->animationController = App->resources->ObtainAnimationController();
-		animationComponet->animationController->SetAnimation(animations[0]);
+		animationComponent->animationController = AnimationControllerImporter::CreateAnimationCotrollerBase();
+		animationComponent->animationController->SetAnimation(animations[0]);
 	}
 
 	// Cache bones for skinning
@@ -364,6 +365,7 @@ bool SceneImporter::LoadScene(const char* fileName) {
 		UID id = ids[i];
 		GameObject* gameObject = App->scene->GetGameObject(id);
 		gameObject->PostLoad(jGameObject);
+
 	}
 
 	// Init components

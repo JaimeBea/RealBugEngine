@@ -250,6 +250,12 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	}
 }
 
+void ComponentMeshRenderer::Init() {
+
+
+
+}
+
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_FILENAME] = mesh->fileName.c_str();
 	jComponent[JSON_TAG_MATERIAL_INDEX] = mesh->materialIndex;
@@ -297,6 +303,8 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	// TODO: Recache the Bones?
 	MeshImporter::UnloadMesh(mesh);
 	MeshImporter::LoadMesh(mesh, goBones);
+
+
 
 	// TODO: Load using Material Importer
 

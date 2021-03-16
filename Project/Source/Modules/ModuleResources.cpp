@@ -66,7 +66,6 @@ ResourceAnimation* ModuleResources::ObtainAnimation() {
 }
 
 void ModuleResources::ReleaseAnimation(ResourceAnimation* animation) {
-	AnimationImporter::UnloadAnimation(animation);
 	animations.Release(animation);
 }
 

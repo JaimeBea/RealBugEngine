@@ -38,7 +38,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	unsigned attachSize = sizeof(Mesh::Attach);
 	unsigned boneSize = sizeof(Mesh::Bone);
 
-	unsigned headerSize = sizeof(unsigned) * 2;
+	unsigned headerSize = sizeof(unsigned) * 3;
 	unsigned vertexSize = positionSize + normalSize + uvSize;
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
@@ -226,6 +226,8 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
 
+	mesh->bones.resize(mesh->numBones);
+
 	// Bones
 	for (unsigned i = 0; i < mesh->numBones; i++) {
 		float3 position, scaling;
@@ -242,7 +244,7 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 		name[lengthName] = '\0';
 
 		// Init the bones map only with the Key. In the scene importer, add the pointers to the GameObject-Bone.
-		bones[name] = nullptr;
+		bones.emplace(name, nullptr);
 
 		//Position
 		position.x = *((float*) cursor);
@@ -278,7 +280,8 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 
 	// Attaches
 	// TODO: Delete when move it to GPU
-	for (unsigned i = 0; i < mesh->numVertices; i++) {
+	if (mesh->numBones > 0) mesh->attaches.resize(mesh->numVertices);
+	for (unsigned i = 0; i < mesh->numVertices && mesh->numBones > 0; i++) {
 		mesh->attaches[i].numBones = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);
 
@@ -367,7 +370,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 	}
 
 	// Attaches
-	cursor += sizeof(Mesh::Attach) * mesh->numVertices;
+	if (numBones > 0) cursor += sizeof(Mesh::Attach) * mesh->numVertices;
 
 	// Vertices
 	std::vector<float3> vertices;

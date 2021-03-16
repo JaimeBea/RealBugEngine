@@ -15,9 +15,13 @@ enum class UpdateStatus {
 #define TEXTURES_PATH "Library/Textures"
 #define MESHES_PATH "Library/Meshes"
 #define SCENES_PATH "Library/Scenes"
+#define ANIMATIONS_PATH "Library/Animations"
+#define ANIMATION_CONTROLLERS_PATH "Library/AnimationControllers"
 #define TEXTURE_EXTENSION ".dds"
 #define MESH_EXTENSION ".mesh"
 #define SCENE_EXTENSION ".scene"
+#define ANIMATION_EXTENSION ".anim"
+#define ANIMATION_CONTROLLER_EXTENSION ".controller"
 
 // Configuration -----------
 #define GLSL_VERSION "#version 330"

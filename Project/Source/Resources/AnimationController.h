@@ -16,10 +16,13 @@ public:
 	void Update();
 
 private:
+	Quat Interpolate(const Quat& first, const Quat& second, float lambda) const;
+
+public:
 	float currentTime;
 	bool loop;
 	bool running;
 	ResourceAnimation* animationResource = nullptr;
 
-	Quat Interpolate(const Quat& first, const Quat& second, float lambda) const;
+	std::string fileName = "New Controller";
 };

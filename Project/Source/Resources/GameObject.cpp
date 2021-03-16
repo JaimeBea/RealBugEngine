@@ -12,6 +12,7 @@
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_ACTIVE "Active"
 #define JSON_TAG_PARENT_ID "ParentId"
+#define JSON_TAG_ROOT_BONE_ID "RootBoneId"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_COMPONENTS "Components"
 
@@ -158,6 +159,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
+	jGameObject[JSON_TAG_ROOT_BONE_ID] = rootBoneHierarchy != nullptr ? rootBoneHierarchy->id : 0;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
@@ -191,6 +193,9 @@ void GameObject::Load(JsonValue jGameObject) {
 
 void GameObject::PostLoad(JsonValue jGameObject) {
 	UID parentId = jGameObject[JSON_TAG_PARENT_ID];
+	UID rootBoneId = jGameObject[JSON_TAG_ROOT_BONE_ID];
 	GameObject* parent = App->scene->GetGameObject(parentId);
+	GameObject* rootBone = App->scene->GetGameObject(rootBoneId);
 	SetParent(parent);
+	SetRootBone(rootBone);
 }
