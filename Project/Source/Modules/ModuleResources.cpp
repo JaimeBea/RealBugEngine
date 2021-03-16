@@ -115,8 +115,10 @@ std::string ModuleResources::GenerateResourcePath(UID id) const {
 	return metaFolder + "/" + strId;
 }
 
-bool ModuleResources::ImportAsset(const char* filePath) {
-	if (!App->files->Exists(filePath)) return false;
+std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
+	std::vector<Resource*> resources;
+
+	if (!App->files->Exists(filePath)) return resources;
 
 	bool assetImported = true;
 
@@ -173,13 +175,20 @@ bool ModuleResources::ImportAsset(const char* filePath) {
 			assetImported = false;
 		}
 
-		if (!validMetaFile && assetImported) {
-			jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
-			SaveMetaFile(metaFilePath.c_str(), document);
+		if (assetImported) {
+			JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+			for (unsigned i = 0; i < jResourceIds.Size(); ++i) {
+				resources.push_back(GetResourceByID(jResourceIds[i]));
+			}
+
+			if (!validMetaFile) {
+				jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
+				SaveMetaFile(metaFilePath.c_str(), document);
+			}
 		}
 	}
 
-	return assetImported;
+	return resources;
 }
 
 void ModuleResources::UpdateAsync() {

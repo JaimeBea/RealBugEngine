@@ -188,8 +188,6 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 }
 
 bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
-	// TODO: Load materials
-
 	// Timer to measure importing a model
 	MSTimer timer;
 	timer.Start();
@@ -212,9 +210,175 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
+	// Initialize resource accumulator
+	unsigned resourceIndex = 0;
+	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+
+	// Import materials
+	for (unsigned i = 0; i < assimpScene->mNumMaterials; ++i) {
+		LOG("Loading material %i...", i);
+		aiMaterial* assimpMaterial = assimpScene->mMaterials[i];
+
+		ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath);
+
+		aiString materialFilePath;
+		aiTextureMapping mapping;
+		aiColor4D color;
+		unsigned uvIndex;
+
+		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uvIndex == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to import diffuse texture...");
+			std::vector<Resource*>& textureResources = App->resources->ImportAsset(materialFilePath.C_Str());
+
+			// Try to load relative to the model folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to model folder...");
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
+				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
+				textureResources = App->resources->ImportAsset(modelFolderMaterialFilePath.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to textures folder...");
+				std::string materialFile = FileDialog::GetFileNameAndExtension(materialFilePath.C_Str());
+				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFile;
+				textureResources = App->resources->ImportAsset(texturesFolderMaterialFileDir.c_str());
+			}
+
+			if (textureResources.empty()) {
+				LOG("Unable to find diffuse texture file.");
+			} else {
+				LOG("Diffuse texture imported successfuly.");
+				material->diffuseMap = (ResourceTexture*) textureResources[0];
+				material->hasDiffuseMap = true;
+			}
+		} else {
+			LOG("Diffuse texture not found.");
+		}
+
+		if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uvIndex == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to import specular texture...");
+			std::vector<Resource*>& textureResources = App->resources->ImportAsset(materialFilePath.C_Str());
+
+			// Try to load relative to the model folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to model folder...");
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
+				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
+				textureResources = App->resources->ImportAsset(modelFolderMaterialFilePath.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to textures folder...");
+				std::string materialFileName = FileDialog::GetFileName(materialFilePath.C_Str());
+				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
+				textureResources = App->resources->ImportAsset(texturesFolderMaterialFileDir.c_str());
+			}
+
+			if (textureResources.empty()) {
+				LOG("Unable to find specular texture file.");
+			} else {
+				LOG("Specular texture imported successfuly.");
+				material->specularMap = (ResourceTexture*) textureResources[0];
+				material->hasSpecularMap = true;
+			}
+		} else {
+			LOG("Specular texture not found.");
+		}
+
+		if (assimpMaterial->GetTexture(aiTextureType_METALNESS, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uvIndex == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to import metalness texture...");
+			std::vector<Resource*>& textureResources = App->resources->ImportAsset(materialFilePath.C_Str());
+
+			// Try to load relative to the model folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to model folder...");
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
+				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
+				textureResources = App->resources->ImportAsset(modelFolderMaterialFilePath.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to textures folder...");
+				std::string materialFileName = FileDialog::GetFileName(materialFilePath.C_Str());
+				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
+				textureResources = App->resources->ImportAsset(texturesFolderMaterialFileDir.c_str());
+			}
+
+			if (textureResources.empty()) {
+				LOG("Unable to find metalness texture file.");
+			} else {
+				LOG("Metalness texture imported successfuly.");
+				material->metallicMap = (ResourceTexture*) textureResources[0];
+			}
+		} else {
+			LOG("Metalness texture not found.");
+		}
+
+		if (assimpMaterial->GetTexture(aiTextureType_NORMALS, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
+			// Check if the material is valid for our purposes
+			assert(mapping == aiTextureMapping_UV);
+			assert(uvIndex == 0);
+
+			// Try to load from the path given in the model file
+			LOG("Trying to import normals texture...");
+			std::vector<Resource*>& textureResources = App->resources->ImportAsset(materialFilePath.C_Str());
+
+			// Try to load relative to the model folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to model folder...");
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
+				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
+				textureResources = App->resources->ImportAsset(modelFolderMaterialFilePath.c_str());
+			}
+
+			// Try to load relative to the textures folder
+			if (textureResources.empty()) {
+				LOG("Trying to import texture relative to textures folder...");
+				std::string materialFileName = FileDialog::GetFileName(materialFilePath.C_Str());
+				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
+				textureResources = App->resources->ImportAsset(texturesFolderMaterialFileDir.c_str());
+			}
+
+			if (textureResources.empty()) {
+				LOG("Unable to find normals texture file.");
+			} else {
+				LOG("Normals texture imported successfuly.");
+				material->normalMap = (ResourceTexture*) textureResources[0];
+			}
+		} else {
+			LOG("Normals texture not found.");
+		}
+
+		assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, material->diffuseColor);
+		assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, material->specularColor);
+		assimpMaterial->Get(AI_MATKEY_SHININESS, material->smoothness);
+
+		LOG("Material imported.");
+		jResourceIds[resourceIndex] = material->GetId();
+		material->SaveToFile(App->resources->GenerateResourcePath(material->GetId()).c_str());
+	}
+
 	// Import nodes
 	LOG("Importing scene tree.");
-	unsigned resourceIndex = 0;
 	GameObject* root = App->scene->CreateGameObject(nullptr, GenerateUID(), "Root");
 	root->CreateComponent<ComponentTransform>();
 	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, root, float4x4::identity, resourceIndex);

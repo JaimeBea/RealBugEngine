@@ -13,59 +13,19 @@ public:
 	void Load() override;
 	void Unload() override;
 
-	ResourceShader* GetShader() {
-		return shader;
-	};
+	void SaveToFile(const char* filePath);
 
-	float4 GetDiffuseColor() {
-		return diffuseColor;
-	};
-
-	ResourceTexture* GetDiffuseMap() {
-		return diffuseMap;
-	};
-
-	float4 GetSpecularColor() {
-		return specularColor;
-	};
-
-	ResourceTexture* GetSpecularMap() {
-		return specularMap;
-	};
-
-	ResourceTexture* GetMetallicMap() {
-		return metallicMap;
-	};
-
-	ResourceTexture* GetNormalMap() {
-		return normalMap;
-	};
-
-	float Getsmoothness() {
-		return smoothness;
-	};
-
-	bool HasSmoothnessInAlphaChannel() {
-		return hasSmoothnessInAlphaChannel;
-	};
-
-	bool HasSpecularMap() {
-		return hasSpecularMap;
-	}
-
-	bool HasDiffuseMap() {
-		return hasDiffuseMap;
-	}
-
-private:
+public:
 	// Material shader
 	ResourceShader* shader = nullptr;
 
 	// Diffuse
+	bool hasDiffuseMap = false;
 	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
 	ResourceTexture* diffuseMap = nullptr;
 
 	// Specular
+	bool hasSpecularMap = false;
 	float4 specularColor = {1.0f, 1.0f, 1.0f, 1.0f};
 	ResourceTexture* specularMap = nullptr;
 
@@ -78,6 +38,4 @@ private:
 	// Smoothness
 	float smoothness = 300;
 	bool hasSmoothnessInAlphaChannel = false;
-	bool hasSpecularMap = false;
-	bool hasDiffuseMap = false;
 };

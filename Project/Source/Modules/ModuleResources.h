@@ -5,6 +5,7 @@
 #include "Utils/UID.h"
 #include "Resources/Resource.h"
 
+#include <vector>
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
@@ -23,7 +24,7 @@ public:
 	Resource* GetResourceByID(UID id);
 	std::string GenerateResourcePath(UID id) const;
 
-	bool ImportAsset(const char* filePath);
+	std::vector<Resource*> ImportAsset(const char* filePath);
 
 	template<typename T>
 	T* CreateResource(const char* assetFilePath);

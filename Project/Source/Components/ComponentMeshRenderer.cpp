@@ -277,16 +277,16 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (mesh == nullptr) return;
 	if (material == nullptr) return;
 
-	unsigned program = material->GetShader()->GetShaderProgram();
+	unsigned program = material->shader->GetShaderProgram();
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
 	unsigned glTextureDiffuse = 0;
 	unsigned glTextureSpecular = 0;
 
-	ResourceTexture* diffuse = material->GetDiffuseMap();
+	ResourceTexture* diffuse = material->diffuseMap;
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-	ResourceTexture* specular = material->GetSpecularMap();
+	ResourceTexture* specular = material->specularMap;
 	glTextureSpecular = specular ? specular->glTexture : 0;
 
 	ComponentLight* directionalLight = nullptr;
@@ -295,7 +295,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	if (material->GetShader()->GetShaderType() == ShaderType::PHONG) {
+	if (material->shader->GetShaderType() == ShaderType::PHONG) {
 		float farPointDistance = 0;
 		ComponentLight* farPointLight = nullptr;
 		float farSpotDistance = 0;
@@ -398,11 +398,11 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->GetDiffuseColor().ptr());
-		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->GetSpecularColor().ptr());
-		int hasDiffuseMap = (material->GetDiffuseMap()) ? 1 : 0;
-		int hasSpecularMap = (material->GetSpecularMap()) ? 1 : 0;
-		int hasShininessInAlphaChannel = (material->HasSmoothnessInAlphaChannel()) ? 1 : 0;
+		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
+		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
+		int hasDiffuseMap = (material->diffuseMap) ? 1 : 0;
+		int hasSpecularMap = (material->specularMap) ? 1 : 0;
+		int hasShininessInAlphaChannel = (material->hasSmoothnessInAlphaChannel) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
