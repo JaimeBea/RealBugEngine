@@ -29,8 +29,6 @@
     <ClCompile Include="Source\Components\ComponentCamera.cpp" />
     <ClCompile Include="Source\Components\ComponentLight.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox.cpp" />
-    <ClCompile Include="Source\Components\ComponentMaterial.cpp" />
-    <ClCompile Include="Source\Components\ComponentMesh.cpp" />
     <ClCompile Include="Source\Components\ComponentTransform.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Panels\Panel.cpp" />
@@ -94,6 +92,32 @@
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
     <ClCompile Include="Source\Resources\AnimationController.cpp" />
     <ClCompile Include="Source\Components\ComponentAnimation.cpp" />
+    <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
+    <ClCompile Include="Source\FileSystem\AnimationImporter.cpp" />
+    <ClCompile Include="Libs\PhysicsFS\physfs.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_dir.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_grp.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_hog.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_iso9660.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_mvl.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_qpak.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_slb.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_unpacked.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_vdf.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_wad.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_archiver_zip.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_byteorder.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_haiku.cpp" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_os2.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_posix.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_qnx.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_unix.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_windows.c" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_platform_winrt.cpp" />
+    <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
+    <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
+    <ClCompile Include="Source\FileSystem\AnimationControllerImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -135,8 +159,6 @@
     <ClInclude Include="Source\Components\ComponentCamera.h" />
     <ClInclude Include="Source\Components\ComponentLight.h" />
     <ClInclude Include="Source\Components\ComponentBoundingBox.h" />
-    <ClInclude Include="Source\Components\ComponentMaterial.h" />
-    <ClInclude Include="Source\Components\ComponentMesh.h" />
     <ClInclude Include="Source\Components\ComponentType.h" />
     <ClInclude Include="Source\Components\ComponentTransform.h" />
     <ClInclude Include="Source\Panels\Panel.h" />
@@ -240,6 +262,16 @@
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
     <ClInclude Include="Source\Resources\AnimationController.h" />
     <ClInclude Include="Source\Components\ComponentAnimation.h" />
+    <ClInclude Include="Source\Resources\ResourceAnimation.h" />
+    <ClInclude Include="Source\FileSystem\AnimationImporter.h" />
+    <ClInclude Include="Libs\PhysicsFS\physfs.h" />
+    <ClInclude Include="Libs\PhysicsFS\physfs_casefolding.h" />
+    <ClInclude Include="Libs\PhysicsFS\physfs_internal.h" />
+    <ClInclude Include="Libs\PhysicsFS\physfs_lzmasdk.h" />
+    <ClInclude Include="Libs\PhysicsFS\physfs_miniz.h" />
+    <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
+    <ClInclude Include="Source\Components\ComponentMeshRenderer.h" />
+    <ClInclude Include="Source\FileSystem\AnimationControllerImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Game\Shaders\default_fragment.glsl" />

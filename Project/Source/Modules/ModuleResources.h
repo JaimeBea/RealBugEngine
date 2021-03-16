@@ -5,6 +5,8 @@
 #include "Resources/Texture.h"
 #include "Resources/CubeMap.h"
 #include "Resources/Mesh.h"
+#include "Resources/ResourceAnimation.h"
+#include "Resources/AnimationController.h"
 
 enum class TextureMinFilter {
 	NEAREST,
@@ -42,6 +44,12 @@ public:
 	Mesh* ObtainMesh();
 	void ReleaseMesh(Mesh* mesh);
 
+	ResourceAnimation* ObtainAnimation();
+	void ReleaseAnimation(ResourceAnimation* animation);
+
+	AnimationController* ObtainAnimationController();
+	void ReleaseAnimationController(AnimationController* animationController);
+
 	void ReleaseAll();
 
 	void SetMinFilter(TextureMinFilter filter);
@@ -56,6 +64,8 @@ public:
 	Pool<Texture> textures;
 	Pool<CubeMap> cubeMaps;
 	Pool<Mesh> meshes;
+	Pool<ResourceAnimation> animations;
+	Pool<AnimationController> animationControllers;
 
 private:
 	TextureMinFilter minFilter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;

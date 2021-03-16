@@ -12,6 +12,7 @@
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_ACTIVE "Active"
 #define JSON_TAG_PARENT_ID "ParentId"
+#define JSON_TAG_ROOT_BONE_ID "RootBoneId"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_COMPONENTS "Components"
 
@@ -91,6 +92,14 @@ GameObject* GameObject::GetParent() const {
 	return parent;
 }
 
+void GameObject::SetRootBone(GameObject* gameObject) {
+	rootBoneHierarchy = gameObject;
+}
+
+GameObject* GameObject::GetRootBone() const {
+	return rootBoneHierarchy;
+}
+
 void GameObject::AddChild(GameObject* gameObject) {
 	gameObject->SetParent(this);
 }
@@ -107,6 +116,22 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	if (GetParent() == nullptr) return false;
 	if (GetParent() == gameObject) return true;
 	return GetParent()->IsDescendantOf(gameObject);
+}
+
+GameObject* GameObject::GetDescendant(std::string name) const {
+
+	for (GameObject* child : children) {
+		if (child->name == name) {
+			return child;
+		}
+		else {
+			GameObject *gameObject = child->GetDescendant(name);
+			if (gameObject != nullptr) return gameObject;
+		}
+			
+	}
+
+	return nullptr;
 }
 
 bool GameObject::AddComponent(ComponentType type) {
@@ -134,6 +159,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_PARENT_ID] = parent != nullptr ? parent->id : 0;
+	jGameObject[JSON_TAG_ROOT_BONE_ID] = rootBoneHierarchy != nullptr ? rootBoneHierarchy->id : 0;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
@@ -167,6 +193,9 @@ void GameObject::Load(JsonValue jGameObject) {
 
 void GameObject::PostLoad(JsonValue jGameObject) {
 	UID parentId = jGameObject[JSON_TAG_PARENT_ID];
+	UID rootBoneId = jGameObject[JSON_TAG_ROOT_BONE_ID];
 	GameObject* parent = App->scene->GetGameObject(parentId);
+	GameObject* rootBone = App->scene->GetGameObject(rootBoneId);
 	SetParent(parent);
+	SetRootBone(rootBone);
 }

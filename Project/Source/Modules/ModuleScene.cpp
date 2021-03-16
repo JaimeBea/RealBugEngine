@@ -66,7 +66,7 @@ bool ModuleScene::Start() {
 
 	CreateEmptyScene();
 
-	SceneImporter::LoadScene("survival_shooter");
+	SceneImporter::LoadScene("AnimationsScene");
 
 	// Load skybox
 	// clang-format off

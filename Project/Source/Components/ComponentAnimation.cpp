@@ -3,11 +3,17 @@
 #include "Application.h"
 #include "Resources/GameObject.h"
 #include "Resources/AnimationController.h"
+#include "Resources/ResourceAnimation.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleResources.h"
+#include "FileSystem/AnimationControllerImporter.h"
+#include "FileSystem/AnimationImporter.h"
 
 #include "Utils/Leaks.h"
+
+#define JSON_TAG_CONTROLLER "Controller"
 
 void ComponentAnimation::Update() {
 	animationController->Update();
@@ -18,24 +24,41 @@ void ComponentAnimation::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Animation");
 }
 
+void ComponentAnimation::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_CONTROLLER] = (animationController != nullptr) ? animationController->fileName.c_str() : "";
+
+	if (animationController != nullptr) {
+		AnimationControllerImporter::SaveAnimationController(animationController);
+	}
+}
+
+void ComponentAnimation::Load(JsonValue jComponent) {
+	std::string controllerName = jComponent[JSON_TAG_CONTROLLER];
+
+	if (controllerName != "") {
+		if (animationController == nullptr) {
+			animationController = App->resources->ObtainAnimationController();
+		}
+		animationController->fileName = controllerName;
+		AnimationControllerImporter::LoadAnimationController(animationController);
+	}
+}
+
 void ComponentAnimation::OnStop() {
 	animationController->Stop();
 }
+
 void ComponentAnimation::OnPlay() {
 	animationController->Play();
 }
 
 void ComponentAnimation::OnUpdate() {
-	//Update gameobjects matrix
-	for (GameObject* child : GetOwner().GetChildren()) {
-		if (child->name == "Ctrl_Grp") {
-			// One iteration loop
-			for (GameObject* child2 : child->GetChildren()) {
-				if (child2->name == "Root") {
-					UpdateAnimations(child2);
-				}
-			}
-		}
+	// Update gameobjects matrix
+
+	GameObject* rootBone = GetOwner().GetRootBone();
+
+	for (GameObject* child : rootBone->GetChildren()) {
+		UpdateAnimations(child);
 	}
 }
 

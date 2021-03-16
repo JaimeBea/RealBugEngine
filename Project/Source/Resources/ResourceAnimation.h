@@ -14,10 +14,12 @@ public:
 		Quat rotation = Quat::identity;
 	};
 
+	/*
 	struct MorphChannel {
 		std::vector<float> wheights;
 	};
-
+	*/
+	
 	struct KeyFrameChannels {
 		std::unordered_map<std::string, Channel> channels;
 	};
@@ -25,15 +27,10 @@ public:
 	//ResourceAnimation(UID id, const char* assetFilePath, const char* resourceFilePath);
 	ResourceAnimation() {}
 
-	void Load();   //override;
-	void Unload(); //override;
-
-	//void SetDuration(float duration);
-
 public:
-	std::string name = "";
+	std::string fileName = "New Animation";
 
 	std::vector<KeyFrameChannels> keyFrames;
 
-	unsigned int duration = 0;
+	float duration = 0.0f;
 };

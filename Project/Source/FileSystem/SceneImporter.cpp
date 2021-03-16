@@ -6,6 +6,7 @@
 #include "FileSystem/MeshImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/AnimationImporter.h"
+#include "FileSystem/AnimationControllerImporter.h"
 #include "Resources/GameObject.h"
 #include "Resources/Material.h"
 #include "Resources/ResourceAnimation.h"
@@ -36,7 +37,7 @@
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 #define JSON_TAG_PARENT_ID "ParentId"
 
-static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
+static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform, std::unordered_map<std::string, GameObject*>& bones) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
@@ -46,7 +47,7 @@ static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Mate
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform);
+			ImportNode(assimpScene, materials, node->mChildren[i], parent, transform, bones);
 		}
 	} else { // Normal node
 		// Create GameObject
@@ -82,7 +83,7 @@ static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Mate
 			mesh->mesh->materialIndex = i;
 
 			// TODO: Move mesh loading to a better place
-			MeshImporter::LoadMesh(mesh->mesh);
+			MeshImporter::LoadMesh(mesh->mesh, bones);
 
 			if (materials.size() > 0) {
 				if (assimpMesh->mMaterialIndex >= materials.size()) {
@@ -114,11 +115,28 @@ static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Mate
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity);
+			ImportNode(assimpScene, materials, node->mChildren[i], gameObject, float4x4::identity, bones);
 		}
 	}
 
 	return gameObject;
+}
+
+static void SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
+		meshRenderer->goBones = goBones;
+	}
+
+	for (GameObject* child : node->GetChildren()) {
+		SaveBones(child, goBones);
+	}
+}
+
+static void CacheBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	for (GameObject* child : node->GetChildren()) {
+		goBones[child->name] = child;
+		CacheBones(child, goBones);
+	}
 }
 
 bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
@@ -238,11 +256,13 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 
 		LOG("Material imported.");
 		materials.push_back(material);
-	}	
+	}
+
+	std::unordered_map<std::string, GameObject*> bones;
 
 	// Create scene tree
 	LOG("Importing scene tree.");
-	GameObject* gameObject = ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity);
+	GameObject* gameObject = ImportNode(assimpScene, materials, assimpScene->mRootNode, parent, float4x4::identity, bones);
 
 	// Load animations
 	if (assimpScene->mNumAnimations > 0) {
@@ -251,10 +271,46 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
 			animations.push_back(animation);
+			//App->resourcers[UID] = animation;
 		}
-		ComponentAnimation* animationComponet = gameObject->CreateComponent<ComponentAnimation>();
-		animationComponet->animationResource = animations[0]; // TODO improve form multiple animations
-		animationComponet->animationController = new AnimationController(animations[0]);
+		ComponentAnimation* animationComponent = gameObject->CreateComponent<ComponentAnimation>();
+		// TODO: Improve form multiple animations
+		// TODO: Remove the new by using the pool of resources when merged with the resource
+		animationComponent->animationController = AnimationControllerImporter::CreateAnimationCotrollerBase();
+		animationComponent->animationController->SetAnimation(animations[0]);
+	}
+
+	// Cache bones for skinning
+
+	auto it = bones.begin();
+
+	aiNode* rootBone = nullptr;
+
+	if (it != bones.end()) {
+		rootBone = assimpScene->mRootNode->FindNode(it->first.c_str());
+		rootBone = rootBone->mParent;
+		while (bones.find(rootBone->mName.C_Str()) != bones.end()) {
+			rootBone = rootBone->mParent;
+			std::string name = rootBone->mName.C_Str();
+			while (name.find("$AssimpFbx$") != std::string::npos) {
+				rootBone = rootBone->mParent;
+				name = rootBone->mName.C_Str();
+			}
+		}
+	}
+
+	if (rootBone != nullptr) {
+		GameObject* rootBoneGO = (gameObject->name == rootBone->mName.C_Str()) ? gameObject : gameObject->GetDescendant(rootBone->mName.C_Str());
+
+		gameObject->SetRootBone(rootBoneGO);
+
+		CacheBones(rootBoneGO, bones);
+
+		for (GameObject* child : gameObject->GetChildren()) {
+			if (child->name != rootBoneGO->name) {
+				SaveBones(child, bones);
+			}
+		}
 	}
 
 	unsigned timeMs = timer.Stop();
@@ -309,6 +365,7 @@ bool SceneImporter::LoadScene(const char* fileName) {
 		UID id = ids[i];
 		GameObject* gameObject = App->scene->GetGameObject(id);
 		gameObject->PostLoad(jGameObject);
+
 	}
 
 	// Init components
@@ -318,6 +375,11 @@ bool SceneImporter::LoadScene(const char* fileName) {
 		UID id = ids[i];
 		GameObject* gameObject = App->scene->GetGameObject(id);
 		gameObject->InitComponents();
+		if (gameObject->GetRootBone() != nullptr) {
+			std::unordered_map<std::string, GameObject*> bones;
+			CacheBones(gameObject->GetRootBone(), bones);
+			SaveBones(gameObject, bones);
+		}
 	}
 
 	// Quadtree generation

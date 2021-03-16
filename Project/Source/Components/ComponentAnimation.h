@@ -12,18 +12,18 @@ public:
 	//void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
-	//void DrawGizmos() override; 
+	//void DrawGizmos() override;
 	//void OnTransformUpdate() override;
-	//void Save(JsonValue jComponent) const override;
-	//void Load(JsonValue jComponent) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
 	void OnStop();
 	void OnPlay();
 	void OnUpdate();
 
-	AnimationController* animationController;
-	ResourceAnimation* animationResource;
-
 private:
-	void UpdateAnimations(GameObject *gameObject);
+	void UpdateAnimations(GameObject* gameObject);
+
+public:
+	AnimationController* animationController = nullptr;
 };
