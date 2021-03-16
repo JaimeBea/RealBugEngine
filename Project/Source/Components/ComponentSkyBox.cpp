@@ -1,17 +1,18 @@
-#include "Skybox.h"
+#include "ComponentSkyBox.h"
 #include <GL/glew.h>
 #include <Math/float4x4.cpp>
 #include "Application.h"
 #include "Modules/ModuleCamera.h"
 #define JSON_TAG_SKYBOX "skybox"
 
-void Skybox::Load(JsonValue jComponent) {
+void ComponentSkyBox::Load(JsonValue jComponent) {
 	skybox = (ResourceSkybox*) App->resources->GetResourceByID(jComponent[JSON_TAG_SKYBOX]);
 }
 
-void Skybox::Draw() {
+void ComponentSkyBox::Draw() {
 	glDepthMask(GL_FALSE); // superfluous
 	glDepthFunc(GL_LEQUAL);
+	unsigned int programSky = skybox->GetShader()->GetShaderProgam();
 	glUseProgram(programSky);
 	float4x4 proj = App->camera->GetProjectionMatrix();
 	float4x4 view = App->camera->GetViewMatrix();

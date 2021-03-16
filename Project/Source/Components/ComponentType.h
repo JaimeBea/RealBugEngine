@@ -21,6 +21,7 @@ enum class ComponentType {
 	BOUNDING_BOX = 3,
 	CAMERA = 4,
 	LIGHT = 5,
+	SKYBOX = 6,
 };
 
 Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active = true);

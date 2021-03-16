@@ -18,6 +18,10 @@ public:
 	void Draw();
 	void ReadPath();
 
+	ResourceShader* GetShader() {
+		return shader;
+	};
+
 	float skyboxVertices[108] {
 		// positions
 		-1.0f,
@@ -145,5 +149,4 @@ private:
 	unsigned int skyboxVAO, skyboxVBO;
 	unsigned int vbo, vao, ebo;
 	//delete after undestand how to link a resouceshader//
-	unsigned int programSky;
 };

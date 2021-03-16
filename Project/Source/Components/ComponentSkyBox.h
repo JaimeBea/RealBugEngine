@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "Application.h"
+#include "Component.h"
 
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceShader.h"
@@ -13,18 +13,20 @@
 #include "rapidjson/document.h"
 #include <FileSystem/JsonValue.h>
 
-class Skybox {
+class ComponentSkyBox : public Component {
 public:
-	Skybox();
-	virtual ~Skybox();
+	REGISTER_COMPONENT(ComponentSkyBox, ComponentType::SKYBOX);
+
+	void OnTransformUpdate() override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
+
 	void Draw();
 	unsigned int loadCubemap(std::vector<std::string> files);
-
 	void Load(JsonValue jComponent);
 
 private:
 	ResourceSkybox* skybox;
-	ResourceShader* shader;
 	unsigned int skyboxVAO, skyboxVBO;
 	unsigned int vbo, vao, ebo;
 	unsigned int programSky;
