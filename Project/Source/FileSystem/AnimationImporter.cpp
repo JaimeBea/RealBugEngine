@@ -21,7 +21,7 @@ ResourceAnimation* AnimationImporter::ImportAnimation(const aiAnimation* aiAnim,
 
 	ResourceAnimation* anim = App->resources->ObtainAnimation();
 	anim->duration = durationInSeconds;
-	anim->fileName =  std::string(ANIMATIONS_PATH) + aiAnim->mName.C_Str() + std::string(ANIMATION_EXTENSION);
+	anim->fileName =  std::string(ANIMATIONS_PATH) + "/" + aiAnim->mName.C_Str() + std::string(ANIMATION_EXTENSION);
 
 	unsigned int size = std::max(aiAnim->mChannels[0]->mNumPositionKeys, aiAnim->mChannels[0]->mNumRotationKeys);
 
