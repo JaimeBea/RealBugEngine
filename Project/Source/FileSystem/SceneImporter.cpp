@@ -375,6 +375,11 @@ bool SceneImporter::LoadScene(const char* fileName) {
 		UID id = ids[i];
 		GameObject* gameObject = App->scene->GetGameObject(id);
 		gameObject->InitComponents();
+		if (gameObject->GetRootBone() != nullptr) {
+			std::unordered_map<std::string, GameObject*> bones;
+			CacheBones(gameObject->GetRootBone(), bones);
+			SaveBones(gameObject, bones);
+		}
 	}
 
 	// Quadtree generation

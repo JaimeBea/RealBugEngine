@@ -14,6 +14,7 @@
             "Id": 15608535896263676540,
             "Name": "Scene",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -47,6 +48,7 @@
             "Id": 5454646671056458227,
             "Name": "Directional Light",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -95,6 +97,7 @@
             "Id": 3024256790399026164,
             "Name": "Game Camera",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -151,9 +154,10 @@
         },
         {
             "ParentId": 15608535896263676540,
-            "Id": 9793278837598805657,
+            "Id": 8755751966403087123,
             "Name": "RootNode",
             "Active": true,
+            "RootBoneId": 13082285859596559063,
             "Components": [
                 {
                     "Type": 1,
@@ -188,10 +192,11 @@
             ]
         },
         {
-            "ParentId": 9793278837598805657,
-            "Id": 9520836260271308158,
+            "ParentId": 8755751966403087123,
+            "Id": 10980882417592932417,
             "Name": "Zombunny",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -287,10 +292,11 @@
             ]
         },
         {
-            "ParentId": 9793278837598805657,
-            "Id": 17632356334950850863,
+            "ParentId": 8755751966403087123,
+            "Id": 13082285859596559063,
             "Name": "Ctrl_Grp",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -320,10 +326,11 @@
             ]
         },
         {
-            "ParentId": 17632356334950850863,
-            "Id": 13300591873111236160,
+            "ParentId": 13082285859596559063,
+            "Id": 3640499684196874852,
             "Name": "Root",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -353,10 +360,11 @@
             ]
         },
         {
-            "ParentId": 13300591873111236160,
-            "Id": 4261076516851290526,
+            "ParentId": 3640499684196874852,
+            "Id": 1610345942102411801,
             "Name": "Hips",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -386,10 +394,11 @@
             ]
         },
         {
-            "ParentId": 4261076516851290526,
-            "Id": 4365760144659843132,
+            "ParentId": 1610345942102411801,
+            "Id": 10704764245259176738,
             "Name": "Spine",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -419,10 +428,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 3826101230850792321,
+            "ParentId": 10704764245259176738,
+            "Id": 7060728241909038292,
             "Name": "Head",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -452,10 +462,11 @@
             ]
         },
         {
-            "ParentId": 3826101230850792321,
-            "Id": 11668672033409745694,
+            "ParentId": 7060728241909038292,
+            "Id": 3191964468440539978,
             "Name": "HeadEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -485,10 +496,11 @@
             ]
         },
         {
-            "ParentId": 3826101230850792321,
-            "Id": 8129762814982717491,
+            "ParentId": 7060728241909038292,
+            "Id": 299405674456698203,
             "Name": "LeftEar",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -518,10 +530,11 @@
             ]
         },
         {
-            "ParentId": 8129762814982717491,
-            "Id": 11028966217114094877,
+            "ParentId": 299405674456698203,
+            "Id": 13775780302776775407,
             "Name": "LeftEarEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -551,10 +564,11 @@
             ]
         },
         {
-            "ParentId": 3826101230850792321,
-            "Id": 4103680127975348832,
+            "ParentId": 7060728241909038292,
+            "Id": 2247218431193808532,
             "Name": "RightEar",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -584,10 +598,11 @@
             ]
         },
         {
-            "ParentId": 4103680127975348832,
-            "Id": 13584421307344363519,
+            "ParentId": 2247218431193808532,
+            "Id": 2998513756456441495,
             "Name": "RightEarEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -617,10 +632,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 11643675017192613351,
+            "ParentId": 10704764245259176738,
+            "Id": 7638536564010458313,
             "Name": "LeftUpperArm",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -650,10 +666,11 @@
             ]
         },
         {
-            "ParentId": 11643675017192613351,
-            "Id": 10589553571838043435,
+            "ParentId": 7638536564010458313,
+            "Id": 3093046429743571923,
             "Name": "LeftLowerArm",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -683,10 +700,11 @@
             ]
         },
         {
-            "ParentId": 10589553571838043435,
-            "Id": 13610602024667947235,
+            "ParentId": 3093046429743571923,
+            "Id": 11093338989177116307,
             "Name": "LeftWrist",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -716,10 +734,11 @@
             ]
         },
         {
-            "ParentId": 13610602024667947235,
-            "Id": 1111906872728685710,
+            "ParentId": 11093338989177116307,
+            "Id": 4678479068197600371,
             "Name": "LeftWristEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -749,10 +768,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 2834859142244818807,
+            "ParentId": 10704764245259176738,
+            "Id": 17877183415006318555,
             "Name": "LeftUpperArmFK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -782,10 +802,11 @@
             ]
         },
         {
-            "ParentId": 2834859142244818807,
-            "Id": 13989466604645762026,
+            "ParentId": 17877183415006318555,
+            "Id": 984297683971837056,
             "Name": "LeftLowerArmFK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -815,10 +836,11 @@
             ]
         },
         {
-            "ParentId": 13989466604645762026,
-            "Id": 17284063389528149238,
+            "ParentId": 984297683971837056,
+            "Id": 2611527677958021831,
             "Name": "LeftWristFK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -848,10 +870,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 12289330482227327205,
+            "ParentId": 10704764245259176738,
+            "Id": 8389723758975996330,
             "Name": "LeftUpperArmIK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -881,10 +904,11 @@
             ]
         },
         {
-            "ParentId": 12289330482227327205,
-            "Id": 1132154376474322125,
+            "ParentId": 8389723758975996330,
+            "Id": 15106232808073436392,
             "Name": "LeftLowerArmIK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -914,10 +938,11 @@
             ]
         },
         {
-            "ParentId": 1132154376474322125,
-            "Id": 8664805347956476642,
+            "ParentId": 15106232808073436392,
+            "Id": 16821731965043743132,
             "Name": "LeftWristIK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -947,10 +972,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 11853093500951927943,
+            "ParentId": 10704764245259176738,
+            "Id": 15090670778165746670,
             "Name": "RightUpperArm",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -980,10 +1006,11 @@
             ]
         },
         {
-            "ParentId": 11853093500951927943,
-            "Id": 3727102638469946941,
+            "ParentId": 15090670778165746670,
+            "Id": 17015801920173675377,
             "Name": "RightLowerArm",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1013,10 +1040,11 @@
             ]
         },
         {
-            "ParentId": 3727102638469946941,
-            "Id": 530286393403937122,
+            "ParentId": 17015801920173675377,
+            "Id": 8975804891846341553,
             "Name": "RightWrist",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1046,10 +1074,11 @@
             ]
         },
         {
-            "ParentId": 530286393403937122,
-            "Id": 4631362811621965479,
+            "ParentId": 8975804891846341553,
+            "Id": 2230396587235519233,
             "Name": "RightWristEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1079,10 +1108,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 3988584455977632145,
+            "ParentId": 10704764245259176738,
+            "Id": 8545138367794114331,
             "Name": "RightUpperArmFK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1112,10 +1142,11 @@
             ]
         },
         {
-            "ParentId": 3988584455977632145,
-            "Id": 5902428329299915858,
+            "ParentId": 8545138367794114331,
+            "Id": 11899351412807076592,
             "Name": "RightLowerArmFK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1145,10 +1176,11 @@
             ]
         },
         {
-            "ParentId": 5902428329299915858,
-            "Id": 8982217347889477856,
+            "ParentId": 11899351412807076592,
+            "Id": 14216489968195258112,
             "Name": "RightWristFK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1178,10 +1210,11 @@
             ]
         },
         {
-            "ParentId": 4365760144659843132,
-            "Id": 2976442599741364917,
+            "ParentId": 10704764245259176738,
+            "Id": 9209374260436765508,
             "Name": "RightUpperArmIK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1211,10 +1244,11 @@
             ]
         },
         {
-            "ParentId": 2976442599741364917,
-            "Id": 11493356111124891951,
+            "ParentId": 9209374260436765508,
+            "Id": 8231299130327058147,
             "Name": "RightLowerArmIK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1244,10 +1278,11 @@
             ]
         },
         {
-            "ParentId": 11493356111124891951,
-            "Id": 7690969870007694055,
+            "ParentId": 8231299130327058147,
+            "Id": 17277528926756360816,
             "Name": "RightWristIK",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1277,10 +1312,11 @@
             ]
         },
         {
-            "ParentId": 4261076516851290526,
-            "Id": 6966934614505885794,
+            "ParentId": 1610345942102411801,
+            "Id": 14296732073146678660,
             "Name": "LeftLeg",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1310,10 +1346,11 @@
             ]
         },
         {
-            "ParentId": 6966934614505885794,
-            "Id": 1874680239380709614,
+            "ParentId": 14296732073146678660,
+            "Id": 281512402513518029,
             "Name": "LeftFoot",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1343,10 +1380,11 @@
             ]
         },
         {
-            "ParentId": 1874680239380709614,
-            "Id": 792392168850712807,
+            "ParentId": 281512402513518029,
+            "Id": 14457708942695228565,
             "Name": "LeftFootEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1376,10 +1414,11 @@
             ]
         },
         {
-            "ParentId": 4261076516851290526,
-            "Id": 10931938121633415070,
+            "ParentId": 1610345942102411801,
+            "Id": 12465203257941756067,
             "Name": "RightLeg",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1409,10 +1448,11 @@
             ]
         },
         {
-            "ParentId": 10931938121633415070,
-            "Id": 17488745882744600308,
+            "ParentId": 12465203257941756067,
+            "Id": 6563507425114378368,
             "Name": "RightFoot",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
@@ -1442,10 +1482,11 @@
             ]
         },
         {
-            "ParentId": 17488745882744600308,
-            "Id": 11953092472861969242,
+            "ParentId": 6563507425114378368,
+            "Id": 1261750016733143029,
             "Name": "RightFootEnd",
             "Active": true,
+            "RootBoneId": 0,
             "Components": [
                 {
                     "Type": 1,
