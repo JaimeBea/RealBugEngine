@@ -31,9 +31,6 @@ void ResourceSkybox::Load(JsonValue jComponent) {
 	shader = (ResourceShader*) App->resources->GetResourceByID(jComponent[JSON_TAG_SHADER]);
 	skyboxVAO = 0;
 	skyboxVBO = 0;
-	vbo = 0;
-	vao = 0;
-	ebo = 0;
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -75,5 +72,5 @@ void ResourceSkybox::Load(JsonValue jComponent) {
 }
 
 void ResourceSkybox::Unload() {
-	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &skyboxVBO);
 }
