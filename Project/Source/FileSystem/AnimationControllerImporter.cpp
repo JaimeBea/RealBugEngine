@@ -71,6 +71,8 @@ void AnimationControllerImporter::LoadAnimationController(AnimationController* a
 		AnimationImporter::LoadAnimation(animationController->animationResource);
 	}
 
+	free(name);
+
 	animationController->currentTime = 0.0f;
 	animationController->running = false;
 

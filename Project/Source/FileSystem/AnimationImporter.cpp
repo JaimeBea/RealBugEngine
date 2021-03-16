@@ -168,7 +168,7 @@ void AnimationImporter::SaveAnimation(ResourceAnimation* animation) {
 			*((unsigned*) cursor) = it->first.length();
 			cursor += sizeof(unsigned);
 
-			memcpy_s(cursor, (FILENAME_MAX / 2) * sizeof(char), it->first.data(), it->first.size() * sizeof(char));
+			memcpy_s(cursor, it->first.size() * sizeof(char), it->first.data(), it->first.size() * sizeof(char));
 			cursor += (FILENAME_MAX / 2) * sizeof(char);
 
 			// Translation
