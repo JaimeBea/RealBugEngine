@@ -8,8 +8,7 @@
 
 #include "rapidjson/error/en.h"
 
-#define JSON_TAG_GAMEOBJECTS "GameObjects"
-#define JSON_TAG_ROOT_ID "RootId"
+#define JSON_TAG_ROOT "GameObjects"
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_PARENT_INDEX "ParentIndex"
 
@@ -37,43 +36,12 @@ void ResourcePrefab::BuildPrefab(GameObject* parent) {
 	JsonValue jScene(document, document);
 
 	// Load GameObjects
-	JsonValue jGameObjects = jScene[JSON_TAG_GAMEOBJECTS];
-	unsigned numGameObjects = jGameObjects.Size();
-	Buffer<GameObject*> gameObjects(numGameObjects);
-	for (unsigned i = 0; i < numGameObjects; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-
-		GameObject* gameObject = App->scene->gameObjects.Obtain();
-		gameObject->Init();
-		gameObject->LoadPrototype(jGameObject);
-		gameObjects[i] = gameObject;
-	}
-
-	// Post-load
-	App->scene->root = App->scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
-	for (unsigned i = 0; i < numGameObjects; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-		GameObject* gameObject = gameObjects[i];
-
-		std::string name = jGameObject[JSON_TAG_NAME];
-		int parentIndex = jGameObject[JSON_TAG_PARENT_INDEX];
-		UID id = GenerateUID();
-		gameObject->id = id;
-		gameObject->name = name;
-		App->scene->gameObjectsIdMap[id] = gameObject;
-		if (parentIndex >= 0) {
-			gameObject->SetParent(gameObjects[parentIndex]);
-		} else {
-			gameObject->SetParent(parent);
-		}
-	}
-
-	// Init components
-	for (unsigned i = 0; i < numGameObjects; ++i) {
-		GameObject* gameObject = gameObjects[i];
-
-		gameObject->InitComponents();
-	}
+	Scene* scene = parent->scene;
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	GameObject* gameObject = scene->gameObjects.Obtain();
+	gameObject->scene = scene;
+	gameObject->LoadPrototype(jRoot);
+	gameObject->InitComponents();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene built in %ums.", timeMs);

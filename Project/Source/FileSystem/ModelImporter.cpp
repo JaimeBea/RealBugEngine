@@ -1,6 +1,7 @@
 #include "ModelImporter.h"
 
 #include "Application.h"
+#include "Scene.h"
 #include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
@@ -122,7 +123,7 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 	return mesh;
 }
 
-void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform, unsigned& resourceIndex) {
+void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, Scene* scene, GameObject* parent, const float4x4& accumulatedTransform, unsigned& resourceIndex) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
@@ -130,11 +131,11 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], parent, transform, resourceIndex);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, parent, transform, resourceIndex);
 		}
 	} else { // Normal node
 		// Create GameObject
-		GameObject* gameObject = App->scene->CreateGameObject(parent, GenerateUID(), name.c_str());
+		GameObject* gameObject = scene->CreateGameObject(parent, GenerateUID(), name.c_str());
 
 		// Load transform
 		ComponentTransform* transform = gameObject->CreateComponent<ComponentTransform>();
@@ -182,7 +183,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], gameObject, float4x4::identity, resourceIndex);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, gameObject, float4x4::identity, resourceIndex);
 		}
 	}
 }
@@ -372,22 +373,25 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, material->specularColor);
 		assimpMaterial->Get(AI_MATKEY_SHININESS, material->smoothness);
 
-		LOG("Material imported.");
 		jResourceIds[resourceIndex] = material->GetId();
+		resourceIndex += 1;
+
 		material->SaveToFile(App->resources->GenerateResourcePath(material->GetId()).c_str());
+		LOG("Material imported.");
 	}
 
 	// Import nodes
+	Scene scene(1000);
 	LOG("Importing scene tree.");
-	GameObject* root = App->scene->CreateGameObject(nullptr, GenerateUID(), "Root");
+	GameObject* root = scene.CreateGameObject(nullptr, GenerateUID(), "Root");
 	root->CreateComponent<ComponentTransform>();
-	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, root, float4x4::identity, resourceIndex);
+	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, &scene, root, float4x4::identity, resourceIndex);
 
 	// Save prefab
 	SavePrefab(filePath, jMeta, root->GetChildren()[0], resourceIndex);
 
 	// Delete temporary GameObject
-	App->scene->DestroyGameObject(root);
+	scene.DestroyGameObject(root);
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene imported in %ums.", timeMs);

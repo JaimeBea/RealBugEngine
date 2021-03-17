@@ -170,7 +170,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	LineSegment ray = engineCameraFrustum.UnProjectLineSegment(pos.x, pos.y);
 
 	// Check with AABB
-	for (GameObject& gameObject : App->scene->gameObjects) {
+	Scene* scene = App->scene->scene;
+	for (GameObject& gameObject : scene->gameObjects) {
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
@@ -182,8 +183,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 			intersectingObjects.push_back(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		GetIntersectingAABBRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds, ray, intersectingObjects);
+	if (scene->quadtree.IsOperative()) {
+		GetIntersectingAABBRecursive(scene->quadtree.root, scene->quadtree.bounds, ray, intersectingObjects);
 	}
 
 	GameObject* selectedGameObject = nullptr;

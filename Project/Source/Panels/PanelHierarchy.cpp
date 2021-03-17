@@ -22,7 +22,7 @@ void PanelHierarchy::Update() {
 	ImGui::SetNextWindowDockID(App->editor->dockLeftId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_SITEMAP " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
-		GameObject* root = App->scene->root;
+		GameObject* root = App->scene->scene->root;
 		if (root != nullptr) {
 			UpdateHierarchyNode(root);
 		}
@@ -53,21 +53,22 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	ImGui::PushID(label);
 	if (ImGui::BeginPopupContextItem("Options")) {
 		App->editor->selectedGameObject = gameObject;
-		if (gameObject != App->scene->root) {
+		Scene* scene = App->scene->scene;
+		if (gameObject != scene->root) {
 			if (ImGui::Selectable("Delete")) {
-				App->scene->DestroyGameObject(gameObject);
+				scene->DestroyGameObject(gameObject);
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
-				App->scene->DuplicateGameObject(gameObject, gameObject->GetParent());
+				scene->DuplicateGameObject(gameObject, gameObject->GetParent());
 			}
 
 			ImGui::Separator();
 		}
 
 		if (ImGui::Selectable("Create Empty")) {
-			GameObject* newGameObject = App->scene->CreateGameObject(gameObject, GenerateUID(), "Game Object");
+			GameObject* newGameObject = scene->CreateGameObject(gameObject, GenerateUID(), "Game Object");
 			ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 			transform->SetPosition(float3(0, 0, 0));
 			transform->SetRotation(Quat::identity);

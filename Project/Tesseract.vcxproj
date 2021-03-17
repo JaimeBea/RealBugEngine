@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\Resources\ResourcePrefab.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />

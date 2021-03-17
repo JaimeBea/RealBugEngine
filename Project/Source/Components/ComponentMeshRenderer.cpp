@@ -301,7 +301,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		float farSpotDistance = 0;
 		ComponentLight* farSpotLight = nullptr;
 
-		for (GameObject& object : App->scene->gameObjects) {
+		for (GameObject& object : GetOwner().scene->gameObjects) {
 			ComponentLight* light = object.GetComponent<ComponentLight>();
 			if (light == nullptr) continue;
 

@@ -22,7 +22,8 @@ ResourceScene::ResourceScene(UID id, const char* assetFilePath, const char* reso
 
 void ResourceScene::BuildScene() {
 	// Clear scene
-	App->scene->ClearScene();
+	Scene* scene = App->scene->scene;
+	scene->ClearScene();
 	App->editor->selectedGameObject = nullptr;
 
 	// Timer to measure loading a scene
@@ -51,14 +52,14 @@ void ResourceScene::BuildScene() {
 	for (unsigned i = 0; i < numGameObjects; ++i) {
 		JsonValue jGameObject = jGameObjects[i];
 
-		GameObject* gameObject = App->scene->gameObjects.Obtain();
-		gameObject->Init();
+		GameObject* gameObject = scene->gameObjects.Obtain();
+		gameObject->scene = scene;
 		gameObject->Load(jGameObject);
 		gameObjects[i] = gameObject;
 	}
 
 	// Post-load
-	App->scene->root = App->scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
+	scene->root = scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
 	for (unsigned i = 0; i < numGameObjects; ++i) {
 		JsonValue jGameObject = jGameObjects[i];
 		GameObject* gameObject = gameObjects[i];
@@ -68,8 +69,8 @@ void ResourceScene::BuildScene() {
 		UID parentId = jGameObject[JSON_TAG_PARENT_ID];
 		gameObject->id = id;
 		gameObject->name = name;
-		App->scene->gameObjectsIdMap[id] = gameObject;
-		gameObject->SetParent(App->scene->GetGameObject(parentId));
+		scene->gameObjectsIdMap[id] = gameObject;
+		gameObject->SetParent(scene->GetGameObject(parentId));
 	}
 
 	// Init components
@@ -81,10 +82,10 @@ void ResourceScene::BuildScene() {
 
 	// Quadtree generation
 	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
-	App->scene->quadtreeBounds = {{jQuadtreeBounds[0], jQuadtreeBounds[1]}, {jQuadtreeBounds[2], jQuadtreeBounds[3]}};
-	App->scene->quadtreeMaxDepth = jScene[JSON_TAG_QUADTREE_MAX_DEPTH];
-	App->scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
-	App->scene->RebuildQuadtree();
+	scene->quadtreeBounds = {{jQuadtreeBounds[0], jQuadtreeBounds[1]}, {jQuadtreeBounds[2], jQuadtreeBounds[3]}};
+	scene->quadtreeMaxDepth = jScene[JSON_TAG_QUADTREE_MAX_DEPTH];
+	scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
+	scene->RebuildQuadtree();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene built in %ums.", timeMs);

@@ -73,12 +73,17 @@ void ResourceMaterial::Unload() {
 }
 
 void ResourceMaterial::SaveToFile(const char* filePath) {
+	LOG("Saving material to path: \"%s\".", filePath);
+
+	MSTimer timer;
+	timer.Start();
+
 	// Create document
 	rapidjson::Document document;
 	JsonValue jMaterial(document, document);
 
 	// Save JSON values
-	jMaterial[JSON_TAG_SHADER] = shader;
+	jMaterial[JSON_TAG_SHADER] = shader != nullptr ? shader->GetId() : 0;
 
 	jMaterial[JSON_TAG_HAS_DIFFUSE_MAP] = hasDiffuseMap;
 	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
@@ -113,4 +118,7 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 		LOG("Failed to save material resource.");
 		return;
 	}
+
+	unsigned timeMs = timer.Stop();
+	LOG("Material saved in %ums", timeMs);
 }

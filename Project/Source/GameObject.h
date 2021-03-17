@@ -12,7 +12,6 @@
 
 class GameObject {
 public:
-	void Init();
 	void InitComponents();
 	void Update();
 	void DrawGizmos();
@@ -51,6 +50,7 @@ public:
 	UID id = 0;
 	std::string name = "";
 
+	Scene* scene = nullptr;
 	bool isInQuadtree = false;
 
 	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree

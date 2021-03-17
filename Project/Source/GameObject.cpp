@@ -16,17 +16,6 @@
 #define JSON_TAG_COMPONENTS "Components"
 #define JSON_TAG_CHILDREN "Children"
 
-void GameObject::Init() {
-	id = 0;
-	name = "";
-	isInQuadtree = false;
-	flag = false;
-	active = true;
-	parent = nullptr;
-	components.clear();
-	children.clear();
-}
-
 void GameObject::InitComponents() {
 	for (const std::pair<ComponentType, UID>& pair : components) {
 		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
@@ -237,11 +226,11 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		JsonValue jChild = jChildren[i];
 		std::string childName = jChild[JSON_TAG_NAME];
 
-		GameObject* child = App->scene->gameObjects.Obtain();
-		child->Init();
+		GameObject* child = scene->gameObjects.Obtain();
+		child->scene = scene;
 		child->LoadPrototype(jChild);
 		child->id = GenerateUID();
-		App->scene->gameObjectsIdMap[child->id] = child;
+		scene->gameObjectsIdMap[child->id] = child;
 		child->SetParent(this);
 	}
 }
@@ -249,20 +238,20 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID componentId) const {
 	switch (type) {
 	case ComponentType::TRANSFORM:
-		if (!App->scene->transformComponents.Has(componentId)) return nullptr;
-		return &App->scene->transformComponents.Get(componentId);
+		if (!scene->transformComponents.Has(componentId)) return nullptr;
+		return &scene->transformComponents.Get(componentId);
 	case ComponentType::MESH_RENDERER:
-		if (!App->scene->meshRendererComponents.Has(componentId)) return nullptr;
-		return &App->scene->meshRendererComponents.Get(componentId);
+		if (!scene->meshRendererComponents.Has(componentId)) return nullptr;
+		return &scene->meshRendererComponents.Get(componentId);
 	case ComponentType::BOUNDING_BOX:
-		if (!App->scene->boundingBoxComponents.Has(componentId)) return nullptr;
-		return &App->scene->boundingBoxComponents.Get(componentId);
+		if (!scene->boundingBoxComponents.Has(componentId)) return nullptr;
+		return &scene->boundingBoxComponents.Get(componentId);
 	case ComponentType::CAMERA:
-		if (!App->scene->cameraComponents.Has(componentId)) return nullptr;
-		return &App->scene->cameraComponents.Get(componentId);
+		if (!scene->cameraComponents.Has(componentId)) return nullptr;
+		return &scene->cameraComponents.Get(componentId);
 	case ComponentType::LIGHT:
-		if (!App->scene->lightComponents.Has(componentId)) return nullptr;
-		return &App->scene->lightComponents.Get(componentId);
+		if (!scene->lightComponents.Has(componentId)) return nullptr;
+		return &scene->lightComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -273,15 +262,15 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID componentId) {
 	switch (type) {
 	case ComponentType::TRANSFORM:
-		return &App->scene->transformComponents.Put(componentId, ComponentTransform(this, componentId, active));
+		return &scene->transformComponents.Put(componentId, ComponentTransform(this, componentId, active));
 	case ComponentType::MESH_RENDERER:
-		return &App->scene->meshRendererComponents.Put(componentId, ComponentMeshRenderer(this, componentId, active));
+		return &scene->meshRendererComponents.Put(componentId, ComponentMeshRenderer(this, componentId, active));
 	case ComponentType::BOUNDING_BOX:
-		return &App->scene->boundingBoxComponents.Put(componentId, ComponentBoundingBox(this, componentId, active));
+		return &scene->boundingBoxComponents.Put(componentId, ComponentBoundingBox(this, componentId, active));
 	case ComponentType::CAMERA:
-		return &App->scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
+		return &scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
 	case ComponentType::LIGHT:
-		return &App->scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
+		return &scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -292,24 +281,24 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 	switch (type) {
 	case ComponentType::TRANSFORM:
-		if (!App->scene->transformComponents.Has(componentId)) return;
-		App->scene->transformComponents.Remove(componentId);
+		if (!scene->transformComponents.Has(componentId)) return;
+		scene->transformComponents.Remove(componentId);
 		break;
 	case ComponentType::MESH_RENDERER:
-		if (!App->scene->meshRendererComponents.Has(componentId)) return;
-		App->scene->meshRendererComponents.Remove(componentId);
+		if (!scene->meshRendererComponents.Has(componentId)) return;
+		scene->meshRendererComponents.Remove(componentId);
 		break;
 	case ComponentType::BOUNDING_BOX:
-		if (!App->scene->boundingBoxComponents.Has(componentId)) return;
-		App->scene->boundingBoxComponents.Remove(componentId);
+		if (!scene->boundingBoxComponents.Has(componentId)) return;
+		scene->boundingBoxComponents.Remove(componentId);
 		break;
 	case ComponentType::CAMERA:
-		if (!App->scene->cameraComponents.Has(componentId)) return;
-		App->scene->cameraComponents.Remove(componentId);
+		if (!scene->cameraComponents.Has(componentId)) return;
+		scene->cameraComponents.Remove(componentId);
 		break;
 	case ComponentType::LIGHT:
-		if (!App->scene->lightComponents.Has(componentId)) return;
-		App->scene->lightComponents.Remove(componentId);
+		if (!scene->lightComponents.Has(componentId)) return;
+		scene->lightComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);
