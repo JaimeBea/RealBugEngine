@@ -251,9 +251,16 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 }
 
 void ComponentMeshRenderer::Init() {
+	palette.resize(mesh->numBones);
+}
 
+void ComponentMeshRenderer::Update() {
 
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		const GameObject* bone = goBones.at(mesh->bones[i].boneName);
 
+		palette[i] = bone ? bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform : float4x4::identity;
+	}
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
@@ -364,11 +371,11 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	if (!IsActive()) return;
 
-	if (mesh->numBones > 0 && App->time->GetDeltaTime() > 0) {
+	/*if (mesh->numBones > 0 && App->time->GetDeltaTime() > 0) {
 		SkinningCPU();
-	}
+	}*/
 
-	unsigned program = App->programs->defaultProgram;
+	unsigned program = App->programs->phongPbrProgram;
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
@@ -674,6 +681,8 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "palette"), palette.size(), GL_TRUE, palette[0].ptr());
+
 	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
 	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
 
@@ -702,7 +711,7 @@ void ComponentMeshRenderer::SkinningCPU() {
 		float4 resPosition = float4::zero;
 		float4 resNormal = float4::zero;
 
-		for (unsigned j = 0; j < attachedInformation.numBones; ++j) {
+		for (unsigned j = 0; j < 4; ++j) {
 			Mesh::Bone bone = mesh->bones[attachedInformation.bones[j]];
 			float weightJ = attachedInformation.weights[j];
 
