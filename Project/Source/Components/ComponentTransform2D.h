@@ -26,7 +26,7 @@ private:
 	float2 pivot	= float2(0.5, 0.5);		// The position of the pivot
 	float2 size		= float2::zero;			// The size of the item
 
-	Quat rotation	= Quat::identity;			// The rotation of the element
+	Quat rotation	= Quat::identity;		// The rotation of the element
 	float3 scale	= float3::one;			// The scale of the element
 
 	float2 anchorX	= float2::zero;			// The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position

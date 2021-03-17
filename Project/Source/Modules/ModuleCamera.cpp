@@ -447,3 +447,12 @@ Frustum* ModuleCamera::GetCullingFrustum() const {
 const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
 	return frustumPlanes;
 }
+
+void ModuleCamera::EnableOrtographic() {
+	activeFrustum->SetOrthographic(App->renderer->viewportWidth, App->renderer->viewportHeight);
+}
+
+void ModuleCamera::EnablePerspective() {
+	activeFrustum->SetPerspective(1.3, 1);
+	ViewportResized(App->renderer->viewportWidth, App->renderer->viewportHeight);
+}

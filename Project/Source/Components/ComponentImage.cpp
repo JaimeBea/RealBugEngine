@@ -67,7 +67,6 @@ void ComponentImage::Draw(const float4x4& modelMatrix) {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	// 1 triangle to draw = 3 vertices
 	glBindTexture(GL_TEXTURE_2D, texture->glTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);

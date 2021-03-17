@@ -73,7 +73,7 @@ bool ModuleScene::Start() {
 
 	CreateEmptyScene();
 
-	SceneImporter::LoadScene("survival_shooter");
+	//.SceneImporter::LoadScene("survival_shooter");
 
 	GameObject* canvas = gameObjects.Obtain();
 	canvas->CreateComponent<ComponentCanvas>();
@@ -85,7 +85,7 @@ bool ModuleScene::Start() {
 	canvasRenderer->CreateComponent<ComponentTransform>();
 	canvasRenderer->CreateComponent<ComponentTransform2D>();
 	canvasRenderer->CreateComponent<ComponentImage>();
-	Texture* lenna = TextureImporter::ImportTexture("C:\\Users\\magri\\Desktop\\Lenna_(test_image).png");
+	Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
 	TextureImporter::LoadTexture(lenna);
 	canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
 	canvasRenderer->name = "canvas renderer";

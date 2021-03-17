@@ -16,9 +16,8 @@ void ComponentCanvas::Render() {
 void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
 
 	ComponentCanvasRenderer* componentCanvasRenderer = gameObject->GetComponent<ComponentCanvasRenderer>();
-	bool useRenderer = componentCanvasRenderer != nullptr;
-
-	if (useRenderer) {
+	
+	if (componentCanvasRenderer != nullptr) {
 		componentCanvasRenderer->Render(gameObject);
 	}
 

@@ -176,7 +176,6 @@ UpdateStatus ModuleRender::Update() {
 	if (drawQuadtree) {
 		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
 		RenderUI();
-
 	}
 
 	// Draw debug draw
@@ -395,16 +394,26 @@ void ModuleRender::DrawSkyBox() {
 }
 
 void ModuleRender::RenderUI() {
-	// ENABLE ORTOGRAPHIC RENDERING
-
-	//glMatrixMode(GL_PROJECTION);
-	////glPushMatrix();		// this might no be needed
-	//glLoadIdentity();
-	//glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
-
+	SetOrtographicRender();
+	App->camera->EnableOrtographic();
 	App->uiEditor->Render();
+	App->camera->EnablePerspective();
+	SetPerspectiveRender();
+}
 
+void ModuleRender::SetOrtographicRender() {
+	// ENABLE ORTOGRAPHIC RENDERING
+	glMatrixMode(GL_PROJECTION);
+	//glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void ModuleRender::SetPerspectiveRender() {
 	// DISABLE ORTOGRAPHIC RENDERING
-	//glMatrixMode(GL_MODELVIEW);
-	//glLoadIdentity();
+ 	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
 }

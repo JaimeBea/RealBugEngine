@@ -46,4 +46,6 @@ private:
 	void DrawGameObject(GameObject* gameObject);
 	void DrawSkyBox();
 	void RenderUI();
+	void SetOrtographicRender();
+	void SetPerspectiveRender();
 };

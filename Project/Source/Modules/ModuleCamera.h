@@ -58,6 +58,8 @@ public:
 	Frustum* GetActiveFrustum() const;
 	Frustum* GetCullingFrustum() const;
 	const FrustumPlanes& GetFrustumPlanes() const;
+	void EnableOrtographic();
+	void EnablePerspective();
 
 public:
 	float movementSpeed = 0.4f;
