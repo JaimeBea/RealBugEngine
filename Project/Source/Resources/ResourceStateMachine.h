@@ -12,7 +12,6 @@ private:
 	std::list<ResourceStates*> states;
 	//std::unordered_map<std::string, ResourceStates*> triggers;
 	std::unordered_map<std::string, ResourceTransition*> transitions;
-
 	ResourceStates* currentState = nullptr;
 
 public:

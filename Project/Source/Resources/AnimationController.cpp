@@ -1,7 +1,10 @@
 #include "AnimationController.h"
 #include "ResourceAnimation.h"
 #include "ResourceStateMachine.h"
+#include "AnimationInterpolation.h"
+#include "ResourceStates.h"
 #include "Clip.h"
+#include "GameObject.h"
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"
 #include "Application.h"
@@ -70,6 +73,20 @@ bool AnimationController::InterpolateTransitions(Clip* source, Clip* target, uns
 	currentTransitionTime += App->time->GetDeltaTime();
 
 	return true;
+}
+
+void AnimationController::InterpolateTransitions(std::list<AnimationInterpolation*>::iterator it, std::list<AnimationInterpolation*> animationInterpolations, GameObject* gameObject, float3& pos, Quat& quat) {
+	GetTransform((*it)->state->clip, gameObject->name.c_str(), pos, quat);
+	if (it != std::prev(animationInterpolations.end())) {
+		float3 position;
+		Quat rotation;
+		InterpolateTransitions(std::next(it), animationInterpolations, gameObject, position, rotation);
+
+		(*it)->fadeTime = 1 - ((*it)->TransistionTime - (*it)->currentTime) / (*it)->TransistionTime;
+		pos = float3::Lerp(pos, position, (*it)->fadeTime);
+		quat = Interpolate(quat, rotation, (*it)->fadeTime);
+	}
+	(*it)->currentTime += App->time->GetDeltaTime();
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {

@@ -7,8 +7,7 @@ class GameObject;
 class AnimationController;
 class ResourceAnimation;
 class ResourceTransition;
-
-
+class AnimationInterpolation;
 
 class ComponentAnimation : public Component {
 public:
@@ -43,6 +42,8 @@ public:
 private:
 	void UpdateAnimations(GameObject *gameObject);
 
-	std::vector<ResourceTransition*> currentTransitions;
+	std::list<AnimationInterpolation*> animationInterpolations;
 
 };
+
+

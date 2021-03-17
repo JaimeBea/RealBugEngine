@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Resources\AnimationInterpolation.h" />
     <ClInclude Include="Source\Resources\Clip.h" />
     <ClInclude Include="Source\Resources\ResourceStates.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />

@@ -5,6 +5,7 @@
 #include "Resources/AnimationController.h"
 //#include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceTransition.h"
+#include "Resources/AnimationInterpolation.h"
 //#include "Resources/ResourceStates.h"
 #include "Resources/Clip.h"
 #include "Components/ComponentType.h"
@@ -68,8 +69,12 @@ void ComponentAnimation::OnUpdate() {
 void ComponentAnimation::SendTrigger(std::string trigger) {
 	ResourceTransition* transition = stateMachineResource->GetValidTransition(trigger);
 	if (transition != nullptr) {
-		currentTransitions.push_back(transition);
+		animationInterpolations.push_front(new AnimationInterpolation(transition->source, 0, 0, transition->interpolationDuration));
+		animationInterpolations.push_front(new AnimationInterpolation(transition->target, 0, 0, transition->interpolationDuration));
 	}
+}
+bool CheckFaceTime(AnimationInterpolation* animationInteropolation) {
+	return animationInteropolation->fadeTime == 1;
 }
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
@@ -78,20 +83,15 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	}
 
 	//find gameobject in hash
-	float3 position = float3::zero;
-	Quat rotation = Quat::identity;
+	float3 position, totalPostion = float3::zero;
+	Quat rotation, totalRotation = Quat::identity;
 
-	bool result;
+	bool result = true;
 	std::vector<ResourceTransition*> toDelete;
-	if (currentTransitions.size() > 0) {
-		for (ResourceTransition* transition : currentTransitions) {
-			result &= animationController->InterpolateTransitions(transition->source->clip, transition->target->clip, transition->interpolationDuration, transition->currentDuration, gameObject->name.c_str(), position, rotation);
 
-			if (transition->interpolationDuration == transition->currentDuration) {
-				toDelete.push_back(transition);
-				stateMachineResource->SetCurrentState(transition->target);
-			}
-		}
+	if (animationInterpolations.size() > 1) {
+		animationController->InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, gameObject, position, rotation);
+		animationInterpolations.remove_if(CheckFaceTime);
 	} else {
 		result = animationController->GetTransform(stateMachineResource->GetCurrentState()->clip, gameObject->name.c_str(), position, rotation);
 	}
