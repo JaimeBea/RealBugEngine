@@ -55,17 +55,16 @@ public:
 			if (IsBranch()) {
 				childNodes->Remove(tree, object);
 			} else {
-				Element* element = firstElement;
 				Element** elementPtr = &firstElement;
+				Element* element = firstElement;
 				while (element != nullptr) {
 					if (element->object == object) {
 						*elementPtr = element->next;
 						tree.elements.Release(element);
 						elementCount -= 1;
 					}
-
-					element = element->next;
 					elementPtr = &element->next;
+					element = element->next;
 				}
 			}
 		}
@@ -126,7 +125,7 @@ public:
 		int elementCount = 0; // Leaf: number of elements. Branch: -1.
 		union {
 			Element* firstElement = nullptr; // Leaf only: first element.
-			QuadNode* childNodes; // Branch only: child nodes index.
+			QuadNode* childNodes;			 // Branch only: child nodes index.
 			std::list<Element>* tempElementList;
 		};
 	};
@@ -277,8 +276,8 @@ public:
 
 public:
 	AABB2D bounds = {{0, 0}, {0, 0}}; // Bounds of the quadtree. All elements should be contained inside this.
-	unsigned maxDepth = 0; // Max depth of the tree. Useful to avoid infinite divisions. This should be >= 1.
-	unsigned maxNodeElements = 0; // Max number of elements before a node is divided.
+	unsigned maxDepth = 0;			  // Max depth of the tree. Useful to avoid infinite divisions. This should be >= 1.
+	unsigned maxNodeElements = 0;	  // Max number of elements before a node is divided.
 
 	Node root;
 	Pool<QuadNode> quadNodes;
