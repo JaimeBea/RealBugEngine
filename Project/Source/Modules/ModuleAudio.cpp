@@ -26,10 +26,12 @@ bool ModuleAudio::Init() {
 	}
 
 	const ALCchar* name = nullptr;
-	if (alcIsExtensionPresent(openALDevice, "ALC_ENUMERATE_ALL_EXT"))
+	if (alcIsExtensionPresent(openALDevice, "ALC_ENUMERATE_ALL_EXT")) {
 		name = alcGetString(openALDevice, ALC_ALL_DEVICES_SPECIFIER);
-	if (!name || alcGetError(openALDevice) != AL_NO_ERROR)
+	}
+	if (!name || alcGetError(openALDevice) != AL_NO_ERROR) {
 		name = alcGetString(openALDevice, ALC_DEVICE_SPECIFIER);
+	}
 	LOG("Using Sound Device: \"%s\"", name);
 
 	return true;

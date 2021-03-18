@@ -2,8 +2,6 @@
 #include "Module.h"
 
 #include "AL/alc.h"
-#include <vector>
-#include <string>
 
 class ModuleAudio : public Module {
 public:
