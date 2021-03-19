@@ -1,7 +1,8 @@
 #pragma once
-#include "Logging.h"
-#include "AL/alc.h"
 
+#include "Logging.h"
+
+#include "AL/alc.h"
 #include <iostream>
 #include <string>
 
