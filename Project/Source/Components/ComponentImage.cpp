@@ -57,13 +57,11 @@ void ComponentImage::Draw(const float4x4& modelMatrix) {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	//float4x4 model = float4x4::identity;
-	float4x4 view = App->camera->GetViewMatrix();
-	float4x4 proj = App->camera->GetProjectionMatrix();
+	float4x4* proj = &float4x4::D3DOrthoProjLH(-1, 200, 1080.0f, 720.0f); //near plane. far plane, screen width, screen height
+	float4x4 *view = &App->camera->GetProjectionMatrix();
 
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, &proj[0][0]);
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
@@ -71,6 +69,7 @@ void ComponentImage::Draw(const float4x4& modelMatrix) {
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 
 void ComponentImage::SetTexture(Texture* text) {
