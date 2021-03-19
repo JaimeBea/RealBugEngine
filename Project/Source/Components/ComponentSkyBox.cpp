@@ -1,8 +1,10 @@
-#include "ComponentSkyBox.h"
-#include <GL/glew.h>
-#include <Math/float4x4.cpp>
+#include "GL/glew.h"
+
 #include "Application.h"
+#include "ComponentSkyBox.h"
+#include "Math/float4x4.cpp"
 #include "Modules/ModuleCamera.h"
+
 #define JSON_TAG_SKYBOX "skybox"
 
 void ComponentSkyBox::Load(JsonValue jComponent) {
@@ -10,7 +12,7 @@ void ComponentSkyBox::Load(JsonValue jComponent) {
 }
 
 void ComponentSkyBox::Draw() {
-	glDepthMask(GL_FALSE); // superfluous
+	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	unsigned int programSky = skybox->GetShader()->GetShaderProgam();
 	glUseProgram(programSky);
@@ -18,7 +20,6 @@ void ComponentSkyBox::Draw() {
 	float4x4 view = App->camera->GetViewMatrix();
 
 	glUniform1i(glGetUniformLocation(programSky, "Skybox"), 0);
-	//glUniformMatrix4fv(glGetUniformLocation(programSky, "model"), 1, GL_TRUE, &identityModel[0][0]); //GL_TRUE transpose the matrix
 	glUniformMatrix4fv(glGetUniformLocation(programSky, "view"), 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(programSky, "proj"), 1, GL_TRUE, &proj[0][0]);
 

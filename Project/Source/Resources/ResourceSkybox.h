@@ -1,13 +1,14 @@
 #pragma once
-
 #include "Resource.h"
+
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#include "Resources/ResourceShader.h"
+#include "FileSystem/JsonValue.h"
+
 #include <vector>
 #include <string>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <Resources/ResourceShader.h>
-#include <FileSystem/JsonValue.h>
 
 class ResourceSkybox : public Resource {
 public:
