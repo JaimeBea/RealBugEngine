@@ -12,6 +12,7 @@
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 
+#include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_ANIMATION_CONTROLLER "AnimationController"
@@ -73,9 +74,17 @@ void ComponentAnimation::SendTrigger(std::string trigger) {
 		animationInterpolations.push_front(new AnimationInterpolation(transition->target, 0, 0, transition->interpolationDuration));
 	}
 }
-bool CheckFaceTime(AnimationInterpolation* animationInteropolation) {
-	return animationInteropolation->fadeTime == 1;
-}
+
+struct CheckFinishInterpolation {
+	bool operator()(AnimationInterpolation*& animationController) {
+		if (animationController->fadeTime >= 0.9) {
+			stateMachine->SetCurrentState(animationController->state);
+			LOG("CheckFinishInterpolation");
+		}
+		return animationController->fadeTime >= 0.9;
+	}
+	ResourceStateMachine* stateMachine;
+};
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	if (gameObject == nullptr) {
@@ -90,8 +99,10 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	std::vector<ResourceTransition*> toDelete;
 
 	if (animationInterpolations.size() > 1) {
-		animationController->InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, gameObject, position, rotation);
-		animationInterpolations.remove_if(CheckFaceTime);
+		result = animationController->InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, gameObject, position, rotation);
+		CheckFinishInterpolation checkFinishInterpolation;
+		checkFinishInterpolation.stateMachine = stateMachineResource;
+		animationInterpolations.remove_if(checkFinishInterpolation);
 	} else {
 		result = animationController->GetTransform(stateMachineResource->GetCurrentState()->clip, gameObject->name.c_str(), position, rotation);
 	}

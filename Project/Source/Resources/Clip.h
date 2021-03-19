@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ResourceAnimation.h"
 #include <string>
 
 class ResourceAnimation;
@@ -17,13 +17,23 @@ public:
 	bool loop = false;
 	unsigned int beginIndex = 0;
 	unsigned int endIndex = 0;
+	float duration = 0;
+	unsigned int keyFramesSize = 0;
 
 	void setBeginIndex(unsigned int index) {
-		beginIndex = index;
+		if (endIndex >= index && animation) {
+			beginIndex = index;
+			keyFramesSize = endIndex - beginIndex;
+			duration = keyFramesSize * animation->duration / animation->keyFrames.size();
+		}
 	}
 
 	void setEndIndex(unsigned int index) {
-		endIndex = index;
+		if (index >= beginIndex && animation) {
+			endIndex = index;
+			keyFramesSize = endIndex - beginIndex;
+			duration = keyFramesSize * animation->duration / animation->keyFrames.size();
+		}
 	}
 
 };

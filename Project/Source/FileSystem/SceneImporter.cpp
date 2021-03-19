@@ -259,37 +259,39 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		}
 
 		//Setting machine state
-		ResourceStateMachine resourceStateMachine;
+		ResourceStateMachine* resourceStateMachine = new ResourceStateMachine();
 		std::string sState1 = "State1";
 		std::string sState2 = "State2";
 
-		std::string clipName = "testClip";
-		Clip* clip1 = new Clip(clipName, animations[0]);
+		std::string clipName1 = "testClip1";
+		std::string clipName2 = "testClip2";
+		Clip* clip1 = new Clip(clipName1, animations[0]);
+		clip1->setEndIndex(250); // animations[0]->keyFrames.size() = 361
 		clip1->setBeginIndex(0);
-		clip1->setEndIndex(animations[0]->keyFrames.size());
+		clip1->loop = true;
 
-		Clip* clip2 = new Clip(clipName, animations[0]);
-		clip2->setBeginIndex(15);
-		clip2->setEndIndex(40);
+		Clip* clip2 = new Clip(clipName2, animations[0]);
+		clip2->setEndIndex(361);
+		clip2->setBeginIndex(250);
+		clip2->loop = true;
 
-
-
-		ResourceStates* state = resourceStateMachine.AddState(sState1,clip1);
-		ResourceStates* state2 = resourceStateMachine.AddState(sState2,clip2);
+		ResourceStates* state = resourceStateMachine->AddState(sState1,clip1);
+		ResourceStates* state2 = resourceStateMachine->AddState(sState2,clip2);
 		std::string tName1 = "s1Ts2";
 		std::string tName2 = "s2Ts1";
 
-		resourceStateMachine.AddTransition(state, state2, 10, tName1);
-		resourceStateMachine.AddTransition(state2, state, 5, tName2);
+		resourceStateMachine->AddTransition(state, state2, 5, tName1);
+		resourceStateMachine->AddTransition(state2, state, 5, tName2);
+		resourceStateMachine->SetCurrentState(state);
 
 		ComponentAnimation* animationComponent = gameObject->CreateComponent<ComponentAnimation>();
 		animationComponent->animationResource = animations[0]; // TODO improve form multiple animations
 		animationComponent->animationController = new AnimationController(animations[0]);
-		animationComponent->stateMachineResource = &resourceStateMachine;
+		animationComponent->stateMachineResource = resourceStateMachine;
 		
 	
 		animationComponent->SendTrigger(tName1);
-		animationComponent->SendTrigger(tName2);
+		//animationComponent->SendTrigger(tName2);
 		
 		//resourceStateMachine.ChangeState(tName1);
 		//resourceStateMachine.ChangeState(tName2);

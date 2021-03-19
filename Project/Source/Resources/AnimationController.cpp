@@ -14,22 +14,28 @@
 AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 	: animationResource(resourceAnimation) {
 	currentTime = 0;
-	loop = true;
 	running = true;
 }
 
 bool AnimationController::GetTransform(Clip* clip, const char* name, float3& pos, Quat& quat) {
 	if (clip->animation == nullptr) {
 		return false;
-	}	
+	}
 	
-	float currentSample = (currentTime * (clip->animation->keyFrames.size() - 1)) / clip->animation->duration;
+	if (clip->loop) {
+		currentTime = currentTime > clip->duration ? 0 : currentTime;
+	} else {
+		currentTime = currentTime > clip->duration ? clip->duration : currentTime;
+	}
+
+	float currentSample = (currentTime * (clip->keyFramesSize - 1)) / clip->duration;
+	currentSample += clip->beginIndex;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
 
 	//find in hash by name
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = clip->animation->keyFrames[intPart].channels.find(name);
-	unsigned int idNext = intPart == (clip->animation->keyFrames.size() - 1) ? 0 : intPart + 1;
+	unsigned int idNext = intPart == (clip->keyFramesSize - 1) ? 0 : intPart + 1;
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = clip->animation->keyFrames[idNext].channels.find(name);	
 
 	if (channel == clip->animation->keyFrames[intPart].channels.end() && channelNext == clip->animation->keyFrames[idNext].channels.end()) {
@@ -53,31 +59,12 @@ void AnimationController::Stop() {
 
 void AnimationController::Update() {
 	currentTime += App->time->GetDeltaTime();
-	if (loop) {
-		currentTime = currentTime > animationResource->duration ? 0 : currentTime;
-	} else {
-		currentTime = currentTime > animationResource->duration ? animationResource->duration : currentTime;
-	}
 }
 
-bool AnimationController::InterpolateTransitions(Clip* source, Clip* target, unsigned int interpolationTime, float& currentTransitionTime, const char* name, float3& pos, Quat& quat) {
-	float3 sourcePos, targetPos;
-	Quat sourceQuat, targetQuat;
-	GetTransform(source, name, sourcePos, sourceQuat);
-	GetTransform(target, name, targetPos, targetQuat);
-
-	float lambda = 1 - (interpolationTime - currentTransitionTime) / interpolationTime;
-	pos = float3::Lerp(sourcePos, targetPos, lambda); // 0 = source, 1 = target
-	quat = Interpolate(sourceQuat, targetQuat, lambda);
-
-	currentTransitionTime += App->time->GetDeltaTime();
-
-	return true;
-}
-
-void AnimationController::InterpolateTransitions(std::list<AnimationInterpolation*>::iterator it, std::list<AnimationInterpolation*> animationInterpolations, GameObject* gameObject, float3& pos, Quat& quat) {
-	GetTransform((*it)->state->clip, gameObject->name.c_str(), pos, quat);
-	if (it != std::prev(animationInterpolations.end())) {
+bool AnimationController::InterpolateTransitions(std::list<AnimationInterpolation*>::iterator it, std::list<AnimationInterpolation*> animationInterpolations, GameObject* gameObject, float3& pos, Quat& quat) {
+	bool ok = GetTransform((*it)->state->clip, gameObject->name.c_str(), pos, quat);
+	std::list<AnimationInterpolation*>::iterator it2 = std::prev(animationInterpolations.end());
+	if ((*it) != (*std::prev(animationInterpolations.end()))) {
 		float3 position;
 		Quat rotation;
 		InterpolateTransitions(std::next(it), animationInterpolations, gameObject, position, rotation);
@@ -87,6 +74,7 @@ void AnimationController::InterpolateTransitions(std::list<AnimationInterpolatio
 		quat = Interpolate(quat, rotation, (*it)->fadeTime);
 	}
 	(*it)->currentTime += App->time->GetDeltaTime();
+	return ok;
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {
