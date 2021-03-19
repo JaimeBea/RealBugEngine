@@ -144,7 +144,7 @@ void ModuleTime::StepGame() {
 	gameStepOnce = true;
 }
 
-void ModuleTime::RecieveEvent(const Event& e) {
+void ModuleTime::ReceiveEvent(const Event& e) {
 	switch (e.type) {
 	case Event::EventType::Pressed_Play:
 		StartGame();

@@ -14,14 +14,12 @@ public:
 
 	enum class EventType {
 		GameObject_Destroyed,
-		File_Dropped,
 		Pressed_Play,
 		Pressed_Pause,
 		Pressed_Resume,
 		Pressed_Step,
 		Pressed_Stop,
-		Button_Pressed,
-		Mouse_Moved,
+		File_Dropped
 
 	} type;
 
@@ -41,8 +39,6 @@ public:
 			return "Pressed step";
 		case EventType::Pressed_Stop:
 			return "Pressed stop";
-		case EventType::Button_Pressed:
-			return "Pressed button";
 		default:
 			return "Unkown event type";
 		}

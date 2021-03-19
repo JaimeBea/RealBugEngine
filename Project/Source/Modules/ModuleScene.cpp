@@ -20,6 +20,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleEventSystem.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -59,6 +60,7 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
+	App->eventSystem->AddObserverToEvent(Event::EventType::GameObject_Destroyed, this);
 	App->files->CreateFolder("Library");
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(MESHES_PATH);
@@ -221,7 +223,7 @@ void ModuleScene::CreateEmptyScene() {
 }
 
 void ModuleScene::ClearScene() {
-	DestroyGameObject(root);
+	DestroyGameObjectImmediately(root, true);
 	root = nullptr;
 	quadtree.Clear();
 
@@ -274,13 +276,15 @@ GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject, GameObject*
 	return newGO;
 }
 
-void ModuleScene::DestroyGameObject(GameObject* gameObject) {
+void ModuleScene::DestroyGameObjectImmediately(GameObject* gameObject, bool recursiveDestroy) {
 	if (gameObject == nullptr) return;
 
 	// We need a copy because we are invalidating the iterator by removing GameObjects
-	std::vector<GameObject*> children = gameObject->GetChildren();
-	for (GameObject* child : children) {
-		DestroyGameObject(child);
+	if (recursiveDestroy) {
+		std::vector<GameObject*> children = gameObject->GetChildren();
+		for (GameObject* child : children) {
+			DestroyGameObjectImmediately(child, recursiveDestroy);
+		}
 	}
 
 	if (gameObject->isInQuadtree) {
@@ -293,8 +297,27 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	gameObjects.Release(gameObject);
 }
 
+void ModuleScene::DestroyGameObject(GameObject* gameObject) {
+	if (gameObject == nullptr) return;
+
+	const std::vector<GameObject*>& children = gameObject->GetChildren();
+	for (GameObject* child : children) {
+		DestroyGameObject(child);
+	}
+
+	App->BroadCastEvent(Event(Event::EventType::GameObject_Destroyed, gameObject));
+}
+
 GameObject* ModuleScene::GetGameObject(UID id) const {
 	if (gameObjectsIdMap.count(id) == 0) return nullptr;
 
 	return gameObjectsIdMap.at(id);
+}
+
+void ModuleScene::ReceiveEvent(const Event& e) {
+	switch (e.type) {
+	case Event::EventType::GameObject_Destroyed:
+		DestroyGameObjectImmediately(e.objPtr.ptr);
+		break;
+	}
 }

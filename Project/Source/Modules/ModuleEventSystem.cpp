@@ -28,7 +28,7 @@ void ModuleEventSystem::ProcessEvents() {
 
 void ModuleEventSystem::ProcessEvent(Event& e) {
 	for (std::vector<Module*>::iterator it = observerMap[e.type].begin(); it != observerMap[e.type].end(); ++it) {
-		(*it)->RecieveEvent(e);
+		(*it)->ReceiveEvent(e);
 	}
 }
 

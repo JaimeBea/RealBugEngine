@@ -8,7 +8,7 @@ public:
 	ModuleTime();
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
-	void ModuleTime::RecieveEvent(const Event& e) override;
+	void ModuleTime::ReceiveEvent(const Event& e) override;
 
 	void WaitForEndOfFrame(); // Calculates the time until the next frame if there is a framerate limitation, and introduces a Delay for that remainign time.
 

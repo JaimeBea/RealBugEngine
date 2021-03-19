@@ -35,8 +35,8 @@ public:
 	UpdateStatus Update(); // Calls the Update functions for all the modules. The UpdateStatus returned will be used by the main loop to know if the app is running correctly and when to quit.
 	bool CleanUp();		   // Calls the memory cleaning methods of each module, to release all the memory used by the app before quitting
 
-	void RequestBrowser(char* url); // Opens the url passed as parameter in a new window your default Internet Borwser
-	void BroadCastEvent(const Event& e);
+	void RequestBrowser(char* url);		 // Opens the url passed as parameter in a new window your default Internet Borwser
+	void BroadCastEvent(const Event& e); //This method exists only with the purpose of being used by those modules that generate events but do not receive them
 
 public:
 	// ---- Application Modules ---- //
