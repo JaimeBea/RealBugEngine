@@ -287,7 +287,6 @@ void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, co
 					if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
 						DrawGameObject(gameObject);
 					}
-
 					gameObject->flag = true;
 				}
 				element = element->next;
