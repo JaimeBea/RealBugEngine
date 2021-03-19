@@ -1,9 +1,9 @@
 #include "GL/glew.h"
 
 #include "Application.h"
+#include "Modules/ModuleCamera.h"
 #include "ComponentSkyBox.h"
 #include "Math/float4x4.cpp"
-#include "Modules/ModuleCamera.h"
 
 #define JSON_TAG_SKYBOX "skybox"
 
