@@ -6,7 +6,7 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
-
+#include "Modules/ModuleEventSystem.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
 
@@ -16,6 +16,15 @@
 
 ModuleTime::ModuleTime() {
 	timer.Start();
+}
+
+bool ModuleTime::Init() {
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Pause, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Play, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Resume, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Step, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Stop, this);
+	return true;
 }
 
 UpdateStatus ModuleTime::PreUpdate() {
@@ -133,4 +142,26 @@ void ModuleTime::StepGame() {
 	if (gameRunning) PauseGame();
 
 	gameStepOnce = true;
+}
+
+void ModuleTime::RecieveEvent(const Event& e) {
+	switch (e.type) {
+	case Event::EventType::Pressed_Play:
+		StartGame();
+		break;
+	case Event::EventType::Pressed_Stop:
+		StopGame();
+		break;
+	case Event::EventType::Pressed_Resume:
+		ResumeGame();
+		break;
+	case Event::EventType::Pressed_Pause:
+		PauseGame();
+		break;
+	case Event::EventType::Pressed_Step:
+		StepGame();
+		break;
+	default:
+		break;
+	}
 }

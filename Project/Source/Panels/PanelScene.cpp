@@ -21,6 +21,7 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include <algorithm>
+#include <Resources/Event.h>
 
 #include "Utils/Leaks.h"
 
@@ -44,26 +45,26 @@ void PanelScene::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
-					App->time->StopGame();
+					App->BroadCastEvent(Event(Event::EventType::Pressed_Stop));
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
-						App->time->PauseGame();
+						App->BroadCastEvent(Event(Event::EventType::Pressed_Pause));
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
-						App->time->ResumeGame();
+						App->BroadCastEvent(Event(Event::EventType::Pressed_Resume));
 					}
 				}
 			} else {
 				if (ImGui::Button("Play")) {
-					App->time->StartGame();
+					App->BroadCastEvent(Event(Event::EventType::Pressed_Play));
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Step")) {
-				App->time->StepGame();
+				App->BroadCastEvent(Event(Event::EventType::Pressed_Step));
 			}
 
 			ImGui::SameLine();
@@ -126,7 +127,7 @@ void PanelScene::Update() {
 
 		ImVec2 framebufferPosition = ImGui::GetWindowPos();
 		framebufferPosition.y += (ImGui::GetWindowHeight() - size.y);
-		
+
 		// Draw
 		ImGui::Image((void*) App->renderer->renderTexture, size, ImVec2(0, 1), ImVec2(1, 0));
 

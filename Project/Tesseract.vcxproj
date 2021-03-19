@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Modules\ModuleEventSystem.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
+    <ClInclude Include="Source\Resources\Event.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
@@ -165,6 +167,7 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
