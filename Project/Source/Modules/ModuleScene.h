@@ -31,6 +31,9 @@ public:
 
 	void CreateEmptyScene(); // Crates a new scene with a default game camera and directional light.
 
+	void DestroyGameObjectDeferred(GameObject* gameObject); //Event dependant destruction, Gameobjects are destroyed upon the receival of an event, so that info is not null
+	void ReceiveEvent(const Event& e) override;
+
 public:
 	std::string fileName = "";							   // REVIEW. This can be removed? Is it even used for anything?
 	Scene* scene = nullptr;

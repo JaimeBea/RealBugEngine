@@ -20,6 +20,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleEventSystem.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -59,6 +60,7 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
+	App->eventSystem->AddObserverToEvent(Event::EventType::GAMEOBJECT_DESTROYED, this);
 	App->files->CreateFolder("Library");
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(MESHES_PATH);
@@ -198,4 +200,23 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
 	gameCamera->InitComponents();
+}
+
+void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
+	if (gameObject == nullptr) return;
+
+	const std::vector<GameObject*>& children = gameObject->GetChildren();
+	for (GameObject* child : children) {
+		DestroyGameObjectDeferred(child);
+	}
+
+	App->BroadCastEvent(Event(Event::EventType::GAMEOBJECT_DESTROYED, gameObject));
+}
+
+void ModuleScene::ReceiveEvent(const Event& e) {
+	switch (e.type) {
+	case Event::EventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.objPtr.ptr);
+		break;
+	}
 }

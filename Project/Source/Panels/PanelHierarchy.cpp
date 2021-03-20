@@ -56,8 +56,8 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		Scene* scene = App->scene->scene;
 		if (gameObject != scene->root) {
 			if (ImGui::Selectable("Delete")) {
-				scene->DestroyGameObject(gameObject);
 				if (isSelected) App->editor->selectedGameObject = nullptr;
+				App->scene->DestroyGameObjectDeferred(gameObject);
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
