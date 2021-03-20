@@ -6,11 +6,17 @@ class ResourceAnimation;
 
 class Clip {
 public:
-	Clip(std::string& mName, ResourceAnimation* mAnimation = nullptr)
+	Clip(std::string& mName, ResourceAnimation* mAnimation = nullptr , bool mLoop = false)
 		: name(mName)
 		, animation(mAnimation)
+		, loop(mLoop)
 	{
-
+		if (mAnimation != nullptr) {
+			beginIndex = 0;
+			keyFramesSize = mAnimation->keyFrames.size();
+			endIndex =  keyFramesSize;
+			duration = mAnimation->duration;
+		}
 	}
 	std::string name;
 	ResourceAnimation* animation;

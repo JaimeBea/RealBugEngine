@@ -13,6 +13,11 @@ ResourceStates* ResourceStateMachine::AddState(std::string name,Clip *clip) {
 	}
 
 	ResourceStates *state = new ResourceStates(name,clip);
+	//Setting default state
+	if (states.size() == 0) {
+		currentState = state;
+	}
+
 	states.push_back(state);
 
 	return state;

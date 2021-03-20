@@ -252,41 +252,50 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	// Load animations
 	if (assimpScene->mNumAnimations > 0) {
 		LOG("Importing animations");
-		std::vector<ResourceAnimation*> animations;
+
+		ResourceStateMachine* resourceStateMachine = new ResourceStateMachine();
+		std::string resourceName = "animation";
+		std::string stateName = "state";
+		std::string clipName = "clip";
+
+		ResourceAnimation* testAnim = nullptr; //TODO::Delete this
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+			std::string parsedI = std::to_string(i);
+			
 			ResourceAnimation* animation = AnimationImporter::ImportAnimation(assimpScene->mAnimations[i], assimpScene);
-			animations.push_back(animation);
+			
+			if (testAnim == nullptr) { //TODO::Delete this
+				testAnim = animation;
+			}
+			
+			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
+			
+			Clip* clip = new Clip(clipName + parsedI, animation);
+			
+			resourceStateMachine->AddState(stateName + parsedI, clip); 
 		}
 
 		//Setting machine state
-		ResourceStateMachine* resourceStateMachine = new ResourceStateMachine();
-		std::string sState1 = "State1";
 		std::string sState2 = "State2";
-
-		std::string clipName1 = "testClip1";
 		std::string clipName2 = "testClip2";
-		Clip* clip1 = new Clip(clipName1, animations[0]);
-		clip1->setEndIndex(250); // animations[0]->keyFrames.size() = 361
-		clip1->setBeginIndex(0);
-		clip1->loop = true;
-
-		Clip* clip2 = new Clip(clipName2, animations[0]);
+		Clip* clip2 = new Clip(clipName2,testAnim);
 		clip2->setEndIndex(361);
 		clip2->setBeginIndex(250);
 		clip2->loop = true;
 
-		ResourceStates* state = resourceStateMachine->AddState(sState1,clip1);
+		//Mocking transition
 		ResourceStates* state2 = resourceStateMachine->AddState(sState2,clip2);
+
 		std::string tName1 = "s1Ts2";
 		std::string tName2 = "s2Ts1";
 
-		resourceStateMachine->AddTransition(state, state2, 5, tName1);
-		resourceStateMachine->AddTransition(state2, state, 5, tName2);
-		resourceStateMachine->SetCurrentState(state);
+		resourceStateMachine->AddTransition(resourceStateMachine->GetCurrentState(), state2, 5, tName1);
+		resourceStateMachine->AddTransition(state2, resourceStateMachine->GetCurrentState(), 5, tName2);
+		//resourceStateMachine->SetCurrentState(state);
 
 		ComponentAnimation* animationComponent = gameObject->CreateComponent<ComponentAnimation>();
-		animationComponent->animationResource = animations[0]; // TODO improve form multiple animations
-		animationComponent->animationController = new AnimationController(animations[0]);
+		animationComponent->animationResource = testAnim; // TODO improve for multiple animations
+		animationComponent->animationController = new AnimationController(testAnim);
 		animationComponent->stateMachineResource = resourceStateMachine;
 		
 	
