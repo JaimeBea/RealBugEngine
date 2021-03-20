@@ -7,16 +7,18 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModulePrograms.h"
 #include "Utils/Logging.h"
+
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "GL/glew.h"
 #include "iostream"
 #include "fstream"
 #include "Utils/Leaks.h"
+
 #define JSON_TAG_SHADER "shader"
+
 ResourceSkybox::ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {
-}
+	: Resource(id, assetFilePath, resourceFilePath) {}
 
 void ResourceSkybox::ReadPath() {
 	std::string imgPath;
@@ -26,11 +28,11 @@ void ResourceSkybox::ReadPath() {
 		files.push_back(imgPath);
 	}
 }
+
 void ResourceSkybox::Load(JsonValue jComponent) {
+	//TODO DELETE COMENTS AFTER TEST IF ALL WORKS
 	ReadPath();
 	shader = (ResourceShader*) App->resources->GetResourceByID(jComponent[JSON_TAG_SHADER]);
-	skyboxVAO = 0;
-	skyboxVBO = 0;
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -43,16 +45,12 @@ void ResourceSkybox::Load(JsonValue jComponent) {
 	ILuint glCubeMap;
 
 	ilGenImages(1, &glCubeMap);
-	// bind it
 	ilBindImage(glCubeMap);
-	// match image origin to OpenGLs
 	ilEnable(IL_ORIGIN_SET);
-	// ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	glGenTextures(1, &glCubeMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, glCubeMap);
 	for (unsigned int i = 0; i < files.size(); i++) {
-		//TODO CHECK IF ALL FILES EXIST OR SOMETHING
 		success = ilLoad(IL_DDS, files[i].c_str());
 		if (success) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
@@ -61,14 +59,14 @@ void ResourceSkybox::Load(JsonValue jComponent) {
 		}
 	}
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	ilDeleteImage(glCubeMap); //release from il since we have it in opengl
+	ilDeleteImage(glCubeMap); 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	//glDeleteTextures(1,textureID); //release from il since we have it in opengl
+	//glDeleteTextures(1,textureID); 
 }
 
 void ResourceSkybox::Unload() {
