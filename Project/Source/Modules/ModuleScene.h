@@ -36,8 +36,10 @@ public:
 	// --- GameObject Management --- //
 	GameObject* CreateGameObject(GameObject* parent);
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
-	void DestroyGameObject(GameObject* gameObject);
+	void DestroyGameObject(GameObject* gameObject); //Event dependant destruction, Gameobjects are destroyed upon the receival of an event, so that info is not null
+	void DestroyGameObjectImmediately(GameObject* gameObject, bool recursiveDestroy = false); //Method used for direct, non-event depending destruction
 	GameObject* GetGameObject(UID id) const;
+	void ReceiveEvent(const Event& e) override;
 
 public:
 	std::string fileName = "";							   // REVIEW. This can be removed? Is it even used for anything?
