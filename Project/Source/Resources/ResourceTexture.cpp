@@ -10,9 +10,6 @@
 #include "IL/ilu.h"
 #include "GL/glew.h"
 
-ResourceTexture::ResourceTexture(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourceTexture::Load() {
 	// Timer to measure loading a texture
 	MSTimer timer;

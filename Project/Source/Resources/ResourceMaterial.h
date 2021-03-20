@@ -8,7 +8,7 @@
 
 class ResourceMaterial : public Resource {
 public:
-	ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceMaterial, ResourceType::MATERIAL);
 
 	void Load() override;
 	void Unload() override;

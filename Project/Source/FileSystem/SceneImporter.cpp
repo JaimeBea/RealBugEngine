@@ -18,6 +18,10 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "ID"
+
 bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 	LOG("Importing scene from path: \"%s\".", filePath);
 
@@ -43,8 +47,12 @@ bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 
 	// Create scene
 	ResourceScene* scene = App->resources->CreateResource<ResourceScene>(filePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[0] = scene->GetId();
+
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[0];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(scene->GetType());
+	jResource[JSON_TAG_ID] = scene->GetId();
 
 	// Save to file
 	App->files->Save(scene->GetResourceFilePath().c_str(), stringBuffer.GetString(), stringBuffer.GetSize());

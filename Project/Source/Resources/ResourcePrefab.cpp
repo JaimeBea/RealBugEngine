@@ -12,9 +12,6 @@
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_PARENT_INDEX "ParentIndex"
 
-ResourcePrefab::ResourcePrefab(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourcePrefab::BuildPrefab(GameObject* parent) {
 	// Timer to measure loading a prefab
 	MSTimer timer;

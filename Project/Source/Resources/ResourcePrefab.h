@@ -6,7 +6,7 @@ class GameObject;
 
 class ResourcePrefab : public Resource {
 public:
-	ResourcePrefab(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourcePrefab, ResourceType::PREFAB);
 
 	void BuildPrefab(GameObject* parent);
 };

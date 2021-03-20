@@ -18,6 +18,10 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "ID"
+
 bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	LOG("Importing material from path: \"%s\".", filePath);
 
@@ -42,8 +46,12 @@ bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 
 	// Material resource creation
 	ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[0] = material->GetId();
+
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[0];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(material->GetType());
+	jResource[JSON_TAG_ID] = material->GetId();
 
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;

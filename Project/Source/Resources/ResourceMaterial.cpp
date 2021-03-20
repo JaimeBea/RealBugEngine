@@ -28,9 +28,6 @@
 #define JSON_TAG_SMOOTHNESS "Smoothness"
 #define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
 
-ResourceMaterial::ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourceMaterial::Load() {
 	std::string filePath = GetResourceFilePath();
 	LOG("Importing material from path: \"%s\".", filePath);

@@ -20,6 +20,10 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "ID"
+
 bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 	LOG("Importing Shader from path: \"%s\".", filePath);
 
@@ -36,8 +40,12 @@ bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 
 	// Create shader resource
 	ResourceShader* shaderResource = App->resources->CreateResource<ResourceShader>(filePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[0] = shaderResource->GetId();
+
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[0];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(shaderResource->GetType());
+	jResource[JSON_TAG_ID] = shaderResource->GetId();
 
 	// Save to file
 	const std::string& resourceFilePath = shaderResource->GetResourceFilePath();

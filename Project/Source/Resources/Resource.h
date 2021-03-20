@@ -1,16 +1,19 @@
 #pragma once
 
 #include "Utils/UID.h"
+#include "Resources/ResourceType.h"
 
 #include <string>
 
 class Resource {
 public:
-	Resource(UID id, const char* assetFilePath, const char* resourceFilePath);
+	Resource(ResourceType type, UID id, const char* assetFilePath, const char* resourceFilePath);
 	virtual ~Resource();
 
 	void IncreaseReferenceCount();
 	void DecreaseReferenceCount();
+
+	ResourceType GetType() const;
 
 	UID GetId() const;
 	const std::string& GetAssetFilePath() const;
@@ -20,6 +23,8 @@ public:
 	virtual void Unload();
 
 private:
+	ResourceType type = ResourceType::UNKNOWN;
+
 	UID id = 0;
 	std::string assetFilePath = "";
 	std::string resourceFilePath = "";

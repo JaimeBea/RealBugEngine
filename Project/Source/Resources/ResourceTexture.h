@@ -6,7 +6,7 @@
 
 class ResourceTexture : public Resource {
 public:
-	ResourceTexture(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceTexture, ResourceType::TEXTURE);
 
 	void Load() override;
 	void Unload() override;

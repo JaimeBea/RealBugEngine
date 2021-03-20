@@ -17,9 +17,6 @@
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_PARENT_ID "ParentId"
 
-ResourceScene::ResourceScene(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourceScene::BuildScene() {
 	// Clear scene
 	Scene* scene = App->scene->scene;

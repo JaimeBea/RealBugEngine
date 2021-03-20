@@ -4,7 +4,7 @@
 
 class ResourceScene : public Resource {
 public:
-	ResourceScene(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceScene, ResourceType::SCENE);
 
 	void BuildScene();
 };

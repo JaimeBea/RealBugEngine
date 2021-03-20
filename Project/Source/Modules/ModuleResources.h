@@ -9,10 +9,33 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
-#include <mutex>
+#include <concurrent_queue.h>
 
-#define JSON_TAG_RESOURCE_IDS "ResourceIds"
-#define JSON_TAG_TIMESTAMP "Timestamp"
+struct AssetFile {
+	AssetFile(const char* path);
+
+	std::string path;
+	std::vector<Resource*> files;
+};
+
+struct AssetFolder {
+	AssetFolder(const char* path);
+
+	std::string path;
+	std::vector<AssetFolder> folders;
+	std::vector<AssetFile> files;
+};
+
+enum class ResourceEventType {
+	ADD_RESOURCE,
+	REMOVE_RESOURCE,
+	UPDATE_FOLDERS
+};
+
+struct ResourceEvent {
+	ResourceEventType type = ResourceEventType::ADD_RESOURCE;
+	void* object = nullptr;
+};
 
 class ModuleResources : public Module {
 public:
@@ -21,8 +44,10 @@ public:
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
-	Resource* GetResourceByID(UID id);
+	Resource* GetResourceByID(UID id) const;
 	std::string GenerateResourcePath(UID id) const;
+
+	AssetFolder* GetRootFolder() const;
 
 	std::vector<Resource*> ImportAsset(const char* filePath);
 
@@ -32,11 +57,15 @@ public:
 private:
 	void UpdateAsync();
 
-	void CheckForNewAssetsRecursive(const char* path);
+	void CheckForNewAssetsRecursive(const char* path, AssetFolder* folder);
+
+	Resource* CreateResourceByTypeAndID(ResourceType type, UID id, const char* assetFilePath);
 
 private:
 	std::unordered_map<UID, Resource*> resources;
-	std::mutex resourcesMutex;
+	AssetFolder* rootFolder = nullptr;
+
+	concurrency::concurrent_queue<ResourceEvent> resourceEventQueue;
 
 	std::thread importThread;
 	bool stopImportThread = false;
@@ -47,8 +76,6 @@ inline T* ModuleResources::CreateResource(const char* assetFilePath) {
 	UID id = GenerateUID();
 	std::string resourceFilePath = GenerateResourcePath(id);
 	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
-	resourcesMutex.lock();
-	resources.emplace(id, resource);
-	resourcesMutex.unlock();
+	resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});
 	return resource;
 }

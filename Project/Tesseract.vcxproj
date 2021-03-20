@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Panels\PanelProject.h" />
+    <ClInclude Include="Source\Resources\ResourceType.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
@@ -168,6 +170,8 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Panels\PanelProject.cpp" />
+    <ClCompile Include="Source\Resources\ResourceType.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\Resources\ResourcePrefab.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />

@@ -26,6 +26,9 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
 
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "ID"
 #define JSON_TAG_ROOT "Root"
 
 ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* assimpMesh, unsigned& resourceIndex) {
@@ -106,8 +109,13 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 
 	// Create mesh
 	ResourceMesh* mesh = App->resources->CreateResource<ResourceMesh>(modelFilePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[resourceIndex] = mesh->GetId();
+
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[resourceIndex];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(mesh->GetType());
+	jResource[JSON_TAG_ID] = mesh->GetId();
+	resourceIndex += 1;
 
 	// Save buffer to file
 	const std::string& resourceFilePath = mesh->GetResourceFilePath();
@@ -117,7 +125,6 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 		return false;
 	}
 
-	resourceIndex += 1;
 	unsigned timeMs = timer.Stop();
 	LOG("Mesh imported in %ums", timeMs);
 	return mesh;
@@ -213,7 +220,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 	// Initialize resource accumulator
 	unsigned resourceIndex = 0;
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 
 	// Import materials
 	for (unsigned i = 0; i < assimpScene->mNumMaterials; ++i) {
@@ -373,7 +380,10 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, material->specularColor);
 		assimpMaterial->Get(AI_MATKEY_SHININESS, material->smoothness);
 
-		jResourceIds[resourceIndex] = material->GetId();
+		// Add resource to meta file
+		JsonValue jResource = jResources[resourceIndex];
+		jResource[JSON_TAG_TYPE] = GetResourceTypeName(material->GetType());
+		jResource[JSON_TAG_ID] = material->GetId();
 		resourceIndex += 1;
 
 		material->SaveToFile(App->resources->GenerateResourcePath(material->GetId()).c_str());
@@ -415,8 +425,10 @@ bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject
 
 	// Create prefab resource
 	ResourcePrefab* prefabResource = App->resources->CreateResource<ResourcePrefab>(filePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[resourceIndex] = prefabResource->GetId();
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[resourceIndex];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(prefabResource->GetType());
+	jResource[JSON_TAG_ID] = prefabResource->GetId();
 	resourceIndex += 1;
 
 	// Save to file
