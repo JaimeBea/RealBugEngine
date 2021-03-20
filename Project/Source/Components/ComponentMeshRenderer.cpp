@@ -5,8 +5,10 @@
 #include "Utils/Logging.h"
 #include "FileSystem/TextureImporter.h"
 #include "GameObject.h"
-#include "Resources/ResourceTexture.h"
+#include "Resources/ResourceMaterial.h"
 #include "Resources/ResourceMesh.h"
+#include "Resources/ResourceShader.h"
+#include "Resources/ResourceTexture.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
 #include "Components/ComponentBoundingBox.h"
@@ -44,22 +46,25 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
-	// MESH
-	if (ImGui::TreeNode("Mesh")) {
-		ImGui::TextColored(App->editor->titleColor, "Geometry");
-		ImGui::TextWrapped("Num Vertices: ");
-		ImGui::SameLine();
-		ImGui::TextColored(App->editor->textColor, "%d", mesh->numVertices);
-		ImGui::TextWrapped("Num Triangles: ");
-		ImGui::SameLine();
-		ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);
-		ImGui::Separator();
-		ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 
-		ImGui::Checkbox("Draw", &bbActive);
-		if (bbActive) {
-			ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-			boundingBox->DrawBoundingBox();
+	if (ImGui::TreeNode("Mesh")) {
+		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResourceByID(meshId);
+		if (mesh != nullptr) {
+			ImGui::TextColored(App->editor->titleColor, "Geometry");
+			ImGui::TextWrapped("Num Vertices: ");
+			ImGui::SameLine();
+			ImGui::TextColored(App->editor->textColor, "%d", mesh->numVertices);
+			ImGui::TextWrapped("Num Triangles: ");
+			ImGui::SameLine();
+			ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);
+			ImGui::Separator();
+			ImGui::TextColored(App->editor->titleColor, "Bounding Box");
+
+			ImGui::Checkbox("Draw", &bbActive);
+			if (bbActive) {
+				ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
+				boundingBox->DrawBoundingBox();
+			}
 		}
 		ImGui::Separator();
 	}
@@ -257,36 +262,43 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_MESH_ID] = mesh != nullptr ? mesh->GetId() : 0;
-	jComponent[JSON_TAG_MATERIAL_ID] = material != nullptr ? material->GetId() : 0;
+	jComponent[JSON_TAG_MESH_ID] = meshId;
+	jComponent[JSON_TAG_MATERIAL_ID] = materialId;
 }
 
 void ComponentMeshRenderer::Load(JsonValue jComponent) {
-	mesh = (ResourceMesh*) App->resources->GetResourceByID(jComponent[JSON_TAG_MESH_ID]);
-	material = (ResourceMaterial*) App->resources->GetResourceByID(jComponent[JSON_TAG_MATERIAL_ID]);
+	meshId = jComponent[JSON_TAG_MESH_ID];
+	materialId = jComponent[JSON_TAG_MATERIAL_ID];
 }
 
 void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
 	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
-	component->mesh = this->mesh;
-	component->material = this->material;
+	component->meshId = meshId;
+	component->materialId = materialId;
 }
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActiveInHierarchy()) return;
+
+	ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResourceByID(meshId);
 	if (mesh == nullptr) return;
+
+	ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResourceByID(materialId);
 	if (material == nullptr) return;
 
-	unsigned program = material->shader->GetShaderProgram();
+	ResourceShader* shader = (ResourceShader*) App->resources->GetResourceByID(material->shaderId);
+	if (shader == nullptr) return;
+
+	unsigned program = shader->GetShaderProgram();
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
 	unsigned glTextureDiffuse = 0;
 	unsigned glTextureSpecular = 0;
 
-	ResourceTexture* diffuse = material->diffuseMap;
+	ResourceTexture* diffuse = (ResourceTexture*) App->resources->GetResourceByID(material->diffuseMapId);
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-	ResourceTexture* specular = material->specularMap;
+	ResourceTexture* specular = (ResourceTexture*) App->resources->GetResourceByID(material->specularMapId);
 	glTextureSpecular = specular ? specular->glTexture : 0;
 
 	ComponentLight* directionalLight = nullptr;
@@ -295,7 +307,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	if (material->shader->GetShaderType() == ShaderType::PHONG) {
+	if (shader->GetShaderType() == ShaderType::PHONG) {
 		float farPointDistance = 0;
 		ComponentLight* farPointLight = nullptr;
 		float farSpotDistance = 0;
@@ -400,8 +412,8 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
 		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
-		int hasDiffuseMap = (material->diffuseMap) ? 1 : 0;
-		int hasSpecularMap = (material->specularMap) ? 1 : 0;
+		int hasDiffuseMap = diffuse ? 1 : 0;
+		int hasSpecularMap = specular ? 1 : 0;
 		int hasShininessInAlphaChannel = (material->hasSmoothnessInAlphaChannel) ? 1 : 0;
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);

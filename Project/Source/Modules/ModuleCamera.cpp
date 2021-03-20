@@ -9,6 +9,8 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
+#include "Resources/ResourceMesh.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
@@ -193,15 +195,17 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	for (GameObject* gameObject : intersectingObjects) {
 		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 		for (ComponentMeshRenderer* mesh : meshes) {
+			ResourceMesh* meshResource = (ResourceMesh*) App->resources->GetResourceByID(mesh->meshId);
+			if (meshResource == nullptr) continue;
+
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
-			std::vector<Triangle> triangles = mesh->mesh->ExtractTriangles(model);
+			std::vector<Triangle> triangles = meshResource->ExtractTriangles(model);
 			for (Triangle& triangle : triangles) {
-				if (ray.Intersects(triangle, &distance, NULL)) {
-					if (distance < minDistance) {
-						selectedGameObject = gameObject;
-						minDistance = distance;
-					}
-				}
+				if (!ray.Intersects(triangle, &distance, NULL)) continue;
+				if (distance >= minDistance) continue;
+
+				selectedGameObject = gameObject;
+				minDistance = distance;
 			}
 		}
 	}

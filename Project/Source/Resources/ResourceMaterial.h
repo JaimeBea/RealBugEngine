@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Resources/Resource.h"
-#include "Resources/ResourceShader.h"
-#include "Resources/ResourceTexture.h"
 
 #include "Math/float3.h"
 
@@ -17,23 +15,23 @@ public:
 
 public:
 	// Material shader
-	ResourceShader* shader = nullptr;
+	UID shaderId = 0;
 
 	// Diffuse
 	bool hasDiffuseMap = false;
 	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
-	ResourceTexture* diffuseMap = nullptr;
+	UID diffuseMapId = 0;
 
 	// Specular
 	bool hasSpecularMap = false;
 	float4 specularColor = {1.0f, 1.0f, 1.0f, 1.0f};
-	ResourceTexture* specularMap = nullptr;
+	UID specularMapId = 0;
 
 	// Metalness
-	ResourceTexture* metallicMap = nullptr;
+	UID metallicMapId = 0;
 
 	// Normal
-	ResourceTexture* normalMap = nullptr;
+	UID normalMapId = 0;
 
 	// Smoothness
 	float smoothness = 300;

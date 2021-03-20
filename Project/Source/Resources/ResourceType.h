@@ -5,7 +5,8 @@
 /* Creating a new resource type:
 *    1. Add a new ResourceType for the new resource
 *    2. Add REGISTER_RESOURCE to the .h of the new resource
-*    4. Add the new resource to the GetResourceTypeName function in ResourceType.cpp
+*    3. Add the new resource to the GetResourceTypeName and GetResourceTypeFromName functions in ResourceType.cpp
+*    4. Add the new resource to the ModuleResource::CreateResourceByTypeAndID function in ModuleResources.cpp
 */
 
 // REGISTER_RESOURCE builds the data structures common to all Resources.

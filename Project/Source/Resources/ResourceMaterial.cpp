@@ -46,18 +46,18 @@ void ResourceMaterial::Load() {
 	}
 	JsonValue jMaterial(document, document);
 
-	shader = (ResourceShader*) App->resources->GetResourceByID(jMaterial[JSON_TAG_SHADER]);
+	shaderId = jMaterial[JSON_TAG_SHADER];
 
 	hasDiffuseMap = jMaterial[JSON_TAG_HAS_DIFFUSE_MAP];
 	diffuseColor = float4(jMaterial[JSON_TAG_DIFFUSE_COLOR][0], jMaterial[JSON_TAG_DIFFUSE_COLOR][1], jMaterial[JSON_TAG_DIFFUSE_COLOR][2], jMaterial[JSON_TAG_DIFFUSE_COLOR][3]);
-	diffuseMap = (ResourceTexture*) App->resources->GetResourceByID(jMaterial[JSON_TAG_DIFFUSE_MAP]);
+	diffuseMapId = jMaterial[JSON_TAG_DIFFUSE_MAP];
 
 	hasSpecularMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
 	specularColor = float4(jMaterial[JSON_TAG_SPECULAR_COLOR][0], jMaterial[JSON_TAG_SPECULAR_COLOR][1], jMaterial[JSON_TAG_SPECULAR_COLOR][2], jMaterial[JSON_TAG_SPECULAR_COLOR][3]);
-	specularMap = (ResourceTexture*) App->resources->GetResourceByID(jMaterial[JSON_TAG_SPECULAR_MAP]);
+	specularMapId = jMaterial[JSON_TAG_SPECULAR_MAP];
 
-	metallicMap = (ResourceTexture*) App->resources->GetResourceByID(jMaterial[JSON_TAG_METALLIC_MAP]);
-	normalMap = (ResourceTexture*) App->resources->GetResourceByID(jMaterial[JSON_TAG_NORMAL_MAP]);
+	metallicMapId = jMaterial[JSON_TAG_METALLIC_MAP];
+	normalMapId = jMaterial[JSON_TAG_NORMAL_MAP];
 
 	smoothness = jMaterial[JSON_TAG_SMOOTHNESS];
 	hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL];
@@ -80,7 +80,7 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	JsonValue jMaterial(document, document);
 
 	// Save JSON values
-	jMaterial[JSON_TAG_SHADER] = shader != nullptr ? shader->GetId() : 0;
+	jMaterial[JSON_TAG_SHADER] = shaderId;
 
 	jMaterial[JSON_TAG_HAS_DIFFUSE_MAP] = hasDiffuseMap;
 	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
@@ -88,7 +88,7 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	jDiffuseColor[1] = diffuseColor.y;
 	jDiffuseColor[2] = diffuseColor.z;
 	jDiffuseColor[3] = diffuseColor.w;
-	jMaterial[JSON_TAG_DIFFUSE_MAP] = diffuseMap != nullptr ? diffuseMap->GetId() : 0;
+	jMaterial[JSON_TAG_DIFFUSE_MAP] = diffuseMapId;
 
 	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = hasSpecularMap;
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
@@ -96,10 +96,10 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	jSpecularColor[1] = specularColor.y;
 	jSpecularColor[2] = specularColor.z;
 	jSpecularColor[3] = specularColor.w;
-	jMaterial[JSON_TAG_SPECULAR_MAP] = diffuseMap != nullptr ? diffuseMap->GetId() : 0;
+	jMaterial[JSON_TAG_SPECULAR_MAP] = diffuseMapId;
 
-	jMaterial[JSON_TAG_METALLIC_MAP] = metallicMap != nullptr ? metallicMap->GetId() : 0;
-	jMaterial[JSON_TAG_NORMAL_MAP] = normalMap != nullptr ? normalMap->GetId() : 0;
+	jMaterial[JSON_TAG_METALLIC_MAP] = metallicMapId;
+	jMaterial[JSON_TAG_NORMAL_MAP] = normalMapId;
 
 	jMaterial[JSON_TAG_SMOOTHNESS] = smoothness;
 	jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL] = hasSmoothnessInAlphaChannel;

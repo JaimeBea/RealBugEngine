@@ -167,7 +167,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 			aiMesh* assimpMesh = assimpScene->mMeshes[node->mMeshes[i]];
 
 			ComponentMeshRenderer* meshRenderer = gameObject->CreateComponent<ComponentMeshRenderer>();
-			meshRenderer->mesh = ImportMesh(modelFilePath, jMeta, assimpMesh, resourceIndex);
+			meshRenderer->meshId = ImportMesh(modelFilePath, jMeta, assimpMesh, resourceIndex)->GetId();
 
 			// Update min and max points
 			for (unsigned int j = 0; j < assimpMesh->mNumVertices; ++j) {
@@ -263,7 +263,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 				LOG("Unable to find diffuse texture file.");
 			} else {
 				LOG("Diffuse texture imported successfuly.");
-				material->diffuseMap = (ResourceTexture*) textureResources[0];
+				material->diffuseMapId = textureResources[0]->GetId();
 				material->hasDiffuseMap = true;
 			}
 		} else {
@@ -299,7 +299,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 				LOG("Unable to find specular texture file.");
 			} else {
 				LOG("Specular texture imported successfuly.");
-				material->specularMap = (ResourceTexture*) textureResources[0];
+				material->specularMapId = textureResources[0]->GetId();
 				material->hasSpecularMap = true;
 			}
 		} else {
@@ -335,7 +335,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 				LOG("Unable to find metalness texture file.");
 			} else {
 				LOG("Metalness texture imported successfuly.");
-				material->metallicMap = (ResourceTexture*) textureResources[0];
+				material->metallicMapId = textureResources[0]->GetId();
 			}
 		} else {
 			LOG("Metalness texture not found.");
@@ -370,7 +370,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 				LOG("Unable to find normals texture file.");
 			} else {
 				LOG("Normals texture imported successfuly.");
-				material->normalMap = (ResourceTexture*) textureResources[0];
+				material->normalMapId = textureResources[0]->GetId();
 			}
 		} else {
 			LOG("Normals texture not found.");
