@@ -60,7 +60,7 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->eventSystem->AddObserverToEvent(Event::EventType::GameObject_Destroyed, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::GAMEOBJECT_DESTROYED, this);
 	App->files->CreateFolder("Library");
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(MESHES_PATH);
@@ -305,7 +305,7 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 		DestroyGameObject(child);
 	}
 
-	App->BroadCastEvent(Event(Event::EventType::GameObject_Destroyed, gameObject));
+	App->BroadCastEvent(Event(Event::EventType::GAMEOBJECT_DESTROYED, gameObject));
 }
 
 GameObject* ModuleScene::GetGameObject(UID id) const {
@@ -316,7 +316,7 @@ GameObject* ModuleScene::GetGameObject(UID id) const {
 
 void ModuleScene::ReceiveEvent(const Event& e) {
 	switch (e.type) {
-	case Event::EventType::GameObject_Destroyed:
+	case Event::EventType::GAMEOBJECT_DESTROYED:
 		DestroyGameObjectImmediately(e.objPtr.ptr);
 		break;
 	}

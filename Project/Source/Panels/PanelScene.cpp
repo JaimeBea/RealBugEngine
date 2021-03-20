@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Resources/GameObject.h"
+#include <Resources/Event.h>
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Modules/ModuleInput.h"
@@ -21,7 +22,6 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include <algorithm>
-#include <Resources/Event.h>
 
 #include "Utils/Leaks.h"
 
@@ -45,26 +45,26 @@ void PanelScene::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
-					App->BroadCastEvent(Event(Event::EventType::Pressed_Stop));
+					App->BroadCastEvent(Event(Event::EventType::PRESSED_STOP));
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
-						App->BroadCastEvent(Event(Event::EventType::Pressed_Pause));
+						App->BroadCastEvent(Event(Event::EventType::PRESSED_PAUSE));
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
-						App->BroadCastEvent(Event(Event::EventType::Pressed_Resume));
+						App->BroadCastEvent(Event(Event::EventType::PRESSED_RESUME));
 					}
 				}
 			} else {
 				if (ImGui::Button("Play")) {
-					App->BroadCastEvent(Event(Event::EventType::Pressed_Play));
+					App->BroadCastEvent(Event(Event::EventType::PRESSED_PLAY));
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Step")) {
-				App->BroadCastEvent(Event(Event::EventType::Pressed_Step));
+				App->BroadCastEvent(Event(Event::EventType::PRESSED_STEP));
 			}
 
 			ImGui::SameLine();

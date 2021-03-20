@@ -19,11 +19,11 @@ ModuleTime::ModuleTime() {
 }
 
 bool ModuleTime::Init() {
-	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Pause, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Play, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Resume, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Step, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::Pressed_Stop, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PAUSE, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PLAY, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_RESUME, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STEP, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STOP, this);
 	return true;
 }
 
@@ -146,19 +146,19 @@ void ModuleTime::StepGame() {
 
 void ModuleTime::ReceiveEvent(const Event& e) {
 	switch (e.type) {
-	case Event::EventType::Pressed_Play:
+	case Event::EventType::PRESSED_PLAY:
 		StartGame();
 		break;
-	case Event::EventType::Pressed_Stop:
+	case Event::EventType::PRESSED_STOP:
 		StopGame();
 		break;
-	case Event::EventType::Pressed_Resume:
+	case Event::EventType::PRESSED_RESUME:
 		ResumeGame();
 		break;
-	case Event::EventType::Pressed_Pause:
+	case Event::EventType::PRESSED_PAUSE:
 		PauseGame();
 		break;
-	case Event::EventType::Pressed_Step:
+	case Event::EventType::PRESSED_STEP:
 		StepGame();
 		break;
 	default:

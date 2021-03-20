@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Resources/Event.h"
+
 #include "Utils/Leaks.h"
 
 Module::~Module() {}

@@ -1,7 +1,9 @@
 #include "ModuleEventSystem.h"
+
 #include "Resources/GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/Logging.h"
+
 #include "Utils/Leaks.h"
 
 ModuleEventSystem::ModuleEventSystem() {
@@ -27,8 +29,8 @@ void ModuleEventSystem::ProcessEvents() {
 }
 
 void ModuleEventSystem::ProcessEvent(Event& e) {
-	for (std::vector<Module*>::iterator it = observerMap[e.type].begin(); it != observerMap[e.type].end(); ++it) {
-		(*it)->ReceiveEvent(e);
+	for (Module* m : observerMap[e.type]) {
+		m->ReceiveEvent(e);
 	}
 }
 

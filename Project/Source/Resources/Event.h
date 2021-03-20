@@ -1,43 +1,35 @@
 #pragma once
+
 #include "GameObject.h"
+
 struct Event {
 public:
-	union {
-		struct {
-			GameObject* ptr;
-		} objPtr;
-		struct
-		{
-			int x, y;
-		} point2d;
-	};
-
 	enum class EventType {
-		GameObject_Destroyed,
-		Pressed_Play,
-		Pressed_Pause,
-		Pressed_Resume,
-		Pressed_Step,
-		Pressed_Stop,
-		File_Dropped
+		GAMEOBJECT_DESTROYED,
+		PRESSED_PLAY,
+		PRESSED_PAUSE,
+		PRESSED_RESUME,
+		PRESSED_STEP,
+		PRESSED_STOP,
+		FILE_DROPPED
 
 	} type;
 
 	static const char* TypeToString(EventType v) {
 		switch (v) {
-		case EventType::GameObject_Destroyed:
+		case EventType::GAMEOBJECT_DESTROYED:
 			return "GameObject destroyed";
-		case EventType::File_Dropped:
+		case EventType::FILE_DROPPED:
 			return "File dropped";
-		case EventType::Pressed_Play:
+		case EventType::PRESSED_PLAY:
 			return "Pressed play";
-		case EventType::Pressed_Pause:
+		case EventType::PRESSED_PAUSE:
 			return "Pressed pause";
-		case EventType::Pressed_Resume:
+		case EventType::PRESSED_RESUME:
 			return "Pressed resume";
-		case EventType::Pressed_Step:
+		case EventType::PRESSED_STEP:
 			return "Pressed step";
-		case EventType::Pressed_Stop:
+		case EventType::PRESSED_STOP:
 			return "Pressed stop";
 		default:
 			return "Unkown event type";
@@ -46,7 +38,10 @@ public:
 
 	Event(EventType aType)
 		: type(aType) {
+		point2d.x = point2d.y = 0;
+		objPtr.ptr = nullptr;
 	}
+
 	Event(EventType aType, float2 aFloat2)
 		: type(aType) {
 		point2d.x = aFloat2.x;
@@ -60,4 +55,15 @@ public:
 
 	~Event() {
 	}
+
+public:
+	union {
+		struct {
+			GameObject* ptr;
+		} objPtr;
+		struct
+		{
+			int x, y;
+		} point2d;
+	};
 };

@@ -54,6 +54,7 @@ public:
 	ModuleTime* time = nullptr;
 	ModuleAudio* audio = nullptr;
 	ModuleEventSystem* eventSystem = nullptr;
+
 	// - Application Configuration - //
 	char appName[20] = "Tesseract";
 	char organization[20] = "";
