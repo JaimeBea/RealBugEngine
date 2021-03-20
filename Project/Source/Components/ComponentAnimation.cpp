@@ -12,6 +12,9 @@
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 
+#include "Application.h"
+#include "Modules/ModuleInput.h"
+
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
@@ -20,6 +23,22 @@
 
 
 void ComponentAnimation::Update() {
+	if (App->input->GetKey(SDL_SCANCODE_1)) {
+		if (t != 1) {
+			SendTrigger("s1Ts2");
+			t = 1;
+			LOG("Transition1");
+		}
+
+	}
+	if (App->input->GetKey(SDL_SCANCODE_2)) {
+		if (t != 2) {
+			SendTrigger("s2Ts1");
+			t = 2;
+			LOG("Transition2");
+		}
+	}
+
 	animationController->Update();
 	OnUpdate();
 }

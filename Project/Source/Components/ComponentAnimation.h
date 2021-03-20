@@ -43,7 +43,7 @@ private:
 	void UpdateAnimations(GameObject *gameObject);
 
 	std::list<AnimationInterpolation*> animationInterpolations;
-
+	int t = 0;
 };
 
 

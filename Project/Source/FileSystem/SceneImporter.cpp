@@ -271,7 +271,10 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
 			
 			Clip* clip = new Clip(clipName + parsedI, animation);
-			
+			clip->setEndIndex(250);
+			clip->setBeginIndex(0);
+			clip->loop = true;
+
 			resourceStateMachine->AddState(stateName + parsedI, clip); 
 		}
 
@@ -299,7 +302,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		animationComponent->stateMachineResource = resourceStateMachine;
 		
 	
-		animationComponent->SendTrigger(tName1);
+		//animationComponent->SendTrigger(tName1);
 		//animationComponent->SendTrigger(tName2);
 		
 		//resourceStateMachine.ChangeState(tName1);
