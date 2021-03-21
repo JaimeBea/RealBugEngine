@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
+#include "Utils/FileDialog.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
@@ -38,7 +39,7 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
-#include "Utils/FileDialog.h"
+
 static aiLogStream logStream = {nullptr, nullptr};
 
 static void AssimpLogCallback(const char* message, char* user) {
@@ -54,6 +55,8 @@ bool ModuleScene::Init() {
 	logStream.callback = AssimpLogCallback;
 	aiAttachLogStream(&logStream);
 #endif
+
+	script.Start();
 
 	return true;
 }

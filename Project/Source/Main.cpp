@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "Brofiler.h"
 
+#include "../SampleTest.h"
+
 #include "Utils/Leaks.h"
 
 enum class MainState {
@@ -27,7 +29,7 @@ int main(int argc, char** argv) {
 
 	// Initialize logging
 	logString = new std::string();
-
+	
 	// Game loop
 	int mainReturn = EXIT_FAILURE;
 	MainState state = MainState::CREATION;
