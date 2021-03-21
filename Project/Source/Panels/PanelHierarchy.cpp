@@ -126,7 +126,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		std::string prafabPayloadType = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(prafabPayloadType.c_str())) {
 			UID prefabId = *(UID*) payload->Data;
-			ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResourceByID(prefabId);
+			ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
 			if (prefab != nullptr) {
 				prefab->BuildPrefab(gameObject);
 			}

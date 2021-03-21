@@ -11,22 +11,6 @@ Resource::Resource(ResourceType type_, UID id_, const char* assetFilePath_, cons
 
 Resource::~Resource() {}
 
-void Resource::IncreaseReferenceCount() {
-	if (referenceCount == 0) {
-		Load();
-	}
-
-	referenceCount += 1;
-}
-
-void Resource::DecreaseReferenceCount() {
-	referenceCount -= 1;
-
-	if (referenceCount == 0) {
-		Unload();
-	}
-}
-
 ResourceType Resource::GetType() const {
 	return type;
 }

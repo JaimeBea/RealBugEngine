@@ -138,7 +138,7 @@ void PanelScene::Update() {
 			std::string payloadType = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadType.c_str())) {
 				UID prefabId = *(UID*) payload->Data;
-				ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResourceByID(prefabId);
+				ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
 				if (prefab != nullptr) {
 					prefab->BuildPrefab(App->scene->scene->root);
 				}

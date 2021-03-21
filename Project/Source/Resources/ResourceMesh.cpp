@@ -15,7 +15,6 @@ void ResourceMesh::Load() {
 	// Timer to measure loading a mesh
 	MSTimer timer;
 	timer.Start();
-
 	std::string filePath = GetResourceFilePath();
 	LOG("Loading mesh from path: \"%s\".", filePath.c_str());
 

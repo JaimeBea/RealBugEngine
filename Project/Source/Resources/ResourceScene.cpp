@@ -26,9 +26,10 @@ void ResourceScene::BuildScene() {
 	// Timer to measure loading a scene
 	MSTimer timer;
 	timer.Start();
+	std::string filePath = GetResourceFilePath();
+	LOG("Builfing scene from path: \"%s\".", filePath.c_str());
 
 	// Read from file
-	std::string filePath = GetResourceFilePath();
 	Buffer<char> buffer = App->files->Load(filePath.c_str());
 
 	if (buffer.Size() == 0) return;

@@ -44,12 +44,16 @@ public:
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
-	Resource* GetResourceByID(UID id) const;
-	std::string GenerateResourcePath(UID id) const;
+	std::vector<Resource*> ImportAsset(const char* filePath);
 
+	Resource* GetResource(UID id) const;
 	AssetFolder* GetRootFolder() const;
 
-	std::vector<Resource*> ImportAsset(const char* filePath);
+	void IncreaseReferenceCount(UID id);
+	void DecreaseReferenceCount(UID id);
+	unsigned GetReferenceCount(UID id) const;
+
+	std::string GenerateResourcePath(UID id) const;
 
 	template<typename T>
 	T* CreateResource(const char* assetFilePath);
@@ -63,6 +67,7 @@ private:
 
 private:
 	std::unordered_map<UID, Resource*> resources;
+	std::unordered_map<UID, unsigned> referenceCounts;
 	AssetFolder* rootFolder = nullptr;
 
 	concurrency::concurrent_queue<ResourceEvent> resourceEventQueue;

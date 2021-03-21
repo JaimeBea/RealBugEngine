@@ -16,12 +16,10 @@ namespace ImGui {
 			std::string payloadType = std::string("_RESOURCE_") + GetResourceTypeName(T::staticType);
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadType.c_str())) {
 				if (*target != 0) {
-					T* oldResource = (T*) App->resources->GetResourceByID(*target);
-					oldResource->DecreaseReferenceCount();
+					App->resources->DecreaseReferenceCount(*target);
 				}
 				*target = *(UID*) payload->Data;
-				T* payloadResource = (T*) App->resources->GetResourceByID(*target);
-				payloadResource->IncreaseReferenceCount();
+				App->resources->IncreaseReferenceCount(*target);
 			}
 			ImGui::EndDragDropTarget();
 		}
@@ -30,4 +28,4 @@ namespace ImGui {
 		std::string text = std::string("Id: ") + std::to_string(*target);
 		ImGui::Text(text.c_str());
 	}
-}
+} // namespace ImGui

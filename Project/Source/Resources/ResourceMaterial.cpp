@@ -29,11 +29,11 @@
 #define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
 
 void ResourceMaterial::Load() {
-	std::string filePath = GetResourceFilePath();
-	LOG("Importing material from path: \"%s\".", filePath);
-
+	// Timer to measure loading a material
 	MSTimer timer;
 	timer.Start();
+	std::string filePath = GetResourceFilePath();
+	LOG("Loading material from path: \"%s\".", filePath.c_str());
 
 	Buffer<char> buffer = App->files->Load(filePath.c_str());
 	if (buffer.Size() == 0) return;
@@ -47,26 +47,36 @@ void ResourceMaterial::Load() {
 	JsonValue jMaterial(document, document);
 
 	shaderId = jMaterial[JSON_TAG_SHADER];
+	App->resources->IncreaseReferenceCount(shaderId);
 
 	hasDiffuseMap = jMaterial[JSON_TAG_HAS_DIFFUSE_MAP];
 	diffuseColor = float4(jMaterial[JSON_TAG_DIFFUSE_COLOR][0], jMaterial[JSON_TAG_DIFFUSE_COLOR][1], jMaterial[JSON_TAG_DIFFUSE_COLOR][2], jMaterial[JSON_TAG_DIFFUSE_COLOR][3]);
 	diffuseMapId = jMaterial[JSON_TAG_DIFFUSE_MAP];
+	App->resources->IncreaseReferenceCount(diffuseMapId);
 
 	hasSpecularMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
 	specularColor = float4(jMaterial[JSON_TAG_SPECULAR_COLOR][0], jMaterial[JSON_TAG_SPECULAR_COLOR][1], jMaterial[JSON_TAG_SPECULAR_COLOR][2], jMaterial[JSON_TAG_SPECULAR_COLOR][3]);
 	specularMapId = jMaterial[JSON_TAG_SPECULAR_MAP];
+	App->resources->IncreaseReferenceCount(specularMapId);
 
 	metallicMapId = jMaterial[JSON_TAG_METALLIC_MAP];
+	App->resources->IncreaseReferenceCount(metallicMapId);
 	normalMapId = jMaterial[JSON_TAG_NORMAL_MAP];
+	App->resources->IncreaseReferenceCount(normalMapId);
 
 	smoothness = jMaterial[JSON_TAG_SMOOTHNESS];
 	hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL];
 
 	unsigned timeMs = timer.Stop();
-	LOG("Material imported in %ums", timeMs);
+	LOG("Material loaded in %ums", timeMs);
 }
 
 void ResourceMaterial::Unload() {
+	App->resources->DecreaseReferenceCount(shaderId);
+	App->resources->DecreaseReferenceCount(diffuseMapId);
+	App->resources->DecreaseReferenceCount(specularMapId);
+	App->resources->DecreaseReferenceCount(metallicMapId);
+	App->resources->DecreaseReferenceCount(normalMapId);
 }
 
 void ResourceMaterial::SaveToFile(const char* filePath) {

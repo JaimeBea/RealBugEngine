@@ -101,7 +101,11 @@ UpdateStatus ModuleResources::Update() {
 		resourceEventQueue.try_pop(resourceEvent);
 		if (resourceEvent.type == ResourceEventType::ADD_RESOURCE) {
 			Resource* resource = (Resource*) resourceEvent.object;
-			resources.emplace(resource->GetId(), resource);
+			UID id = resource->GetId();
+			resources.emplace(id, resource);
+			if (GetReferenceCount(id) > 0) {
+				resource->Load();
+			}
 		} else if (resourceEvent.type == ResourceEventType::REMOVE_RESOURCE) {
 		} else if (resourceEvent.type == ResourceEventType::UPDATE_FOLDERS) {
 			RELEASE(rootFolder);
@@ -125,25 +129,6 @@ bool ModuleResources::CleanUp() {
 	RELEASE(rootFolder);
 
 	return true;
-}
-
-Resource* ModuleResources::GetResourceByID(UID id) const {
-	return resources.find(id) != resources.end() ? resources.at(id) : nullptr;
-}
-
-std::string ModuleResources::GenerateResourcePath(UID id) const {
-	std::string strId = std::to_string(id);
-	std::string metaFolder = DATA_PATH + strId.substr(0, 2);
-
-	if (!App->files->Exists(metaFolder.c_str())) {
-		App->files->CreateFolder(metaFolder.c_str());
-	}
-
-	return metaFolder + "/" + strId;
-}
-
-AssetFolder* ModuleResources::GetRootFolder() const {
-	return rootFolder;
 }
 
 std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
@@ -181,7 +166,7 @@ std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
 		for (unsigned i = 0; i < jResources.Size(); ++i) {
 			JsonValue jResource = jResources[i];
 			UID id = jResource[JSON_TAG_ID];
-			if (GetResourceByID(id) == nullptr) {
+			if (GetResource(id) == nullptr) {
 				std::string typeName = jResource[JSON_TAG_TYPE];
 				ResourceType type = GetResourceTypeFromName(typeName.c_str());
 				CreateResourceByTypeAndID(type, id, filePath);
@@ -227,10 +212,62 @@ std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
 
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	for (unsigned i = 0; i < jResources.Size(); ++i) {
-		resources.push_back(GetResourceByID(jResources[i][JSON_TAG_ID]));
+		resources.push_back(GetResource(jResources[i][JSON_TAG_ID]));
 	}
 
 	return resources;
+}
+
+Resource* ModuleResources::GetResource(UID id) const {
+	return resources.find(id) != resources.end() ? resources.at(id) : nullptr;
+}
+
+AssetFolder* ModuleResources::GetRootFolder() const {
+	return rootFolder;
+}
+
+void ModuleResources::IncreaseReferenceCount(UID id) {
+	if (id == 0) return;
+
+	if (referenceCounts.find(id) != referenceCounts.end()) {
+		referenceCounts[id] = referenceCounts[id] + 1;
+	} else {
+		Resource* resource = GetResource(id);
+		if (resource != nullptr) {
+			resource->Load();
+		}
+		referenceCounts[id] = 1;
+	}
+}
+
+void ModuleResources::DecreaseReferenceCount(UID id) {
+	if (id == 0) return;
+
+	if (referenceCounts.find(id) != referenceCounts.end()) {
+		referenceCounts[id] = referenceCounts[id] - 1;
+		if (referenceCounts[id] <= 0) {
+			Resource* resource = GetResource(id);
+			if (resource != nullptr) {
+				resource->Unload();
+			}
+			referenceCounts.erase(id);
+		}
+	}
+}
+
+unsigned ModuleResources::GetReferenceCount(UID id) const {
+	return referenceCounts.find(id) != referenceCounts.end() ? referenceCounts.at(id) : 0;
+}
+
+std::string ModuleResources::GenerateResourcePath(UID id) const {
+	std::string strId = std::to_string(id);
+	std::string metaFolder = DATA_PATH + strId.substr(0, 2);
+
+	if (!App->files->Exists(metaFolder.c_str())) {
+		App->files->CreateFolder(metaFolder.c_str());
+	}
+
+	return metaFolder + "/" + strId;
 }
 
 void ModuleResources::UpdateAsync() {

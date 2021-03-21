@@ -10,9 +10,6 @@ public:
 	Resource(ResourceType type, UID id, const char* assetFilePath, const char* resourceFilePath);
 	virtual ~Resource();
 
-	void IncreaseReferenceCount();
-	void DecreaseReferenceCount();
-
 	ResourceType GetType() const;
 
 	UID GetId() const;
@@ -28,5 +25,4 @@ private:
 	UID id = 0;
 	std::string assetFilePath = "";
 	std::string resourceFilePath = "";
-	int referenceCount = 0;
 };

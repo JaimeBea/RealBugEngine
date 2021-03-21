@@ -52,7 +52,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
 
 	if (ImGui::TreeNode("Mesh")) {
-		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResourceByID(meshId);
+		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshId);
 		if (mesh != nullptr) {
 			ImGui::TextColored(App->editor->titleColor, "Geometry");
 			ImGui::TextWrapped("Num Vertices: ");
@@ -74,11 +74,11 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	}
 
 	if (ImGui::TreeNode("Material")) {
-		ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResourceByID(materialId);
+		ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
 		if (material != nullptr) {
 			ImGui::ResourceSlot<ResourceShader>("Shader", &material->shaderId);
 
-			ResourceShader* shader = (ResourceShader*) App->resources->GetResourceByID(material->shaderId);
+			ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
 			if (shader != nullptr) {
 				if (shader->GetShaderType() == ShaderType::PHONG) {
 					// Diffuse Texture Combo
@@ -235,7 +235,9 @@ void ComponentMeshRenderer::Save(JsonValue jComponent) const {
 
 void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	meshId = jComponent[JSON_TAG_MESH_ID];
+	if (meshId != 0) App->resources->IncreaseReferenceCount(meshId);
 	materialId = jComponent[JSON_TAG_MATERIAL_ID];
+	if (materialId != 0) App->resources->IncreaseReferenceCount(materialId);
 }
 
 void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
@@ -247,13 +249,13 @@ void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActiveInHierarchy()) return;
 
-	ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResourceByID(meshId);
+	ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshId);
 	if (mesh == nullptr) return;
 
-	ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResourceByID(materialId);
+	ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
 	if (material == nullptr) return;
 
-	ResourceShader* shader = (ResourceShader*) App->resources->GetResourceByID(material->shaderId);
+	ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
 	if (shader == nullptr) return;
 
 	unsigned program = shader->GetShaderProgram();
@@ -263,9 +265,9 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	unsigned glTextureDiffuse = 0;
 	unsigned glTextureSpecular = 0;
 
-	ResourceTexture* diffuse = (ResourceTexture*) App->resources->GetResourceByID(material->diffuseMapId);
+	ResourceTexture* diffuse = (ResourceTexture*) App->resources->GetResource(material->diffuseMapId);
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-	ResourceTexture* specular = (ResourceTexture*) App->resources->GetResourceByID(material->specularMapId);
+	ResourceTexture* specular = (ResourceTexture*) App->resources->GetResource(material->specularMapId);
 	glTextureSpecular = specular ? specular->glTexture : 0;
 
 	ComponentLight* directionalLight = nullptr;
