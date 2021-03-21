@@ -58,7 +58,8 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	*((unsigned*) cursor) = mesh->numBones;
 	cursor += sizeof(unsigned);
 
-	std::vector<Mesh::Attach> attaches = std::vector<Mesh::Attach>(mesh->numVertices);
+	std::vector<Mesh::Attach> attaches;
+	attaches.resize(mesh->numVertices);
 	for (unsigned i = 0; i < assimpMesh->mNumBones; ++i) {
 		aiBone* aiBone = assimpMesh->mBones[i];
 
@@ -107,8 +108,6 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 			attaches[vtxWeight.mVertexId].numBones++;
 		}
 	}
-
-	if (assimpMesh->mNumBones == 0) attaches.clear();
 
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
 		aiVector3D& vertex = assimpMesh->mVertices[i];
@@ -328,7 +327,7 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*) 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*) positionSize);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexSize, (void*) (positionSize + normalSize));
-	glVertexAttribPointer(3, 4, GL_UNSIGNED_INT, GL_FALSE, vertexSize, (void*) (positionSize + normalSize + uvSize));
+	glVertexAttribIPointer(3, 4, GL_UNSIGNED_INT, vertexSize, (void*) (positionSize + normalSize + uvSize));
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, vertexSize, (void*) (positionSize + normalSize + uvSize + bonesIDSize));
 
 	// Unbind VAO

@@ -13,7 +13,7 @@ public:
 	};
 
 	struct Attach {
-		unsigned numBones = 0;
+		unsigned numBones = 0u;
 		unsigned bones[4] = {0u, 0u, 0u, 0u};
 		float weights[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 	};

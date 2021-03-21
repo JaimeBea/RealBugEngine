@@ -252,19 +252,21 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 
 void ComponentMeshRenderer::Init() {
 	palette.resize(mesh->numBones);
-	for (unsigned i = 0; i < mesh->numBones; ++i) {
-
-		palette[i] = float4x4::identity;
-	}
 }
 
 void ComponentMeshRenderer::Update() {
-
-	/*for (unsigned i = 0; i < mesh->numBones; ++i) {
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
 		const GameObject* bone = goBones.at(mesh->bones[i].boneName);
-
-		palette[i] = float4x4::identity; //bone ? bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform : float4x4::identity;
-	}*/
+		
+		if (bone) {
+			const GameObject* parent = GetOwner().GetParent();
+			const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
+			const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+			palette[i] = bone ? invertedRootBoneTransform * bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform : float4x4::identity;
+		} else {
+			palette[i] = float4x4::identity;
+		}
+	}
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
@@ -314,8 +316,6 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	// TODO: Recache the Bones?
 	MeshImporter::UnloadMesh(mesh);
 	MeshImporter::LoadMesh(mesh, goBones);
-
-
 
 	// TODO: Load using Material Importer
 
@@ -737,7 +737,6 @@ void ComponentMeshRenderer::SkinningCPU() {
 		vertices[i + 0] = resPosition.x;
 		vertices[i + 1] = resPosition.y;
 		vertices[i + 2] = resPosition.z;
-
 
 		// Normal
 		resNormal.Normalize();
