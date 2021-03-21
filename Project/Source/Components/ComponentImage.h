@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
-#include "Math/float4x4.h"
 #include <Resources/Texture.h>
+#include "ComponentTransform2D.h"
 
 class ComponentImage : public Component {
 public:
@@ -12,7 +12,7 @@ public:
 	void Init() override;
 	void Update() override;
 
-	void Draw(const float4x4& modelMatrix);
+	void Draw(ComponentTransform2D* transform);
 	void SetTexture(Texture* text);
 
 private:

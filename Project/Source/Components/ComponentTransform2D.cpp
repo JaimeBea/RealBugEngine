@@ -4,6 +4,7 @@
 #include "Modules/ModuleDebugDraw.h"
 #include "debugdraw.h"
 #include "imgui.h"
+#include "Math/TransformOps.h"
 
 void ComponentTransform2D::Update() {
 	//dd::plane(vec(0,0,0))
@@ -72,7 +73,6 @@ void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	anchorY = anchorY_;
 }
 
-float4x4 ComponentTransform2D::GetGlobalMatrix() {
-
-	return float4x4::FromTRS(position, rotation, scale);
+const float4x4 ComponentTransform2D::GetGlobalMatrix() {
+	return float4x4::FromTRS(position, rotation, vec(scale.x*size.x, scale.y*size.y, 0));
 }

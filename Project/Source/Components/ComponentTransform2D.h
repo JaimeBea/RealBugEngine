@@ -19,12 +19,12 @@ public:
 	void SetScale(float3 scale);
 	void SetAnchorX(float2 anchorX);
 	void SetAnchorY(float2 anchorY);
-	float4x4 GetGlobalMatrix();
+	const float4x4 GetGlobalMatrix();
 
 private:
 	float3 position = float3::zero;			// The offset position
 	float2 pivot	= float2(0.5, 0.5);		// The position of the pivot
-	float2 size		= float2::zero;			// The size of the item
+	float2 size		= float2::one;			// The size of the item
 
 	Quat rotation	= Quat::identity;		// The rotation of the element
 	float3 scale	= float3::one;			// The scale of the element

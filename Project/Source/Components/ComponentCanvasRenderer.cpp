@@ -12,7 +12,7 @@ void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 
 	ComponentImage* componentImage = gameObject->GetComponent<ComponentImage>();
 	if (componentImage != nullptr) {
-		componentImage->Draw(transform2D->GetGlobalMatrix());
+		componentImage->Draw(transform2D);
 	}
 
 	/*ComponentText* componentText = gameObject->GetComponent<componentText>();
