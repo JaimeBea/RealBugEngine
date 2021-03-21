@@ -133,9 +133,6 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 
 		float weight = attaches[i].weights[0] + attaches[i].weights[1] + attaches[i].weights[2] + attaches[i].weights[3];
 
-		//*((unsigned*) cursor) = attaches[i].numBones;
-		//cursor += sizeof(unsigned);
-
 		*((unsigned*) cursor) = attaches[i].bones[0];
 		cursor += sizeof(unsigned);
 		*((unsigned*) cursor) = attaches[i].bones[1];
@@ -282,20 +279,6 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 	mesh->vertices = (float*) malloc(vertexBufferSize);
 	memcpy_s(mesh->vertices, vertexBufferSize, (float*) cursor, vertexBufferSize);
 	cursor += vertexBufferSize;
-
-	// TODO: DELETE when finished skinning GPU and validated
-	mesh->attaches.resize(mesh->numVertices);
-	for (unsigned i = 0; i < mesh->numVertices; ++i) {
-		mesh->attaches[i].bones[0] = mesh->vertices[8 * i + 8];
-		mesh->attaches[i].bones[1] = mesh->vertices[8 * i + 9];
-		mesh->attaches[i].bones[2] = mesh->vertices[8 * i + 10];
-		mesh->attaches[i].bones[3] = mesh->vertices[8 * i + 11];
-
-		mesh->attaches[i].weights[0] = mesh->vertices[8 * i + 12];
-		mesh->attaches[i].weights[1] = mesh->vertices[8 * i + 13];
-		mesh->attaches[i].weights[2] = mesh->vertices[8 * i + 14];
-		mesh->attaches[i].weights[3] = mesh->vertices[8 * i + 15];
-	}
 
 	// Indices
 	unsigned* indices = (unsigned*) cursor;
