@@ -22,7 +22,7 @@
 
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
-#define JSON_TAG_ID "ID"
+#define JSON_TAG_ID "Id"
 
 bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 	LOG("Importing Shader from path: \"%s\".", filePath);

@@ -8,14 +8,10 @@
 
 #include "rapidjson/error/en.h"
 
-#define JSON_TAG_GAMEOBJECTS "GameObjects"
-#define JSON_TAG_ROOT_ID "RootId"
+#define JSON_TAG_ROOT "Root"
 #define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
-#define JSON_TAG_ID "Id"
-#define JSON_TAG_NAME "Name"
-#define JSON_TAG_PARENT_ID "ParentId"
 
 void ResourceScene::BuildScene() {
 	// Clear scene
@@ -27,7 +23,7 @@ void ResourceScene::BuildScene() {
 	MSTimer timer;
 	timer.Start();
 	std::string filePath = GetResourceFilePath();
-	LOG("Builfing scene from path: \"%s\".", filePath.c_str());
+	LOG("Building scene from path: \"%s\".", filePath.c_str());
 
 	// Read from file
 	Buffer<char> buffer = App->files->Load(filePath.c_str());
@@ -44,39 +40,13 @@ void ResourceScene::BuildScene() {
 	JsonValue jScene(document, document);
 
 	// Load GameObjects
-	JsonValue jGameObjects = jScene[JSON_TAG_GAMEOBJECTS];
-	unsigned numGameObjects = jGameObjects.Size();
-	Buffer<GameObject*> gameObjects(numGameObjects);
-	for (unsigned i = 0; i < numGameObjects; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-
-		GameObject* gameObject = scene->gameObjects.Obtain();
-		gameObject->scene = scene;
-		gameObject->Load(jGameObject);
-		gameObjects[i] = gameObject;
-	}
-
-	// Post-load
-	scene->root = scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
-	for (unsigned i = 0; i < numGameObjects; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-		GameObject* gameObject = gameObjects[i];
-
-		UID id = gameObject->GetID();
-		std::string name = jGameObject[JSON_TAG_NAME];
-		UID parentId = jGameObject[JSON_TAG_PARENT_ID];
-		gameObject->id = id;
-		gameObject->name = name;
-		scene->gameObjectsIdMap[id] = gameObject;
-		gameObject->SetParent(scene->GetGameObject(parentId));
-	}
-
-	// Init components
-	for (unsigned i = 0; i < numGameObjects; ++i) {
-		GameObject* gameObject = gameObjects[i];
-
-		gameObject->InitComponents();
-	}
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	GameObject* root = scene->gameObjects.Obtain();
+	scene->root = root;
+	root->scene = scene;
+	root->Load(jRoot);
+	scene->gameObjectsIdMap[root->GetID()] = root;
+	root->InitComponents();
 
 	// Quadtree generation
 	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];

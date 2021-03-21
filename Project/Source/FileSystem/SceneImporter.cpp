@@ -11,6 +11,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
+#include "Modules/ModuleScene.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -18,11 +19,19 @@
 
 #include "Utils/Leaks.h"
 
+
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
-#define JSON_TAG_ID "ID"
+#define JSON_TAG_ID "Id"
+#define JSON_TAG_ROOT "Root"
+#define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
+#define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
+#define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
 
 bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
+	// Timer to measure importing a scene
+	MSTimer timer;
+	timer.Start();
 	LOG("Importing scene from path: \"%s\".", filePath);
 
 	// Read from file
@@ -56,6 +65,40 @@ bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 
 	// Save to file
 	App->files->Save(scene->GetResourceFilePath().c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
+
+	unsigned timeMs = timer.Stop();
+	LOG("Scene imported in %ums", timeMs);
+	return true;
+}
+
+bool SceneImporter::SaveScene(const char* filePath) {
+	// Create document
+	rapidjson::Document document;
+	document.SetObject();
+	JsonValue jScene(document, document);
+
+	// Save scene information
+	Scene* scene = App->scene->scene;
+	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
+	jQuadtreeBounds[0] = scene->quadtreeBounds.minPoint.x;
+	jQuadtreeBounds[1] = scene->quadtreeBounds.minPoint.y;
+	jQuadtreeBounds[2] = scene->quadtreeBounds.maxPoint.x;
+	jQuadtreeBounds[3] = scene->quadtreeBounds.maxPoint.y;
+	jScene[JSON_TAG_QUADTREE_MAX_DEPTH] = scene->quadtreeMaxDepth;
+	jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = scene->quadtreeElementsPerNode;
+
+	// Save GameObjects
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	scene->root->Save(jRoot);
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Save to file
+	App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
+
 	return true;
 }
 

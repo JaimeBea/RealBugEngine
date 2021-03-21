@@ -35,7 +35,7 @@
 
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
-#define JSON_TAG_ID "ID"
+#define JSON_TAG_ID "Id"
 #define JSON_TAG_TIMESTAMP "Timestamp"
 
 AssetFile::AssetFile(const char* path_)
@@ -131,8 +131,8 @@ bool ModuleResources::CleanUp() {
 	return true;
 }
 
-std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
-	std::vector<Resource*> resources;
+std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
+	std::vector<UID> resources;
 
 	if (!App->files->Exists(filePath)) return resources;
 
@@ -173,7 +173,6 @@ std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
 			}
 		}
 	} else {
-		bool validResourceFiles = true;
 		UID id;
 		if (App->files->Exists(metaFilePath.c_str())) {
 			ReadMetaFile(metaFilePath.c_str(), document);
@@ -212,7 +211,7 @@ std::vector<Resource*> ModuleResources::ImportAsset(const char* filePath) {
 
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	for (unsigned i = 0; i < jResources.Size(); ++i) {
-		resources.push_back(GetResource(jResources[i][JSON_TAG_ID]));
+		resources.push_back(jResources[i][JSON_TAG_ID]);
 	}
 
 	return resources;
@@ -261,7 +260,7 @@ unsigned ModuleResources::GetReferenceCount(UID id) const {
 
 std::string ModuleResources::GenerateResourcePath(UID id) const {
 	std::string strId = std::to_string(id);
-	std::string metaFolder = DATA_PATH + strId.substr(0, 2);
+	std::string metaFolder = std::string(LIBRARY_PATH "/") + strId.substr(0, 2);
 
 	if (!App->files->Exists(metaFolder.c_str())) {
 		App->files->CreateFolder(metaFolder.c_str());
@@ -358,10 +357,10 @@ void ModuleResources::CheckForNewAssetsRecursive(const char* path, AssetFolder* 
 			assetFolder->folders.push_back(AssetFolder(filePath.c_str()));
 			CheckForNewAssetsRecursive(filePath.c_str(), &assetFolder->folders.back());
 		} else if (extension != META_EXTENSION) {
-			std::vector<Resource*> resources = ImportAsset(filePath.c_str());
+			std::vector<UID>& resourceIds = ImportAsset(filePath.c_str());
 			if (!resources.empty()) {
 				AssetFile assetFile(filePath.c_str());
-				assetFile.files = std::move(resources);
+				assetFile.resourceIds = std::move(resourceIds);
 				assetFolder->files.push_back(std::move(assetFile));
 			}
 		}

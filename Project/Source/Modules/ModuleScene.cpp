@@ -61,9 +61,8 @@ bool ModuleScene::Init() {
 
 bool ModuleScene::Start() {
 	App->eventSystem->AddObserverToEvent(Event::EventType::GAMEOBJECT_DESTROYED, this);
-	App->files->CreateFolder("Library");
+	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
-	App->files->CreateFolder(MESHES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
 	CreateEmptyScene();

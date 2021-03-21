@@ -18,7 +18,7 @@
 
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
-#define JSON_TAG_ID "ID"
+#define JSON_TAG_ID "Id"
 
 bool TextureImporter::ImportTexture(const char* filePath, JsonValue jMeta) {
 	LOG("Importing texture from path: \"%s\".", filePath);

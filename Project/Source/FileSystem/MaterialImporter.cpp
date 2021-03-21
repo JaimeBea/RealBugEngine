@@ -20,7 +20,7 @@
 
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
-#define JSON_TAG_ID "ID"
+#define JSON_TAG_ID "Id"
 
 bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	LOG("Importing material from path: \"%s\".", filePath);

@@ -99,10 +99,11 @@ void PanelProject::UpdateResourcesRecursive(const AssetFolder& folder) {
 		for (const AssetFile& assetFile : folder.files) {
 			if (assetFile.path != selectedAsset) continue;
 
-			for (const Resource* resource : assetFile.files) {
+			for (UID resourceId : assetFile.resourceIds) {
+				Resource* resource = App->resources->GetResource(resourceId);
 				if (resource == nullptr) continue;
 
-				std::string resourceName = std::to_string(resource->GetId());
+				std::string resourceName = std::to_string(resourceId);
 				std::string resourceTypeName = GetResourceTypeName(resource->GetType());
 				std::string name = std::string(ICON_FA_FILE " ") + "[" + resourceTypeName + "] " + resourceName.c_str();
 
@@ -113,8 +114,7 @@ void PanelProject::UpdateResourcesRecursive(const AssetFolder& folder) {
 
 				if (ImGui::BeginDragDropSource()) {
 					std::string payloadType = std::string("_RESOURCE_") + resourceTypeName;
-					UID id = resource->GetId();
-					ImGui::SetDragDropPayload(payloadType.c_str(), &id, sizeof(UID));
+					ImGui::SetDragDropPayload(payloadType.c_str(), &resourceId, sizeof(UID));
 					ImGui::EndDragDropSource();
 				}
 			}

@@ -15,7 +15,7 @@ struct AssetFile {
 	AssetFile(const char* path);
 
 	std::string path;
-	std::vector<Resource*> files;
+	std::vector<UID> resourceIds;
 };
 
 struct AssetFolder {
@@ -44,7 +44,7 @@ public:
 	UpdateStatus Update() override;
 	bool CleanUp() override;
 
-	std::vector<Resource*> ImportAsset(const char* filePath);
+	std::vector<UID> ImportAsset(const char* filePath);
 
 	Resource* GetResource(UID id) const;
 	AssetFolder* GetRootFolder() const;
