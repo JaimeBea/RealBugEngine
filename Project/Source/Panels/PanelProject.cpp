@@ -103,12 +103,20 @@ void PanelProject::UpdateResourcesRecursive(const AssetFolder& folder) {
 				if (resource == nullptr) continue;
 
 				std::string resourceName = std::to_string(resource->GetId());
-				std::string name = std::string(ICON_FA_FILE " ") + "[" + GetResourceTypeName(resource->GetType()) + "] " + resourceName.c_str();
+				std::string resourceTypeName = GetResourceTypeName(resource->GetType());
+				std::string name = std::string(ICON_FA_FILE " ") + "[" + resourceTypeName + "] " + resourceName.c_str();
 
 				ImGuiSelectableFlags flags = ImGuiSelectableFlags_None;
 				ImGui::PushID(resourceName.c_str());
 				ImGui::Selectable(name.c_str(), flags);
 				ImGui::PopID();
+
+				if (ImGui::BeginDragDropSource()) {
+					std::string payloadType = std::string("_RESOURCE_") + resourceTypeName;
+					UID id = resource->GetId();
+					ImGui::SetDragDropPayload(payloadType.c_str(), &id, sizeof(UID));
+					ImGui::EndDragDropSource();
+				}
 			}
 		}
 	} else {

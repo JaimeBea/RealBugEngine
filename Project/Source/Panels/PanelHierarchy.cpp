@@ -4,8 +4,10 @@
 #include "Utils/Logging.h"
 #include "GameObject.h"
 #include "Components/ComponentTransform.h"
+#include "Resources/ResourcePrefab.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleResources.h"
 
 #include "imgui.h"
 #include "IconsFontAwesome5.h"
@@ -85,14 +87,18 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	}
 
 	if (ImGui::BeginDragDropSource()) {
-		ImGui::SetDragDropPayload("_HIERARCHY", gameObject, sizeof(GameObject*));
+		UID id = gameObject->GetID();
+		ImGui::SetDragDropPayload("_HIERARCHY", &id, sizeof(UID));
 		ImGui::EndDragDropSource();
 	}
 
 	if (ImGui::BeginDragDropTarget()) {
+		// Hierarchy movements
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_HIERARCHY")) {
-			if (!gameObject->IsDescendantOf(App->editor->selectedGameObject)) {
-				ComponentTransform* transform = App->editor->selectedGameObject->GetComponent<ComponentTransform>();
+			UID payloadGameObjectId = *(UID*) payload->Data;
+			GameObject* payloadGameObject = App->scene->scene->GetGameObject(payloadGameObjectId);
+			if (!gameObject->IsDescendantOf(payloadGameObject)) {
+				ComponentTransform* transform = payloadGameObject->GetComponent<ComponentTransform>();
 				ComponentTransform* parentTransform = gameObject->GetComponent<ComponentTransform>();
 				// Recompute local matrix to maintain global position
 				// 1. Get current matrix
@@ -110,9 +116,19 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				// 3. New local matrix
 				transform->SetTRS(parentGlobalMatrix * childGlobalMatrix);
 
-				App->editor->selectedGameObject->SetParent(gameObject);
+				payloadGameObject->SetParent(gameObject);
 				transform->InvalidateHierarchy();
 				transform->CalculateGlobalMatrix();
+			}
+		}
+
+		// Prefabs
+		std::string prafabPayloadType = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(prafabPayloadType.c_str())) {
+			UID prefabId = *(UID*) payload->Data;
+			ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResourceByID(prefabId);
+			if (prefab != nullptr) {
+				prefab->BuildPrefab(gameObject);
 			}
 		}
 		ImGui::EndDragDropTarget();

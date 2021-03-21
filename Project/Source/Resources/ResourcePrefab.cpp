@@ -8,7 +8,7 @@
 
 #include "rapidjson/error/en.h"
 
-#define JSON_TAG_ROOT "GameObjects"
+#define JSON_TAG_ROOT "Root"
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_PARENT_INDEX "ParentIndex"
 
@@ -38,6 +38,9 @@ void ResourcePrefab::BuildPrefab(GameObject* parent) {
 	GameObject* gameObject = scene->gameObjects.Obtain();
 	gameObject->scene = scene;
 	gameObject->LoadPrototype(jRoot);
+	gameObject->id = GenerateUID();
+	scene->gameObjectsIdMap[gameObject->GetID()] = gameObject;
+	gameObject->SetParent(parent);
 	gameObject->InitComponents();
 
 	unsigned timeMs = timer.Stop();
