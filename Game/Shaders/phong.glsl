@@ -20,8 +20,9 @@ out vec2 uv;
 void main() {
 	mat4 skinT = palette[boneIndices[0]] * boneWeitghts[0] + palette[boneIndices[1]] * boneWeitghts[1]
 	+ palette[boneIndices[2]] * boneWeitghts[2] + palette[boneIndices[3]] * boneWeitghts[3];
+	skinT = mat4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 	vec4 position = skinT * vec4(pos, 1.0);
-	vec4 normal = skinT * vec4(norm, 1.0);
+	vec4 normal = skinT * vec4(norm, 0.0);
 
 	gl_Position = proj * view * model * position;
 	fragNormal = transpose(inverse(mat3(model))) * normal.xyz;

@@ -34,12 +34,14 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
 	unsigned uvSize = sizeof(float) * 2;
+	unsigned bonesIDSize = sizeof(unsigned) * 4;
+	unsigned weightsSize = sizeof(float) * 4;
 	unsigned indexSize = sizeof(unsigned);
 	unsigned attachSize = sizeof(Mesh::Attach);
-	unsigned boneSize = sizeof(Mesh::Bone);
+	unsigned boneSize = sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
 
 	unsigned headerSize = sizeof(unsigned) * 3;
-	unsigned vertexSize = positionSize + normalSize + uvSize;
+	unsigned vertexSize = positionSize + normalSize + uvSize + bonesIDSize + weightsSize;
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
 	unsigned bonesBufferSize = boneSize * mesh->numBones;
@@ -64,7 +66,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 		cursor += sizeof(unsigned);
 
 		memcpy_s(cursor, aiBone->mName.length * sizeof(char), aiBone->mName.data, aiBone->mName.length * sizeof(char));
-		cursor += aiBone->mName.length * sizeof(char);
+		cursor += FILENAME_MAX * sizeof(char);
 
 		//Transform
 		aiVector3D position, scaling;
@@ -238,14 +240,14 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 		char* name = (char*) malloc((lengthName + 1) * sizeof(char));
 
 		memcpy_s(name, lengthName * sizeof(char), cursor, lengthName * sizeof(char));
-		cursor += lengthName * sizeof(char);
+		cursor += FILENAME_MAX * sizeof(char);
 
 		name[lengthName] = '\0';
 
 		// Init the bones map only with the Key. In the scene importer, add the pointers to the GameObject-Bone.
 		bones.emplace(name, nullptr);
 
-		//Position
+		// Translation
 		position.x = *((float*) cursor);
 		cursor += sizeof(float);
 		position.y = *((float*) cursor);
@@ -353,10 +355,11 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 	// Bones
 	for (unsigned i = 0; i < numBones; i++) {
-		unsigned lengthName = *((unsigned*) cursor);
+		// filename size
 		cursor += sizeof(unsigned);
-
-		cursor += lengthName * sizeof(char);
+		// filename
+		cursor += FILENAME_MAX * sizeof(char);
+		// translation, scaling, rotation
 		cursor += sizeof(float) * 10;
 	}
 

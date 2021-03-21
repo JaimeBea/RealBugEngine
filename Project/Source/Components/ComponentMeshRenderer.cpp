@@ -252,15 +252,19 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 
 void ComponentMeshRenderer::Init() {
 	palette.resize(mesh->numBones);
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+
+		palette[i] = float4x4::identity;
+	}
 }
 
 void ComponentMeshRenderer::Update() {
 
-	for (unsigned i = 0; i < mesh->numBones; ++i) {
+	/*for (unsigned i = 0; i < mesh->numBones; ++i) {
 		const GameObject* bone = goBones.at(mesh->bones[i].boneName);
 
-		palette[i] = bone ? bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform : float4x4::identity;
-	}
+		palette[i] = float4x4::identity; //bone ? bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform : float4x4::identity;
+	}*/
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
@@ -375,7 +379,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 		SkinningCPU();
 	}*/
 
-	unsigned program = App->programs->phongPbrProgram;
+	unsigned program = App->programs->defaultProgram;
 
 	float4x4 viewMatrix = App->camera->GetViewMatrix();
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
