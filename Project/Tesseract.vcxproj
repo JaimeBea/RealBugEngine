@@ -14,7 +14,11 @@
     <ClInclude Include="Source\UI\EventSystem\Interfaces\IMoveHandler.h" />
     <ClInclude Include="Source\UI\EventSystem\Interfaces\IPointerEnterHandler.h" />
     <ClInclude Include="Source\UI\EventSystem\Interfaces\IPointerExitHandler.h" />
+    <ClInclude Include="Source\Components\ComponentCanvas.h" />
+    <ClInclude Include="Source\Components\ComponentCanvasRenderer.h" />
     <ClInclude Include="Source\UI\FontImporter.h" />
+    <ClInclude Include="Source\Components\ComponentImage.h" />
+    <ClInclude Include="Source\Components\ComponentTransform2D.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
     <ClInclude Include="Libs\imgui\imgui_utils.h" />
@@ -169,7 +173,11 @@
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Components\ComponentCanvas.cpp" />
+    <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />
     <ClCompile Include="Source\UI\FontImporter.cpp" />
+    <ClCompile Include="Source\Components\ComponentImage.cpp" />
+    <ClCompile Include="Source\Components\ComponentTransform2D.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_dir.c" />
@@ -296,6 +304,8 @@
     <None Include="..\Game\Shaders\phong_vertex.glsl" />
     <None Include="..\Game\Shaders\skybox_fragment.glsl" />
     <None Include="..\Game\Shaders\skybox_vertex.glsl" />
+    <None Include="..\Game\Shaders\ui_fragment.glsl" />
+    <None Include="..\Game\Shaders\ui_vertex.glsl" />
     <None Include="..\LICENSE" />
     <None Include="..\PackageEngine.bat" />
     <None Include="..\PackageEngine.ps1" />

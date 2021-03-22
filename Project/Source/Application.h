@@ -23,6 +23,8 @@ class ComponentEventSystem;
 class ModuleUserInterface;
 
 struct Event;
+
+
 class Application {
 public:
 	Application();
@@ -49,6 +51,7 @@ public:
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
 	ModuleUserInterface* userInterface = nullptr;
+
 	// Application Configuration
 
 	char appName[20] = "Tesseract";

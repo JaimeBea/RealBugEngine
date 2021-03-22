@@ -14,6 +14,10 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentCanvas.h"
+#include "Components/ComponentCanvasRenderer.h"
+#include "Components/ComponentTransform2D.h"
+#include "Components/ComponentImage.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -21,6 +25,8 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
+
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -69,6 +75,32 @@ bool ModuleScene::Start() {
 	CreateEmptyScene();
 
 	SceneImporter::LoadScene("survival_shooter");
+
+	GameObject* canvas = gameObjects.Obtain();
+	canvas->CreateComponent<ComponentCanvas>();
+	canvas->CreateComponent<ComponentTransform>();
+	canvas->name = "canvas";
+
+	GameObject* canvasRenderer = gameObjects.Obtain();
+	canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
+	canvasRenderer->CreateComponent<ComponentTransform>();
+	canvasRenderer->CreateComponent<ComponentTransform2D>();
+	canvasRenderer->CreateComponent<ComponentImage>();
+	//Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
+	Texture* lenna = TextureImporter::ImportTexture("C:/Users/mange/Desktop/sp.jpg");
+	TextureImporter::LoadTexture(lenna);
+	canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
+	canvasRenderer->name = "canvas renderer";
+
+	canvas->AddChild(canvasRenderer);
+
+	root->AddChild(canvas);
+	App->userInterface->canvas = canvas;
+
+	canvas->Init();
+	canvas->InitComponents();
+	canvasRenderer->Init();
+	canvasRenderer->InitComponents();
 
 	// Load skybox
 	// clang-format off

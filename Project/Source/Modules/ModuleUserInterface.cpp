@@ -1,6 +1,9 @@
 #include "ModuleUserInterface.h"
 #include "Application.h"
 #include "ModuleFiles.h"
+#include "Resources/GameObject.h"
+#include "Components/ComponentCanvas.h"
+
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 void ModuleUserInterface::AddFont(std::string fontPath) {
@@ -34,4 +37,22 @@ void ModuleUserInterface::GetCharactersInString(std::string font, std::string se
 	for (std::string::const_iterator i = sentence.begin(); i != sentence.end(); ++i) {
 		charsInSentence.push_back(fonts[font][*i]);
 	}
+}
+
+void ModuleUserInterface::Render() {
+	//GameObject* canvasRenderer = canvas->GetChildren()[0];
+	if (canvas != nullptr) {
+		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
+		canvas->GetComponent<ComponentCanvas>()->Render();
+	}
+}
+
+void ModuleUserInterface::StartUI() {
+}
+
+void ModuleUserInterface::EndUI() {
+}
+
+GameObject* ModuleUserInterface::GetCanvas() const {
+	return canvas;
 }

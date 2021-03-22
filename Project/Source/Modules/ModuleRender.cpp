@@ -14,6 +14,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModulePrograms.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -174,6 +175,7 @@ UpdateStatus ModuleRender::Update() {
 	// Draw quadtree
 	if (drawQuadtree) {
 		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+		RenderUI();
 	}
 
 	// Draw debug draw
@@ -222,6 +224,19 @@ void ModuleRender::ViewportResized(int width, int height) {
 
 void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
+}
+
+void ModuleRender::EnableOrtographicRender() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+}
+
+void ModuleRender::DisableOrtographicRender() {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	// TODO
+	//gluPerspective()
 }
 
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
@@ -375,4 +390,29 @@ void ModuleRender::DrawSkyBox() {
 
 		glDepthFunc(GL_LESS);
 	}
+}
+
+void ModuleRender::RenderUI() {
+	SetOrtographicRender();
+	App->camera->EnableOrtographic();
+	App->userInterface->Render();
+	App->camera->EnablePerspective();
+	SetPerspectiveRender();
+}
+
+void ModuleRender::SetOrtographicRender() {
+	// ENABLE ORTOGRAPHIC RENDERING
+	glMatrixMode(GL_PROJECTION);
+	//glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void ModuleRender::SetPerspectiveRender() {
+	// DISABLE ORTOGRAPHIC RENDERING
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
 }

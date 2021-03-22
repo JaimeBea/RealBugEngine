@@ -21,8 +21,14 @@ enum class ComponentType {
 	BOUNDING_BOX = 3,
 	CAMERA = 4,
 	LIGHT = 5,
-	SELECTABLE = 6,
-	EVENT_SYSTEM = 7
+
+	UI = 6,
+	CANVAS = 7,
+	CANVASRENDERER = 8,
+	IMAGE = 9,
+	TRANSFORM2D = 10,
+	SELECTABLE = 11,
+	EVENT_SYSTEM = 12
 };
 
 Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active = true);

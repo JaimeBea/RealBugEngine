@@ -58,6 +58,8 @@ public:
 	Frustum* GetActiveFrustum() const;
 	Frustum* GetCullingFrustum() const;
 	const FrustumPlanes& GetFrustumPlanes() const;
+	void EnableOrtographic();
+	void EnablePerspective();
 
 public:
 	float movementSpeed = 0.4f;
@@ -65,6 +67,7 @@ public:
 	float zoomSpeed = 0.001f;
 	float shiftMultiplier = 5.0f;
 	Frustum engineCameraFrustum = Frustum();
+	Frustum editorCameraFrustum = Frustum();
 
 private:
 	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects);
@@ -74,6 +77,7 @@ private:
 
 	Frustum* activeFrustum = &engineCameraFrustum;
 	Frustum* cullingFrustum = &engineCameraFrustum;
+	Frustum* editorFrustum = &editorCameraFrustum;
 
 	FrustumPlanes frustumPlanes = FrustumPlanes();
 };
