@@ -6,7 +6,7 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
-#include "Modules/ModuleUI.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -199,10 +199,10 @@ UpdateStatus ModuleEditor::Update() {
 
 	if (ImGui::BeginMenu("UI Editor")) {
 		if (ImGui::MenuItem("Open")) {
-			App->uiEditor->StartUI();
+			App->userInterface->StartUI();
 		}
 		if (ImGui::MenuItem("Exit")) {
-			App->uiEditor->EndUI();
+			App->userInterface->EndUI();
 		}
 		ImGui::EndMenu();
 	}

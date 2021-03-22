@@ -25,7 +25,8 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
-#include "Modules/ModuleUI.h"
+#include "Modules/ModuleUserInterface.h"
+
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -94,7 +95,7 @@ bool ModuleScene::Start() {
 	canvas->AddChild(canvasRenderer);
 
 	root->AddChild(canvas);
-	App->uiEditor->canvas = canvas;
+	App->userInterface->canvas = canvas;
 
 	canvas->Init();
 	canvas->InitComponents();

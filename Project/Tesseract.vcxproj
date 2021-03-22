@@ -15,7 +15,6 @@
     <ClInclude Include="Source\Components\ComponentCanvasRenderer.h" />
     <ClInclude Include="Source\UI\FontImporter.h" />
     <ClInclude Include="Source\Components\ComponentImage.h" />
-    <ClInclude Include="Source\Modules\ModuleUI.h" />
     <ClInclude Include="Source\Components\ComponentTransform2D.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
@@ -173,7 +172,6 @@
     <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />
     <ClCompile Include="Source\UI\FontImporter.cpp" />
     <ClCompile Include="Source\Components\ComponentImage.cpp" />
-    <ClCompile Include="Source\Modules\ModuleUI.cpp" />
     <ClCompile Include="Source\Components\ComponentTransform2D.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />

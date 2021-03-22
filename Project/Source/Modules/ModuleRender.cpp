@@ -14,7 +14,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModulePrograms.h"
-#include "Modules/ModuleUI.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -180,7 +180,6 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
-
 
 	return UpdateStatus::CONTINUE;
 }
@@ -396,7 +395,7 @@ void ModuleRender::DrawSkyBox() {
 void ModuleRender::RenderUI() {
 	SetOrtographicRender();
 	App->camera->EnableOrtographic();
-	App->uiEditor->Render();
+	App->userInterface->Render();
 	App->camera->EnablePerspective();
 	SetPerspectiveRender();
 }
@@ -412,7 +411,7 @@ void ModuleRender::SetOrtographicRender() {
 
 void ModuleRender::SetPerspectiveRender() {
 	// DISABLE ORTOGRAPHIC RENDERING
- 	glMatrixMode(GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
