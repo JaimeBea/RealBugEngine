@@ -194,6 +194,7 @@ void GameObject::Load(JsonValue jGameObject) {
 		child->Load(jChild);
 		scene->gameObjectsIdMap[child->id] = child;
 		child->SetParent(this);
+		child->InitComponents();
 	}
 }
 
@@ -249,6 +250,7 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		child->id = GenerateUID();
 		scene->gameObjectsIdMap[child->id] = child;
 		child->SetParent(this);
+		child->InitComponents();
 	}
 }
 
