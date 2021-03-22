@@ -5,7 +5,7 @@
 #include "UI/EventSystem/Interfaces/IPointerEnterHandler.h"
 #include "UI/EventSystem/Interfaces/IPointerExitHandler.h"
 #include "UI/EventSystem/Interfaces/IMoveHandler.h"
-class ModuleEventSystem;
+class ComponentEventSystem;
 class Selectable : public Component
 	 {
 public:

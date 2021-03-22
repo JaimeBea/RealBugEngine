@@ -7,7 +7,6 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleUserInterface.h"
-#include "Modules/ModuleEventSystem.h"
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 #include "Brofiler.h"
@@ -104,8 +103,7 @@ UpdateStatus ModuleInput::PreUpdate() {
 			keyboard[event.key.keysym.scancode] = KS_UP;
 			break;
 		case SDL_MOUSEMOTION:
-			//TO DO this probably will be changed to a method inside the scene/game view itself, for coordinate purposes
-			App->eventSystem->AddEvent(Event(Event::EventType::Mouse_Moved, float2(event.motion.x, event.motion.y)));
+			//TO DO possibly generate a movement UI event
 			break;
 		}
 	}

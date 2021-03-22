@@ -21,7 +21,6 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
-#include "Modules/ModuleEventSystem.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -57,8 +56,6 @@ bool ModuleScene::Init() {
 	logStream.callback = AssimpLogCallback;
 	aiAttachLogStream(&logStream);
 #endif
-
-	App->eventSystem->AddObserverToEvent(Event::EventType::GameObject_Destroyed, this);
 
 	return true;
 }
@@ -294,7 +291,6 @@ void ModuleScene::DestroyGameObject(GameObject* gameObject) {
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 
-	App->BroadCastEvent(Event(Event::EventType::GameObject_Destroyed, gameObject));
 }
 
 GameObject* ModuleScene::GetGameObject(UID id) const {

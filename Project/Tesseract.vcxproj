@@ -26,7 +26,7 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
     <ClInclude Include="Source\Globals.h" />
     <ClInclude Include="Source\Application.h" />
-    <ClInclude Include="Source\Modules\ModuleEventSystem.h" />
+    <ClInclude Include="Source\Components\ComponentEventSystem.h" />
     <ClInclude Include="Source\Modules\ModuleUserInterface.h" />
     <ClInclude Include="Source\UI\EventSystem\Event.h" />
     <ClInclude Include="Source\UI\Selectables\Button.h" />
@@ -194,7 +194,7 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
+    <ClCompile Include="Source\Components\ComponentEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleUserInterface.cpp" />
     <ClCompile Include="Source\UI\Selectables\Button.cpp" />
     <ClCompile Include="Source\UI\Selectables\Selectable.cpp" />

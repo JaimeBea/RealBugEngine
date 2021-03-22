@@ -14,7 +14,6 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
-#include "Modules/ModuleEventSystem.h"
 #include "Modules/ModuleUserInterface.h"
 
 #include "SDL_timer.h"
@@ -34,7 +33,6 @@ Application::Application() {
 
 	modules.push_back(time = new ModuleTime());
 	modules.push_back(input = new ModuleInput());
-	modules.push_back(eventSystem = new ModuleEventSystem());
 	modules.push_back(camera = new ModuleCamera());
 
 	modules.push_back(scene = new ModuleScene());
@@ -105,8 +103,4 @@ bool Application::CleanUp() {
 
 void Application::RequestBrowser(char* url) {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
-}
-
-void Application::BroadCastEvent(const Event& e) {
-	eventSystem->AddEvent(e);
 }

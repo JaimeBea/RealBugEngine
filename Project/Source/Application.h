@@ -19,7 +19,7 @@ class ModulePrograms;
 class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
-class ModuleEventSystem;
+class ComponentEventSystem;
 class ModuleUserInterface;
 
 struct Event;
@@ -34,7 +34,6 @@ public:
 	bool CleanUp();
 
 	void RequestBrowser(char* url);
-	void BroadCastEvent(const Event& e);
 
 public:
 	ModuleHardwareInfo* hardware = nullptr;
@@ -49,7 +48,6 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
-	ModuleEventSystem* eventSystem = nullptr;
 	ModuleUserInterface* userInterface = nullptr;
 	// Application Configuration
 

@@ -1,6 +1,6 @@
 #include "Selectable.h"
 #include "Application.h"
-#include "Modules/ModuleEventSystem.h"
+#include "Components/ComponentEventSystem.h"
 #include "Modules/ModuleEditor.h"
 #include <Resources/GameObject.h>
 #include "imgui.h"
@@ -37,10 +37,9 @@ Selectable::~Selectable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
 	if (selectableIndex > -1) {
 		//Subtitute my position in vector with last element of vector
-		App->eventSystem->m_Selectables[selectableIndex] = App->eventSystem->m_Selectables[App->eventSystem->m_Selectables.size()];
-
+		ComponentEventSystem::currentEvSys->m_Selectables[selectableIndex] = ComponentEventSystem::currentEvSys->m_Selectables[ComponentEventSystem::currentEvSys->m_Selectables.size()];
 		//Remove last position from vector, effectively removing myself
-		App->eventSystem->m_Selectables.pop_back();
+		ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
 		selectableIndex = -1;
 	}
 }
@@ -56,7 +55,7 @@ void Selectable::SetInteractable(bool b) {
 Selectable* Selectable::FindSelectableOnDir(float2 dir) {
 	switch (m_NavigationType) {
 	case NavigationType::AUTOMATIC:
-		for (std::vector<Selectable*>::iterator it = App->eventSystem->m_Selectables.begin(); it != App->eventSystem->m_Selectables.end(); ++it) {
+		for (std::vector<Selectable*>::iterator it = ComponentEventSystem::currentEvSys->m_Selectables.begin(); it != ComponentEventSystem::currentEvSys->m_Selectables.end(); ++it) {
 			//TO DO Compare all selectables by distance and assign closest to retSelectable
 		}
 		break;
@@ -89,7 +88,7 @@ void Selectable::OnDeselect() {
 }
 
 void Selectable::Init() {
-	App->eventSystem->m_Selectables.push_back(this);
+	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
 	//TO DO add as listener	to MouseMoved event?
 }
 
@@ -140,20 +139,20 @@ void Selectable::OnEditorUpdate() {
 }
 
 void Selectable::Enable() {
-	selectableIndex = App->eventSystem->m_Selectables.size();
-	App->eventSystem->m_Selectables.push_back(this);
+	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();
+	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
 }
 
 void Selectable::Disable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
 	if (selected) {
-		App->eventSystem->SetSelected(nullptr);
+		ComponentEventSystem::currentEvSys->SetSelected(nullptr);
 	}
 
 	//Subtitute my position in vector with last element of vector
-	App->eventSystem->m_Selectables[selectableIndex] = App->eventSystem->m_Selectables[App->eventSystem->m_Selectables.size()];
+	ComponentEventSystem::currentEvSys->m_Selectables[selectableIndex] = ComponentEventSystem::currentEvSys->m_Selectables[ComponentEventSystem::currentEvSys->m_Selectables.size()];
 
 	//Remove last position from vector, effectively removing myself
-	App->eventSystem->m_Selectables.pop_back();
+	ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
 	selectableIndex = -1;
 }

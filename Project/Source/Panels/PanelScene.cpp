@@ -44,26 +44,26 @@ void PanelScene::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
-					App->BroadCastEvent(Event(Event::EventType::Pressed_Stop));
+					App->time->StopGame();
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
-						App->BroadCastEvent(Event(Event::EventType::Pressed_Pause));
+						App->time->PauseGame();
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
-						App->BroadCastEvent(Event(Event::EventType::Pressed_Resume));
+						App->time->ResumeGame();
 					}
 				}
 			} else {
 				if (ImGui::Button("Play")) {
-					App->BroadCastEvent(Event(Event::EventType::Pressed_Play));
+					App->time->StartGame();
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Step")) {
-				App->BroadCastEvent(Event(Event::EventType::Pressed_Step));
+				App->time->StepGame();
 			}
 
 			ImGui::SameLine();

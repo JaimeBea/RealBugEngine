@@ -7,6 +7,7 @@
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
 #include "UI/Selectables/Selectable.h"
+#include "Components/ComponentEventSystem.h"
 
 #include "Utils/Leaks.h"
 
@@ -24,6 +25,8 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 		return owner.CreateComponent<ComponentLight>(active);
 	case ComponentType::SELECTABLE:
 		return owner.CreateComponent<Selectable>(active);
+	case ComponentType::EVENT_SYSTEM:
+		return owner.CreateComponent<ComponentEventSystem>(active);
 	default:
 		return nullptr;
 	}

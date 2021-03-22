@@ -22,6 +22,7 @@ enum class ComponentType {
 	CAMERA = 4,
 	LIGHT = 5,
 	SELECTABLE = 6,
+	EVENT_SYSTEM = 7
 };
 
 Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active = true);
