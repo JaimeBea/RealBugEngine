@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "FileSystem/SceneImporter.h"
+#include "Utils/FileDialog.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
@@ -21,7 +22,6 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
-#include "Utils/FileDialog.h"
 
 static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
