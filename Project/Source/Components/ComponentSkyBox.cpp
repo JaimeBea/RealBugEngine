@@ -1,4 +1,5 @@
 #include "Application.h"
+
 #include "Modules/ModuleCamera.h"
 #include "ComponentSkyBox.h"
 
@@ -13,8 +14,7 @@ void ComponentSkyBox::Load(JsonValue jComponent) {
 void ComponentSkyBox::Draw() {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
-	programSky = 0;
-	//programSky = skybox->GetShader()->GetShaderProgam();
+	programSky = skybox->GetShader()->GetShaderProgam();
 	glUseProgram(programSky);
 	float4x4 proj = App->camera->GetProjectionMatrix();
 	float4x4 view = App->camera->GetViewMatrix();

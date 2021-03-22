@@ -61,7 +61,6 @@ void ResourceSkybox::Load() {
 	ilGenImages(1, &glCubeMap);
 	ilBindImage(glCubeMap);
 	ilEnable(IL_ORIGIN_SET);
-	// ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	glGenTextures(1, &glCubeMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, glCubeMap);

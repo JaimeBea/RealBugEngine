@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Component.h"
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceShader.h"
@@ -12,6 +13,7 @@
 
 #include <vector>
 #include <string>
+
 class ComponentSkyBox : public Component {
 public:
 	REGISTER_COMPONENT(ComponentSkyBox, ComponentType::SKYBOX, false);
