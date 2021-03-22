@@ -46,7 +46,6 @@ void ResourceSkybox::Load() {
 	JsonValue jSkybox(document, document);
 	//TODO ASSIGN RESOURCE SHADER
 	//shader = (ResourceShader*) App->resources->GetResourceByID(jSkybox[JSON_TAG_SHADER]);
-	float4(jSkybox[JSON_TAG_SHADER][0], jSkybox[JSON_TAG_SHADER][1], jSkybox[JSON_TAG_SHADER][2], jSkybox[JSON_TAG_SHADER][3]);
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -56,7 +55,6 @@ void ResourceSkybox::Load() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
 
 	ILboolean success = false;
-	glCubeMap;
 
 	ilGenImages(1, &glCubeMap);
 	ilBindImage(glCubeMap);

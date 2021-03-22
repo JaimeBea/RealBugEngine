@@ -33,15 +33,6 @@ public:
 		return glCubeMap;
 	}
 	// clang-format off
-	float skyboxVertices[108] = {
-		// Front (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-
 	const float skyboxVertices[108] = {
 		// Front (x, y, z)
 		-1.0f,  1.0f, -1.0f,
@@ -50,7 +41,7 @@ public:
 		 1.0f, -1.0f, -1.0f,
 		 1.0f,  1.0f, -1.0f,
 		-1.0f,  1.0f, -1.0f,
-	
+
 		// Left (x, y, z)
 		-1.0f, -1.0f,  1.0f,
 		-1.0f, -1.0f, -1.0f,
