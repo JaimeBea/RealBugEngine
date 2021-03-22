@@ -1,6 +1,10 @@
-"Skybox/right.jpg"
-"Skybox/left.jpg"
-"Skybox/bottom.jpg"
-"Skybox/top.jpg"
-"Skybox/front.jpg"
-"Skybox/back.jpg"
+{
+	"Shader": [
+		"Skybox/right.jpg",
+		"Skybox/left.jpg",
+		"Skybox/bottom.jpg",
+		"Skybox/top.jpg",
+		"Skybox/front.jpg",
+		"Skybox/back.jpg"
+	]
+}

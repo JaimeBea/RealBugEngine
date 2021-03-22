@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Resource.h"
 
 #include "assimp/Importer.hpp"
@@ -14,7 +15,7 @@ class ResourceSkybox : public Resource {
 public:
 	ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath);
 
-	void Load(JsonValue jComponent);
+	void Load();
 	void Unload() override;
 	void Draw();
 	void ReadPath();
@@ -28,129 +29,63 @@ public:
 	unsigned int GetVbo() {
 		return skyboxVBO;
 	};
-	float skyboxVertices[108] {
-		// positions
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
+	unsigned int GetGlCubeMap() {
+		return glCubeMap;
+	}
+	// clang-format off
+	float skyboxVertices[108] = {
+		// Front (x, y, z)
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
 
 		// Left (x, y, z)
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
 
 		// Right (x, y, z)
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
 
 		// Back (x, y, z)
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
 
 		// Top (x, y, z)
-		-1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
+		-1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f, -1.0f,
+		 1.0f,  1.0f,  1.0f,
+		 1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
 
 		// Bottom (x, y, z)
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		-1.0f,
-		1.0f,
-		1.0f,
-		-1.0f,
-		1.0f};
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f, -1.0f,
+		 1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		 1.0f, -1.0f,  1.0f
+	}; // clang-format on
 
 private:
-	std::vector<std::string> files;
 	ResourceShader* shader;
-	unsigned int skyboxVAO, skyboxVBO;
+	unsigned int skyboxVAO = 0;
+	unsigned int skyboxVBO = 0;
+	unsigned int glCubeMap = 0;
 };

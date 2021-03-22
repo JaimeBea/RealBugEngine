@@ -12,3 +12,6 @@
 
 # Library folder
 # /Game/Library/
+
+# Meta
+*.meta

@@ -6,31 +6,47 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModulePrograms.h"
+
+#include "rapidjson/error/en.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/document.h"
+
 #include "Utils/Logging.h"
+#include "Utils/Buffer.h"
+#include "Utils/Leaks.h"
+
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "GL/glew.h"
-#include "iostream"
-#include "fstream"
-#include "Utils/Leaks.h"
-#define JSON_TAG_SHADER "shader"
-ResourceSkybox::ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {
-}
 
-void ResourceSkybox::ReadPath() {
-	std::string imgPath;
-	std::ifstream infile(this->GetAssetFilePath().c_str());
-	for (int i = 0; i < 6; i++) {
-		getline(infile, imgPath);
-		files.push_back(imgPath);
+#include <iostream>
+
+#define JSON_TAG_SHADER "Shader"
+
+ResourceSkybox::ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath)
+	: Resource(id, assetFilePath, resourceFilePath) {}
+
+void ResourceSkybox::Load() {
+	std::string filePath = GetResourceFilePath();
+	LOG("Importing material from path: \"%s\".", filePath);
+
+	MSTimer timer;
+	timer.Start();
+
+	Buffer<char> buffer = App->files->Load(filePath.c_str());
+	if (buffer.Size() == 0) return;
+
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
+	if (document.HasParseError()) {
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return;
 	}
-}
-void ResourceSkybox::Load(JsonValue jComponent) {
-	ReadPath();
-	shader = (ResourceShader*) App->resources->GetResourceByID(jComponent[JSON_TAG_SHADER]);
-	skyboxVAO = 0;
-	skyboxVBO = 0;
+	JsonValue jSkybox(document, document);
+	//TODO ASSIGN RESOURCE SHADER
+	//shader = (ResourceShader*) App->resources->GetResourceByID(jSkybox[JSON_TAG_SHADER]);
+	float4(jSkybox[JSON_TAG_SHADER][0], jSkybox[JSON_TAG_SHADER][1], jSkybox[JSON_TAG_SHADER][2], jSkybox[JSON_TAG_SHADER][3]);
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -40,35 +56,33 @@ void ResourceSkybox::Load(JsonValue jComponent) {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
 
 	ILboolean success = false;
-	ILuint glCubeMap;
+	glCubeMap;
 
 	ilGenImages(1, &glCubeMap);
-	// bind it
 	ilBindImage(glCubeMap);
-	// match image origin to OpenGLs
 	ilEnable(IL_ORIGIN_SET);
 	// ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 	glGenTextures(1, &glCubeMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, glCubeMap);
-	for (unsigned int i = 0; i < files.size(); i++) {
-		//TODO CHECK IF ALL FILES EXIST OR SOMETHING
-		success = ilLoad(IL_DDS, files[i].c_str());
+	for (unsigned int i = 0; i < 6; i++) {
+		std::string file = jSkybox[JSON_TAG_SHADER][i];
+		success = ilLoad(IL_DDS, file.c_str());
 		if (success) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
 		} else {
-			std::cout << "Cubemap tex failed to load at path: " << files[i] << std::endl;
+			std::cout << "Cubemap tex failed to load at path: " << file << std::endl;
 		}
 	}
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	ilDeleteImage(glCubeMap); //release from il since we have it in opengl
+	ilDeleteImage(glCubeMap);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	//glDeleteTextures(1,textureID); //release from il since we have it in opengl
+	//glDeleteTextures(1,textureID);
 }
 
 void ResourceSkybox::Unload() {

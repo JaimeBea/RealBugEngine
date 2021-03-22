@@ -21,9 +21,8 @@ public:
 	void Load(JsonValue jComponent) override;
 
 	void Draw();
-	void Load(JsonValue jComponent);
 
 private:
 	ResourceSkybox* skybox;
-	unsigned int glCubeMap;
+	unsigned int programSky;
 };

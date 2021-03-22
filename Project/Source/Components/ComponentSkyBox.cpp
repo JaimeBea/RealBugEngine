@@ -1,9 +1,8 @@
-#include "GL/glew.h"
-
 #include "Application.h"
 #include "Modules/ModuleCamera.h"
 #include "ComponentSkyBox.h"
-#include "Math/float4x4.cpp"
+
+#include "GL/glew.h"
 
 #define JSON_TAG_SKYBOX "skybox"
 
@@ -14,7 +13,8 @@ void ComponentSkyBox::Load(JsonValue jComponent) {
 void ComponentSkyBox::Draw() {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
-	unsigned int programSky = skybox->GetShader()->GetShaderProgam();
+	programSky = 0;
+	//programSky = skybox->GetShader()->GetShaderProgam();
 	glUseProgram(programSky);
 	float4x4 proj = App->camera->GetProjectionMatrix();
 	float4x4 view = App->camera->GetViewMatrix();
@@ -25,7 +25,7 @@ void ComponentSkyBox::Draw() {
 
 	glBindVertexArray(skybox->GetVao());
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, glCubeMap);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox->GetGlCubeMap());
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glBindVertexArray(0);
