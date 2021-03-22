@@ -22,10 +22,6 @@ public:
 
 	void Draw(const float4x4& modelMatrix);
 
-private:
-
-	void SkinningCPU();
-
 public:
 	Mesh* mesh = nullptr;
 	Material material;

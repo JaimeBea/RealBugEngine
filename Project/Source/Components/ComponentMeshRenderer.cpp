@@ -686,7 +686,10 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "palette"), palette.size(), GL_TRUE, palette[0].ptr());
+	if (palette.size() > 0) {
+		glUniformMatrix4fv(glGetUniformLocation(program, "palette"), palette.size(), GL_TRUE, palette[0].ptr());
+	}
+	glUniform1i(glGetUniformLocation(program, "hasBones"), goBones.size());
 
 	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
 	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
