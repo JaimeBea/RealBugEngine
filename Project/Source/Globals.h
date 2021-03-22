@@ -15,11 +15,14 @@ enum class UpdateStatus {
 #define ASSETS_PATH "Assets"
 #define LIBRARY_PATH "Library"
 #define TEXTURES_PATH "Assets/Textures"
+#define SHADERS_PATH "Assets/Shaders"
 #define SCENES_PATH "Assets/Scenes"
 #define TEXTURE_EXTENSION ".dds"
 #define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
 #define META_EXTENSION ".meta"
+
+#define PHONG_SHADER_FILE "phong.glsl"
 
 // Configuration -----------
 #define GLSL_VERSION "#version 460"

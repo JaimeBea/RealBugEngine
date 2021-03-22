@@ -130,7 +130,7 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 	return mesh;
 }
 
-void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, Scene* scene, GameObject* parent, const float4x4& accumulatedTransform, unsigned& resourceIndex) {
+void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, Scene* scene, GameObject* parent, std::vector<UID>& materialIds, const float4x4& accumulatedTransform, unsigned& resourceIndex) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
@@ -138,7 +138,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, parent, transform, resourceIndex);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, parent, materialIds, transform, resourceIndex);
 		}
 	} else { // Normal node
 		// Create GameObject
@@ -168,6 +168,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 
 			ComponentMeshRenderer* meshRenderer = gameObject->CreateComponent<ComponentMeshRenderer>();
 			meshRenderer->meshId = ImportMesh(modelFilePath, jMeta, assimpMesh, resourceIndex)->GetId();
+			meshRenderer->materialId = materialIds[assimpMesh->mMaterialIndex];
 
 			// Update min and max points
 			for (unsigned int j = 0; j < assimpMesh->mNumVertices; ++j) {
@@ -190,7 +191,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, gameObject, float4x4::identity, resourceIndex);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, gameObject, materialIds, float4x4::identity, resourceIndex);
 		}
 	}
 }
@@ -223,6 +224,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 
 	// Import materials
+	std::vector<UID> materialIds;
 	for (unsigned i = 0; i < assimpScene->mNumMaterials; ++i) {
 		LOG("Loading material %i...", i);
 		aiMaterial* assimpMaterial = assimpScene->mMaterials[i];
@@ -233,6 +235,13 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		aiTextureMapping mapping;
 		aiColor4D color;
 		unsigned uvIndex;
+
+		std::vector<UID>& shaderResourceIds = App->resources->ImportAsset(SHADERS_PATH "/" PHONG_SHADER_FILE);
+		if (shaderResourceIds.empty()) {
+			LOG("Unable to find phong shader file.");
+		} else {
+			material->shaderId = shaderResourceIds[0];
+		}
 
 		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
 			// Check if the material is valid for our purposes
@@ -386,7 +395,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		jResource[JSON_TAG_ID] = material->GetId();
 		resourceIndex += 1;
 
-		material->SaveToFile(App->resources->GenerateResourcePath(material->GetId()).c_str());
+		material->SaveToFile(material->GetResourceFilePath().c_str());
+		materialIds.push_back(material->GetId());
 		LOG("Material imported.");
 	}
 
@@ -395,7 +405,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	LOG("Importing scene tree.");
 	GameObject* root = scene.CreateGameObject(nullptr, GenerateUID(), "Root");
 	root->CreateComponent<ComponentTransform>();
-	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, &scene, root, float4x4::identity, resourceIndex);
+	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, &scene, root, materialIds, float4x4::identity, resourceIndex);
 
 	// Save prefab
 	SavePrefab(filePath, jMeta, root->GetChildren()[0], resourceIndex);
