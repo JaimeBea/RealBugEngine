@@ -1,17 +1,18 @@
 #include "SkyboxImporter.h"
-#include "Globals.h"
+
 #include "Application.h"
-#include "Utils/Logging.h"
-#include "Utils/Buffer.h"
 #include "Resources/ResourceSkybox.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
+#include "Globals.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "GL/glew.h"
 
+#include "Utils/Logging.h"
+#include "Utils/Buffer.h"
 #include "Utils/Leaks.h"
 
 bool SkyboxImporter::ImportSkybox(const char* filePath, JsonValue jMeta) {

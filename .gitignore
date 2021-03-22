@@ -11,7 +11,4 @@
 /Build/
 
 # Library folder
-# /Game/Library/
-
-# Meta
-*.meta
+#/Game/Library/
