@@ -14,7 +14,7 @@
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_TYPE "LightType"
+#define JSON_TAG_LIGHT_TYPE "LightType"
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_INTENSITY "Intensity"
 #define JSON_TAG_KL "Kl"
@@ -102,7 +102,7 @@ void ComponentLight::OnEditorUpdate() {
 }
 
 void ComponentLight::Save(JsonValue jComponent) const {
-	JsonValue jLightType = jComponent[JSON_TAG_TYPE];
+	JsonValue jLightType = jComponent[JSON_TAG_LIGHT_TYPE];
 	jLightType = (int) lightType;
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
@@ -127,7 +127,7 @@ void ComponentLight::Save(JsonValue jComponent) const {
 }
 
 void ComponentLight::Load(JsonValue jComponent) {
-	JsonValue jLightType = jComponent[JSON_TAG_TYPE];
+	JsonValue jLightType = jComponent[JSON_TAG_LIGHT_TYPE];
 	lightType = (LightType)(int) jLightType;
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];

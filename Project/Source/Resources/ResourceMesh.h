@@ -9,7 +9,7 @@
 
 class ResourceMesh : public Resource {
 public:
-	ResourceMesh(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceMesh, ResourceType::MESH);
 
 	void Load() override;
 	void Unload() override;

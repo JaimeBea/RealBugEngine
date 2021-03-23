@@ -1,12 +1,20 @@
 #include "ResourceShader.h"
+
 #include "Application.h"
+#include "Utils/Logging.h"
 #include "Modules/ModulePrograms.h"
 
-ResourceShader::ResourceShader(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourceShader::Load() {
-	shaderProgram = App->programs->CreateProgram(this->GetAssetFilePath().c_str());
+	// Timer to measure loading a shader
+	MSTimer timer;
+	timer.Start();
+	std::string filePath = GetResourceFilePath();
+	LOG("Loading shader from path: \"%s\".", filePath.c_str());
+
+	shaderProgram = App->programs->CreateProgram(filePath.c_str());
+
+	unsigned timeMs = timer.Stop();
+	LOG("Shader loaded in %ums.", timeMs);
 }
 
 void ResourceShader::Unload() {

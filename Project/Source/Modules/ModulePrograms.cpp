@@ -17,7 +17,7 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 	if (shaderId == 0) {
 		return 0;
 	}
-	std::string v = "#version 460\n";
+	std::string v = GLSL_VERSION "\n";
 	std::string defineVertexShader = "#define VERTEX  \n";
 	std::string defineFragmentShader = "#define FRAGMENT\n";
 
@@ -98,8 +98,5 @@ bool ModulePrograms::Start() {
 }
 
 bool ModulePrograms::CleanUp() {
-	glDeleteProgram(defaultProgram);
-	glDeleteProgram(phongPbrProgram);
-	glDeleteProgram(skyboxProgram);
 	return true;
 }

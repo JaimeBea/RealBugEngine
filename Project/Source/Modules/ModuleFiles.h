@@ -29,6 +29,7 @@ public:
 	void CreateFolder(const char* folderPath) const;
 	void Erase(const char* path) const;
 
+	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
 	bool Exists(const char* filePath) const;
 	bool IsDirectory(const char* path) const;
 

@@ -7,10 +7,13 @@
 #include "Event.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Resources/ResourcePrefab.h"
+#include "Resources/ResourceScene.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 
 #include "imgui.h"
@@ -130,6 +133,29 @@ void PanelScene::Update() {
 
 		// Draw
 		ImGui::Image((void*) App->renderer->renderTexture, size, ImVec2(0, 1), ImVec2(1, 0));
+
+		// Drag and drop
+		if (ImGui::BeginDragDropTarget()) {
+			std::string payloadTypePrefab = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypePrefab.c_str())) {
+				UID prefabId = *(UID*) payload->Data;
+				ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+				if (prefab != nullptr) {
+					prefab->BuildPrefab(App->scene->scene->root);
+				}
+			}
+
+			// TODO: "Are you sure?" Popup to avoid losing the current scene
+			std::string payloadTypeScene = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::SCENE);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypeScene.c_str())) {
+				UID sceneId = *(UID*) payload->Data;
+				ResourceScene* scene = (ResourceScene*) App->resources->GetResource(sceneId);
+				if (scene != nullptr) {
+					scene->BuildScene();
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		// Capture input
 		if (ImGui::IsWindowFocused()) {

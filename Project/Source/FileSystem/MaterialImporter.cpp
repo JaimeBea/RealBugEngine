@@ -18,17 +18,26 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "Id"
+
 bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	LOG("Importing material from path: \"%s\".", filePath);
 
+	// Timer to measure importing a material
 	MSTimer timer;
 	timer.Start();
 
+	// Read from file
 	Buffer<char> buffer = App->files->Load(filePath);
-	if (buffer.Size() == 0) return false;
+	if (buffer.Size() == 0) {
+		LOG("Error loading material %s", filePath);
+		return false;
+	}
 
+	// Parse document from file
 	rapidjson::Document document;
-
 	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
 	if (document.HasParseError()) {
 		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
@@ -36,28 +45,28 @@ bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	}
 
 	// Material resource creation
-	ResourceMaterial* textureMaterial = App->resources->CreateResource<ResourceMaterial>(filePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[0] = textureMaterial->GetId();
+	ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath);
 
-	const std::string& resourceFilePath = textureMaterial->GetResourceFilePath();
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[0];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(material->GetType());
+	jResource[JSON_TAG_ID] = material->GetId();
 
+	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
 	document.Accept(writer);
 
 	// Save to file
+	const std::string& resourceFilePath = material->GetResourceFilePath();
 	bool saved = App->files->Save(resourceFilePath.c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
-
 	if (!saved) {
 		LOG("Failed to save material resource.");
 		return false;
 	}
 
-	jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
-
 	unsigned timeMs = timer.Stop();
 	LOG("Material imported in %ums", timeMs);
-
 	return true;
 }

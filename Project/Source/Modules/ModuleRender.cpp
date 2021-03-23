@@ -148,7 +148,8 @@ UpdateStatus ModuleRender::Update() {
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (ComponentBoundingBox& boundingBox : App->scene->boundingBoxComponents) {
+	Scene* scene = App->scene->scene;
+	for (ComponentBoundingBox& boundingBox : scene->boundingBoxComponents) {
 		GameObject& gameObject = boundingBox.GetOwner();
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
@@ -159,8 +160,8 @@ UpdateStatus ModuleRender::Update() {
 			DrawGameObject(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	if (scene->quadtree.IsOperative()) {
+		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
@@ -170,7 +171,7 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw quadtree
 	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+		DrawQuadtreeRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 
 	// Draw debug draw
