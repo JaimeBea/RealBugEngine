@@ -84,6 +84,7 @@ static GameObject* ImportNode(const aiScene* assimpScene, const std::vector<Mate
 
 			// TODO: Move mesh loading to a better place
 			MeshImporter::LoadMesh(mesh->mesh, bones);
+			mesh->Init();
 
 			if (materials.size() > 0) {
 				if (assimpMesh->mMaterialIndex >= materials.size()) {

@@ -251,9 +251,27 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 }
 
 void ComponentMeshRenderer::Init() {
+	palette.resize(mesh->numBones);
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		palette[i] = float4x4::identity;
+	}
+}
 
+void ComponentMeshRenderer::Update() {
+	if (App->time->GetDeltaTime() > 0) {
+		for (unsigned i = 0; i < mesh->numBones; ++i) {
+			const GameObject* bone = goBones.at(mesh->bones[i].boneName);
 
-
+			if (bone) {
+				const GameObject* parent = GetOwner().GetParent();
+				const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
+				const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+				palette[i] = invertedRootBoneTransform * bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform;
+			} else {
+				palette[i] = float4x4::identity;
+			}
+		}
+	}
 }
 
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
@@ -303,8 +321,6 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 	// TODO: Recache the Bones?
 	MeshImporter::UnloadMesh(mesh);
 	MeshImporter::LoadMesh(mesh, goBones);
-
-
 
 	// TODO: Load using Material Importer
 
@@ -363,10 +379,6 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	if (!IsActive()) return;
-
-	if (mesh->numBones > 0 && App->time->GetDeltaTime() > 0) {
-		SkinningCPU();
-	}
 
 	unsigned program = App->programs->defaultProgram;
 
@@ -674,6 +686,11 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
+	if (palette.size() > 0) {
+		glUniformMatrix4fv(glGetUniformLocation(program, "palette"), palette.size(), GL_TRUE, palette[0].ptr());
+	}
+	glUniform1i(glGetUniformLocation(program, "hasBones"), goBones.size());
+
 	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
 	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
 
@@ -685,55 +702,4 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) {
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
-}
-
-void ComponentMeshRenderer::SkinningCPU() {
-	// Bind VBO buffer to iterate over vertex information
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
-
-	float* vertices = (float*) glMapBufferRange(GL_ARRAY_BUFFER, 0, mesh->numVertices * 8, GL_MAP_WRITE_BIT);
-
-	for (unsigned i = 0, vtxcount = 0; vtxcount < mesh->numVertices; i += 8, ++vtxcount) {
-		float4 position(mesh->vertices[i + 0], mesh->vertices[i + 1], mesh->vertices[i + 2], 1);
-		float4 normal(mesh->vertices[i + 3], mesh->vertices[i + 4], mesh->vertices[i + 5], 0);
-
-		Mesh::Attach attachedInformation = mesh->attaches[vtxcount];
-
-		float4 resPosition = float4::zero;
-		float4 resNormal = float4::zero;
-
-		for (unsigned j = 0; j < attachedInformation.numBones; ++j) {
-			Mesh::Bone bone = mesh->bones[attachedInformation.bones[j]];
-			float weightJ = attachedInformation.weights[j];
-
-			const float4x4& inverseOffsetMatrix = bone.transform;
-
-			// In this case, I can assume that the bone name is already stored in the map, so the find is not necessary
-			const float4x4& boneTransform = goBones[bone.boneName]->GetComponent<ComponentTransform>()->GetGlobalMatrix(); // Have the root node
-			const GameObject* parent = GetOwner().GetParent();
-			const GameObject* rootBone = parent->GetRootBone();
-			const float4x4& invertedRootBone = (rootBone != nullptr && rootBone->GetParent() != parent) ? rootBone->GetParent()->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
-
-			float4x4 boneGameObjectTransform = invertedRootBone * boneTransform;
-
-			resPosition += weightJ * (boneGameObjectTransform * (inverseOffsetMatrix * position));
-			resNormal += weightJ * (boneGameObjectTransform * (inverseOffsetMatrix * normal));
-		}
-
-		// Position
-		vertices[i + 0] = resPosition.x;
-		vertices[i + 1] = resPosition.y;
-		vertices[i + 2] = resPosition.z;
-
-
-		// Normal
-		resNormal.Normalize();
-		vertices[i + 3] = resNormal.x;
-		vertices[i + 4] = resNormal.y;
-		vertices[i + 5] = resNormal.z;
-	}
-
-	glUnmapBuffer(GL_ARRAY_BUFFER);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

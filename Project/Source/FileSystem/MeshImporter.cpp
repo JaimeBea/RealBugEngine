@@ -34,12 +34,14 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
 	unsigned uvSize = sizeof(float) * 2;
+	unsigned bonesIDSize = sizeof(unsigned) * 4;
+	unsigned weightsSize = sizeof(float) * 4;
 	unsigned indexSize = sizeof(unsigned);
 	unsigned attachSize = sizeof(Mesh::Attach);
-	unsigned boneSize = sizeof(Mesh::Bone);
+	unsigned boneSize = sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
 
 	unsigned headerSize = sizeof(unsigned) * 3;
-	unsigned vertexSize = positionSize + normalSize + uvSize;
+	unsigned vertexSize = positionSize + normalSize + uvSize + bonesIDSize + weightsSize;
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
 	unsigned bonesBufferSize = boneSize * mesh->numBones;
@@ -56,7 +58,8 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 	*((unsigned*) cursor) = mesh->numBones;
 	cursor += sizeof(unsigned);
 
-	std::vector<Mesh::Attach> attaches = std::vector<Mesh::Attach>(mesh->numVertices);
+	std::vector<Mesh::Attach> attaches;
+	attaches.resize(mesh->numVertices);
 	for (unsigned i = 0; i < assimpMesh->mNumBones; ++i) {
 		aiBone* aiBone = assimpMesh->mBones[i];
 
@@ -64,7 +67,7 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 		cursor += sizeof(unsigned);
 
 		memcpy_s(cursor, aiBone->mName.length * sizeof(char), aiBone->mName.data, aiBone->mName.length * sizeof(char));
-		cursor += aiBone->mName.length * sizeof(char);
+		cursor += FILENAME_MAX * sizeof(char);
 
 		//Transform
 		aiVector3D position, scaling;
@@ -106,34 +109,6 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 		}
 	}
 
-	if (assimpMesh->mNumBones == 0) attaches.clear();
-
-	// TODO: Move to vertices loop when moved to GPU
-	for (unsigned i = 0; i < attaches.size(); ++i) {
-		float weight = attaches[i].weights[0] + attaches[i].weights[1] + attaches[i].weights[2] + attaches[i].weights[3];
-
-		*((unsigned*) cursor) = attaches[i].numBones;
-		cursor += sizeof(unsigned);
-
-		*((unsigned*) cursor) = attaches[i].bones[0];
-		cursor += sizeof(unsigned);
-		*((unsigned*) cursor) = attaches[i].bones[1];
-		cursor += sizeof(unsigned);
-		*((unsigned*) cursor) = attaches[i].bones[2];
-		cursor += sizeof(unsigned);
-		*((unsigned*) cursor) = attaches[i].bones[3];
-		cursor += sizeof(unsigned);
-
-		*((float*) cursor) = attaches[i].weights[0] / weight;
-		cursor += sizeof(float);
-		*((float*) cursor) = attaches[i].weights[1] / weight;
-		cursor += sizeof(float);
-		*((float*) cursor) = attaches[i].weights[2] / weight;
-		cursor += sizeof(float);
-		*((float*) cursor) = attaches[i].weights[3] / weight;
-		cursor += sizeof(float);
-	}
-
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
 		aiVector3D& vertex = assimpMesh->mVertices[i];
 		aiVector3D& normal = assimpMesh->mNormals[i];
@@ -154,6 +129,26 @@ Mesh* MeshImporter::ImportMesh(const aiMesh* assimpMesh, unsigned index) {
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].x : 0;
 		cursor += sizeof(float);
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].y : 0;
+		cursor += sizeof(float);
+
+		float weight = attaches[i].weights[0] + attaches[i].weights[1] + attaches[i].weights[2] + attaches[i].weights[3];
+
+		*((unsigned*) cursor) = attaches[i].bones[0];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[1];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[2];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[3];
+		cursor += sizeof(unsigned);
+
+		*((float*) cursor) = attaches[i].weights[0] / weight;
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[1] / weight;
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[2] / weight;
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[3] / weight;
 		cursor += sizeof(float);
 	}
 
@@ -220,9 +215,11 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
 	unsigned uvSize = sizeof(float) * 2;
+	unsigned bonesIDSize = sizeof(unsigned) * 4;
+	unsigned weightsSize = sizeof(float) * 4;
 	unsigned indexSize = sizeof(unsigned);
 
-	unsigned vertexSize = positionSize + normalSize + uvSize;
+	unsigned vertexSize = positionSize + normalSize + uvSize + bonesIDSize + weightsSize;
 	unsigned vertexBufferSize = vertexSize * mesh->numVertices;
 	unsigned indexBufferSize = indexSize * mesh->numIndices;
 
@@ -239,14 +236,14 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 		char* name = (char*) malloc((lengthName + 1) * sizeof(char));
 
 		memcpy_s(name, lengthName * sizeof(char), cursor, lengthName * sizeof(char));
-		cursor += lengthName * sizeof(char);
+		cursor += FILENAME_MAX * sizeof(char);
 
 		name[lengthName] = '\0';
 
 		// Init the bones map only with the Key. In the scene importer, add the pointers to the GameObject-Bone.
 		bones.emplace(name, nullptr);
 
-		//Position
+		// Translation
 		position.x = *((float*) cursor);
 		cursor += sizeof(float);
 		position.y = *((float*) cursor);
@@ -278,32 +275,6 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 		free(name);
 	}
 
-	// Attaches
-	// TODO: Delete when move it to GPU
-	if (mesh->numBones > 0) mesh->attaches.resize(mesh->numVertices);
-	for (unsigned i = 0; i < mesh->numVertices && mesh->numBones > 0; i++) {
-		mesh->attaches[i].numBones = *((unsigned*) cursor);
-		cursor += sizeof(unsigned);
-
-		mesh->attaches[i].bones[0] = *((unsigned*) cursor);
-		cursor += sizeof(unsigned);
-		mesh->attaches[i].bones[1] = *((unsigned*) cursor);
-		cursor += sizeof(unsigned);
-		mesh->attaches[i].bones[2] = *((unsigned*) cursor);
-		cursor += sizeof(unsigned);
-		mesh->attaches[i].bones[3] = *((unsigned*) cursor);
-		cursor += sizeof(unsigned);
-
-		mesh->attaches[i].weights[0] = *((float*) cursor);
-		cursor += sizeof(float);
-		mesh->attaches[i].weights[1] = *((float*) cursor);
-		cursor += sizeof(float);
-		mesh->attaches[i].weights[2] = *((float*) cursor);
-		cursor += sizeof(float);
-		mesh->attaches[i].weights[3] = *((float*) cursor);
-		cursor += sizeof(float);
-	}
-
 	// Vertices
 	mesh->vertices = (float*) malloc(vertexBufferSize);
 	memcpy_s(mesh->vertices, vertexBufferSize, (float*) cursor, vertexBufferSize);
@@ -333,10 +304,14 @@ void MeshImporter::LoadMesh(Mesh* mesh, std::unordered_map<std::string, GameObje
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*) 0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertexSize, (void*) positionSize);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertexSize, (void*) (positionSize + normalSize));
+	glVertexAttribIPointer(3, 4, GL_UNSIGNED_INT, vertexSize, (void*) (positionSize + normalSize + uvSize));
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, vertexSize, (void*) (positionSize + normalSize + uvSize + bonesIDSize));
 
 	// Unbind VAO
 	glBindVertexArray(0);
@@ -362,15 +337,13 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 
 	// Bones
 	for (unsigned i = 0; i < numBones; i++) {
-		unsigned lengthName = *((unsigned*) cursor);
+		// filename size
 		cursor += sizeof(unsigned);
-
-		cursor += lengthName * sizeof(char);
+		// filename
+		cursor += FILENAME_MAX * sizeof(char);
+		// translation, scaling, rotation
 		cursor += sizeof(float) * 10;
 	}
-
-	// Attaches
-	if (numBones > 0) cursor += sizeof(Mesh::Attach) * mesh->numVertices;
 
 	// Vertices
 	std::vector<float3> vertices;
@@ -381,7 +354,7 @@ std::vector<Triangle> MeshImporter::ExtractMeshTriangles(Mesh* mesh, const float
 		vertex[1] = *((float*) cursor);
 		cursor += sizeof(float);
 		vertex[2] = *((float*) cursor);
-		cursor += sizeof(float) * 6;
+		cursor += sizeof(float) * 14;
 		vertices.push_back((model * float4(vertex[0], vertex[1], vertex[2], 1)).xyz());
 	}
 

@@ -178,8 +178,10 @@ UpdateStatus ModuleRender::Update() {
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
 	// Draw Animations
-	for (GameObject& gameObject : App->scene->gameObjects) {
-		DrawAnimation(&gameObject);
+	for (const GameObject& gameObject : App->scene->gameObjects) {
+		if (gameObject.GetRootBone()) {
+			DrawAnimation(gameObject.GetRootBone());
+		}
 	}
 
 	return UpdateStatus::CONTINUE;
@@ -374,20 +376,13 @@ void ModuleRender::DrawSkyBox() {
 	}
 }
 
-void ModuleRender::DrawAnimation(GameObject* gameObject, bool hasAnimation) {
-	ComponentAnimation* animationComponent = gameObject->GetComponent<ComponentAnimation>();
-	if (animationComponent || hasAnimation) {
-		for (GameObject* childen : gameObject->GetChildren()) {
-			ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
-			if (transform && gameObject->name != "RootNode" && gameObject->name != "Ctrl_Grp" && gameObject->name != "Root") {
-				if (gameObject->name == "RootNode") {
-					bool wtf = true;
-				}
-				dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
-				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
-				//dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);
-			}
-			DrawAnimation(childen, true);
-		}
+void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {
+	for (const GameObject* childen : gameObject->GetChildren()) {
+		ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
+
+		dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
+		dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
+
+		DrawAnimation(childen, true);
 	}
 }
