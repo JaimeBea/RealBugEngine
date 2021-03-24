@@ -11,14 +11,10 @@
 
 #include "Utils/Leaks.h"
 
-ResourceMesh::ResourceMesh(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourceMesh::Load() {
 	// Timer to measure loading a mesh
 	MSTimer timer;
 	timer.Start();
-
 	std::string filePath = GetResourceFilePath();
 	LOG("Loading mesh from path: \"%s\".", filePath.c_str());
 

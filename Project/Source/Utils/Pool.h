@@ -36,12 +36,12 @@ public:
 	}
 
 	T* Obtain() {
-		assert(firstFree != nullptr); // The pool hasn't been initialized
+		assert(firstFree != nullptr); // ERROR: The pool hasn't been initialized
 
-		assert(firstFree != data + size); // Pool overflow
+		assert(firstFree != data + size); // ERROR: Pool overflow
 
 		// Obtain a new object
-		T* object = firstFree;
+		T* object = new (firstFree) T();
 		size_t index = object - data;
 		firstFree = nextFree[index];
 		nextFree[index] = nullptr;
@@ -51,13 +51,14 @@ public:
 	}
 
 	void Release(T* object) {
-		assert(object >= data && object < data + size); // The object is not in the data array
+		assert(object >= data && object < data + size); // ERROR: The object is not in the data array
 
 		size_t index = object - data;
 
-		assert(nextFree[index] == nullptr); // The object is already free
+		assert(nextFree[index] == nullptr); // ERROR: The object is already free
 
 		// Release the object
+		object->~T();
 		nextFree[index] = firstFree;
 		firstFree = object;
 		count -= 1;
@@ -132,9 +133,9 @@ public:
 	}
 
 private:
-	size_t size = 0; // Max number of objects in the pool.
-	size_t count = 0; // Current number of objects in the pool.
-	T* data = nullptr; // Data storage.
+	size_t size = 0;		// Max number of objects in the pool.
+	size_t count = 0;		// Current number of objects in the pool.
+	T* data = nullptr;		// Data storage.
 	T** nextFree = nullptr; // Linked list of free objects. Null pointers mean that the object isn't free. Last item points to the end of the data.
 	T* firstFree = nullptr; // First free object in the linked list.
 };

@@ -84,6 +84,21 @@ void ModuleFiles::Erase(const char* path) const {
 	}
 }
 
+std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
+	std::vector<std::string> files;
+	char** filesList = PHYSFS_enumerateFiles(folderPath);
+
+	unsigned i = 0;
+	char* file = filesList[i];
+	while (file != nullptr) {
+		files.push_back(file);
+		file = filesList[++i];
+	}
+
+	PHYSFS_freeList(filesList);
+	return files;
+}
+
 bool ModuleFiles::Exists(const char* path) const {
 	PHYSFS_Stat fileStats;
 	return PHYSFS_stat(path, &fileStats) != 0;

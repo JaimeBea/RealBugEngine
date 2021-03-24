@@ -1,83 +1,39 @@
 #pragma once
 
 #include "Resources/Resource.h"
-#include "Resources/ResourceShader.h"
-#include "Resources/ResourceTexture.h"
 
 #include "Math/float3.h"
 
 class ResourceMaterial : public Resource {
 public:
-	ResourceMaterial(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceMaterial, ResourceType::MATERIAL);
 
 	void Load() override;
 	void Unload() override;
 
-	ResourceShader* GetShader() {
-		return shader;
-	};
+	void SaveToFile(const char* filePath);
 
-	float4 GetDiffuseColor() {
-		return diffuseColor;
-	};
-
-	ResourceTexture* GetDiffuseMap() {
-		return diffuseMap;
-	};
-
-	float4 GetSpecularColor() {
-		return specularColor;
-	};
-
-	ResourceTexture* GetSpecularMap() {
-		return specularMap;
-	};
-
-	ResourceTexture* GetMetallicMap() {
-		return metallicMap;
-	};
-
-	ResourceTexture* GetNormalMap() {
-		return normalMap;
-	};
-
-	float Getsmoothness() {
-		return smoothness;
-	};
-
-	bool HasSmoothnessInAlphaChannel() {
-		return hasSmoothnessInAlphaChannel;
-	};
-
-	bool HasSpecularMap() {
-		return hasSpecularMap;
-	}
-
-	bool HasDiffuseMap() {
-		return hasDiffuseMap;
-	}
-
-private:
+public:
 	// Material shader
-	ResourceShader* shader = nullptr;
+	UID shaderId = 0;
 
 	// Diffuse
+	bool hasDiffuseMap = false;
 	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
-	ResourceTexture* diffuseMap = nullptr;
+	UID diffuseMapId = 0;
 
 	// Specular
+	bool hasSpecularMap = false;
 	float4 specularColor = {1.0f, 1.0f, 1.0f, 1.0f};
-	ResourceTexture* specularMap = nullptr;
+	UID specularMapId = 0;
 
 	// Metalness
-	ResourceTexture* metallicMap = nullptr;
+	UID metallicMapId = 0;
 
 	// Normal
-	ResourceTexture* normalMap = nullptr;
+	UID normalMapId = 0;
 
 	// Smoothness
 	float smoothness = 300;
 	bool hasSmoothnessInAlphaChannel = false;
-	bool hasSpecularMap = false;
-	bool hasDiffuseMap = false;
 };

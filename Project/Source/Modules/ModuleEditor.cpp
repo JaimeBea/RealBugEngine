@@ -138,6 +138,7 @@ bool ModuleEditor::Start() {
 
 	panels.push_back(&panelScene);
 	panels.push_back(&panelConsole);
+	panels.push_back(&panelProject);
 	panels.push_back(&panelConfiguration);
 	panels.push_back(&panelHierarchy);
 	panels.push_back(&panelInspector);
@@ -183,6 +184,7 @@ UpdateStatus ModuleEditor::Update() {
 	if (ImGui::BeginMenu("View")) {
 		ImGui::MenuItem(panelScene.name, "", &panelScene.enabled);
 		ImGui::MenuItem(panelConsole.name, "", &panelConsole.enabled);
+		ImGui::MenuItem(panelProject.name, "", &panelProject.enabled);
 		ImGui::MenuItem(panelInspector.name, "", &panelInspector.enabled);
 		ImGui::MenuItem(panelHierarchy.name, "", &panelHierarchy.enabled);
 		ImGui::MenuItem(panelConfiguration.name, "", &panelConfiguration.enabled);
@@ -209,10 +211,10 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::OpenPopup("New scene");
 		break;
 	case Modal::LOAD_SCENE:
-		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), gamePath + "\\Library\\Scenes");
+		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), gamePath);
 		break;
 	case Modal::SAVE_SCENE:
-		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), gamePath + "\\Library\\Scenes");
+		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), gamePath);
 		break;
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");
@@ -239,19 +241,20 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndPopup();
 	}
-	// TODO: (Scene resource) Loading and saving scenes
-	/*
+
 	std::string selectedFile;
+	/*
 	if (FileDialog::OpenDialog("Load scene", selectedFile)) {
 		SceneImporter::LoadScene(FileDialog::GetFileName(selectedFile.c_str()).c_str());
 		ImGui::CloseCurrentPopup();
 	}
+	*/
 
 	if (FileDialog::OpenDialog("Save scene", selectedFile)) {
-		SceneImporter::SaveScene(FileDialog::GetFileName(selectedFile.c_str()).c_str());
+		std::string filePath = std::string(SCENES_PATH "/") + FileDialog::GetFileName(selectedFile.c_str()) + SCENE_EXTENSION;
+		SceneImporter::SaveScene(filePath.c_str());
 		ImGui::CloseCurrentPopup();
 	}
-	*/
 
 	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
@@ -289,9 +292,9 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::DockBuilderSetNodeSize(dockSpaceId, viewport->GetWorkSize());
 
 		dockMainId = dockSpaceId;
-		dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.25f, nullptr, &dockMainId);
-		dockRightId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.33f, nullptr, &dockMainId);
+		dockRightId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, nullptr, &dockMainId);
 		dockDownId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
+		dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.25f, nullptr, &dockMainId);
 	}
 
 	ImGui::SetNextWindowPos(viewport->GetWorkPos());

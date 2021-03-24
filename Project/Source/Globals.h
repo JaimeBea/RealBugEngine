@@ -13,18 +13,19 @@ enum class UpdateStatus {
 
 // Files -----------
 #define ASSETS_PATH "Assets"
-#define DATA_PATH "Library/Data/"
-#define TEXTURES_PATH "Library/Textures"
-#define MESHES_PATH "Library/Meshes"
-#define SCENES_PATH "Library/Scenes"
+#define LIBRARY_PATH "Library"
+#define TEXTURES_PATH "Assets/Textures"
+#define SHADERS_PATH "Assets/Shaders"
+#define SCENES_PATH "Assets/Scenes"
 #define TEXTURE_EXTENSION ".dds"
-#define MESH_EXTENSION ".mesh"
 #define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
 #define META_EXTENSION ".meta"
 
+#define PHONG_SHADER_FILE "phong.glsl"
+
 // Configuration -----------
-#define GLSL_VERSION "#version 330"
+#define GLSL_VERSION "#version 460"
 
 // Threads
 #define TIME_BETWEEN_RESOURCE_UPDATES_MS 300

@@ -12,7 +12,6 @@
 
 class GameObject {
 public:
-	void Init();
 	void InitComponents();
 	void Update();
 	void DrawGizmos();
@@ -43,12 +42,15 @@ public:
 
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);
-	void PostLoad(JsonValue jGameObject);
+
+	void SavePrototype(JsonValue jGameObject) const;
+	void LoadPrototype(JsonValue jGameObject);
 
 public:
 	UID id = 0;
-	std::string name = "GameObject";
+	std::string name = "";
 
+	Scene* scene = nullptr;
 	bool isInQuadtree = false;
 
 	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree

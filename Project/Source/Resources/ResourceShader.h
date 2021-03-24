@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Resources/Resource.h"
-enum class ShaderType { PHONG };
 
+enum class ShaderType { PHONG };
 
 class ResourceShader : public Resource {
 public:
-	ResourceShader(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceShader, ResourceType::SHADER);
 
 	void Load() override;
 	void Unload() override;
@@ -19,6 +19,6 @@ public:
 	}
 
 private:
-	unsigned int shaderProgram;
-	ShaderType shaderType;
+	unsigned int shaderProgram = 0;
+	ShaderType shaderType = ShaderType::PHONG;
 };

@@ -1,6 +1,7 @@
 #include "Module.h"
 
 #include "Globals.h"
+#include "Event.h"
 
 #include "Utils/Leaks.h"
 

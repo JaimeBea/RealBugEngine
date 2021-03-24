@@ -10,15 +10,12 @@
 #include "IL/ilu.h"
 #include "GL/glew.h"
 
-ResourceTexture::ResourceTexture(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
-
 void ResourceTexture::Load() {
 	// Timer to measure loading a texture
 	MSTimer timer;
 	timer.Start();
-
-	LOG("Loading texture from path: \"%s\".", this->GetAssetFilePath().c_str());
+	std::string filePath = GetResourceFilePath();
+	LOG("Loading texture from path: \"%s\".", filePath.c_str());
 
 	// Generate image handler
 	unsigned image;
@@ -29,7 +26,7 @@ void ResourceTexture::Load() {
 
 	// Load image
 	ilBindImage(image);
-	bool imageLoaded = ilLoad(IL_DDS, this->GetAssetFilePath().c_str());
+	bool imageLoaded = ilLoad(IL_DDS, filePath.c_str());
 	if (!imageLoaded) {
 		LOG("Failed to load image.");
 		return;
