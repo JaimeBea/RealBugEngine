@@ -122,6 +122,9 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		CheckFinishInterpolation checkFinishInterpolation;
 		checkFinishInterpolation.stateMachine = stateMachineResource;
 		animationInterpolations.remove_if(checkFinishInterpolation);
+		if (animationInterpolations.size() <= 1) {
+			animationInterpolations.clear();
+		}
 	} else {
 		result = animationController->GetTransform(stateMachineResource->GetCurrentState()->clip, gameObject->name.c_str(), position, rotation);
 	}

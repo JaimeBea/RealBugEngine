@@ -63,7 +63,6 @@ void AnimationController::Update() {
 
 bool AnimationController::InterpolateTransitions(std::list<AnimationInterpolation*>::iterator it, std::list<AnimationInterpolation*> animationInterpolations, GameObject* gameObject, float3& pos, Quat& quat) {
 	bool ok = GetTransform((*it)->state->clip, gameObject->name.c_str(), pos, quat);
-	std::list<AnimationInterpolation*>::iterator it2 = std::prev(animationInterpolations.end());
 	if ((*it) != (*std::prev(animationInterpolations.end()))) {
 		float3 position;
 		Quat rotation;
