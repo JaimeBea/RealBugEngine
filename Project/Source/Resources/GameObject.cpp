@@ -89,7 +89,6 @@ std::vector<Component*> GameObject::GetComponents() const {
 	return auxComponents;
 }
 
-
 void GameObject::RemoveComponent(Component* component) {
 	for (auto it = components.begin(); it != components.end(); ++it) {
 		if (it->second == component->GetID()) {
@@ -215,6 +214,12 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 	case ComponentType::LIGHT:
 		if (!App->scene->lightComponents.Has(componentId)) return nullptr;
 		return &App->scene->lightComponents.Get(componentId);
+	case ComponentType::AUDIO_SOURCE:
+		if (!App->scene->audioSourceComponents.Has(componentId)) return nullptr;
+		return &App->scene->audioSourceComponents.Get(componentId);
+	case ComponentType::AUDIO_LISTENER:
+		if (!App->scene->audioListenerComponents.Has(componentId)) return nullptr;
+		return &App->scene->audioListenerComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -234,6 +239,10 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 		return &App->scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
 	case ComponentType::LIGHT:
 		return &App->scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
+	case ComponentType::AUDIO_SOURCE:
+		return &App->scene->audioSourceComponents.Put(componentId, ComponentAudioSource(this, componentId, active));
+	case ComponentType::AUDIO_LISTENER:
+		return &App->scene->audioListenerComponents.Put(componentId, ComponentAudioListener(this, componentId, active));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -262,6 +271,14 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::LIGHT:
 		if (!App->scene->lightComponents.Has(componentId)) return;
 		App->scene->lightComponents.Remove(componentId);
+		break;
+	case ComponentType::AUDIO_SOURCE:
+		if (!App->scene->audioSourceComponents.Has(componentId)) return;
+		App->scene->audioSourceComponents.Remove(componentId);
+		break;
+	case ComponentType::AUDIO_LISTENER:
+		if (!App->scene->audioListenerComponents.Has(componentId)) return;
+		App->scene->audioListenerComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);

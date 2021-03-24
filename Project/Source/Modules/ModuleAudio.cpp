@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "Utils/alErrors.h"
 #include "Utils/alcErrors.h"
 #include "AL/al.h"
 
@@ -34,10 +35,45 @@ bool ModuleAudio::Init() {
 	}
 	LOG("Using Sound Device: \"%s\"", name);
 
+	// Generate Sources
+	alGenSources(NUM_SOURCES, sources);
+
 	return true;
 }
 
+ALuint ModuleAudio::GetAvailableSource(bool reverse) const {
+	if (reverse) {
+		for (int i = NUM_SOURCES - 1; i >= 0; --i) {
+			if (isAvailable(sources[i])) {
+				return sources[i];
+			}
+		}
+		return false;
+
+	} else {
+		for (int i = 0; i < NUM_SOURCES; ++i) {
+			if (isAvailable(sources[i])) {
+				return sources[i];
+			}
+		}
+		return false;
+	}
+}
+
+bool ModuleAudio::isActive(ALuint sourceId) const {
+	ALint state;
+	alGetSourcei(sourceId, AL_SOURCE_STATE, &state);
+	return (state == AL_PLAYING || state == AL_PAUSED);
+}
+
+bool ModuleAudio::isAvailable(ALuint sourceId) const {
+	ALint state;
+	alGetSourcei(sourceId, AL_SOURCE_STATE, &state);
+	return (state == AL_STOPPED || state == AL_INITIAL);
+}
+
 bool ModuleAudio::CleanUp() {
+	alCall(alDeleteSources, 16, sources);
 	alcCall(alcMakeContextCurrent, contextMadeCurrent, openALDevice, nullptr);
 	alcCall(alcDestroyContext, openALDevice, openALContext);
 	alcCloseDevice(openALDevice);

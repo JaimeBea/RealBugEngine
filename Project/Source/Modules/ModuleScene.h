@@ -12,6 +12,8 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "Components/ComponentAudioSource.h"
+#include "Components/ComponentAudioListener.h"
 
 #include <unordered_map>
 #include <string>
@@ -51,6 +53,8 @@ public:
 	VectorMap<UID, ComponentBoundingBox> boundingBoxComponents;
 	VectorMap<UID, ComponentCamera> cameraComponents;
 	VectorMap<UID, ComponentLight> lightComponents;
+	VectorMap<UID, ComponentAudioSource> audioSourceComponents;
+	VectorMap<UID, ComponentAudioListener> audioListenerComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

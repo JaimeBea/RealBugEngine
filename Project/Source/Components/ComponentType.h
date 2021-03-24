@@ -31,4 +31,6 @@ enum class ComponentType {
 	BOUNDING_BOX = 3,
 	CAMERA = 4,
 	LIGHT = 5,
+	AUDIO_SOURCE = 6,
+	AUDIO_LISTENER = 7
 };
