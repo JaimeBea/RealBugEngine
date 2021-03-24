@@ -1,0 +1,85 @@
+{
+    "Root": {
+        "Name": "RootNode",
+        "Active": true,
+        "Components": [
+            {
+                "Type": 1,
+                "Active": true,
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "LocalEulerAngles": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ]
+            }
+        ],
+        "Children": [
+            {
+                "Name": "Croissant1",
+                "Active": true,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            100.0,
+                            100.0,
+                            100.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": 2,
+                        "Active": true,
+                        "MeshID": 8232352332729853280,
+                        "MaterialID": 9179883072805092012
+                    },
+                    {
+                        "Type": 3,
+                        "Active": true,
+                        "LocalBoundingBox": [
+                            -0.7219939827919006,
+                            -0.010254710912704468,
+                            -1.0147950649261475,
+                            0.7139790058135986,
+                            1.0296562910079957,
+                            1.03926682472229
+                        ]
+                    }
+                ],
+                "Children": null
+            }
+        ]
+    }
+}

@@ -17,6 +17,7 @@ void ComponentSkyBox::Init() {
 }
 
 void ComponentSkyBox::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_SKYBOX] = skybox->GetId();
 }
 
 void ComponentSkyBox::Load(JsonValue jComponent) {
@@ -53,7 +54,7 @@ void ComponentSkyBox::OnEditorUpdate() {
 void ComponentSkyBox::Draw() {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
-	programSky = skybox->GetShader()->GetShaderProgram();
+	/*programSky = skybox->GetShader()->GetShaderProgram();*/
 	glUseProgram(programSky);
 	float4x4 proj = App->camera->GetProjectionMatrix();
 	float4x4 view = App->camera->GetViewMatrix();

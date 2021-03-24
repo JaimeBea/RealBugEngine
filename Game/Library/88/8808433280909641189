@@ -1,0 +1,85 @@
+{
+    "Root": {
+        "Name": "RootNode",
+        "Active": true,
+        "Components": [
+            {
+                "Type": 1,
+                "Active": true,
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "LocalEulerAngles": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ]
+            }
+        ],
+        "Children": [
+            {
+                "Name": "herschel_bag",
+                "Active": true,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            -0.7071068286895752,
+                            0.0,
+                            0.0,
+                            0.7071067094802856
+                        ],
+                        "Scale": [
+                            100.0,
+                            100.0,
+                            100.0
+                        ],
+                        "LocalEulerAngles": [
+                            -90.00000762939453,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    {
+                        "Type": 2,
+                        "Active": true,
+                        "MeshID": 9572103751974016947,
+                        "MaterialID": 17092040506260821068
+                    },
+                    {
+                        "Type": 3,
+                        "Active": true,
+                        "LocalBoundingBox": [
+                            -0.5429824590682983,
+                            0.2763635516166687,
+                            -0.47777047753334048,
+                            0.4865575134754181,
+                            1.5314897298812867,
+                            0.4230339527130127
+                        ]
+                    }
+                ],
+                "Children": null
+            }
+        ]
+    }
+}

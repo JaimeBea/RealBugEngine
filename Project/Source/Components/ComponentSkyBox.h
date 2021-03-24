@@ -21,12 +21,11 @@ public:
 	void Init() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
-	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
-
+	void Save(JsonValue jComponent) const override;
 	void Draw();
 
 private:
-	ResourceSkybox* skybox;
-	unsigned int programSky;
+	ResourceSkybox* skybox = nullptr;
+	unsigned int programSky = 0;
 };

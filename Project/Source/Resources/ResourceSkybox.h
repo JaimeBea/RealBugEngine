@@ -20,9 +20,9 @@ public:
 	void Draw();
 	void ReadPath();
 
-	ResourceShader* GetShader() {
-		return shader;
-	};
+	//ResourceShader* GetShader() {
+	//	return shader;
+	//};
 	unsigned int GetVao() {
 		return skyboxVAO;
 	};
@@ -80,7 +80,7 @@ public:
 	}; // clang-format on
 
 private:
-	ResourceShader* shader;
+	//ResourceShader* shader;
 	unsigned int skyboxVAO = 0;
 	unsigned int skyboxVBO = 0;
 	unsigned int glCubeMap = 0;

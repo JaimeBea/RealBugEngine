@@ -127,7 +127,7 @@ void ModuleScene::CreateEmptyScene() {
 	//gameCamera->InitComponents();
 
 	// Create Skybox
-	/*ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();*/
+	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	gameCamera->InitComponents();
 }
 

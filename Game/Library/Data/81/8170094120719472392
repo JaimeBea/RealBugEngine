@@ -1,0 +1,21 @@
+{
+    "shader": 0,
+    "diffuseColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "diffuseMap": 0,
+    "specularColor": [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+    ],
+    "specularMap": 0,
+    "metallicMap": 0,
+    "normalMap": 0,
+    "smoothness": 0,
+    "hasSmoothnessInAlphaChannel": 0
+}

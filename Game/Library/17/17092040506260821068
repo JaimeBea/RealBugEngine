@@ -1,0 +1,23 @@
+{
+    "Shader": 10727013993834048235,
+    "HasDiffuseMap": true,
+    "DiffuseColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "DiffuseMap": 10458334806966586385,
+    "HasSpecularMap": false,
+    "SpecularColor": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "SpecularMap": 10458334806966586385,
+    "MetallicMap": 0,
+    "NormalMap": 0,
+    "Smoothness": 9.607843399047852,
+    "HasSmoothnessInAlphaChannel": false
+}
