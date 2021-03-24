@@ -18,7 +18,9 @@ class ComponentSkyBox : public Component {
 public:
 	REGISTER_COMPONENT(ComponentSkyBox, ComponentType::SKYBOX, false);
 
+	void Init() override;
 	void OnTransformUpdate() override;
+	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 

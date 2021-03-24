@@ -124,6 +124,10 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
+	//gameCamera->InitComponents();
+
+	// Create Skybox
+	/*ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();*/
 	gameCamera->InitComponents();
 }
 

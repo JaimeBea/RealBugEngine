@@ -15,6 +15,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <Components/ComponentSkyBox.h>
 
 class CubeMap;
 struct aiScene;
@@ -51,6 +52,7 @@ public:
 	VectorMap<UID, ComponentBoundingBox> boundingBoxComponents;
 	VectorMap<UID, ComponentCamera> cameraComponents;
 	VectorMap<UID, ComponentLight> lightComponents;
+	VectorMap<UID, ComponentSkyBox> skyboxComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;
