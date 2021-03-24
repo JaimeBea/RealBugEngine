@@ -11,12 +11,15 @@ public:
 
 	void Init() override;
 	void Update() override;
+	void OnEditorUpdate() override;
+
 
 	void Draw(ComponentTransform2D* transform);
 	void SetTexture(Texture* text);
 
 private:
 	Texture* texture;
+	float3 color = {255, 255, 255};
 	unsigned int vbo;
 	unsigned int renderedTexture = 0;
 

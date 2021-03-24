@@ -3,9 +3,11 @@
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
-#include "GL/glew.h"
+#include "Modules/ModuleEditor.h"
+#include "Modules/ModuleResources.h"
 #include "Math/TransformOps.h"
-#include "Utils/Logging.h"
+#include "imgui.h"
+#include "GL/glew.h"
 
 ComponentImage::~ComponentImage() {
 	DestroyVBO();
@@ -17,6 +19,45 @@ void ComponentImage::Init() {
 
 void ComponentImage::Update() {
 
+}
+
+void ComponentImage::OnEditorUpdate() {
+	if (ImGui::CollapsingHeader("Image")) {
+		ImGui::TextColored(App->editor->textColor, "Texture Settings:");
+
+		std::vector<Texture*> textures;
+		for (Texture& texture : App->resources->textures) textures.push_back(&texture);
+
+		ImGui::ColorEdit3("Color##", color.ptr());
+
+		std::string& currentDiffuseTexture = texture->fileName;
+		if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
+			for (unsigned i = 0; i < textures.size(); ++i) {
+				bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
+				if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
+					texture = textures[i];
+				};
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		
+		ImGui::Text("");
+
+		ImGui::Separator();
+		ImGui::TextColored(App->editor->titleColor, "Texture Preview");
+		ImGui::TextWrapped("Size:");
+		ImGui::SameLine();
+		int width;
+		int height;
+		glGetTextureLevelParameteriv(texture->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+		glGetTextureLevelParameteriv(texture->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+		ImGui::TextWrapped("%d x %d", width, height);
+		ImGui::Image((void*) texture->glTexture, ImVec2(200, 200));
+		ImGui::Separator();
+	}
 }
 
 void ComponentImage::CreateVBO() {
