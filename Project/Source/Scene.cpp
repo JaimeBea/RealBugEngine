@@ -74,7 +74,7 @@ void Scene::DestroyGameObject(GameObject* gameObject) {
 	}
 
 	gameObjectsIdMap.erase(gameObject->GetID());
-	gameObject->RemoveComponents();
+	gameObject->RemoveAllComponents();
 	gameObject->SetParent(nullptr);
 	gameObjects.Release(gameObject);
 }

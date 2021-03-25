@@ -31,5 +31,4 @@ private:
 	AABB worldAABB = {{0, 0, 0}, {0, 0, 0}}; // Axis Aligned Bounding Box in world coordinates. Used for Culling and other camera calculations.
 	OBB worldOBB = {worldAABB};				 // Oriented Bounding Box. This is the one that will be rendered.
 	bool dirty = true;						 // If set to true CalculateWorldBoundingBox() will update the BBs on the next frame. Otherwise, it will skip the calculations.
-	//bool bbActive = false;					 // Used as a check button from the PanelInspector to render the outlines of the 'worldOBB'.
 };

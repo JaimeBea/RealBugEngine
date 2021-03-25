@@ -29,7 +29,7 @@ public:
 	template<class T> std::vector<T*> GetComponents() const;
 	std::vector<Component*> GetComponents() const;
 	void RemoveComponent(Component* component);
-	void RemoveComponents();
+	void RemoveAllComponents();
 
 	void SetParent(GameObject* gameObject);
 	GameObject* GetParent() const;

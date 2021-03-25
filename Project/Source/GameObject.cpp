@@ -89,7 +89,7 @@ void GameObject::RemoveComponent(Component* component) {
 	}
 }
 
-void GameObject::RemoveComponents() {
+void GameObject::RemoveAllComponents() {
 	while (!components.empty()) {
 		std::pair<ComponentType, UID> pair = components.back();
 		RemoveComponentByTypeAndId(pair.first, pair.second);
