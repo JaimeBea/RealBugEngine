@@ -56,8 +56,6 @@ bool ModuleScene::Init() {
 	aiAttachLogStream(&logStream);
 #endif
 
-	script.Start();
-
 	return true;
 }
 

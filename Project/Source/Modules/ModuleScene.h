@@ -13,8 +13,6 @@
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
 
-#include <Script.h>
-
 #include <unordered_map>
 #include <string>
 
@@ -64,6 +62,4 @@ public:
 	unsigned skyboxVao = 0;
 	unsigned skyboxVbo = 0;
 	CubeMap* skyboxCubeMap = 0;
-
-	Script script;
 };

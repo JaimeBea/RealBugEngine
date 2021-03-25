@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include "Brofiler.h"
 
-#include "../SampleTest.h"
-
 #include "Utils/Leaks.h"
 
 enum class MainState {
