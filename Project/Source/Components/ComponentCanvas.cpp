@@ -1,12 +1,6 @@
 #include "ComponentCanvas.h"
-
 #include "ComponentCanvasRenderer.h"
-
 #include "Application.h"
-
-#include "Modules/ModuleCamera.h"
-#include "Modules/ModulePrograms.h"
-
 #include "Resources/GameObject.h"
 
 void ComponentCanvas::Render() {
@@ -21,7 +15,7 @@ void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
 		componentCanvasRenderer->Render(gameObject);
 	}
 
-	for (auto& children : gameObject->GetChildren()) {
-		RenderGameObject(children);
+	for (GameObject* child : gameObject->GetChildren()) {
+		RenderGameObject(child);
 	}
 }

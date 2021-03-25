@@ -401,17 +401,14 @@ void ModuleRender::RenderUI() {
 }
 
 void ModuleRender::SetOrtographicRender() {
-	// ENABLE ORTOGRAPHIC RENDERING
 	glMatrixMode(GL_PROJECTION);
-	//glPushMatrix();
 	glLoadIdentity();
 	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
 	glMatrixMode(GL_MODELVIEW);
 }
 
 void ModuleRender::SetPerspectiveRender() {
-	// DISABLE ORTOGRAPHIC RENDERING
-	glMatrixMode(GL_PROJECTION);
+ 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);

@@ -197,16 +197,6 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndMenu();
 	}
 
-	if (ImGui::BeginMenu("UI Editor")) {
-		if (ImGui::MenuItem("Open")) {
-			App->userInterface->StartUI();
-		}
-		if (ImGui::MenuItem("Exit")) {
-			App->userInterface->EndUI();
-		}
-		ImGui::EndMenu();
-	}
-
 	ImGui::EndMainMenuBar();
 
 	// Modals
