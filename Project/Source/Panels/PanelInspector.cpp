@@ -1,7 +1,7 @@
 #include "PanelInspector.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
 #include "Modules/ModuleEditor.h"

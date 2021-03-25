@@ -6,8 +6,9 @@
 class ModuleTime : public Module {
 public:
 	ModuleTime();
-
+	bool Init() override;
 	UpdateStatus PreUpdate() override;
+	void ReceiveEvent(const Event& e) override;
 
 	void WaitForEndOfFrame(); // Calculates the time until the next frame if there is a framerate limitation, and introduces a Delay for that remainign time.
 
@@ -19,6 +20,9 @@ public:
 	float GetRealTimeDeltaTime() const;
 	float GetTimeSinceStartup() const;
 	float GetRealTimeSinceStartup() const;
+
+	long long GetCurrentTimestamp() const;
+
 	float GetTimeScale() const;
 	void SetTimeScale(float timeScale);
 	unsigned int GetFrameCount() const;

@@ -11,6 +11,7 @@ namespace FileDialog {
 	bool OverrideAlertDialog(const std::string& file);
 	bool IsDirectory(const char* path);
 	bool Exists(const char* filePath);
+	void Copy(const char* path, const char* newPath);
 
 	std::vector<std::string> GetDrives();
 	std::vector<std::string> GetFilesInFolder(const char* folderPath, AllowedExtensionsFlag extFilter = AllowedExtensionsFlag::ALL);

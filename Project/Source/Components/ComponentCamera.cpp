@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
