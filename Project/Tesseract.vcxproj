@@ -11,9 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Panels\PanelProject.h" />
+    <ClInclude Include="Source\Resources\ResourceType.h" />
+    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\Resources\ResourcePrefab.h" />
     <ClInclude Include="Source\Modules\ModuleEventSystem.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
-    <ClInclude Include="Source\Resources\Event.h" />
+    <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
@@ -26,8 +30,15 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_lzmasdk.h" />
     <ClInclude Include="Libs\PhysicsFS\physfs_miniz.h" />
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
+    <ClInclude Include="Source\FileSystem\MaterialImporter.h" />
+    <ClInclude Include="Source\FileSystem\ModelImporter.h" />
+    <ClInclude Include="Source\FileSystem\ShaderImporter.h" />
+    <ClInclude Include="Source\Resources\ResourceScene.h" />
+    <ClInclude Include="Source\Resources\ResourceShader.h" />
+    <ClInclude Include="Source\Resources\Resource.h" />
     <ClInclude Include="Source\Globals.h" />
     <ClInclude Include="Source\Application.h" />
+    <ClInclude Include="Source\Utils\ImGuiUtils.h" />
     <ClInclude Include="Source\Utils\Leaks.h" />
     <ClInclude Include="Source\Utils\Logging.h" />
     <ClInclude Include="Source\Utils\Buffer.h" />
@@ -37,14 +48,12 @@
     <ClInclude Include="Source\Utils\Pool.h" />
     <ClInclude Include="Source\Utils\Quadtree.h" />
     <ClInclude Include="Source\FileSystem\JsonValue.h" />
-    <ClInclude Include="Source\FileSystem\MeshImporter.h" />
     <ClInclude Include="Source\FileSystem\SceneImporter.h" />
     <ClInclude Include="Source\FileSystem\TextureImporter.h" />
-    <ClInclude Include="Source\Resources\GameObject.h" />
-    <ClInclude Include="Source\Resources\Material.h" />
-    <ClInclude Include="Source\Resources\Mesh.h" />
-    <ClInclude Include="Source\Resources\Texture.h" />
-    <ClInclude Include="Source\Resources\CubeMap.h" />
+    <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\Resources\ResourceMaterial.h" />
+    <ClInclude Include="Source\Resources\ResourceMesh.h" />
+    <ClInclude Include="Source\Resources\ResourceTexture.h" />
     <ClInclude Include="Source\Modules\Module.h" />
     <ClInclude Include="Source\Modules\ModuleCamera.h" />
     <ClInclude Include="Source\Modules\ModuleFiles.h" />
@@ -169,6 +178,10 @@
   <ItemGroup>
     <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
+    <ClCompile Include="Source\Panels\PanelProject.cpp" />
+    <ClCompile Include="Source\Resources\ResourceType.cpp" />
+    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\Resources\ResourcePrefab.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
@@ -192,17 +205,25 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_windows.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_winrt.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
+    <ClCompile Include="Source\FileSystem\MaterialImporter.cpp" />
+    <ClCompile Include="Source\FileSystem\ModelImporter.cpp" />
+    <ClCompile Include="Source\FileSystem\ShaderImporter.cpp" />
+    <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Resources\ResourceMaterial.cpp" />
+    <ClCompile Include="Source\Resources\ResourceMesh.cpp" />
+    <ClCompile Include="Source\Resources\ResourceScene.cpp" />
+    <ClCompile Include="Source\Resources\ResourceShader.cpp" />
+    <ClCompile Include="Source\Resources\ResourceTexture.cpp" />
     <ClCompile Include="Source\Utils\Logging.cpp" />
     <ClCompile Include="Source\Utils\MSTimer.cpp" />
     <ClCompile Include="Source\Utils\PerformanceTimer.cpp" />
     <ClCompile Include="Source\Utils\UID.cpp" />
     <ClCompile Include="Source\FileSystem\JsonValue.cpp" />
-    <ClCompile Include="Source\FileSystem\MeshImporter.cpp" />
     <ClCompile Include="Source\FileSystem\SceneImporter.cpp" />
     <ClCompile Include="Source\FileSystem\TextureImporter.cpp" />
-    <ClCompile Include="Source\Resources\GameObject.cpp" />
+    <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Modules\Module.cpp" />
     <ClCompile Include="Source\Modules\ModuleCamera.cpp" />
     <ClCompile Include="Source\Modules\ModuleFiles.cpp" />
@@ -283,14 +304,6 @@
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Game\Shaders\default_fragment.glsl" />
-    <None Include="..\Game\Shaders\default_vertex.glsl" />
-    <None Include="..\Game\Shaders\phong_fragment.glsl" />
-    <None Include="..\Game\Shaders\phong_pbr_fragment.glsl" />
-    <None Include="..\Game\Shaders\phong_pbr_vertex.glsl" />
-    <None Include="..\Game\Shaders\phong_vertex.glsl" />
-    <None Include="..\Game\Shaders\skybox_fragment.glsl" />
-    <None Include="..\Game\Shaders\skybox_vertex.glsl" />
     <None Include="..\LICENSE" />
     <None Include="..\PackageEngine.bat" />
     <None Include="..\PackageEngine.ps1" />

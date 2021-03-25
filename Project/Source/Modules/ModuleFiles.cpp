@@ -80,10 +80,38 @@ void ModuleFiles::CreateFolder(const char* folderPath) const {
 
 void ModuleFiles::Erase(const char* path) const {
 	if (!PHYSFS_delete(path)) {
-		LOG(PHYSFS_getLastError());
+		LOG("Can't erase file %s. (%s)\n", path, PHYSFS_getLastError());
 	}
 }
 
+std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
+	std::vector<std::string> files;
+	char** filesList = PHYSFS_enumerateFiles(folderPath);
+
+	unsigned i = 0;
+	char* file = filesList[i];
+	while (file != nullptr) {
+		files.push_back(file);
+		file = filesList[++i];
+	}
+
+	PHYSFS_freeList(filesList);
+	return files;
+}
+
 bool ModuleFiles::Exists(const char* path) const {
-	return PHYSFS_exists(path);
+	PHYSFS_Stat fileStats;
+	return PHYSFS_stat(path, &fileStats) != 0;
+}
+
+bool ModuleFiles::IsDirectory(const char* path) const {
+	PHYSFS_Stat fileStats;
+	PHYSFS_stat(path, &fileStats);
+	return fileStats.filetype == PHYSFS_FileType::PHYSFS_FILETYPE_DIRECTORY;
+}
+
+long long ModuleFiles::GetLocalFileModificationTime(const char* path) const {
+	PHYSFS_Stat fileStats;
+	PHYSFS_stat(path, &fileStats);
+	return fileStats.modtime;
 }

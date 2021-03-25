@@ -1,7 +1,5 @@
 #include "ModuleEventSystem.h"
 
-#include "Resources/GameObject.h"
-#include "Utils/Logging.h"
 #include "Utils/Logging.h"
 
 #include "Utils/Leaks.h"

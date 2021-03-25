@@ -1,13 +1,11 @@
 #pragma once
-#include <queue>
-#include <Modules/Module.h>
-#include < vector>
-#include "Resources/Event.h"
 
-class ModuleUserInterface;
-class ModuleScene;
-class ModuleTime;
-class GameObject;
+#include "Event.h"
+#include "Modules/Module.h"
+
+#include <queue>
+#include <vector>
+#include <unordered_map>
 
 class ModuleEventSystem : public Module {
 private:
