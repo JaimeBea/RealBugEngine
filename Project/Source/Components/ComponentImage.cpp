@@ -28,7 +28,7 @@ void ComponentImage::OnEditorUpdate() {
 		std::vector<Texture*> textures;
 		for (Texture& texture : App->resources->textures) textures.push_back(&texture);
 
-		ImGui::ColorEdit3("Color##", color.ptr());
+		ImGui::ColorEdit4("Color##", color.ptr());
 
 		std::string& currentDiffuseTexture = texture->fileName;
 		if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
@@ -44,6 +44,8 @@ void ComponentImage::OnEditorUpdate() {
 			ImGui::EndCombo();
 		}
 		
+		ImGui::Checkbox("Alpha transparency", &alphaTransparency);
+
 		ImGui::Text("");
 
 		ImGui::Separator();
@@ -111,6 +113,11 @@ void ComponentImage::DestroyVBO() {
 
 void ComponentImage::Draw(ComponentTransform2D* transform) {
 
+	if (alphaTransparency) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
 	unsigned int program = App->programs->uiProgram;
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -128,10 +135,15 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
+	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
+
+
 	glBindTexture(GL_TEXTURE_2D, texture->glTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glDisable(GL_BLEND);
 }
 
 void ComponentImage::SetTexture(Texture* text) {

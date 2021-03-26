@@ -395,7 +395,9 @@ void ModuleRender::DrawSkyBox() {
 void ModuleRender::RenderUI() {
 	SetOrtographicRender();
 	App->camera->EnableOrtographic();
+	glDisable(GL_DEPTH_TEST);		// In order to not clip with Models
 	App->userInterface->Render();
+	glEnable(GL_DEPTH_TEST);
 	App->camera->EnablePerspective();
 	SetPerspectiveRender();
 }

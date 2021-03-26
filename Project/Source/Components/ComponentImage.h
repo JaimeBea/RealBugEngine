@@ -19,9 +19,10 @@ public:
 
 private:
 	Texture* texture;
-	float3 color = {255, 255, 255};
+	float4 color = {1, 1, 1, 1};
 	unsigned int vbo;
 	unsigned int renderedTexture = 0;
+	bool alphaTransparency = false;
 
 	void CreateVBO();
 	void DestroyVBO();
