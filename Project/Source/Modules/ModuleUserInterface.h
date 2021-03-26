@@ -12,15 +12,15 @@ public:
 	void GetCharactersInString(std::string font, std::string sentence, std::vector<Character>& charsInSentence); //Fills the given vector with the glyphs of the given font to form the given sentence.
 
 	void Render();
-
 	void StartUI();
 	void EndUI();
 	GameObject* GetCanvas() const;
+
+	void RecieveEvent(const Event& e) override;
 
 private:
 	std::unordered_map<std::string, std::unordered_map<char, Character>> fonts; //Container for different fonts with the name of the font as key.
 
 public:
 	GameObject* canvas = nullptr;
-
 };

@@ -103,7 +103,7 @@ UpdateStatus ModuleInput::PreUpdate() {
 			keyboard[event.key.keysym.scancode] = KS_UP;
 			break;
 		case SDL_MOUSEMOTION:
-			//TO DO possibly generate a movement UI event
+			//TO DO generate a movement UI event
 			break;
 		}
 	}

@@ -7,7 +7,7 @@
 #include "UI/EventSystem/Interfaces/IMoveHandler.h"
 class ComponentEventSystem;
 class Selectable : public Component
-	 {
+	, IPointerEnterHandler {
 public:
 	enum class NavigationType {
 		NONE,
@@ -50,4 +50,7 @@ public:
 	void OnEditorUpdate() override;
 	void Enable() override;
 	void Disable() override;
+
+	// Heredado vía IPointerEnterHandler
+	virtual void OnPointerEnter() override;
 };

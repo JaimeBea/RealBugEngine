@@ -5,6 +5,8 @@
 #include <Resources/GameObject.h>
 #include "imgui.h"
 
+#include "Utils/Logging.h"
+
 //TO DO ACTUALLY TRANSITION	WHEN HIGHLIGHTING HAPPENS, REQUIRES CLASS GRAPHICS FOR SPRITES/IMAGES
 void Selectable::Highlight(bool b) {
 	switch (m_Transition) {
@@ -155,4 +157,8 @@ void Selectable::Disable() {
 	//Remove last position from vector, effectively removing myself
 	ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
 	selectableIndex = -1;
+}
+
+void Selectable::OnPointerEnter() {
+	LOG("PointerEntered");
 }

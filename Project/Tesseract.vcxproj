@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Components\ComponentBoundingBox2D.h" />
     <ClInclude Include="Source\UI\EventSystem\Interfaces\IMoveHandler.h" />
     <ClInclude Include="Source\UI\EventSystem\Interfaces\IPointerEnterHandler.h" />
     <ClInclude Include="Source\UI\EventSystem\Interfaces\IPointerExitHandler.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
     <ClCompile Include="Source\Components\ComponentCanvas.cpp" />
     <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />
     <ClCompile Include="Source\UI\FontImporter.cpp" />

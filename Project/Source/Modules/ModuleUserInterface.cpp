@@ -4,6 +4,13 @@
 #include "Resources/GameObject.h"
 #include "Components/ComponentCanvas.h"
 
+#include "UI/Selectables/Selectable.h"
+#include "Components/ComponentEventSystem.h"
+#include "Components/ComponentBoundingBox2D.h"
+#include "UI/EventSystem/Event.h"
+
+#include "UI/EventSystem/Interfaces/IPointerEnterHandler.h"
+
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 void ModuleUserInterface::AddFont(std::string fontPath) {
@@ -55,4 +62,15 @@ void ModuleUserInterface::EndUI() {
 
 GameObject* ModuleUserInterface::GetCanvas() const {
 	return canvas;
+}
+
+void ModuleUserInterface::RecieveEvent(const Event& e) {
+	float2 mousePos = float2(e.point2d.x, e.point2d.y);
+	for (Selectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
+		ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
+		if (bb->GetWorldAABB().Contains(mousePos)) {
+			selectable->OnPointerEnter();
+			//selectable
+		}
+	}
 }

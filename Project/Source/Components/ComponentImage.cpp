@@ -5,6 +5,13 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
+
+#include "ComponentBoundingBox2D.h"
+#include "ComponentTransform2D.h"
+#include "Resources/GameObject.h"
+
+#include "Geometry/AABB2D.h"
+
 #include "Math/TransformOps.h"
 #include "imgui.h"
 #include "GL/glew.h"
@@ -15,10 +22,21 @@ ComponentImage::~ComponentImage() {
 
 void ComponentImage::Init() {
 	CreateVBO();
+	ComponentBoundingBox2D* bb = owner.GetComponent<ComponentBoundingBox2D>();
+	if (bb == nullptr) {
+		bb = owner.CreateComponent<ComponentBoundingBox2D>();
+	}
+
+	ComponentTransform2D* transform2D = owner.GetComponent<ComponentTransform2D>();
+
+	float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
+	float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
+
+	bb->SetLocalBoundingBox(AABB2D(minPoint.xy(), maxPoint.xy()));
+	bb->CalculateWorldBoundingBox();
 }
 
 void ComponentImage::Update() {
-
 }
 
 void ComponentImage::OnEditorUpdate() {
@@ -43,7 +61,7 @@ void ComponentImage::OnEditorUpdate() {
 			}
 			ImGui::EndCombo();
 		}
-		
+
 		ImGui::Text("");
 
 		ImGui::Separator();
@@ -61,8 +79,6 @@ void ComponentImage::OnEditorUpdate() {
 }
 
 void ComponentImage::CreateVBO() {
-
-
 	//float buffer_data[] = {
 	//	 0.0f, 0.0f, 0.0f, //  v0 pos
 	//	 1.0f, 0.0f, 0.0f, // v1 pos
@@ -83,21 +99,39 @@ void ComponentImage::CreateVBO() {
 
 	// centered position
 	float buffer_data[] = {
-		-0.5f, -0.5f, 0.0f, //  v0 pos
-		 0.5f, -0.5f, 0.0f, // v1 pos
-		-0.5f,  0.5f, 0.0f, //  v2 pos
+		-0.5f,
+		-0.5f,
+		0.0f, //  v0 pos
+		0.5f,
+		-0.5f,
+		0.0f, // v1 pos
+		-0.5f,
+		0.5f,
+		0.0f, //  v2 pos
 
-		 0.5f, -0.5f, 0.0f, //  v3 pos
-		 0.5f, 0.5f, 0.0f, // v4 pos
-		-0.5f, 0.5f, 0.0f, //  v5 pos
+		0.5f,
+		-0.5f,
+		0.0f, //  v3 pos
+		0.5f,
+		0.5f,
+		0.0f, // v4 pos
+		-0.5f,
+		0.5f,
+		0.0f, //  v5 pos
 
-		0.0f, 0.0f, //  v0 texcoord
-		1.0f, 0.0f, //  v1 texcoord
-		0.0f, 1.0f, //  v2 texcoord
+		0.0f,
+		0.0f, //  v0 texcoord
+		1.0f,
+		0.0f, //  v1 texcoord
+		0.0f,
+		1.0f, //  v2 texcoord
 
-		1.0f, 0.0f, //  v3 texcoord
-		1.0f, 1.0f, //  v4 texcoord
-		0.0f, 1.0f //  v5 texcoord
+		1.0f,
+		0.0f, //  v3 texcoord
+		1.0f,
+		1.0f, //  v4 texcoord
+		0.0f,
+		1.0f //  v5 texcoord
 	};
 
 	glGenBuffers(1, &vbo);
@@ -110,7 +144,6 @@ void ComponentImage::DestroyVBO() {
 }
 
 void ComponentImage::Draw(ComponentTransform2D* transform) {
-
 	unsigned int program = App->programs->uiProgram;
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
