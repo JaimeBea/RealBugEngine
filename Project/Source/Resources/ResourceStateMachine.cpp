@@ -23,7 +23,7 @@ ResourceStates* ResourceStateMachine::AddState(std::string name,Clip *clip) {
 	return state;
 }
 
-void ResourceStateMachine::AddTransition(ResourceStates* from, ResourceStates* to, unsigned int interpolation, std::string& name) {
+void ResourceStateMachine::AddTransition(ResourceStates* from, ResourceStates* to, float interpolation, std::string& name) {
 	//Checking for unique name
 	ResourceTransition* transition = FindTransitionGivenName(name);
 	if (transition) {

@@ -21,9 +21,9 @@ public:
 		animationResource = animation;
 	}
 
+	float currentTime = 0;
 private:
-	float currentTime;
-	bool running;
+	bool running = false;
 	ResourceAnimation* animationResource = nullptr;
 	//std::vector<Clips> clips;
 

@@ -17,7 +17,7 @@ private:
 public:
 	ResourceStateMachine();
 	ResourceStates* AddState(std::string name,Clip *clip);
-	void AddTransition(ResourceStates* from, ResourceStates* to,unsigned int interpolation, std::string& name );
+	void AddTransition(ResourceStates* from, ResourceStates* to, float interpolation, std::string& name );
 	ResourceTransition* GetValidTransition(std::string& name);
 	ResourceTransition* FindTransitionGivenName(std::string& name);
 	ResourceStates* GetCurrentState();

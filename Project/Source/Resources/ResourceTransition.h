@@ -5,7 +5,7 @@ class ResourceStates;
 class ResourceTransition {
 	
 public:
-	ResourceTransition(ResourceStates* mSource, ResourceStates* mTarget, std::string& mTrigger, unsigned int mInterpolation)
+	ResourceTransition(ResourceStates* mSource, ResourceStates* mTarget, std::string& mTrigger, float mInterpolation)
 		: source(mSource)
 		, target(mTarget)
 		, trigger(mTrigger)
@@ -16,6 +16,6 @@ public:
 	ResourceStates* source = nullptr;
 	ResourceStates* target = nullptr;
 	std::string trigger = "";
-	unsigned int interpolationDuration = 0;
-	float currentDuration;
+	float interpolationDuration = 0;
+	float currentDuration = 0;
 };

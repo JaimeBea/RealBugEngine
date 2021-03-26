@@ -91,18 +91,21 @@ void ComponentAnimation::SendTrigger(std::string trigger) {
 	if (transition != nullptr) {
 		animationInterpolations.push_front(new AnimationInterpolation(transition->source, 0, 0, transition->interpolationDuration));
 		animationInterpolations.push_front(new AnimationInterpolation(transition->target, 0, 0, transition->interpolationDuration));
+		animationController->currentTime = 0;
 	}
 }
 
 struct CheckFinishInterpolation {
-	bool operator()(AnimationInterpolation*& animationController) {
-		if (animationController->fadeTime >= 0.9) {
-			stateMachine->SetCurrentState(animationController->state);
+	bool operator()(AnimationInterpolation*& animationInterpolation) {
+		if (animationInterpolation->fadeTime >= 0.9) {
+			stateMachine->SetCurrentState(animationInterpolation->state);
+			//animationController->currentTime = 0;
 			LOG("CheckFinishInterpolation");
 		}
-		return animationController->fadeTime >= 0.9;
+		return animationInterpolation->fadeTime >= 0.9;
 	}
 	ResourceStateMachine* stateMachine;
+	AnimationController* animationController;
 };
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
@@ -121,6 +124,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		result = animationController->InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, gameObject, position, rotation);
 		CheckFinishInterpolation checkFinishInterpolation;
 		checkFinishInterpolation.stateMachine = stateMachineResource;
+		checkFinishInterpolation.animationController = animationController;
 		animationInterpolations.remove_if(checkFinishInterpolation);
 		if (animationInterpolations.size() <= 1) {
 			animationInterpolations.clear();
