@@ -9,4 +9,5 @@ public:
 	ResourceStates(std::string &name,Clip *clip);
 	std::string name = "";
 	Clip* clip = nullptr;
+	float currentTime = 0;
 };

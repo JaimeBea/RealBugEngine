@@ -13,6 +13,7 @@
 #include "Modules/ModuleEditor.h"
 
 #include "Application.h"
+#include "Modules/ModuleTime.h"
 #include "Modules/ModuleInput.h"
 
 #include "Utils/Logging.h"
@@ -38,8 +39,6 @@ void ComponentAnimation::Update() {
 			LOG("Transition2");
 		}
 	}
-
-	animationController->Update();
 	OnUpdate();
 }
 
@@ -83,15 +82,15 @@ void ComponentAnimation::OnUpdate() {
 				}
 			}
 		}
-	}
+	}	
+	stateMachineResource->GetCurrentState()->currentTime += App->time->GetDeltaTime();
 }
 
 void ComponentAnimation::SendTrigger(std::string trigger) {
 	ResourceTransition* transition = stateMachineResource->GetValidTransition(trigger);
 	if (transition != nullptr) {
-		animationInterpolations.push_front(new AnimationInterpolation(transition->source, 0, 0, transition->interpolationDuration));
+		animationInterpolations.push_front(new AnimationInterpolation(transition->source, stateMachineResource->GetCurrentState()->currentTime, 0, transition->interpolationDuration));
 		animationInterpolations.push_front(new AnimationInterpolation(transition->target, 0, 0, transition->interpolationDuration));
-		animationController->currentTime = 0;
 	}
 }
 
@@ -99,13 +98,12 @@ struct CheckFinishInterpolation {
 	bool operator()(AnimationInterpolation*& animationInterpolation) {
 		if (animationInterpolation->fadeTime >= 0.9) {
 			stateMachine->SetCurrentState(animationInterpolation->state);
-			//animationController->currentTime = 0;
+			stateMachine->GetCurrentState()->currentTime = animationInterpolation->TransistionTime;
 			LOG("CheckFinishInterpolation");
 		}
 		return animationInterpolation->fadeTime >= 0.9;
 	}
 	ResourceStateMachine* stateMachine;
-	AnimationController* animationController;
 };
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
@@ -124,13 +122,12 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		result = animationController->InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, gameObject, position, rotation);
 		CheckFinishInterpolation checkFinishInterpolation;
 		checkFinishInterpolation.stateMachine = stateMachineResource;
-		checkFinishInterpolation.animationController = animationController;
 		animationInterpolations.remove_if(checkFinishInterpolation);
 		if (animationInterpolations.size() <= 1) {
 			animationInterpolations.clear();
 		}
 	} else {
-		result = animationController->GetTransform(stateMachineResource->GetCurrentState()->clip, gameObject->name.c_str(), position, rotation);
+		result = animationController->GetTransform(stateMachineResource->GetCurrentState()->clip, stateMachineResource->GetCurrentState()->currentTime, gameObject->name.c_str(), position, rotation);
 	}
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();

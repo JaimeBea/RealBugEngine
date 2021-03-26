@@ -13,11 +13,10 @@
 
 AnimationController::AnimationController(ResourceAnimation* resourceAnimation)
 	: animationResource(resourceAnimation) {
-	currentTime = 0;
 	running = true;
 }
 
-bool AnimationController::GetTransform(Clip* clip, const char* name, float3& pos, Quat& quat) {
+bool AnimationController::GetTransform(Clip* clip, float& currentTime, const char* name, float3& pos, Quat& quat) {
 	if (clip->animation == nullptr) {
 		return false;
 	}
@@ -57,22 +56,22 @@ void AnimationController::Stop() {
 	running = false;
 }
 
-void AnimationController::Update() {
-	currentTime += App->time->GetDeltaTime();
-}
-
 bool AnimationController::InterpolateTransitions(std::list<AnimationInterpolation*>::iterator it, std::list<AnimationInterpolation*> animationInterpolations, GameObject* gameObject, float3& pos, Quat& quat) {
-	bool ok = GetTransform((*it)->state->clip, gameObject->name.c_str(), pos, quat);
+	bool ok = GetTransform((*it)->state->clip, (*it)->currentTime, gameObject->name.c_str(), pos, quat);
 	if ((*it) != (*std::prev(animationInterpolations.end()))) {
 		float3 position;
 		Quat rotation;
 		InterpolateTransitions(std::next(it), animationInterpolations, gameObject, position, rotation);
 
+
 		(*it)->fadeTime = 1 - ((*it)->TransistionTime - (*it)->currentTime) / (*it)->TransistionTime;
-		pos = float3::Lerp(pos, position, (*it)->fadeTime);
-		quat = Interpolate(quat, rotation, (*it)->fadeTime);
+		pos = float3::Lerp(position, pos, (*it)->fadeTime);
+		quat = Interpolate(rotation, quat, (*it)->fadeTime);
 	}
-	(*it)->currentTime += App->time->GetDeltaTime();
+	if (gameObject->name.compare("Root") == 0) {
+		(*it)->currentTime += App->time->GetDeltaTime();
+	}
+
 	return ok;
 }
 
