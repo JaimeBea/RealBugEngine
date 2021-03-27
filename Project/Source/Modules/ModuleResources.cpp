@@ -10,11 +10,13 @@
 #include "Resources/ResourceScene.h"
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceSkybox.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
+#include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
@@ -200,6 +202,9 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
 			ModelImporter::ImportModel(filePath, jMeta);
+		} else if (extension == ".sky") {
+			// Skybox files
+			SkyboxImporter::ImportSkybox(filePath, jMeta);
 		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
@@ -394,6 +399,9 @@ Resource* ModuleResources::CreateResourceByTypeAndID(ResourceType type, UID id, 
 		break;
 	case ResourceType::TEXTURE:
 		resource = new ResourceTexture(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::SKYBOX:
+		resource = new ResourceSkybox(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);
