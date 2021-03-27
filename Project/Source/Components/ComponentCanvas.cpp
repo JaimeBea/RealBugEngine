@@ -1,7 +1,12 @@
 #include "ComponentCanvas.h"
 #include "ComponentCanvasRenderer.h"
+#include <Modules/ModuleUserInterface.h>
 #include "Application.h"
 #include "GameObject.h"
+
+void ComponentCanvas::Init() {
+	App->userInterface->canvas = owner;
+}
 
 void ComponentCanvas::Render() {
 	RenderGameObject(owner);

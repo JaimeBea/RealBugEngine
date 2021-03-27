@@ -18,6 +18,17 @@
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
+void ComponentBoundingBox2D::Init() {
+	ComponentTransform2D* transform2D = owner->GetComponent<ComponentTransform2D>();
+	if (transform2D) {
+		float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
+		float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
+
+		SetLocalBoundingBox(AABB2D(minPoint.xy(), maxPoint.xy()));
+		CalculateWorldBoundingBox();
+	}
+}
+
 void ComponentBoundingBox2D::OnTransformUpdate() {
 	CalculateWorldBoundingBox(true);
 }

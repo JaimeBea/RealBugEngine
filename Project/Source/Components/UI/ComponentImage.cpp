@@ -10,10 +10,14 @@
 #include <Components/ComponentTransform2D.h>
 #include "GameObject.h"
 
+#include <Resources/ResourceTexture.h>
+#include <Resources/ResourceShader.h>
+
 #include "Geometry/AABB2D.h"
 
 #include "Math/TransformOps.h"
 #include "imgui.h"
+#include "Utils/ImGuiUtils.h"
 #include "GL/glew.h"
 
 ComponentImage::~ComponentImage() {
@@ -22,18 +26,18 @@ ComponentImage::~ComponentImage() {
 
 void ComponentImage::Init() {
 	CreateVBO();
-	ComponentBoundingBox2D* bb = owner->GetComponent<ComponentBoundingBox2D>();
-	if (bb == nullptr) {
-		bb = owner->CreateComponent<ComponentBoundingBox2D>();
-	}
+	//ComponentBoundingBox2D* bb = owner->GetComponent<ComponentBoundingBox2D>();
+	//if (bb == nullptr) {
+	//	bb = owner->CreateComponent<ComponentBoundingBox2D>();
+	//}
 
-	ComponentTransform2D* transform2D = owner->GetComponent<ComponentTransform2D>();
+	//ComponentTransform2D* transform2D = owner->GetComponent<ComponentTransform2D>();
 
-	float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
-	float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
+	//float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
+	//float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
 
-	bb->SetLocalBoundingBox(AABB2D(minPoint.xy(), maxPoint.xy()));
-	bb->CalculateWorldBoundingBox();
+	//bb->SetLocalBoundingBox(AABB2D(minPoint.xy(), maxPoint.xy()));
+	//bb->CalculateWorldBoundingBox();
 }
 
 void ComponentImage::Update() {
@@ -63,20 +67,27 @@ void ComponentImage::OnEditorUpdate() {
 		//	}
 		//	ImGui::EndCombo();
 		//}
+		ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
+		ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
+		ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
 
-		ImGui::Text("");
+		if (tex != nullptr) {
+			ImGui::Text("");
 
-		ImGui::Separator();
-		ImGui::TextColored(App->editor->titleColor, "Texture Preview");
-		ImGui::TextWrapped("Size:");
-		ImGui::SameLine();
-		int width;
-		int height;
-		glGetTextureLevelParameteriv(texture->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-		glGetTextureLevelParameteriv(texture->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-		ImGui::TextWrapped("%d x %d", width, height);
-		ImGui::Image((void*) texture->glTexture, ImVec2(200, 200));
-		ImGui::Separator();
+			ImGui::Separator();
+			ImGui::TextColored(App->editor->titleColor, "Texture Preview");
+			ImGui::TextWrapped("Size:");
+			ImGui::SameLine();
+			int width;
+			int height;
+
+			glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+			glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+
+			ImGui::TextWrapped("%d x %d", width, height);
+			ImGui::Image((void*) tex->glTexture, ImVec2(200, 200));
+			ImGui::Separator();
+		}
 	}
 }
 
@@ -146,8 +157,16 @@ void ComponentImage::DestroyVBO() {
 }
 
 void ComponentImage::Draw(ComponentTransform2D* transform) {
-	unsigned int program = App->programs->uiProgram;
+	//unsigned int program = App->programs->uiProgram;
+	unsigned int program = 0;
+	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+	if (shaderResouce) {
+		program = shaderResouce->GetShaderProgram();
+	}
 
+	ResourceTexture* texResource = (ResourceTexture*) App->resources->GetResource(textureID);
+	if (texResource == nullptr) return;
+	
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -163,15 +182,15 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	glBindTexture(GL_TEXTURE_2D, texture->glTexture);
+	glBindTexture(GL_TEXTURE_2D, texResource->glTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ComponentImage::SetTexture(ResourceTexture* text) {
-	texture = text;
-}
+//void ComponentImage::SetTexture(ResourceTexture* text) {
+//	texture = text;
+//}
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();
