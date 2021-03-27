@@ -3,7 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"
@@ -14,7 +14,7 @@
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_TYPE "LightType"
+#define JSON_TAG_LIGHT_TYPE "LightType"
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_INTENSITY "Intensity"
 #define JSON_TAG_KL "Kl"
@@ -28,8 +28,12 @@ void ComponentLight::OnTransformUpdate() {
 	direction = transform->GetRotation() * float3::unitZ;
 }
 
+void ComponentLight::Init() {
+	OnTransformUpdate();
+}
+
 void ComponentLight::DrawGizmos() {
-	if (IsActive() && drawGizmos) {
+	if (IsActiveInHierarchy() && drawGizmos) {
 		if (lightType == LightType::DIRECTIONAL) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 			dd::cone(transform->GetPosition(), direction * 200, dd::colors::White, 1.0f, 1.0f);
@@ -98,7 +102,7 @@ void ComponentLight::OnEditorUpdate() {
 }
 
 void ComponentLight::Save(JsonValue jComponent) const {
-	JsonValue jLightType = jComponent[JSON_TAG_TYPE];
+	JsonValue jLightType = jComponent[JSON_TAG_LIGHT_TYPE];
 	jLightType = (int) lightType;
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
@@ -123,7 +127,7 @@ void ComponentLight::Save(JsonValue jComponent) const {
 }
 
 void ComponentLight::Load(JsonValue jComponent) {
-	JsonValue jLightType = jComponent[JSON_TAG_TYPE];
+	JsonValue jLightType = jComponent[JSON_TAG_LIGHT_TYPE];
 	lightType = (LightType)(int) jLightType;
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
@@ -143,4 +147,19 @@ void ComponentLight::Load(JsonValue jComponent) {
 
 	JsonValue jOuterAngle = jComponent[JSON_TAG_OUTER_ANGLE];
 	outerAngle = jOuterAngle;
+}
+
+void ComponentLight::DuplicateComponent(GameObject& owner) {
+	ComponentLight* component = owner.CreateComponent<ComponentLight>();
+	component->drawGizmos = this->drawGizmos;
+	component->lightType = this->lightType;
+	component->pos = this->pos;
+	component->direction = this->direction;
+	component->color = this->color;
+	component->intensity = this->intensity;
+	component->kc = this->kc;
+	component->kl = this->kl;
+	component->kq = this->kq;
+	component->innerAngle = this->innerAngle;
+	component->outerAngle = this->outerAngle;
 }

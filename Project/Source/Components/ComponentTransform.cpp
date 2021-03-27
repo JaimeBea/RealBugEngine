@@ -1,7 +1,7 @@
 #include "ComponentTransform.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Modules/ModuleEditor.h"
@@ -17,17 +17,6 @@
 #define JSON_TAG_ROTATION "Rotation"
 #define JSON_TAG_SCALE "Scale"
 #define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
-
-void ComponentTransform::Init() {
-	CalculateGlobalMatrix();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::Update() {
-	CalculateGlobalMatrix();
-}
 
 void ComponentTransform::OnEditorUpdate() {
 	float3 pos = position;
@@ -86,6 +75,13 @@ void ComponentTransform::Load(JsonValue jComponent) {
 	dirty = true;
 }
 
+void ComponentTransform::DuplicateComponent(GameObject& owner) {
+	ComponentTransform* component = owner.CreateComponent<ComponentTransform>();
+	component->SetPosition(this->GetPosition());
+	component->SetRotation(this->GetRotation());
+	component->SetScale(this->GetScale());
+}
+
 void ComponentTransform::InvalidateHierarchy() {
 	Invalidate();
 
@@ -113,7 +109,6 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
-      globalMatrix.Orthogonalize3();
 		} else {
 			globalMatrix = localMatrix;
 		}
@@ -122,38 +117,39 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 	}
 }
 
+void ComponentTransform::TransformChanged() {
+	for (Component* component : GetOwner().GetComponents()) {
+		component->OnTransformUpdate();
+	}
+	for (GameObject* child : GetOwner().GetChildren()) {
+		child->GetComponent<ComponentTransform>()->TransformChanged();
+	}
+}
+
 void ComponentTransform::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetRotation(Quat rotation_) {
 	rotation = rotation_;
 	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetRotation(float3 rotation_) {
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetScale(float3 scale_) {
 	scale = scale_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 void ComponentTransform::SetTRS(float4x4& newTransform_) {
@@ -164,9 +160,7 @@ void ComponentTransform::SetTRS(float4x4& newTransform_) {
 	rotation = Quat(newTransform_.SubMatrix(3, 3));
 	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
+	TransformChanged();
 }
 
 float3 ComponentTransform::GetPosition() const {
@@ -181,14 +175,12 @@ float3 ComponentTransform::GetScale() const {
 	return scale;
 }
 
-const float4x4& ComponentTransform::GetLocalMatrix() const {
+const float4x4& ComponentTransform::GetLocalMatrix() {
+	CalculateGlobalMatrix();
 	return localMatrix;
 }
 
-const float4x4& ComponentTransform::GetGlobalMatrix() const {
+const float4x4& ComponentTransform::GetGlobalMatrix() {
+	CalculateGlobalMatrix();
 	return globalMatrix;
-}
-
-bool ComponentTransform::GetDirty() const {
-	return dirty;
 }

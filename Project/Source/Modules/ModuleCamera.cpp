@@ -4,12 +4,13 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
-#include "FileSystem/MeshImporter.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
+#include "Resources/ResourceMesh.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
@@ -171,7 +172,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	LineSegment ray = engineCameraFrustum.UnProjectLineSegment(pos.x, pos.y);
 
 	// Check with AABB
-	for (GameObject& gameObject : App->scene->gameObjects) {
+	Scene* scene = App->scene->scene;
+	for (GameObject& gameObject : scene->gameObjects) {
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
@@ -183,8 +185,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 			intersectingObjects.push_back(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		GetIntersectingAABBRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds, ray, intersectingObjects);
+	if (scene->quadtree.IsOperative()) {
+		GetIntersectingAABBRecursive(scene->quadtree.root, scene->quadtree.bounds, ray, intersectingObjects);
 	}
 
 	GameObject* selectedGameObject = nullptr;
@@ -193,15 +195,17 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	for (GameObject* gameObject : intersectingObjects) {
 		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 		for (ComponentMeshRenderer* mesh : meshes) {
+			ResourceMesh* meshResource = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
+			if (meshResource == nullptr) continue;
+
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
-			std::vector<Triangle> triangles = MeshImporter::ExtractMeshTriangles(mesh->mesh, model);
+			std::vector<Triangle> triangles = meshResource->ExtractTriangles(model);
 			for (Triangle& triangle : triangles) {
-				if (ray.Intersects(triangle, &distance, NULL)) {
-					if (distance < minDistance) {
-						selectedGameObject = gameObject;
-						minDistance = distance;
-					}
-				}
+				if (!ray.Intersects(triangle, &distance, NULL)) continue;
+				if (distance >= minDistance) continue;
+
+				selectedGameObject = gameObject;
+				minDistance = distance;
 			}
 		}
 	}
@@ -302,7 +306,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 		SetPosition(float3::zero - GetFront() * 30.f);
 	} else {
 		// Focus a GameObject
-		if (gameObject->HasComponent(ComponentType::MESH)) {
+		if (gameObject->HasComponent<ComponentMeshRenderer>()) {
 			// If the GO has Mesh, focus on that mesh
 			ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 			if (!boundingBox) return;
@@ -343,7 +347,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 
 void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject, float3& minPoint, float3& maxPoint) {
 	for (GameObject* child : gameObject->GetChildren()) {
-		if (child->HasComponent(ComponentType::MESH)) {
+		if (child->HasComponent<ComponentMeshRenderer>()) {
 			ComponentBoundingBox* childBoundingBox = child->GetComponent<ComponentBoundingBox>();
 			if (childBoundingBox->GetWorldOBB().MinimalEnclosingAABB().IsFinite()) {
 				minPoint = minPoint.Min(childBoundingBox->GetWorldAABB().minPoint);

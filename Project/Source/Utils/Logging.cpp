@@ -3,8 +3,13 @@
 #include <sstream>
 #include <windows.h>
 #include <stdio.h>
+#include <mutex>
+#include <queue>
 
 #include "Leaks.h"
+
+std::mutex logMessageQueueMutex;
+std::queue<std::string> logMessageQueue;
 
 void Log(const char file[], int line, const char* format, ...) {
 	static char tmpString[4096];
@@ -12,13 +17,23 @@ void Log(const char file[], int line, const char* format, ...) {
 	static va_list ap;
 
 	// Construct the string from variable arguments
+	logMessageQueueMutex.lock();
 	va_start(ap, format);
 	vsprintf_s(tmpString, 4096, format, ap);
 	va_end(ap);
 	sprintf_s(tmpString2, 4096, "%s(%d) : %s\n", file, line, tmpString);
 	OutputDebugString(tmpString2);
+	logMessageQueue.push(tmpString2);
+	logMessageQueueMutex.unlock();
+}
 
-	logString->append(tmpString2);
+void UpdateLogString() {
+	logMessageQueueMutex.lock();
+	while (!logMessageQueue.empty()) {
+		logString->append(logMessageQueue.front());
+		logMessageQueue.pop();
+	}
+	logMessageQueueMutex.unlock();
 }
 
 void LogDeltaMS(float deltaMs) {

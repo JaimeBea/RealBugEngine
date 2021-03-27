@@ -149,19 +149,20 @@ UpdateStatus ModuleRender::Update() {
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (ComponentBoundingBox* boundingBox : ComponentBoundingBox::GetComponents()) {
-		GameObject& gameObject = boundingBox->GetOwner();
+	Scene* scene = App->scene->scene;
+	for (ComponentBoundingBox& boundingBox : scene->boundingBoxComponents) {
+		GameObject& gameObject = boundingBox.GetOwner();
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
-		const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
-		const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+		const AABB& gameObjectAABB = boundingBox.GetWorldAABB();
+		const OBB& gameObjectOBB = boundingBox.GetWorldOBB();
 		if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
 			DrawGameObject(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	if (scene->quadtree.IsOperative()) {
+		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
@@ -171,7 +172,7 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw quadtree
 	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+		DrawQuadtreeRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 
 	// Draw debug draw
@@ -357,6 +358,8 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::DrawSkyBox() {
+	// TODO: (Texture resource) Make skybox work
+	/*
 	if (skyboxActive) {
 		glDepthFunc(GL_LEQUAL);
 
@@ -374,6 +377,7 @@ void ModuleRender::DrawSkyBox() {
 
 		glDepthFunc(GL_LESS);
 	}
+	*/
 }
 
 void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {

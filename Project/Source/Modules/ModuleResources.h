@@ -2,73 +2,85 @@
 
 #include "Module.h"
 #include "Utils/Pool.h"
-#include "Resources/Texture.h"
-#include "Resources/CubeMap.h"
-#include "Resources/Mesh.h"
-#include "Resources/ResourceAnimation.h"
-#include "Resources/AnimationController.h"
+#include "Utils/UID.h"
+#include "Resources/Resource.h"
 
-enum class TextureMinFilter {
-	NEAREST,
-	LINEAR,
-	NEAREST_MIPMAP_NEAREST,
-	LINEAR_MIPMAP_NEAREST,
-	NEAREST_MIPMAP_LINEAR,
-	LINEAR_MIPMAP_LINEAR
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+#include <thread>
+#include <concurrent_queue.h>
+
+struct AssetFile {
+	AssetFile(const char* path);
+
+	std::string path;
+	std::vector<UID> resourceIds;
 };
 
-enum class TextureMagFilter {
-	NEAREST,
-	LINEAR
+struct AssetFolder {
+	AssetFolder(const char* path);
+
+	std::string path;
+	std::vector<AssetFolder> folders;
+	std::vector<AssetFile> files;
 };
 
-enum class TextureWrap {
-	REPEAT,
-	CLAMP_TO_EDGE,
-	CLAMP_TO_BORDER,
-	MIRROR_REPEAT,
-	MIRROR_CLAMP_TO_EDGE
+enum class ResourceEventType {
+	ADD_RESOURCE,
+	REMOVE_RESOURCE,
+	UPDATE_FOLDERS
+};
+
+struct ResourceEvent {
+	ResourceEventType type = ResourceEventType::ADD_RESOURCE;
+	void* object = nullptr;
 };
 
 class ModuleResources : public Module {
 public:
 	bool Init() override;
+	bool Start() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
 
-	Texture* ObtainTexture();
-	void ReleaseTexture(Texture* texture);
+	std::vector<UID> ImportAsset(const char* filePath);
 
-	CubeMap* ObtainCubeMap();
-	void ReleaseCubeMap(CubeMap* cubeMap);
+	Resource* GetResource(UID id) const;
+	AssetFolder* GetRootFolder() const;
 
-	Mesh* ObtainMesh();
-	void ReleaseMesh(Mesh* mesh);
+	void IncreaseReferenceCount(UID id);
+	void DecreaseReferenceCount(UID id);
+	unsigned GetReferenceCount(UID id) const;
 
-	ResourceAnimation* ObtainAnimation();
-	void ReleaseAnimation(ResourceAnimation* animation);
+	std::string GenerateResourcePath(UID id) const;
 
-	AnimationController* ObtainAnimationController();
-	void ReleaseAnimationController(AnimationController* animationController);
-
-	void ReleaseAll();
-
-	void SetMinFilter(TextureMinFilter filter);
-	void SetMagFilter(TextureMagFilter filter);
-	void SetWrap(TextureWrap wrap);
-
-	TextureMinFilter GetMinFilter() const;
-	TextureMagFilter GetMagFilter() const;
-	TextureWrap GetWrap() const;
-
-public:
-	Pool<Texture> textures;
-	Pool<CubeMap> cubeMaps;
-	Pool<Mesh> meshes;
-	Pool<ResourceAnimation> animations;
-	Pool<AnimationController> animationControllers;
+	template<typename T>
+	T* CreateResource(const char* assetFilePath);
 
 private:
-	TextureMinFilter minFilter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;
-	TextureMagFilter magFilter = TextureMagFilter::LINEAR;
-	TextureWrap textureWrap = TextureWrap::REPEAT;
+	void UpdateAsync();
+
+	void CheckForNewAssetsRecursive(const char* path, AssetFolder* folder);
+
+	Resource* CreateResourceByTypeAndID(ResourceType type, UID id, const char* assetFilePath);
+
+private:
+	std::unordered_map<UID, Resource*> resources;
+	std::unordered_map<UID, unsigned> referenceCounts;
+	AssetFolder* rootFolder = nullptr;
+
+	concurrency::concurrent_queue<ResourceEvent> resourceEventQueue;
+
+	std::thread importThread;
+	bool stopImportThread = false;
 };
+
+template<typename T>
+inline T* ModuleResources::CreateResource(const char* assetFilePath) {
+	UID id = GenerateUID();
+	std::string resourceFilePath = GenerateResourcePath(id);
+	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
+	resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});
+	return resource;
+}

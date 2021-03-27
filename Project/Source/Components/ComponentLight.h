@@ -12,14 +12,16 @@ enum class LightType {
 
 class ComponentLight : public Component {
 public:
-	REGISTER_COMPONENT(ComponentLight, ComponentType::LIGHT); // Refer to ComponentType for the Constructor
+	REGISTER_COMPONENT(ComponentLight, ComponentType::LIGHT, false); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
+	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	void DuplicateComponent(GameObject& owner) override;
 
 public:
 	bool drawGizmos = true;						  // If true, the Gizmos will be drawn on DrawGizmos().

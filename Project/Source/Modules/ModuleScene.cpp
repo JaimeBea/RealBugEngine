@@ -3,11 +3,11 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
+#include "Utils/FileDialog.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
-#include "Resources/Texture.h"
-#include "Resources/CubeMap.h"
+#include "Resources/ResourceTexture.h"
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
@@ -20,6 +20,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleEventSystem.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -48,7 +49,7 @@ static void AssimpLogCallback(const char* message, char* user) {
 }
 
 bool ModuleScene::Init() {
-	gameObjects.Allocate(10000);
+	scene = new Scene(10000);
 
 #ifdef _DEBUG
 	logStream.callback = AssimpLogCallback;
@@ -59,14 +60,15 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->files->CreateFolder("Library");
+	App->eventSystem->AddObserverToEvent(Event::EventType::GAMEOBJECT_DESTROYED, this);
+	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
-	App->files->CreateFolder(MESHES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
 	CreateEmptyScene();
 
-	SceneImporter::LoadScene("AnimationsScene");
+	// TODO: (Scene resource) Load default scene
+	// SceneImporter::LoadScene("survival_shooter");
 
 	// Load skybox
 	// clang-format off
@@ -121,6 +123,8 @@ bool ModuleScene::Start() {
 	}; // clang-format on
 
 	// Skybox VAO
+	// TODO: (Texture resource) Make skybox work
+	/*
 	glGenVertexArrays(1, &skyboxVao);
 	glGenBuffers(1, &skyboxVbo);
 	glBindVertexArray(skyboxVao);
@@ -138,6 +142,7 @@ bool ModuleScene::Start() {
 	skyboxCubeMap->fileNames[4] = "front";
 	skyboxCubeMap->fileNames[5] = "back";
 	TextureImporter::LoadCubeMap(skyboxCubeMap);
+	*/
 
 	return true;
 }
@@ -145,42 +150,21 @@ bool ModuleScene::Start() {
 UpdateStatus ModuleScene::Update() {
 	BROFILER_CATEGORY("ModuleScene - Update", Profiler::Color::Green)
 
-	// Load scene/fbx if one gets dropped
-	const char* droppedFilePath = App->input->GetDroppedFilePath();
-	if (droppedFilePath != nullptr) {
-		std::string droppedFileExtension = App->files->GetFileExtension(droppedFilePath);
-		std::string droppedFileName = App->files->GetFileName(droppedFilePath);
-		if (droppedFileExtension == SCENE_EXTENSION) {
-			SceneImporter::LoadScene(droppedFileName.c_str());
-
-			LOG("Scene loaded");
-		} else if (droppedFileExtension == ".fbx") {
-			SceneImporter::ImportScene(droppedFilePath, root);
-
-			LOG("Scene imported");
-		} else if (droppedFileExtension == ".png" || droppedFileExtension == ".tif" || droppedFileExtension == ".dds") {
-			Texture* texture = TextureImporter::ImportTexture(droppedFilePath);
-			TextureImporter::LoadTexture(texture);
-
-			LOG("Texture imported");
-		}
-
-		App->input->ReleaseDroppedFilePath();
-	}
-
 	// Update GameObjects
-	for (GameObject& gameObject : gameObjects) {
-		gameObject.Update();
-	}
+	scene->root->Update();
 
 	return UpdateStatus::CONTINUE;
 }
 
 bool ModuleScene::CleanUp() {
+	// TODO: (Texture resource) make skybox work
+	/*
 	glDeleteVertexArrays(1, &skyboxVao);
 	glDeleteBuffers(1, &skyboxVbo);
+	*/
 
-	ClearScene();
+	scene->ClearScene();
+	RELEASE(scene);
 
 #ifdef _DEBUG
 	aiDetachAllLogStreams();
@@ -190,20 +174,16 @@ bool ModuleScene::CleanUp() {
 }
 
 void ModuleScene::CreateEmptyScene() {
-	ClearScene();
+	scene->ClearScene();
 
 	// Create Scene root node
-	root = CreateGameObject(nullptr);
-	root->name = "Scene";
+	GameObject* root = scene->CreateGameObject(nullptr, GenerateUID(), "Scene");
+	scene->root = root;
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
-	/*sceneTransform->SetPosition(float3(0, 0, 0));
-	sceneTransform->SetRotation(Quat::identity);
-	sceneTransform->SetScale(float3(1, 1, 1));*/
 	root->InitComponents();
 
 	// Create Directional Light
-	GameObject* dirLight = CreateGameObject(root);
-	dirLight->name = "Directional Light";
+	GameObject* dirLight = scene->CreateGameObject(root, GenerateUID(), "Directional Light");
 	ComponentTransform* dirLightTransform = dirLight->CreateComponent<ComponentTransform>();
 	dirLightTransform->SetPosition(float3(0, 300, 0));
 	dirLightTransform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
@@ -212,8 +192,7 @@ void ModuleScene::CreateEmptyScene() {
 	dirLight->InitComponents();
 
 	// Create Game Camera
-	GameObject* gameCamera = CreateGameObject(root);
-	gameCamera->name = "Game Camera";
+	GameObject* gameCamera = scene->CreateGameObject(root, GenerateUID(), "Game Camera");
 	ComponentTransform* gameCameraTransform = gameCamera->CreateComponent<ComponentTransform>();
 	gameCameraTransform->SetPosition(float3(2, 3, -5));
 	gameCameraTransform->SetRotation(Quat::identity);
@@ -222,74 +201,21 @@ void ModuleScene::CreateEmptyScene() {
 	gameCamera->InitComponents();
 }
 
-void ModuleScene::ClearScene() {
-	DestroyGameObject(root);
-	root = nullptr;
-	quadtree.Clear();
-
-	assert(gameObjects.Count() == 0); // There should be no GameObjects outside the scene hierarchy
-	gameObjects.ReleaseAll(); // This looks redundant, but it resets the free list so that GameObject order is mantained when saving/loading
-}
-
-void ModuleScene::RebuildQuadtree() {
-	quadtree.Initialize(quadtreeBounds, quadtreeMaxDepth, quadtreeElementsPerNode);
-	for (ComponentBoundingBox* boundingBox : ComponentBoundingBox::GetComponents()) {
-		GameObject& gameObject = boundingBox->GetOwner();
-		boundingBox->CalculateWorldBoundingBox();
-		const AABB& worldAABB = boundingBox->GetWorldAABB();
-		quadtree.Add(&gameObject, AABB2D(worldAABB.minPoint.xz(), worldAABB.maxPoint.xz()));
-		gameObject.isInQuadtree = true;
-	}
-	quadtree.Optimize();
-}
-
-void ModuleScene::ClearQuadtree() {
-	quadtree.Clear();
-	for (GameObject& gameObject : gameObjects) {
-		gameObject.isInQuadtree = false;
-	}
-}
-
-GameObject* ModuleScene::CreateGameObject(GameObject* parent) {
-	GameObject* gameObject = gameObjects.Obtain();
-	gameObject->Init();
-	gameObject->SetParent(parent);
-	gameObjectsIdMap[gameObject->GetID()] = gameObject;
-
-	return gameObject;
-}
-
-GameObject* ModuleScene::DuplicateGameObject(GameObject* gameObject) {
-	// TODO: Duplicate Game Objects
-	return gameObject;
-}
-
-void ModuleScene::DestroyGameObject(GameObject* gameObject) {
+void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 	if (gameObject == nullptr) return;
 
-	// We need a copy because we are invalidating the iterator by removing GameObjects
-	std::vector<GameObject*> children = gameObject->GetChildren();
+	const std::vector<GameObject*>& children = gameObject->GetChildren();
 	for (GameObject* child : children) {
-		DestroyGameObject(child);
+		DestroyGameObjectDeferred(child);
 	}
 
-	if (gameObject->isInQuadtree) {
-		quadtree.Remove(gameObject);
-	}
-
-	gameObjectsIdMap.erase(gameObject->GetID());
-	gameObject->id = 0;
-	for (Component* component : gameObject->components) {
-		delete component;
-	}
-	gameObject->components.clear();
-	gameObject->Enable();
-	gameObject->SetParent(nullptr);
-	gameObjects.Release(gameObject);
+	App->BroadCastEvent(Event(Event::EventType::GAMEOBJECT_DESTROYED, gameObject));
 }
 
-GameObject* ModuleScene::GetGameObject(UID id) const {
-	if (gameObjectsIdMap.count(id) == 0) return nullptr;
-
-	return gameObjectsIdMap.at(id);
+void ModuleScene::ReceiveEvent(const Event& e) {
+	switch (e.type) {
+	case Event::EventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.objPtr.ptr);
+		break;
+	}
 }
