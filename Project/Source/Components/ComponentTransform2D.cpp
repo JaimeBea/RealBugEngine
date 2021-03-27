@@ -7,8 +7,16 @@
 #include "imgui.h"
 #include "Math/TransformOps.h"
 
+#define JSON_TAG_POSITION "Position"
+#define JSON_TAG_ROTATION "Rotation"
+#define JSON_TAG_SCALE "Scale"
+#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
+#define JSON_TAG_PIVOT "Pivot"
+#define JSON_TAG_SIZE "Size"
+#define JSON_TAG_ANCHOR_X "AnchorX"
+#define JSON_TAG_ANCHOR_Y "AnchorY"
+
 void ComponentTransform2D::Update() {
-	//dd::plane(vec(0,0,0))
 	CalculateGlobalMatrix();
 }
 
@@ -16,7 +24,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 
 	if (ImGui::CollapsingHeader("Rect Transform")) {
 		float3 editorPos = position;
-		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+		ImGui::TextColored(App->editor->titleColor, "Position (X,Y,Z)");
 		if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 			SetPosition(editorPos);
 		}
@@ -42,13 +50,78 @@ void ComponentTransform2D::OnEditorUpdate() {
 			SetScale(scl);
 		}
 
-		float3 rot = rotation.ToEulerXYZ() * RADTODEG;
+		float3 rot = localEulerAngles;
 		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetRotation(Quat::FromEulerXYZ(rot.x * DEGTORAD, rot.y * DEGTORAD, rot.z * DEGTORAD));
+			SetRotation(rot);
 		}
 
 		ImGui::Separator();
 	}
+}
+
+void ComponentTransform2D::Save(JsonValue jComponent) const {
+	JsonValue jPosition = jComponent[JSON_TAG_POSITION];
+	jPosition[0] = position.x;
+	jPosition[1] = position.y;
+	jPosition[2] = position.z;
+
+	JsonValue jRotation = jComponent[JSON_TAG_ROTATION];
+	jRotation[0] = rotation.x;
+	jRotation[1] = rotation.y;
+	jRotation[2] = rotation.z;
+	jRotation[3] = rotation.w;
+
+	JsonValue jScale = jComponent[JSON_TAG_SCALE];
+	jScale[0] = scale.x;
+	jScale[1] = scale.y;
+	jScale[2] = scale.z;
+
+	JsonValue jLocalEulerAngles = jComponent[JSON_TAG_LOCAL_EULER_ANGLES];
+	jLocalEulerAngles[0] = localEulerAngles.x;
+	jLocalEulerAngles[1] = localEulerAngles.y;
+	jLocalEulerAngles[2] = localEulerAngles.z;
+
+	JsonValue jPivot = jComponent[JSON_TAG_PIVOT];
+	jPivot[0] = pivot.x;
+	jPivot[1] = pivot.y;
+
+	JsonValue jSize = jComponent[JSON_TAG_SIZE];
+	jSize[0] = size.x;
+	jSize[1] = size.y;
+
+	JsonValue jAnchorX = jComponent[JSON_TAG_ANCHOR_X];
+	jAnchorX[0] = anchorX.x;
+	jAnchorX[1] = anchorX.y;
+
+	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
+	jAnchorY[0] = anchorY.x;
+	jAnchorY[1] = anchorY.y;
+}
+
+void ComponentTransform2D::Load(JsonValue jComponent) {
+	JsonValue jPosition = jComponent[JSON_TAG_POSITION];
+	position.Set(jPosition[0], jPosition[1], jPosition[2]);
+
+	JsonValue jRotation = jComponent[JSON_TAG_ROTATION];
+	rotation.Set(jRotation[0], jRotation[1], jRotation[2], jRotation[3]);
+
+	JsonValue jScale = jComponent[JSON_TAG_SCALE];
+	scale.Set(jScale[0], jScale[1], jScale[2]);
+
+	JsonValue jLocalEulerAngles = jComponent[JSON_TAG_LOCAL_EULER_ANGLES];
+	localEulerAngles.Set(jLocalEulerAngles[0], jLocalEulerAngles[1], jLocalEulerAngles[2]);
+
+	JsonValue jPivot = jComponent[JSON_TAG_PIVOT];
+	pivot.Set(jPivot[0], jPivot[1]);
+
+	JsonValue jSize = jComponent[JSON_TAG_SIZE];
+	size.Set(jSize[0], jSize[1]);
+
+	JsonValue jAnchorX = jComponent[JSON_TAG_ANCHOR_X];
+	anchorX.Set(jAnchorX[0], jAnchorX[1]);
+
+	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
+	anchorY.Set(jAnchorY[0], jAnchorY[1]);
 }
 
 void ComponentTransform2D::SetPosition(float3 position_) {
@@ -61,6 +134,12 @@ void ComponentTransform2D::SetSize(float2 size_) {
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
 	rotation = rotation_;
+	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+}
+
+void ComponentTransform2D::SetRotation(float3 rotation_) {
+	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
+	localEulerAngles = rotation_;
 }
 
 void ComponentTransform2D::SetScale(float3 scale_) {

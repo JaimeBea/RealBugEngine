@@ -6,6 +6,7 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "Components/ComponentTransform2D.h"
 
 #include "Utils/Leaks.h"
 
@@ -21,6 +22,8 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 		return owner.CreateComponent<ComponentCamera>(active);
 	case ComponentType::LIGHT:
 		return owner.CreateComponent<ComponentLight>(active);
+	case ComponentType::TRANSFORM2D:
+		return owner.CreateComponent<ComponentTransform2D>(active);
 	default:
 		return nullptr;
 	}

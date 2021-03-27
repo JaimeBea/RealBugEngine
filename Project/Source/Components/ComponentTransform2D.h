@@ -11,11 +11,14 @@ public:
 	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM2D);
 	void Update() override;
 	void OnEditorUpdate() override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 	
 
 	void SetPosition(float3 position);
 	void SetSize(float2 size);
 	void SetRotation(Quat rotation);
+	void SetRotation(float3 rotation);
 	void SetScale(float3 scale);
 	void SetAnchorX(float2 anchorX);
 	void SetAnchorY(float2 anchorY);
@@ -23,11 +26,12 @@ public:
 	const float4x4 GetGlobalMatrixWithSize();
 
 private:
-	float3 position = float3::zero;			// The offset position
 	float2 pivot	= float2(0.5, 0.5);		// The position of the pivot
 	float2 size		= float2::one;			// The size of the item
 
-	Quat rotation	= Quat::identity;		// The rotation of the element
+	float3 position = float3::zero;			// The offset position
+	Quat rotation	= Quat::identity;		// The rotation of the element in Quaternion
+	float3 localEulerAngles = float3::zero;	// The rotation of the element in Euler
 	float3 scale	= float3::one;			// The scale of the element
 
 	float2 anchorX	= float2::zero;			// The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position
