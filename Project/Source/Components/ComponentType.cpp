@@ -8,6 +8,9 @@
 #include "Components/ComponentLight.h"
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentImage.h"
+#include "Components/ComponentCanvas.h"
+#include "Components/ComponentCanvasRenderer.h"
+
 
 #include "Utils/Leaks.h"
 
@@ -27,6 +30,10 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 		return owner.CreateComponent<ComponentTransform2D>(active);
 	case ComponentType::IMAGE:
 		return owner.CreateComponent<ComponentImage>(active);
+	case ComponentType::CANVAS:
+		return owner.CreateComponent<ComponentCanvas>(active);
+	case ComponentType::CANVASRENDERER:
+		return owner.CreateComponent<ComponentCanvasRenderer>(active);
 	default:
 		return nullptr;
 	}

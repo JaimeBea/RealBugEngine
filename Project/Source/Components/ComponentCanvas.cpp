@@ -3,6 +3,12 @@
 #include "Application.h"
 #include "Resources/GameObject.h"
 
+void ComponentCanvas::Save(JsonValue jComponent) const {
+}
+
+void ComponentCanvas::Load(JsonValue jComponent) {
+}
+
 void ComponentCanvas::Render() {
 	RenderGameObject(&GetOwner());
 }

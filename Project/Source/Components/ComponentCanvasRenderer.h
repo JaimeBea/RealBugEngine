@@ -12,6 +12,9 @@ class ComponentCanvasRenderer : public Component {
 public:
 	REGISTER_COMPONENT(ComponentCanvasRenderer, ComponentType::CANVASRENDERER);
 
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
+
 	void Render(GameObject* gameObject);
 
 };
