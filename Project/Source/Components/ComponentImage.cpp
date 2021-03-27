@@ -127,7 +127,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	float4x4 modelMatrix = transform->GetGlobalMatrix();
+	float4x4 modelMatrix = transform->GetGlobalMatrixWithSize();
 	float4x4* proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());

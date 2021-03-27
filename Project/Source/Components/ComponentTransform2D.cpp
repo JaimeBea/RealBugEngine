@@ -2,12 +2,14 @@
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
+#include "Resources/GameObject.h"
 #include "debugdraw.h"
 #include "imgui.h"
 #include "Math/TransformOps.h"
 
 void ComponentTransform2D::Update() {
 	//dd::plane(vec(0,0,0))
+	CalculateGlobalMatrix();
 }
 
 void ComponentTransform2D::OnEditorUpdate() {
@@ -74,5 +76,28 @@ void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 }
 
 const float4x4 ComponentTransform2D::GetGlobalMatrix() {
-	return float4x4::FromTRS(position, rotation, vec(scale.x*size.x, scale.y*size.y, 0));
+	return globalMatrix;
+}
+
+const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize() {
+	return globalMatrix  * float4x4::Scale(size.x, size.y, 0);
+}
+
+void ComponentTransform2D::CalculateGlobalMatrix() {
+	localMatrix = float4x4::FromTRS(position, rotation, scale);
+
+	GameObject* parent = GetOwner().GetParent();
+	if (parent != nullptr) {
+		ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
+		
+		if (parentTransform != nullptr) {
+			parentTransform->CalculateGlobalMatrix();
+			globalMatrix = parentTransform->globalMatrix * localMatrix;
+		} else {
+			globalMatrix = localMatrix;
+		}
+		
+	} else {
+		globalMatrix = localMatrix;
+	}
 }

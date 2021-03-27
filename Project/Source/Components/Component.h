@@ -26,10 +26,7 @@ public:
 
 private:
 	ComponentType type = ComponentType::UNKNOWN;
-
-	bool active = true;
-
-protected:
 	GameObject& owner;
+	bool active = true;
 
 };

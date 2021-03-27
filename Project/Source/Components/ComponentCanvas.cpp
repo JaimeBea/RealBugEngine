@@ -4,7 +4,7 @@
 #include "Resources/GameObject.h"
 
 void ComponentCanvas::Render() {
-	RenderGameObject(&owner);
+	RenderGameObject(&GetOwner());
 }
 
 void ComponentCanvas::RenderGameObject(GameObject* gameObject) {

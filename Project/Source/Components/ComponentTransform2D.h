@@ -20,6 +20,7 @@ public:
 	void SetAnchorX(float2 anchorX);
 	void SetAnchorY(float2 anchorY);
 	const float4x4 GetGlobalMatrix();
+	const float4x4 GetGlobalMatrixWithSize();
 
 private:
 	float3 position = float3::zero;			// The offset position
@@ -31,4 +32,9 @@ private:
 
 	float2 anchorX	= float2::zero;			// The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position
 	float2 anchorY	= float2::zero;			// The Anchor of Y axis. AnchorY.x -> Min position, AnchorY.y -> Max position
+
+	float4x4 localMatrix = float4x4::identity;
+	float4x4 globalMatrix = float4x4::identity;
+
+	void CalculateGlobalMatrix();
 };
