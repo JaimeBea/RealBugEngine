@@ -75,7 +75,6 @@ public:
 	}; // clang-format on
 
 public:
-	//ResourceShader* shader;
 	UID shaderId = 0;
 
 private:

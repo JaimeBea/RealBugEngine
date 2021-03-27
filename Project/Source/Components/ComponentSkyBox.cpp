@@ -14,13 +14,6 @@
 
 #define JSON_TAG_SKYBOX "skybox"
 
-void ComponentSkyBox::OnTransformUpdate() {
-}
-
-void ComponentSkyBox::Init() {
-	OnTransformUpdate();
-}
-
 void ComponentSkyBox::Update() {
 	Draw();
 }
@@ -47,7 +40,6 @@ void ComponentSkyBox::OnEditorUpdate() {
 		ResourceSkybox* skybox = (ResourceSkybox*) App->resources->GetResource(skyboxId);
 		if (skybox != nullptr) {
 			ImGui::ResourceSlot<ResourceShader>("Shader", &skybox->shaderId);
-			ResourceShader* shader = (ResourceShader*) App->resources->GetResource(skybox->shaderId);
 		}
 		ImGui::TreePop();
 	}
@@ -62,7 +54,7 @@ void ComponentSkyBox::Draw() {
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 
-	programSky = shader->GetShaderProgram();
+	unsigned int programSky = shader->GetShaderProgram();
 	glUseProgram(programSky);
 	float4x4 proj = App->camera->GetProjectionMatrix();
 	float4x4 view = App->camera->GetViewMatrix();

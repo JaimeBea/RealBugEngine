@@ -18,8 +18,6 @@ class ComponentSkyBox : public Component {
 public:
 	REGISTER_COMPONENT(ComponentSkyBox, ComponentType::SKYBOX, false);
 
-	void Init() override;
-	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Load(JsonValue jComponent) override;
 	void Save(JsonValue jComponent) const override;
@@ -29,5 +27,4 @@ public:
 private:
 	UID shaderId = 0;
 	UID skyboxId = 0;
-	unsigned int programSky = 0;
 };
