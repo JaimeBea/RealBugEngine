@@ -1,16 +1,15 @@
 #include "ComponentCanvas.h"
 #include "ComponentCanvasRenderer.h"
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 
 void ComponentCanvas::Render() {
-	RenderGameObject(&owner);
+	RenderGameObject(owner);
 }
 
 void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
-
 	ComponentCanvasRenderer* componentCanvasRenderer = gameObject->GetComponent<ComponentCanvasRenderer>();
-	
+
 	if (componentCanvasRenderer != nullptr) {
 		componentCanvasRenderer->Render(gameObject);
 	}
@@ -18,4 +17,9 @@ void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
 	for (GameObject* child : gameObject->GetChildren()) {
 		RenderGameObject(child);
 	}
+}
+
+void ComponentCanvas::DuplicateComponent(GameObject& owner) {
+	ComponentCanvas* component = owner.CreateComponent<ComponentCanvas>();
+	//TO DO
 }

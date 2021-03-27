@@ -1,23 +1,28 @@
 #include "ComponentEventSystem.h"
-#include "UI/EventSystem/Event.h"
+
 #include "Modules/ModuleUserInterface.h"
-#include "Resources/GameObject.h"
+
+#include "GameObject.h"
+#include "Event.h"
+
 #include "UI/Selectables/Selectable.h"
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
 ComponentEventSystem* ComponentEventSystem::currentEvSys = nullptr;
 
-ComponentEventSystem::ComponentEventSystem(GameObject& owner, bool active)
-	: Component(ComponentType::EVENT_SYSTEM, owner, active)
-	, currentSelected(nullptr)
-	, firstSelected(nullptr) {
-}
+//ComponentEventSystem::ComponentEventSystem(GameObject* owner, UID componentID_, bool active)
+//	: Component(ComponentType::EVENT_SYSTEM, owner, componentID_, active)
+//	, currentSelected(nullptr)
+//	, firstSelected(nullptr) {
+//}
 
 ComponentEventSystem ::~ComponentEventSystem() {
 }
 
 void ComponentEventSystem::Init() {
+	currentSelected = nullptr;
+	firstSelected = nullptr;
 	currentEvSys = this;
 	SetSelected(firstSelected);
 }
@@ -58,4 +63,9 @@ void ComponentEventSystem::SetSelected(Selectable* newSelected) {
 	if (newSelected != nullptr) {
 		newSelected->OnSelect();
 	}
+}
+
+void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
+	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
+	//TO DO
 }

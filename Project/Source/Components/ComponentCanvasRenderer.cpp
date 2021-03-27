@@ -2,10 +2,9 @@
 #include "ComponentImage.h"
 #include "ComponentTransform2D.h"
 
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 
 void ComponentCanvasRenderer::Render(GameObject* gameObject) {
-
 	//We should get UI components (image, text,etc) here and call their render functions
 
 	ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
@@ -19,4 +18,9 @@ void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 	if (componentText != nullptr) {
 		componentText->Render();
 	}*/
+}
+
+void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
+	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
+	//TO DO
 }

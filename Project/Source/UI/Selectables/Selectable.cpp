@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "Components/ComponentEventSystem.h"
 #include "Modules/ModuleEditor.h"
-#include <Resources/GameObject.h>
+#include "GameObject.h"
 #include "imgui.h"
 
 #include "Utils/Logging.h"
@@ -21,19 +21,21 @@ void Selectable::Highlight(bool b) {
 	highlighted = b;
 }
 
-Selectable::Selectable(GameObject& owner, bool active)
-	: Component(ComponentType::SELECTABLE, owner, active)
-	, interactable(false)
-	, highlighted(false)
-	, selected(false)
-	, m_NavigationType(NavigationType::AUTOMATIC)
-	, onAxisDown(nullptr)
-	, onAxisLeft(nullptr)
-	, onAxisRight(nullptr)
-	, onAxisUp(nullptr)
-	, selectableIndex(-1)
-	, m_Transition(TransitionType::NONE) {
-}
+//
+//Selectable::Selectable(GameObject* owner, UID componentID_, bool active)
+//	: Component(ComponentType::SELECTABLE, owner, componentID_, active)
+//
+//	, interactable(false)
+//	, highlighted(false)
+//	, selected(false)
+//	, m_NavigationType(NavigationType::AUTOMATIC)
+//	, onAxisDown(nullptr)
+//	, onAxisLeft(nullptr)
+//	, onAxisRight(nullptr)
+//	, onAxisUp(nullptr)
+//	, selectableIndex(-1)
+//	, m_Transition(TransitionType::NONE) {
+//}
 
 Selectable::~Selectable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
@@ -91,6 +93,18 @@ void Selectable::OnDeselect() {
 
 void Selectable::Init() {
 	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
+
+	interactable = (false);
+	highlighted = (false);
+	selected = (false);
+	m_NavigationType = (NavigationType::AUTOMATIC);
+	onAxisDown = (nullptr);
+	onAxisLeft = (nullptr);
+	onAxisRight = (nullptr);
+	onAxisUp = (nullptr);
+	selectableIndex = (-1);
+	m_Transition = (TransitionType::NONE);
+
 	//TO DO add as listener	to MouseMoved event?
 }
 

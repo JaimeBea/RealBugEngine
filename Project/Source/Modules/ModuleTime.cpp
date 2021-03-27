@@ -6,9 +6,11 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
-#include "UI/EventSystem/Event.h"
+#include "Event.h"
+#include "Modules/ModuleEventSystem.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
+#include <ctime>
 
 #include "Utils/Leaks.h"
 
@@ -19,6 +21,11 @@ ModuleTime::ModuleTime() {
 }
 
 bool ModuleTime::Init() {
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PAUSE, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PLAY, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_RESUME, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STEP, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STOP, this);
 	return true;
 }
 
@@ -60,6 +67,14 @@ void ModuleTime::WaitForEndOfFrame() {
 	}
 }
 
+bool ModuleTime::HasGameStarted() const {
+	return gameStarted;
+}
+
+bool ModuleTime::IsGameRunning() const {
+	return gameRunning;
+}
+
 float ModuleTime::GetDeltaTime() const {
 	return timeDeltaMs / 1000.0f;
 }
@@ -76,6 +91,10 @@ float ModuleTime::GetRealTimeSinceStartup() const {
 	return realTimeLastMs / 1000.0f;
 }
 
+long long ModuleTime::GetCurrentTimestamp() const {
+	return std::time(0);
+}
+
 float ModuleTime::GetTimeScale() const {
 	return timeScale;
 }
@@ -84,18 +103,15 @@ void ModuleTime::SetTimeScale(float timeScale) {
 	timeScale = std::max(0.0f, timeScale);
 }
 
-bool ModuleTime::HasGameStarted() const {
-	return gameStarted;
-}
-
-bool ModuleTime::IsGameRunning() const {
-	return gameRunning;
+unsigned int ModuleTime::GetFrameCount() const {
+	return frameCount;
 }
 
 void ModuleTime::StartGame() {
 	if (gameStarted) return;
 
-	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
+	// TODO: (Scene resource) Save temp scenes
+	// SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
 
 	gameStarted = true;
 	gameRunning = true;
@@ -104,7 +120,8 @@ void ModuleTime::StartGame() {
 void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
-	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
+	// TODO: (Scene resource) Load temp scenes
+	// SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
 	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
 	App->files->Erase(tempSceneFilePath.c_str());
 
@@ -135,25 +152,21 @@ void ModuleTime::StepGame() {
 	gameStepOnce = true;
 }
 
-unsigned int ModuleTime::GetFrameCount() const {
-	return frameCount;
-}
-
-void ModuleTime::RecieveEvent(const Event& e) {
+void ModuleTime::ReceiveEvent(const Event& e) {
 	switch (e.type) {
-	case Event::EventType::Pressed_Play:
+	case Event::EventType::PRESSED_PLAY:
 		StartGame();
 		break;
-	case Event::EventType::Pressed_Stop:
+	case Event::EventType::PRESSED_STOP:
 		StopGame();
 		break;
-	case Event::EventType::Pressed_Resume:
+	case Event::EventType::PRESSED_RESUME:
 		ResumeGame();
 		break;
-	case Event::EventType::Pressed_Pause:
+	case Event::EventType::PRESSED_PAUSE:
 		PauseGame();
 		break;
-	case Event::EventType::Pressed_Step:
+	case Event::EventType::PRESSED_STEP:
 		StepGame();
 		break;
 	default:

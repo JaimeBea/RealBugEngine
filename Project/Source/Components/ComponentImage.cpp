@@ -8,7 +8,7 @@
 
 #include "ComponentBoundingBox2D.h"
 #include "ComponentTransform2D.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 
 #include "Geometry/AABB2D.h"
 
@@ -22,12 +22,12 @@ ComponentImage::~ComponentImage() {
 
 void ComponentImage::Init() {
 	CreateVBO();
-	ComponentBoundingBox2D* bb = owner.GetComponent<ComponentBoundingBox2D>();
+	ComponentBoundingBox2D* bb = owner->GetComponent<ComponentBoundingBox2D>();
 	if (bb == nullptr) {
-		bb = owner.CreateComponent<ComponentBoundingBox2D>();
+		bb = owner->CreateComponent<ComponentBoundingBox2D>();
 	}
 
-	ComponentTransform2D* transform2D = owner.GetComponent<ComponentTransform2D>();
+	ComponentTransform2D* transform2D = owner->GetComponent<ComponentTransform2D>();
 
 	float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
 	float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
@@ -43,24 +43,26 @@ void ComponentImage::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Image")) {
 		ImGui::TextColored(App->editor->textColor, "Texture Settings:");
 
-		std::vector<Texture*> textures;
-		for (Texture& texture : App->resources->textures) textures.push_back(&texture);
+		//ASAP TO DO HANDLE COMBO WITH NEW SYSTEM
 
-		ImGui::ColorEdit3("Color##", color.ptr());
+		//std::vector<ResourceTexture*> textures;
+		//for (ResourceTexture& texture : App->resources->texture) textures.push_back(&texture);
 
-		std::string& currentDiffuseTexture = texture->fileName;
-		if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
-			for (unsigned i = 0; i < textures.size(); ++i) {
-				bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
-				if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
-					texture = textures[i];
-				};
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
+		//ImGui::ColorEdit3("Color##", color.ptr());
+
+		//std::string& currentDiffuseTexture = texture->fileName;
+		//if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
+		//	for (unsigned i = 0; i < textures.size(); ++i) {
+		//		bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
+		//		if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
+		//			texture = textures[i];
+		//		};
+		//		if (isSelected) {
+		//			ImGui::SetItemDefaultFocus();
+		//		}
+		//	}
+		//	ImGui::EndCombo();
+		//}
 
 		ImGui::Text("");
 
@@ -167,6 +169,11 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void ComponentImage::SetTexture(Texture* text) {
+void ComponentImage::SetTexture(ResourceTexture* text) {
 	texture = text;
+}
+
+void ComponentImage::DuplicateComponent(GameObject& owner) {
+	ComponentImage* component = owner.CreateComponent<ComponentImage>();
+	//TO DO
 }

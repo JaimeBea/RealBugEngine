@@ -14,15 +14,19 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleAudio.h"
+#include "Modules/ModuleEventSystem.h"
 
 #include "Modules/ModuleUserInterface.h"
+
+#include "Event.h"
 
 #include "SDL_timer.h"
 #include <windows.h>
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
-#include "UI/EventSystem/Event.h"
+
 
 Application::Application() {
 	// Order matters: they will Init/start/update in this order
@@ -31,6 +35,7 @@ Application::Application() {
 	modules.push_back(files = new ModuleFiles());
 	modules.push_back(resources = new ModuleResources());
 	modules.push_back(programs = new ModulePrograms());
+	modules.push_back(audio = new ModuleAudio());
 
 	modules.push_back(time = new ModuleTime());
 	modules.push_back(input = new ModuleInput());
@@ -44,6 +49,7 @@ Application::Application() {
 	modules.push_back(userInterface = new ModuleUserInterface());
 
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(eventSystem = new ModuleEventSystem());
 }
 
 Application::~Application() {
@@ -106,4 +112,8 @@ bool Application::CleanUp() {
 
 void Application::RequestBrowser(char* url) {
 	ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+}
+
+void Application::BroadCastEvent(const Event& e) {
+	eventSystem->AddEvent(e);
 }

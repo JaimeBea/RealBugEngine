@@ -3,7 +3,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
 
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "ComponentBoundingBox2D.h"
 
 #include "debugdraw.h"
@@ -56,7 +56,7 @@ void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
 
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 }
@@ -65,21 +65,21 @@ void ComponentTransform2D::SetSize(float2 size_) {
 	size = size_;
 
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 
 	rotation = rotation_;
 
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 }
@@ -87,7 +87,7 @@ void ComponentTransform2D::SetRotation(Quat rotation_) {
 void ComponentTransform2D::SetScale(float3 scale_) {
 	scale = scale_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 }
@@ -95,7 +95,7 @@ void ComponentTransform2D::SetScale(float3 scale_) {
 void ComponentTransform2D::SetAnchorX(float2 anchorX_) {
 	anchorX = anchorX_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 }
@@ -103,7 +103,7 @@ void ComponentTransform2D::SetAnchorX(float2 anchorX_) {
 void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	anchorY = anchorY_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
+	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
 }
@@ -140,3 +140,20 @@ void ComponentTransform2D::Invalidate() {
 	ComponentBoundingBox2D* boundingBox = GetOwner().GetComponent<ComponentBoundingBox2D>();
 	if (boundingBox) boundingBox->Invalidate();
 }
+
+void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
+	ComponentTransform2D* component = owner.CreateComponent<ComponentTransform2D>();
+	component->size = size;
+	component->scale = scale;
+	component->position = position;
+	component->rotation = rotation;
+	component->pivot = pivot;
+	component->anchorX = anchorX;
+	component->anchorY = anchorY;
+}
+
+//void ComponentBoundingBox::DuplicateComponent(GameObject& owner) {
+//	ComponentBoundingBox* component = owner.CreateComponent<ComponentBoundingBox>();
+//	component->SetLocalBoundingBox(this->localAABB);
+//	//component->bbActive = this->bbActive;
+//}

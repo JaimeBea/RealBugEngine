@@ -7,11 +7,10 @@
 #include "GL/glew.h"
 #include <vector>
 
-
 class ComponentCanvasRenderer : public Component {
 public:
-	REGISTER_COMPONENT(ComponentCanvasRenderer, ComponentType::CANVASRENDERER);
+	REGISTER_COMPONENT(ComponentCanvasRenderer, ComponentType::CANVASRENDERER, false);
 
 	void Render(GameObject* gameObject);
-
+	void DuplicateComponent(GameObject& owner) override;
 };

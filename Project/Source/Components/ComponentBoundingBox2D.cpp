@@ -1,7 +1,7 @@
 #include "ComponentBoundingBox2D.h"
 
 #include "Utils/Logging.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform2D.h"
 
 #include "Geometry/AABB.h"
@@ -45,7 +45,8 @@ void ComponentBoundingBox2D::SetLocalBoundingBox(const AABB2D& boundingBox) {
 
 void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 	if (dirty || force) {
-		ComponentTransform2D* t2d = owner.GetComponent<ComponentTransform2D>();
+		ComponentTransform2D* t2d = owner->GetComponent<ComponentTransform2D>();
+
 		worldAABB.minPoint = localAABB.minPoint.Mul(t2d->GetPosition().xy() + t2d->GetSize().Mul(t2d->GetScale().xy()));
 		worldAABB.maxPoint = localAABB.maxPoint.Mul(t2d->GetPosition().xy() + t2d->GetSize().Mul(t2d->GetScale().xy()));
 
@@ -74,4 +75,8 @@ const AABB2D& ComponentBoundingBox2D::GetWorldAABB() const {
 }
 
 void ComponentBoundingBox2D::Update() {
+}
+
+void ComponentBoundingBox2D::DuplicateComponent(GameObject& owner) {
+	ComponentBoundingBox2D* component = owner.CreateComponent<ComponentBoundingBox2D>();
 }

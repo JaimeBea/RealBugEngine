@@ -7,7 +7,7 @@
 
 class ComponentBoundingBox2D : public Component {
 public:
-	REGISTER_COMPONENT(ComponentBoundingBox2D, ComponentType::BOUNDING_BOX_2D);
+	REGISTER_COMPONENT(ComponentBoundingBox2D, ComponentType::BOUNDING_BOX_2D, false);
 
 	void OnTransformUpdate() override;
 	void Save(JsonValue jComponent) const override;
@@ -18,11 +18,11 @@ public:
 	void DrawBoundingBox();
 	void Invalidate();
 	void Update() override;
+	void DuplicateComponent(GameObject& owner) override;
 
 	const AABB2D& GetWorldAABB() const;
 
 private:
-
 	bool dirty = true;
 	AABB2D localAABB = {{0, 0}, {0, 0}};
 	AABB2D worldAABB = {{0, 0}, {0, 0}};

@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
@@ -24,6 +24,10 @@
 #define JSON_TAG_VERTICAL_FOV "VerticalFov"
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
 
+void ComponentCamera::Init() {
+	OnTransformUpdate();
+}
+
 void ComponentCamera::DrawGizmos() {
 	if (activeCamera) return;
 
@@ -40,33 +44,31 @@ void ComponentCamera::OnTransformUpdate() {
 }
 
 void ComponentCamera::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Camera")) {
-		if (ImGui::Checkbox("Main Camera", &activeCamera)) {
-			App->camera->ChangeActiveFrustum(frustum, activeCamera);
-		}
-		ImGui::Separator();
+	if (ImGui::Checkbox("Main Camera", &activeCamera)) {
+		App->camera->ChangeActiveFrustum(frustum, activeCamera);
+	}
+	if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
+		App->camera->ChangeCullingFrustum(frustum, cullingCamera);
+	}
+	ImGui::Separator();
 
-		vec front = frustum.Front();
-		vec up = frustum.Up();
-		ImGui::TextColored(App->editor->titleColor, "Frustum");
-		ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-		ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+	vec front = frustum.Front();
+	vec up = frustum.Up();
+	ImGui::TextColored(App->editor->titleColor, "Frustum");
+	ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-		float nearPlane = frustum.NearPlaneDistance();
-		float farPlane = frustum.FarPlaneDistance();
-		if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
-			frustum.SetViewPlaneDistances(nearPlane, farPlane);
-		}
-		if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
-			frustum.SetViewPlaneDistances(nearPlane, farPlane);
-		}
-		float fov = frustum.VerticalFov();
-		if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
-			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
-		}
-		if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
-			App->camera->ChangeCullingFrustum(frustum, cullingCamera);
-		}
+	float nearPlane = frustum.NearPlaneDistance();
+	float farPlane = frustum.FarPlaneDistance();
+	if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
+		frustum.SetViewPlaneDistances(nearPlane, farPlane);
+	}
+	if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
+		frustum.SetViewPlaneDistances(nearPlane, farPlane);
+	}
+	float fov = frustum.VerticalFov();
+	if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
+		frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 	}
 }
 
@@ -102,6 +104,11 @@ void ComponentCamera::Load(JsonValue jComponent) {
 	frustum.SetPerspective(jFrustum[JSON_TAG_HORIZONTAL_FOV], jFrustum[JSON_TAG_VERTICAL_FOV]);
 
 	activeCamera = jComponent[JSON_TAG_CAMERA_SELECTED];
+}
+
+void ComponentCamera::DuplicateComponent(GameObject& owner) {
+	ComponentCamera* component = owner.CreateComponent<ComponentCamera>();
+	component->frustum = this->frustum;
 }
 
 Frustum ComponentCamera::BuildDefaultFrustum() const {

@@ -8,7 +8,7 @@
 
 class ComponentTransform2D : public Component {
 public:
-	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM2D);
+	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM2D, false);
 	void Update() override;
 	void OnEditorUpdate() override;
 
@@ -26,15 +26,18 @@ public:
 
 	void InvalidateHierarchy();
 	void Invalidate();
+	void DuplicateComponent(GameObject& owner) override;
+
+
 
 private:
 	bool dirty = true;
-	float3 position = float3::zero; // The offset position
+	float3 position = float3::zero;	 // The offset position
 	float2 pivot = float2(0.5, 0.5); // The position of the pivot
-	float2 size = float2::one; // The size of the item
+	float2 size = float2::one;		 // The size of the item
 
 	Quat rotation = Quat::identity; // The rotation of the element
-	float3 scale = float3::one; // The scale of the element
+	float3 scale = float3::one;		// The scale of the element
 
 	float2 anchorX = float2::zero; // The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position
 	float2 anchorY = float2::zero; // The Anchor of Y axis. AnchorY.x -> Min position, AnchorY.y -> Max position
