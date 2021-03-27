@@ -9,6 +9,7 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "Components/ComponentSkybox.h"
 
 #include <unordered_map>
 
@@ -39,6 +40,7 @@ public:
 	VectorMap<UID, ComponentBoundingBox> boundingBoxComponents;
 	VectorMap<UID, ComponentCamera> cameraComponents;
 	VectorMap<UID, ComponentLight> lightComponents;
+	VectorMap<UID, ComponentSkyBox> skyboxComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

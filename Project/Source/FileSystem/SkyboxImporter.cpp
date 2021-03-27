@@ -15,17 +15,30 @@
 #include "Utils/Buffer.h"
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "Id"
+
 bool SkyboxImporter::ImportSkybox(const char* filePath, JsonValue jMeta) {
 	LOG("Importing skybox from path: \"%s\".", filePath);
 
 	MSTimer timer;
 	timer.Start();
+
+	// Read from file
 	Buffer<char> buffer = App->files->Load(filePath);
-	if (buffer.Size() == 0) return false;
+	if (buffer.Size() == 0) {
+		LOG("Error loading skybox %s", filePath);
+		return false;
+	}
 
 	ResourceSkybox* resourceSkybox = App->resources->CreateResource<ResourceSkybox>(filePath);
-	JsonValue jResourceIds = jMeta[JSON_TAG_RESOURCE_IDS];
-	jResourceIds[0] = resourceSkybox->GetId();
+
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[0];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(resourceSkybox->GetType());
+	jResource[JSON_TAG_ID] = resourceSkybox->GetId();
 
 	const std::string& resourceFilePath = resourceSkybox->GetResourceFilePath();
 	bool saved = App->files->Save(resourceFilePath.c_str(), buffer);
@@ -34,10 +47,7 @@ bool SkyboxImporter::ImportSkybox(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
-
 	unsigned timeMs = timer.Stop();
 	LOG("skybox imported in %ums", timeMs);
-	resourceSkybox->Load();
 	return true;
 }

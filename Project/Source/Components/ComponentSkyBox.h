@@ -23,9 +23,11 @@ public:
 	void OnEditorUpdate() override;
 	void Load(JsonValue jComponent) override;
 	void Save(JsonValue jComponent) const override;
+	void Update() override;
 	void Draw();
 
 private:
-	ResourceSkybox* skybox = nullptr;
+	UID shaderId = 0;
+	UID skyboxId = 0;
 	unsigned int programSky = 0;
 };

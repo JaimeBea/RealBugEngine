@@ -11,8 +11,8 @@
 
 // REGISTER_RESOURCE builds the data structures common to all Resources.
 // This includes the Constructor.
-#define REGISTER_RESOURCE(resourceClass, resourceType)         \
-	static const ResourceType staticType = resourceType;       \
+#define REGISTER_RESOURCE(resourceClass, resourceType)   \
+	static const ResourceType staticType = resourceType; \
 	resourceClass(UID id, const char* assetFilePath, const char* resourceFilePath) : Resource(staticType, id, assetFilePath, resourceFilePath) {}
 
 enum class ResourceType {
@@ -22,7 +22,8 @@ enum class ResourceType {
 	PREFAB,
 	SCENE,
 	SHADER,
-	TEXTURE
+	TEXTURE,
+	SKYBOX
 };
 
 const char* GetResourceTypeName(ResourceType type);

@@ -13,16 +13,11 @@
 
 class ResourceSkybox : public Resource {
 public:
-	ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath);
+	REGISTER_RESOURCE(ResourceSkybox, ResourceType::SKYBOX);
 
-	void Load();
+	void Load() override;
 	void Unload() override;
-	void Draw();
-	void ReadPath();
 
-	//ResourceShader* GetShader() {
-	//	return shader;
-	//};
 	unsigned int GetVao() {
 		return skyboxVAO;
 	};
@@ -79,8 +74,11 @@ public:
 		 1.0f, -1.0f,  1.0f
 	}; // clang-format on
 
-private:
+public:
 	//ResourceShader* shader;
+	UID shaderId = 0;
+
+private:
 	unsigned int skyboxVAO = 0;
 	unsigned int skyboxVBO = 0;
 	unsigned int glCubeMap = 0;

@@ -201,7 +201,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 			ShaderImporter::ImportShader(filePath, jMeta);
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
-			 ModelImporter::ImportModel(filePath, jMeta);
+			ModelImporter::ImportModel(filePath, jMeta);
 		} else if (extension == ".sky") {
 			// Skybox files
 			SkyboxImporter::ImportSkybox(filePath, jMeta);
@@ -399,6 +399,9 @@ Resource* ModuleResources::CreateResourceByTypeAndID(ResourceType type, UID id, 
 		break;
 	case ResourceType::TEXTURE:
 		resource = new ResourceTexture(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::SKYBOX:
+		resource = new ResourceSkybox(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);

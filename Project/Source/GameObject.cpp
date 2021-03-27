@@ -324,8 +324,8 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 		scene->lightComponents.Remove(componentId);
 		break;
 	case ComponentType::SKYBOX:
-		if (!App->scene->skyboxComponents.Has(componentId)) return;
-		App->scene->skyboxComponents.Remove(componentId);
+		if (!scene->skyboxComponents.Has(componentId)) return;
+		scene->skyboxComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);

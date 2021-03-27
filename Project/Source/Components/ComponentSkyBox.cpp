@@ -1,8 +1,13 @@
-#include "Application.h"
+#include "ComponentSkyBox.h"
 
+#include "Application.h"
+#include "Utils/ImGuiUtils.h"
+#include "Resources/ResourceShader.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleEditor.h"
 #include "ComponentSkyBox.h"
+#include "Modules/ModuleRender.h"
+#include "Modules/ModulePrograms.h"
 
 #include "GL/glew.h"
 #include "imgui.h"
@@ -16,12 +21,17 @@ void ComponentSkyBox::Init() {
 	OnTransformUpdate();
 }
 
+void ComponentSkyBox::Update() {
+	Draw();
+}
+
 void ComponentSkyBox::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_SKYBOX] = skybox->GetId();
+	jComponent[JSON_TAG_SKYBOX] = skyboxId;
 }
 
 void ComponentSkyBox::Load(JsonValue jComponent) {
-	skybox = (ResourceSkybox*) App->resources->GetResourceByID(jComponent[JSON_TAG_SKYBOX]);
+	skyboxId = jComponent[JSON_TAG_SKYBOX];
+	if (skyboxId != 0) App->resources->IncreaseReferenceCount(skyboxId);
 }
 
 void ComponentSkyBox::OnEditorUpdate() {
@@ -30,31 +40,29 @@ void ComponentSkyBox::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
-	// MESH
-	if (ImGui::TreeNode("Mesh")) {
-		ImGui::TextColored(App->editor->titleColor, "Geometry");
-		ImGui::TextWrapped("Num Vertices: ");
-		ImGui::SameLine();
-		//ImGui::TextColored(App->editor->textColor, "%d", mesh->numVertices);
-		//ImGui::TextWrapped("Num Triangles: ");
-		ImGui::SameLine();
-		/*ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);*/
-		ImGui::Separator();
-		ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 
-		//ImGui::Checkbox("Draw", &bbActive);
-		/*if (bbActive) {
-			ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-			boundingBox->DrawBoundingBox();
-		}*/
-		ImGui::Separator();
+	ImGui::ResourceSlot<ResourceSkybox>("Skybox", &skyboxId);
+
+	if (ImGui::TreeNode("Skybox")) {
+		ResourceSkybox* skybox = (ResourceSkybox*) App->resources->GetResource(skyboxId);
+		if (skybox != nullptr) {
+			ImGui::ResourceSlot<ResourceShader>("Shader", &skybox->shaderId);
+			ResourceShader* shader = (ResourceShader*) App->resources->GetResource(skybox->shaderId);
+		}
+		ImGui::TreePop();
 	}
 }
 
 void ComponentSkyBox::Draw() {
+	ResourceSkybox* skybox = (ResourceSkybox*) App->resources->GetResource(skyboxId);
+	if (skybox == nullptr) return;
+	ResourceShader* shader = (ResourceShader*) App->resources->GetResource(skybox->shaderId);
+	if (shader == nullptr) return;
+
 	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
-	/*programSky = skybox->GetShader()->GetShaderProgram();*/
+
+	programSky = shader->GetShaderProgram();
 	glUseProgram(programSky);
 	float4x4 proj = App->camera->GetProjectionMatrix();
 	float4x4 view = App->camera->GetViewMatrix();

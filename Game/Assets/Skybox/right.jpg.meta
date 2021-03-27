@@ -1,6 +1,9 @@
 {
-    "ResourceIds": [
-        3421072524890138131
+    "Resources": [
+        {
+            "Type": "Texture",
+            "Id": 18176064521724127138
+        }
     ],
-    "Timestamp": 1616580231
+    "Timestamp": 1616860788
 }

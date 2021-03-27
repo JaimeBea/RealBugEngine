@@ -22,10 +22,7 @@
 
 #include <iostream>
 
-#define JSON_TAG_SHADER "Shader"
-
-ResourceSkybox::ResourceSkybox(UID id, const char* assetFilePath, const char* resourceFilePath)
-	: Resource(id, assetFilePath, resourceFilePath) {}
+#define JSON_TAG_SKYBOX "Skybox"
 
 void ResourceSkybox::Load() {
 	std::string filePath = GetResourceFilePath();
@@ -46,6 +43,9 @@ void ResourceSkybox::Load() {
 	JsonValue jSkybox(document, document);
 	//TODO ASSIGN RESOURCE SHADER
 	//shader = (ResourceShader*) App->resources->GetResourceByID(jSkybox[JSON_TAG_SHADER]);
+	shaderId = jSkybox[JSON_TAG_SKYBOX];
+	App->resources->IncreaseReferenceCount(shaderId);
+
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -63,8 +63,8 @@ void ResourceSkybox::Load() {
 	glGenTextures(1, &glCubeMap);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, glCubeMap);
 	for (unsigned int i = 0; i < 6; i++) {
-		std::string file = jSkybox[JSON_TAG_SHADER][i];
-		success = ilLoad(IL_DDS, file.c_str());
+		std::string file = jSkybox[JSON_TAG_SKYBOX][i];
+		success = ilLoad(IL_TYPE_UNKNOWN, file.c_str());
 		if (success) {
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, ilGetInteger(IL_IMAGE_BPP), ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, ilGetInteger(IL_IMAGE_FORMAT), GL_UNSIGNED_BYTE, ilGetData());
 		} else {
