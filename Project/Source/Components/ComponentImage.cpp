@@ -5,9 +5,15 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
+#include "FileSystem/TextureImporter.h"
 #include "Math/TransformOps.h"
+#include "FileSystem/JsonValue.h"
 #include "imgui.h"
 #include "GL/glew.h"
+
+#define JSON_TAG_TEXTURE_FILENAME "Texture"
+#define JSON_TAG_COLOR "Color"
+#define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
 ComponentImage::~ComponentImage() {
 	DestroyVBO();
@@ -60,6 +66,36 @@ void ComponentImage::OnEditorUpdate() {
 		ImGui::Image((void*) texture->glTexture, ImVec2(200, 200));
 		ImGui::Separator();
 	}
+}
+
+void ComponentImage::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_TEXTURE_FILENAME] = texture->fileName.c_str();
+
+	JsonValue jColor = jComponent[JSON_TAG_COLOR];
+	jColor[0] = color.x;
+	jColor[1] = color.y;
+	jColor[2] = color.z;
+	jColor[3] = color.w;
+
+	jComponent[JSON_TAG_ALPHATRANSPARENCY] = alphaTransparency;
+}
+
+void ComponentImage::Load(JsonValue jComponent) {
+	std::string textureFileName = jComponent[JSON_TAG_TEXTURE_FILENAME];
+	for (Texture& text : App->resources->textures) {
+		if (text.fileName == textureFileName) {
+			texture = &text;
+			break;
+		}
+	}
+
+	TextureImporter::UnloadTexture(texture);
+	TextureImporter::LoadTexture(texture);
+
+	JsonValue jColor = jComponent[JSON_TAG_COLOR];
+	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
+
+	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
 void ComponentImage::CreateVBO() {

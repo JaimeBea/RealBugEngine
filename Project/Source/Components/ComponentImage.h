@@ -12,7 +12,8 @@ public:
 	void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
-
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
 	void Draw(ComponentTransform2D* transform);
 	void SetTexture(Texture* text);
@@ -21,7 +22,6 @@ private:
 	Texture* texture;
 	float4 color = {1, 1, 1, 1};
 	unsigned int vbo;
-	unsigned int renderedTexture = 0;
 	bool alphaTransparency = false;
 
 	void CreateVBO();

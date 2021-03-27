@@ -7,6 +7,7 @@
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
 #include "Components/ComponentTransform2D.h"
+#include "Components/ComponentImage.h"
 
 #include "Utils/Leaks.h"
 
@@ -24,6 +25,8 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 		return owner.CreateComponent<ComponentLight>(active);
 	case ComponentType::TRANSFORM2D:
 		return owner.CreateComponent<ComponentTransform2D>(active);
+	case ComponentType::IMAGE:
+		return owner.CreateComponent<ComponentImage>(active);
 	default:
 		return nullptr;
 	}
