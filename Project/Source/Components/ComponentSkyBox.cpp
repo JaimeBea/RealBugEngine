@@ -77,6 +77,6 @@ void ComponentSkyBox::Draw() {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glBindVertexArray(0);
-	glDepthFunc(GL_LESS); // set depth function back to default
-	glDepthMask(GL_TRUE); // superfluous
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
 }
