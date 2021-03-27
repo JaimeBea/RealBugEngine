@@ -1,7 +1,8 @@
 #pragma once
-#include "Component.h"
+#include <Components/Component.h>
 #include <Resources/ResourceTexture.h>
-#include "ComponentTransform2D.h"
+#include <Math/float3.h>
+class ComponentTransform2D;
 
 class ComponentImage : public Component {
 public:

@@ -1,4 +1,4 @@
-#include "Selectable.h"
+#include "ComponentSelectable.h"
 #include "Application.h"
 #include "Components/ComponentEventSystem.h"
 #include "Modules/ModuleEditor.h"
@@ -8,7 +8,7 @@
 #include "Utils/Logging.h"
 
 //TO DO ACTUALLY TRANSITION	WHEN HIGHLIGHTING HAPPENS, REQUIRES CLASS GRAPHICS FOR SPRITES/IMAGES
-void Selectable::Highlight(bool b) {
+void ComponentSelectable::Highlight(bool b) {
 	switch (m_Transition) {
 	case TransitionType::COLOR_CHANGE:
 		break;
@@ -22,7 +22,7 @@ void Selectable::Highlight(bool b) {
 }
 
 //
-//Selectable::Selectable(GameObject* owner, UID componentID_, bool active)
+//ComponentSelectable::ComponentSelectable(GameObject* owner, UID componentID_, bool active)
 //	: Component(ComponentType::SELECTABLE, owner, componentID_, active)
 //
 //	, interactable(false)
@@ -37,7 +37,7 @@ void Selectable::Highlight(bool b) {
 //	, m_Transition(TransitionType::NONE) {
 //}
 
-Selectable::~Selectable() {
+ComponentSelectable::~ComponentSelectable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
 	if (selectableIndex > -1) {
 		//Subtitute my position in vector with last element of vector
@@ -48,18 +48,18 @@ Selectable::~Selectable() {
 	}
 }
 
-bool Selectable::GetInteractable() {
+bool ComponentSelectable::GetInteractable() {
 	return interactable;
 }
 
-void Selectable::SetInteractable(bool b) {
+void ComponentSelectable::SetInteractable(bool b) {
 	interactable = b;
 }
 
-Selectable* Selectable::FindSelectableOnDir(float2 dir) {
+ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 	switch (m_NavigationType) {
 	case NavigationType::AUTOMATIC:
-		for (std::vector<Selectable*>::iterator it = ComponentEventSystem::currentEvSys->m_Selectables.begin(); it != ComponentEventSystem::currentEvSys->m_Selectables.end(); ++it) {
+		for (std::vector<ComponentSelectable*>::iterator it = ComponentEventSystem::currentEvSys->m_Selectables.begin(); it != ComponentEventSystem::currentEvSys->m_Selectables.end(); ++it) {
 			//TO DO Compare all selectables by distance and assign closest to retSelectable
 		}
 		break;
@@ -81,17 +81,17 @@ Selectable* Selectable::FindSelectableOnDir(float2 dir) {
 	return nullptr;
 }
 
-void Selectable::OnSelect() {
+void ComponentSelectable::OnSelect() {
 	selected = true;
 	Highlight(true);
 }
 
-void Selectable::OnDeselect() {
+void ComponentSelectable::OnDeselect() {
 	selected = false;
 	Highlight(false);
 }
 
-void Selectable::Init() {
+void ComponentSelectable::Init() {
 	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
 
 	interactable = (false);
@@ -108,10 +108,10 @@ void Selectable::Init() {
 	//TO DO add as listener	to MouseMoved event?
 }
 
-void Selectable::Update() {
+void ComponentSelectable::Update() {
 }
 
-void Selectable::OnEditorUpdate() {
+void ComponentSelectable::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Selectable")) {
 		bool isInteractable = interactable;
 		if (ImGui::Checkbox("Interactable", &isInteractable)) {
@@ -150,16 +150,16 @@ void Selectable::OnEditorUpdate() {
 			ImGui::EndCombo();
 		}
 
-		//TO DO Drag/Drop for manual navigation references (4 Selectable pointers)
+		//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
 	}
 }
 
-void Selectable::Enable() {
+void ComponentSelectable::Enable() {
 	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();
 	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
 }
 
-void Selectable::Disable() {
+void ComponentSelectable::Disable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
 	if (selected) {
 		ComponentEventSystem::currentEvSys->SetSelected(nullptr);
@@ -173,6 +173,6 @@ void Selectable::Disable() {
 	selectableIndex = -1;
 }
 
-void Selectable::OnPointerEnter() {
+void ComponentSelectable::OnPointerEnter() {
 	LOG("PointerEntered");
 }

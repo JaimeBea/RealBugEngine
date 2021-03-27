@@ -8,7 +8,7 @@
 
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
-#include "Components/ComponentImage.h";
+#include "Components/UI/ComponentImage.h";
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentEventSystem.h"
@@ -334,7 +334,7 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 	case ComponentType::TRANSFORM2D:
 		return &scene->transform2DComponents.Put(componentId, ComponentTransform2D(this, componentId, active));
 	case ComponentType::SELECTABLE:
-		return &scene->selectableComponents.Put(componentId, Selectable(this, componentId, active));
+		return &scene->selectableComponents.Put(componentId, ComponentSelectable(this, componentId, active));
 	case ComponentType::EVENT_SYSTEM:
 		return &scene->eventSystemComponents.Put(componentId, ComponentEventSystem(this, componentId, active));
 	case ComponentType::BOUNDING_BOX_2D:

@@ -3,16 +3,16 @@
 #include <Components/Component.h>
 
 class GameObject;
-class Selectable;
+class ComponentSelectable;
 
 class ComponentEventSystem : public Component {
 private:
-	Selectable* currentSelected;
+	ComponentSelectable* currentSelected;
 
 public:
 	static ComponentEventSystem* currentEvSys;
-	std::vector<Selectable*> m_Selectables;
-	Selectable* firstSelected;
+	std::vector<ComponentSelectable*> m_Selectables;
+	ComponentSelectable* firstSelected;
 
 public:
 	REGISTER_COMPONENT(ComponentEventSystem, ComponentType::EVENT_SYSTEM, false);
@@ -30,5 +30,5 @@ public:
 	void Disable() override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void SetSelected(Selectable* newSelected);
+	void SetSelected(ComponentSelectable* newSelected);
 };

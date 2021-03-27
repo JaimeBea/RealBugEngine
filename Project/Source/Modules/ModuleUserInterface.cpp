@@ -8,12 +8,12 @@
 #include "GameObject.h"
 #include "Components/ComponentCanvas.h"
 
-#include "UI/Selectables/Selectable.h"
+#include <Components/UI/ComponentSelectable.h>
 #include "Components/ComponentEventSystem.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Event.h"
 
-#include "UI/EventSystem/Interfaces/IPointerEnterHandler.h"
+#include "UI/Interfaces/IPointerEnterHandler.h"
 
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"

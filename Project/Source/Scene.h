@@ -11,11 +11,11 @@
 #include "Components/ComponentLight.h"
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
-#include "Components/ComponentImage.h";
+#include "Components/UI/ComponentImage.h";
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentEventSystem.h"
-#include "UI/Selectables/Button.h"
+#include "Components/UI/ComponentButton.h"
 
 #include <unordered_map>
 
@@ -53,7 +53,7 @@ public:
 	VectorMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
 	VectorMap<UID, ComponentEventSystem> eventSystemComponents;
 	//VectorMap<UID, Button> buttonComponents;
-	VectorMap<UID, Selectable> selectableComponents;
+	VectorMap<UID, ComponentSelectable> selectableComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

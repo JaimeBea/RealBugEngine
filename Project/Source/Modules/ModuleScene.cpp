@@ -17,7 +17,7 @@
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
 #include "Components/ComponentTransform2D.h"
-#include "Components/ComponentImage.h"
+#include "Components/UI/ComponentImage.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"

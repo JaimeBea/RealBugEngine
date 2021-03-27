@@ -2,27 +2,27 @@
 #include <Math/float2.h>
 #include <vector>
 #include <Components/Component.h>
-#include "UI/EventSystem/Interfaces/IPointerEnterHandler.h"
-#include "UI/EventSystem/Interfaces/IPointerExitHandler.h"
-#include "UI/EventSystem/Interfaces/IMoveHandler.h"
+#include "UI/Interfaces/IPointerEnterHandler.h"
+#include "UI/Interfaces/IPointerExitHandler.h"
+#include "UI/Interfaces/IMoveHandler.h"
 class ComponentEventSystem;
-class Selectable : public Component
+class ComponentSelectable : public Component
 	, IPointerEnterHandler {
 public:
-	REGISTER_COMPONENT(Selectable, ComponentType::SELECTABLE, false);
+	REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
 
 	//Selectable(GameObject* owner, UID componentID_, bool active = true);
-	~Selectable();
+	~ComponentSelectable();
 	bool GetInteractable();
 	void SetInteractable(bool b);
-	Selectable* FindSelectableOnDir(float2 dir);
+	ComponentSelectable* FindSelectableOnDir(float2 dir);
 
 	virtual void OnSelect();
 	virtual void OnDeselect();
-	Selectable* onAxisUp;
-	Selectable* onAxisDown;
-	Selectable* onAxisLeft;
-	Selectable* onAxisRight;
+	ComponentSelectable* onAxisUp;
+	ComponentSelectable* onAxisDown;
+	ComponentSelectable* onAxisLeft;
+	ComponentSelectable* onAxisRight;
 
 	void Init() override;
 	void Update() override;
@@ -55,5 +55,4 @@ protected:
 	NavigationType m_NavigationType;
 	TransitionType m_Transition;
 	void Highlight(bool b);
-
 };

@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Event.h"
 
-#include "UI/Selectables/Selectable.h"
+#include <Components/UI/ComponentSelectable.h>
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
@@ -55,7 +55,7 @@ void ComponentEventSystem::Disable() {
 	}
 }
 
-void ComponentEventSystem::SetSelected(Selectable* newSelected) {
+void ComponentEventSystem::SetSelected(ComponentSelectable* newSelected) {
 	if (currentSelected != nullptr) {
 		currentSelected->OnDeselect();
 	}

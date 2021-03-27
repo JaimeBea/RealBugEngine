@@ -1,5 +1,5 @@
 #include "ComponentCanvasRenderer.h"
-#include "ComponentImage.h"
+#include "UI/ComponentImage.h"
 #include "ComponentTransform2D.h"
 
 #include "GameObject.h"

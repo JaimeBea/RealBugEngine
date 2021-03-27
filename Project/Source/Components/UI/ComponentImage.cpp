@@ -6,8 +6,8 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
 
-#include "ComponentBoundingBox2D.h"
-#include "ComponentTransform2D.h"
+#include <Components/ComponentBoundingBox2D.h>
+#include <Components/ComponentTransform2D.h>
 #include "GameObject.h"
 
 #include "Geometry/AABB2D.h"
