@@ -139,6 +139,14 @@ void PanelInspector::Update() {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
+				if (ImGui::MenuItem("Animation")) {
+					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
+					if (animation != nullptr) {
+						animation->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}

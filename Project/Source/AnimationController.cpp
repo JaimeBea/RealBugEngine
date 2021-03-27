@@ -1,23 +1,18 @@
 #include "AnimationController.h"
-#include "ResourceAnimation.h"
-#include "Math/float3.h"
+#include "Resources/ResourceAnimation.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleResources.h"
 #include "Application.h"
+
+#include "Math/float3.h"
 
 #include "Utils/Leaks.h"
 
-AnimationController::AnimationController() : currentTime(0), loop(true), running(true) {
-
-}
-
-void AnimationController::SetAnimation(ResourceAnimation* animation) {
-	animationResource = animation;
-}
-
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
-	if (animationResource == nullptr) {
-		return false;
-	}	
+
+	ResourceAnimation* animationResource = static_cast<ResourceAnimation*>(App->resources->GetResource(animationID));
+
+	if (!animationResource) return false;
 
 	float currentSample = (currentTime * (animationResource->keyFrames.size() - 1)) / animationResource->duration;
 	int intPart = (int) currentSample;
@@ -26,7 +21,7 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 	//find in hash by name
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = animationResource->keyFrames[intPart].channels.find(name);
 	unsigned int idNext = intPart == (animationResource->keyFrames.size() - 1) ? 0 : intPart + 1;
-	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = animationResource->keyFrames[idNext].channels.find(name);	
+	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = animationResource->keyFrames[idNext].channels.find(name);
 
 	if (channel == animationResource->keyFrames[intPart].channels.end() && channelNext == animationResource->keyFrames[idNext].channels.end()) {
 		return false;
@@ -48,6 +43,9 @@ void AnimationController::Stop() {
 }
 
 void AnimationController::Update() {
+	ResourceAnimation* animationResource = static_cast<ResourceAnimation*>(App->resources->GetResource(animationID));
+	if (!animationResource) return;
+
 	currentTime += App->time->GetDeltaTime();
 	if (loop) {
 		currentTime = currentTime > animationResource->duration ? 0 : currentTime;
@@ -57,8 +55,9 @@ void AnimationController::Update() {
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) const {
-	if (first.Dot(second) >= 0.0f) // is minimum arc ?
+	if (first.Dot(second) >= 0.0f) { // is minimum arc ?
 		return Quat::Lerp(first, second, lambda).Normalized();
-	else
+	} else {
 		return Quat::Lerp(first, second.Neg(), lambda).Normalized();
+	}
 }

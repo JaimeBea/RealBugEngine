@@ -10,6 +10,7 @@
 #include "Resources/ResourceScene.h"
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceAnimation.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
@@ -394,6 +395,9 @@ Resource* ModuleResources::CreateResourceByTypeAndID(ResourceType type, UID id, 
 		break;
 	case ResourceType::TEXTURE:
 		resource = new ResourceTexture(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::ANIMATION:
+		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);

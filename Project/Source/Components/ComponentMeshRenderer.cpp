@@ -231,6 +231,9 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 }
 
 void ComponentMeshRenderer::Init() {
+	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	if (!mesh) return;
+
 	palette.resize(mesh->numBones);
 	for (unsigned i = 0; i < mesh->numBones; ++i) {
 		palette[i] = float4x4::identity;
@@ -238,6 +241,9 @@ void ComponentMeshRenderer::Init() {
 }
 
 void ComponentMeshRenderer::Update() {
+	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	if (!mesh) return;
+
 	if (App->time->GetDeltaTime() > 0) {
 		for (unsigned i = 0; i < mesh->numBones; ++i) {
 			const GameObject* bone = goBones.at(mesh->bones[i].boneName);

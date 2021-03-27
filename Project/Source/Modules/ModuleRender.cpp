@@ -179,10 +179,8 @@ UpdateStatus ModuleRender::Update() {
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
 	// Draw Animations
-	for (const GameObject& gameObject : App->scene->gameObjects) {
-		if (gameObject.GetRootBone()) {
-			DrawAnimation(gameObject.GetRootBone());
-		}
+	for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+		DrawAnimation(animationComponent.GetOwner().GetRootBone());
 	}
 
 	return UpdateStatus::CONTINUE;

@@ -11,6 +11,8 @@
 #define JSON_TAG_ID "Id"
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_ACTIVE "Active"
+#define JSON_TAG_ROOT_BONE_ID "RootBoneId"
+#define JSON_TAG_ROOT_BONE_NAME "RootBoneName"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_COMPONENTS "Components"
 #define JSON_TAG_CHILDREN "Children"
@@ -119,6 +121,14 @@ GameObject* GameObject::GetParent() const {
 	return parent;
 }
 
+void GameObject::SetRootBone(GameObject* gameObject) {
+	rootBoneHierarchy = gameObject;
+}
+
+GameObject* GameObject::GetRootBone() const {
+	return rootBoneHierarchy;
+}
+
 void GameObject::AddChild(GameObject* gameObject) {
 	gameObject->SetParent(this);
 }
@@ -137,6 +147,19 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
+GameObject* GameObject::FindDescendant(std::string name) const {
+	for (GameObject* child : children) {
+		if (child->name == name) {
+			return child;
+		} else {
+			GameObject* gameObject = child->FindDescendant(name);
+			if (gameObject != nullptr) return gameObject;
+		}
+	}
+
+	return nullptr;
+}
+
 bool GameObject::HasChildren() const {
 	return !children.empty();
 }
@@ -145,6 +168,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_ID] = id;
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
+	jGameObject[JSON_TAG_ROOT_BONE_ID] = rootBoneHierarchy != nullptr ? rootBoneHierarchy->id : 0;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
@@ -196,11 +220,15 @@ void GameObject::Load(JsonValue jGameObject) {
 		child->SetParent(this);
 		child->InitComponents();
 	}
+
+	UID rootBoneId = jGameObject[JSON_TAG_ROOT_BONE_ID];
+	rootBoneHierarchy = scene->GetGameObject(rootBoneId);
 }
 
 void GameObject::SavePrototype(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
+	jGameObject[JSON_TAG_ROOT_BONE_NAME] = rootBoneHierarchy ? rootBoneHierarchy->name.c_str() : "";
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
@@ -252,6 +280,8 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		child->SetParent(this);
 		child->InitComponents();
 	}
+
+	rootBoneHierarchy = FindDescendant(jGameObject[JSON_TAG_ROOT_BONE_NAME]);
 }
 
 Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID componentId) const {
@@ -271,6 +301,9 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 	case ComponentType::LIGHT:
 		if (!scene->lightComponents.Has(componentId)) return nullptr;
 		return &scene->lightComponents.Get(componentId);
+	case ComponentType::ANIMATION:
+		if (!scene->animationComponents.Has(componentId)) return nullptr;
+		return &scene->animationComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -290,6 +323,8 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 		return &scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
 	case ComponentType::LIGHT:
 		return &scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
+	case ComponentType::ANIMATION:
+		return &scene->animationComponents.Put(componentId, ComponentAnimation(this, componentId, active));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -318,6 +353,10 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::LIGHT:
 		if (!scene->lightComponents.Has(componentId)) return;
 		scene->lightComponents.Remove(componentId);
+		break;
+	case ComponentType::ANIMATION:
+		if (!scene->animationComponents.Has(componentId)) return;
+		scene->animationComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);

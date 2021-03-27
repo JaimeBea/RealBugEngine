@@ -18,6 +18,8 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Shader";
 	case ResourceType::TEXTURE:
 		return "Texture";
+	case ResourceType::ANIMATION:
+		return "Animation";
 	default:
 		LOG("Resource of type %i hasn't been registered in GetResourceTypeName.", (unsigned) type);
 		assert(false); // ERROR: Resource type not registered

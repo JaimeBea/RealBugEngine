@@ -1,14 +1,13 @@
 #pragma once
+
+#include "Utils/UID.h"
+
 #include <Math/Quat.h>
 
 class ResourceAnimation;
 
 class AnimationController {
 public:
-	AnimationController();
-
-	void SetAnimation(ResourceAnimation* animation);
-
 	bool GetTransform(const char* name, float3& pos, Quat& quat);
 
 	void Play();
@@ -19,10 +18,8 @@ private:
 	Quat Interpolate(const Quat& first, const Quat& second, float lambda) const;
 
 public:
-	float currentTime;
-	bool loop;
-	bool running;
-	ResourceAnimation* animationResource = nullptr;
-
-	std::string fileName = "New Controller";
+	float currentTime = 0.f;
+	bool loop = false;
+	bool running = false;
+	UID animationID = 0;
 };

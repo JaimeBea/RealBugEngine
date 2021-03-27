@@ -1,22 +1,20 @@
 #include "ComponentAnimation.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
-#include "Resources/AnimationController.h"
+#include "GameObject.h"
+#include "AnimationController.h"
 #include "Resources/ResourceAnimation.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
-#include "FileSystem/AnimationControllerImporter.h"
-#include "FileSystem/AnimationImporter.h"
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_CONTROLLER "Controller"
+#define JSON_TAG_LOOP "Controller"
 
 void ComponentAnimation::Update() {
-	animationController->Update();
+	animationController.Update();
 	OnUpdate();
 }
 
@@ -25,31 +23,28 @@ void ComponentAnimation::OnEditorUpdate() {
 }
 
 void ComponentAnimation::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_CONTROLLER] = (animationController != nullptr) ? animationController->fileName.c_str() : "";
-
-	if (animationController != nullptr) {
-		AnimationControllerImporter::SaveAnimationController(animationController);
-	}
+	// TODO: Save state machine resource UID
+	jComponent[JSON_TAG_LOOP] = animationController.loop;
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
-	std::string controllerName = jComponent[JSON_TAG_CONTROLLER];
+	animationController.loop = jComponent[JSON_TAG_LOOP];
+}
 
-	if (controllerName != "") {
-		if (animationController == nullptr) {
-			animationController = App->resources->ObtainAnimationController();
-		}
-		animationController->fileName = controllerName;
-		AnimationControllerImporter::LoadAnimationController(animationController);
-	}
+void ComponentAnimation::DuplicateComponent(GameObject& owner) {
+	ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
+	component->animationController.animationID = animationController.animationID;
+	component->animationController.loop = animationController.loop;
+	component->animationController.running = animationController.running;
+	component->animationController.currentTime = animationController.currentTime;
 }
 
 void ComponentAnimation::OnStop() {
-	animationController->Stop();
+	animationController.Stop();
 }
 
 void ComponentAnimation::OnPlay() {
-	animationController->Play();
+	animationController.Play();
 }
 
 void ComponentAnimation::OnUpdate() {
@@ -71,7 +66,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	float3 position = float3::zero;
 	Quat rotation = Quat::identity;
 
-	bool result = animationController->GetTransform(gameObject->name.c_str(), position, rotation);
+	bool result = animationController.GetTransform(gameObject->name.c_str(), position, rotation);
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
 

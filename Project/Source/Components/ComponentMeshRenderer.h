@@ -19,7 +19,7 @@ public:
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void Draw(const float4x4& modelMatrix);
+	void Draw(const float4x4& modelMatrix) const;
 
 public:
 	UID meshId = 0;

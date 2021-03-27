@@ -1,13 +1,14 @@
 #pragma once
 
-//#include "Resources/Resource.h"
+#include "Resources/ResourceType.h"
+#include "Resources/Resource.h"
 
 #include "Math/float3.h"
 #include "Math/Quat.h"
 #include <string>
 #include <unordered_map>
 
-class ResourceAnimation {
+class ResourceAnimation : public Resource {
 public:
 	struct Channel {
 		float3 tranlation = float3::zero;
@@ -19,17 +20,18 @@ public:
 		std::vector<float> wheights;
 	};
 	*/
-	
+
 	struct KeyFrameChannels {
 		std::unordered_map<std::string, Channel> channels;
 	};
 
-	//ResourceAnimation(UID id, const char* assetFilePath, const char* resourceFilePath);
-	ResourceAnimation() {}
+public:
+	REGISTER_RESOURCE(ResourceAnimation, ResourceType::ANIMATION);
+
+	void Load() override;
+	void Unload() override;
 
 public:
-	std::string fileName = "New Animation";
-
 	std::vector<KeyFrameChannels> keyFrames;
 
 	float duration = 0.0f;

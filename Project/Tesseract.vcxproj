@@ -21,9 +21,7 @@
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
-    <ClInclude Include="Source\FileSystem\AnimationControllerImporter.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />
-    <ClInclude Include="Source\FileSystem\AnimationImporter.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
     <ClInclude Include="Libs\imgui\imgui_utils.h" />
@@ -43,7 +41,7 @@
     <ClInclude Include="Source\Globals.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Utils\ImGuiUtils.h" />
-    <ClInclude Include="Source\Resources\AnimationController.h" />
+    <ClInclude Include="Source\AnimationController.h" />
     <ClInclude Include="Source\Utils\Leaks.h" />
     <ClInclude Include="Source\Utils\Logging.h" />
     <ClInclude Include="Source\Utils\Buffer.h" />
@@ -188,10 +186,8 @@
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\Resources\ResourcePrefab.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
-    <ClCompile Include="Source\FileSystem\AnimationControllerImporter.cpp" />
     <ClCompile Include="Source\Components\ComponentAnimation.cpp" />
     <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
-    <ClCompile Include="Source\FileSystem\AnimationImporter.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_dir.c" />
@@ -220,7 +216,7 @@
     <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\Resources\AnimationController.cpp" />
+    <ClCompile Include="Source\AnimationController.cpp" />
     <ClCompile Include="Source\Resources\ResourceMaterial.cpp" />
     <ClCompile Include="Source\Resources\ResourceMesh.cpp" />
     <ClCompile Include="Source\Resources\ResourceScene.cpp" />

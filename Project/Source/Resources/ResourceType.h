@@ -22,7 +22,8 @@ enum class ResourceType {
 	PREFAB,
 	SCENE,
 	SHADER,
-	TEXTURE
+	TEXTURE,
+	ANIMATION,
 };
 
 const char* GetResourceTypeName(ResourceType type);
