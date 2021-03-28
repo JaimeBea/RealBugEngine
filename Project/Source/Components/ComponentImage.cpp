@@ -36,10 +36,10 @@ void ComponentImage::OnEditorUpdate() {
 
 		ImGui::ColorEdit4("Color##", color.ptr());
 
-		std::string& currentDiffuseTexture = texture->fileName;
-		if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
+		std::string& currentTexture = texture == nullptr ? "none" : texture->fileName;
+		if (ImGui::BeginCombo("Texture##", currentTexture.c_str())) {
 			for (unsigned i = 0; i < textures.size(); ++i) {
-				bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
+				bool isSelected = (currentTexture == textures[i]->fileName);
 				if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
 					texture = textures[i];
 				};

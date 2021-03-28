@@ -40,6 +40,8 @@ public:
 	float3 ambientColor = {0.0f, 0.0f, 0.0f};
 
 private:
+	//Texture* defaultTexture = nullptr;
+
 	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
 	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);

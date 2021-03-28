@@ -13,8 +13,14 @@ public:
 
 private:
 	void UpdateHierarchyNode(GameObject* gameObject);
+	GameObject* CreateEmptyGameObject(GameObject* gameObject);
+	void CreateUICanvas(GameObject* gameObject);
+	void CreateUIImage(GameObject* gameObject);
+	void CreateUIText(GameObject* gameObject);
+	void CreateUIButton(GameObject* gameObject);
 
 private:
 	int windowWidth = 0;
 	int windowHeight = 0;
+
 };

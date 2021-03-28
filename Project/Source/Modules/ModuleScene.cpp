@@ -76,31 +76,31 @@ bool ModuleScene::Start() {
 
 	SceneImporter::LoadScene("survival_shooter");
 
-	GameObject* canvas = gameObjects.Obtain();
-	canvas->CreateComponent<ComponentCanvas>();
-	canvas->CreateComponent<ComponentTransform>();
-	canvas->name = "canvas";
+	//GameObject* canvas = gameObjects.Obtain();
+	//canvas->CreateComponent<ComponentCanvas>();
+	//canvas->CreateComponent<ComponentTransform>();
+	//canvas->name = "canvas";
 
-	GameObject* canvasRenderer = gameObjects.Obtain();
-	canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
-	canvasRenderer->CreateComponent<ComponentTransform>();
-	canvasRenderer->CreateComponent<ComponentTransform2D>();
-	canvasRenderer->CreateComponent<ComponentImage>();
-	//Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
-	Texture* lenna = TextureImporter::ImportTexture("C:/Users/mange/Desktop/sp.jpg");
-	TextureImporter::LoadTexture(lenna);
-	canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
-	canvasRenderer->name = "canvas renderer";
+	//GameObject* canvasRenderer = gameObjects.Obtain();
+	//canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
+	//canvasRenderer->CreateComponent<ComponentTransform>();
+	//canvasRenderer->CreateComponent<ComponentTransform2D>();
+	//canvasRenderer->CreateComponent<ComponentImage>();
+	////Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
+	//Texture* lenna = TextureImporter::ImportTexture("C:/Users/mange/Desktop/sp.jpg");
+	//TextureImporter::LoadTexture(lenna);
+	//canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
+	//canvasRenderer->name = "canvas renderer";
 
-	canvas->AddChild(canvasRenderer);
+	//canvas->AddChild(canvasRenderer);
 
-	root->AddChild(canvas);
-	App->userInterface->canvas = canvas;
+	//root->AddChild(canvas);
+	//App->userInterface->canvas = canvas;
 
-	canvas->Init();
-	canvas->InitComponents();
-	canvasRenderer->Init();
-	canvasRenderer->InitComponents();
+	//canvas->Init();
+	//canvas->InitComponents();
+	//canvasRenderer->Init();
+	//canvasRenderer->InitComponents();
 
 	// Load skybox
 	// clang-format off

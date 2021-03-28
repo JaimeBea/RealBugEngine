@@ -4,6 +4,16 @@
 #include "ModuleFiles.h"
 #include "Resources/GameObject.h"
 #include "Components/ComponentCanvas.h"
+#include "FileSystem/TextureImporter.h"
+
+
+bool ModuleUserInterface::Init() {
+
+	Texture* texture = TextureImporter::ImportTexture("./Assets/none.png");
+	TextureImporter::LoadTexture(texture);
+
+	return true;
+}
 
 void ModuleUserInterface::AddFont(std::string fontPath) {
 	std::string fontName = App->files->GetFileName(fontPath.c_str());
@@ -54,4 +64,8 @@ void ModuleUserInterface::EndUI() {
 
 GameObject* ModuleUserInterface::GetCanvas() const {
 	return canvas;
+}
+
+Texture* ModuleUserInterface::GetDefaultTexture() const {
+	return defaultTexture;
 }
