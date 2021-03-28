@@ -79,9 +79,11 @@ bool ModuleScene::Start() {
 
 	//GameObject* eventSystObj = scene->CreateGameObject(scene->root, GenerateUID(), "EventSystem");
 	//eventSystObj->CreateComponent<ComponentEventSystem>();
+	//eventSystObj->CreateComponent<ComponentTransform>();
+
 	//eventSystObj->InitComponents();
-	//
-	////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
+	////
+	//////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
 	//GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
 	//canvasObj->CreateComponent<ComponentCanvas>();
 	//canvasObj->CreateComponent<ComponentTransform2D>();

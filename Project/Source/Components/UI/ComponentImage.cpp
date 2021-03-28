@@ -16,7 +16,8 @@
 #include "imgui.h"
 #include "GL/glew.h"
 
-#define JSON_TAG_TEXTURE_FILENAME "Texture"
+#define JSON_TAG_TEXTURE_SHADERID "ShaderID"
+#define JSON_TAG_TEXTURE_TEXTUREID "TextureID"
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
@@ -35,31 +36,13 @@ void ComponentImage::OnEditorUpdate() {
 	if (ImGui::CollapsingHeader("Image")) {
 		ImGui::TextColored(App->editor->textColor, "Texture Settings:");
 
-	/*	std::vector<Texture*> textures;
-		for (Texture& texture : App->resources->textures) textures.push_back(&texture);
-
 		ImGui::ColorEdit4("Color##", color.ptr());
-
-		std::string& currentDiffuseTexture = texture->fileName;
-		if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
-			for (unsigned i = 0; i < textures.size(); ++i) {
-				bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
-				if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
-					texture = textures[i];
-				};
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}*/
 
 		ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 
 		ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 		ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 		ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
-
 
 		if (tex != nullptr) {
 			ImGui::Text("");
@@ -79,7 +62,8 @@ void ComponentImage::OnEditorUpdate() {
 }
 
 void ComponentImage::Save(JsonValue jComponent) const {
-	//jComponent[JSON_TAG_TEXTURE_FILENAME] = texture->fileName.c_str();
+	jComponent[JSON_TAG_TEXTURE_SHADERID] = shaderID;
+	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	jColor[0] = color.x;
@@ -91,16 +75,11 @@ void ComponentImage::Save(JsonValue jComponent) const {
 }
 
 void ComponentImage::Load(JsonValue jComponent) {
-	/*std::string textureFileName = jComponent[JSON_TAG_TEXTURE_FILENAME];
-	for (Texture& text : App->resources->textures) {
-		if (text.fileName == textureFileName) {
-			texture = &text;
-			break;
-		}
-	}
+	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
+	App->resources->IncreaseReferenceCount(shaderID);
 
-	TextureImporter::UnloadTexture(texture);
-	TextureImporter::LoadTexture(texture);*/
+	textureID = jComponent[JSON_TAG_TEXTURE_TEXTUREID];
+	App->resources->IncreaseReferenceCount(textureID);
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
