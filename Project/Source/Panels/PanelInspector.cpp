@@ -72,6 +72,27 @@ void PanelInspector::Update() {
 				case ComponentType::BOUNDING_BOX:
 					cName = "Bounding Box";
 					break;
+				case ComponentType::TRANSFORM2D:
+					cName = "Rect Transform";
+					break;
+				case ComponentType::BOUNDING_BOX_2D:
+					cName = "Bounding Box 2D";
+					break;
+				case ComponentType::EVENT_SYSTEM:
+					cName = "Event System";
+					break;
+				case ComponentType::IMAGE:
+					cName = "Image";
+					break;
+				case ComponentType::CANVAS:
+					cName = "Canvas";
+					break;
+				case ComponentType::CANVASRENDERER:
+					cName = "Canvas Renderer";
+					break;
+				case ComponentType::SELECTABLE:
+					cName = "Selectable";
+					break;
 				default:
 					cName = "";
 					break;

@@ -108,14 +108,9 @@ UpdateStatus ModuleInput::PreUpdate() {
 			keyboard[event.key.keysym.scancode] = KS_UP;
 			break;
 		case SDL_MOUSEMOTION:
-			//TO DO generate a movement UI event
-
-			//TO DO IF EDITOR DO THIS
-
+			//IF EDITOR DO THIS
 			App->editor->OnMouseMoved();
-
 			//IF NOT EDITOR USE ACTUAL MOUSE POS
-
 			break;
 		}
 	}

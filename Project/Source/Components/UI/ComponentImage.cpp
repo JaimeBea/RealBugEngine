@@ -44,50 +44,48 @@ void ComponentImage::Update() {
 }
 
 void ComponentImage::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Image")) {
-		ImGui::TextColored(App->editor->textColor, "Texture Settings:");
+	ImGui::TextColored(App->editor->textColor, "Texture Settings:");
 
-		//ASAP TO DO HANDLE COMBO WITH NEW SYSTEM
+	//ASAP TO DO HANDLE COMBO WITH NEW SYSTEM
 
-		//std::vector<ResourceTexture*> textures;
-		//for (ResourceTexture& texture : App->resources->texture) textures.push_back(&texture);
+	//std::vector<ResourceTexture*> textures;
+	//for (ResourceTexture& texture : App->resources->texture) textures.push_back(&texture);
 
-		//ImGui::ColorEdit3("Color##", color.ptr());
+	//ImGui::ColorEdit3("Color##", color.ptr());
 
-		//std::string& currentDiffuseTexture = texture->fileName;
-		//if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
-		//	for (unsigned i = 0; i < textures.size(); ++i) {
-		//		bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
-		//		if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
-		//			texture = textures[i];
-		//		};
-		//		if (isSelected) {
-		//			ImGui::SetItemDefaultFocus();
-		//		}
-		//	}
-		//	ImGui::EndCombo();
-		//}
-		ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
-		ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
-		ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
+	//std::string& currentDiffuseTexture = texture->fileName;
+	//if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
+	//	for (unsigned i = 0; i < textures.size(); ++i) {
+	//		bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
+	//		if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
+	//			texture = textures[i];
+	//		};
+	//		if (isSelected) {
+	//			ImGui::SetItemDefaultFocus();
+	//		}
+	//	}
+	//	ImGui::EndCombo();
+	//}
+	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
+	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
+	ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
 
-		if (tex != nullptr) {
-			ImGui::Text("");
+	if (tex != nullptr) {
+		ImGui::Text("");
 
-			ImGui::Separator();
-			ImGui::TextColored(App->editor->titleColor, "Texture Preview");
-			ImGui::TextWrapped("Size:");
-			ImGui::SameLine();
-			int width;
-			int height;
+		ImGui::Separator();
+		ImGui::TextColored(App->editor->titleColor, "Texture Preview");
+		ImGui::TextWrapped("Size:");
+		ImGui::SameLine();
+		int width;
+		int height;
 
-			glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-			glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
 
-			ImGui::TextWrapped("%d x %d", width, height);
-			ImGui::Image((void*) tex->glTexture, ImVec2(200, 200));
-			ImGui::Separator();
-		}
+		ImGui::TextWrapped("%d x %d", width, height);
+		ImGui::Image((void*) tex->glTexture, ImVec2(200, 200));
+		ImGui::Separator();
 	}
 }
 
@@ -166,7 +164,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 
 	ResourceTexture* texResource = (ResourceTexture*) App->resources->GetResource(textureID);
 	if (texResource == nullptr) return;
-	
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);

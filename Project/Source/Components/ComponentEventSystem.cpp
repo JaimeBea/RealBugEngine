@@ -34,6 +34,13 @@ void ComponentEventSystem::OnTransformUpdate() {
 }
 
 void ComponentEventSystem::OnEditorUpdate() {
+	ImGui::TextColored(ImVec4(1, 1, 0, 1), "Current Selected:");
+
+	if (currentSelected != nullptr) {
+		ImGui::SameLine();
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), currentSelected->GetOwner().name.c_str());
+	}
+
 	//TO DO
 }
 

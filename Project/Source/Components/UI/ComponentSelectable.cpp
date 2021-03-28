@@ -112,46 +112,44 @@ void ComponentSelectable::Update() {
 }
 
 void ComponentSelectable::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Selectable")) {
-		bool isInteractable = interactable;
-		if (ImGui::Checkbox("Interactable", &isInteractable)) {
-			SetInteractable(isInteractable);
-		}
-
-		// Navigation Type combo box
-		const char* navigationTypeItems[] = {"Automatic", "Manual"};
-		const char* navigationCurrent = navigationTypeItems[(int) m_NavigationType];
-		if (ImGui::BeginCombo("Navigation Mode", navigationCurrent)) {
-			for (int n = 0; n < IM_ARRAYSIZE(navigationTypeItems); ++n) {
-				bool isSelected = (navigationCurrent == navigationTypeItems[n]);
-				if (ImGui::Selectable(navigationTypeItems[n], isSelected)) {
-					m_NavigationType = NavigationType(n);
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-
-		//Transition Type combo box
-		const char* transitionTypeItems[] = {"Automatic", "Manual"};
-		const char* transitionCurrent = transitionTypeItems[(int) m_Transition];
-		if (ImGui::BeginCombo("Transition", transitionCurrent)) {
-			for (int n = 0; n < IM_ARRAYSIZE(transitionTypeItems); ++n) {
-				bool isSelected = (transitionCurrent == transitionTypeItems[n]);
-				if (ImGui::Selectable(transitionTypeItems[n], isSelected)) {
-					m_Transition = TransitionType(n);
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-
-		//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
+	bool isInteractable = interactable;
+	if (ImGui::Checkbox("Interactable", &isInteractable)) {
+		SetInteractable(isInteractable);
 	}
+
+	// Navigation Type combo box
+	const char* navigationTypeItems[] = {"None", "Automatic", "Manual"};
+	const char* navigationCurrent = navigationTypeItems[(int) m_NavigationType];
+	if (ImGui::BeginCombo("Navigation Mode", navigationCurrent)) {
+		for (int n = 0; n < IM_ARRAYSIZE(navigationTypeItems); ++n) {
+			bool isSelected = (navigationCurrent == navigationTypeItems[n]);
+			if (ImGui::Selectable(navigationTypeItems[n], isSelected)) {
+				m_NavigationType = NavigationType(n);
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	//Transition Type combo box
+	const char* transitionTypeItems[] = {"None", "Color Transition", "Animation"};
+	const char* transitionCurrent = transitionTypeItems[(int) m_Transition];
+	if (ImGui::BeginCombo("Transition", transitionCurrent)) {
+		for (int n = 0; n < IM_ARRAYSIZE(transitionTypeItems); ++n) {
+			bool isSelected = (transitionCurrent == transitionTypeItems[n]);
+			if (ImGui::Selectable(transitionTypeItems[n], isSelected)) {
+				m_Transition = TransitionType(n);
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
 }
 
 void ComponentSelectable::Enable() {

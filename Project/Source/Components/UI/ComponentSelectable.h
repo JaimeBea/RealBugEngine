@@ -45,9 +45,10 @@ public:
 
 	//TO DO
 	enum class TransitionType {
+		NONE,
 		COLOR_CHANGE,
 		ANIMATION,
-		NONE
+		
 	};
 
 protected:
