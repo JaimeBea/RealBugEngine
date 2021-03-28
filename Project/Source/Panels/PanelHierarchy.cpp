@@ -85,20 +85,20 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		}
 
 		if (ImGui::BeginMenu("UI")) {
-			if (ImGui::MenuItem("Create Canvas")) {
+			if (ImGui::MenuItem("Canvas")) {
 				CreateUICanvas(gameObject);
 			}
 
-			if (ImGui::MenuItem("Create Image")) {
+			if (ImGui::MenuItem("Image")) {
 				CreateUIImage(gameObject);
 			}
 
-			if (ImGui::MenuItem("Create Text")) {
+			if (ImGui::MenuItem("Text")) {
 				// TODO
 				CreateUIText(gameObject);
 			}
 
-			if (ImGui::MenuItem("Create Button")) {
+			if (ImGui::MenuItem("Button")) {
 				// TODO
 				CreateUIButton(gameObject);
 			}
