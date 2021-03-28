@@ -14,6 +14,11 @@
 #include "Application.h"
 #include <Modules/ModuleInput.h>
 
+//IF EDITOR
+#include <Panels/PanelScene.h>
+#include <Modules/ModuleEditor.h>
+//ENDIF
+
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
@@ -58,18 +63,13 @@ void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 	if (dirty || force) {
 		ComponentTransform2D* t2d = owner->GetComponent<ComponentTransform2D>();
 
-		worldAABB.minPoint = localAABB.minPoint.Mul(t2d->GetPosition().xy() + t2d->GetSize().Mul(t2d->GetScale().xy()));
-		worldAABB.maxPoint = localAABB.maxPoint.Mul(t2d->GetPosition().xy() + t2d->GetSize().Mul(t2d->GetScale().xy()));
+		//worldAABB minPoint is the localAABB's min point mulitplied by the rect transform's scale and size, adding the rect transform position
+		//Right now to calculate position we add half the size of the WindowScene because all textures are "centered" for their coordinates
 
-		//worldOBB.SetFrom(Circle(rect.transform.position, -camera.forward, width, height));
-		//worldAABB = AABB2D(worldOBB);
-
-		//OBB worldOBB = OBB(AABB(float3(localAABB.minPoint.xy(), 0.0f), float3(localAABB.maxPoint.xy(), 0.0f)));
-		//ComponentTransform2D* t2d = owner.GetComponent<ComponentTransform2D>();
-		//worldOBB.Transform(t2d->GetGlobalMatrix());
-		//AABB worldAABB_ = worldOBB.MinimalEnclosingAABB();
-		//worldAABB.minPoint = worldAABB_.minPoint.xy();
-		//worldAABB.maxPoint = worldAABB_.maxPoint.xy();
+		//IF EDITOR
+		worldAABB.minPoint = t2d->GetPosition().xy() + App->editor->panelScene.GetSceneWindowSize() / 2 + localAABB.minPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
+		worldAABB.maxPoint = t2d->GetPosition().xy() + App->editor->panelScene.GetSceneWindowSize() / 2 + localAABB.maxPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
+		//ENDIF
 	}
 }
 

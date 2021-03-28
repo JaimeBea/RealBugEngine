@@ -82,15 +82,20 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	float2 mousePos = float2(e.point2d.x, e.point2d.y);
 	switch (e.type) {
 	case Event::EventType::MOUSE_UPDATE:
-		//LOG("%d, %d", e.point2d.x, e.point2d.y);
 		if (ComponentEventSystem::currentEvSys) {
-			//for (Selectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
-			//	ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
-			//	if (bb->GetWorldAABB().Contains(mousePos)) {
-			//		selectable->OnPointerEnter();
-			//	} /*else if (hoveredSelectables) {
-			//	}*/
-			//}
+			for (ComponentSelectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
+				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
+
+				if (!selectable->IsHovered()) {
+					if (bb->GetWorldAABB().Contains(mousePos)) {
+						selectable->OnPointerEnter();
+					}
+				} else {
+					if (!bb->GetWorldAABB().Contains(mousePos)) {
+						selectable->OnPointerExit();
+					}
+				}
+			}
 		}
 		break;
 	default:

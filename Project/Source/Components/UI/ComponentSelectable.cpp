@@ -94,16 +94,16 @@ void ComponentSelectable::OnDeselect() {
 void ComponentSelectable::Init() {
 	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
 
-	interactable = (false);
-	highlighted = (false);
-	selected = (false);
-	m_NavigationType = (NavigationType::AUTOMATIC);
-	onAxisDown = (nullptr);
-	onAxisLeft = (nullptr);
-	onAxisRight = (nullptr);
-	onAxisUp = (nullptr);
-	selectableIndex = (-1);
-	m_Transition = (TransitionType::NONE);
+	interactable = false;
+	highlighted = false;
+	selected = false;
+	m_NavigationType = NavigationType::AUTOMATIC;
+	onAxisDown = nullptr;
+	onAxisLeft = nullptr;
+	onAxisRight = nullptr;
+	onAxisUp = nullptr;
+	selectableIndex = -1;
+	m_Transition = TransitionType::NONE;
 
 	//TO DO add as listener	to MouseMoved event?
 }
@@ -160,7 +160,6 @@ void ComponentSelectable::Enable() {
 }
 
 void ComponentSelectable::Disable() {
-	//TO DO IF SELECTED SET SELECTED TO NULL
 	if (selected) {
 		ComponentEventSystem::currentEvSys->SetSelected(nullptr);
 	}
@@ -174,5 +173,15 @@ void ComponentSelectable::Disable() {
 }
 
 void ComponentSelectable::OnPointerEnter() {
+	hovered = true;
 	LOG("PointerEntered");
+}
+
+void ComponentSelectable::OnPointerExit() {
+	hovered = false;
+	LOG("PointerExit");
+}
+
+bool ComponentSelectable::IsHovered() const {
+	return hovered;
 }

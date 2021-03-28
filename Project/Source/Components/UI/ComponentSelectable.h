@@ -7,7 +7,8 @@
 #include "UI/Interfaces/IMoveHandler.h"
 class ComponentEventSystem;
 class ComponentSelectable : public Component
-	, IPointerEnterHandler {
+	, IPointerEnterHandler
+	, IPointerExitHandler {
 public:
 	REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
 
@@ -29,9 +30,11 @@ public:
 	void OnEditorUpdate() override;
 	void Enable() override;
 	void Disable() override;
-
+	bool IsHovered() const;
 	// Heredado vía IPointerEnterHandler
 	virtual void OnPointerEnter() override;
+	virtual void OnPointerExit() override;
+	void Highlight(bool b);
 
 public:
 	enum class NavigationType {
@@ -48,11 +51,12 @@ public:
 	};
 
 protected:
-	bool interactable;
-	bool highlighted;
-	bool selected;
-	int selectableIndex;
-	NavigationType m_NavigationType;
-	TransitionType m_Transition;
-	void Highlight(bool b);
+	bool interactable = true;
+	bool highlighted = false;
+	bool selected = false;
+	bool hovered = false;
+	int selectableIndex = -1;
+	NavigationType m_NavigationType = NavigationType::AUTOMATIC;
+	TransitionType m_Transition = TransitionType::NONE;
+
 };

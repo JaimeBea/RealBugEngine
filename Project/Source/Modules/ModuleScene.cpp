@@ -77,20 +77,25 @@ bool ModuleScene::Start() {
 	// TODO: (Scene resource) Load default scene
 	// SceneImporter::LoadScene("survival_shooter");
 
-	//ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
-	GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
-	canvasObj->CreateComponent<ComponentCanvas>();
-	canvasObj->CreateComponent<ComponentTransform2D>();
-	canvasObj->CreateComponent<ComponentTransform>();
-	canvasObj->InitComponents();
-
-	GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
-	canvasRendererObj->CreateComponent<ComponentTransform>();
-	canvasRendererObj->CreateComponent<ComponentTransform2D>();
-	canvasRendererObj->CreateComponent<ComponentImage>();
-	canvasRendererObj->CreateComponent<ComponentCanvasRenderer>();
-	canvasRendererObj->CreateComponent<ComponentBoundingBox2D>();
-	canvasRendererObj->InitComponents();
+	//GameObject* eventSystObj = scene->CreateGameObject(scene->root, GenerateUID(), "EventSystem");
+	//eventSystObj->CreateComponent<ComponentEventSystem>();
+	//eventSystObj->InitComponents();
+	//
+	////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
+	//GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
+	//canvasObj->CreateComponent<ComponentCanvas>();
+	//canvasObj->CreateComponent<ComponentTransform2D>();
+	//canvasObj->CreateComponent<ComponentTransform>();
+	//canvasObj->InitComponents();
+	//
+	//GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
+	//canvasRendererObj->CreateComponent<ComponentTransform>();
+	//canvasRendererObj->CreateComponent<ComponentTransform2D>();
+	//canvasRendererObj->CreateComponent<ComponentImage>();
+	//canvasRendererObj->CreateComponent<ComponentCanvasRenderer>();
+	//canvasRendererObj->CreateComponent<ComponentBoundingBox2D>();
+	//canvasRendererObj->CreateComponent<ComponentSelectable>();
+	//canvasRendererObj->InitComponents();
 
 	//	canvasRendererObj->CreateComponent<
 

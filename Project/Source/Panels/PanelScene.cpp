@@ -236,6 +236,10 @@ void PanelScene::Update() {
 	}
 }
 
-float2 PanelScene::GetMousePosOnScene() {
+float2 PanelScene::GetMousePosOnScene()const {
 	return mousePosOnScene;
+}
+
+float2 PanelScene::GetSceneWindowSize() const {
+	return framebufferSize;
 }

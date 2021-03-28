@@ -13,7 +13,8 @@ public:
 	PanelScene();
 
 	void Update() override;
-	float2 GetMousePosOnScene();
+	float2 GetMousePosOnScene() const;
+	float2 GetSceneWindowSize() const;
 
 private:
 	float2 framebufferSize = {0.0f, 0.0f};
