@@ -35,7 +35,8 @@ public:
 private:
 	UID id = 0;			// Unique identifier for the component
 	bool active = true; // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
+	GameObject* owner = nullptr;				 // References the GameObject this Component applies its functionality to. Its 'parent'.
+
 protected:
 	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.
-	GameObject* owner = nullptr;				 // References the GameObject this Component applies its functionality to. Its 'parent'.
 };

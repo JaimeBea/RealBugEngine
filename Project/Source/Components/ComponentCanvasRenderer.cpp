@@ -4,6 +4,12 @@
 
 #include "GameObject.h"
 
+void ComponentCanvasRenderer::Save(JsonValue jComponent) const {
+}
+
+void ComponentCanvasRenderer::Load(JsonValue jComponent) {
+}
+
 void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 	//We should get UI components (image, text,etc) here and call their render functions
 

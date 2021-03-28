@@ -11,6 +11,10 @@
 class ComponentCanvas : public Component {
 public:
 	REGISTER_COMPONENT(ComponentCanvas, ComponentType::CANVAS, false);
+
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
+
 	void Init() override;
 	void Render();
 	void RenderGameObject(GameObject* gameObject);

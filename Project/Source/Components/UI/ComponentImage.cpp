@@ -5,20 +5,21 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
-
-#include <Components/ComponentBoundingBox2D.h>
 #include <Components/ComponentTransform2D.h>
 #include "GameObject.h"
-
 #include <Resources/ResourceTexture.h>
 #include <Resources/ResourceShader.h>
-
-#include "Geometry/AABB2D.h"
-
+#include "FileSystem/TextureImporter.h"
 #include "Math/TransformOps.h"
-#include "imgui.h"
+#include "FileSystem/JsonValue.h"
 #include "Utils/ImGuiUtils.h"
+#include "imgui.h"
 #include "GL/glew.h"
+
+#define JSON_TAG_TEXTURE_SHADERID "ShaderID"
+#define JSON_TAG_TEXTURE_TEXTUREID "TextureID"
+#define JSON_TAG_COLOR "Color"
+#define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
 ComponentImage::~ComponentImage() {
 	DestroyVBO();
@@ -26,18 +27,6 @@ ComponentImage::~ComponentImage() {
 
 void ComponentImage::Init() {
 	CreateVBO();
-	//ComponentBoundingBox2D* bb = owner->GetComponent<ComponentBoundingBox2D>();
-	//if (bb == nullptr) {
-	//	bb = owner->CreateComponent<ComponentBoundingBox2D>();
-	//}
-
-	//ComponentTransform2D* transform2D = owner->GetComponent<ComponentTransform2D>();
-
-	//float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
-	//float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
-
-	//bb->SetLocalBoundingBox(AABB2D(minPoint.xy(), maxPoint.xy()));
-	//bb->CalculateWorldBoundingBox();
 }
 
 void ComponentImage::Update() {
@@ -46,47 +35,54 @@ void ComponentImage::Update() {
 void ComponentImage::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->textColor, "Texture Settings:");
 
-	//ASAP TO DO HANDLE COMBO WITH NEW SYSTEM
+	ImGui::ColorEdit4("Color##", color.ptr());
 
-	//std::vector<ResourceTexture*> textures;
-	//for (ResourceTexture& texture : App->resources->texture) textures.push_back(&texture);
+	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 
-	//ImGui::ColorEdit3("Color##", color.ptr());
-
-	//std::string& currentDiffuseTexture = texture->fileName;
-	//if (ImGui::BeginCombo("Texture##", currentDiffuseTexture.c_str())) {
-	//	for (unsigned i = 0; i < textures.size(); ++i) {
-	//		bool isSelected = (currentDiffuseTexture == textures[i]->fileName);
-	//		if (ImGui::Selectable(textures[i]->fileName.c_str(), isSelected)) {
-	//			texture = textures[i];
-	//		};
-	//		if (isSelected) {
-	//			ImGui::SetItemDefaultFocus();
-	//		}
-	//	}
-	//	ImGui::EndCombo();
-	//}
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 	ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
 
 	if (tex != nullptr) {
 		ImGui::Text("");
-
 		ImGui::Separator();
 		ImGui::TextColored(App->editor->titleColor, "Texture Preview");
 		ImGui::TextWrapped("Size:");
 		ImGui::SameLine();
 		int width;
 		int height;
-
 		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
 		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-
 		ImGui::TextWrapped("%d x %d", width, height);
 		ImGui::Image((void*) tex->glTexture, ImVec2(200, 200));
 		ImGui::Separator();
 	}
+}
+
+void ComponentImage::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_TEXTURE_SHADERID] = shaderID;
+	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
+
+	JsonValue jColor = jComponent[JSON_TAG_COLOR];
+	jColor[0] = color.x;
+	jColor[1] = color.y;
+	jColor[2] = color.z;
+	jColor[3] = color.w;
+
+	jComponent[JSON_TAG_ALPHATRANSPARENCY] = alphaTransparency;
+}
+
+void ComponentImage::Load(JsonValue jComponent) {
+	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
+	App->resources->IncreaseReferenceCount(shaderID);
+
+	textureID = jComponent[JSON_TAG_TEXTURE_TEXTUREID];
+	App->resources->IncreaseReferenceCount(textureID);
+
+	JsonValue jColor = jComponent[JSON_TAG_COLOR];
+	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
+
+	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
 void ComponentImage::CreateVBO() {
@@ -155,15 +151,18 @@ void ComponentImage::DestroyVBO() {
 }
 
 void ComponentImage::Draw(ComponentTransform2D* transform) {
-	//unsigned int program = App->programs->uiProgram;
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
 	}
-
 	ResourceTexture* texResource = (ResourceTexture*) App->resources->GetResource(textureID);
 	if (texResource == nullptr) return;
+
+	if (alphaTransparency) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
@@ -172,7 +171,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	float4x4 modelMatrix = transform->GetGlobalMatrix();
+	float4x4 modelMatrix = transform->GetGlobalMatrixWithSize();
 	float4x4* proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
@@ -180,15 +179,15 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
+	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
+
 	glBindTexture(GL_TEXTURE_2D, texResource->glTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
 
-//void ComponentImage::SetTexture(ResourceTexture* text) {
-//	texture = text;
-//}
+	glDisable(GL_BLEND);
+}
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();

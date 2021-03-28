@@ -64,7 +64,10 @@ void ModuleUserInterface::Render() {
 	//GameObject* canvasRenderer = canvas->GetChildren()[0];
 	if (canvas != nullptr) {
 		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
-		canvas->GetComponent<ComponentCanvas>()->Render();
+		ComponentCanvas* canvasComponent = canvas->GetComponent<ComponentCanvas>();
+		if (canvasComponent) {
+			canvasComponent->Render();
+		}
 	}
 }
 

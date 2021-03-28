@@ -1,5 +1,6 @@
 #pragma once
 #include <Components/Component.h>
+#include "Resources/ResourceTexture.h"
 #include <Math/float3.h>
 class ComponentTransform2D;
 
@@ -12,18 +13,21 @@ public:
 	void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
-	void DuplicateComponent(GameObject& owner) override;
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
+	void DuplicateComponent(GameObject& owner) override;
 	void Draw(ComponentTransform2D* transform);
 	//void SetTexture(ResourceTexture* text);
+	void SetTextureID(UID uid);
 
 private:
 	//ResourceTexture* texture;
+	float4 color = {1, 1, 1, 1};
+	unsigned int vbo;
+	bool alphaTransparency = false;
 	UID textureID;
 	UID shaderID;
-	float3 color = {255, 255, 255};
-	unsigned int vbo;
-	unsigned int renderedTexture = 0;
 
 	void CreateVBO();
 	void DestroyVBO();

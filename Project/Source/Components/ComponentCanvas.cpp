@@ -5,11 +5,17 @@
 #include "GameObject.h"
 
 void ComponentCanvas::Init() {
-	App->userInterface->canvas = owner;
+	App->userInterface->canvas = &GetOwner();
+}
+
+void ComponentCanvas::Save(JsonValue jComponent) const {
+}
+
+void ComponentCanvas::Load(JsonValue jComponent) {
 }
 
 void ComponentCanvas::Render() {
-	RenderGameObject(owner);
+	RenderGameObject(&GetOwner());
 }
 
 void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
