@@ -9,3 +9,6 @@
 
 # Build results
 /Build/
+
+# Library folder
+/Game/Library/

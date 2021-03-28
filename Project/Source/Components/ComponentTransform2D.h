@@ -8,7 +8,7 @@
 
 class ComponentTransform2D : public Component {
 public:
-	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM2D);
+	REGISTER_COMPONENT(ComponentTransform2D, ComponentType::TRANSFORM2D, false);
 	void Update() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
@@ -25,6 +25,16 @@ public:
 	const float4x4 GetGlobalMatrix();
 	const float4x4 GetGlobalMatrixWithSize();
 
+	float3 GetPosition() const;
+	float2 GetSize() const;
+	float3 GetScale() const;
+
+	void InvalidateHierarchy();
+	void Invalidate();
+	void DuplicateComponent(GameObject& owner) override;
+
+
+
 private:
 	float2 pivot	= float2(0.5, 0.5);		// The position of the pivot
 	float2 size		= float2::one;			// The size of the item
@@ -39,6 +49,8 @@ private:
 
 	float4x4 localMatrix = float4x4::identity;
 	float4x4 globalMatrix = float4x4::identity;
+
+	bool dirty = true;
 
 	void CalculateGlobalMatrix();
 };

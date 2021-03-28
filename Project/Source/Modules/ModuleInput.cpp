@@ -7,6 +7,11 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 
+//IF EDITOR
+#include "Modules/ModuleEditor.h"
+//ENDIF
+
+#include "Modules/ModuleUserInterface.h"
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 #include "Brofiler.h"
@@ -101,6 +106,11 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_KEYUP:
 			keyboard[event.key.keysym.scancode] = KS_UP;
+			break;
+		case SDL_MOUSEMOTION:
+			//IF EDITOR DO THIS
+			App->editor->OnMouseMoved();
+			//IF NOT EDITOR USE ACTUAL MOUSE POS
 			break;
 		}
 	}

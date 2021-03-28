@@ -10,6 +10,7 @@ class GameObject;
 
 class ModuleRender : public Module {
 public:
+	// ------- Core Functions ------ //
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
@@ -21,23 +22,28 @@ public:
 	void SetVSync(bool vsync);
 	void EnableOrtographicRender();
 	void DisableOrtographicRender();
-	void RecieveEvent(const Event& ev) override;
+	void ReceiveEvent(const Event& ev) override;
+
 
 public:
-	void* context = nullptr;
+	void* context = nullptr; // SDL context.
+
+	// - Render Buffer GL pointers - //
 	unsigned renderTexture = 0;
 	unsigned depthRenderbuffer = 0;
 	unsigned framebuffer = 0;
 
+	// ------- Viewport Size ------- //
 	unsigned viewportWidth = 0;
 	unsigned viewportHeight = 0;
 
-	float3 clearColor = {0.1f, 0.1f, 0.1f};
-
+	// -- Debugging Tools Toggles -- //
 	bool drawQuadtree = true;
 	bool drawAllBoundingBoxes = false;
 	bool skyboxActive = true;
-	float3 ambientColor = {0.0f, 0.0f, 0.0f};
+
+	float3 ambientColor = {0.0f, 0.0f, 0.0f}; // Color of ambient Light
+	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
 
 private:
 	//Texture* defaultTexture = nullptr;

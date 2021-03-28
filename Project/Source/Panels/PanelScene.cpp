@@ -3,13 +3,17 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
+#include "Event.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Resources/ResourcePrefab.h"
+#include "Resources/ResourceScene.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 
 #include "imgui.h"
@@ -21,7 +25,7 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include <algorithm>
-
+#include <Event.h>
 #include "Utils/Leaks.h"
 
 PanelScene::PanelScene()
@@ -44,26 +48,26 @@ void PanelScene::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
-					App->time->StopGame();
+					App->BroadCastEvent(Event(Event::EventType::PRESSED_STOP));
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
-						App->time->PauseGame();
+						App->BroadCastEvent(Event(Event::EventType::PRESSED_PAUSE));
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
-						App->time->ResumeGame();
+						App->BroadCastEvent(Event(Event::EventType::PRESSED_RESUME));
 					}
 				}
 			} else {
 				if (ImGui::Button("Play")) {
-					App->time->StartGame();
+					App->BroadCastEvent(Event(Event::EventType::PRESSED_PLAY));
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Step")) {
-				App->time->StepGame();
+				App->BroadCastEvent(Event(Event::EventType::PRESSED_STEP));
 			}
 
 			ImGui::SameLine();
@@ -83,6 +87,8 @@ void PanelScene::Update() {
 				if (ImGui::RadioButton("Local", currentGuizmoMode == ImGuizmo::LOCAL)) currentGuizmoMode = ImGuizmo::LOCAL;
 				ImGui::SameLine();
 				if (ImGui::RadioButton("World", currentGuizmoMode == ImGuizmo::WORLD)) currentGuizmoMode = ImGuizmo::WORLD;
+			} else {
+				currentGuizmoMode = ImGuizmo::LOCAL;
 			}
 
 			ImGui::SameLine();
@@ -100,10 +106,10 @@ void PanelScene::Update() {
 				ImGui::InputFloat3("Snap", &snap[0]);
 				break;
 			case ImGuizmo::ROTATE:
-				ImGui::InputFloat("Angle Snap", &snap[0]);
+				ImGui::InputFloat("Snap Angle", &snap[0]);
 				break;
 			case ImGuizmo::SCALE:
-				ImGui::InputFloat("Scale Snap", &snap[0]);
+				ImGui::InputFloat("Snap Scale", &snap[0]);
 				break;
 			}
 			ImGui::PopItemWidth();
@@ -124,9 +130,32 @@ void PanelScene::Update() {
 
 		ImVec2 framebufferPosition = ImGui::GetWindowPos();
 		framebufferPosition.y += (ImGui::GetWindowHeight() - size.y);
-		
+
 		// Draw
 		ImGui::Image((void*) App->renderer->renderTexture, size, ImVec2(0, 1), ImVec2(1, 0));
+
+		// Drag and drop
+		if (ImGui::BeginDragDropTarget()) {
+			std::string payloadTypePrefab = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypePrefab.c_str())) {
+				UID prefabId = *(UID*) payload->Data;
+				ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+				if (prefab != nullptr) {
+					prefab->BuildPrefab(App->scene->scene->root);
+				}
+			}
+
+			// TODO: "Are you sure?" Popup to avoid losing the current scene
+			std::string payloadTypeScene = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::SCENE);
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypeScene.c_str())) {
+				UID sceneId = *(UID*) payload->Data;
+				ResourceScene* scene = (ResourceScene*) App->resources->GetResource(sceneId);
+				if (scene != nullptr) {
+					scene->BuildScene();
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		// Capture input
 		if (ImGui::IsWindowFocused()) {
@@ -137,10 +166,12 @@ void PanelScene::Update() {
 			}
 
 			ImGui::CaptureKeyboardFromApp(false);
+			ImGui::CaptureMouseFromApp(true);
+			ImGuiIO& io = ImGui::GetIO();
+			mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
+			mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
 
 			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
-				ImGui::CaptureMouseFromApp(true);
-				ImGuiIO& io = ImGui::GetIO();
 				float2 mousePosNormalized;
 				mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
 				mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
@@ -151,6 +182,7 @@ void PanelScene::Update() {
 
 		float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
 		float viewManipulateTop = framebufferPosition.y;
+
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
 
@@ -202,4 +234,12 @@ void PanelScene::Update() {
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
+}
+
+float2 PanelScene::GetMousePosOnScene()const {
+	return mousePosOnScene;
+}
+
+float2 PanelScene::GetSceneWindowSize() const {
+	return framebufferSize;
 }

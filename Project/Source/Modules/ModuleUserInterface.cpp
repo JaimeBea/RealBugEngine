@@ -2,29 +2,41 @@
 
 #include "Application.h"
 #include "ModuleFiles.h"
-#include "Resources/GameObject.h"
+#include "ModuleEventSystem.h"
+#include "Utils/FileDialog.h"
+
+#include "GameObject.h"
 #include "Components/ComponentCanvas.h"
 #include "FileSystem/TextureImporter.h"
+#include <Components/UI/ComponentSelectable.h>
+#include "Components/ComponentEventSystem.h"
+#include "Components/ComponentBoundingBox2D.h"
+#include "Event.h"
 
+#include "UI/Interfaces/IPointerEnterHandler.h"
+
+#include "Utils/Logging.h"
+#include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
-
-	Texture* texture = TextureImporter::ImportTexture("./Assets/none.png");
-	TextureImporter::LoadTexture(texture);
-
+	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_UPDATE, this);
 	return true;
 }
 
 void ModuleUserInterface::AddFont(std::string fontPath) {
-	std::string fontName = App->files->GetFileName(fontPath.c_str());
+	//Right now we have FileDialog, it may change in the future
+	//FileDialog::GetFileName(fontPath.c_str());
 
-	std::unordered_map<std::string, std::unordered_map<char, Character>>::const_iterator existsKey = fonts.find(fontName);
+	//OLD VERSION, TO DO USE NEW SYSTEM, AS STATED IN THE PREVIOUS COMMENT
 
-	if (existsKey == fonts.end()) {
-		std::unordered_map<char, Character> characters;
-		FontImporter::LoadFont(fontPath, characters);
-		fonts.insert(std::pair<std::string, std::unordered_map<char, Character>>(fontName, characters));
-	}
+	//std::string fontName = App->files->GetFileName(fontPath.c_str());
+	//std::unordered_map<std::string, std::unordered_map<char, Character>>::const_iterator existsKey = fonts.find(fontName);
+
+	//if (existsKey == fonts.end()) {
+	//	std::unordered_map<char, Character> characters;
+	//	FontImporter::LoadFont(fontPath, characters);
+	//	fonts.insert(std::pair<std::string, std::unordered_map<char, Character>>(fontName, characters));
+	//}
 }
 
 Character ModuleUserInterface::GetCharacter(std::string font, char c) {
@@ -52,7 +64,10 @@ void ModuleUserInterface::Render() {
 	//GameObject* canvasRenderer = canvas->GetChildren()[0];
 	if (canvas != nullptr) {
 		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
-		canvas->GetComponent<ComponentCanvas>()->Render();
+		ComponentCanvas* canvasComponent = canvas->GetComponent<ComponentCanvas>();
+		if (canvasComponent) {
+			canvasComponent->Render();
+		}
 	}
 }
 
@@ -66,6 +81,27 @@ GameObject* ModuleUserInterface::GetCanvas() const {
 	return canvas;
 }
 
-Texture* ModuleUserInterface::GetDefaultTexture() const {
-	return defaultTexture;
+void ModuleUserInterface::ReceiveEvent(const Event& e) {
+	float2 mousePos = float2(e.point2d.x, e.point2d.y);
+	switch (e.type) {
+	case Event::EventType::MOUSE_UPDATE:
+		if (ComponentEventSystem::currentEvSys) {
+			for (ComponentSelectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
+				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
+
+				if (!selectable->IsHovered()) {
+					if (bb->GetWorldAABB().Contains(mousePos)) {
+						selectable->OnPointerEnter();
+					}
+				} else {
+					if (!bb->GetWorldAABB().Contains(mousePos)) {
+						selectable->OnPointerExit();
+					}
+				}
+			}
+		}
+		break;
+	default:
+		break;
+	}
 }
