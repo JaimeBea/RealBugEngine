@@ -12,4 +12,6 @@ public:
 	unsigned phongPbrProgram = 0;
 	unsigned skyboxProgram = 0;
 	unsigned uiProgram = 0;
+	unsigned CreateProgram(const char* ShaderFilePath);
+	void DeleteProgram(unsigned int IdProgram);
 };

@@ -1,8 +1,8 @@
 #include "ModuleEventSystem.h"
-#include "UI/EventSystem/Event.h"
-#include "Modules/ModuleUserInterface.h"
-#include "Resources/GameObject.h"
+
 #include "Utils/Logging.h"
+
+#include "Utils/Leaks.h"
 
 ModuleEventSystem::ModuleEventSystem() {
 }
@@ -27,18 +27,12 @@ void ModuleEventSystem::ProcessEvents() {
 }
 
 void ModuleEventSystem::ProcessEvent(Event& e) {
-	for (std::vector<Module*>::iterator it = observerMap[e.type].begin(); it != observerMap[e.type].end(); ++it) {
-		(*it)->RecieveEvent(e);
+	for (Module* m : observerMap[e.type]) {
+		m->ReceiveEvent(e);
 	}
 }
 
 bool ModuleEventSystem::Init() {
-	//	//GameObject Destroyed Event
-	std::vector<Module*> gameObjectDestroyedMapVector;
-	gameObjectDestroyedMapVector.push_back(App->scene);
-	gameObjectDestroyedMapVector.push_back((Module*) App->renderer);
-	observerMap[Event::EventType::GameObject_Destroyed] = gameObjectDestroyedMapVector;
-
 	return true;
 }
 
@@ -55,6 +49,20 @@ UpdateStatus ModuleEventSystem::PostUpdate() {
 	return UpdateStatus::CONTINUE;
 }
 
+void ModuleEventSystem::AddObserverToEvent(Event::EventType type, Module* moduleToAdd) {
+	observerMap[type].push_back(moduleToAdd);
+}
+
+void ModuleEventSystem::RemoveObserverFromEvent(Event::EventType type, Module* moduleToRemove) {
+	for (std::vector<Module*>::iterator it = observerMap[type].begin(); it != observerMap[type].end(); ++it) {
+		if (*it == moduleToRemove) {
+			observerMap[type].erase(it);
+			return;
+		}
+	}
+}
+
 bool ModuleEventSystem::CleanUp() {
+	observerMap.clear();
 	return true;
 }

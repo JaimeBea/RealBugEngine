@@ -23,7 +23,7 @@
 #include "GL/glew.h"
 #include "SDL.h"
 #include "Brofiler.h"
-#include "UI/EventSystem/Event.h"
+#include "Event.h"
 
 #include "Utils/Leaks.h"
 
@@ -150,21 +150,20 @@ UpdateStatus ModuleRender::Update() {
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (GameObject& gameObject : App->scene->gameObjects) {
+	Scene* scene = App->scene->scene;
+	for (ComponentBoundingBox& boundingBox : scene->boundingBoxComponents) {
+		GameObject& gameObject = boundingBox.GetOwner();
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
-		ComponentBoundingBox* boundingBox = gameObject.GetComponent<ComponentBoundingBox>();
-		if (boundingBox == nullptr) continue;
-
-		const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
-		const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+		const AABB& gameObjectAABB = boundingBox.GetWorldAABB();
+		const OBB& gameObjectOBB = boundingBox.GetWorldOBB();
 		if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
 			DrawGameObject(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	if (scene->quadtree.IsOperative()) {
+		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
@@ -174,7 +173,7 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw quadtree
 	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+		DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 		RenderUI();
 	}
 
@@ -273,10 +272,8 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 	}
 }
 
-void ModuleRender::RecieveEvent(const Event& ev) {
-	//if (ev.type == Event::EventType::GameObject_Destroyed) {
-	//	App->scene->quadtree.root.Remove(App->scene->quadtree, ev.objPtr.ptr);
-	//}
+void ModuleRender::ReceiveEvent(const Event& ev) {
+
 }
 
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
@@ -373,6 +370,8 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::DrawSkyBox() {
+	// TODO: (Texture resource) Make skybox work
+	/*
 	if (skyboxActive) {
 		glDepthFunc(GL_LEQUAL);
 
@@ -390,6 +389,7 @@ void ModuleRender::DrawSkyBox() {
 
 		glDepthFunc(GL_LESS);
 	}
+	*/
 }
 
 void ModuleRender::RenderUI() {
@@ -410,7 +410,7 @@ void ModuleRender::SetOrtographicRender() {
 }
 
 void ModuleRender::SetPerspectiveRender() {
- 	glMatrixMode(GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);

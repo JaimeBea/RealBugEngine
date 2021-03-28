@@ -3,34 +3,106 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
-#include "FileSystem/MeshImporter.h"
+#include "Utils/FileDialog.h"
 #include "FileSystem/TextureImporter.h"
-#include "Resources/GameObject.h"
-#include "Resources/Material.h"
+#include "Resources/ResourceScene.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Modules/ModuleFiles.h"
-#include "Modules/ModuleScene.h"
-#include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
+#include "Modules/ModuleScene.h"
 
-#include "assimp/scene.h"
-#include "assimp/cimport.h"
-#include "assimp/postprocess.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
-#include <string>
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_GAMEOBJECTS "GameObjects"
-#define JSON_TAG_ROOT_ID "RootId"
+
+#define JSON_TAG_RESOURCES "Resources"
+#define JSON_TAG_TYPE "Type"
+#define JSON_TAG_ID "Id"
+#define JSON_TAG_ROOT "Root"
 #define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
-#define JSON_TAG_PARENT_ID "ParentId"
+
+bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
+	// Timer to measure importing a scene
+	MSTimer timer;
+	timer.Start();
+	LOG("Importing scene from path: \"%s\".", filePath);
+
+	// Read from file
+	Buffer<char> buffer = App->files->Load(filePath);
+	if (buffer.Size() == 0) {
+		LOG("Error loading scene %s", filePath);
+		return false;
+	}
+
+	// Parse document from file
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
+	if (document.HasParseError()) {
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return false;
+	}
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Create scene
+	ResourceScene* scene = App->resources->CreateResource<ResourceScene>(filePath);
+
+	// Add resource to meta file
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[0];
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(scene->GetType());
+	jResource[JSON_TAG_ID] = scene->GetId();
+
+	// Save to file
+	App->files->Save(scene->GetResourceFilePath().c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
+
+	unsigned timeMs = timer.Stop();
+	LOG("Scene imported in %ums", timeMs);
+	return true;
+}
+
+bool SceneImporter::SaveScene(const char* filePath) {
+	// Create document
+	rapidjson::Document document;
+	document.SetObject();
+	JsonValue jScene(document, document);
+
+	// Save scene information
+	Scene* scene = App->scene->scene;
+	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
+	jQuadtreeBounds[0] = scene->quadtreeBounds.minPoint.x;
+	jQuadtreeBounds[1] = scene->quadtreeBounds.minPoint.y;
+	jQuadtreeBounds[2] = scene->quadtreeBounds.maxPoint.x;
+	jQuadtreeBounds[3] = scene->quadtreeBounds.maxPoint.y;
+	jScene[JSON_TAG_QUADTREE_MAX_DEPTH] = scene->quadtreeMaxDepth;
+	jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = scene->quadtreeElementsPerNode;
+
+	// Save GameObjects
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	scene->root->Save(jRoot);
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Save to file
+	App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
+
+	return true;
+}
+
+/*
 
 static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& materials, const aiNode* node, GameObject* parent, const float4x4& accumulatedTransform) {
 	std::string name = node->mName.C_Str();
@@ -55,7 +127,7 @@ static void ImportNode(const aiScene* assimpScene, const std::vector<Material>& 
 		float3 position;
 		Quat rotation;
 		float3 scale;
-		matrix.Decompose(position, rotation, scale);
+		matrix.Decompose(position, rotation, scale);// TODO: this fails on non-uniform scale
 		transform->SetPosition(position);
 		transform->SetRotation(rotation);
 		transform->SetScale(scale);
@@ -119,7 +191,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 	timer.Start();
 
 	// Check for extension support
-	std::string extension = App->files->GetFileExtension(filePath);
+	std::string extension = FileDialog::GetFileExtension(filePath);
 	if (!aiIsExtensionSupported(extension.c_str())) {
 		LOG("Extension is not supported by assimp: \"%s\".", extension);
 		return false;
@@ -160,7 +232,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the model folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to model folder...");
-				std::string modelFolderPath = App->files->GetFileFolder(filePath);
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
 				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
 				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
 			}
@@ -168,7 +240,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the textures folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to textures folder...");
-				std::string materialFile = App->files->GetFileNameAndExtension(materialFilePath.C_Str());
+				std::string materialFile = FileDialog::GetFileNameAndExtension(materialFilePath.C_Str());
 				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFile;
 				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
 			}
@@ -198,7 +270,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the model folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to model folder...");
-				std::string modelFolderPath = App->files->GetFileFolder(filePath);
+				std::string modelFolderPath = FileDialog::GetFileFolder(filePath);
 				std::string modelFolderMaterialFilePath = modelFolderPath + "/" + materialFilePath.C_Str();
 				texture = TextureImporter::ImportTexture(modelFolderMaterialFilePath.c_str());
 			}
@@ -206,7 +278,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			// Try to load relative to the textures folder
 			if (texture == nullptr) {
 				LOG("Trying to import texture relative to textures folder...");
-				std::string materialFileName = App->files->GetFileName(materialFilePath.C_Str());
+				std::string materialFileName = FileDialog::GetFileName(materialFilePath.C_Str());
 				std::string texturesFolderMaterialFileDir = std::string(TEXTURES_PATH) + "/" + materialFileName + TEXTURE_EXTENSION;
 				texture = TextureImporter::ImportTexture(texturesFolderMaterialFileDir.c_str());
 			}
@@ -352,3 +424,5 @@ bool SceneImporter::SaveScene(const char* fileName) {
 
 	return true;
 }
+
+*/

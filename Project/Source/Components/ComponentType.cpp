@@ -12,6 +12,14 @@
 #include "Components/ComponentCanvasRenderer.h"
 
 
+#include "Components/ComponentCanvas.h"
+#include "Components/ComponentCanvasRenderer.h"
+#include "Components/ComponentImage.h";
+#include "Components/ComponentTransform2D.h"
+#include "Components/ComponentBoundingBox2D.h"
+#include "Components/ComponentEventSystem.h"
+#include "UI/Selectables/Button.h"
+
 #include "Utils/Leaks.h"
 
 Component* CreateComponentByType(GameObject& owner, ComponentType type, bool active) {
@@ -34,6 +42,10 @@ Component* CreateComponentByType(GameObject& owner, ComponentType type, bool act
 		return owner.CreateComponent<ComponentCanvas>(active);
 	case ComponentType::CANVASRENDERER:
 		return owner.CreateComponent<ComponentCanvasRenderer>(active);
+	case ComponentType::BUTTON:
+		return owner.CreateComponent<Selectable>(active);
+	case ComponentType::EVENT_SYSTEM:
+		return owner.CreateComponent<ComponentEventSystem>(active);
 	default:
 		return nullptr;
 	}

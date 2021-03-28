@@ -13,10 +13,12 @@ public:
 	PanelScene();
 
 	void Update() override;
+	float2 GetMousePosOnScene() const;
+	float2 GetSceneWindowSize() const;
 
 private:
 	float2 framebufferSize = {0.0f, 0.0f};
-
+	float2 mousePosOnScene = {0.0f, 0.0f};
 	//ImGuizmo
 	ImGuizmo::OPERATION currentGuizmoOperation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE currentGuizmoMode = ImGuizmo::WORLD;
