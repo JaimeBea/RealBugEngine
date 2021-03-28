@@ -24,7 +24,7 @@
 #define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
 void ComponentBoundingBox2D::Init() {
-	ComponentTransform2D* transform2D = owner->GetComponent<ComponentTransform2D>();
+	ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
 	if (transform2D) {
 		float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
 		float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
@@ -61,7 +61,7 @@ void ComponentBoundingBox2D::SetLocalBoundingBox(const AABB2D& boundingBox) {
 
 void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 	if (dirty || force) {
-		ComponentTransform2D* t2d = owner->GetComponent<ComponentTransform2D>();
+		ComponentTransform2D* t2d = GetOwner().GetComponent<ComponentTransform2D>();
 
 		//worldAABB minPoint is the localAABB's min point mulitplied by the rect transform's scale and size, adding the rect transform position
 		//Right now to calculate position we add half the size of the WindowScene because all textures are "centered" for their coordinates
