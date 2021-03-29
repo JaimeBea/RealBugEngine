@@ -271,7 +271,7 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
 			
 			Clip* clip = new Clip(clipName + parsedI, animation);
-			clip->setEndIndex(290);
+			clip->setEndIndex(60);
 			clip->setBeginIndex(0);
 			clip->loop = true;
 
@@ -286,14 +286,26 @@ bool SceneImporter::ImportScene(const char* filePath, GameObject* parent) {
 		clip2->setBeginIndex(290);
 		clip2->loop = false;
 
+		std::string sState3 = "State3";
+		std::string clipName3 = "testClip3";
+		Clip* clip3 = new Clip(clipName3, testAnim);
+		clip3->setEndIndex(120); //361
+		clip3->setBeginIndex(60);
+		clip3->loop = true;
+
 		//Mocking transition
-		ResourceStates* state2 = resourceStateMachine->AddState(sState2,clip2);
+		ResourceStates* state2 = resourceStateMachine->AddState(sState2, clip2);
+		ResourceStates* state3 = resourceStateMachine->AddState(sState3, clip3);
 
 		std::string tName1 = "s1Ts2";
 		std::string tName2 = "s2Ts1";
+		std::string tName3 = "s2Ts3";
+		std::string tName4 = "s3Ts1";
 
 		resourceStateMachine->AddTransition(resourceStateMachine->GetCurrentState(), state2, 0.3, tName1);
 		resourceStateMachine->AddTransition(state2, resourceStateMachine->GetCurrentState(), 0.3, tName2);
+		resourceStateMachine->AddTransition(state2, state3, 0.4, tName3);
+		resourceStateMachine->AddTransition(state3, resourceStateMachine->GetCurrentState(), 0.7, tName4);
 		//resourceStateMachine->SetCurrentState(state);
 
 		ComponentAnimation* animationComponent = gameObject->CreateComponent<ComponentAnimation>();

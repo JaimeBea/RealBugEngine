@@ -34,9 +34,25 @@ void ComponentAnimation::Update() {
 	}
 	if (App->input->GetKey(SDL_SCANCODE_2)) {
 		if (t != 2) {
-			SendTrigger("s2Ts1");
+			SendTrigger("s2Ts3");
 			t = 2;
 			LOG("Transition2");
+		}
+	}
+	if (App->input->GetKey(SDL_SCANCODE_3)) {
+		if (t != 3) {
+			SendTrigger("s3Ts1");
+			t = 3;
+			LOG("Transition3");
+		}
+	}
+	if (App->input->GetKey(SDL_SCANCODE_4)) {
+		if (t != 4) {
+			//SendTrigger("s1Ts2");
+			SendTrigger("s2Ts3");
+			SendTrigger("s3Ts1");
+			t = 4;
+			LOG("Transition4");
 		}
 	}
 	OnUpdate();
@@ -89,7 +105,9 @@ void ComponentAnimation::OnUpdate() {
 void ComponentAnimation::SendTrigger(std::string trigger) {
 	ResourceTransition* transition = stateMachineResource->GetValidTransition(trigger);
 	if (transition != nullptr) {
-		animationInterpolations.push_front(new AnimationInterpolation(transition->source, stateMachineResource->GetCurrentState()->currentTime, 0, transition->interpolationDuration));
+		if (animationInterpolations.size() == 0) {
+			animationInterpolations.push_front(new AnimationInterpolation(transition->source, stateMachineResource->GetCurrentState()->currentTime, 0, transition->interpolationDuration));
+		}
 		animationInterpolations.push_front(new AnimationInterpolation(transition->target, 0, 0, transition->interpolationDuration));
 	}
 }
@@ -141,6 +159,8 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		UpdateAnimations(child);
 	}
 
-	animationController->SetAnimationResource(stateMachineResource->GetCurrentState()->clip->animation); // Update current animation resource
-
+	if (_oldState != stateMachineResource->GetCurrentState()->name.c_str()) {
+		animationController->SetAnimationResource(stateMachineResource->GetCurrentState()->clip->animation); // Update current animation resource
+		_oldState = stateMachineResource->GetCurrentState()->name.c_str();
+	}
 }

@@ -39,20 +39,9 @@ ResourceTransition* ResourceStateMachine::GetValidTransition(std::string& transi
 
 	if (transitions.empty()) {
 		return nullptr;
-	}
-	
+	}	
 
-	ResourceTransition* transition = FindTransitionGivenName(transitionName);
-	if (transition) {
-		//check able movement
-		if (GetCurrentState() == nullptr || GetCurrentState() == transition->source) {
-			return transition;
-		}
-		//else {
-			//movement not valid
-		//}
-	}
-	return nullptr;
+	return FindTransitionGivenName(transitionName);	
 }
 
 ResourceTransition* ResourceStateMachine::FindTransitionGivenName(std::string& name) {

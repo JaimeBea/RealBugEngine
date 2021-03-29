@@ -41,6 +41,7 @@ public:
 
 private:
 	void UpdateAnimations(GameObject *gameObject);
+	std::string _oldState = "";
 
 	std::list<AnimationInterpolation*> animationInterpolations;
 	int t = 0;
