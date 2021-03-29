@@ -1,12 +1,16 @@
 #pragma once
 #include "ComponentSelectable.h"
 class GameObject;
-class ComponentButton : public ComponentSelectable {
+class ComponentButton : public Component
+	, ComponentSelectable {
 public:
-	//REGISTER_COMPONENT(Button, ComponentType::BUTTON, false);
-
-	ComponentButton(GameObject*, UID componentID_, bool active);
+	REGISTER_COMPONENT(ComponentButton, ComponentType::BUTTON, false);
+	void Init() override;
 	~ComponentButton();
+
 	void OnPressed();
-	//void DuplicateComponent(GameObject& owner) override;
+
+	void DuplicateComponent(GameObject& obj) override;
+	void OnPointerEnter() override;
+	void OnPointerExit() override;
 };

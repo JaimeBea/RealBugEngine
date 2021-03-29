@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
     <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
     <ClInclude Include="Libs\freetype\include\freetype\ftadvanc.h" />
     <ClInclude Include="Libs\freetype\include\freetype\ftbbox.h" />
@@ -234,6 +235,7 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
     <ClCompile Include="Source\Components\ComponentCanvas.cpp" />
     <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />

@@ -6,17 +6,18 @@
 #include "UI/Interfaces/IPointerExitHandler.h"
 #include "UI/Interfaces/IMoveHandler.h"
 class ComponentEventSystem;
-class ComponentSelectable : public Component
-	, IPointerEnterHandler
+
+class ComponentSelectable : IPointerEnterHandler
 	, IPointerExitHandler {
 public:
-	REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
+	//REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
 
 	//Selectable(GameObject* owner, UID componentID_, bool active = true);
 	~ComponentSelectable();
 	bool GetInteractable();
 	void SetInteractable(bool b);
 	ComponentSelectable* FindSelectableOnDir(float2 dir);
+	GameObject* GetSelectableOwner();
 
 	virtual void OnSelect();
 	virtual void OnDeselect();
@@ -24,12 +25,12 @@ public:
 	ComponentSelectable* onAxisDown;
 	ComponentSelectable* onAxisLeft;
 	ComponentSelectable* onAxisRight;
-
-	void Init() override;
-	void Update() override;
-	void OnEditorUpdate() override;
-	void Enable() override;
-	void Disable() override;
+	void SelectableInit(GameObject* obj);
+	//void Init() override;
+	//void Update() override;
+	//void OnEditorUpdate() override;
+	void Enable();
+	void Disable();
 	bool IsHovered() const;
 	// Heredado vía IPointerEnterHandler
 	virtual void OnPointerEnter() override;
@@ -48,8 +49,11 @@ public:
 		NONE,
 		COLOR_CHANGE,
 		ANIMATION,
-		
+
 	};
+
+private:
+	GameObject* selectableOwner;
 
 protected:
 	bool interactable = true;
@@ -59,5 +63,4 @@ protected:
 	int selectableIndex = -1;
 	NavigationType m_NavigationType = NavigationType::AUTOMATIC;
 	TransitionType m_Transition = TransitionType::NONE;
-
 };

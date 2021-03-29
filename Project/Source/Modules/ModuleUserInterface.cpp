@@ -20,6 +20,7 @@
 
 bool ModuleUserInterface::Init() {
 	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_UPDATE, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_CLICKED, this);
 	return true;
 }
 
@@ -87,7 +88,21 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	case Event::EventType::MOUSE_UPDATE:
 		if (ComponentEventSystem::currentEvSys) {
 			for (ComponentSelectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
-				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
+				//TODO GET GAMEOBJECT REF
+
+				//ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
+				//
+				//if (!selectable->IsHovered()) {
+				//	if (bb->GetWorldAABB().Contains(mousePos)) {
+				//		selectable->OnPointerEnter();
+				//	}
+				//} else {
+				//	if (!bb->GetWorldAABB().Contains(mousePos)) {
+				//		selectable->OnPointerExit();
+				//	}
+				//}
+
+				ComponentBoundingBox2D* bb = selectable->GetSelectableOwner()->GetComponent<ComponentBoundingBox2D>();
 
 				if (!selectable->IsHovered()) {
 					if (bb->GetWorldAABB().Contains(mousePos)) {
@@ -100,6 +115,10 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 				}
 			}
 		}
+		break;
+
+	case Event::EventType::MOUSE_CLICKED:
+		LOG("Clicked Mouse");
 		break;
 	default:
 		break;

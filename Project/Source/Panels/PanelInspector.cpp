@@ -90,8 +90,11 @@ void PanelInspector::Update() {
 				case ComponentType::CANVASRENDERER:
 					cName = "Canvas Renderer";
 					break;
-				case ComponentType::SELECTABLE:
-					cName = "Selectable";
+				case ComponentType::BUTTON:
+					cName = "Button";
+					break;
+				case ComponentType::TOGGLE:
+					cName = "Toggle";
 					break;
 				default:
 					cName = "";
