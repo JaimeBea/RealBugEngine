@@ -18,8 +18,6 @@ public:
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void OnStop();
-	void OnPlay();
 	void OnUpdate();
 
 private:

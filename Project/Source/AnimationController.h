@@ -10,8 +10,6 @@ class AnimationController {
 public:
 	bool GetTransform(const char* name, float3& pos, Quat& quat);
 
-	void Play();
-	void Stop();
 	void Update();
 
 private:
@@ -19,7 +17,6 @@ private:
 
 public:
 	float currentTime = 0.f;
-	bool loop = false;
-	bool running = false;
+	bool loop = true;
 	UID animationID = 0;
 };

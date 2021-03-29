@@ -94,14 +94,6 @@ long long ModuleTime::GetCurrentTimestamp() const {
 	return std::time(0);
 }
 
-float ModuleTime::GetTimeScale() const {
-	return timeScale;
-}
-
-void ModuleTime::SetTimeScale(float timeScale) {
-	timeScale = std::max(0.0f, timeScale);
-}
-
 unsigned int ModuleTime::GetFrameCount() const {
 	return frameCount;
 }

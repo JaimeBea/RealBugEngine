@@ -15,7 +15,7 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 	if (!animationResource) return false;
 
 	float currentSample = (currentTime * (animationResource->keyFrames.size() - 1)) / animationResource->duration;
-	int intPart = (int) currentSample;
+	int intPart = (int)std::floor(currentSample);
 	float decimal = currentSample - intPart;
 
 	//find in hash by name
@@ -27,19 +27,10 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 		return false;
 	}
 
-	float lambda = 1 - decimal;
-	pos = float3::Lerp(channel->second.tranlation, channelNext->second.tranlation, lambda);
-	quat = Interpolate(channel->second.rotation, channelNext->second.rotation, lambda);
+	pos = float3::Lerp(channel->second.tranlation, channelNext->second.tranlation, decimal);
+	quat = Interpolate(channel->second.rotation, channelNext->second.rotation, decimal);
 
 	return true;
-}
-
-void AnimationController::Play() {
-	running = true;
-}
-
-void AnimationController::Stop() {
-	running = false;
 }
 
 void AnimationController::Update() {

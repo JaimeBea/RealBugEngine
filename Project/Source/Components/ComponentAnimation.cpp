@@ -39,16 +39,7 @@ void ComponentAnimation::DuplicateComponent(GameObject& owner) {
 	ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
 	component->animationController.animationID = animationController.animationID;
 	component->animationController.loop = animationController.loop;
-	component->animationController.running = animationController.running;
 	component->animationController.currentTime = animationController.currentTime;
-}
-
-void ComponentAnimation::OnStop() {
-	animationController.Stop();
-}
-
-void ComponentAnimation::OnPlay() {
-	animationController.Play();
 }
 
 void ComponentAnimation::OnUpdate() {
