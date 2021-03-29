@@ -239,12 +239,6 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 	*((float*) cursor) = durationInSeconds;
 	cursor += sizeof(float);
 
-	*((unsigned*) cursor) = numKeyFrames;
-	cursor += sizeof(unsigned);
-
-	*((unsigned*) cursor) = numChannels;
-	cursor += sizeof(unsigned);
-
 	std::vector<ResourceAnimation::KeyFrameChannels> keyFrames;
 	keyFrames.resize(numKeyFrames);
 
@@ -290,6 +284,12 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 			keyFrames[frame++].channels[channelName] = channel;
 		}
 	}
+
+	*((unsigned*) cursor) = keyFrames.size();
+	cursor += sizeof(unsigned);
+
+	*((unsigned*) cursor) = keyFrames[0].channels.size();
+	cursor += sizeof(unsigned);
 
 	for (const ResourceAnimation::KeyFrameChannels& keyFrame : keyFrames) {
 		for (const auto& entry : keyFrame.channels) {
@@ -343,23 +343,6 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 	unsigned timeMs = timer.Stop();
 	LOG("Animation imported in %ums", timeMs);
 	return animation;
-}
-
-static void SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
-	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
-		meshRenderer->goBones = goBones;
-	}
-
-	for (GameObject* child : node->GetChildren()) {
-		SaveBones(child, goBones);
-	}
-}
-
-static void CacheBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
-	for (GameObject* child : node->GetChildren()) {
-		goBones[child->name] = child;
-		CacheBones(child, goBones);
-	}
 }
 
 static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, Scene* scene, GameObject* parent, std::vector<UID>& materialIds, const float4x4& accumulatedTransform, unsigned& resourceIndex, std::vector<const char*>& bones) {
@@ -645,7 +628,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	if (assimpScene->mNumAnimations > 0) {
 		LOG("Importing animations");
 		std::vector<ResourceAnimation*> animations;
-		ComponentAnimation* animationComponent = root->CreateComponent<ComponentAnimation>();
+		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			animationComponent->animationController.animationID = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex)->GetId();
 		}
@@ -653,7 +636,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	}
 
 	// Cache bones for skinning
-	aiNode* rootBone = nullptr;
+	/*aiNode* rootBone = nullptr;
 
 	if (!bones.empty()) {
 		rootBone = assimpScene->mRootNode->FindNode(bones[0]);
@@ -672,16 +655,15 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 					name = rootBone->mName.C_Str();
 				}
 			}
-
 		} while (foundInBones);
-	}
+	}*/
 
-	if (rootBone != nullptr) {
-		GameObject* rootBoneGO = (root->name == rootBone->mName.C_Str()) ? root : root->FindDescendant(rootBone->mName.C_Str());
-
-		root->SetRootBone(rootBoneGO);
+	if (!bones.empty()) {
+		GameObject* rootBoneGO = root->FindDescendant(bones[0])->GetParent();
+		root->GetChildren()[0]->SetRootBone(rootBoneGO);
 
 		std::unordered_map<std::string, GameObject*> goBones;
+		// TODO: check if CtrlGrp is generated always
 		CacheBones(rootBoneGO, goBones);
 
 		for (GameObject* child : root->GetChildren()) {
@@ -734,4 +716,21 @@ bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject
 	}
 
 	return true;
+}
+
+void ModelImporter::CacheBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	for (GameObject* child : node->GetChildren()) {
+		goBones[child->name] = child;
+		CacheBones(child, goBones);
+	}
+}
+
+void ModelImporter::SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
+		meshRenderer->goBones = goBones;
+	}
+
+	for (GameObject* child : node->GetChildren()) {
+		SaveBones(child, goBones);
+	}
 }

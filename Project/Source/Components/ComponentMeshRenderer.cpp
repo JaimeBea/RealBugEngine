@@ -247,7 +247,7 @@ void ComponentMeshRenderer::Update() {
 	if (App->time->GetDeltaTime() > 0) {
 		for (unsigned i = 0; i < mesh->numBones; ++i) {
 			const GameObject* bone = goBones.at(mesh->bones[i].boneName);
-
+			// TODO: if(bone) might not be necessary
 			if (bone) {
 				const GameObject* parent = GetOwner().GetParent();
 				const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();

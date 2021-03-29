@@ -12,6 +12,7 @@
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_LOOP "Controller"
+#define JSON_TAG_ANIMATION_ID "AnimationId"
 
 void ComponentAnimation::Update() {
 	animationController.Update();
@@ -24,10 +25,13 @@ void ComponentAnimation::OnEditorUpdate() {
 
 void ComponentAnimation::Save(JsonValue jComponent) const {
 	// TODO: Save state machine resource UID
+	jComponent[JSON_TAG_ANIMATION_ID] = animationController.animationID;
 	jComponent[JSON_TAG_LOOP] = animationController.loop;
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
+	animationController.animationID = jComponent[JSON_TAG_ANIMATION_ID];
+	if (animationController.animationID != 0) App->resources->IncreaseReferenceCount(animationController.animationID);
 	animationController.loop = jComponent[JSON_TAG_LOOP];
 }
 

@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Components/ComponentType.h"
+#include "FileSystem/ModelImporter.h"
 
 #include "Math/myassert.h"
 #include "rapidjson/document.h"
@@ -79,7 +80,6 @@ std::vector<Component*> GameObject::GetComponents() const {
 
 	return auxComponents;
 }
-
 
 void GameObject::RemoveComponent(Component* component) {
 	for (auto it = components.begin(); it != components.end(); ++it) {
@@ -223,6 +223,12 @@ void GameObject::Load(JsonValue jGameObject) {
 
 	UID rootBoneId = jGameObject[JSON_TAG_ROOT_BONE_ID];
 	rootBoneHierarchy = scene->GetGameObject(rootBoneId);
+	// Recache bones to unordered map
+	if (rootBoneHierarchy) {
+		std::unordered_map<std::string, GameObject*> temporalBonesMap;
+		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
+		ModelImporter::SaveBones(this, temporalBonesMap);
+	}
 }
 
 void GameObject::SavePrototype(JsonValue jGameObject) const {
@@ -281,7 +287,14 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		child->InitComponents();
 	}
 
-	rootBoneHierarchy = FindDescendant(jGameObject[JSON_TAG_ROOT_BONE_NAME]);
+	std::string rootBoneName = jGameObject[JSON_TAG_ROOT_BONE_NAME];
+	if (rootBoneName != "") {
+		rootBoneHierarchy = (rootBoneName == this->name) ? this : FindDescendant(rootBoneName);
+		// Recache bones to unordered map
+		std::unordered_map<std::string, GameObject*> temporalBonesMap;
+		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
+		ModelImporter::SaveBones(this, temporalBonesMap);
+	}
 }
 
 Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID componentId) const {

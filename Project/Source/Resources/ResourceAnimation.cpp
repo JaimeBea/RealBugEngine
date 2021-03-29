@@ -18,9 +18,9 @@ void ResourceAnimation::Load() {
 	duration = *((float*) cursor);
 	cursor += sizeof(float);
 	unsigned numKreyFrames = *((unsigned*) cursor);
-	cursor += sizeof(cursor);
+	cursor += sizeof(unsigned);
 	unsigned numChannels = *((unsigned*) cursor);
-	cursor += sizeof(cursor);
+	cursor += sizeof(unsigned);
 
 	keyFrames.resize(numKreyFrames);
 
