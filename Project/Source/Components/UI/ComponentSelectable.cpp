@@ -21,37 +21,11 @@ void ComponentSelectable::Highlight(bool b) {
 	highlighted = b;
 }
 
-void ComponentSelectable::SelectableInit(GameObject* obj) {
-	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();
-	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
-	selectableOwner = obj;
+ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active)
+	: Component(type_, owner, componentID_, active) {
 }
 
-//void ComponentSelectable::SelectableInit(GameObject& obj) {
-//	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();
-//	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
-//	selectableOwner = obj;
-//}
-
-//
-//ComponentSelectable::ComponentSelectable(GameObject* owner, UID componentID_, bool active)
-//	: Component(ComponentType::SELECTABLE, owner, componentID_, active)
-//
-//	, interactable(false)
-//	, highlighted(false)
-//	, selected(false)
-//	, m_NavigationType(NavigationType::AUTOMATIC)
-//	, onAxisDown(nullptr)
-//	, onAxisLeft(nullptr)
-//	, onAxisRight(nullptr)
-//	, onAxisUp(nullptr)
-//	, selectableIndex(-1)
-//	, m_Transition(TransitionType::NONE) {
-//}
-
 ComponentSelectable::~ComponentSelectable() {
-	if (ComponentEventSystem::currentEvSys == nullptr) return;
-	if (ComponentEventSystem::currentEvSys->m_Selectables.size() == 0) return;
 	//TO DO IF SELECTED SET SELECTED TO NULL
 	if (selectableIndex > -1) {
 		//Subtitute my position in vector with last element of vector
@@ -60,10 +34,6 @@ ComponentSelectable::~ComponentSelectable() {
 		ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
 		selectableIndex = -1;
 	}
-}
-
-GameObject* ComponentSelectable::GetSelectableOwner() {
-	return selectableOwner;
 }
 
 bool ComponentSelectable::GetInteractable() {
@@ -109,66 +79,66 @@ void ComponentSelectable::OnDeselect() {
 	Highlight(false);
 }
 
-//void ComponentSelectable::Init() {
-//	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
-//
-//	interactable = false;
-//	highlighted = false;
-//	selected = false;
-//	m_NavigationType = NavigationType::AUTOMATIC;
-//	onAxisDown = nullptr;
-//	onAxisLeft = nullptr;
-//	onAxisRight = nullptr;
-//	onAxisUp = nullptr;
-//	selectableIndex = -1;
-//	m_Transition = TransitionType::NONE;
-//
-//	//TO DO add as listener	to MouseMoved event?
-//}
-//
-//void ComponentSelectable::Update() {
-//}
-//
-//void ComponentSelectable::OnEditorUpdate() {
-//	bool isInteractable = interactable;
-//	if (ImGui::Checkbox("Interactable", &isInteractable)) {
-//		SetInteractable(isInteractable);
-//	}
-//
-//	// Navigation Type combo box
-//	const char* navigationTypeItems[] = {"None", "Automatic", "Manual"};
-//	const char* navigationCurrent = navigationTypeItems[(int) m_NavigationType];
-//	if (ImGui::BeginCombo("Navigation Mode", navigationCurrent)) {
-//		for (int n = 0; n < IM_ARRAYSIZE(navigationTypeItems); ++n) {
-//			bool isSelected = (navigationCurrent == navigationTypeItems[n]);
-//			if (ImGui::Selectable(navigationTypeItems[n], isSelected)) {
-//				m_NavigationType = NavigationType(n);
-//			}
-//			if (isSelected) {
-//				ImGui::SetItemDefaultFocus();
-//			}
-//		}
-//		ImGui::EndCombo();
-//	}
-//
-//	//Transition Type combo box
-//	const char* transitionTypeItems[] = {"None", "Color Transition", "Animation"};
-//	const char* transitionCurrent = transitionTypeItems[(int) m_Transition];
-//	if (ImGui::BeginCombo("Transition", transitionCurrent)) {
-//		for (int n = 0; n < IM_ARRAYSIZE(transitionTypeItems); ++n) {
-//			bool isSelected = (transitionCurrent == transitionTypeItems[n]);
-//			if (ImGui::Selectable(transitionTypeItems[n], isSelected)) {
-//				m_Transition = TransitionType(n);
-//			}
-//			if (isSelected) {
-//				ImGui::SetItemDefaultFocus();
-//			}
-//		}
-//		ImGui::EndCombo();
-//	}
-//
-//	//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
-//}
+void ComponentSelectable::Init() {
+	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
+
+	interactable = false;
+	highlighted = false;
+	selected = false;
+	m_NavigationType = NavigationType::AUTOMATIC;
+	onAxisDown = nullptr;
+	onAxisLeft = nullptr;
+	onAxisRight = nullptr;
+	onAxisUp = nullptr;
+	selectableIndex = -1;
+	m_Transition = TransitionType::NONE;
+
+	//TO DO add as listener	to MouseMoved event?
+}
+
+void ComponentSelectable::Update() {
+}
+
+void ComponentSelectable::OnEditorUpdate() {
+	bool isInteractable = interactable;
+	if (ImGui::Checkbox("Interactable", &isInteractable)) {
+		SetInteractable(isInteractable);
+	}
+
+	// Navigation Type combo box
+	const char* navigationTypeItems[] = {"None", "Automatic", "Manual"};
+	const char* navigationCurrent = navigationTypeItems[(int) m_NavigationType];
+	if (ImGui::BeginCombo("Navigation Mode", navigationCurrent)) {
+		for (int n = 0; n < IM_ARRAYSIZE(navigationTypeItems); ++n) {
+			bool isSelected = (navigationCurrent == navigationTypeItems[n]);
+			if (ImGui::Selectable(navigationTypeItems[n], isSelected)) {
+				m_NavigationType = NavigationType(n);
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	//Transition Type combo box
+	const char* transitionTypeItems[] = {"None", "Color Transition", "Animation"};
+	const char* transitionCurrent = transitionTypeItems[(int) m_Transition];
+	if (ImGui::BeginCombo("Transition", transitionCurrent)) {
+		for (int n = 0; n < IM_ARRAYSIZE(transitionTypeItems); ++n) {
+			bool isSelected = (transitionCurrent == transitionTypeItems[n]);
+			if (ImGui::Selectable(transitionTypeItems[n], isSelected)) {
+				m_Transition = TransitionType(n);
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
+}
 
 void ComponentSelectable::Enable() {
 	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();

@@ -1,12 +1,10 @@
 #pragma once
 #include "ComponentSelectable.h"
 class GameObject;
-class ComponentButton : public Component
-	, ComponentSelectable {
+class ComponentButton : public ComponentSelectable {
 public:
-	REGISTER_COMPONENT(ComponentButton, ComponentType::BUTTON, false);
+	REGISTER_COMPONENT_SELECTABLE(ComponentButton, ComponentType::BUTTON, false);
 	void Init() override;
-	~ComponentButton();
 
 	void OnPressed();
 

@@ -102,7 +102,7 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 				//	}
 				//}
 
-				ComponentBoundingBox2D* bb = selectable->GetSelectableOwner()->GetComponent<ComponentBoundingBox2D>();
+				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
 
 				if (!selectable->IsHovered()) {
 					if (bb->GetWorldAABB().Contains(mousePos)) {

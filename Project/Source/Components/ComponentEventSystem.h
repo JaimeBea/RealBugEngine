@@ -6,14 +6,6 @@ class GameObject;
 class ComponentSelectable;
 
 class ComponentEventSystem : public Component {
-private:
-	ComponentSelectable* currentSelected;
-
-public:
-	static ComponentEventSystem* currentEvSys;
-	std::vector<ComponentSelectable*> m_Selectables;
-	ComponentSelectable* firstSelected;
-
 public:
 	REGISTER_COMPONENT(ComponentEventSystem, ComponentType::EVENT_SYSTEM, false);
 
@@ -31,4 +23,12 @@ public:
 	void DuplicateComponent(GameObject& owner) override;
 
 	void SetSelected(ComponentSelectable* newSelected);
+
+private:
+	ComponentSelectable* currentSelected = nullptr;
+
+public:
+	static ComponentEventSystem* currentEvSys;
+	std::vector<ComponentSelectable*> m_Selectables;
+	ComponentSelectable* firstSelected = nullptr;
 };

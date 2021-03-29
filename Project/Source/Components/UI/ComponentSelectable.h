@@ -6,18 +6,16 @@
 #include "UI/Interfaces/IPointerExitHandler.h"
 #include "UI/Interfaces/IMoveHandler.h"
 class ComponentEventSystem;
-
-class ComponentSelectable : IPointerEnterHandler
+class ComponentSelectable : public Component
+	, IPointerEnterHandler
 	, IPointerExitHandler {
 public:
 	//REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
-
-	//Selectable(GameObject* owner, UID componentID_, bool active = true);
+	ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active = true);
 	~ComponentSelectable();
 	bool GetInteractable();
 	void SetInteractable(bool b);
 	ComponentSelectable* FindSelectableOnDir(float2 dir);
-	GameObject* GetSelectableOwner();
 
 	virtual void OnSelect();
 	virtual void OnDeselect();
@@ -25,12 +23,12 @@ public:
 	ComponentSelectable* onAxisDown;
 	ComponentSelectable* onAxisLeft;
 	ComponentSelectable* onAxisRight;
-	void SelectableInit(GameObject* obj);
-	//void Init() override;
-	//void Update() override;
-	//void OnEditorUpdate() override;
-	void Enable();
-	void Disable();
+
+	void Init() override;
+	void Update() override;
+	void OnEditorUpdate() override;
+	void Enable() override;
+	void Disable() override;
 	bool IsHovered() const;
 	// Heredado vía IPointerEnterHandler
 	virtual void OnPointerEnter() override;
@@ -51,9 +49,6 @@ public:
 		ANIMATION,
 
 	};
-
-private:
-	GameObject* selectableOwner;
 
 protected:
 	bool interactable = true;

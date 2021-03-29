@@ -1,10 +1,9 @@
 #pragma once
 #include <Components/Component.h>
 #include <Components/UI/ComponentSelectable.h>
-class ComponentToggle : public Component
-	, ComponentSelectable {
+class ComponentToggle : public ComponentSelectable {
 public:
-	REGISTER_COMPONENT(ComponentToggle, ComponentType::TOGGLE, false);
+	REGISTER_COMPONENT_SELECTABLE(ComponentToggle, ComponentType::TOGGLE, false);
 
 	void Init() override;
 
@@ -17,5 +16,5 @@ public:
 	void OnPointerExit() override;
 
 private:
-	bool isOn;
+	bool isOn = false;
 };

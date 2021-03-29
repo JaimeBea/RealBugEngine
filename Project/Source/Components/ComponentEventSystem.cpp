@@ -11,12 +11,6 @@
 
 ComponentEventSystem* ComponentEventSystem::currentEvSys = nullptr;
 
-//ComponentEventSystem::ComponentEventSystem(GameObject* owner, UID componentID_, bool active)
-//	: Component(ComponentType::EVENT_SYSTEM, owner, componentID_, active)
-//	, currentSelected(nullptr)
-//	, firstSelected(nullptr) {
-//}
-
 ComponentEventSystem ::~ComponentEventSystem() {
 }
 
@@ -38,7 +32,7 @@ void ComponentEventSystem::OnEditorUpdate() {
 
 	if (currentSelected != nullptr) {
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1, 1, 1, 1), currentSelected->GetSelectableOwner()->name.c_str());
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), currentSelected->GetOwner().name.c_str());
 	}
 
 	//TO DO

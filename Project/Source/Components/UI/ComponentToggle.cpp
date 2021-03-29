@@ -9,7 +9,7 @@
 ComponentToggle ::~ComponentToggle() {}
 
 void ComponentToggle::Init() {
-	SelectableInit(&GetOwner());
+
 }
 
 void ComponentToggle ::OnValueChanged() {

@@ -16,6 +16,11 @@
 	static const bool allowMultipleComponents = allowMultiple;           \
 	componentClass(GameObject* owner, UID id, bool active) : Component(staticType, owner, id, active) {}
 
+#define REGISTER_COMPONENT_SELECTABLE(selectableClass, componentType, allowMultiple) \
+	static const ComponentType staticType = componentType;                           \
+	static const bool allowMultipleComponents = allowMultiple;                       \
+	selectableClass(GameObject* owner, UID id, bool active) : ComponentSelectable(staticType, owner, id, active) {}
+
 enum class ComponentType {
 	// SERIALIZATION: IDs should be consistent between versions (don't change what an ID means)
 	UNKNOWN = 0,
