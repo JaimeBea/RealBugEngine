@@ -1,4 +1,5 @@
 #include "FontImporter.h"
+#include "Resources/ResourceFont.h"
 
 #include "Utils/Logging.h"
 
@@ -6,32 +7,32 @@
 #include "freetype/freetype.h"
 #include "GL/glew.h"
 
-void FontImporter::LoadFont(std::string fontPath, std::unordered_map<char, Character>& characters) {
-	
-	FT_Library ft;
+#include "Utils/Leaks.h"
 
-	//Initiate freetype library.
+ResourceFont* FontImporter::ImportFont(const std::string& path) {
+	FT_Library ft;
+	//Initiate freetype library. This piece of code should go into Module initialization
 	if (FT_Init_FreeType(&ft)) {
 		LOG("Could not init FreeType library.");
-		return;
+		return NULL;
 	}
 
 	FT_Face face;
 
 	//Load font as a face
-	if (FT_New_Face(ft, fontPath.c_str(), 0, &face)) {
+	if (FT_New_Face(ft, path.c_str(), 0, &face)) {
 		LOG("Could not load the font.");
-		return;
+		return NULL;
 	}
 
-	//Set the font size to extract the characters. Setting with to 0 allows to dinamically calculate the width based on the given height.
 	FT_Set_Pixel_Sizes(face, 0, 48);
 
 	//Disable byte-alignment restriction.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	for (unsigned char c = 0; c < 128; c++) {
+	ResourceFont* font = new ResourceFont();
 
+	for (unsigned char c = 0; c < 128; c++) {
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
 			LOG("Failed to load glyph.");
 			continue;
@@ -51,11 +52,10 @@ void FontImporter::LoadFont(std::string fontPath, std::unordered_map<char, Chara
 			texture,
 			float2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 			float2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x
-		};
+			face->glyph->advance.x};
 
 		//Store the loaded glyph in the map for later use.
-		characters.insert(std::pair<char, Character>(c, character));
+		font->characters.insert(std::pair<char, Character>(c, character));
 	}
 
 	//Reset pixel storage mode to default
@@ -65,4 +65,5 @@ void FontImporter::LoadFont(std::string fontPath, std::unordered_map<char, Chara
 	FT_Done_Face(face);
 	FT_Done_FreeType(ft);
 
+	return font;
 }
