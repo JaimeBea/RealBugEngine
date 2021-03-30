@@ -174,15 +174,21 @@ GameObject* PanelHierarchy::CreateEmptyGameObject(GameObject* gameObject) {
 	return nullptr;
 }
 
-void PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
+GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
 
 	newGameObject->InitComponents();
+
+	return newGameObject;
 }
 
-void PanelHierarchy::CreateUIImage(GameObject* gameObject) {
+GameObject* PanelHierarchy::CreateUIImage(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Image");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
@@ -190,12 +196,16 @@ void PanelHierarchy::CreateUIImage(GameObject* gameObject) {
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
 
 	newGameObject->InitComponents();
+
+	return newGameObject;
 }
 
-void PanelHierarchy::CreateUIText(GameObject* gameObject) {
+GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
 	// TODO
+	return nullptr;
 }
 
-void PanelHierarchy::CreateUIButton(GameObject* gameObject) {
+GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	// TODO
+	return nullptr;
 }
