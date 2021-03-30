@@ -16,4 +16,7 @@ public:
 
 	void Render(GameObject* gameObject);
 	void DuplicateComponent(GameObject& owner) override;
+
+	private:
+	GameObject* AnyParentHasCanvas(GameObject* current);
 };

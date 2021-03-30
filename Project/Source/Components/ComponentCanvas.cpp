@@ -15,7 +15,7 @@ void ComponentCanvas::Load(JsonValue jComponent) {
 }
 
 void ComponentCanvas::Render() {
-	RenderGameObject(&GetOwner());
+	//RenderGameObject(&GetOwner());
 }
 
 void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
