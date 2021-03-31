@@ -9,6 +9,13 @@ void ComponentButton::Init() {
 	ComponentSelectable::Init();
 }
 
+void ComponentButton::OnEditorUpdate() {
+	ComponentSelectable::OnEditorUpdate();
+	ImGui::ColorEdit4("Hover Color##", colorHovered.ptr());
+	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
+	ImGui::ColorEdit4("Disable Color##", colorDisabled.ptr());
+}
+
 void ComponentButton::OnClicked() {
 	clicked = true;
 	LOG("I was clicked");
@@ -30,6 +37,32 @@ bool ComponentButton::GetClicked() const {
 
 void ComponentButton::SetClicked(bool b) {
 	clicked = b;
+}
+
+const float4 ComponentButton::GetHoverColor() const {
+	return colorHovered;
+}
+
+const float4 ComponentButton::GetClickColor() const {
+	return colorClicked;
+}
+
+const float4 ComponentButton::GetDisableColor() const {
+	return colorDisabled;
+}
+
+const float4 ComponentButton::GetTintColor() const {
+	if (IsActive()) {
+		if (!GetInteractable()) {
+			return colorDisabled;
+		} else if (GetClicked()) {
+			return colorClicked;
+		} else if (IsHovered()) {
+			return colorHovered;
+		}
+	}
+	
+	return float4::one;
 }
 
 void ComponentButton::DuplicateComponent(GameObject& owner) {

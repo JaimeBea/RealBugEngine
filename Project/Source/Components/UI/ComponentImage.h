@@ -1,7 +1,8 @@
 #pragma once
 #include <Components/Component.h>
 #include "Resources/ResourceTexture.h"
-#include <Math/float3.h>
+#include "Math/float4.h"
+
 class ComponentTransform2D;
 
 class ComponentImage : public Component {
@@ -29,4 +30,6 @@ private:
 
 	void CreateVBO();
 	void DestroyVBO();
+
+	const float4 GetTintColor() const;
 };

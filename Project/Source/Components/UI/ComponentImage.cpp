@@ -150,6 +150,14 @@ void ComponentImage::DestroyVBO() {
 	glDeleteBuffers(1, &vbo);
 }
 
+const float4 ComponentImage::GetTintColor() const {
+	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
+	if (button != nullptr) {
+		return button->GetTintColor();
+	}
+	return float4::one;
+}
+
 void ComponentImage::Draw(ComponentTransform2D* transform) {
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
@@ -180,6 +188,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
+	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
 
 	glBindTexture(GL_TEXTURE_2D, texResource->glTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

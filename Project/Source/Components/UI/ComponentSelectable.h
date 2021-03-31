@@ -12,7 +12,7 @@ public:
 	//REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
 	ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active = true);
 	~ComponentSelectable();
-	bool GetInteractable();
+	bool GetInteractable() const;
 	void SetInteractable(bool b);
 	ComponentSelectable* FindSelectableOnDir(float2 dir);
 

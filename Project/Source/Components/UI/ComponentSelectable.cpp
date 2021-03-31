@@ -36,7 +36,7 @@ ComponentSelectable::~ComponentSelectable() {
 	}
 }
 
-bool ComponentSelectable::GetInteractable() {
+bool ComponentSelectable::GetInteractable() const{
 	return interactable;
 }
 

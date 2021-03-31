@@ -7,6 +7,7 @@
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
+#include "Components/ComponentBoundingBox2D.h"
 #include "Components/UI/ComponentImage.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
@@ -214,7 +215,20 @@ GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
 }
 
 GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
-	// TODO
+	if (gameObject->HasComponentInAnyParent<ComponentButton>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Button");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
+	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
+	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
+
+	newGameObject->InitComponents();
+
 	return nullptr;
 }
 
