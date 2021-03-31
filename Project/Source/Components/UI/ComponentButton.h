@@ -9,8 +9,14 @@ public:
 	void Init() override;
 
 	void OnClicked() override;
-
+	void Update() override;
 	void DuplicateComponent(GameObject& obj) override;
 	void OnPointerEnter() override;
 	void OnPointerExit() override;
+
+	bool GetClicked() const;
+	void SetClicked(bool b);
+
+private:
+	bool clicked = false;
 };
