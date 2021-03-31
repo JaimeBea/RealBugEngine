@@ -142,13 +142,13 @@ void ComponentTransform2D::SetSize(float2 size_) {
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
+	rotation = rotation_;
+	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
-
-	rotation = rotation_;
-	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 }
 
 void ComponentTransform2D::SetRotation(float3 rotation_) {
