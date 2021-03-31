@@ -22,6 +22,8 @@ void ComponentEventSystem::Init() {
 }
 
 void ComponentEventSystem::Update() {
+	// TODO: Input arrowkeys to navigate
+	// currentSelected
 }
 
 void ComponentEventSystem::OnTransformUpdate() {

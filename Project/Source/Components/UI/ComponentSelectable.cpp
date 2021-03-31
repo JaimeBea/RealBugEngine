@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Components/ComponentEventSystem.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleInput.h"
 #include "GameObject.h"
 #include "imgui.h"
 
@@ -46,12 +47,43 @@ void ComponentSelectable::SetInteractable(bool b) {
 
 ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 	switch (m_NavigationType) {
-	case NavigationType::AUTOMATIC:
-		for (std::vector<ComponentSelectable*>::iterator it = ComponentEventSystem::currentEvSys->m_Selectables.begin(); it != ComponentEventSystem::currentEvSys->m_Selectables.end(); ++it) {
-			//TO DO Compare all selectables by distance and assign closest to retSelectable
+	case NavigationType::AUTOMATIC: {
+		ComponentSelectable* bestCandidate = nullptr;
+		float minDistance = FLT_MAX;
+		float3 thisPos = this->GetOwner().GetComponent<ComponentTransform2D>()->GetPosition(); //TODO: wtf
+		// Get Gameobjects with the same parent
+		for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
+			ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
+			if (!selectable) continue;
+
+			// Get relative direction and distance to this Element
+			float3 direction = brother->GetComponent<ComponentTransform2D>()->GetPosition() - thisPos;
+			float distance = direction.LengthSq();
+
+			// Compare best candidate
+			if (distance < minDistance) {
+				if (dir.x > 0.6f && direction.x > 0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				}
+				else if (dir.x < -0.6f && direction.x > -0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				}
+				else if (dir.y > 0.6f && direction.y > 0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				}
+				else if (dir.y < -0.6f && direction.y > -0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				}
+			}
 		}
+		return bestCandidate;
 		break;
-	case NavigationType::MANUAL:
+	}
+	case NavigationType::MANUAL: {
 		if (dir.x > 0.6f) {
 			return onAxisRight;
 		} else if (dir.x < -0.6f) {
@@ -62,6 +94,7 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 			return onAxisDown;
 		}
 		break;
+	}
 	default:
 		break;
 	}
