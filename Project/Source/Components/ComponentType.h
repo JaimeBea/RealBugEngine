@@ -30,5 +30,6 @@ enum class ComponentType {
 	TRANSFORM2D = 9,
 	SELECTABLE = 10,
 	EVENT_SYSTEM = 11,
-	BOUNDING_BOX_2D = 12
+	BOUNDING_BOX_2D = 12,
+	TEXT = 13
 };
