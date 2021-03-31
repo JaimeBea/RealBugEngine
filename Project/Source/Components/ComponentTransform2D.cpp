@@ -211,8 +211,6 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 		globalMatrix = localMatrix;
 	}
 }
-// return float4x4::FromTRS(position, rotation, vec(scale.x * size.x, scale.y * size.y, 0));
-// }
 
 float3 ComponentTransform2D::GetPosition() const {
 	return position;

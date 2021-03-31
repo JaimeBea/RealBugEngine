@@ -18,7 +18,7 @@ public:
 	void OnPointerEnter() override;
 	void OnPointerExit() override;
 
-	bool GetClicked() const;
+	bool IsClicked() const;
 	void SetClicked(bool b);
 
 	const float4 GetHoverColor() const;
@@ -29,7 +29,7 @@ public:
 private:
 	bool clicked = false;
 
-	float4 colorHovered = float4::one;
-	float4 colorClicked = float4::one;
-	float4 colorDisabled = float4::one;
+	float4 colorHovered = float4(0.84, 0.84, 0.84, 1);
+	float4 colorClicked = float4(0.64, 0.64, 0.64, 1);
+	float4 colorDisabled = float4(0.73, 0.73, 0.73, 1);
 };

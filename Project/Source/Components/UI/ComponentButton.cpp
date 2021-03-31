@@ -31,7 +31,7 @@ void ComponentButton::OnPointerExit() {
 	ComponentSelectable::OnPointerExit();
 }
 
-bool ComponentButton::GetClicked() const {
+bool ComponentButton::IsClicked() const {
 	return clicked;
 }
 
@@ -53,9 +53,9 @@ const float4 ComponentButton::GetDisableColor() const {
 
 const float4 ComponentButton::GetTintColor() const {
 	if (IsActive()) {
-		if (!GetInteractable()) {
+		if (!IsInteractable()) {
 			return colorDisabled;
-		} else if (GetClicked()) {
+		} else if (IsClicked()) {
 			return colorClicked;
 		} else if (IsHovered()) {
 			return colorHovered;

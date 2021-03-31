@@ -37,7 +37,7 @@ public:
 
 private:
 	float2 pivot	= float2(0.5, 0.5);		// The position of the pivot
-	float2 size		= float2::one;			// The size of the item
+	float2 size		= float2(200, 200);		// The size of the item
 
 	float3 position = float3::zero;			// The offset position
 	Quat rotation	= Quat::identity;		// The rotation of the element in Quaternion
