@@ -13,6 +13,8 @@ public:
 	REGISTER_COMPONENT_SELECTABLE(ComponentButton, ComponentType::BUTTON, false);
 	void Init() override;											// Inits the component
 	void OnEditorUpdate() override;									// Works as input of the Colors and the Selectable interface
+	void Save(JsonValue jComponent) const override;					// Serializes object
+	void Load(JsonValue jComponent) override;						// Deserializes object
 	
 	void OnClicked() override;										// Action to perform when the button is clicked
 	void Update() override;											// Updates clicked variable if the button is Left-clicked mouse

@@ -5,6 +5,12 @@
 
 #include <Utils/Logging.h>
 
+#define JSON_TAG_COLOR_HOVER "ColorHover"
+#define JSON_TAG_COLOR_CLICK "ColorClick"
+#define JSON_TAG_COLOR_DISABLE "ColorDisable"
+#define JSON_TAG_CLICKED "Clicked"
+
+
 void ComponentButton::Init() {
 	ComponentSelectable::Init();
 }
@@ -14,6 +20,41 @@ void ComponentButton::OnEditorUpdate() {
 	ImGui::ColorEdit4("Hover Color##", colorHovered.ptr());
 	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
 	ImGui::ColorEdit4("Disable Color##", colorDisabled.ptr());
+}
+
+void ComponentButton::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_CLICKED] = clicked;
+
+	JsonValue jColorHover = jComponent[JSON_TAG_COLOR_HOVER];
+	jColorHover[0] = colorHovered.x;
+	jColorHover[1] = colorHovered.y;
+	jColorHover[2] = colorHovered.z;
+	jColorHover[3] = colorHovered.w;
+
+	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
+	jColorClick[0] = colorClicked.x;
+	jColorClick[1] = colorClicked.y;
+	jColorClick[2] = colorClicked.z;
+	jColorClick[3] = colorClicked.w;
+
+	JsonValue jColorDisable = jComponent[JSON_TAG_COLOR_DISABLE];
+	jColorDisable[0] = colorDisabled.x;
+	jColorDisable[1] = colorDisabled.y;
+	jColorDisable[2] = colorDisabled.z;
+	jColorDisable[3] = colorDisabled.w;
+}
+
+void ComponentButton::Load(JsonValue jComponent) {
+	clicked = jComponent[JSON_TAG_CLICKED];
+	
+	JsonValue jColorHover = jComponent[JSON_TAG_COLOR_HOVER];
+	colorHovered.Set(jColorHover[0], jColorHover[1], jColorHover[2], jColorHover[3]);
+
+	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
+	colorClicked.Set(jColorClick[0], jColorClick[1], jColorClick[2], jColorClick[3]);
+
+	JsonValue jColorDisable = jComponent[JSON_TAG_COLOR_DISABLE];
+	colorDisabled.Set(jColorDisable[0], jColorDisable[1], jColorDisable[2], jColorDisable[3]);
 }
 
 void ComponentButton::OnClicked() {
