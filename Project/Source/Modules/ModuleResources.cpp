@@ -10,12 +10,14 @@
 #include "Resources/ResourceScene.h"
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceFont.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/ShaderImporter.h"
+#include "UI/FontImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -203,6 +205,9 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
+		} else if (extension == ".ttf") {
+			// Font files
+			FontImporter::ImportFont(filePath, jMeta);
 		} else {
 			assetImported = false;
 		}
@@ -394,6 +399,9 @@ Resource* ModuleResources::CreateResourceByTypeAndID(ResourceType type, UID id, 
 		break;
 	case ResourceType::TEXTURE:
 		resource = new ResourceTexture(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::FONT:
+		resource = new ResourceFont(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);

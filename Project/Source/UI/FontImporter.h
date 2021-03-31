@@ -1,11 +1,7 @@
 #pragma once
 
-#include "Math/float2.h"
-#include <unordered_map>
-
-class ResourceFont;
+#include "FileSystem/JsonValue.h"
 
 namespace FontImporter {
-	// Change to Resource
-	ResourceFont* ImportFont(const std::string& path);
+	bool ImportFont(const char* filePath, JsonValue jMeta);
 }; //namespace FontImporter

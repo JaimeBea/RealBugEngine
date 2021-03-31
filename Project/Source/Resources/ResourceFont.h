@@ -1,4 +1,7 @@
 #pragma once
+
+#include "Resource.h"
+
 #include "Math/float2.h"
 #include <unordered_map>
 
@@ -9,10 +12,12 @@ struct Character {
 	unsigned int advance;
 };
 
-class ResourceFont {
+class ResourceFont : public Resource {
 public:
-	ResourceFont();
-	~ResourceFont();
+	REGISTER_RESOURCE(ResourceFont, ResourceType::FONT);
+	
+	void Load() override;
+	void Unload() override;
 
 public:
 	std::unordered_map<char, Character> characters; //Should character be a pointer? It's not a built-in type

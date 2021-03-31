@@ -3,6 +3,8 @@
 #include "Module.h"
 #include "UI/FontImporter.h"
 
+#include <unordered_map>
+
 class GameObject;
 class ResourceFont;
 struct Character;
@@ -25,6 +27,7 @@ public:
 
 private:
 	std::unordered_map<std::string, ResourceFont*> fonts; //Container for different fonts with the name of the font as key.
+	bool importFont = true; // Temporary to check font resource is loading fine
 
 public:
 	GameObject* canvas = nullptr;

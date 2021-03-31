@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "ModuleFiles.h"
 #include "ModuleEventSystem.h"
+#include "Modules/ModuleResources.h"
 #include "Utils/FileDialog.h"
 
 #include "GameObject.h"
@@ -25,12 +26,11 @@ bool ModuleUserInterface::Init() {
 }
 
 bool ModuleUserInterface::Start() {
-	// Testing font importer
+	/* Testing font importer
 	AddFont("./Fonts/fa-solid-900.ttf");
 	GetCharacter("fa-solid-900", 'b');
 	std::vector<Character> phrase;
-	GetCharactersInString("fa-solid-900", "-This Is a test-", phrase);
-
+	GetCharactersInString("fa-solid-900", "-This Is a test-", phrase); */
 	return true;
 }
 
@@ -39,7 +39,7 @@ void ModuleUserInterface::AddFont(const std::string& fontPath) {
 	//FileDialog::GetFileName(fontPath.c_str());
 
 	//OLD VERSION, TO DO USE NEW SYSTEM, AS STATED IN THE PREVIOUS COMMENT
-
+	/*
 	std::string fontName = FileDialog::GetFileName(fontPath.c_str());
 
 	std::unordered_map<std::string, ResourceFont*>::const_iterator existsKey = fonts.find(fontName);
@@ -54,6 +54,7 @@ void ModuleUserInterface::AddFont(const std::string& fontPath) {
 			LOG("Couldn't load font %s", fontPath.c_str());
 		}
 	}
+	*/
 }
 
 Character ModuleUserInterface::GetCharacter(const std::string& font, char c) { // Should this return a Character*?
@@ -79,6 +80,19 @@ void ModuleUserInterface::GetCharactersInString(const std::string& font, const s
 
 void ModuleUserInterface::Render() {
 	//GameObject* canvasRenderer = canvas->GetChildren()[0];
+	if (importFont) {
+		// Temporary code to check font resource is loading fine
+		std::vector<UID>& fontResourcesID = App->resources->ImportAsset("Assets/fa-solid-900.ttf");
+		UID fontId = fontResourcesID[0];
+		App->resources->IncreaseReferenceCount(fontId);
+		ResourceFont* font = (ResourceFont*)App->resources->GetResource(fontId);
+		font->name = "fa-solid-900";
+		fonts.insert(std::pair<std::string, ResourceFont*>(font->name, font));
+		GetCharacter("fa-solid-900", 'b');
+		std::vector<Character> phrase;
+		GetCharactersInString("fa-solid-900", "-This Is a test-", phrase);
+		importFont = false;
+	}
 	if (canvas != nullptr) {
 		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
 		ComponentCanvas* canvasComponent = canvas->GetComponent<ComponentCanvas>();
@@ -124,12 +138,6 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 }
 
 bool ModuleUserInterface::CleanUp() {
-	// Don't like this, review
-	// TODO: call glDeleteTextures for each character in a font
-	for (std::unordered_map<std::string, ResourceFont*>::iterator it = fonts.begin(); it != fonts.end(); ++it) {
-		RELEASE((*it).second);
-	}
-	fonts.clear();
 
 	return true;
 }
