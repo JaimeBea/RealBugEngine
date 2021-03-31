@@ -65,6 +65,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			if (ImGui::Selectable("Delete")) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 				App->scene->DestroyGameObjectDeferred(gameObject);
+				ComponentEventSystem::currentEvSys = nullptr;
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
@@ -101,6 +102,11 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			if (ImGui::MenuItem("Button")) {
 				// TODO
 				CreateUIButton(gameObject);
+			}
+
+			if (ImGui::MenuItem("Event System")) {
+				// TODO
+				CreateEventSystem(gameObject);
 			}
 
 			ImGui::EndMenu();
@@ -181,6 +187,8 @@ GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
 
 	newGameObject->InitComponents();
 
+	CreateEventSystem(gameObject);
+
 	return newGameObject;
 }
 
@@ -208,4 +216,20 @@ GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
 GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	// TODO
 	return nullptr;
+}
+
+GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
+	if (ComponentEventSystem::currentEvSys == nullptr) {
+		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
+		newGameObject->CreateComponent<ComponentTransform>();
+		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
+
+		ComponentEventSystem::currentEvSys = component;
+
+		newGameObject->InitComponents();
+
+		return newGameObject;
+	} /*else {
+		gameObject = &ComponentEventSystem::currentEvSys->GetOwner();
+	}*/
 }
