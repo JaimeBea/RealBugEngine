@@ -81,7 +81,6 @@ void ComponentSelectable::OnDeselect() {
 
 void ComponentSelectable::Init() {
 	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
-
 	interactable = false;
 	highlighted = false;
 	selected = false;
@@ -160,12 +159,16 @@ void ComponentSelectable::Disable() {
 
 void ComponentSelectable::OnPointerEnter() {
 	hovered = true;
-	LOG("PointerEntered");
+	if (ComponentEventSystem::currentEvSys != nullptr) {
+		ComponentEventSystem::currentEvSys->EnteredPointerOnSelectable(this);
+	}
 }
 
 void ComponentSelectable::OnPointerExit() {
 	hovered = false;
-	LOG("PointerExit");
+	if (ComponentEventSystem::currentEvSys != nullptr) {
+		ComponentEventSystem::currentEvSys->ExitedPointerOnSelectable(this);
+	}
 }
 
 bool ComponentSelectable::IsHovered() const {

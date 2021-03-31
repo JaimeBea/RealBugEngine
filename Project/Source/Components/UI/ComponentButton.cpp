@@ -4,18 +4,21 @@
 #include <Utils/Logging.h>
 
 void ComponentButton::Init() {
-
+	ComponentSelectable::Init();
 }
 
-void ComponentButton::OnPressed() {
+void ComponentButton::OnClicked() {
+	LOG("I was clicked");
 	//TO DO
 }
 
 void ComponentButton::OnPointerEnter() {
+	ComponentSelectable::OnPointerEnter();
 	ComponentEventSystem::currentEvSys->SetSelected(this);
 }
 
 void ComponentButton::OnPointerExit() {
+	ComponentSelectable::OnPointerExit();
 }
 
 void ComponentButton::DuplicateComponent(GameObject& owner) {

@@ -14,6 +14,8 @@
 #include "Event.h"
 
 #include "UI/Interfaces/IPointerEnterHandler.h"
+#include "UI/Interfaces/IPointerExitHandler.h"
+#include "UI/Interfaces/IMouseClickHandler.h"
 
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
@@ -72,12 +74,6 @@ void ModuleUserInterface::Render() {
 	}
 }
 
-void ModuleUserInterface::StartUI() {
-}
-
-void ModuleUserInterface::EndUI() {
-}
-
 GameObject* ModuleUserInterface::GetCanvas() const {
 	return canvas;
 }
@@ -88,20 +84,6 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	case Event::EventType::MOUSE_UPDATE:
 		if (ComponentEventSystem::currentEvSys) {
 			for (ComponentSelectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
-				//TODO GET GAMEOBJECT REF
-
-				//ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
-				//
-				//if (!selectable->IsHovered()) {
-				//	if (bb->GetWorldAABB().Contains(mousePos)) {
-				//		selectable->OnPointerEnter();
-				//	}
-				//} else {
-				//	if (!bb->GetWorldAABB().Contains(mousePos)) {
-				//		selectable->OnPointerExit();
-				//	}
-				//}
-
 				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
 
 				if (!selectable->IsHovered()) {
@@ -118,7 +100,17 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 		break;
 
 	case Event::EventType::MOUSE_CLICKED:
-		LOG("Clicked Mouse");
+		if (ComponentEventSystem::currentEvSys != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = ComponentEventSystem::currentEvSys->GetCurrentlyHovered();
+			if (lastHoveredSelectable != nullptr) {
+				if (lastHoveredSelectable->GetInteractable()) {
+					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable);
+					if (i != nullptr) {
+						i->OnClicked();
+					}
+				}
+			}
+		}
 		break;
 	default:
 		break;

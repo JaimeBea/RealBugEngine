@@ -1,12 +1,14 @@
 #pragma once
 #include "ComponentSelectable.h"
+#include "UI/Interfaces/IMouseClickHandler.h"
 class GameObject;
-class ComponentButton : public ComponentSelectable {
+class ComponentButton : public ComponentSelectable //Class that allows user interaction by clicking/pressing
+	, public IMouseClickHandler {
 public:
 	REGISTER_COMPONENT_SELECTABLE(ComponentButton, ComponentType::BUTTON, false);
 	void Init() override;
 
-	void OnPressed();
+	void OnClicked() override;
 
 	void DuplicateComponent(GameObject& obj) override;
 	void OnPointerEnter() override;

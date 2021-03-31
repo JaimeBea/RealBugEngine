@@ -13,8 +13,6 @@ public:
 	void GetCharactersInString(std::string font, std::string sentence, std::vector<Character>& charsInSentence); //Fills the given vector with the glyphs of the given font to form the given sentence.
 
 	void Render();
-	void StartUI();
-	void EndUI();
 	GameObject* GetCanvas() const;
 	void ReceiveEvent(const Event& e) override;
 
