@@ -18,11 +18,9 @@ public:
 
 	void DuplicateComponent(GameObject& owner) override;
 	void Draw(ComponentTransform2D* transform);
-	//void SetTexture(ResourceTexture* text);
 	void SetTextureID(UID uid);
 
 private:
-	//ResourceTexture* texture;
 	float4 color = {1, 1, 1, 1};
 	unsigned int vbo;
 	bool alphaTransparency = false;

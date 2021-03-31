@@ -77,36 +77,44 @@ bool ModuleScene::Start() {
 	// TODO: (Scene resource) Load default scene
 	// SceneImporter::LoadScene("survival_shooter");
 
-	GameObject* eventSystObj = scene->CreateGameObject(scene->root, GenerateUID(), "EventSystem");
-	eventSystObj->CreateComponent<ComponentEventSystem>();
-	eventSystObj->CreateComponent<ComponentTransform>();
+	//GameObject* eventSystObj = scene->CreateGameObject(scene->root, GenerateUID(), "EventSystem");
+	//eventSystObj->CreateComponent<ComponentEventSystem>();
+	//eventSystObj->CreateComponent<ComponentTransform>();
 
-	eventSystObj->InitComponents();
+	//eventSystObj->InitComponents();
+	////
+	//////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
+	//GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
+	//canvasObj->CreateComponent<ComponentCanvas>();
+	//canvasObj->CreateComponent<ComponentTransform2D>();
+	//canvasObj->CreateComponent<ComponentTransform>();
+	//canvasObj->InitComponents();
 	//
 	////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
-	GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
-	canvasObj->CreateComponent<ComponentCanvas>();
-	canvasObj->CreateComponent<ComponentTransform2D>();
-	canvasObj->CreateComponent<ComponentTransform>();
-	canvasObj->InitComponents();
 
-	GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
-	canvasRendererObj->CreateComponent<ComponentTransform>();
-	canvasRendererObj->CreateComponent<ComponentTransform2D>();
-	canvasRendererObj->CreateComponent<ComponentImage>();
-	canvasRendererObj->CreateComponent<ComponentCanvasRenderer>();
-	canvasRendererObj->CreateComponent<ComponentBoundingBox2D>();
-	canvasRendererObj->CreateComponent<ComponentButton>();
-	canvasRendererObj->InitComponents();
-
-	GameObject* canvasRendererObj2 = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj2");
-	canvasRendererObj2->CreateComponent<ComponentTransform>();
-	canvasRendererObj2->CreateComponent<ComponentTransform2D>();
-	canvasRendererObj2->CreateComponent<ComponentImage>();
-	canvasRendererObj2->CreateComponent<ComponentCanvasRenderer>();
-	canvasRendererObj2->CreateComponent<ComponentBoundingBox2D>();
-	canvasRendererObj2->CreateComponent<ComponentToggle>();
-	canvasRendererObj2->InitComponents();
+	//GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
+	//canvasObj->CreateComponent<ComponentCanvas>();
+	//canvasObj->CreateComponent<ComponentTransform2D>();
+	//canvasObj->CreateComponent<ComponentTransform>();
+	//canvasObj->InitComponents();
+	//
+	//GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
+	//canvasRendererObj->CreateComponent<ComponentTransform>();
+	//canvasRendererObj->CreateComponent<ComponentTransform2D>();
+	//canvasRendererObj->CreateComponent<ComponentImage>();
+	//canvasRendererObj->CreateComponent<ComponentCanvasRenderer>();
+	//canvasRendererObj->CreateComponent<ComponentBoundingBox2D>();
+	//canvasRendererObj->CreateComponent<ComponentButton>();
+	//canvasRendererObj->InitComponents();
+	//
+	//GameObject* canvasRendererObj2 = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj2");
+	//canvasRendererObj2->CreateComponent<ComponentTransform>();
+	//canvasRendererObj2->CreateComponent<ComponentTransform2D>();
+	//canvasRendererObj2->CreateComponent<ComponentImage>();
+	//canvasRendererObj2->CreateComponent<ComponentCanvasRenderer>();
+	//canvasRendererObj2->CreateComponent<ComponentBoundingBox2D>();
+	//canvasRendererObj2->CreateComponent<ComponentToggle>();
+	//canvasRendererObj2->InitComponents();
 
 	//	canvasRendererObj->CreateComponent<
 
@@ -122,16 +130,25 @@ bool ModuleScene::Start() {
 	//canvasRenderer->CreateComponent<ComponentImage>();
 	//Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
 
-	//Texture* lenna = TextureImporter::ImportTexture("C:/Users/Devildrake/Desktop/sp.png");
+	//GameObject* canvas = gameObjects.Obtain();
+	//canvas->CreateComponent<ComponentCanvas>();
+	//canvas->CreateComponent<ComponentTransform>();
+	//canvas->name = "canvas";
+
+	//GameObject* canvasRenderer = gameObjects.Obtain();
+	//canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
+	//canvasRenderer->CreateComponent<ComponentTransform>();
+	//canvasRenderer->CreateComponent<ComponentTransform2D>();
+	//canvasRenderer->CreateComponent<ComponentImage>();
+	////Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
+	//Texture* lenna = TextureImporter::ImportTexture("C:/Users/mange/Desktop/sp.jpg");
 	//TextureImporter::LoadTexture(lenna);
-
 	//canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
-
 	//canvasRenderer->name = "canvas renderer";
 
 	//canvas->AddChild(canvasRenderer);
 
-	//scene->root->AddChild(canvas);
+	//root->AddChild(canvas);
 	//App->userInterface->canvas = canvas;
 
 	//canvas->Init();

@@ -3,12 +3,15 @@
 #include "Application.h"
 #include "ModuleFiles.h"
 #include "ModuleEventSystem.h"
+#include "ModuleScene.h"
 #include "Utils/FileDialog.h"
+#include "FileSystem/TextureImporter.h"
+
 
 #include "GameObject.h"
+#include "Scene.h"
 #include "Components/ComponentCanvas.h"
-
-#include <Components/UI/ComponentSelectable.h>
+#include "Components/UI/ComponentSelectable.h""
 #include "Components/ComponentEventSystem.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Event.h"
@@ -64,12 +67,10 @@ void ModuleUserInterface::GetCharactersInString(std::string font, std::string se
 }
 
 void ModuleUserInterface::Render() {
-	//GameObject* canvasRenderer = canvas->GetChildren()[0];
-	if (canvas != nullptr) {
-		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
-		ComponentCanvas* canvasComponent = canvas->GetComponent<ComponentCanvas>();
-		if (canvasComponent) {
-			canvasComponent->Render();
+	Scene* scene = App->scene->scene;
+	if (scene != nullptr) {
+		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {
+			canvasRenderer.Render(&canvasRenderer.GetOwner());
 		}
 	}
 }

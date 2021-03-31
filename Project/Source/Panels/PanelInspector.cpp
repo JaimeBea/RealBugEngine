@@ -160,6 +160,10 @@ void PanelInspector::Update() {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
+
+				AddUIComponentsOptions(selected);
+
+
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
@@ -174,4 +178,72 @@ Component* PanelInspector::GetComponentToDelete() const {
 
 void PanelInspector::SetComponentToDelete(Component* comp) {
 	componentToDelete = comp;
+}
+
+void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
+	bool hasImage = selected->GetComponent<ComponentImage>() == nullptr;
+	bool hasTransform2D = selected->GetComponent<ComponentTransform2D>() == nullptr;
+	bool hasCanvas = selected->GetComponent<ComponentCanvas>() == nullptr;
+	bool hasCanvasRenderer = selected->GetComponent<ComponentCanvasRenderer>() == nullptr;
+	bool hasEventSystem = ComponentEventSystem::currentEvSys == nullptr;
+
+	bool hasUI = hasImage || hasTransform2D || hasCanvas || hasCanvasRenderer || hasEventSystem;
+	if (hasUI && ImGui::BeginMenu("UI")) {
+		if (hasImage) {
+			if (ImGui::MenuItem("Image")) {
+				ComponentImage* component = selected->CreateComponent<ComponentImage>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		if (hasTransform2D) {
+			if (ImGui::MenuItem("Transform 2D")) {
+				ComponentTransform2D* component = selected->CreateComponent<ComponentTransform2D>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		if (hasCanvas) {
+			if (ImGui::MenuItem("Canvas")) {
+				ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		if (hasCanvasRenderer) {
+			if (ImGui::MenuItem("Canvas Renderer")) {
+				ComponentCanvasRenderer* component = selected->CreateComponent<ComponentCanvasRenderer>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		if (hasEventSystem) {
+			if (ImGui::MenuItem("Event System")) {
+				ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		ImGui::EndMenu();
+	}
 }

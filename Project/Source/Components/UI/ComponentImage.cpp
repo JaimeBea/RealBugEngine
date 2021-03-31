@@ -189,6 +189,10 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glDisable(GL_BLEND);
 }
 
+void ComponentImage::SetTextureID(UID uid) {
+	textureID = uid;
+}
+
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();
 	//TO DO

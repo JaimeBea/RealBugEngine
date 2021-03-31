@@ -4,10 +4,15 @@
 #include "Utils/Logging.h"
 #include "GameObject.h"
 #include "Components/ComponentTransform.h"
-#include "Resources/ResourcePrefab.h"
+#include "Components/ComponentTransform2D.h"
+#include "Components/ComponentCanvas.h"
+#include "Components/ComponentCanvasRenderer.h"
+#include "Components/UI/ComponentImage.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleResources.h"
+#include "Resources/ResourcePrefab.h"
 
 #include "imgui.h"
 #include "IconsFontAwesome5.h"
@@ -60,6 +65,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			if (ImGui::Selectable("Delete")) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 				App->scene->DestroyGameObjectDeferred(gameObject);
+				ComponentEventSystem::currentEvSys = nullptr;
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
@@ -70,12 +76,40 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		}
 
 		if (ImGui::Selectable("Create Empty")) {
+			// TODO Refactor into a private method
 			GameObject* newGameObject = scene->CreateGameObject(gameObject, GenerateUID(), "Game Object");
 			ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 			transform->SetPosition(float3(0, 0, 0));
 			transform->SetRotation(Quat::identity);
 			transform->SetScale(float3(1, 1, 1));
 			newGameObject->InitComponents();
+		}
+
+		if (ImGui::BeginMenu("UI")) {
+			if (ImGui::MenuItem("Canvas")) {
+				CreateUICanvas(gameObject);
+			}
+
+			if (ImGui::MenuItem("Image")) {
+				CreateUIImage(gameObject);
+			}
+
+			if (ImGui::MenuItem("Text")) {
+				// TODO
+				CreateUIText(gameObject);
+			}
+
+			if (ImGui::MenuItem("Button")) {
+				// TODO
+				CreateUIButton(gameObject);
+			}
+
+			if (ImGui::MenuItem("Event System")) {
+				// TODO
+				CreateEventSystem(gameObject);
+			}
+
+			ImGui::EndMenu();
 		}
 
 		ImGui::EndPopup();
@@ -140,4 +174,62 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		}
 		ImGui::TreePop();
 	}
+}
+
+GameObject* PanelHierarchy::CreateEmptyGameObject(GameObject* gameObject) {
+	return nullptr;
+}
+
+GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
+
+	newGameObject->InitComponents();
+
+	CreateEventSystem(gameObject);
+
+	return newGameObject;
+}
+
+GameObject* PanelHierarchy::CreateUIImage(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Image");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
+
+	newGameObject->InitComponents();
+
+	return newGameObject;
+}
+
+GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
+	// TODO
+	return nullptr;
+}
+
+GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
+	// TODO
+	return nullptr;
+}
+
+GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
+	if (ComponentEventSystem::currentEvSys == nullptr) {
+		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
+		newGameObject->CreateComponent<ComponentTransform>();
+		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
+
+		ComponentEventSystem::currentEvSys = component;
+
+		newGameObject->InitComponents();
+
+		return newGameObject;
+	} /*else {
+		gameObject = &ComponentEventSystem::currentEvSys->GetOwner();
+	}*/
 }

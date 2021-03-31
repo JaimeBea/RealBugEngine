@@ -46,6 +46,8 @@ public:
 	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
 
 private:
+	//Texture* defaultTexture = nullptr;
+
 	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
 	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);

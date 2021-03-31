@@ -174,8 +174,10 @@ UpdateStatus ModuleRender::Update() {
 	// Draw quadtree
 	if (drawQuadtree) {
 		DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
-		RenderUI();
 	}
+
+	//Render UI
+	RenderUI();
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
