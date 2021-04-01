@@ -5,6 +5,7 @@
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -163,7 +164,6 @@ void PanelInspector::Update() {
 
 				AddUIComponentsOptions(selected);
 
-
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
@@ -186,8 +186,8 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 	bool hasTransform2D = selected->GetComponent<ComponentTransform2D>() == nullptr;
 	bool hasCanvas = selected->GetComponent<ComponentCanvas>() == nullptr;
 	bool hasCanvasRenderer = selected->GetComponent<ComponentCanvasRenderer>() == nullptr;
-	bool hasEventSystem = ComponentEventSystem::currentEvSys == nullptr;
-	bool hasButton = selected->GetComponent<ComponentButton>() == nullptr;	// this should be any selectable
+	bool hasEventSystem = App->userInterface->GetCurrentEventSystem() == nullptr;
+	bool hasButton = selected->GetComponent<ComponentButton>() == nullptr; // this should be any selectable
 
 	bool hasUI = hasImage || hasTransform2D || hasCanvas || hasCanvasRenderer || hasEventSystem || hasButton;
 

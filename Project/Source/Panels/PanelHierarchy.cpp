@@ -66,7 +66,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			if (ImGui::Selectable("Delete")) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 				App->scene->DestroyGameObjectDeferred(gameObject);
-				ComponentEventSystem::currentEvSys = nullptr;
+				if (App->userInterface->GetCurrentEventSystem()) {
+					App->userInterface->GetCurrentEventSystem()->SetSelected(nullptr);
+				}
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
@@ -233,12 +235,12 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 }
 
 GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
-	if (ComponentEventSystem::currentEvSys == nullptr) {
+	if (App->userInterface->GetCurrentEventSystem() == nullptr) {
 		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
 		newGameObject->CreateComponent<ComponentTransform>();
 		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
 
-		ComponentEventSystem::currentEvSys = component;
+		App->userInterface->SetCurrentEventSystem(component);
 
 		newGameObject->InitComponents();
 

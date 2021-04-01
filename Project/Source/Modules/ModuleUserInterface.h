@@ -4,6 +4,7 @@
 #include "UI/FontImporter.h"
 
 class GameObject;
+class ComponentEventSystem;
 
 class ModuleUserInterface : public Module {
 public:
@@ -15,9 +16,12 @@ public:
 	void Render();
 	GameObject* GetCanvas() const;
 	void ReceiveEvent(const Event& e) override;
+	void SetCurrentEventSystem(ComponentEventSystem* ev);
+	ComponentEventSystem* GetCurrentEventSystem();
 
 private:
 	std::unordered_map<std::string, std::unordered_map<char, Character>> fonts; //Container for different fonts with the name of the font as key.
+	static ComponentEventSystem* currentEvSys;
 
 public:
 	GameObject* canvas = nullptr;

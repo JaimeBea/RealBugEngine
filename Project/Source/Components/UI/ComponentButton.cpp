@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <Application.h>
 #include <Modules/ModuleInput.h>
+#include <Modules/ModuleUserInterface.h>
 
 #include <Utils/Logging.h>
 
@@ -24,7 +25,6 @@ void ComponentButton::OnClicked() {
 
 void ComponentButton::OnPointerEnter() {
 	ComponentSelectable::OnPointerEnter();
-	ComponentEventSystem::currentEvSys->SetSelected(this);
 }
 
 void ComponentButton::OnPointerExit() {
@@ -61,7 +61,7 @@ const float4 ComponentButton::GetTintColor() const {
 			return colorHovered;
 		}
 	}
-	
+
 	return float4::one;
 }
 

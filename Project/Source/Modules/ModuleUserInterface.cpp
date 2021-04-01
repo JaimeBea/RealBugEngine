@@ -7,13 +7,14 @@
 #include "Utils/FileDialog.h"
 #include "FileSystem/TextureImporter.h"
 
-
 #include "GameObject.h"
 #include "Scene.h"
 #include "Components/ComponentCanvas.h"
-#include "Components/UI/ComponentSelectable.h""
+#include "Components/UI/ComponentSelectable.h"
+
 #include "Components/ComponentEventSystem.h"
 #include "Components/ComponentBoundingBox2D.h"
+#include "Components/ComponentEventSystem.h"
 #include "Event.h"
 
 #include "UI/Interfaces/IPointerEnterHandler.h"
@@ -22,6 +23,8 @@
 
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
+
+ComponentEventSystem* ModuleUserInterface::currentEvSys = nullptr;
 
 bool ModuleUserInterface::Init() {
 	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_UPDATE, this);
@@ -83,8 +86,8 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	float2 mousePos = float2(e.point2d.x, e.point2d.y);
 	switch (e.type) {
 	case Event::EventType::MOUSE_UPDATE:
-		if (ComponentEventSystem::currentEvSys) {
-			for (ComponentSelectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
+		if (currentEvSys) {
+			for (ComponentSelectable* selectable : currentEvSys->m_Selectables) {
 				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
 
 				if (!selectable->IsHovered()) {
@@ -101,8 +104,8 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 		break;
 
 	case Event::EventType::MOUSE_CLICKED:
-		if (ComponentEventSystem::currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = ComponentEventSystem::currentEvSys->GetCurrentlyHovered();
+		if (currentEvSys != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->GetInteractable()) {
 					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable);
@@ -116,4 +119,12 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	default:
 		break;
 	}
+}
+
+void ModuleUserInterface::SetCurrentEventSystem(ComponentEventSystem* ev) {
+	currentEvSys = ev;
+}
+
+ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
+	return currentEvSys;
 }

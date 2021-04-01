@@ -9,7 +9,6 @@
 ComponentToggle ::~ComponentToggle() {}
 
 void ComponentToggle::Init() {
-
 }
 
 void ComponentToggle ::OnValueChanged() {
@@ -24,10 +23,11 @@ void ComponentToggle ::SetOn(bool b) {
 }
 
 void ComponentToggle::OnPointerEnter() {
-	ComponentEventSystem::currentEvSys->SetSelected(this);
+	ComponentSelectable::OnPointerEnter();
 }
 
 void ComponentToggle::OnPointerExit() {
+	ComponentSelectable::OnPointerExit();
 }
 
 void ComponentToggle::DuplicateComponent(GameObject& owner) {
