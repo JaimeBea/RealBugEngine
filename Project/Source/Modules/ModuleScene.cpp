@@ -90,14 +90,31 @@ bool ModuleScene::Start() {
 	//canvasObj->CreateComponent<ComponentTransform>();
 	//canvasObj->InitComponents();
 	//
+	////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
+
+	//GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
+	//canvasObj->CreateComponent<ComponentCanvas>();
+	//canvasObj->CreateComponent<ComponentTransform2D>();
+	//canvasObj->CreateComponent<ComponentTransform>();
+	//canvasObj->InitComponents();
+	//
 	//GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
 	//canvasRendererObj->CreateComponent<ComponentTransform>();
 	//canvasRendererObj->CreateComponent<ComponentTransform2D>();
 	//canvasRendererObj->CreateComponent<ComponentImage>();
 	//canvasRendererObj->CreateComponent<ComponentCanvasRenderer>();
 	//canvasRendererObj->CreateComponent<ComponentBoundingBox2D>();
-	//canvasRendererObj->CreateComponent<ComponentSelectable>();
+	//canvasRendererObj->CreateComponent<ComponentButton>();
 	//canvasRendererObj->InitComponents();
+	//
+	//GameObject* canvasRendererObj2 = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj2");
+	//canvasRendererObj2->CreateComponent<ComponentTransform>();
+	//canvasRendererObj2->CreateComponent<ComponentTransform2D>();
+	//canvasRendererObj2->CreateComponent<ComponentImage>();
+	//canvasRendererObj2->CreateComponent<ComponentCanvasRenderer>();
+	//canvasRendererObj2->CreateComponent<ComponentBoundingBox2D>();
+	//canvasRendererObj2->CreateComponent<ComponentToggle>();
+	//canvasRendererObj2->InitComponents();
 
 	//	canvasRendererObj->CreateComponent<
 

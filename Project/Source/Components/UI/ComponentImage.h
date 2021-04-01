@@ -1,32 +1,35 @@
 #pragma once
 #include <Components/Component.h>
 #include "Resources/ResourceTexture.h"
-#include <Math/float3.h>
+#include "Math/float4.h"
+
 class ComponentTransform2D;
 
+// Component that renders an Image
 class ComponentImage : public Component {
 public:
 	REGISTER_COMPONENT(ComponentImage, ComponentType::IMAGE, false);
 
-	~ComponentImage();
+	~ComponentImage();											// Destructor
 
-	void Init() override;
-	void Update() override;
-	void OnEditorUpdate() override;
-	void Save(JsonValue jComponent) const override;
-	void Load(JsonValue jComponent) override;
+	void Init() override;										// Inits the component
+	void Update() override;										// Update
+	void OnEditorUpdate() override;								// Works as input of the AlphaTransparency, color and Texture and Shader used
+	void Save(JsonValue jComponent) const override;				// Serializes object
+	void Load(JsonValue jComponent) override;					// Deserializes object
 
-	void DuplicateComponent(GameObject& owner) override;
-	void Draw(ComponentTransform2D* transform);
-	void SetTextureID(UID uid);
+	void DuplicateComponent(GameObject& owner) override;		// TODO
+	void Draw(ComponentTransform2D* transform);					// Draws the image ortographically using the active camera, and the transform passed as model. It will apply AlphaTransparency if true, and will get Button's additional color to apply if needed
 
 private:
-	float4 color = {1, 1, 1, 1};
-	unsigned int vbo;
-	bool alphaTransparency = false;
-	UID textureID;
-	UID shaderID;
+	float4 color = {1, 1, 1, 1};				// Color used as default tainter
+	unsigned int vbo;							// Vertex buffer of the two triangles
+	bool alphaTransparency = false;				// Enables Alpha Transparency of the image and the color
+	UID textureID;								// ID of the image
+	UID shaderID;								// ID of the shader
 
-	void CreateVBO();
-	void DestroyVBO();
+	void CreateVBO();							// Creates a vbo made by two triangles centered that form a Quad
+	void DestroyVBO();							// Destroys vbo
+
+	const float4 GetTintColor() const;			// Gets an additional color that needs to be applied to the image. Currently gets the color of the Button
 };

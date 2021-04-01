@@ -27,7 +27,6 @@
 
 #include "Utils/Leaks.h"
 
-
 Application::Application() {
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(hardware = new ModuleHardwareInfo());
@@ -44,8 +43,6 @@ Application::Application() {
 	modules.push_back(scene = new ModuleScene());
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(debugDraw = new ModuleDebugDraw());
-
-	modules.push_back(userInterface = new ModuleUserInterface());
 
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(eventSystem = new ModuleEventSystem());

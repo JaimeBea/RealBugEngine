@@ -5,6 +5,7 @@
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -90,8 +91,11 @@ void PanelInspector::Update() {
 				case ComponentType::CANVASRENDERER:
 					cName = "Canvas Renderer";
 					break;
-				case ComponentType::SELECTABLE:
-					cName = "Selectable";
+				case ComponentType::BUTTON:
+					cName = "Button";
+					break;
+				case ComponentType::TOGGLE:
+					cName = "Toggle";
 					break;
 				default:
 					cName = "";
@@ -160,7 +164,6 @@ void PanelInspector::Update() {
 
 				AddUIComponentsOptions(selected);
 
-
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
@@ -178,12 +181,16 @@ void PanelInspector::SetComponentToDelete(Component* comp) {
 }
 
 void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
+	// TODO This could use an optimization
 	bool hasImage = selected->GetComponent<ComponentImage>() == nullptr;
 	bool hasTransform2D = selected->GetComponent<ComponentTransform2D>() == nullptr;
 	bool hasCanvas = selected->GetComponent<ComponentCanvas>() == nullptr;
 	bool hasCanvasRenderer = selected->GetComponent<ComponentCanvasRenderer>() == nullptr;
+	bool hasEventSystem = App->userInterface->GetCurrentEventSystem() == nullptr;
+	bool hasButton = selected->GetComponent<ComponentButton>() == nullptr; // this should be any selectable
 
-	bool hasUI = hasImage || hasTransform2D || hasCanvas || hasCanvasRenderer;
+	bool hasUI = hasImage || hasTransform2D || hasCanvas || hasCanvasRenderer || hasEventSystem || hasButton;
+
 	if (hasUI && ImGui::BeginMenu("UI")) {
 		if (hasImage) {
 			if (ImGui::MenuItem("Image")) {
@@ -221,6 +228,28 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 		if (hasCanvasRenderer) {
 			if (ImGui::MenuItem("Canvas Renderer")) {
 				ComponentCanvasRenderer* component = selected->CreateComponent<ComponentCanvasRenderer>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		if (hasEventSystem) {
+			if (ImGui::MenuItem("Event System")) {
+				ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
+			}
+		}
+
+		if (hasButton) {
+			if (ImGui::MenuItem("Button")) {
+				ComponentButton* component = selected->CreateComponent<ComponentButton>();
 				if (component != nullptr) {
 					component->Init();
 				} else {

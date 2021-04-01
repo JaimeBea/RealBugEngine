@@ -4,17 +4,15 @@
 #include <Components/Component.h>
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
-#include "UI/Interfaces/IMoveHandler.h"
 class ComponentEventSystem;
 class ComponentSelectable : public Component
 	, IPointerEnterHandler
 	, IPointerExitHandler {
 public:
-	REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
-
-	//Selectable(GameObject* owner, UID componentID_, bool active = true);
+	//REGISTER_COMPONENT(ComponentSelectable, ComponentType::SELECTABLE, false);
+	ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active = true);
 	~ComponentSelectable();
-	bool GetInteractable();
+	bool IsInteractable() const;
 	void SetInteractable(bool b);
 	ComponentSelectable* FindSelectableOnDir(float2 dir);
 
@@ -48,16 +46,15 @@ public:
 		NONE,
 		COLOR_CHANGE,
 		ANIMATION,
-		
+
 	};
 
 protected:
-	bool interactable = true;
-	bool highlighted = false;
-	bool selected = false;
-	bool hovered = false;
+	bool interactable = true; //Can this ComponentSelectable be interacted
+	bool highlighted = false; //Is this ComponentSelectable highlighted
+	bool selected = false;	  //Is this ComponentSelectable selected
+	bool hovered = false;	  //Is this ComponentSelectable hovered by mouse
 	int selectableIndex = -1;
-	NavigationType m_NavigationType = NavigationType::AUTOMATIC;
-	TransitionType m_Transition = TransitionType::NONE;
-
+	NavigationType m_NavigationType = NavigationType::AUTOMATIC; //Navigation can be user-explicit, automatic based on 2D axis, or non-existing
+	TransitionType m_Transition = TransitionType::NONE;			 //Transition for selected/hovered can be managed in different ways
 };

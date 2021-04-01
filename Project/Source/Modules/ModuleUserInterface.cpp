@@ -4,24 +4,33 @@
 #include "ModuleFiles.h"
 #include "ModuleEventSystem.h"
 #include "Modules/ModuleResources.h"
+#include "ModuleScene.h"
 #include "Utils/FileDialog.h"
+#include "FileSystem/TextureImporter.h"
 
 #include "GameObject.h"
 #include "Resources/ResourceFont.h"
+#include "Scene.h"
 #include "Components/ComponentCanvas.h"
-#include "FileSystem/TextureImporter.h"
-#include <Components/UI/ComponentSelectable.h>
+#include "Components/UI/ComponentSelectable.h"
+
 #include "Components/ComponentEventSystem.h"
 #include "Components/ComponentBoundingBox2D.h"
+#include "Components/ComponentEventSystem.h"
 #include "Event.h"
 
 #include "UI/Interfaces/IPointerEnterHandler.h"
+#include "UI/Interfaces/IPointerExitHandler.h"
+#include "UI/Interfaces/IMouseClickHandler.h"
 
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
+ComponentEventSystem* ModuleUserInterface::currentEvSys = nullptr;
+
 bool ModuleUserInterface::Init() {
 	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_UPDATE, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_CLICKED, this);
 	return true;
 }
 
@@ -80,32 +89,25 @@ void ModuleUserInterface::GetCharactersInString(const std::string& font, const s
 
 void ModuleUserInterface::Render() {
 	//GameObject* canvasRenderer = canvas->GetChildren()[0];
-	if (importFont) {
-		// Temporary code to check font resource is loading fine
-		std::vector<UID>& fontResourcesID = App->resources->ImportAsset("Assets/fa-solid-900.ttf");
-		UID fontId = fontResourcesID[0];
-		App->resources->IncreaseReferenceCount(fontId);
-		ResourceFont* font = (ResourceFont*)App->resources->GetResource(fontId);
-		font->name = "fa-solid-900";
-		fonts.insert(std::pair<std::string, ResourceFont*>(font->name, font));
-		GetCharacter("fa-solid-900", 'b');
-		std::vector<Character> phrase;
-		GetCharactersInString("fa-solid-900", "-This Is a test-", phrase);
-		importFont = false;
-	}
-	if (canvas != nullptr) {
-		//canvas->GetChildren()[0]->GetComponent<ComponentCanvas>()->Render();
-		ComponentCanvas* canvasComponent = canvas->GetComponent<ComponentCanvas>();
-		if (canvasComponent) {
-			canvasComponent->Render();
+	// if (importFont) {
+	// 	// Temporary code to check font resource is loading fine
+	// 	std::vector<UID>& fontResourcesID = App->resources->ImportAsset("Assets/fa-solid-900.ttf");
+	// 	UID fontId = fontResourcesID[0];
+	// 	App->resources->IncreaseReferenceCount(fontId);
+	// 	ResourceFont* font = (ResourceFont*)App->resources->GetResource(fontId);
+	// 	font->name = "fa-solid-900";
+	// 	fonts.insert(std::pair<std::string, ResourceFont*>(font->name, font));
+	// 	GetCharacter("fa-solid-900", 'b');
+	// 	std::vector<Character> phrase;
+	// 	GetCharactersInString("fa-solid-900", "-This Is a test-", phrase);
+	// 	importFont = false;
+	//}
+	Scene* scene = App->scene->scene;
+	if (scene != nullptr) {
+		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {
+			canvasRenderer.Render(&canvasRenderer.GetOwner());
 		}
 	}
-}
-
-void ModuleUserInterface::StartUI() {
-}
-
-void ModuleUserInterface::EndUI() {
 }
 
 GameObject* ModuleUserInterface::GetCanvas() const {
@@ -116,8 +118,8 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	float2 mousePos = float2(e.point2d.x, e.point2d.y);
 	switch (e.type) {
 	case Event::EventType::MOUSE_UPDATE:
-		if (ComponentEventSystem::currentEvSys) {
-			for (ComponentSelectable* selectable : ComponentEventSystem::currentEvSys->m_Selectables) {
+		if (currentEvSys) {
+			for (ComponentSelectable* selectable : currentEvSys->m_Selectables) {
 				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
 
 				if (!selectable->IsHovered()) {
@@ -132,12 +134,33 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 			}
 		}
 		break;
+
+	case Event::EventType::MOUSE_CLICKED:
+		if (currentEvSys != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+			if (lastHoveredSelectable != nullptr) {
+				if (lastHoveredSelectable->IsInteractable()) {
+					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable);
+					if (i != nullptr) {
+						i->OnClicked();
+					}
+				}
+			}
+		}
+		break;
 	default:
 		break;
 	}
 }
 
 bool ModuleUserInterface::CleanUp() {
-
 	return true;
+}
+
+void ModuleUserInterface::SetCurrentEventSystem(ComponentEventSystem* ev) {
+	currentEvSys = ev;
+}
+
+ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
+	return currentEvSys;
 }

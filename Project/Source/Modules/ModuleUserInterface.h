@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 class GameObject;
+class ComponentEventSystem;
 class ResourceFont;
 struct Character;
 
@@ -18,16 +19,17 @@ public:
 	void GetCharactersInString(const std::string& font, const std::string& sentence, std::vector<Character>& charsInSentence); //Fills the given vector with the glyphs of the given font to form the given sentence.
 
 	void Render();
-	void StartUI();
-	void EndUI();
 	GameObject* GetCanvas() const;
 	void ReceiveEvent(const Event& e) override;
+	void SetCurrentEventSystem(ComponentEventSystem* ev);
+	ComponentEventSystem* GetCurrentEventSystem();
 
 	bool CleanUp() override;
 
 private:
 	std::unordered_map<std::string, ResourceFont*> fonts; //Container for different fonts with the name of the font as key.
-	bool importFont = true; // Temporary to check font resource is loading fine
+	//bool importFont = true; // Temporary to check font resource is loading fine
+	static ComponentEventSystem* currentEvSys;
 
 public:
 	GameObject* canvas = nullptr;

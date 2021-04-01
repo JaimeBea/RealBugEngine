@@ -16,6 +16,7 @@
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentEventSystem.h"
 #include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentToggle.h"
 
 #include <unordered_map>
 
@@ -52,8 +53,8 @@ public:
 	VectorMap<UID, ComponentTransform2D> transform2DComponents;
 	VectorMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
 	VectorMap<UID, ComponentEventSystem> eventSystemComponents;
-	//VectorMap<UID, Button> buttonComponents;
-	VectorMap<UID, ComponentSelectable> selectableComponents;
+	VectorMap<UID, ComponentToggle> toggleComponents;
+	VectorMap<UID, ComponentButton> buttonComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

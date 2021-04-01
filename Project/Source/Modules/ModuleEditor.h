@@ -37,6 +37,7 @@ public:
 	bool CleanUp() override;
 	//void ReceiveEvent(const Event& ev) override;
 	void OnMouseMoved();
+	void OnMouseClicked();
 
 public:
 	Modal modalToOpen = Modal::NONE; // Used in the MenuBar to popup a Modal Window of the specific type.

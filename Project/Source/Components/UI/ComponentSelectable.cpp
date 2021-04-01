@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "Components/ComponentEventSystem.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
+
 #include "GameObject.h"
 #include "imgui.h"
 
@@ -21,34 +23,24 @@ void ComponentSelectable::Highlight(bool b) {
 	highlighted = b;
 }
 
-//
-//ComponentSelectable::ComponentSelectable(GameObject* owner, UID componentID_, bool active)
-//	: Component(ComponentType::SELECTABLE, owner, componentID_, active)
-//
-//	, interactable(false)
-//	, highlighted(false)
-//	, selected(false)
-//	, m_NavigationType(NavigationType::AUTOMATIC)
-//	, onAxisDown(nullptr)
-//	, onAxisLeft(nullptr)
-//	, onAxisRight(nullptr)
-//	, onAxisUp(nullptr)
-//	, selectableIndex(-1)
-//	, m_Transition(TransitionType::NONE) {
-//}
+ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active)
+	: Component(type_, owner, componentID_, active) {
+}
 
 ComponentSelectable::~ComponentSelectable() {
-	//TO DO IF SELECTED SET SELECTED TO NULL
-	if (selectableIndex > -1) {
-		//Subtitute my position in vector with last element of vector
-		ComponentEventSystem::currentEvSys->m_Selectables[selectableIndex] = ComponentEventSystem::currentEvSys->m_Selectables[ComponentEventSystem::currentEvSys->m_Selectables.size()];
-		//Remove last position from vector, effectively removing myself
-		ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
-		selectableIndex = -1;
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		//TO DO IF SELECTED SET SELECTED TO NULL
+		if (selectableIndex > -1) {
+			//Subtitute my position in vector with last element of vector
+			evSys->m_Selectables[selectableIndex] = evSys->m_Selectables[evSys->m_Selectables.size()];
+			//Remove last position from vector, effectively removing myself
+			evSys->m_Selectables.pop_back();
+			selectableIndex = -1;
+		}
 	}
 }
 
-bool ComponentSelectable::GetInteractable() {
+bool ComponentSelectable::IsInteractable() const{
 	return interactable;
 }
 
@@ -57,9 +49,11 @@ void ComponentSelectable::SetInteractable(bool b) {
 }
 
 ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
+	if (!App->userInterface->GetCurrentEventSystem()) return nullptr;
+
 	switch (m_NavigationType) {
 	case NavigationType::AUTOMATIC:
-		for (std::vector<ComponentSelectable*>::iterator it = ComponentEventSystem::currentEvSys->m_Selectables.begin(); it != ComponentEventSystem::currentEvSys->m_Selectables.end(); ++it) {
+		for (std::vector<ComponentSelectable*>::iterator it = App->userInterface->GetCurrentEventSystem()->m_Selectables.begin(); it != App->userInterface->GetCurrentEventSystem()->m_Selectables.end(); ++it) {
 			//TO DO Compare all selectables by distance and assign closest to retSelectable
 		}
 		break;
@@ -92,9 +86,11 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
-
-	interactable = false;
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		evSys->m_Selectables.push_back(this);
+	}
+	interactable
+		= false;
 	highlighted = false;
 	selected = false;
 	m_NavigationType = NavigationType::AUTOMATIC;
@@ -153,31 +149,43 @@ void ComponentSelectable::OnEditorUpdate() {
 }
 
 void ComponentSelectable::Enable() {
-	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();
-	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
+	if (ComponentEventSystem* evSyst = App->userInterface->GetCurrentEventSystem()) {
+		selectableIndex = evSyst->m_Selectables.size();
+		evSyst->m_Selectables.push_back(this);
+	}
 }
 
 void ComponentSelectable::Disable() {
-	if (selected) {
-		ComponentEventSystem::currentEvSys->SetSelected(nullptr);
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		if (selected) {
+			evSys->SetSelected(nullptr);
+		}
+
+		//Subtitute my position in vector with last element of vector
+		evSys->m_Selectables[selectableIndex] = evSys->m_Selectables[evSys->m_Selectables.size()];
+
+		//Remove last position from vector, effectively removing myself
+		evSys->m_Selectables.pop_back();
+		selectableIndex = -1;
 	}
-
-	//Subtitute my position in vector with last element of vector
-	ComponentEventSystem::currentEvSys->m_Selectables[selectableIndex] = ComponentEventSystem::currentEvSys->m_Selectables[ComponentEventSystem::currentEvSys->m_Selectables.size()];
-
-	//Remove last position from vector, effectively removing myself
-	ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
-	selectableIndex = -1;
 }
 
 void ComponentSelectable::OnPointerEnter() {
-	hovered = true;
-	LOG("PointerEntered");
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		hovered = true;
+		if (evSys != nullptr) {
+			evSys->EnteredPointerOnSelectable(this);
+		}
+	}
 }
 
 void ComponentSelectable::OnPointerExit() {
-	hovered = false;
-	LOG("PointerExit");
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		hovered = false;
+		if (evSys != nullptr) {
+			evSys->ExitedPointerOnSelectable(this);
+		}
+	}
 }
 
 bool ComponentSelectable::IsHovered() const {

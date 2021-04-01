@@ -94,8 +94,10 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_MOUSEBUTTONDOWN:
 			mouseButtons[event.button.button - 1] = KS_DOWN;
+			if (event.button.button == SDL_BUTTON_LEFT) {
+				App->editor->OnMouseClicked();
+			}
 			break;
-
 		case SDL_MOUSEBUTTONUP:
 			mouseButtons[event.button.button - 1] = KS_UP;
 			break;
