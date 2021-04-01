@@ -107,7 +107,7 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 		if (currentEvSys != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
-				if (lastHoveredSelectable->GetInteractable()) {
+				if (lastHoveredSelectable->IsInteractable()) {
 					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable);
 					if (i != nullptr) {
 						i->OnClicked();
