@@ -29,19 +29,17 @@ ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner,
 }
 
 ComponentSelectable::~ComponentSelectable() {
-	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
-		//TO DO IF SELECTED SET SELECTED TO NULL
-		if (selectableIndex > -1) {
-			//Subtitute my position in vector with last element of vector
-			evSys->m_Selectables[selectableIndex] = evSys->m_Selectables[evSys->m_Selectables.size()];
-			//Remove last position from vector, effectively removing myself
-			evSys->m_Selectables.pop_back();
-			selectableIndex = -1;
-		}
+	//TO DO IF SELECTED SET SELECTED TO NULL
+	if (selectableIndex > -1) {
+		//Subtitute my position in vector with last element of vector
+		ComponentEventSystem::m_Selectables[selectableIndex] = ComponentEventSystem::m_Selectables[ComponentEventSystem::m_Selectables.size()];
+		//Remove last position from vector, effectively removing myself
+		ComponentEventSystem::m_Selectables.pop_back();
+		selectableIndex = -1;
 	}
 }
 
-bool ComponentSelectable::IsInteractable() const{
+bool ComponentSelectable::IsInteractable() const {
 	return interactable;
 }
 
@@ -58,7 +56,6 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 		float minDistance = FLT_MAX;
 		float3 thisPos = this->GetOwner().GetComponent<ComponentTransform2D>()->GetPosition(); //TODO: wtf
 		// Get Gameobjects with the same parent
-
 
 		//for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
 		//	ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
@@ -121,9 +118,8 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
-		evSys->m_Selectables.push_back(this);
-	}
+	ComponentEventSystem::m_Selectables.push_back(this);
+
 	interactable
 		= false;
 	highlighted = false;
@@ -195,14 +191,13 @@ void ComponentSelectable::Disable() {
 		if (selected) {
 			evSys->SetSelected(nullptr);
 		}
-
-		//Subtitute my position in vector with last element of vector
-		evSys->m_Selectables[selectableIndex] = evSys->m_Selectables[evSys->m_Selectables.size()];
-
-		//Remove last position from vector, effectively removing myself
-		evSys->m_Selectables.pop_back();
-		selectableIndex = -1;
 	}
+	//Subtitute my position in vector with last element of vector
+	ComponentEventSystem::m_Selectables[selectableIndex] = ComponentEventSystem::m_Selectables[ComponentEventSystem::m_Selectables.size()];
+
+	//Remove last position from vector, effectively removing myself
+	ComponentEventSystem::m_Selectables.pop_back();
+	selectableIndex = -1;
 }
 
 void ComponentSelectable::OnPointerEnter() {

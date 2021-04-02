@@ -10,6 +10,8 @@
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
+std::vector<ComponentSelectable*> ComponentEventSystem::m_Selectables;
+
 ComponentEventSystem ::~ComponentEventSystem() {
 }
 
