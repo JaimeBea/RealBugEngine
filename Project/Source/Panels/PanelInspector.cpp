@@ -103,6 +103,7 @@ void PanelInspector::Update() {
 
 				ImGui::PushID(component);
 
+				// TODO: Place TransformComponent always th the top of the Inspector
 				bool headerOpen = ImGui::CollapsingHeader(cName.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
 
 				// Options BUTTON (in the same line and at the end of the line)
@@ -116,6 +117,7 @@ void PanelInspector::Update() {
 				if (ImGui::BeginPopup("Component Options")) {
 					if (component->GetType() != ComponentType::TRANSFORM) {
 						if (ImGui::MenuItem("Remove Component")) componentToDelete = component;
+						// TODO: force remove other components that this one requires for functioning
 					}
 					// More Options items ...
 					ImGui::EndPopup();
@@ -163,7 +165,6 @@ void PanelInspector::Update() {
 
 				AddUIComponentsOptions(selected);
 
-
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
@@ -181,67 +182,61 @@ void PanelInspector::SetComponentToDelete(Component* comp) {
 }
 
 void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
-	bool hasImage = selected->GetComponent<ComponentImage>() == nullptr;
-	bool hasTransform2D = selected->GetComponent<ComponentTransform2D>() == nullptr;
-	bool hasCanvas = selected->GetComponent<ComponentCanvas>() == nullptr;
-	bool hasCanvasRenderer = selected->GetComponent<ComponentCanvasRenderer>() == nullptr;
-	bool hasEventSystem = ComponentEventSystem::currentEvSys == nullptr;
-
-	bool hasUI = hasImage || hasTransform2D || hasCanvas || hasCanvasRenderer || hasEventSystem;
-	if (hasUI && ImGui::BeginMenu("UI")) {
-		if (hasImage) {
-			if (ImGui::MenuItem("Image")) {
-				ComponentImage* component = selected->CreateComponent<ComponentImage>();
-				if (component != nullptr) {
-					component->Init();
-				} else {
-					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				}
+	if (ImGui::BeginMenu("UI")) {
+		bool newUIComponentCreated = false;
+		if (ImGui::MenuItem("Image")) {
+			ComponentImage* component = selected->CreateComponent<ComponentImage>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
 
-		if (hasTransform2D) {
-			if (ImGui::MenuItem("Transform 2D")) {
-				ComponentTransform2D* component = selected->CreateComponent<ComponentTransform2D>();
-				if (component != nullptr) {
-					component->Init();
-				} else {
-					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				}
+		if (ImGui::MenuItem("Transform 2D")) {
+			ComponentTransform2D* component = selected->CreateComponent<ComponentTransform2D>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
 
-		if (hasCanvas) {
-			if (ImGui::MenuItem("Canvas")) {
-				ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
-				if (component != nullptr) {
-					component->Init();
-				} else {
-					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				}
+		if (ImGui::MenuItem("Canvas")) {
+			ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
 
-		if (hasCanvasRenderer) {
-			if (ImGui::MenuItem("Canvas Renderer")) {
-				ComponentCanvasRenderer* component = selected->CreateComponent<ComponentCanvasRenderer>();
-				if (component != nullptr) {
-					component->Init();
-				} else {
-					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				}
+		if (ImGui::MenuItem("Canvas Renderer")) {
+			ComponentCanvasRenderer* component = selected->CreateComponent<ComponentCanvasRenderer>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
 
-		if (hasEventSystem) {
-			if (ImGui::MenuItem("Event System")) {
-				ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
-				if (component != nullptr) {
-					component->Init();
-				} else {
-					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				}
+		if (ImGui::MenuItem("Event System")) {
+			ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
+		}
+
+		if (newUIComponentCreated) {
+			// TODO: create required components that come along with a UI element
+			// if not has the required component, create it 
 		}
 
 		ImGui::EndMenu();
