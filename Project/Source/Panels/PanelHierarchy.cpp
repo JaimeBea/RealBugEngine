@@ -7,6 +7,7 @@
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
+#include "Components/ComponentBoundingBox2D.h"
 #include "Components/UI/ComponentImage.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
@@ -65,7 +66,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			if (ImGui::Selectable("Delete")) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 				App->scene->DestroyGameObjectDeferred(gameObject);
-				ComponentEventSystem::currentEvSys = nullptr;
+				if (App->userInterface->GetCurrentEventSystem()) {
+					App->userInterface->GetCurrentEventSystem()->SetSelected(nullptr);
+				}
 			}
 
 			if (ImGui::Selectable("Duplicate")) {
@@ -214,17 +217,30 @@ GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
 }
 
 GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
-	// TODO
+	if (gameObject->HasComponentInAnyParent<ComponentButton>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Button");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
+	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
+	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
+
+	newGameObject->InitComponents();
+
 	return nullptr;
 }
 
 GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
-	if (ComponentEventSystem::currentEvSys == nullptr) {
+	if (App->userInterface->GetCurrentEventSystem() == nullptr) {
 		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
 		newGameObject->CreateComponent<ComponentTransform>();
 		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
 
-		ComponentEventSystem::currentEvSys = component;
+		App->userInterface->SetCurrentEventSystem(component);
 
 		newGameObject->InitComponents();
 

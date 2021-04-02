@@ -1,5 +1,6 @@
 #include "ComponentEventSystem.h"
 
+#include "Application.h"
 #include "Modules/ModuleUserInterface.h"
 
 #include "GameObject.h"
@@ -9,15 +10,13 @@
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
-ComponentEventSystem* ComponentEventSystem::currentEvSys = nullptr;
-
 ComponentEventSystem ::~ComponentEventSystem() {
 }
 
 void ComponentEventSystem::Init() {
 	currentSelected = nullptr;
 	firstSelected = nullptr;
-	currentEvSys = this;
+	App->userInterface->SetCurrentEventSystem(this);
 	SetSelected(firstSelected);
 }
 
@@ -49,12 +48,12 @@ void ComponentEventSystem::Load(JsonValue jComponent) {
 }
 
 void ComponentEventSystem::Enable() {
-	currentEvSys = this;
+	App->userInterface->SetCurrentEventSystem(this);
 }
 
 void ComponentEventSystem::Disable() {
-	if (currentEvSys == this) {
-		currentEvSys = nullptr;
+	if (App->userInterface->GetCurrentEventSystem() == this) {
+		App->userInterface->SetCurrentEventSystem(nullptr);
 	}
 }
 

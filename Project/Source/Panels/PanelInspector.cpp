@@ -5,6 +5,7 @@
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -193,6 +194,14 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
+		if (ImGui::MenuItem("Button")) {
+				ComponentButton* component = selected->CreateComponent<ComponentButton>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}		
+		}
 
 		if (ImGui::MenuItem("Transform 2D")) {
 			ComponentTransform2D* component = selected->CreateComponent<ComponentTransform2D>();
@@ -237,7 +246,9 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 		if (newUIComponentCreated) {
 			// TODO: create required components that come along with a UI element
 			// if not has the required component, create it 
-		}
+
+			}
+		
 
 		ImGui::EndMenu();
 	}

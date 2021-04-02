@@ -3,6 +3,8 @@
 #include "Components/ComponentEventSystem.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleUserInterface.h"
+
 #include "GameObject.h"
 #include "imgui.h"
 
@@ -27,17 +29,19 @@ ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner,
 }
 
 ComponentSelectable::~ComponentSelectable() {
-	//TO DO IF SELECTED SET SELECTED TO NULL
-	if (selectableIndex > -1) {
-		//Subtitute my position in vector with last element of vector
-		ComponentEventSystem::currentEvSys->m_Selectables[selectableIndex] = ComponentEventSystem::currentEvSys->m_Selectables[ComponentEventSystem::currentEvSys->m_Selectables.size()];
-		//Remove last position from vector, effectively removing myself
-		ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
-		selectableIndex = -1;
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		//TO DO IF SELECTED SET SELECTED TO NULL
+		if (selectableIndex > -1) {
+			//Subtitute my position in vector with last element of vector
+			evSys->m_Selectables[selectableIndex] = evSys->m_Selectables[evSys->m_Selectables.size()];
+			//Remove last position from vector, effectively removing myself
+			evSys->m_Selectables.pop_back();
+			selectableIndex = -1;
+		}
 	}
 }
 
-bool ComponentSelectable::GetInteractable() {
+bool ComponentSelectable::IsInteractable() const{
 	return interactable;
 }
 
@@ -46,40 +50,44 @@ void ComponentSelectable::SetInteractable(bool b) {
 }
 
 ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
+	if (!App->userInterface->GetCurrentEventSystem()) return nullptr;
+
 	switch (m_NavigationType) {
 	case NavigationType::AUTOMATIC: {
 		ComponentSelectable* bestCandidate = nullptr;
 		float minDistance = FLT_MAX;
 		float3 thisPos = this->GetOwner().GetComponent<ComponentTransform2D>()->GetPosition(); //TODO: wtf
 		// Get Gameobjects with the same parent
-		for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
-			ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
-			if (!selectable) continue;
 
-			// Get relative direction and distance to this Element
-			float3 direction = brother->GetComponent<ComponentTransform2D>()->GetPosition() - thisPos;
-			float distance = direction.LengthSq();
 
-			// Compare best candidate
-			if (distance < minDistance) {
-				if (dir.x > 0.6f && direction.x > 0.6f) {
-					bestCandidate = selectable;
-					minDistance = distance;
-				}
-				else if (dir.x < -0.6f && direction.x > -0.6f) {
-					bestCandidate = selectable;
-					minDistance = distance;
-				}
-				else if (dir.y > 0.6f && direction.y > 0.6f) {
-					bestCandidate = selectable;
-					minDistance = distance;
-				}
-				else if (dir.y < -0.6f && direction.y > -0.6f) {
-					bestCandidate = selectable;
-					minDistance = distance;
-				}
-			}
-		}
+		//for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
+		//	ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
+		//	if (!selectable) continue;
+
+		//	// Get relative direction and distance to this Element
+		//	float3 direction = brother->GetComponent<ComponentTransform2D>()->GetPosition() - thisPos;
+		//	float distance = direction.LengthSq();
+
+		//	// Compare best candidate
+		//	if (distance < minDistance) {
+		//		if (dir.x > 0.6f && direction.x > 0.6f) {
+		//			bestCandidate = selectable;
+		//			minDistance = distance;
+		//		}
+		//		else if (dir.x < -0.6f && direction.x > -0.6f) {
+		//			bestCandidate = selectable;
+		//			minDistance = distance;
+		//		}
+		//		else if (dir.y > 0.6f && direction.y > 0.6f) {
+		//			bestCandidate = selectable;
+		//			minDistance = distance;
+		//		}
+		//		else if (dir.y < -0.6f && direction.y > -0.6f) {
+		//			bestCandidate = selectable;
+		//			minDistance = distance;
+		//		}
+		//	}
+		//}
 		return bestCandidate;
 		break;
 	}
@@ -113,8 +121,11 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
-	interactable = false;
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		evSys->m_Selectables.push_back(this);
+	}
+	interactable
+		= false;
 	highlighted = false;
 	selected = false;
 	m_NavigationType = NavigationType::AUTOMATIC;
@@ -173,34 +184,42 @@ void ComponentSelectable::OnEditorUpdate() {
 }
 
 void ComponentSelectable::Enable() {
-	selectableIndex = ComponentEventSystem::currentEvSys->m_Selectables.size();
-	ComponentEventSystem::currentEvSys->m_Selectables.push_back(this);
+	if (ComponentEventSystem* evSyst = App->userInterface->GetCurrentEventSystem()) {
+		selectableIndex = evSyst->m_Selectables.size();
+		evSyst->m_Selectables.push_back(this);
+	}
 }
 
 void ComponentSelectable::Disable() {
-	if (selected) {
-		ComponentEventSystem::currentEvSys->SetSelected(nullptr);
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		if (selected) {
+			evSys->SetSelected(nullptr);
+		}
+
+		//Subtitute my position in vector with last element of vector
+		evSys->m_Selectables[selectableIndex] = evSys->m_Selectables[evSys->m_Selectables.size()];
+
+		//Remove last position from vector, effectively removing myself
+		evSys->m_Selectables.pop_back();
+		selectableIndex = -1;
 	}
-
-	//Subtitute my position in vector with last element of vector
-	ComponentEventSystem::currentEvSys->m_Selectables[selectableIndex] = ComponentEventSystem::currentEvSys->m_Selectables[ComponentEventSystem::currentEvSys->m_Selectables.size()];
-
-	//Remove last position from vector, effectively removing myself
-	ComponentEventSystem::currentEvSys->m_Selectables.pop_back();
-	selectableIndex = -1;
 }
 
 void ComponentSelectable::OnPointerEnter() {
-	hovered = true;
-	if (ComponentEventSystem::currentEvSys != nullptr) {
-		ComponentEventSystem::currentEvSys->EnteredPointerOnSelectable(this);
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		hovered = true;
+		if (evSys != nullptr) {
+			evSys->EnteredPointerOnSelectable(this);
+		}
 	}
 }
 
 void ComponentSelectable::OnPointerExit() {
-	hovered = false;
-	if (ComponentEventSystem::currentEvSys != nullptr) {
-		ComponentEventSystem::currentEvSys->ExitedPointerOnSelectable(this);
+	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+		hovered = false;
+		if (evSys != nullptr) {
+			evSys->ExitedPointerOnSelectable(this);
+		}
 	}
 }
 

@@ -142,13 +142,13 @@ void ComponentTransform2D::SetSize(float2 size_) {
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
+	rotation = rotation_;
+	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
-
-	rotation = rotation_;
-	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 }
 
 void ComponentTransform2D::SetRotation(float3 rotation_) {
@@ -211,8 +211,6 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 		globalMatrix = localMatrix;
 	}
 }
-// return float4x4::FromTRS(position, rotation, vec(scale.x * size.x, scale.y * size.y, 0));
-// }
 
 float3 ComponentTransform2D::GetPosition() const {
 	return position;
