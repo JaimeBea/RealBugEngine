@@ -13,6 +13,7 @@
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/ShaderImporter.h"
+#include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -109,6 +110,9 @@ void ImportAsset(const char* filePath) {
 		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
+		} else if (extension == ".h") {
+			// Script files
+			ScriptImporter::ImportScript(filePath, jMeta);
 		} else {
 			assetImported = false;
 		}
