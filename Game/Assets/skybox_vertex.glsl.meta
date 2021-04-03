@@ -1,6 +1,9 @@
 {
-    "ResourceIds": [
-        903130357727628756
+    "Resources": [
+        {
+            "Type": "Shader",
+            "Id": 13346928912254971762
+        }
     ],
-    "Timestamp": 1617466820
+    "Timestamp": 1616860796
 }

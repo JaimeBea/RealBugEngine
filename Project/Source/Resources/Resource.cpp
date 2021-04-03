@@ -3,27 +3,16 @@
 #include "Application.h"
 #include "Modules/ModuleTime.h"
 
-Resource::Resource(UID id_, const char* assetFilePath_, const char* resourceFilePath_)
-	: id(id_)
+Resource::Resource(ResourceType type_, UID id_, const char* assetFilePath_, const char* resourceFilePath_)
+	: type(type_)
+	, id(id_)
 	, assetFilePath(assetFilePath_)
 	, resourceFilePath(resourceFilePath_) {}
 
 Resource::~Resource() {}
 
-void Resource::IncreaseReferenceCount() {
-	if (referenceCount == 0) {
-		Load();
-	}
-
-	referenceCount += 1;
-}
-
-void Resource::DecreaseReferenceCount() {
-	referenceCount -= 1;
-
-	if (referenceCount == 0) {
-		Unload();
-	}
+ResourceType Resource::GetType() const {
+	return type;
 }
 
 UID Resource::GetId() const {

@@ -20,20 +20,26 @@ class ModulePrograms;
 class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
+class ModuleAudio;
+class ModuleEventSystem;
+
+struct Event;
 
 class Application {
 public:
 	Application();
 	~Application();
 
-	bool Init();
-	bool Start();
-	UpdateStatus Update();
-	bool CleanUp();
+	bool Init();		   // Calls the functionality initialisation for all the Modules.
+	bool Start();		   // Calls a second step functionality initialisation for all the Modules, that needs to be Started after the modules have been Initialised.
+	UpdateStatus Update(); // Calls the Update functions for all the modules. The UpdateStatus returned will be used by the main loop to know if the app is running correctly and when to quit.
+	bool CleanUp();		   // Calls the memory cleaning methods of each module, to release all the memory used by the app before quitting
 
-	void RequestBrowser(char* url);
+	void RequestBrowser(char* url);		 // Opens the url passed as parameter in a new window your default Internet Borwser
+	void BroadCastEvent(const Event& e); //This method exists only with the purpose of being used by those modules that generate events but do not receive them
 
 public:
+	// ---- Application Modules ---- //
 	ModuleHardwareInfo* hardware = nullptr;
 	ModuleResources* resources = nullptr;
 	ModuleRender* renderer = nullptr;
@@ -46,9 +52,10 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
+	ModuleAudio* audio = nullptr;
+	ModuleEventSystem* eventSystem = nullptr;
 
-	// Application Configuration
-
+	// - Application Configuration - //
 	char appName[20] = "Tesseract";
 	char organization[20] = "";
 
