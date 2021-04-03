@@ -54,12 +54,13 @@ bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
 	document.Accept(writer);
 
-	// Create scene
-	ResourceScene* scene = App->resources->CreateResource<ResourceScene>(filePath);
-
-	// Add resource to meta file
+	// Create scene resource
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceScene* scene = App->resources->CreateResource<ResourceScene>(filePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(scene->GetType());
 	jResource[JSON_TAG_ID] = scene->GetId();
 

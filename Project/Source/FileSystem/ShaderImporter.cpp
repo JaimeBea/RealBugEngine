@@ -39,11 +39,12 @@ bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 	}
 
 	// Create shader resource
-	ResourceShader* shaderResource = App->resources->CreateResource<ResourceShader>(filePath);
-
-	// Add resource to meta file
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceShader* shaderResource = App->resources->CreateResource<ResourceShader>(filePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(shaderResource->GetType());
 	jResource[JSON_TAG_ID] = shaderResource->GetId();
 
