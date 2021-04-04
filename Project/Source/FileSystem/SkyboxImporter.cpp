@@ -32,11 +32,12 @@ bool SkyboxImporter::ImportSkybox(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	ResourceSkybox* resourceSkybox = App->resources->CreateResource<ResourceSkybox>(filePath);
-
-	// Add resource to meta file
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceSkybox* resourceSkybox = App->resources->CreateResource<ResourceSkybox>(filePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(resourceSkybox->GetType());
 	jResource[JSON_TAG_ID] = resourceSkybox->GetId();
 
