@@ -7,6 +7,7 @@
 #include "Utils/Buffer.h"
 #include "Utils/UID.h"
 #include "Utils/EngineAPI.h"
+#include "Utils/FileDialog.h"
 
 #include "Script.h"
 
@@ -25,56 +26,41 @@
 #define JSON_TAG_PROJECT_NAME "ProjectName"
 #define JSON_TAG_SCENES "Scenes"
 
-
 #define EXAMPLE(classname, pointer, variable, value) \
 	static_cast<classname*>(pointer)->variable = value
 
 bool ModuleProject::Init() {
-
-
-	//HGLOBAL hResLoad;  // handle to loaded resource
-	//HMODULE hExe;	   // handle to existing .EXE file
-	//HRSRC hRes;		   // handle/ptr. to res. info. in hExe
-	//HANDLE hUpdateRes; // update resource handle
-	//LPVOID lpResLock;  // pointer to resource data
-	//BOOL result;
-	//
-	////assert(LoadGameCodeDLL("TemplateProject.dll"));
-	//hExe = LoadLibraryA("TemplateProject.dll");
-	//
-	//Script* p = Factory::create("CameraScr");
-	//
-	//assert(p != nullptr);
-	//
-	//p->Start();
-	//p->speed = 10;
-	//p->speed = 5;
 	
-	CreateNewProject("TemplateProject", "");
-	std::string workingDir = App->files->GetWorkingDirectory();
-	std::string sourceDir = App->files->GetWorkingDirectory();
-	workingDir += "TemplateProject/TemplateProject.sln";
-	sourceDir += "TemplateProject/Source";
-	#ifdef _DEBUG
-	workingDir = "TemplateProject/TemplateProject.sln";
-	sourceDir = "TemplateProject/Source";
-	#endif // 
-	
-	App->files->CreateFolder(sourceDir.c_str());
-	ShellExecute(NULL, "open", workingDir.c_str(), NULL, NULL, SW_MAXIMIZE);
+	LoadProject("Penteract");
 
 	return true;
 }
 
 void ModuleProject::LoadProject(const char* path) {
-	// TODO: Load project
+	
+	if (!App->files->Exists("Penteract/Penteract.sln")) {
+		CreateNewProject("Penteract", "");
+	}
+
+	projectName = FileDialog::GetFileName(path);
+	projectPath = path;
+
+	//std::string fullPath = FileDialog::GetAbsolutePath("Penteract.sln");
+
+	//ShellExecute(NULL, "open", fullPath.c_str(), NULL, NULL, SW_MAXIMIZE);
+	ShellExecute(NULL, "open", "D:\\Documentos\\Jordi\\UPC\\Master Engine\\Tesseract\\Game/Penteract/Penteract.sln", NULL, NULL, SW_MAXIMIZE);
+
 }
 
 void ModuleProject::CreateNewProject(const char* name, const char* path) {
+	
 	projectName = name;
 
 	std::string fullPath = std::string(path) + name;
+	std::string sourcePath = fullPath + "/Source";
 	App->files->CreateFolder(fullPath.c_str());
+
+	App->files->CreateFolder(sourcePath.c_str());
 
 	std::string UIDProject("{");
 	UIDProject += GenerateUID128();
@@ -102,11 +88,13 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 	Buffer<char> buffer = App->files->Load("Templates/MSVCProject");
 
 	std::string project = buffer.Data();
+
 	std::string enginePath = App->files->GetWorkingDirectory();
-	#ifdef  _DEBUG
+
+	#ifdef _DEBUG
 	std::string result = fmt::format(project, name, UIDProject, "../Project/Source/", enginePath);
 	#else
-	std::string result = fmt::format(project, name, UIDProject, enginePath + "Source", enginePath + "Lib\\");
+	std::string result = fmt::format(project, name, UIDProject, enginePath + "Source", enginePath + "/Lib/");
 	#endif
 
 	App->files->Save(path, result.data(), result.size());

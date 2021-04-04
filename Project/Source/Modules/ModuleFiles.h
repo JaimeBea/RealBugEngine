@@ -7,14 +7,15 @@
 #include <string>
 #include <vector>
 
-constexpr char* extensions[] = {".jpg", ".png", ".dds", ".scene"};
+constexpr char* extensions[] = {".jpg", ".png", ".dds", ".scene", ".sln"};
 
 enum class AllowedExtensionsFlag {
 	ALL = 0,
 	JPG = 1,
 	PNG = 1 << 1,
 	DDS = 1 << 2,
-	SCENE = 1 << 3
+	SCENE = 1 << 3,
+	PROJECT = 1 << 4
 };
 
 inline AllowedExtensionsFlag operator|(AllowedExtensionsFlag l, AllowedExtensionsFlag r) {
