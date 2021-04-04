@@ -2,17 +2,31 @@
 
 #include "Module.h"
 
+#include "Utils/UID.h"
+
 #include <string>
+
+enum class Configuration {
+	RELEASE,
+	RELEASE_EDITOR,
+	DEBUG,
+	DEBUG_EDITOR
+};
 
 class ModuleProject : public Module {
 public:
-	
 	bool Init() override;
 
 	void CreateNewProject(const char* name, const char* path);
 	void LoadProject(const char* path);
-	void SaveProject();
+
+	void CompileProject(Configuration config);
 
 private:
-	std::string fileName = "";
+	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
+	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
+
+public:
+	std::string projectName = "";
+	std::string projectPath = "";
 };

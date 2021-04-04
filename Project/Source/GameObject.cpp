@@ -78,7 +78,6 @@ std::vector<Component*> GameObject::GetComponents() const {
 	return auxComponents;
 }
 
-
 void GameObject::RemoveComponent(Component* component) {
 	for (auto it = components.begin(); it != components.end(); ++it) {
 		if (it->second == component->GetID()) {

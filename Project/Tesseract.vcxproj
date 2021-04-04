@@ -11,6 +11,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Script.h" />
+    <ClInclude Include="Source\Utils\Creator.h" />
+    <ClInclude Include="Source\Utils\EngineAPI.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\chrono.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\color.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\compile.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\core.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\format-inl.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\format.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\locale.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\os.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\ostream.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\posix.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\printf.h" />
+    <ClInclude Include="Libs\fmt-7.1.3\include\fmt\ranges.h" />
     <ClInclude Include="Source\Modules\ModuleProject.h" />
     <ClInclude Include="Source\Panels\PanelProject.h" />
     <ClInclude Include="Source\Resources\ResourceType.h" />
@@ -21,6 +36,7 @@
     <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
+    <ClInclude Include="Source\Utils\Factory.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
     <ClInclude Include="Libs\imgui\IconsForkAwesome.h" />
@@ -177,6 +193,10 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Utils\Creator.cpp" />
+    <ClCompile Include="Source\Utils\EngineAPI.cpp" />
+    <ClCompile Include="Libs\fmt-7.1.3\include\src\format.cc" />
+    <ClCompile Include="Libs\fmt-7.1.3\include\src\os.cc" />
     <ClCompile Include="Source\Modules\ModuleProject.cpp" />
     <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
@@ -184,6 +204,7 @@
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\Resources\ResourcePrefab.cpp" />
+    <ClCompile Include="Source\Utils\Factory.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
     <ClCompile Include="Libs\PhysicsFS\physfs_archiver_7z.c" />
@@ -363,8 +384,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Libs\PhysicsFS;$(ProjectDir)/Libs\ImGuizmo;$(ProjectDir)/Libs\rapidjson/include;$(ProjectDir)/Libs\brofiler/include;$(ProjectDir)/Libs\assimp/include;$(ProjectDir)/Libs\DeviL/include;$(ProjectDir)/Libs\DebugDraw;$(ProjectDir)/Libs\imgui;$(ProjectDir)/Libs\MathGeoLib;$(ProjectDir)/Libs\SDL/include;$(ProjectDir)/Libs\glew-2.1.0/include;$(ProjectDir)/Libs\OpenAL-soft/include;$(ProjectDir)/Libs\libsndfile/include;$(ProjectDir)/Source</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Libs\PhysicsFS;$(ProjectDir)/Libs\ImGuizmo;$(ProjectDir)/Libs\rapidjson/include;$(ProjectDir)/Libs\brofiler/include;$(ProjectDir)/Libs\assimp/include;$(ProjectDir)/Libs\DeviL/include;$(ProjectDir)/Libs\DebugDraw;$(ProjectDir)/Libs\imgui;$(ProjectDir)/Libs\MathGeoLib;$(ProjectDir)/Libs\SDL/include;$(ProjectDir)/Libs\glew-2.1.0/include;$(ProjectDir)/Libs\OpenAL-soft/include;$(ProjectDir)/Libs\libsndfile/include;$(ProjectDir)/Libs\fmt-7.1.3\include;$(ProjectDir)/Source</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS;TESSERACT_ENGINE; %(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -373,7 +394,8 @@
       <AdditionalDependencies>ProfilerCore32.lib;assimp-vc141-mt.lib;DeviL.lib;ILU.lib;ILUT.lib;SDL2.lib;SDL2main.lib;glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;OpenAL32.lib;sndfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Build\Scripting\$(Configuration)\TesseractScripting.dll" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -384,8 +406,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)/Libs\PhysicsFS;$(ProjectDir)/Libs\ImGuizmo;$(ProjectDir)/Libs\rapidjson/include;$(ProjectDir)/Libs\brofiler/include;$(ProjectDir)/Libs\assimp/include;$(ProjectDir)/Libs\DeviL/include;$(ProjectDir)/Libs\DebugDraw;$(ProjectDir)/Libs\imgui;$(ProjectDir)/Libs\MathGeoLib;$(ProjectDir)/Libs\SDL/include;$(ProjectDir)/Libs\glew-2.1.0/include;$(ProjectDir)/Libs\OpenAL-soft/include;$(ProjectDir)/Libs\libsndfile/include;$(ProjectDir)/Source</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS; %(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)/Libs\PhysicsFS;$(ProjectDir)/Libs\ImGuizmo;$(ProjectDir)/Libs\rapidjson/include;$(ProjectDir)/Libs\brofiler/include;$(ProjectDir)/Libs\assimp/include;$(ProjectDir)/Libs\DeviL/include;$(ProjectDir)/Libs\DebugDraw;$(ProjectDir)/Libs\imgui;$(ProjectDir)/Libs\MathGeoLib;$(ProjectDir)/Libs\SDL/include;$(ProjectDir)/Libs\glew-2.1.0/include;$(ProjectDir)/Libs\OpenAL-soft/include;$(ProjectDir)/Libs\libsndfile/include;$(ProjectDir)/Libs\fmt-7.1.3\include;$(ProjectDir)/Source</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS; _MBCS;TESSERACT_ENGINE; %(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -397,7 +419,8 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y /d "$(SolutionDir)Build\Scripting\$(Configuration)\TesseractScripting.dll" "$(OutDir)"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

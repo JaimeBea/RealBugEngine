@@ -6,7 +6,9 @@
 
 #include <string>
 #include <vector>
+
 constexpr char* extensions[] = {".jpg", ".png", ".dds", ".scene"};
+
 enum class AllowedExtensionsFlag {
 	ALL = 0,
 	JPG = 1,
@@ -14,6 +16,7 @@ enum class AllowedExtensionsFlag {
 	DDS = 1 << 2,
 	SCENE = 1 << 3
 };
+
 inline AllowedExtensionsFlag operator|(AllowedExtensionsFlag l, AllowedExtensionsFlag r) {
 	return static_cast<AllowedExtensionsFlag>(static_cast<int>(l) + static_cast<int>(r));
 }
@@ -32,6 +35,9 @@ public:
 	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
 	bool Exists(const char* filePath) const;
 	bool IsDirectory(const char* path) const;
+
+	const char* GetWorkingDirectory() const;
+	const char* GetRealDirectory(const char* path) const;
 
 	long long GetLocalFileModificationTime(const char* path) const;
 };

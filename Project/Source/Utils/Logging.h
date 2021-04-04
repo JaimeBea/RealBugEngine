@@ -7,7 +7,7 @@
 #define LOG(format, ...) Log(__FILENAME__, __LINE__, format, __VA_ARGS__);
 #define FPS_LOG_SIZE 100
 
-void Log(const char file[], int line, const char* format, ...);
+void TESSERACT_ENGINE_API Log(const char file[], int line, const char* format, ...);
 void UpdateLogString();
 
 void LogDeltaMS(float deltaMs);

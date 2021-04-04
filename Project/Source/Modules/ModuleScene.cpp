@@ -38,6 +38,9 @@
 #include <string>
 #include "Brofiler.h"
 
+#include <Windows.h>
+#include <array>
+
 #include "Utils/Leaks.h"
 
 static aiLogStream logStream = {nullptr, nullptr};
