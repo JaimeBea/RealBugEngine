@@ -33,7 +33,7 @@ public:
 private:
 	bool clicked = false;											// Clicked state
 
-	float4 colorHovered = float4(0.84, 0.84, 0.84, 1);				// The color when the button is hovered
-	float4 colorClicked = float4(0.64, 0.64, 0.64, 1);				// The color when the button is clicked
-	float4 colorDisabled = float4(0.73, 0.73, 0.73, 1);				// The color when the button is disabled
+	float4 colorHovered = float4(0.84f, 0.84f, 0.84f, 1.f);				// The color when the button is hovered
+	float4 colorClicked = float4(0.64f, 0.64f, 0.64f, 1.f);				// The color when the button is clicked
+	float4 colorDisabled = float4(0.73f, 0.73f, 0.73f, 1.f);				// The color when the button is disabled
 };

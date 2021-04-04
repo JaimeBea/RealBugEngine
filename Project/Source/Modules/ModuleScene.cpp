@@ -98,7 +98,7 @@ bool ModuleScene::Start() {
 	//canvasObj->CreateComponent<ComponentTransform>();
 	//canvasObj->InitComponents();
 	//
-	GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
+	/*GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
 	canvasRendererObj->CreateComponent<ComponentTransform>();
 	canvasRendererObj->CreateComponent<ComponentTransform2D>();
 	canvasRendererObj->CreateComponent<ComponentImage>();
@@ -114,7 +114,7 @@ bool ModuleScene::Start() {
 	canvasRendererObj2->CreateComponent<ComponentCanvasRenderer>();
 	canvasRendererObj2->CreateComponent<ComponentBoundingBox2D>();
 	canvasRendererObj2->CreateComponent<ComponentToggle>();
-	canvasRendererObj2->InitComponents();
+	canvasRendererObj2->InitComponents();*/
 
 	//	canvasRendererObj->CreateComponent<
 

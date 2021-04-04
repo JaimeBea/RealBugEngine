@@ -1,6 +1,8 @@
 #pragma once
-#include <Components/Component.h>
-#include <Components/UI/ComponentSelectable.h>
+
+//#include "Components/Component.h"
+#include "Components/UI/ComponentSelectable.h"
+
 class ComponentToggle : public ComponentSelectable {
 public:
 	REGISTER_COMPONENT_SELECTABLE(ComponentToggle, ComponentType::TOGGLE, false);

@@ -8,11 +8,10 @@
 
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
-#include "Components/UI/ComponentImage.h";
+#include "Components/UI/ComponentImage.h"
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentEventSystem.h"
-//#include "UI/Selectables/Button.h"
 
 #include "Utils/Leaks.h"
 

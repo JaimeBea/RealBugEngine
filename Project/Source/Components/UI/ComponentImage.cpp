@@ -180,7 +180,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glUseProgram(program);
 
 	float4x4 modelMatrix = transform->GetGlobalMatrixWithSize();
-	float4x4* proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+	float4x4* proj = &float4x4::D3DOrthoProjLH(-1.f, 1.f, (float) App->renderer->viewportWidth, (float) App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());

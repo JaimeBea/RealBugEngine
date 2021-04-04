@@ -49,6 +49,7 @@ public:
 
 	Event(EventType aType, float2 aFloat2)
 		: type(aType) {
+		// TODO: float to int?
 		point2d.x = aFloat2.x;
 		point2d.y = aFloat2.y;
 	}

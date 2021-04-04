@@ -119,7 +119,7 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	switch (e.type) {
 	case Event::EventType::MOUSE_UPDATE:
 		if (currentEvSys) {
-			for (ComponentSelectable* selectable : currentEvSys->m_Selectables) {
+			for (ComponentSelectable* selectable : ComponentEventSystem::m_Selectables) {
 				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
 
 				if (!selectable->IsHovered()) {

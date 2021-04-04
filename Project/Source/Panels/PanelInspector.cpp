@@ -184,30 +184,11 @@ void PanelInspector::SetComponentToDelete(Component* comp) {
 
 void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 	if (ImGui::BeginMenu("UI")) {
-		bool newUIComponentCreated = false;
-		if (ImGui::MenuItem("Image")) {
-			ComponentImage* component = selected->CreateComponent<ComponentImage>();
+		// ------ CREATING UI HANDLERS -------
+		if (ImGui::MenuItem("Event System")) {
+			ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
 			if (component != nullptr) {
 				component->Init();
-				newUIComponentCreated = true;
-			} else {
-				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-			}
-		}
-		if (ImGui::MenuItem("Button")) {
-				ComponentButton* component = selected->CreateComponent<ComponentButton>();
-				if (component != nullptr) {
-					component->Init();
-				} else {
-					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
-				}		
-		}
-
-		if (ImGui::MenuItem("Transform 2D")) {
-			ComponentTransform2D* component = selected->CreateComponent<ComponentTransform2D>();
-			if (component != nullptr) {
-				component->Init();
-				newUIComponentCreated = true;
 			} else {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
@@ -217,14 +198,16 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 			ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
 			if (component != nullptr) {
 				component->Init();
-				newUIComponentCreated = true;
 			} else {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
 
-		if (ImGui::MenuItem("Canvas Renderer")) {
-			ComponentCanvasRenderer* component = selected->CreateComponent<ComponentCanvasRenderer>();
+		// ------ CREATING UI ELEMENTS -------
+		bool newUIComponentCreated = false;	 // If a UI component is created, we will create a Transform2D and a CanvasRenderer components for it
+		bool newUISelectableCreated = false; // In addition, if it is a selectable element, a ComponentBoundingBox2D will also be created
+		if (ImGui::MenuItem("Image")) {
+			ComponentImage* component = selected->CreateComponent<ComponentImage>();
 			if (component != nullptr) {
 				component->Init();
 				newUIComponentCreated = true;
@@ -232,24 +215,41 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
+		// MenuItem("TextLabel")
+		// MenuItem("ProgressBar")
+		// ...
 
-		if (ImGui::MenuItem("Event System")) {
-			ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+		// Selectables
+		if (ImGui::MenuItem("Button")) {
+			ComponentButton* component = selected->CreateComponent<ComponentButton>();
 			if (component != nullptr) {
 				component->Init();
+				ComponentEventSystem::m_Selectables.push_back(component);
 				newUIComponentCreated = true;
+				newUISelectableCreated = true;
 			} else {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
+		// MenuItem("Toggle")
+		// MenuItem("InputText")
+		// MenuItem("ScrollBar")
+		// ...
 
 		if (newUIComponentCreated) {
-			// TODO: create required components that come along with a UI element
-			// if not has the required component, create it 
+			// Create new Transform2D
+			ComponentTransform2D* transform2d = selected->CreateComponent<ComponentTransform2D>();
+			if (transform2d != nullptr) transform2d->Init();
 
+			// Create new Canvas Renderer
+			ComponentCanvasRenderer* canvasRender = selected->CreateComponent<ComponentCanvasRenderer>();
+			if (canvasRender != nullptr) canvasRender->Init();
+
+			if (newUISelectableCreated) {
+				ComponentBoundingBox2D* boundingBox2d = selected->CreateComponent<ComponentBoundingBox2D>();
+				if (boundingBox2d != nullptr) boundingBox2d->Init();
 			}
-		
-
+		}
 		ImGui::EndMenu();
 	}
 }

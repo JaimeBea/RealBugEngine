@@ -454,11 +454,11 @@ const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
 }
 
 void ModuleCamera::EnableOrtographic() {
-	activeFrustum->SetOrthographic(App->renderer->viewportWidth, App->renderer->viewportHeight);
+	activeFrustum->SetOrthographic((float) App->renderer->viewportWidth, (float) App->renderer->viewportHeight);
 }
 
 void ModuleCamera::EnablePerspective() {
-	activeFrustum->SetPerspective(1.3, 1);
+	activeFrustum->SetPerspective(1.3f, 1.f);
 	ViewportResized(App->renderer->viewportWidth, App->renderer->viewportHeight);
 }
 

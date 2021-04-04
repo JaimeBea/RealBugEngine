@@ -79,16 +79,16 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		}
 
 		if (ImGui::Selectable("Create Empty")) {
-			// TODO Refactor into a private method
-			GameObject* newGameObject = scene->CreateGameObject(gameObject, GenerateUID(), "Game Object");
-			ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
-			transform->SetPosition(float3(0, 0, 0));
-			transform->SetRotation(Quat::identity);
-			transform->SetScale(float3(1, 1, 1));
-			newGameObject->InitComponents();
+			CreateEmptyGameObject(gameObject);
 		}
 
+		// TODO: code duplicated in every CreateXX(gameObject). Generalisation could be done here. Also with PanelInspector->AddUIComponentsOptions()
 		if (ImGui::BeginMenu("UI")) {
+			if (ImGui::MenuItem("Event System")) {
+				// TODO
+				CreateEventSystem(gameObject);
+			}
+
 			if (ImGui::MenuItem("Canvas")) {
 				CreateUICanvas(gameObject);
 			}
@@ -105,11 +105,6 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			if (ImGui::MenuItem("Button")) {
 				// TODO
 				CreateUIButton(gameObject);
-			}
-
-			if (ImGui::MenuItem("Event System")) {
-				// TODO
-				CreateEventSystem(gameObject);
 			}
 
 			ImGui::EndMenu();
@@ -179,23 +174,42 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	}
 }
 
-GameObject* PanelHierarchy::CreateEmptyGameObject(GameObject* gameObject) {
-	return nullptr;
+void PanelHierarchy::CreateEmptyGameObject(GameObject* gameObject) {
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Game Object");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	transform->SetPosition(float3(0, 0, 0));
+	transform->SetRotation(Quat::identity);
+	transform->SetScale(float3(1, 1, 1));
+	newGameObject->InitComponents();
+}
+
+void PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
+	if (App->userInterface->GetCurrentEventSystem() == nullptr) {
+		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
+		newGameObject->CreateComponent<ComponentTransform>();
+		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
+
+		App->userInterface->SetCurrentEventSystem(component);
+
+		newGameObject->InitComponents();
+	} /*else {
+		gameObject = &ComponentEventSystem::currentEvSys->GetOwner();
+	}*/
 }
 
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
+	CreateEventSystem(gameObject);
+
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
 
 	newGameObject->InitComponents();
 
-	CreateEventSystem(gameObject);
-
 	return newGameObject;
 }
 
-GameObject* PanelHierarchy::CreateUIImage(GameObject* gameObject) {
+void PanelHierarchy::CreateUIImage(GameObject* gameObject) {
 	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
 		gameObject = CreateUICanvas(gameObject);
 	}
@@ -207,17 +221,14 @@ GameObject* PanelHierarchy::CreateUIImage(GameObject* gameObject) {
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
 
 	newGameObject->InitComponents();
-
-	return newGameObject;
 }
 
-GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
+void PanelHierarchy::CreateUIText(GameObject* gameObject) {
 	// TODO
-	return nullptr;
 }
 
-GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
-	if (gameObject->HasComponentInAnyParent<ComponentButton>(gameObject) == nullptr) {
+void PanelHierarchy::CreateUIButton(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
 		gameObject = CreateUICanvas(gameObject);
 	}
 
@@ -230,22 +241,4 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
 
 	newGameObject->InitComponents();
-
-	return nullptr;
-}
-
-GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
-	if (App->userInterface->GetCurrentEventSystem() == nullptr) {
-		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
-		newGameObject->CreateComponent<ComponentTransform>();
-		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
-
-		App->userInterface->SetCurrentEventSystem(component);
-
-		newGameObject->InitComponents();
-
-		return newGameObject;
-	} /*else {
-		gameObject = &ComponentEventSystem::currentEvSys->GetOwner();
-	}*/
 }

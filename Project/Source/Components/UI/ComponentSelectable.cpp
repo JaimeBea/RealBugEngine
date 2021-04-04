@@ -1,6 +1,7 @@
 #include "ComponentSelectable.h"
 #include "Application.h"
 #include "Components/ComponentEventSystem.h"
+#include "Components/UI/ComponentSelectable.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleUserInterface.h"
@@ -10,7 +11,7 @@
 
 #include "Utils/Logging.h"
 
-//TO DO ACTUALLY TRANSITION	WHEN HIGHLIGHTING HAPPENS, REQUIRES CLASS GRAPHICS FOR SPRITES/IMAGES
+//TODO: ACTUALLY TRANSITION WHEN HIGHLIGHTING HAPPENS, REQUIRES CLASS GRAPHICS FOR SPRITES/IMAGES
 void ComponentSelectable::Highlight(bool b) {
 	switch (m_Transition) {
 	case TransitionType::COLOR_CHANGE:
@@ -54,37 +55,38 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 	case NavigationType::AUTOMATIC: {
 		ComponentSelectable* bestCandidate = nullptr;
 		float minDistance = FLT_MAX;
-		float3 thisPos = this->GetOwner().GetComponent<ComponentTransform2D>()->GetPosition(); //TODO: wtf
+		float3 thisPos = this->GetOwner().GetComponent<ComponentTransform2D>()->GetPosition();
+
 		// Get Gameobjects with the same parent
+		/*for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
+		ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
+		if (!selectable) continue;*/
+		// TODO: This is a hotfix because GetComponent doesn't support Component hierarchy. Ideally, should use the code commented above.
+		for (ComponentSelectable* selectable : ComponentEventSystem::m_Selectables) {
+			GameObject selectableObject = selectable->GetOwner();
+			if (selectableObject.GetParent()->GetID() != this->GetOwner().GetParent()->GetID()) continue;
 
-		//for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
-		//	ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
-		//	if (!selectable) continue;
+			// Get relative direction and distance to this Element
+			float3 direction = selectableObject.GetComponent<ComponentTransform2D>()->GetPosition() - thisPos;
+			float distance = direction.LengthSq();
 
-		//	// Get relative direction and distance to this Element
-		//	float3 direction = brother->GetComponent<ComponentTransform2D>()->GetPosition() - thisPos;
-		//	float distance = direction.LengthSq();
-
-		//	// Compare best candidate
-		//	if (distance < minDistance) {
-		//		if (dir.x > 0.6f && direction.x > 0.6f) {
-		//			bestCandidate = selectable;
-		//			minDistance = distance;
-		//		}
-		//		else if (dir.x < -0.6f && direction.x > -0.6f) {
-		//			bestCandidate = selectable;
-		//			minDistance = distance;
-		//		}
-		//		else if (dir.y > 0.6f && direction.y > 0.6f) {
-		//			bestCandidate = selectable;
-		//			minDistance = distance;
-		//		}
-		//		else if (dir.y < -0.6f && direction.y > -0.6f) {
-		//			bestCandidate = selectable;
-		//			minDistance = distance;
-		//		}
-		//	}
-		//}
+			// Compare best candidate
+			if (distance < minDistance) {
+				if (dir.x > 0.6f && direction.x > 0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				} else if (dir.x < -0.6f && direction.x > -0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				} else if (dir.y > 0.6f && direction.y > 0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				} else if (dir.y < -0.6f && direction.y > -0.6f) {
+					bestCandidate = selectable;
+					minDistance = distance;
+				}
+			}
+		}
 		return bestCandidate;
 		break;
 	}
@@ -120,8 +122,7 @@ void ComponentSelectable::OnDeselect() {
 void ComponentSelectable::Init() {
 	ComponentEventSystem::m_Selectables.push_back(this);
 
-	interactable
-		= false;
+	interactable = false;
 	highlighted = false;
 	selected = false;
 	m_NavigationType = NavigationType::AUTOMATIC;
@@ -132,7 +133,7 @@ void ComponentSelectable::Init() {
 	selectableIndex = -1;
 	m_Transition = TransitionType::NONE;
 
-	//TO DO add as listener	to MouseMoved event?
+	//TODO: add as listener to MouseMoved event?
 }
 
 void ComponentSelectable::Update() {
