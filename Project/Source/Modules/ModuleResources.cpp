@@ -130,7 +130,7 @@ bool ModuleResources::CleanUp() {
 
 	RELEASE(rootFolder);
 
-	while (resourceEventQueue.empty()) {
+	while (!resourceEventQueue.empty()) {
 		ResourceEvent resourceEvent;
 		resourceEventQueue.try_pop(resourceEvent);
 		RELEASE(resourceEvent.object);
