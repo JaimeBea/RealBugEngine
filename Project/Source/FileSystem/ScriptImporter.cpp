@@ -1,6 +1,7 @@
 #include "ScriptImporter.h"
 
 #include "Application.h"
+#include "Modules/ModuleResources.h"
 #include "Resources/ResourceScript.h"
 
 #include "Globals.h"
@@ -37,11 +38,12 @@ bool ScriptImporter::ImportScript(const char* filePath, JsonValue jMeta) {
 	}
 
 	// Script resource creation
-	ResourceScript* scriptResource = App->resources->CreateResource<ResourceScript>(filePath);
-
-	// Add resource to meta file
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceScript* scriptResource = App->resources->CreateResource<ResourceScript>(filePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(scriptResource->GetType());
 	jResource[JSON_TAG_ID] = scriptResource->GetId();
 
