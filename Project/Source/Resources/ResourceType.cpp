@@ -18,6 +18,10 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Shader";
 	case ResourceType::TEXTURE:
 		return "Texture";
+	case ResourceType::SKYBOX:
+		return "Skybox";
+	case ResourceType::SCRIPT:
+		return "Script";
 	default:
 		LOG("Resource of type %i hasn't been registered in GetResourceTypeName.", (unsigned) type);
 		assert(false); // ERROR: Resource type not registered
@@ -38,6 +42,10 @@ ResourceType GetResourceTypeFromName(const char* name) {
 		return ResourceType::SHADER;
 	} else if (strcmp(name, "Texture") == 0) {
 		return ResourceType::TEXTURE;
+	} else if (strcmp(name, "Skybox") == 0) {
+		return ResourceType::SKYBOX;
+	} else if (strcmp(name, "Script") == 0) {
+		return ResourceType::SCRIPT;
 	} else {
 		LOG("No resource of name %s exists.", (unsigned) name);
 		assert(false); // ERROR: Invalid name

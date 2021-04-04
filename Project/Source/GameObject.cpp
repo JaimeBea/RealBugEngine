@@ -270,6 +270,9 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 	case ComponentType::LIGHT:
 		if (!scene->lightComponents.Has(componentId)) return nullptr;
 		return &scene->lightComponents.Get(componentId);
+	case ComponentType::SKYBOX:
+		if (!scene->skyboxComponents.Has(componentId)) return nullptr;
+		return &scene->skyboxComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -289,6 +292,8 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 		return &scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
 	case ComponentType::LIGHT:
 		return &scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
+	case ComponentType::SKYBOX:
+		return &scene->skyboxComponents.Put(componentId, ComponentSkyBox(this, componentId, active));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -317,6 +322,10 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::LIGHT:
 		if (!scene->lightComponents.Has(componentId)) return;
 		scene->lightComponents.Remove(componentId);
+		break;
+	case ComponentType::SKYBOX:
+		if (!scene->skyboxComponents.Has(componentId)) return;
+		scene->skyboxComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);

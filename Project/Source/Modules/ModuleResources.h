@@ -56,14 +56,14 @@ public:
 	std::string GenerateResourcePath(UID id) const;
 
 	template<typename T>
-	T* CreateResource(const char* assetFilePath);
+	T* CreateResource(const char* assetFilePath, UID id);
 
 private:
 	void UpdateAsync();
 
 	void CheckForNewAssetsRecursive(const char* path, AssetFolder* folder);
 
-	Resource* CreateResourceByTypeAndID(ResourceType type, UID id, const char* assetFilePath);
+	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
 
 private:
 	std::unordered_map<UID, Resource*> resources;
@@ -77,8 +77,7 @@ private:
 };
 
 template<typename T>
-inline T* ModuleResources::CreateResource(const char* assetFilePath) {
-	UID id = GenerateUID();
+inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {
 	std::string resourceFilePath = GenerateResourcePath(id);
 	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
 	resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});

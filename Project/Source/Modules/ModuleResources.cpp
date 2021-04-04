@@ -10,12 +10,15 @@
 #include "Resources/ResourceScene.h"
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceSkybox.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
+#include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
+#include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -128,7 +131,7 @@ bool ModuleResources::CleanUp() {
 
 	RELEASE(rootFolder);
 
-	while (resourceEventQueue.empty()) {
+	while (!resourceEventQueue.empty()) {
 		ResourceEvent resourceEvent;
 		resourceEventQueue.try_pop(resourceEvent);
 		RELEASE(resourceEvent.object);
@@ -175,18 +178,10 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 			if (GetResource(id) == nullptr) {
 				std::string typeName = jResource[JSON_TAG_TYPE];
 				ResourceType type = GetResourceTypeFromName(typeName.c_str());
-				CreateResourceByTypeAndID(type, id, filePath);
+				CreateResourceByType(type, filePath, id);
 			}
 		}
 	} else {
-		UID id;
-		if (App->files->Exists(metaFilePath.c_str())) {
-			ReadMetaFile(metaFilePath.c_str(), document);
-			id = jMeta[JSON_TAG_RESOURCES][0][JSON_TAG_ID];
-		} else {
-			id = GenerateUID();
-		}
-
 		Resource* resource = nullptr;
 		if (extension == SCENE_EXTENSION) {
 			// Scene files
@@ -200,9 +195,15 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".fbx" || extension == ".obj") {
 			// Model files
 			ModelImporter::ImportModel(filePath, jMeta);
+		} else if (extension == ".sky") {
+			// Skybox files
+			SkyboxImporter::ImportSkybox(filePath, jMeta);
 		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
+		} else if (extension == ".h") {
+			// Script files
+			ScriptImporter::ImportScript(filePath, jMeta);
 		} else {
 			assetImported = false;
 		}
@@ -364,7 +365,7 @@ void ModuleResources::CheckForNewAssetsRecursive(const char* path, AssetFolder* 
 			CheckForNewAssetsRecursive(filePath.c_str(), &assetFolder->folders.back());
 		} else if (extension != META_EXTENSION) {
 			std::vector<UID>& resourceIds = ImportAsset(filePath.c_str());
-			if (!resources.empty()) {
+			if (!resourceIds.empty()) {
 				AssetFile assetFile(filePath.c_str());
 				assetFile.resourceIds = std::move(resourceIds);
 				assetFolder->files.push_back(std::move(assetFile));
@@ -373,7 +374,7 @@ void ModuleResources::CheckForNewAssetsRecursive(const char* path, AssetFolder* 
 	}
 }
 
-Resource* ModuleResources::CreateResourceByTypeAndID(ResourceType type, UID id, const char* assetFilePath) {
+Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* assetFilePath, UID id) {
 	std::string resourceFilePath = GenerateResourcePath(id);
 	Resource* resource = nullptr;
 	switch (type) {
@@ -394,6 +395,9 @@ Resource* ModuleResources::CreateResourceByTypeAndID(ResourceType type, UID id, 
 		break;
 	case ResourceType::TEXTURE:
 		resource = new ResourceTexture(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::SKYBOX:
+		resource = new ResourceSkybox(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);

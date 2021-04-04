@@ -8,6 +8,7 @@
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceSkybox.h"
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
@@ -70,83 +71,6 @@ bool ModuleScene::Start() {
 
 	CreateEmptyScene();
 
-	// TODO: (Scene resource) Load default scene
-	// SceneImporter::LoadScene("survival_shooter");
-
-	// Load skybox
-	// clang-format off
-	float skyboxVertices[] = {
-		// Front (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-	
-		// Left (x, y, z)
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-		
-		// Right (x, y, z)
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 
-		// Back (x, y, z)
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-	
-		// Top (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-		
-		// Bottom (x, y, z)
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	}; // clang-format on
-
-	// Skybox VAO
-	// TODO: (Texture resource) Make skybox work
-	/*
-	glGenVertexArrays(1, &skyboxVao);
-	glGenBuffers(1, &skyboxVbo);
-	glBindVertexArray(skyboxVao);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-	glBindVertexArray(0);
-
-	skyboxCubeMap = App->resources->ObtainCubeMap();
-	skyboxCubeMap->fileNames[0] = "right";
-	skyboxCubeMap->fileNames[1] = "left";
-	skyboxCubeMap->fileNames[2] = "top";
-	skyboxCubeMap->fileNames[3] = "bottom";
-	skyboxCubeMap->fileNames[4] = "front";
-	skyboxCubeMap->fileNames[5] = "back";
-	TextureImporter::LoadCubeMap(skyboxCubeMap);
-	*/
-
 	return true;
 }
 
@@ -201,6 +125,9 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
+
+	// Create Skybox
+	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	gameCamera->InitComponents();
 }
 
