@@ -109,8 +109,7 @@ unsigned int ModuleTime::GetFrameCount() const {
 void ModuleTime::StartGame() {
 	if (gameStarted) return;
 
-	// TODO: (Scene resource) Save temp scenes
-	// SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
+	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
 
 	gameStarted = true;
 	gameRunning = true;
@@ -119,10 +118,8 @@ void ModuleTime::StartGame() {
 void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
-	// TODO: (Scene resource) Load temp scenes
-	// SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
-	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
-	App->files->Erase(tempSceneFilePath.c_str());
+	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
+	App->files->Erase(TEMP_SCENE_FILE_NAME);
 
 	gameStarted = false;
 	gameRunning = false;
