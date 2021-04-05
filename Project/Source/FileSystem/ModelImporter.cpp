@@ -50,17 +50,17 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	unsigned bonesIDSize = sizeof(unsigned) * 4;
 	unsigned weightsSize = sizeof(float) * 4;
 	unsigned indexSize = sizeof(unsigned);
-	unsigned attachSize = sizeof(ResourceMesh::Attach);
-	unsigned boneSize = sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
+	//unsigned attachSize = sizeof(ResourceMesh::Attach);
+	unsigned boneSize = sizeof(unsigned) + sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
 
 	unsigned headerSize = sizeof(unsigned) * 3;
 	unsigned vertexSize = positionSize + normalSize + uvSize + bonesIDSize + weightsSize;
 	unsigned vertexBufferSize = vertexSize * numVertices;
 	unsigned indexBufferSize = indexSize * numIndices;
 	unsigned bonesBufferSize = boneSize * numBones;
-	unsigned attachesBufferSize = attachSize * numVertices;
+	//unsigned attachesBufferSize = attachSize * numVertices;
 
-	size_t size = headerSize + vertexBufferSize + indexBufferSize + bonesBufferSize + attachesBufferSize;
+	size_t size = headerSize + bonesBufferSize + vertexBufferSize + indexBufferSize;
 	Buffer<char> buffer = Buffer<char>(size);
 	char* cursor = buffer.Data();
 
@@ -636,30 +636,33 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	}
 
 	// Cache bones for skinning
-	/*aiNode* rootBone = nullptr;
+	aiNode* rootBone = nullptr;
 
 	if (!bones.empty()) {
 		rootBone = assimpScene->mRootNode->FindNode(bones[0]);
-		rootBone = rootBone->mParent;
+		aiNode* rootBoneParent = rootBone->mParent;
 		bool foundInBones = false;
 		do {
+			// Ignore assimp middle nodes
+			std::string name = rootBoneParent->mName.C_Str();
+			while (name.find("$AssimpFbx$") != std::string::npos) {
+				rootBoneParent = rootBoneParent->mParent;
+				name = rootBoneParent->mName.C_Str();
+			}
+			// Find if node in bones
 			foundInBones = false;
 			for (const char* bone : bones) {
-				if (std::strcmp(rootBone->mName.C_Str(), bone) != 0) continue;
+				if (std::strcmp(rootBoneParent->mName.C_Str(), bone) != 0) continue;
 
 				foundInBones = true;
-				rootBone = rootBone->mParent;
-				std::string name = rootBone->mName.C_Str();
-				while (name.find("$AssimpFbx$") != std::string::npos) {
-					rootBone = rootBone->mParent;
-					name = rootBone->mName.C_Str();
-				}
+				rootBone = rootBoneParent;
+				rootBoneParent = rootBone->mParent;
 			}
 		} while (foundInBones);
-	}*/
+	}
 
 	if (!bones.empty()) {
-		GameObject* rootBoneGO = root->FindDescendant(bones[0])->GetParent();
+		GameObject* rootBoneGO = root->FindDescendant(rootBone->mName.C_Str())->GetParent();
 		root->GetChildren()[0]->SetRootBone(rootBoneGO);
 
 		std::unordered_map<std::string, GameObject*> goBones;

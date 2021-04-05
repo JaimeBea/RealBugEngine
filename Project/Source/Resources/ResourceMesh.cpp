@@ -141,7 +141,7 @@ void ResourceMesh::Load() {
 void ResourceMesh::Unload() {
 	if (!vao) return;
 
-	attaches.clear();
+	//attaches.clear();
 	bones.clear();
 
 	glDeleteVertexArrays(1, &vao);
