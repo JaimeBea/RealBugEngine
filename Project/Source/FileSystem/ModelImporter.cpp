@@ -324,7 +324,7 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 	}
 
 	// Create animation
-	ResourceAnimation* animation = App->resources->CreateResource<ResourceAnimation>(modelFilePath);
+	ResourceAnimation* animation = App->resources->CreateResource<ResourceAnimation>(modelFilePath, GenerateUID());
 
 	// Add resource to meta file
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];

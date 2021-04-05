@@ -9,7 +9,6 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
-#include "Components/ComponentAnimation.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"
@@ -20,7 +19,6 @@
 #include "rapidjson/error/en.h"
 
 #include "Utils/Leaks.h"
-
 
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
@@ -100,38 +98,13 @@ void SceneImporter::LoadScene(const char* filePath) {
 	JsonValue jScene(document, document);
 
 	// Load GameObjects
-	JsonValue jGameObjects = jScene[JSON_TAG_GAMEOBJECTS];
-	unsigned jGameObjectsSize = jGameObjects.Size();
-	Buffer<UID> ids(jGameObjectsSize);
-	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-
-		GameObject* gameObject = App->scene->gameObjects.Obtain();
-		gameObject->Load(jGameObject);
-
-		UID id = gameObject->GetID();
-		App->scene->gameObjectsIdMap[id] = gameObject;
-		ids[i] = id;
-	}
-
-	// Post-load
-	App->scene->root = App->scene->GetGameObject(jScene[JSON_TAG_ROOT_ID]);
-	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-
-		UID id = ids[i];
-		GameObject* gameObject = App->scene->GetGameObject(id);
-		gameObject->PostLoad(jGameObject);
-	}
-
-	// Init components
-	for (unsigned i = 0; i < jGameObjectsSize; ++i) {
-		JsonValue jGameObject = jGameObjects[i];
-
-		UID id = ids[i];
-		GameObject* gameObject = App->scene->GetGameObject(id);
-		gameObject->InitComponents();
-	}
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	GameObject* root = scene->gameObjects.Obtain();
+	scene->root = root;
+	root->scene = scene;
+	root->Load(jRoot);
+	scene->gameObjectsIdMap[root->GetID()] = root;
+	root->InitComponents();
 
 	// Quadtree generation
 	JsonValue jQuadtreeBounds = jScene[JSON_TAG_QUADTREE_BOUNDS];
