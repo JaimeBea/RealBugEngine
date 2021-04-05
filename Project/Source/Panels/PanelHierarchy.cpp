@@ -217,7 +217,7 @@ GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
 }
 
 GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
-	if (gameObject->HasComponentInAnyParent<ComponentButton>(gameObject) == nullptr) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
 		gameObject = CreateUICanvas(gameObject);
 	}
 
