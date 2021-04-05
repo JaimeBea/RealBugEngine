@@ -17,6 +17,8 @@
 #include "fmt/core.h"
 #include "fmt/format.h"
 
+#include "physfs.h"
+
 #include <Windows.h>
 #include <shellapi.h>
 #include <ObjIdl.h>
@@ -42,13 +44,14 @@ void ModuleProject::LoadProject(const char* path) {
 		CreateNewProject("Penteract", "");
 	}
 
+	PHYSFS_addToSearchPath("Penteract", 1);
+
+	std::string fullpath = PHYSFS_getRealDir("Penteract.sln");
+
 	projectName = FileDialog::GetFileName(path);
 	projectPath = path;
 
-	//std::string fullPath = FileDialog::GetAbsolutePath("Penteract.sln");
-
-	//ShellExecute(NULL, "open", fullPath.c_str(), NULL, NULL, SW_MAXIMIZE);
-	ShellExecute(NULL, "open", "D:\\Documentos\\Jordi\\UPC\\Master Engine\\Tesseract\\Game/Penteract/Penteract.sln", NULL, NULL, SW_MAXIMIZE);
+	ShellExecute(NULL, "open", "D:/Documentos/Jordi/UPC/Master Engine/Tesseract/Game/./Penteract/Penteract.sln", NULL, NULL, SW_MAXIMIZE);
 
 }
 
