@@ -1,12 +1,5 @@
 #pragma once
 
-#include "Utils/UID.h"
-
-#include <vector>
-
-class GameObject;
-class Component;
-
 /* Creating a new component type:
 *    1. Add a new ComponentType for the new component
 *    2. Add REGISTER_COMPONENT to the .h of the new component
@@ -31,4 +24,5 @@ enum class ComponentType {
 	BOUNDING_BOX = 3,
 	CAMERA = 4,
 	LIGHT = 5,
+	SKYBOX = 6,
 };

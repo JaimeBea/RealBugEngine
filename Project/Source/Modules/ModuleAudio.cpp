@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/alcErrors.h"
+
 #include "AL/al.h"
 
 #include "Utils/Leaks.h"

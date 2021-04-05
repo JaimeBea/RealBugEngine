@@ -280,3 +280,7 @@ inline bool FileDialog::Exists(const char* filePath) {
 	std::ifstream f(filePath);
 	return f.good();
 }
+
+void FileDialog::Copy(const char* path, const char* newPath) {
+	CopyFile(path, newPath, false);
+}

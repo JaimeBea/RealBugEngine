@@ -4,6 +4,7 @@
 
 #include "Utils/Buffer.h"
 #include "Panels/PanelScene.h"
+#include "Panels/PanelProject.h"
 #include "Panels/PanelConsole.h"
 #include "Panels/PanelConfiguration.h"
 #include "Panels/PanelInspector.h"
@@ -37,14 +38,16 @@ public:
 public:
 	Modal modalToOpen = Modal::NONE; // Used in the MenuBar to popup a Modal Window of the specific type.
 
-	unsigned dockMainId = 0;  // ??
-	unsigned dockLeftId = 0;  // ??
-	unsigned dockRightId = 0; // ??
-	unsigned dockDownId = 0;  // ??
+	// ---------- Docking ----------
+	unsigned dockMainId = 0;
+	unsigned dockLeftId = 0;
+	unsigned dockRightId = 0;
+	unsigned dockDownId = 0;
 
 	// ---------- Panels ----------- //
 	std::vector<Panel*> panels;
 	PanelScene panelScene;
+	PanelProject panelProject;
 	PanelConsole panelConsole;
 	PanelConfiguration panelConfiguration;
 	PanelInspector panelInspector;

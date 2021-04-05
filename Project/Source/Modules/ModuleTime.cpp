@@ -9,6 +9,7 @@
 #include "Modules/ModuleEventSystem.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
+#include <ctime>
 
 #include "Utils/Leaks.h"
 
@@ -89,6 +90,10 @@ float ModuleTime::GetRealTimeSinceStartup() const {
 	return realTimeLastMs / 1000.0f;
 }
 
+long long ModuleTime::GetCurrentTimestamp() const {
+	return std::time(0);
+}
+
 float ModuleTime::GetTimeScale() const {
 	return timeScale;
 }
@@ -114,8 +119,7 @@ void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
-	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
-	App->files->Erase(tempSceneFilePath.c_str());
+	App->files->Erase(TEMP_SCENE_FILE_NAME);
 
 	gameStarted = false;
 	gameRunning = false;
