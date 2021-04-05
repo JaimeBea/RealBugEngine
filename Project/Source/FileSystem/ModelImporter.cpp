@@ -192,11 +192,12 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	}
 
 	// Create mesh
-	ResourceMesh* mesh = App->resources->CreateResource<ResourceMesh>(modelFilePath);
-
-	// Add resource to meta file
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[resourceIndex];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceMesh* mesh = App->resources->CreateResource<ResourceMesh>(modelFilePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(mesh->GetType());
 	jResource[JSON_TAG_ID] = mesh->GetId();
 	resourceIndex += 1;
@@ -444,7 +445,9 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		LOG("Loading material %i...", i);
 		aiMaterial* assimpMaterial = assimpScene->mMaterials[i];
 
-		ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath);
+		JsonValue jResource = jResources[resourceIndex];
+		UID id = jResource[JSON_TAG_ID];
+		ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath, id ? id : GenerateUID());
 
 		aiString materialFilePath;
 		aiTextureMapping mapping;
@@ -605,7 +608,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		assimpMaterial->Get(AI_MATKEY_SHININESS, material->smoothness);
 
 		// Add resource to meta file
-		JsonValue jResource = jResources[resourceIndex];
 		jResource[JSON_TAG_TYPE] = GetResourceTypeName(material->GetType());
 		jResource[JSON_TAG_ID] = material->GetId();
 		resourceIndex += 1;
@@ -703,9 +705,10 @@ bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject
 	document.Accept(writer);
 
 	// Create prefab resource
-	ResourcePrefab* prefabResource = App->resources->CreateResource<ResourcePrefab>(filePath);
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[resourceIndex];
+	UID id = jResource[JSON_TAG_ID];
+	ResourcePrefab* prefabResource = App->resources->CreateResource<ResourcePrefab>(filePath, id ? id : GenerateUID());
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(prefabResource->GetType());
 	jResource[JSON_TAG_ID] = prefabResource->GetId();
 	resourceIndex += 1;

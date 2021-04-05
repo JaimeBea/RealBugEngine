@@ -6,13 +6,13 @@
 *    1. Add a new ResourceType for the new resource
 *    2. Add REGISTER_RESOURCE to the .h of the new resource
 *    3. Add the new resource to the GetResourceTypeName and GetResourceTypeFromName functions in ResourceType.cpp
-*    4. Add the new resource to the ModuleResource::CreateResourceByTypeAndID function in ModuleResources.cpp
+*    4. Add the new resource to the ModuleResource::CreateResourceByType function in ModuleResources.cpp
 */
 
 // REGISTER_RESOURCE builds the data structures common to all Resources.
 // This includes the Constructor.
-#define REGISTER_RESOURCE(resourceClass, resourceType)         \
-	static const ResourceType staticType = resourceType;       \
+#define REGISTER_RESOURCE(resourceClass, resourceType)   \
+	static const ResourceType staticType = resourceType; \
 	resourceClass(UID id, const char* assetFilePath, const char* resourceFilePath) : Resource(staticType, id, assetFilePath, resourceFilePath) {}
 
 enum class ResourceType {
@@ -23,7 +23,8 @@ enum class ResourceType {
 	SCENE,
 	SHADER,
 	TEXTURE,
-	ANIMATION,
+	SKYBOX,
+	ANIMATION
 };
 
 const char* GetResourceTypeName(ResourceType type);

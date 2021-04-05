@@ -72,6 +72,9 @@ void PanelInspector::Update() {
 				case ComponentType::BOUNDING_BOX:
 					cName = "Bounding Box";
 					break;
+				case ComponentType::SKYBOX:
+					cName = "Skybox";
+					break;
 				case ComponentType::ANIMATION:
 					cName = "Animation";
 					break;
@@ -135,6 +138,14 @@ void PanelInspector::Update() {
 					ComponentLight* light = selected->CreateComponent<ComponentLight>();
 					if (light != nullptr) {
 						light->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Skybox")) {
+					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
+					if (skybox != nullptr) {
+						skybox->Init();
 					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}

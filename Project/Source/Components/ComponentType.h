@@ -24,5 +24,6 @@ enum class ComponentType {
 	BOUNDING_BOX = 3,
 	CAMERA = 4,
 	LIGHT = 5,
-	ANIMATION = 6
+	SKYBOX = 6,
+	ANIMATION = 7
 };

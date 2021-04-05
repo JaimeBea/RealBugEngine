@@ -50,7 +50,12 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	}
 	ImGui::Separator();
 
+	UID oldMeshId = meshId;
 	ImGui::ResourceSlot<ResourceMesh>("Mesh", &meshId);
+	if (oldMeshId != meshId) {
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		transform->InvalidateHierarchy();
+	}
 	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
 
 	if (ImGui::TreeNode("Mesh")) {

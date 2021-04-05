@@ -18,6 +18,8 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Shader";
 	case ResourceType::TEXTURE:
 		return "Texture";
+	case ResourceType::SKYBOX:
+		return "Skybox";
 	case ResourceType::ANIMATION:
 		return "Animation";
 	default:
@@ -40,6 +42,8 @@ ResourceType GetResourceTypeFromName(const char* name) {
 		return ResourceType::SHADER;
 	} else if (strcmp(name, "Texture") == 0) {
 		return ResourceType::TEXTURE;
+	} else if (strcmp(name, "Skybox") == 0) {
+		return ResourceType::SKYBOX;
 	} else if (strcmp(name, "Animation") == 0) {
 		return ResourceType::ANIMATION;
 	} else {

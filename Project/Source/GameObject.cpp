@@ -314,6 +314,9 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 	case ComponentType::LIGHT:
 		if (!scene->lightComponents.Has(componentId)) return nullptr;
 		return &scene->lightComponents.Get(componentId);
+	case ComponentType::SKYBOX:
+		if (!scene->skyboxComponents.Has(componentId)) return nullptr;
+		return &scene->skyboxComponents.Get(componentId);
 	case ComponentType::ANIMATION:
 		if (!scene->animationComponents.Has(componentId)) return nullptr;
 		return &scene->animationComponents.Get(componentId);
@@ -336,6 +339,8 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 		return &scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
 	case ComponentType::LIGHT:
 		return &scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
+	case ComponentType::SKYBOX:
+		return &scene->skyboxComponents.Put(componentId, ComponentSkyBox(this, componentId, active));
 	case ComponentType::ANIMATION:
 		return &scene->animationComponents.Put(componentId, ComponentAnimation(this, componentId, active));
 	default:
@@ -366,6 +371,10 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::LIGHT:
 		if (!scene->lightComponents.Has(componentId)) return;
 		scene->lightComponents.Remove(componentId);
+		break;
+	case ComponentType::SKYBOX:
+		if (!scene->skyboxComponents.Has(componentId)) return;
+		scene->skyboxComponents.Remove(componentId);
 		break;
 	case ComponentType::ANIMATION:
 		if (!scene->animationComponents.Has(componentId)) return;
