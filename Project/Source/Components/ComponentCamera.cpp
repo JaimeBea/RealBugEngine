@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
@@ -23,6 +23,10 @@
 #define JSON_TAG_HORIZONTAL_FOV "HorizontalFov"
 #define JSON_TAG_VERTICAL_FOV "VerticalFov"
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
+
+void ComponentCamera::Init() {
+	OnTransformUpdate();
+}
 
 void ComponentCamera::DrawGizmos() {
 	if (activeCamera) return;
@@ -100,6 +104,11 @@ void ComponentCamera::Load(JsonValue jComponent) {
 	frustum.SetPerspective(jFrustum[JSON_TAG_HORIZONTAL_FOV], jFrustum[JSON_TAG_VERTICAL_FOV]);
 
 	activeCamera = jComponent[JSON_TAG_CAMERA_SELECTED];
+}
+
+void ComponentCamera::DuplicateComponent(GameObject& owner) {
+	ComponentCamera* component = owner.CreateComponent<ComponentCamera>();
+	component->frustum = this->frustum;
 }
 
 Frustum ComponentCamera::BuildDefaultFrustum() const {

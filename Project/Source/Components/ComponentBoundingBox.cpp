@@ -4,7 +4,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 
@@ -15,14 +15,14 @@
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX "LocalBoundingBox"
 
-void ComponentBoundingBox::OnTransformUpdate() {
-	CalculateWorldBoundingBox(true);
-}
-
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
-	ImGui::Checkbox("Draw", &bbActive);
-	if (bbActive) DrawBoundingBox();
+
+	bool active = IsActive();
+
+	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
+
+	if (IsActive()) DrawBoundingBox();
 }
 
 void ComponentBoundingBox::Save(JsonValue jComponent) const {
@@ -43,6 +43,12 @@ void ComponentBoundingBox::Load(JsonValue jComponent) {
 	dirty = true;
 }
 
+void ComponentBoundingBox::DuplicateComponent(GameObject& owner) {
+	ComponentBoundingBox* component = owner.CreateComponent<ComponentBoundingBox>();
+	component->SetLocalBoundingBox(this->localAABB);
+	//component->bbActive = this->bbActive;
+}
+
 void ComponentBoundingBox::SetLocalBoundingBox(const AABB& boundingBox) {
 	localAABB = boundingBox;
 	dirty = true;
@@ -61,7 +67,7 @@ void ComponentBoundingBox::CalculateWorldBoundingBox(bool force) {
 
 void ComponentBoundingBox::DrawBoundingBox() {
 	float3 points[8];
-	worldOBB.GetCornerPoints(points);
+	GetWorldOBB().GetCornerPoints(points);
 
 	// Reorder points for drawing
 	float3 aux;
@@ -79,10 +85,12 @@ void ComponentBoundingBox::Invalidate() {
 	dirty = true;
 }
 
-const OBB& ComponentBoundingBox::GetWorldOBB() const {
+const OBB& ComponentBoundingBox::GetWorldOBB() {
+	CalculateWorldBoundingBox();
 	return worldOBB;
 }
 
-const AABB& ComponentBoundingBox::GetWorldAABB() const {
+const AABB& ComponentBoundingBox::GetWorldAABB() {
+	CalculateWorldBoundingBox();
 	return worldAABB;
 }

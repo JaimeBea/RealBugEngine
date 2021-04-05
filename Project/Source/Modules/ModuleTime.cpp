@@ -6,9 +6,10 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
-
+#include "Modules/ModuleEventSystem.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
+#include <ctime>
 
 #include "Utils/Leaks.h"
 
@@ -16,6 +17,15 @@
 
 ModuleTime::ModuleTime() {
 	timer.Start();
+}
+
+bool ModuleTime::Init() {
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PAUSE, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PLAY, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_RESUME, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STEP, this);
+	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STOP, this);
+	return true;
 }
 
 UpdateStatus ModuleTime::PreUpdate() {
@@ -80,12 +90,8 @@ float ModuleTime::GetRealTimeSinceStartup() const {
 	return realTimeLastMs / 1000.0f;
 }
 
-float ModuleTime::GetTimeScale() const {
-	return timeScale;
-}
-
-void ModuleTime::SetTimeScale(float timeScale) {
-	timeScale = std::max(0.0f, timeScale);
+long long ModuleTime::GetCurrentTimestamp() const {
+	return std::time(0);
 }
 
 unsigned int ModuleTime::GetFrameCount() const {
@@ -105,8 +111,7 @@ void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
-	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
-	App->files->Erase(tempSceneFilePath.c_str());
+	App->files->Erase(TEMP_SCENE_FILE_NAME);
 
 	gameStarted = false;
 	gameRunning = false;
@@ -133,4 +138,26 @@ void ModuleTime::StepGame() {
 	if (gameRunning) PauseGame();
 
 	gameStepOnce = true;
+}
+
+void ModuleTime::ReceiveEvent(const Event& e) {
+	switch (e.type) {
+	case Event::EventType::PRESSED_PLAY:
+		StartGame();
+		break;
+	case Event::EventType::PRESSED_STOP:
+		StopGame();
+		break;
+	case Event::EventType::PRESSED_RESUME:
+		ResumeGame();
+		break;
+	case Event::EventType::PRESSED_PAUSE:
+		PauseGame();
+		break;
+	case Event::EventType::PRESSED_STEP:
+		StepGame();
+		break;
+	default:
+		break;
+	}
 }

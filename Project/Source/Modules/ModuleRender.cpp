@@ -149,19 +149,20 @@ UpdateStatus ModuleRender::Update() {
 	//PerformanceTimer timer;
 	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (ComponentBoundingBox* boundingBox : ComponentBoundingBox::GetComponents()) {
-		GameObject& gameObject = boundingBox->GetOwner();
+	Scene* scene = App->scene->scene;
+	for (ComponentBoundingBox& boundingBox : scene->boundingBoxComponents) {
+		GameObject& gameObject = boundingBox.GetOwner();
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
-		const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
-		const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+		const AABB& gameObjectAABB = boundingBox.GetWorldAABB();
+		const OBB& gameObjectOBB = boundingBox.GetWorldOBB();
 		if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
 			DrawGameObject(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	if (scene->quadtree.IsOperative()) {
+		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
@@ -171,15 +172,15 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw quadtree
 	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+		DrawQuadtreeRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
 	// Draw Animations
-	for (GameObject& gameObject : App->scene->gameObjects) {
-		DrawAnimation(&gameObject);
+	for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+		DrawAnimation(animationComponent.GetOwner().GetRootBone());
 	}
 
 	return UpdateStatus::CONTINUE;
@@ -355,6 +356,8 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::DrawSkyBox() {
+	// TODO: (Texture resource) Make skybox work
+	/*
 	if (skyboxActive) {
 		glDepthFunc(GL_LEQUAL);
 
@@ -372,22 +375,16 @@ void ModuleRender::DrawSkyBox() {
 
 		glDepthFunc(GL_LESS);
 	}
+	*/
 }
 
-void ModuleRender::DrawAnimation(GameObject* gameObject, bool hasAnimation) {
-	ComponentAnimation* animationComponent = gameObject->GetComponent<ComponentAnimation>();
-	if (animationComponent || hasAnimation) {
-		for (GameObject* childen : gameObject->GetChildren()) {
-			ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
-			if (transform && gameObject->name != "RootNode" && gameObject->name != "Ctrl_Grp" && gameObject->name != "Root") {
-				if (gameObject->name == "RootNode") {
-					bool wtf = true;
-				}
-				dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
-				dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
-				//dd::axisTriad(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix(), 1, 10, 0, false);
-			}
-			DrawAnimation(childen, true);
-		}
+void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {
+	for (const GameObject* childen : gameObject->GetChildren()) {
+		ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
+
+		dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
+		dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
+
+		DrawAnimation(childen, true);
 	}
 }

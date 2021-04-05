@@ -17,6 +17,8 @@ PanelConsole::PanelConsole()
 	: Panel("Console", true) {}
 
 void PanelConsole::Update() {
+	UpdateLogString();
+
 	ImGui::SetNextWindowDockID(App->editor->dockDownId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FK_TERMINAL " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {

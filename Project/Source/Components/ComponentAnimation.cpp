@@ -1,16 +1,18 @@
 #include "ComponentAnimation.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
-#include "Resources/AnimationController.h"
 //#include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceTransition.h"
 #include "Resources/AnimationInterpolation.h"
 //#include "Resources/ResourceStates.h"
 #include "Resources/Clip.h"
+#include "GameObject.h"
+#include "AnimationController.h"
+#include "Resources/ResourceAnimation.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleResources.h"
 
 #include "Application.h"
 #include "Modules/ModuleTime.h"
@@ -19,9 +21,8 @@
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_ANIMATION_CONTROLLER "AnimationController"
-#define JSON_TAG_RESOURCE_ANIMATION "ResourceAnimation"
-
+#define JSON_TAG_LOOP "Controller"
+#define JSON_TAG_ANIMATION_ID "AnimationId"
 
 void ComponentAnimation::Update() {
 	if (App->input->GetKey(SDL_SCANCODE_1)) {
@@ -63,42 +64,31 @@ void ComponentAnimation::OnEditorUpdate() {
 }
 
 void ComponentAnimation::Save(JsonValue jComponent) const {
-	// TODO
-	/*JsonValue jAnimationController = jComponent[JSON_TAG_ANIMATION_CONTROLLER];
-	jAnimationController = animationController;
-
-	JsonValue jResourceAnimation = jComponent[JSON_TAG_RESOURCE_ANIMATION];
-	jResourceAnimation = animationResource;*/
+	// TODO: Save state machine resource UID
+	jComponent[JSON_TAG_ANIMATION_ID] = animationController.animationID;
+	jComponent[JSON_TAG_LOOP] = animationController.loop;
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
-	// TODO
-	/*JsonValue jAnimationController = jComponent[JSON_TAG_ANIMATION_CONTROLLER];
-	animationController = jAnimationController;
-
-	JsonValue jResourceAnimation = jComponent[JSON_TAG_RESOURCE_ANIMATION];
-	animationResource = jResourceAnimation;*/
+	animationController.animationID = jComponent[JSON_TAG_ANIMATION_ID];
+	if (animationController.animationID != 0) App->resources->IncreaseReferenceCount(animationController.animationID);
+	animationController.loop = jComponent[JSON_TAG_LOOP];
 }
 
-void ComponentAnimation::OnStop() {
-	animationController->Stop();
-}
-void ComponentAnimation::OnPlay() {
-	animationController->Play();
+void ComponentAnimation::DuplicateComponent(GameObject& owner) {
+	ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
+	component->animationController.animationID = animationController.animationID;
+	component->animationController.loop = animationController.loop;
+	component->animationController.currentTime = animationController.currentTime;
 }
 
 void ComponentAnimation::OnUpdate() {
-	//Update gameobjects matrix
-	for (GameObject* child : GetOwner().GetChildren()) {
-		if (child->name == "Ctrl_Grp") {
-			// One iteration loop
-			for (GameObject* child2 : child->GetChildren()) {
-				if (child2->name == "Root") {
-					UpdateAnimations(child2);
-				}
-			}
-		}
-	}	
+	// Update gameobjects matrix
+	GameObject* rootBone = GetOwner().GetRootBone();
+
+	for (GameObject* child : rootBone->GetChildren()) {
+		UpdateAnimations(child);
+	}
 	stateMachineResource->GetCurrentState()->currentTime += App->time->GetDeltaTime();
 }
 
