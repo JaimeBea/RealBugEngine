@@ -28,7 +28,9 @@ public:
 
 	void CreateFolder(const char* folderPath) const;
 	void Erase(const char* path) const;
-	std::string GetFilePath(const char* file, bool absolute = false) const;
-	bool Exists(const char* filePath) const;
 	void AddSearchPath(const char* searchPath) const;
+	
+	bool Exists(const char* filePath) const;
+	std::string GetFilePath(const char* file, bool absolute = false) const;
+	
 };
