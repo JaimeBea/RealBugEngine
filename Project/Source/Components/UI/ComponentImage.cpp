@@ -5,6 +5,8 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
+#include "Modules/ModuleTime.h"
+#include "Panels/PanelScene.h"
 #include <Components/ComponentTransform2D.h>
 #include "GameObject.h"
 #include <Resources/ResourceTexture.h>
@@ -15,6 +17,8 @@
 #include "Utils/ImGuiUtils.h"
 #include "imgui.h"
 #include "GL/glew.h"
+#include "debugdraw.h"
+
 
 #define JSON_TAG_TEXTURE_SHADERID "ShaderID"
 #define JSON_TAG_TEXTURE_TEXTUREID "TextureID"
@@ -179,8 +183,20 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	float4x4 modelMatrix = transform->GetGlobalMatrixWithSize();
-	float4x4* proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+	float4x4 modelMatrix;
+	float4x4* proj = &App->camera->GetProjectionMatrix();
+
+	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		float4x4 view = float4x4::identity;
+		modelMatrix = modelMatrix = transform->GetGlobalMatrixWithSize();
+	
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
+	} else {
+		float4x4* view = &App->camera->GetViewMatrix();
+		modelMatrix = transform->GetGlobalMatrixWithSize(true);
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
+	}
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());

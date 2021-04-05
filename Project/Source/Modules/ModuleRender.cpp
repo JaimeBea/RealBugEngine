@@ -15,6 +15,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Modules/ModuleTime.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -395,13 +396,19 @@ void ModuleRender::DrawSkyBox() {
 }
 
 void ModuleRender::RenderUI() {
-	SetOrtographicRender();
-	App->camera->EnableOrtographic();
+	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+		SetOrtographicRender();
+		App->camera->EnableOrtographic();
+	}
+	
 	glDisable(GL_DEPTH_TEST);		// In order to not clip with Models
 	App->userInterface->Render();
 	glEnable(GL_DEPTH_TEST);
-	App->camera->EnablePerspective();
-	SetPerspectiveRender();
+
+	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+		App->camera->EnablePerspective();
+		SetPerspectiveRender();
+	}
 }
 
 void ModuleRender::SetOrtographicRender() {
