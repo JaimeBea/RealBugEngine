@@ -32,13 +32,13 @@ public:
 	bool Save(const char* filePath, const char* buffer, size_t size, bool append = false) const;
 	void CreateFolder(const char* folderPath) const;
 	void Erase(const char* path) const;
+	void AddSearchPath(const char* searchPath) const;
 
-	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
 	bool Exists(const char* filePath) const;
 	bool IsDirectory(const char* path) const;
 
-	const char* GetWorkingDirectory() const;
-	const char* GetRealDirectory(const char* path) const;
-
+	std::string GetFilePath(const char* file, bool absolute = false) const;
+	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
+	
 	long long GetLocalFileModificationTime(const char* path) const;
 };
