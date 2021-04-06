@@ -6,11 +6,18 @@
 #include "physfs.h"
 
 #include "Utils/Leaks.h"
+#include "Math/MathFunc.h"
 
 bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
 	PHYSFS_mount(".", nullptr, 0);
 	PHYSFS_setWriteDir(".");
+	AddSearchPath("Library");
+	std::string file1 = GetFilePath("SDL2.dll",true);
+	std::string file2 = GetFilePath("SDL2.dll", false);
+	std::string file3 = GetFilePath("pruebas.txt", false);
+	std::string error1 = GetFilePath("SDL.dll", true);
+	std::string error2 = GetFilePath("SDL.dll", false);
 	return true;
 }
 
@@ -114,14 +121,39 @@ long long ModuleFiles::GetLocalFileModificationTime(const char* path) const {
 	PHYSFS_stat(path, &fileStats);
 	return fileStats.modtime;
 }
-std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
-#ifdef _DEBUG
-	return std::string(PHYSFS_getBaseDir()) + "..\\..\\" + std::string(PHYSFS_getRealDir(file)) + "\\" + file;
-#else
-	return std::string(PHYSFS_getBaseDir()) + std::string(PHYSFS_getRealDir(file)) + "\\" + file;
-#endif
+
+std::string GetFileFolder(const char* filePath, int upTimes = 1) {
+	std::string result = filePath;
+	for (int i = 0; i < upTimes; ++i) {
+		const char* lastSlash = strrchr(result.c_str(), '/');
+		const char* lastBackslash = strrchr(result.c_str(), '\\');
+		const char* lastSeparator = Max(lastSlash, lastBackslash);
+
+		if (lastSeparator == nullptr) {
+			return std::string();
+		}
+		result = std::string(result).substr(0, lastSeparator - result.c_str());
+	}
+	return result;
 }
 
-void ModuleFiles::AddSearchPath(const char* searchPath) const {
-	PHYSFS_mount(searchPath, NULL, 1);
+std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
+	const char* localdir = PHYSFS_getRealDir(file);
+	
+	if (localdir != nullptr) {
+		#ifdef _DEBUG
+		std::string absolutedir =  GetFileFolder(PHYSFS_getBaseDir(),3) + "\\Game\\" ;
+		return ((absolute) ? absolutedir : "") + ((std::string(localdir) == ".") ? "" : std::string(localdir) + "\\") + file;
+		#else
+			return ((absolute) ? std::string(PHYSFS_getBaseDir()) : "") + std::string(localdir) + "\\" + file;
+		#endif
+	} else {
+		return "";
+	}
 }
+
+bool ModuleFiles::AddSearchPath(const char* searchPath) const {
+	return PHYSFS_mount(searchPath, NULL, 1) == 0;
+}
+
+
