@@ -44,7 +44,6 @@ void ComponentAnimation::DuplicateComponent(GameObject& owner) {
 
 void ComponentAnimation::OnUpdate() {
 	// Update gameobjects matrix
-
 	GameObject* rootBone = GetOwner().GetRootBone();
 
 	for (GameObject* child : rootBone->GetChildren()) {

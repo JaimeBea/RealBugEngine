@@ -1,4 +1,5 @@
 #include "AnimationController.h"
+
 #include "Resources/ResourceAnimation.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleResources.h"
@@ -9,7 +10,6 @@
 #include "Utils/Leaks.h"
 
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
-
 	ResourceAnimation* animationResource = static_cast<ResourceAnimation*>(App->resources->GetResource(animationID));
 
 	if (!animationResource) return false;

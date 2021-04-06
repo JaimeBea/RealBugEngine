@@ -249,18 +249,18 @@ void ComponentMeshRenderer::Update() {
 	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
 	if (!mesh) return;
 
-	if (App->time->GetDeltaTime() > 0) {
-		for (unsigned i = 0; i < mesh->numBones; ++i) {
-			const GameObject* bone = goBones.at(mesh->bones[i].boneName);
-			// TODO: if(bone) might not be necessary
-			if (bone) {
-				const GameObject* parent = GetOwner().GetParent();
-				const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
-				const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
-				palette[i] = invertedRootBoneTransform * bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform;
-			} else {
-				palette[i] = float4x4::identity;
-			}
+	if (App->time->GetDeltaTime() <= 0) return;
+
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		const GameObject* bone = goBones.at(mesh->bones[i].boneName);
+		// TODO: if(bone) might not be necessary
+		if (bone) {
+			const GameObject* parent = GetOwner().GetParent();
+			const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
+			const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+			palette[i] = invertedRootBoneTransform * bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform;
+		} else {
+			palette[i] = float4x4::identity;
 		}
 	}
 }

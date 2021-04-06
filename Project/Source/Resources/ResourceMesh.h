@@ -35,7 +35,6 @@ public:
 	unsigned numVertices = 0;
 	unsigned numIndices = 0;
 	unsigned numBones = 0;
-	float* vertices;
-	//std::vector<ResourceMesh::Attach> attaches; // For each vertex, we store the bone indices and wights that this vertex is related.
+	float* vertices = nullptr;
 	std::vector<ResourceMesh::Bone> bones;		// The bones and it's transform from a Mesh
 };

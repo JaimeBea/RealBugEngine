@@ -2,9 +2,7 @@
 
 #include "Utils/UID.h"
 
-#include <Math/Quat.h>
-
-class ResourceAnimation;
+#include "Math/Quat.h"
 
 class AnimationController {
 public:

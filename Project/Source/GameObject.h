@@ -41,7 +41,7 @@ public:
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
-	GameObject* FindDescendant(std::string name) const;
+	GameObject* FindDescendant(const std::string& name) const;
 	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;

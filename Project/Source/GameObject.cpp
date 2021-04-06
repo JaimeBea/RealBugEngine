@@ -147,7 +147,7 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-GameObject* GameObject::FindDescendant(std::string name) const {
+GameObject* GameObject::FindDescendant(const std::string& name) const {
 	for (GameObject* child : children) {
 		if (child->name == name) {
 			return child;
