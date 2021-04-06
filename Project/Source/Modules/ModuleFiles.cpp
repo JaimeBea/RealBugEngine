@@ -12,12 +12,6 @@ bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
 	PHYSFS_mount(".", nullptr, 0);
 	PHYSFS_setWriteDir(".");
-	AddSearchPath("Library");
-	std::string file1 = GetFilePath("SDL2.dll",true);
-	std::string file2 = GetFilePath("SDL2.dll", false);
-	std::string file3 = GetFilePath("pruebas.txt", false);
-	std::string error1 = GetFilePath("SDL.dll", true);
-	std::string error2 = GetFilePath("SDL.dll", false);
 	return true;
 }
 
@@ -139,13 +133,13 @@ std::string GetFileFolder(const char* filePath, int upTimes = 1) {
 
 std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
 	const char* localdir = PHYSFS_getRealDir(file);
-	
+
 	if (localdir != nullptr) {
 		#ifdef _DEBUG
-		std::string absolutedir =  GetFileFolder(PHYSFS_getBaseDir(),3) + "\\Game\\" ;
-		return ((absolute) ? absolutedir : "") + ((std::string(localdir) == ".") ? "" : std::string(localdir) + "\\") + file;
+				std::string absolutedir = GetFileFolder(PHYSFS_getBaseDir(), 3) + "\\Game\\";
+				return ((absolute) ? absolutedir : "") + ((std::string(localdir) == ".") ? "" : std::string(localdir) + "\\") + file;
 		#else
-			return ((absolute) ? std::string(PHYSFS_getBaseDir()) : "") + std::string(localdir) + "\\" + file;
+				return ((absolute) ? std::string(PHYSFS_getBaseDir()) : "") + std::string(localdir) + "\\" + file;
 		#endif
 	} else {
 		return "";
@@ -155,5 +149,3 @@ std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
 bool ModuleFiles::AddSearchPath(const char* searchPath) const {
 	return PHYSFS_mount(searchPath, NULL, 1) == 0;
 }
-
-
