@@ -4,6 +4,7 @@
 #include "Utils/Pool.h"
 #include "Utils/UID.h"
 #include "Resources/Resource.h"
+#include "Utils/AssetFile.h"
 
 #include <vector>
 #include <unordered_set>
@@ -11,31 +12,17 @@
 #include <thread>
 #include <concurrent_queue.h>
 
-struct AssetFile {
-	AssetFile(const char* path);
-
-	std::string path;
-	std::vector<UID> resourceIds;
-};
-
-struct AssetFolder {
-	AssetFolder(const char* path);
-
-	std::string path;
-	std::vector<AssetFolder> folders;
-	std::vector<AssetFile> files;
-};
-
-enum class ResourceEventType {
-	ADD_RESOURCE,
-	REMOVE_RESOURCE,
-	UPDATE_FOLDERS
-};
-
-struct ResourceEvent {
-	ResourceEventType type = ResourceEventType::ADD_RESOURCE;
-	void* object = nullptr;
-};
+//
+//enum class ResourceEventType {
+//	ADD_RESOURCE,
+//	REMOVE_RESOURCE,
+//	UPDATE_FOLDERS
+//};
+//
+//struct ResourceEvent {
+//	ResourceEventType type = ResourceEventType::ADD_RESOURCE;
+//	void* object = nullptr;
+//};
 
 class ModuleResources : public Module {
 public:
@@ -43,6 +30,7 @@ public:
 	bool Start() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
+	void ReceiveEvent(const Event& ev) override;
 
 	std::vector<UID> ImportAsset(const char* filePath);
 
@@ -64,13 +52,14 @@ private:
 	void CheckForNewAssetsRecursive(const char* path, AssetFolder* folder);
 
 	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
+	void SendAddResourceEvent(Resource* resource);
 
 private:
 	std::unordered_map<UID, Resource*> resources;
 	std::unordered_map<UID, unsigned> referenceCounts;
 	AssetFolder* rootFolder = nullptr;
 
-	concurrency::concurrent_queue<ResourceEvent> resourceEventQueue;
+	//concurrency::concurrent_queue<ResourceEvent> resourceEventQueue;
 
 	std::thread importThread;
 	bool stopImportThread = false;
@@ -80,6 +69,8 @@ template<typename T>
 inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {
 	std::string resourceFilePath = GenerateResourcePath(id);
 	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
-	resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});
+	//resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});
+
+	SendAddResourceEvent(resource);
 	return resource;
 }
