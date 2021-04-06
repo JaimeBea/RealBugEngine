@@ -103,7 +103,7 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 }
 
 void ModuleProject::CompileProject(Configuration config) {
-	/*
+	
 	std::string workingDir = App->files->GetWorkingDirectory();
 	workingDir += "TemplateProject\\TemplateProject.sln";
 
@@ -151,6 +151,5 @@ void ModuleProject::CompileProject(Configuration config) {
 	default:
 		break;
 	}
-	*/
 
 }

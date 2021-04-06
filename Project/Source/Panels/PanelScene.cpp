@@ -50,22 +50,39 @@ void PanelScene::Update() {
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
 					App->BroadCastEvent(Event(Event::EventType::PRESSED_STOP));
+					for (auto& it : App->scene->scene->scriptComponents) {
+						it.onGame = false;
+					}
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
 						App->BroadCastEvent(Event(Event::EventType::PRESSED_PAUSE));
+						for (auto& it : App->scene->scene->scriptComponents) {
+							it.onGame = false;
+						}
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
 						App->BroadCastEvent(Event(Event::EventType::PRESSED_RESUME));
+						for (auto& it : App->scene->scene->scriptComponents) {
+							it.onGame = true;
+						}
 					}
 				}
 			} else {
 				if (ImGui::Button("Play")) {
 					App->BroadCastEvent(Event(Event::EventType::PRESSED_PLAY));
+					// TODO: Move to proper position when components can listen events
 					// Compile the VS project with the Release Editor configuration
+					#ifdef _DEBUG
+					App->project->CompileProject(Configuration::DEBUG_EDITOR);
+					#else
 					App->project->CompileProject(Configuration::RELEASE_EDITOR);
+					#endif // _DEBUG
+					for (auto& it : App->scene->scene->scriptComponents) {
+						it.onGame = true;
+					}
 				}
 			}
 			ImGui::SameLine();

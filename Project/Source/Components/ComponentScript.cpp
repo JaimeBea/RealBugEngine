@@ -16,6 +16,22 @@ void ComponentScript::Init() {
 }
 
 void ComponentScript::Update() {
+	if (onGame) {
+		OnUpdate();
+	}
+}
+
+void ComponentScript::OnStart() {
+	assert(script);
+
+	script->Start();
+
+}
+
+void ComponentScript::OnUpdate() {
+	assert(script != nullptr);
+
+	script->Update();
 }
 
 void ComponentScript::OnEditorUpdate() {

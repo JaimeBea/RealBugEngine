@@ -11,10 +11,15 @@ public:
 
 	void Init();
 	void Update();
+	void OnStart();
+	void OnUpdate();
 
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const;
 	void Load(JsonValue jComponent);
+
+public:
+	bool onGame = false;
 
 private:
 	std::string name = "";
