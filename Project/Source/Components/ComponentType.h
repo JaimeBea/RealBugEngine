@@ -3,7 +3,7 @@
 /* Creating a new component type:
 *    1. Add a new ComponentType for the new component
 *    2. Add REGISTER_COMPONENT to the .h of the new component
-*    3. Create a new VectorMap for the new component in ModuleScene.h
+*    3. Create a new VectorMap for the new component in Scene.h
 *    4. Add the new component to the ByTypeAndId functions in GameObject.cpp
 *    5. Implement DuplicateComponent for the new component
 *    6. Add the "Add Component" functionality in PanelInspector.cpp (ln. 62)
@@ -25,4 +25,5 @@ enum class ComponentType {
 	CAMERA = 4,
 	LIGHT = 5,
 	SKYBOX = 6,
+	SCRIPT = 7
 };

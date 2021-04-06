@@ -75,6 +75,9 @@ void PanelInspector::Update() {
 				case ComponentType::SKYBOX:
 					cName = "Skybox";
 					break;
+				case ComponentType::SCRIPT:
+					cName = "Script";
+					break;
 				default:
 					cName = "";
 					break;
@@ -143,6 +146,14 @@ void PanelInspector::Update() {
 					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
 					if (skybox != nullptr) {
 						skybox->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Script")) {
+					ComponentScript* script = selected->CreateComponent<ComponentScript>();
+					if (script != nullptr) {
+						script->Init();
 					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
