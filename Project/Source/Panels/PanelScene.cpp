@@ -15,6 +15,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleProject.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -63,6 +64,8 @@ void PanelScene::Update() {
 			} else {
 				if (ImGui::Button("Play")) {
 					App->BroadCastEvent(Event(Event::EventType::PRESSED_PLAY));
+					// Compile the VS project with the Release Editor configuration
+					App->project->CompileProject(Configuration::RELEASE_EDITOR);
 				}
 			}
 			ImGui::SameLine();

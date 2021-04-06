@@ -44,14 +44,13 @@ void ModuleProject::LoadProject(const char* path) {
 		CreateNewProject("Penteract", "");
 	}
 
-	PHYSFS_addToSearchPath("Penteract", 1);
-
-	std::string fullpath = PHYSFS_getRealDir("Penteract.sln");
+	//App->files->AddPathToSearch("Penteract");
 
 	projectName = FileDialog::GetFileName(path);
 	projectPath = path;
 
-	ShellExecute(NULL, "open", "D:/Documentos/Jordi/UPC/Master Engine/Tesseract/Game/./Penteract/Penteract.sln", NULL, NULL, SW_MAXIMIZE);
+	// TODO: Add correct path
+	ShellExecute(NULL, "open", "D:/Documentos/Jordi/UPC/Master Engine/Tesseract/Game/Penteract/Penteract.sln", NULL, NULL, SW_MAXIMIZE);
 
 }
 
