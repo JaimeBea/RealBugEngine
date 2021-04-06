@@ -23,7 +23,8 @@ enum class ResourceType {
 	SCENE,
 	SHADER,
 	TEXTURE,
-	SKYBOX
+	SKYBOX,
+	ANIMATION
 };
 
 const char* GetResourceTypeName(ResourceType type);

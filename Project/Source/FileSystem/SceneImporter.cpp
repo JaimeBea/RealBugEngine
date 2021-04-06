@@ -20,7 +20,6 @@
 
 #include "Utils/Leaks.h"
 
-
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
