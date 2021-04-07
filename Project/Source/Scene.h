@@ -35,6 +35,11 @@ public:
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
+	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
+
+	template<class T> T* GetComponent(UID id);
 
 public:
 	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
@@ -57,7 +62,6 @@ public:
 	VectorMap<UID, ComponentButton> buttonComponents;
 	VectorMap<UID, ComponentSelectable> selectableComponents;
 
-
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;
 	AABB2D quadtreeBounds = {{-1000, -1000}, {1000, 1000}};
@@ -72,3 +76,8 @@ public:
 	CubeMap* skyboxCubeMap = 0;
 	*/
 };
+
+template<class T>
+inline T* Scene::GetComponent(UID id) {
+	return (T*) GetComponentByTypeAndId(T::staticType, id);
+}

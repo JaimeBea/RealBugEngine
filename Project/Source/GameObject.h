@@ -27,7 +27,7 @@ public:
 	template<class T> bool HasComponent() const;
 	template<class T> T* GetComponent() const;
 	template<class T> std::vector<T*> GetComponents() const;
-	template<class T> GameObject* HasComponentInAnyParent(GameObject* current) const;		// Finds in the current object or in any parent of this Object the T Component. Returns the GameObject if found, else nullptr
+	template<class T> GameObject* HasComponentInAnyParent(GameObject* current) const; // Finds in the current object or in any parent of this Object the T Component. Returns the GameObject if found, else nullptr
 	std::vector<Component*> GetComponents() const;
 	void RemoveComponent(Component* component);
 	void RemoveAllComponents();
@@ -57,11 +57,6 @@ public:
 	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree
 
 private:
-	Component* GetComponentByTypeAndId(ComponentType type, UID componentId) const;
-	Component* CreateComponentByTypeAndId(ComponentType type, UID componentId);
-	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
-
-private:
 	bool active = true;
 	GameObject* parent = nullptr;
 	std::vector<std::pair<ComponentType, UID>> components;
@@ -73,7 +68,7 @@ inline T* GameObject::CreateComponent(bool active) {
 	if (!T::allowMultipleComponents && HasComponent<T>()) return nullptr;
 	UID componentId = GenerateUID();
 	components.push_back(std::pair<ComponentType, UID>(T::staticType, componentId));
-	return (T*) CreateComponentByTypeAndId(T::staticType, componentId);
+	return (T*) scene->CreateComponentByTypeAndId(this, T::staticType, componentId);
 }
 
 template<class T>
@@ -91,7 +86,7 @@ template<class T>
 inline T* GameObject::GetComponent() const {
 	for (const std::pair<ComponentType, UID>& pair : components) {
 		if (pair.first == T::staticType) {
-			return (T*) GetComponentByTypeAndId(pair.first, pair.second);
+			return (T*) scene->GetComponentByTypeAndId(pair.first, pair.second);
 		}
 	}
 	return nullptr;
@@ -103,7 +98,7 @@ inline std::vector<T*> GameObject::GetComponents() const {
 
 	for (const std::pair<ComponentType, UID>& pair : components) {
 		if (pair.first == T::staticType) {
-			auxComponents.push_back((T*) GetComponentByTypeAndId(pair.first, pair.second));
+			auxComponents.push_back((T*) scene->GetComponentByTypeAndId(pair.first, pair.second));
 		}
 	}
 
