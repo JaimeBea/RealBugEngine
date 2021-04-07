@@ -27,6 +27,7 @@ public:
 	template<class T> bool HasComponent() const;
 	template<class T> T* GetComponent() const;
 	template<class T> std::vector<T*> GetComponents() const;
+	template<class T> GameObject* HasComponentInAnyParent(GameObject* current) const;		// Finds in the current object or in any parent of this Object the T Component. Returns the GameObject if found, else nullptr
 	std::vector<Component*> GetComponents() const;
 	void RemoveComponent(Component* component);
 	void RemoveAllComponents();
@@ -107,4 +108,18 @@ inline std::vector<T*> GameObject::GetComponents() const {
 	}
 
 	return auxComponents;
+}
+
+template<class T>
+inline GameObject* GameObject::HasComponentInAnyParent(GameObject* current) const {
+	T* component = current->GetComponent<T>();
+	if (component != nullptr) {
+		return current;
+	} else {
+		if (current->GetParent() != nullptr) {
+			return HasComponentInAnyParent<T>(current->GetParent());
+		}
+	}
+
+	return nullptr;
 }

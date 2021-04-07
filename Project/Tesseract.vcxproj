@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
     <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
     <ClInclude Include="Libs\freetype\include\freetype\ftadvanc.h" />
     <ClInclude Include="Libs\freetype\include\freetype\ftbbox.h" />
@@ -56,8 +57,9 @@
     <ClInclude Include="Libs\freetype\include\freetype\tttables.h" />
     <ClInclude Include="Libs\freetype\include\freetype\tttags.h" />
     <ClInclude Include="Libs\freetype\include\ft2build.h" />
+    <ClInclude Include="Source\Resources\ResourceFont.h" />
     <ClInclude Include="Source\Components\ComponentBoundingBox2D.h" />
-    <ClInclude Include="Source\UI\Interfaces\IMoveHandler.h" />
+    <ClInclude Include="Source\UI\Interfaces\IMouseClickHandler.h" />
     <ClInclude Include="Source\UI\Interfaces\IPointerEnterHandler.h" />
     <ClInclude Include="Source\UI\Interfaces\IPointerExitHandler.h" />
     <ClInclude Include="Source\Components\ComponentCanvas.h" />
@@ -234,6 +236,8 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Resources\ResourceFont.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
     <ClCompile Include="Source\Components\ComponentCanvas.cpp" />
     <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />

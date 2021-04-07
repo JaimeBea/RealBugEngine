@@ -114,6 +114,10 @@ void PanelScene::Update() {
 			}
 			ImGui::PopItemWidth();
 
+			ImGui::SameLine();
+			ImGui::Checkbox("2D", &view2D);
+			ImGui::SameLine();
+
 			ImGui::EndMenuBar();
 		}
 
@@ -242,4 +246,8 @@ float2 PanelScene::GetMousePosOnScene()const {
 
 float2 PanelScene::GetSceneWindowSize() const {
 	return framebufferSize;
+}
+
+const bool PanelScene::IsUsing2D() const {
+	return view2D;
 }

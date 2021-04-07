@@ -8,11 +8,11 @@
 
 #include "Components/ComponentCanvas.h"
 #include "Components/ComponentCanvasRenderer.h"
-#include "Components/UI/ComponentImage.h";
+#include "Components/UI/ComponentImage.h"
 #include "Components/ComponentTransform2D.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentEventSystem.h"
-//#include "UI/Selectables/Button.h"
+#include "Components/UI/ComponentSelectable.h"
 
 #include "Utils/Leaks.h"
 
@@ -281,31 +281,30 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 	case ComponentType::CANVAS:
 		if (!scene->canvasComponents.Has(componentId)) return nullptr;
 		return &scene->canvasComponents.Get(componentId);
-		break;
 	case ComponentType::CANVASRENDERER:
 		if (!scene->canvasRendererComponents.Has(componentId)) return nullptr;
 		return &scene->canvasRendererComponents.Get(componentId);
-		break;
 	case ComponentType::IMAGE:
 		if (!scene->imageComponents.Has(componentId)) return nullptr;
 		return &scene->imageComponents.Get(componentId);
-		break;
 	case ComponentType::TRANSFORM2D:
 		if (!scene->transform2DComponents.Has(componentId)) return nullptr;
 		return &scene->transform2DComponents.Get(componentId);
-		break;
-	case ComponentType::SELECTABLE:
-		if (!scene->selectableComponents.Has(componentId)) return nullptr;
-		return &scene->selectableComponents.Get(componentId);
-		break;
+	case ComponentType::BUTTON:
+		if (!scene->buttonComponents.Has(componentId)) return nullptr;
+		return &scene->buttonComponents.Get(componentId);
 	case ComponentType::EVENT_SYSTEM:
 		if (!scene->eventSystemComponents.Has(componentId)) return nullptr;
 		return &scene->eventSystemComponents.Get(componentId);
-		break;
 	case ComponentType::BOUNDING_BOX_2D:
 		if (!scene->boundingBox2DComponents.Has(componentId)) return nullptr;
 		return &scene->boundingBox2DComponents.Get(componentId);
-		break;
+	case ComponentType::TOGGLE:
+		if (!scene->toggleComponents.Has(componentId)) return nullptr;
+		return &scene->toggleComponents.Get(componentId);
+	case ComponentType::SELECTABLE:
+		if (!scene->selectableComponents.Has(componentId)) return nullptr;
+		return &scene->selectableComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -333,12 +332,16 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 		return &scene->imageComponents.Put(componentId, ComponentImage(this, componentId, active));
 	case ComponentType::TRANSFORM2D:
 		return &scene->transform2DComponents.Put(componentId, ComponentTransform2D(this, componentId, active));
-	case ComponentType::SELECTABLE:
-		return &scene->selectableComponents.Put(componentId, ComponentSelectable(this, componentId, active));
+	case ComponentType::BUTTON:
+		return &scene->buttonComponents.Put(componentId, ComponentButton(this, componentId, active));
 	case ComponentType::EVENT_SYSTEM:
 		return &scene->eventSystemComponents.Put(componentId, ComponentEventSystem(this, componentId, active));
 	case ComponentType::BOUNDING_BOX_2D:
 		return &scene->boundingBox2DComponents.Put(componentId, ComponentBoundingBox2D(this, componentId, active));
+	case ComponentType::TOGGLE:
+		return &scene->toggleComponents.Put(componentId, ComponentToggle(this, componentId, active));
+	case ComponentType::SELECTABLE:
+		return &scene->selectableComponents.Put(componentId, ComponentSelectable(this, componentId, active));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -384,9 +387,9 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 		if (!scene->transform2DComponents.Has(componentId)) return;
 		scene->transform2DComponents.Remove(componentId);
 		break;
-	case ComponentType::SELECTABLE:
-		if (!scene->selectableComponents.Has(componentId)) return;
-		scene->selectableComponents.Remove(componentId);
+	case ComponentType::BUTTON:
+		if (!scene->buttonComponents.Has(componentId)) return;
+		scene->buttonComponents.Remove(componentId);
 		break;
 	case ComponentType::EVENT_SYSTEM:
 		if (!scene->eventSystemComponents.Has(componentId)) return;
@@ -395,6 +398,14 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::BOUNDING_BOX_2D:
 		if (!scene->boundingBox2DComponents.Has(componentId)) return;
 		scene->boundingBox2DComponents.Remove(componentId);
+		break;
+	case ComponentType::TOGGLE:
+		if (!scene->toggleComponents.Has(componentId)) return;
+		scene->toggleComponents.Remove(componentId);
+		break;
+	case ComponentType::SELECTABLE:
+		if (!scene->selectableComponents.Has(componentId)) return;
+		scene->selectableComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);

@@ -376,6 +376,10 @@ void ModuleEditor::OnMouseMoved() {
 	App->BroadCastEvent(Event(Event::EventType::MOUSE_UPDATE, panelScene.GetMousePosOnScene()));
 }
 
+void ModuleEditor::OnMouseClicked() {
+	App->BroadCastEvent(Event(Event::EventType::MOUSE_CLICKED, panelScene.GetMousePosOnScene()));
+}
+
 //void ModuleEditor::ReceiveEvent(const Event& ev) {
 //	switch (ev.type) {
 //	case Event::EventType::MOUSE_UPDATE:

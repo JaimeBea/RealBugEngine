@@ -13,6 +13,7 @@ public:
 		PRESSED_STOP = 5,
 		MOUSE_UPDATE = 6,
 		FILE_DROPPED = 7,
+		MOUSE_CLICKED = 8,
 	} type;
 
 	static const char* TypeToString(EventType v) {
@@ -33,6 +34,8 @@ public:
 			return "Pressed stop";
 		case EventType::MOUSE_UPDATE:
 			return "Mouse moved";
+		case EventType::MOUSE_CLICKED:
+			return "Mouse clicked";
 		default:
 			return "Unkown event type";
 		}
@@ -46,6 +49,7 @@ public:
 
 	Event(EventType aType, float2 aFloat2)
 		: type(aType) {
+		// TODO: float to int?
 		point2d.x = aFloat2.x;
 		point2d.y = aFloat2.y;
 	}

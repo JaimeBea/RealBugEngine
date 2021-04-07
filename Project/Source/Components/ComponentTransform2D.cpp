@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
+#include "Modules/ModuleTime.h"
 #include "GameObject.h"
 #include "ComponentBoundingBox2D.h"
 
@@ -31,7 +32,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 
 	float2 editorSize = size;
 	ImGui::TextColored(App->editor->titleColor, "Size (Width,Height)");
-	if (ImGui::DragFloat2("Size", editorSize.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+	if (ImGui::DragFloat2("Size", editorSize.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 		SetSize(editorSize);
 	}
 
@@ -123,6 +124,12 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 	anchorY.Set(jAnchorY[0], jAnchorY[1]);
 }
 
+void ComponentTransform2D::DrawGizmos() {
+	if (!App->time->IsGameRunning()) {
+		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
+	}
+}
+
 void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
 
@@ -142,13 +149,13 @@ void ComponentTransform2D::SetSize(float2 size_) {
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
+	rotation = rotation_;
+	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+
 	InvalidateHierarchy();
 	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
-
-	rotation = rotation_;
-	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 }
 
 void ComponentTransform2D::SetRotation(float3 rotation_) {
@@ -189,7 +196,10 @@ const float4x4 ComponentTransform2D::GetGlobalMatrix() {
 	return globalMatrix;
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize() {
+const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
+	if (isRunning) {
+		return globalMatrix * float4x4::Scale(size.x / 100, size.y / 100, 0);
+	}
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
 }
 
@@ -211,8 +221,6 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 		globalMatrix = localMatrix;
 	}
 }
-// return float4x4::FromTRS(position, rotation, vec(scale.x * size.x, scale.y * size.y, 0));
-// }
 
 float3 ComponentTransform2D::GetPosition() const {
 	return position;
