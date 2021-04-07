@@ -17,6 +17,7 @@ class ModuleProject : public Module {
 public:
 	bool Init() override;
 
+	void CreateScript(std::string& name);
 	void CreateNewProject(const char* name, const char* path);
 	void LoadProject(const char* path);
 
@@ -25,6 +26,7 @@ public:
 private:
 	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
+	void CreateBatches();
 
 public:
 	std::string projectName = "";

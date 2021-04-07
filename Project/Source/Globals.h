@@ -1,10 +1,10 @@
 #pragma once
 
-#ifdef TESSERACT_ENGINE
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
 #define TESSERACT_ENGINE_API __declspec(dllexport)
-#else 
-#define TESSERACT_ENGINE_API __declspec(dllimport)
-#endif // TESSERACT_ENGINE
+#endif
 
 // Enums -----------
 enum class UpdateStatus {

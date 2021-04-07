@@ -1,0 +1,4 @@
+﻿  aaaa.cpp
+aaaa.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+     Creating library D:\Documentos\Jordi\UPC\Master Engine\Tesseract\Game\Penteract\\Build\DebugEditor\Penteract.lib and object D:\Documentos\Jordi\UPC\Master Engine\Tesseract\Game\Penteract\\Build\DebugEditor\Penteract.exp
+  Penteract.vcxproj -> D:\Documentos\Jordi\UPC\Master Engine\Tesseract\Game\Penteract\Build\DebugEditor\Penteract.dll

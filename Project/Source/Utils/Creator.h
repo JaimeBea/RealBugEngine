@@ -19,8 +19,7 @@ public:
 template<class T>
 class TESSERACT_ENGINE_API CreatorImplementation : public Creator {
 public:
-	CreatorImplementation<T>(const std::string& className)
-		: Creator(className) {}
+	CreatorImplementation<T>(const std::string& className) : Creator(className) {}
 
 	virtual ~CreatorImplementation<T>() {}
 

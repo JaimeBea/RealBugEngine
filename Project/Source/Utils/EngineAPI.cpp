@@ -5,7 +5,7 @@
 #include <Windows.h>
 
 namespace {
-	HMODULE gameCodeDLL = nullptr;
+	static HMODULE gameCodeDLL = nullptr;
 }
 
 bool LoadGameCodeDLL(const char* path) {

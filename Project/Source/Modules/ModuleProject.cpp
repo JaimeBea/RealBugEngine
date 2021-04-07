@@ -32,37 +32,61 @@
 	static_cast<classname*>(pointer)->variable = value
 
 bool ModuleProject::Init() {
-	
-	LoadProject("Penteract");
+	LoadProject("Penteract/Penteract.sln");
 
 	return true;
 }
 
 void ModuleProject::LoadProject(const char* path) {
-	
-	if (!App->files->Exists("Penteract/Penteract.sln")) {
-		CreateNewProject("Penteract", "");
+	projectPath = FileDialog::GetFileFolder(path);
+	projectName = FileDialog::GetFileNameAndExtension(path);
+
+	if (!App->files->Exists(projectName.c_str())) {
+		CreateNewProject(projectPath.c_str(), "");
+	} else {
+#ifdef _DEBUG
+		CompileProject(Configuration::DEBUG_EDITOR);
+#else
+		CompileProject(Configuration::RELEASE_EDITOR);
+#endif // _DEBUG
 	}
 
-	//App->files->AddPathToSearch("Penteract");
+	//ShellExecute(NULL, "open", (App->files->GetFilePath(projectName.c_str())).c_str(), NULL, NULL, SW_MAXIMIZE);
+}
 
-	projectName = FileDialog::GetFileName(path);
-	projectPath = path;
+void ModuleProject::CreateScript(std::string& name) {
+	//CreateSymbolicLink
+	Buffer<char> bufferHeader = App->files->Load("Templates/Header");
+	Buffer<char> bufferSource = App->files->Load("Templates/Source");
 
-	// TODO: Add correct path
-	ShellExecute(NULL, "open", "D:/Documentos/Jordi/UPC/Master Engine/Tesseract/Game/Penteract/Penteract.sln", NULL, NULL, SW_MAXIMIZE);
+	std::string header = bufferHeader.Data();
+	std::string source = bufferSource.Data();
 
+	std::string assetsPath = "Assets/Scripts/";
+	std::string realPath = projectPath + "/Source/";
+
+	std::string result;
+
+	result = fmt::format(header, name, "{", "}");
+	App->files->Save((assetsPath + name + ".h").c_str(), result.data(), result.size());
+
+	result = fmt::format(source, name, "{", "}");
+	App->files->Save((assetsPath + name + ".cpp").c_str(), result.data(), result.size());
+
+	//assert(CreateSymbolicLinkA((assetsPath + name + ".h").c_str(), (realPath + name + ".h").c_str(), 0x0));
+	//assert(CreateSymbolicLinkA((assetsPath + name + ".cpp").c_str(), (realPath + name + ".cpp").c_str(), 0x0));
 }
 
 void ModuleProject::CreateNewProject(const char* name, const char* path) {
-	
-	projectName = name;
-
 	std::string fullPath = std::string(path) + name;
 	std::string sourcePath = fullPath + "/Source";
+	std::string batchPath = fullPath + "/Batches";
+
 	App->files->CreateFolder(fullPath.c_str());
+	App->files->AddSearchPath(fullPath.c_str());
 
 	App->files->CreateFolder(sourcePath.c_str());
+	App->files->CreateFolder(batchPath.c_str());
 
 	std::string UIDProject("{");
 	UIDProject += GenerateUID128();
@@ -70,6 +94,8 @@ void ModuleProject::CreateNewProject(const char* name, const char* path) {
 
 	CreateMSVCSolution((fullPath + "/" + name + ".sln").c_str(), name, UIDProject.c_str());
 	CreateMSVCProject((fullPath + "/" + name + ".vcxproj").c_str(), name, UIDProject.c_str());
+
+	CreateBatches();
 }
 
 void ModuleProject::CreateMSVCSolution(const char* path, const char* name, const char* UIDProject) {
@@ -90,22 +116,51 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 	Buffer<char> buffer = App->files->Load("Templates/MSVCProject");
 
 	std::string project = buffer.Data();
+	std::string enginePath = FileDialog::GetFileFolder(FileDialog::GetAbsolutePath("").c_str());
 
-	std::string enginePath = App->files->GetWorkingDirectory();
-
-	#ifdef _DEBUG
-	std::string result = fmt::format(project, name, UIDProject, "../Project/Source/", enginePath);
-	#else
+#ifdef _DEBUG
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", enginePath);
+#else
 	std::string result = fmt::format(project, name, UIDProject, enginePath + "Source", enginePath + "/Lib/");
-	#endif
+#endif
 
 	App->files->Save(path, result.data(), result.size());
 }
 
+void ModuleProject::CreateBatches() {
+	Buffer<char> buffer;
+	std::string file;
+	std::string result;
+
+	// Debug (.exe)
+	buffer = App->files->Load("Templates/BuildDebug");
+	file = buffer.Data();
+	result = fmt::format(file, projectName);
+	App->files->Save((projectPath + "/Batches/BuildDebug.bat").c_str(), result.data(), result.size());
+
+	// Debug Editor (.dll)
+	buffer = App->files->Load("Templates/BuildDebugEditor");
+	file = buffer.Data();
+	result = fmt::format(file, projectName);
+	App->files->Save((projectPath + "/Batches/BuildDebugEditor.bat").c_str(), result.data(), result.size());
+
+	// Release (.exe)
+	buffer = App->files->Load("Templates/BuildRelease");
+	file = buffer.Data();
+	result = fmt::format(file, projectName);
+	App->files->Save((projectPath + "/Batches/BuildRelease.bat").c_str(), result.data(), result.size());
+
+	// Release Editor (.dll)
+	buffer = App->files->Load("Templates/BuildReleaseEditor");
+	file = buffer.Data();
+	result = fmt::format(file, projectName);
+	App->files->Save((projectPath + "/Batches/BuildReleaseEditor.bat").c_str(), result.data(), result.size());
+}
+
 void ModuleProject::CompileProject(Configuration config) {
-	
-	std::string workingDir = App->files->GetWorkingDirectory();
-	workingDir += "TemplateProject\\TemplateProject.sln";
+	UnloadGameCodeDLL();
+
+	std::string batchDir = projectPath + "/Batches";
 
 	SHELLEXECUTEINFO sei = {0};
 	sei.cbSize = sizeof(SHELLEXECUTEINFO);
@@ -113,22 +168,22 @@ void ModuleProject::CompileProject(Configuration config) {
 	sei.hwnd = NULL;
 	sei.lpVerb = "open";
 	sei.lpParameters = NULL;
-	sei.lpDirectory = workingDir.c_str();
+	sei.lpDirectory = batchDir.c_str();
 	sei.nShow = NULL;
 	sei.hInstApp = NULL;
 
 	switch (config) {
 	case Configuration::RELEASE:
-		sei.lpFile = "";
+		sei.lpFile = "BuildRelease.bat";
 		break;
 	case Configuration::RELEASE_EDITOR:
-		sei.lpFile = "";
+		sei.lpFile = "BuildReleaseEditor.bat";
 		break;
 	case Configuration::DEBUG:
-		sei.lpFile = "";
+		sei.lpFile = "BuildDebug.bat";
 		break;
 	case Configuration::DEBUG_EDITOR:
-		sei.lpFile = "";
+		sei.lpFile = "BuildDebugEditor.bat";
 		break;
 	default:
 		sei.lpFile = "";
@@ -139,17 +194,24 @@ void ModuleProject::CompileProject(Configuration config) {
 	WaitForSingleObject(sei.hProcess, INFINITE);
 	CloseHandle(sei.hProcess);
 
+	std::string buildPath = projectPath;
+	std::string name = FileDialog::GetFileName(projectName.c_str());
+
 	switch (config) {
 	case Configuration::RELEASE:
+		buildPath += "/Build/Release/";
 		break;
 	case Configuration::RELEASE_EDITOR:
+		buildPath += "/Build/ReleaseEditor/";
 		break;
 	case Configuration::DEBUG:
+		buildPath += "/Build/Debug/";
 		break;
 	case Configuration::DEBUG_EDITOR:
-		break;
-	default:
+		buildPath += "/Build/DebugEditor/";
 		break;
 	}
 
+	buildPath += name + ".dll";
+	LoadGameCodeDLL(buildPath.c_str());
 }

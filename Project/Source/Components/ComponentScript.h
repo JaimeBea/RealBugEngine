@@ -22,7 +22,5 @@ public:
 	bool onGame = false;
 
 private:
-	std::string name = "";
-	Script* script = nullptr;
 	UID id = 0;
 };

@@ -1,37 +1,42 @@
 #include "ComponentScript.h"
+
 #include "Application.h"
-#include "Resources/ResourceScript.h"
+#include "Modules/ModuleProject.h"
 #include "Modules/ModuleEventSystem.h"
+#include "Modules/ModuleResources.h"
+#include "Modules/ModuleTime.h"
+#include "Resources/ResourceScript.h"
+#include "Utils/FileDialog.h"
+#include "Utils/ImGuiUtils.h"
 
 #include "imgui.h"
-#include "Utils/ImGuiUtils.h"
+
+#include "Utils/Leaks.h"
 
 #define JSON_TAG_SCRIPT "Script"
 #define JSON_TAG_NAME "Name"
 
 void ComponentScript::Init() {
-	script = Factory::create(name);
-
-	//App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PLAY, this); TODO: JAIMICO Y LA COMADREJA
 }
 
 void ComponentScript::Update() {
-	if (onGame) {
+	if (App->time->HasGameStarted()) {
 		OnUpdate();
 	}
 }
 
 void ComponentScript::OnStart() {
-	assert(script);
-
-	script->Start();
-
+	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
+	if (resource != nullptr) {
+		resource->script->Start();
+	}
 }
 
 void ComponentScript::OnUpdate() {
-	assert(script != nullptr);
-
-	script->Update();
+	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
+	if (resource != nullptr) {
+		resource->script->Update();
+	}
 }
 
 void ComponentScript::OnEditorUpdate() {
@@ -40,16 +45,22 @@ void ComponentScript::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
+	UID idAnt = id;
 	ImGui::ResourceSlot<ResourceScript>("Script", &id);
+
+	static char name[1024] = "";
+	ImGui::InputText("Script name", name, 1024);
+	ImGui::SameLine();
+	if (ImGui::Button("Create Script")) {
+		App->project->CreateScript(std::string(name));
+	}
 }
 
 void ComponentScript::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_SCRIPT] = id;
-	jComponent[JSON_TAG_NAME] = name.c_str();
 }
 
 void ComponentScript::Load(JsonValue jComponent) {
 	id = jComponent[JSON_TAG_SCRIPT];
-	name = jComponent[JSON_TAG_NAME];
 	if (id != 0) App->resources->IncreaseReferenceCount(id);
 }

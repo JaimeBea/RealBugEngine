@@ -1,0 +1,15 @@
+#pragma once
+
+#include "Script.h"
+
+class {0} : public Script
+{1}
+	GENERATE_BODY({0});
+
+public:
+
+	void Start() override;
+	void Update() override;
+
+{2};
+
