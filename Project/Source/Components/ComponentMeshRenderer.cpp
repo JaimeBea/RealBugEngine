@@ -13,11 +13,13 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleTime.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
@@ -48,7 +50,12 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	}
 	ImGui::Separator();
 
+	UID oldMeshId = meshId;
 	ImGui::ResourceSlot<ResourceMesh>("Mesh", &meshId);
+	if (oldMeshId != meshId) {
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		transform->InvalidateHierarchy();
+	}
 	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
 
 	if (ImGui::TreeNode("Mesh")) {
@@ -225,6 +232,36 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			}
 		}
 		ImGui::TreePop();
+	}
+}
+
+void ComponentMeshRenderer::Init() {
+	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	if (!mesh) return;
+
+	palette.resize(mesh->numBones);
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		palette[i] = float4x4::identity;
+	}
+}
+
+void ComponentMeshRenderer::Update() {
+	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	if (!mesh) return;
+
+	if (App->time->GetDeltaTime() <= 0) return;
+
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		const GameObject* bone = goBones.at(mesh->bones[i].boneName);
+		// TODO: if(bone) might not be necessary
+		if (bone) {
+			const GameObject* parent = GetOwner().GetParent();
+			const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
+			const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+			palette[i] = invertedRootBoneTransform * bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform;
+		} else {
+			palette[i] = float4x4::identity;
+		}
 	}
 }
 
@@ -561,6 +598,11 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
+	if (palette.size() > 0) {
+		glUniformMatrix4fv(glGetUniformLocation(program, "palette"), palette.size(), GL_TRUE, palette[0].ptr());
+	}
+	glUniform1i(glGetUniformLocation(program, "hasBones"), goBones.size());
+
 	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
 	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
 

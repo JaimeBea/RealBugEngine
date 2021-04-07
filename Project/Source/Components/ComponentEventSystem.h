@@ -21,16 +21,18 @@ public:
 	void Disable() override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void SetSelected(ComponentSelectable* newSelected);
-	void EnteredPointerOnSelectable(ComponentSelectable* newH); //Interface implementation
-	void ExitedPointerOnSelectable(ComponentSelectable* newH);	//Interface implementation
-	ComponentSelectable* GetCurrentSelected() const;			//Returns currently selected ComponentSelectable
-	ComponentSelectable* GetCurrentlyHovered() const;			//Returns last Selectable that was hovered over with mouse
+	void SetSelected(UID newSelectableComponentID);
+	void EnteredPointerOnSelectable(ComponentSelectable* newHoveredComponent);	//Interface implementation
+	void ExitedPointerOnSelectable(ComponentSelectable* newUnHoveredComponent); //Interface implementation
+	ComponentSelectable* GetCurrentSelected() const;							//Returns currently selected ComponentSelectable
+	ComponentSelectable* GetCurrentlyHovered() const;							//Returns last Selectable that was hovered over with mouse
 
 private:
-	ComponentSelectable* currentSelected = nullptr;		  //Currently selected SelectableComponent*
-	std::vector<ComponentSelectable*> hoveredSelectables; //vector of SelectableComponents* it updates (adding/removing) with mouse events
+	UID currentSelected = 0; //Currently selected SelectableComponent*
+
+	//ESTO VA A DAR POR CULO 100%
+	std::vector<UID> hoveredSelectables; //vector of SelectableComponents* it updates (adding/removing) with mouse events
 
 public:
-	ComponentSelectable* firstSelected = nullptr; //Reference to the "first selected selectableComponent", this is not used directly but Unity implements it so that users can access it
+	UID firstSelected = 0; //Reference to the "first selected selectableComponent", this is not used directly but Unity implements it so that users can access it
 };

@@ -39,7 +39,7 @@ void ComponentButton::Load(JsonValue jComponent) {
 
 void ComponentButton::OnClicked() {
 	clicked = true;
-	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>());
+	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 	LOG("I was clicked");
 	//TO DO
 }

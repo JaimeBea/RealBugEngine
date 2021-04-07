@@ -3,7 +3,7 @@
 /* Creating a new component type:
 *    1. Add a new ComponentType for the new component
 *    2. Add REGISTER_COMPONENT to the .h of the new component
-*    3. Create a new VectorMap for the new component in ModuleScene.h
+*    3. Create a new VectorMap for the new component in Scene.h
 *    4. Add the new component to the ByTypeAndId functions in GameObject.cpp
 *    5. Implement DuplicateComponent for the new component
 *    6. Add the "Add Component" functionality in PanelInspector.cpp (ln. 62)
@@ -15,11 +15,6 @@
 	static const ComponentType staticType = componentType;               \
 	static const bool allowMultipleComponents = allowMultiple;           \
 	componentClass(GameObject* owner, UID id, bool active) : Component(staticType, owner, id, active) {}
-
-//#define REGISTER_COMPONENT_SELECTABLE(selectableClass, componentType, allowMultiple) \
-//	static const ComponentType staticType = componentType;                           \
-//	static const bool allowMultipleComponents = allowMultiple;                       \
-//	selectableClass(GameObject* owner, UID id, bool active) : ComponentSelectable(staticType, owner, id, active) {}
 
 enum class ComponentType {
 	// SERIALIZATION: IDs should be consistent between versions (don't change what an ID means)
@@ -38,5 +33,7 @@ enum class ComponentType {
 	BOUNDING_BOX_2D = 12,
 	TOGGLE = 13,
 	SELECTABLE = 14,
-	TEXT = 15
+	SKYBOX = 15,
+	ANIMATION = 16,
+	TEXT = 17
 };

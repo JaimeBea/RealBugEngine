@@ -178,7 +178,7 @@ void ComponentSelectable::Enable() {
 void ComponentSelectable::Disable() {
 	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
 		if (selected) {
-			evSys->SetSelected(nullptr);
+			evSys->SetSelected(0);
 		}
 	}
 }

@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Components/ComponentType.h"
+#include "FileSystem/ModelImporter.h"
 
 #include "Math/myassert.h"
 #include "rapidjson/document.h"
@@ -19,13 +20,15 @@
 #define JSON_TAG_ID "Id"
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_ACTIVE "Active"
+#define JSON_TAG_ROOT_BONE_ID "RootBoneId"
+#define JSON_TAG_ROOT_BONE_NAME "RootBoneName"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_COMPONENTS "Components"
 #define JSON_TAG_CHILDREN "Children"
 
 void GameObject::InitComponents() {
 	for (const std::pair<ComponentType, UID>& pair : components) {
-		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 		component->Init();
 	}
 }
@@ -33,7 +36,7 @@ void GameObject::InitComponents() {
 void GameObject::Update() {
 	if (IsActiveInHierarchy()) {
 		for (const std::pair<ComponentType, UID>& pair : components) {
-			Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+			Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 			component->Update();
 		}
 
@@ -45,7 +48,7 @@ void GameObject::Update() {
 
 void GameObject::DrawGizmos() {
 	for (const std::pair<ComponentType, UID>& pair : components) {
-		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 		component->DrawGizmos();
 	}
 
@@ -80,7 +83,7 @@ std::vector<Component*> GameObject::GetComponents() const {
 	std::vector<Component*> auxComponents;
 
 	for (const std::pair<ComponentType, UID>& pair : components) {
-		auxComponents.push_back(GetComponentByTypeAndId(pair.first, pair.second));
+		auxComponents.push_back(scene->GetComponentByTypeAndId(pair.first, pair.second));
 	}
 
 	return auxComponents;
@@ -89,7 +92,7 @@ std::vector<Component*> GameObject::GetComponents() const {
 void GameObject::RemoveComponent(Component* component) {
 	for (auto it = components.begin(); it != components.end(); ++it) {
 		if (it->second == component->GetID()) {
-			RemoveComponentByTypeAndId(it->first, it->second);
+			scene->RemoveComponentByTypeAndId(it->first, it->second);
 			components.erase(it);
 			break;
 		}
@@ -99,7 +102,7 @@ void GameObject::RemoveComponent(Component* component) {
 void GameObject::RemoveAllComponents() {
 	while (!components.empty()) {
 		std::pair<ComponentType, UID> pair = components.back();
-		RemoveComponentByTypeAndId(pair.first, pair.second);
+		scene->RemoveComponentByTypeAndId(pair.first, pair.second);
 		components.pop_back();
 	}
 }
@@ -126,6 +129,14 @@ GameObject* GameObject::GetParent() const {
 	return parent;
 }
 
+void GameObject::SetRootBone(GameObject* gameObject) {
+	rootBoneHierarchy = gameObject;
+}
+
+GameObject* GameObject::GetRootBone() const {
+	return rootBoneHierarchy;
+}
+
 void GameObject::AddChild(GameObject* gameObject) {
 	gameObject->SetParent(this);
 }
@@ -144,6 +155,19 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
+GameObject* GameObject::FindDescendant(const std::string& name) const {
+	for (GameObject* child : children) {
+		if (child->name == name) {
+			return child;
+		} else {
+			GameObject* gameObject = child->FindDescendant(name);
+			if (gameObject != nullptr) return gameObject;
+		}
+	}
+
+	return nullptr;
+}
+
 bool GameObject::HasChildren() const {
 	return !children.empty();
 }
@@ -152,12 +176,13 @@ void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_ID] = id;
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
+	jGameObject[JSON_TAG_ROOT_BONE_ID] = rootBoneHierarchy != nullptr ? rootBoneHierarchy->id : 0;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
 		JsonValue jComponent = jComponents[i];
 		std::pair<ComponentType, UID> pair = components[i];
-		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
 		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
 		jComponent[JSON_TAG_ID] = component->GetID();
@@ -187,7 +212,7 @@ void GameObject::Load(JsonValue jGameObject) {
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
 		components.push_back(std::pair<ComponentType, UID>(type, componentId));
-		Component* component = CreateComponentByTypeAndId(type, componentId);
+		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
 		component->Load(jComponent);
 	}
 
@@ -203,17 +228,27 @@ void GameObject::Load(JsonValue jGameObject) {
 		child->SetParent(this);
 		child->InitComponents();
 	}
+
+	UID rootBoneId = jGameObject[JSON_TAG_ROOT_BONE_ID];
+	rootBoneHierarchy = scene->GetGameObject(rootBoneId);
+	// Recache bones to unordered map
+	if (rootBoneHierarchy) {
+		std::unordered_map<std::string, GameObject*> temporalBonesMap;
+		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
+		ModelImporter::SaveBones(this, temporalBonesMap);
+	}
 }
 
 void GameObject::SavePrototype(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
+	jGameObject[JSON_TAG_ROOT_BONE_NAME] = rootBoneHierarchy ? rootBoneHierarchy->name.c_str() : "";
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
 		JsonValue jComponent = jComponents[i];
 		std::pair<ComponentType, UID> pair = components[i];
-		Component* component = GetComponentByTypeAndId(pair.first, pair.second);
+		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
 		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
@@ -242,7 +277,7 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
 		components.push_back(std::pair<ComponentType, UID>(type, componentId));
-		Component* component = CreateComponentByTypeAndId(type, componentId);
+		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
 		component->Load(jComponent);
 	}
 
@@ -259,157 +294,13 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		child->SetParent(this);
 		child->InitComponents();
 	}
-}
 
-Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID componentId) const {
-	switch (type) {
-	case ComponentType::TRANSFORM:
-		if (!scene->transformComponents.Has(componentId)) return nullptr;
-		return &scene->transformComponents.Get(componentId);
-	case ComponentType::MESH_RENDERER:
-		if (!scene->meshRendererComponents.Has(componentId)) return nullptr;
-		return &scene->meshRendererComponents.Get(componentId);
-	case ComponentType::BOUNDING_BOX:
-		if (!scene->boundingBoxComponents.Has(componentId)) return nullptr;
-		return &scene->boundingBoxComponents.Get(componentId);
-	case ComponentType::CAMERA:
-		if (!scene->cameraComponents.Has(componentId)) return nullptr;
-		return &scene->cameraComponents.Get(componentId);
-	case ComponentType::LIGHT:
-		if (!scene->lightComponents.Has(componentId)) return nullptr;
-		return &scene->lightComponents.Get(componentId);
-	case ComponentType::CANVAS:
-		if (!scene->canvasComponents.Has(componentId)) return nullptr;
-		return &scene->canvasComponents.Get(componentId);
-	case ComponentType::CANVASRENDERER:
-		if (!scene->canvasRendererComponents.Has(componentId)) return nullptr;
-		return &scene->canvasRendererComponents.Get(componentId);
-	case ComponentType::IMAGE:
-		if (!scene->imageComponents.Has(componentId)) return nullptr;
-		return &scene->imageComponents.Get(componentId);
-	case ComponentType::TRANSFORM2D:
-		if (!scene->transform2DComponents.Has(componentId)) return nullptr;
-		return &scene->transform2DComponents.Get(componentId);
-	case ComponentType::BUTTON:
-		if (!scene->buttonComponents.Has(componentId)) return nullptr;
-		return &scene->buttonComponents.Get(componentId);
-	case ComponentType::EVENT_SYSTEM:
-		if (!scene->eventSystemComponents.Has(componentId)) return nullptr;
-		return &scene->eventSystemComponents.Get(componentId);
-	case ComponentType::BOUNDING_BOX_2D:
-		if (!scene->boundingBox2DComponents.Has(componentId)) return nullptr;
-		return &scene->boundingBox2DComponents.Get(componentId);
-	case ComponentType::TOGGLE:
-		if (!scene->toggleComponents.Has(componentId)) return nullptr;
-		return &scene->toggleComponents.Get(componentId);
-	case ComponentType::SELECTABLE:
-		if (!scene->selectableComponents.Has(componentId)) return nullptr;
-		return &scene->selectableComponents.Get(componentId);
-	default:
-		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
-		assert(false);
-		return nullptr;
-	}
-}
-
-Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID componentId) {
-	switch (type) {
-	case ComponentType::TRANSFORM:
-		return &scene->transformComponents.Put(componentId, ComponentTransform(this, componentId, active));
-	case ComponentType::MESH_RENDERER:
-		return &scene->meshRendererComponents.Put(componentId, ComponentMeshRenderer(this, componentId, active));
-	case ComponentType::BOUNDING_BOX:
-		return &scene->boundingBoxComponents.Put(componentId, ComponentBoundingBox(this, componentId, active));
-	case ComponentType::CAMERA:
-		return &scene->cameraComponents.Put(componentId, ComponentCamera(this, componentId, active));
-	case ComponentType::LIGHT:
-		return &scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
-	case ComponentType::CANVAS:
-		return &scene->canvasComponents.Put(componentId, ComponentCanvas(this, componentId, active));
-	case ComponentType::CANVASRENDERER:
-		return &scene->canvasRendererComponents.Put(componentId, ComponentCanvasRenderer(this, componentId, active));
-	case ComponentType::IMAGE:
-		return &scene->imageComponents.Put(componentId, ComponentImage(this, componentId, active));
-	case ComponentType::TRANSFORM2D:
-		return &scene->transform2DComponents.Put(componentId, ComponentTransform2D(this, componentId, active));
-	case ComponentType::BUTTON:
-		return &scene->buttonComponents.Put(componentId, ComponentButton(this, componentId, active));
-	case ComponentType::EVENT_SYSTEM:
-		return &scene->eventSystemComponents.Put(componentId, ComponentEventSystem(this, componentId, active));
-	case ComponentType::BOUNDING_BOX_2D:
-		return &scene->boundingBox2DComponents.Put(componentId, ComponentBoundingBox2D(this, componentId, active));
-	case ComponentType::TOGGLE:
-		return &scene->toggleComponents.Put(componentId, ComponentToggle(this, componentId, active));
-	case ComponentType::SELECTABLE:
-		return &scene->selectableComponents.Put(componentId, ComponentSelectable(this, componentId, active));
-	default:
-		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
-		assert(false);
-		return nullptr;
-	}
-}
-
-void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
-	switch (type) {
-	case ComponentType::TRANSFORM:
-		if (!scene->transformComponents.Has(componentId)) return;
-		scene->transformComponents.Remove(componentId);
-		break;
-	case ComponentType::MESH_RENDERER:
-		if (!scene->meshRendererComponents.Has(componentId)) return;
-		scene->meshRendererComponents.Remove(componentId);
-		break;
-	case ComponentType::BOUNDING_BOX:
-		if (!scene->boundingBoxComponents.Has(componentId)) return;
-		scene->boundingBoxComponents.Remove(componentId);
-		break;
-	case ComponentType::CAMERA:
-		if (!scene->cameraComponents.Has(componentId)) return;
-		scene->cameraComponents.Remove(componentId);
-		break;
-	case ComponentType::LIGHT:
-		if (!scene->lightComponents.Has(componentId)) return;
-		scene->lightComponents.Remove(componentId);
-		break;
-	case ComponentType::CANVAS:
-		if (!scene->canvasComponents.Has(componentId)) return;
-		scene->canvasComponents.Remove(componentId);
-		break;
-	case ComponentType::CANVASRENDERER:
-		if (!scene->canvasRendererComponents.Has(componentId)) return;
-		scene->canvasRendererComponents.Remove(componentId);
-		break;
-	case ComponentType::IMAGE:
-		if (!scene->imageComponents.Has(componentId)) return;
-		scene->imageComponents.Remove(componentId);
-		break;
-	case ComponentType::TRANSFORM2D:
-		if (!scene->transform2DComponents.Has(componentId)) return;
-		scene->transform2DComponents.Remove(componentId);
-		break;
-	case ComponentType::BUTTON:
-		if (!scene->buttonComponents.Has(componentId)) return;
-		scene->buttonComponents.Remove(componentId);
-		break;
-	case ComponentType::EVENT_SYSTEM:
-		if (!scene->eventSystemComponents.Has(componentId)) return;
-		scene->eventSystemComponents.Remove(componentId);
-		break;
-	case ComponentType::BOUNDING_BOX_2D:
-		if (!scene->boundingBox2DComponents.Has(componentId)) return;
-		scene->boundingBox2DComponents.Remove(componentId);
-		break;
-	case ComponentType::TOGGLE:
-		if (!scene->toggleComponents.Has(componentId)) return;
-		scene->toggleComponents.Remove(componentId);
-		break;
-	case ComponentType::SELECTABLE:
-		if (!scene->selectableComponents.Has(componentId)) return;
-		scene->selectableComponents.Remove(componentId);
-		break;
-	default:
-		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);
-		assert(false);
-		break;
+	std::string rootBoneName = jGameObject[JSON_TAG_ROOT_BONE_NAME];
+	if (rootBoneName != "") {
+		rootBoneHierarchy = (rootBoneName == this->name) ? this : FindDescendant(rootBoneName);
+		// Recache bones to unordered map
+		std::unordered_map<std::string, GameObject*> temporalBonesMap;
+		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
+		ModelImporter::SaveBones(this, temporalBonesMap);
 	}
 }

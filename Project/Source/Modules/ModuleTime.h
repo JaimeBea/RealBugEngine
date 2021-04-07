@@ -22,9 +22,6 @@ public:
 	float GetRealTimeSinceStartup() const;
 
 	long long GetCurrentTimestamp() const;
-
-	float GetTimeScale() const;
-	void SetTimeScale(float timeScale);
 	unsigned int GetFrameCount() const;
 
 	// --- Game Time Controllers --- //
@@ -41,6 +38,7 @@ public:
 	bool limitFramerate = true; // "Flag" to limit the framerate.
 	bool vsync = true;			// "Flag" to force vertical sync.
 	int stepDeltaTimeMs = 100;	// When calling StepGame(), the game will advance one frame, with a specific time increment of 'stepDeltaTimeMs'.
+	float timeScale = 1.0f;		// Multiplier of Game Time. 1=normal time, <1=slow motion, >1=accelerated
 
 private:
 	MSTimer timer = MSTimer(); // Real time Timer that is the base of every time calculation.
@@ -49,7 +47,6 @@ private:
 	unsigned int realTimeDeltaMs = 0; // Registers the time increment at each frame.
 	unsigned int timeLastMs = 0;	  // Registers the total time since the Game was started.
 	unsigned int realTimeLastMs = 0;  // Registers the total time since the Application was started.
-	float timeScale = 1.0f;			  // Multiplier of Game Time. 1=normal time, <1=slow motion, >1=accelerated
 	unsigned int frameCount = 0;	  // Total number of frames elapsed since the Application start.
 
 	// ------ Game Time Flags ------ //

@@ -99,6 +99,11 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::SELECTABLE:
 					cName = "Selectable";
+				case ComponentType::SKYBOX:
+					cName = "Skybox";
+					break;
+				case ComponentType::ANIMATION:
+					cName = "Animation";
 					break;
 				default:
 					cName = "";
@@ -166,10 +171,26 @@ void PanelInspector::Update() {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
+				if (ImGui::MenuItem("Skybox")) {
+					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
+					if (skybox != nullptr) {
+						skybox->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Animation")) {
+					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
+					if (animation != nullptr) {
+						animation->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				// TRANSFORM is always there, cannot add a new one.
 
 				AddUIComponentsOptions(selected);
 
-				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();
 			}
 		}

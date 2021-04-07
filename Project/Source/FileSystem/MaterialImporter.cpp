@@ -45,11 +45,12 @@ bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	}
 
 	// Material resource creation
-	ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath);
-
-	// Add resource to meta file
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceMaterial* material = App->resources->CreateResource<ResourceMaterial>(filePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(material->GetType());
 	jResource[JSON_TAG_ID] = material->GetId();
 

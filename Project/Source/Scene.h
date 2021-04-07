@@ -17,6 +17,8 @@
 #include "Components/ComponentEventSystem.h"
 #include "Components/UI/ComponentButton.h"
 #include "Components/UI/ComponentToggle.h"
+#include "Components/ComponentSkybox.h"
+#include "Components/ComponentAnimation.h"
 
 #include <unordered_map>
 
@@ -35,6 +37,11 @@ public:
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
+	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
+
+	template<class T> T* GetComponent(UID id);
 
 public:
 	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
@@ -56,7 +63,8 @@ public:
 	VectorMap<UID, ComponentToggle> toggleComponents;
 	VectorMap<UID, ComponentButton> buttonComponents;
 	VectorMap<UID, ComponentSelectable> selectableComponents;
-
+	VectorMap<UID, ComponentSkyBox> skyboxComponents;
+	VectorMap<UID, ComponentAnimation> animationComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;
@@ -72,3 +80,8 @@ public:
 	CubeMap* skyboxCubeMap = 0;
 	*/
 };
+
+template<class T>
+inline T* Scene::GetComponent(UID id) {
+	return (T*) GetComponentByTypeAndId(T::staticType, id);
+}

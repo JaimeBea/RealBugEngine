@@ -15,8 +15,8 @@ ComponentEventSystem ::~ComponentEventSystem() {
 }
 
 void ComponentEventSystem::Init() {
-	currentSelected = nullptr;
-	firstSelected = nullptr;
+	currentSelected = 0;
+	firstSelected = 0;
 	App->userInterface->SetCurrentEventSystem(this);
 	SetSelected(firstSelected);
 }
@@ -42,9 +42,9 @@ void ComponentEventSystem::Update() {
 	}
 
 	if (keyPressed) {
-		if (currentSelected) {
-			ComponentSelectable* newSel = currentSelected->FindSelectableOnDir(selectionDir);
-			if (newSel) SetSelected(newSel);
+		if (currentSelected != 0) {
+			ComponentSelectable* newSel = GetCurrentSelected()->FindSelectableOnDir(selectionDir);
+			if (newSel) SetSelected(newSel->GetID());
 		}
 	}
 }
@@ -55,9 +55,9 @@ void ComponentEventSystem::OnTransformUpdate() {
 void ComponentEventSystem::OnEditorUpdate() {
 	ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "Current Selected:");
 
-	if (currentSelected != nullptr) {
+	if (currentSelected != 0) {
 		ImGui::SameLine();
-		ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), currentSelected->GetOwner().name.c_str());
+		ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), GetCurrentSelected()->GetOwner().name.c_str());
 	}
 
 	//TO DO
@@ -81,13 +81,17 @@ void ComponentEventSystem::Disable() {
 	}
 }
 
-void ComponentEventSystem::SetSelected(ComponentSelectable* newSelected) {
-	if (currentSelected != nullptr) {
-		currentSelected->OnDeselect();
+void ComponentEventSystem::SetSelected(UID newSelectableComponentID) {
+	ComponentSelectable* currentSel = GetCurrentSelected();
+	if (currentSel != nullptr) {
+		currentSel->OnDeselect();
 	}
-	currentSelected = newSelected;
-	if (newSelected != nullptr) {
-		newSelected->OnSelect();
+	currentSelected = newSelectableComponentID;
+
+	ComponentSelectable* newSelectableComponent = GetOwner().scene->GetComponent<ComponentSelectable>(newSelectableComponentID);
+
+	if (newSelectableComponent != nullptr) {
+		newSelectableComponent->OnSelect();
 	}
 }
 
@@ -95,32 +99,23 @@ void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
 	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
 	//TO DO
 }
-//
-//void ComponentEventSystem::AddPointerEnterHandler(IPointerEnterHandler* newH) {
-//	for (std::vector<IPointerEnterHandler*>::const_iterator it = pointerEnterHandlers.begin(); it != pointerEnterHandlers.end(); ++it) {
-//		if ((*it) == newH) {
-//			return;
-//		}
-//	}
-//	pointerEnterHandlers.push_back(newH);
-//}
 
-void ComponentEventSystem::EnteredPointerOnSelectable(ComponentSelectable* newH) {
-	for (std::vector<ComponentSelectable*>::const_iterator it = hoveredSelectables.begin(); it != hoveredSelectables.end(); ++it) {
-		if ((*it) == newH) {
+void ComponentEventSystem::EnteredPointerOnSelectable(ComponentSelectable* newHoveredComponent) {
+	for (std::vector<UID>::const_iterator it = hoveredSelectables.begin(); it != hoveredSelectables.end(); ++it) {
+		if ((*it) == newHoveredComponent->GetID()) {
 			return;
 		}
 	}
-	hoveredSelectables.push_back(newH);
+	hoveredSelectables.push_back(newHoveredComponent->GetID());
 }
 
-void ComponentEventSystem::ExitedPointerOnSelectable(ComponentSelectable* newH) {
-	std::vector<ComponentSelectable*>::iterator itToRemove;
+void ComponentEventSystem::ExitedPointerOnSelectable(ComponentSelectable* newUnHoveredComponent) {
+	std::vector<UID>::iterator itToRemove;
 	ComponentSelectable* selectableToRemove = nullptr;
-	for (std::vector<ComponentSelectable*>::iterator it = hoveredSelectables.begin(); it != hoveredSelectables.end() && selectableToRemove == nullptr; ++it) {
-		if ((*it) == newH) {
+	for (std::vector<UID>::iterator it = hoveredSelectables.begin(); it != hoveredSelectables.end() && selectableToRemove == nullptr; ++it) {
+		if ((*it) == newUnHoveredComponent->GetID()) {
 			itToRemove = it;
-			selectableToRemove = *it;
+			selectableToRemove = GetOwner().scene->GetComponent<ComponentSelectable>(*it);
 		}
 	}
 
@@ -130,10 +125,12 @@ void ComponentEventSystem::ExitedPointerOnSelectable(ComponentSelectable* newH) 
 }
 
 ComponentSelectable* ComponentEventSystem::GetCurrentSelected() const {
-	return currentSelected;
+	if (currentSelected == 0) return nullptr;
+
+	return GetOwner().scene->GetComponent<ComponentSelectable>(currentSelected);
 }
 
 ComponentSelectable* ComponentEventSystem::GetCurrentlyHovered() const {
 	if (hoveredSelectables.size() == 0) return nullptr;
-	return hoveredSelectables.front();
+	return GetOwner().scene->GetComponent<ComponentSelectable>(hoveredSelectables.front());
 }
