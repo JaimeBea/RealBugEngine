@@ -16,6 +16,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <Components/ComponentSkyBox.h>
 
 class CubeMap;
 struct aiScene;

@@ -46,13 +46,12 @@ public:
 	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
 
 private:
-	//Texture* defaultTexture = nullptr;
-
-	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
-	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);
-	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);
-	void DrawGameObject(GameObject* gameObject);
-	void DrawSkyBox();
+	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb); // Draws the quadrtee nodes if 'drawQuadtree' is set to true.
+	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
+	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
+	void DrawGameObject(GameObject* gameObject);											// ??
+	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
+	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
 	void RenderUI();
 	void SetOrtographicRender();
 	void SetPerspectiveRender();

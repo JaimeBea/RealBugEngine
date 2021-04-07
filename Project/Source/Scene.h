@@ -17,6 +17,8 @@
 #include "Components/ComponentEventSystem.h"
 #include "Components/UI/ComponentButton.h"
 #include "Components/UI/ComponentToggle.h"
+#include "Components/ComponentSkybox.h"
+#include "Components/ComponentAnimation.h"
 
 #include <unordered_map>
 
@@ -61,6 +63,8 @@ public:
 	VectorMap<UID, ComponentToggle> toggleComponents;
 	VectorMap<UID, ComponentButton> buttonComponents;
 	VectorMap<UID, ComponentSelectable> selectableComponents;
+	VectorMap<UID, ComponentSkyBox> skyboxComponents;
+	VectorMap<UID, ComponentAnimation> animationComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

@@ -40,6 +40,7 @@ void PanelConfiguration::Update() {
 				App->renderer->SetVSync(App->time->vsync);
 			}
 			ImGui::SliderInt("Step delta time (MS)", &App->time->stepDeltaTimeMs, 1, 1000);
+			ImGui::SliderFloat("TimeScale", &App->time->timeScale, 0.f, 4.f);
 
 			// FPS Graph
 			char title[25];

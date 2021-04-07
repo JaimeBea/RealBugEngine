@@ -8,6 +8,7 @@
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
 #include "Resources/ResourceTexture.h"
+#include "Resources/ResourceSkybox.h"
 #include "Components/Component.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
@@ -74,162 +75,6 @@ bool ModuleScene::Start() {
 
 	CreateEmptyScene();
 
-	// TODO: (Scene resource) Load default scene
-	// SceneImporter::LoadScene("survival_shooter");
-
-	GameObject* eventSystObj = scene->CreateGameObject(scene->root, GenerateUID(), "EventSystem");
-	eventSystObj->CreateComponent<ComponentEventSystem>();
-	eventSystObj->CreateComponent<ComponentTransform>();
-
-	eventSystObj->InitComponents();
-	//
-	////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
-	GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
-	canvasObj->CreateComponent<ComponentCanvas>();
-	canvasObj->CreateComponent<ComponentTransform2D>();
-	canvasObj->CreateComponent<ComponentTransform>();
-	canvasObj->InitComponents();
-	
-	////ASAP TO DO ENTIRE CANVAS GIMMICK FOR UI RENDER TRIALS
-
-	//GameObject* canvasObj = scene->CreateGameObject(scene->root, GenerateUID(), "CanvasObj");
-	//canvasObj->CreateComponent<ComponentCanvas>();
-	//canvasObj->CreateComponent<ComponentTransform2D>();
-	//canvasObj->CreateComponent<ComponentTransform>();
-	//canvasObj->InitComponents();
-	//
-	/*GameObject* canvasRendererObj = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj");
-	canvasRendererObj->CreateComponent<ComponentTransform>();
-	canvasRendererObj->CreateComponent<ComponentTransform2D>();
-	canvasRendererObj->CreateComponent<ComponentImage>();
-	canvasRendererObj->CreateComponent<ComponentCanvasRenderer>();
-	canvasRendererObj->CreateComponent<ComponentBoundingBox2D>();
-	canvasRendererObj->CreateComponent<ComponentButton>();
-	canvasRendererObj->InitComponents();
-	
-	GameObject* canvasRendererObj2 = scene->CreateGameObject(canvasObj, GenerateUID(), "CanvasRendererObj2");
-	canvasRendererObj2->CreateComponent<ComponentTransform>();
-	canvasRendererObj2->CreateComponent<ComponentTransform2D>();
-	canvasRendererObj2->CreateComponent<ComponentImage>();
-	canvasRendererObj2->CreateComponent<ComponentCanvasRenderer>();
-	canvasRendererObj2->CreateComponent<ComponentBoundingBox2D>();
-	canvasRendererObj2->CreateComponent<ComponentToggle>();
-	canvasRendererObj2->InitComponents();*/
-
-	//	canvasRendererObj->CreateComponent<
-
-	//GameObject* canvas = gameObjects.Obtain();
-	//canvas->CreateComponent<ComponentCanvas>();
-	//canvas->CreateComponent<ComponentTransform>();
-	//canvas->name = "canvas";
-	//
-	//GameObject* canvasRenderer = gameObjects.Obtain();
-	//canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
-	//canvasRenderer->CreateComponent<ComponentTransform>();
-	//canvasRenderer->CreateComponent<ComponentTransform2D>();
-	//canvasRenderer->CreateComponent<ComponentImage>();
-	//Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
-
-	//GameObject* canvas = gameObjects.Obtain();
-	//canvas->CreateComponent<ComponentCanvas>();
-	//canvas->CreateComponent<ComponentTransform>();
-	//canvas->name = "canvas";
-
-	//GameObject* canvasRenderer = gameObjects.Obtain();
-	//canvasRenderer->CreateComponent<ComponentCanvasRenderer>();
-	//canvasRenderer->CreateComponent<ComponentTransform>();
-	//canvasRenderer->CreateComponent<ComponentTransform2D>();
-	//canvasRenderer->CreateComponent<ComponentImage>();
-	////Texture* lenna = TextureImporter::ImportTexture("./Assets/Lenna.png");
-	//Texture* lenna = TextureImporter::ImportTexture("C:/Users/mange/Desktop/sp.jpg");
-	//TextureImporter::LoadTexture(lenna);
-	//canvasRenderer->GetComponent<ComponentImage>()->SetTexture(lenna);
-	//canvasRenderer->name = "canvas renderer";
-
-	//canvas->AddChild(canvasRenderer);
-
-	//root->AddChild(canvas);
-	//App->userInterface->canvas = canvas;
-
-	//canvas->Init();
-	//canvas->InitComponents();
-	//canvasRenderer->Init();
-	//canvasRenderer->InitComponents();
-
-	// Load skybox
-	// clang-format off
-	float skyboxVertices[] = {
-		// Front (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-	
-		// Left (x, y, z)
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-		
-		// Right (x, y, z)
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 
-		// Back (x, y, z)
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-	
-		// Top (x, y, z)
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-		
-		// Bottom (x, y, z)
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	}; // clang-format on
-
-	// Skybox VAO
-	// TODO: (Texture resource) Make skybox work
-	/*
-	glGenVertexArrays(1, &skyboxVao);
-	glGenBuffers(1, &skyboxVbo);
-	glBindVertexArray(skyboxVao);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-	glBindVertexArray(0);
-
-	skyboxCubeMap = App->resources->ObtainCubeMap();
-	skyboxCubeMap->fileNames[0] = "right";
-	skyboxCubeMap->fileNames[1] = "left";
-	skyboxCubeMap->fileNames[2] = "top";
-	skyboxCubeMap->fileNames[3] = "bottom";
-	skyboxCubeMap->fileNames[4] = "front";
-	skyboxCubeMap->fileNames[5] = "back";
-	TextureImporter::LoadCubeMap(skyboxCubeMap);
-	*/
-
 	return true;
 }
 
@@ -284,6 +129,9 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
+
+	// Create Skybox
+	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	gameCamera->InitComponents();
 }
 

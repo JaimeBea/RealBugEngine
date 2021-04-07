@@ -11,7 +11,6 @@ bool ModuleFiles::Init() {
 	PHYSFS_init(nullptr);
 	PHYSFS_mount(".", nullptr, 0);
 	PHYSFS_setWriteDir(".");
-
 	return true;
 }
 
@@ -114,4 +113,15 @@ long long ModuleFiles::GetLocalFileModificationTime(const char* path) const {
 	PHYSFS_Stat fileStats;
 	PHYSFS_stat(path, &fileStats);
 	return fileStats.modtime;
+}
+std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
+#ifdef _DEBUG
+	return std::string(PHYSFS_getBaseDir()) + "..\\..\\" + std::string(PHYSFS_getRealDir(file)) + "\\" + file;
+#else
+	return std::string(PHYSFS_getBaseDir()) + std::string(PHYSFS_getRealDir(file)) + "\\" + file;
+#endif
+}
+
+void ModuleFiles::AddSearchPath(const char* searchPath) const {
+	PHYSFS_mount(searchPath, NULL, 1);
 }

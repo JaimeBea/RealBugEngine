@@ -14,6 +14,7 @@ enum class UpdateStatus {
 // Files -----------
 #define ASSETS_PATH "Assets"
 #define LIBRARY_PATH "Library"
+#define SKYBOX_PATH "Assets/Skybox"
 #define TEXTURES_PATH "Assets/Textures"
 #define SHADERS_PATH "Assets/Shaders"
 #define SCENES_PATH "Assets/Scenes"

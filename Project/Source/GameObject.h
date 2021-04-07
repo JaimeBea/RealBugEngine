@@ -35,10 +35,14 @@ public:
 	void SetParent(GameObject* gameObject);
 	GameObject* GetParent() const;
 
+	void SetRootBone(GameObject* gameObject);
+	GameObject* GetRootBone() const;
+
 	void AddChild(GameObject* gameObject);
 	void RemoveChild(GameObject* gameObject);
 	const std::vector<GameObject*>& GetChildren() const;
 	bool IsDescendantOf(GameObject* gameObject);
+	GameObject* FindDescendant(const std::string& name) const;
 	bool HasChildren() const;
 
 	void Save(JsonValue jGameObject) const;
@@ -59,6 +63,7 @@ public:
 private:
 	bool active = true;
 	GameObject* parent = nullptr;
+	GameObject* rootBoneHierarchy = nullptr;
 	std::vector<std::pair<ComponentType, UID>> components;
 	std::vector<GameObject*> children;
 };

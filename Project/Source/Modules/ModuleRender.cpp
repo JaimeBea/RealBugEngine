@@ -6,6 +6,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
@@ -182,6 +183,11 @@ UpdateStatus ModuleRender::Update() {
 
 	// Draw debug draw
 	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+
+	// Draw Animations
+	for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+		DrawAnimation(animationComponent.GetOwner().GetRootBone());
+	}
 
 	return UpdateStatus::CONTINUE;
 }
@@ -423,4 +429,14 @@ void ModuleRender::SetPerspectiveRender() {
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
+}
+void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {
+	for (const GameObject* childen : gameObject->GetChildren()) {
+		ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
+
+		dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
+		dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
+
+		DrawAnimation(childen, true);
+	}
 }
