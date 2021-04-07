@@ -43,19 +43,30 @@ void ComponentImage::OnEditorUpdate() {
 	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
+	
+	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
+
 	ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
 
 	if (tex != nullptr) {
+		int width;
+		int height;
+		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+
+		if (oldID != textureID) {
+			ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
+			if (transform != nullptr) {
+				transform->SetSize(float2(width, height));
+			}
+		}
+
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::TextColored(App->editor->titleColor, "Texture Preview");
 		ImGui::TextWrapped("Size:");
 		ImGui::SameLine();
-		int width;
-		int height;
-		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
 		ImGui::TextWrapped("%d x %d", width, height);
 		ImGui::Image((void*) tex->glTexture, ImVec2(200, 200));
 		ImGui::Separator();
