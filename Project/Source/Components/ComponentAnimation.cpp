@@ -23,6 +23,7 @@
 
 #define JSON_TAG_LOOP "Controller"
 #define JSON_TAG_ANIMATION_ID "AnimationId"
+#define JSON_TAG_STATE_MACHINE_ID "StateMachineId"
 
 void ComponentAnimation::Update() {
 	if (App->input->GetKey(SDL_SCANCODE_1)) {
@@ -65,21 +66,27 @@ void ComponentAnimation::OnEditorUpdate() {
 
 void ComponentAnimation::Save(JsonValue jComponent) const {
 	// TODO: Save state machine resource UID
-	jComponent[JSON_TAG_ANIMATION_ID] = animationController.animationID;
-	jComponent[JSON_TAG_LOOP] = animationController.loop;
+	//jComponent[JSON_TAG_ANIMATION_ID] = animationController->animationID;
+	jComponent[JSON_TAG_STATE_MACHINE_ID] = stateMachineResource->animationID;
+	bool ok = true;
+	//jComponent[JSON_TAG_LOOP] = animationController.loop;
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
-	animationController.animationID = jComponent[JSON_TAG_ANIMATION_ID];
-	if (animationController.animationID != 0) App->resources->IncreaseReferenceCount(animationController.animationID);
-	animationController.loop = jComponent[JSON_TAG_LOOP];
+	//animationController->animationID = jComponent[JSON_TAG_ANIMATION_ID];
+	//if (animationController->animationID != 0) App->resources->IncreaseReferenceCount(animationController->animationID);
+	stateMachineResource->animationID = jComponent[JSON_TAG_STATE_MACHINE_ID];
+	if (stateMachineResource->animationID != 0) App->resources->IncreaseReferenceCount(stateMachineResource->animationID);
+	bool ok = true;
+
+	//animationController.loop = jComponent[JSON_TAG_LOOP];
 }
 
 void ComponentAnimation::DuplicateComponent(GameObject& owner) {
-	ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
+	/*ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
 	component->animationController.animationID = animationController.animationID;
 	component->animationController.loop = animationController.loop;
-	component->animationController.currentTime = animationController.currentTime;
+	component->animationController.currentTime = animationController.currentTime;*/
 }
 
 void ComponentAnimation::OnUpdate() {

@@ -22,6 +22,8 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Skybox";
 	case ResourceType::ANIMATION:
 		return "Animation";
+	case ResourceType::STATE_MACHINE:
+		return "StateMachine";
 	default:
 		LOG("Resource of type %i hasn't been registered in GetResourceTypeName.", (unsigned) type);
 		assert(false); // ERROR: Resource type not registered
@@ -46,6 +48,8 @@ ResourceType GetResourceTypeFromName(const char* name) {
 		return ResourceType::SKYBOX;
 	} else if (strcmp(name, "Animation") == 0) {
 		return ResourceType::ANIMATION;
+	} else if (strcmp(name, "StateMachine") == 0) {
+		return ResourceType::STATE_MACHINE;
 	} else {
 		LOG("No resource of name %s exists.", (unsigned) name);
 		assert(false); // ERROR: Invalid name

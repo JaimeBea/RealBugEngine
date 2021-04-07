@@ -1,9 +1,6 @@
 #include "ResourceStateMachine.h"
 #include "ResourceTransition.h"
 #include "ResourceStates.h"
-ResourceStateMachine::ResourceStateMachine() {
-}
-
 
 ResourceStates* ResourceStateMachine::AddState(std::string name,Clip *clip) {
 	//Checking for unique name

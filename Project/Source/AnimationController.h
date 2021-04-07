@@ -1,6 +1,7 @@
 #pragma once
 #include <Math/Quat.h>
 #include <list>
+#include "Utils/UID.h"
 
 class ResourceAnimation;
 class Clip;
@@ -21,4 +22,9 @@ public:
 private:
 	bool running = false;
 	ResourceAnimation* animationResource = nullptr;
+
+public:
+	float currentTime = 0.f;
+	bool loop = true;
+	UID animationID = 0;
 };

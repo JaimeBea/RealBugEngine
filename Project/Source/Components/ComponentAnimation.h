@@ -25,7 +25,7 @@ public:
 
 	void OnUpdate();
 	
-	AnimationController* animationController;
+	AnimationController* animationController = nullptr;
 	ResourceStateMachine* stateMachineResource = nullptr;
 
 	void SendTrigger(std::string trigger);

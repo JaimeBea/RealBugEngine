@@ -1,12 +1,16 @@
 #pragma once
+#include "Resources/ResourceType.h"
+#include "Resources/Resource.h"
+
 #include <list>
 #include <unordered_map>
+#include "Utils/UID.h"
 
 class ResourceStates;
 class ResourceTransition;
 class ResourceAnimation;
 class Clip;
-class ResourceStateMachine {
+class ResourceStateMachine : public Resource {
 private:
 
 	std::list<ResourceStates*> states;
@@ -15,7 +19,8 @@ private:
 	ResourceStates* currentState = nullptr;
 
 public:
-	ResourceStateMachine();
+	REGISTER_RESOURCE(ResourceStateMachine, ResourceType::STATE_MACHINE);
+
 	ResourceStates* AddState(std::string name,Clip *clip);
 	void AddTransition(ResourceStates* from, ResourceStates* to, float interpolation, std::string& name );
 	ResourceTransition* GetValidTransition(std::string& name);
@@ -26,4 +31,7 @@ public:
 	void SetCurrentState(ResourceStates *newState) {
 		currentState = newState;
 	}
+
+public:
+	UID animationID = 0;
 };

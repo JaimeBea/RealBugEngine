@@ -16,6 +16,7 @@
 #include "Resources/ResourceTexture.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/Clip.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
@@ -629,13 +630,89 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 	// Load animations
 	if (assimpScene->mNumAnimations > 0) {
-		LOG("Importing animations");
+		/*LOG("Importing animations");
 		std::vector<ResourceAnimation*> animations;
 		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			animationComponent->animationController.animationID = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex)->GetId();
-		}
+		}*/
 		// TODO: Improve for multiple animations
+
+		LOG("Importing animations");
+
+		//JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+		JsonValue jResource = jResources[resourceIndex];
+		UID id = jResource[JSON_TAG_ID];
+		ResourceStateMachine* resourceStateMachine = App->resources->CreateResource<ResourceStateMachine>(filePath, id ? id : GenerateUID());
+		jResource[JSON_TAG_TYPE] = GetResourceTypeName(resourceStateMachine->GetType());
+		jResource[JSON_TAG_ID] = resourceStateMachine->GetId();
+		resourceIndex += 1;
+
+		std::string resourceName = "animation";
+		std::string stateName = "state";
+		std::string clipName = "clip";
+
+		ResourceAnimation* testAnim = nullptr; //TODO::Delete this
+		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+			std::string parsedI = std::to_string(i);
+
+			ResourceAnimation* animation = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex); // TODO
+
+			if (testAnim == nullptr) { //TODO::Delete this
+				testAnim = animation;
+			}
+
+			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
+
+			Clip* clip = new Clip(clipName + parsedI, animation);
+			clip->setEndIndex(60);
+			clip->setBeginIndex(0);
+			clip->loop = true;
+
+			resourceStateMachine->AddState(stateName + parsedI, clip);
+		}
+
+		//Setting machine state
+		std::string sState2 = "State2";
+		std::string clipName2 = "testClip2";
+		Clip* clip2 = new Clip(clipName2, testAnim);
+		clip2->setEndIndex(360); //361
+		clip2->setBeginIndex(290);
+		clip2->loop = false;
+
+		std::string sState3 = "State3";
+		std::string clipName3 = "testClip3";
+		Clip* clip3 = new Clip(clipName3, testAnim);
+		clip3->setEndIndex(120); //361
+		clip3->setBeginIndex(60);
+		clip3->loop = true;
+
+		//Mocking transition
+		ResourceStates* state2 = resourceStateMachine->AddState(sState2, clip2);
+		ResourceStates* state3 = resourceStateMachine->AddState(sState3, clip3);
+
+		std::string tName1 = "s1Ts2";
+		std::string tName2 = "s2Ts1";
+		std::string tName3 = "s2Ts3";
+		std::string tName4 = "s3Ts1";
+
+		resourceStateMachine->AddTransition(resourceStateMachine->GetCurrentState(), state2, 0.3, tName1);
+		resourceStateMachine->AddTransition(state2, resourceStateMachine->GetCurrentState(), 0.3, tName2);
+		resourceStateMachine->AddTransition(state2, state3, 0.4, tName3);
+		resourceStateMachine->AddTransition(state3, resourceStateMachine->GetCurrentState(), 0.7, tName4);
+		//resourceStateMachine->SetCurrentState(state);
+
+		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
+		animationComponent->animationController = new AnimationController(testAnim);
+		animationComponent->animationController->SetAnimationResource(testAnim); // TODO improve for multiple animations
+		animationComponent->stateMachineResource = resourceStateMachine;
+
+		//animationComponent->SendTrigger(tName1);
+		//animationComponent->SendTrigger(tName2);
+
+		//resourceStateMachine.ChangeState(tName1);
+		//resourceStateMachine.ChangeState(tName2);
+		//esourceStateMachine.GetCurrentState();
 	}
 
 	// Cache bones for skinning
