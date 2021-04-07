@@ -5,12 +5,15 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleResources.h"
-#include <Resources/ResourceTexture.h>
-#include <Resources/ResourceShader.h>
+#include "Resources/ResourceTexture.h""
+#include "Resources/ResourceShader.h"
+#include "Resources/ResourceFont.h"
 #include "GL/glew.h"
 #include "Math/TransformOps.h"
 #include "FileSystem/JsonValue.h"
 #include "Utils/Logging.h"
+#include "Utils/ImGuiUtils.h"
+#include "imgui_stdlib.h"
 
 #define JSON_TAG_TEXTURE_SHADERID "ShaderID"
 #define JSON_TAG_TEXTURE_TEXTUREID "TextureID"
@@ -66,6 +69,15 @@ void ComponentText::Init() {
 void ComponentText::Update() {
 }
 
+void ComponentText::OnEditorUpdate() {
+
+	static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
+	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
+	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
+	
+}
+
 void ComponentText::Save(JsonValue jComponent) const {
 }
 
@@ -98,9 +110,9 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
 
-	std::string font = "";
+	//std::string font = "";
 	std::vector<Character> characters;
-	App->userInterface->GetCharactersInString(font, text, characters);
+	App->userInterface->GetCharactersInString(fontID, text, characters);
 
 	// Iterate through all characters
 
@@ -114,14 +126,13 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	//}
 
 	for (char c : text) {
-		Character character = App->userInterface->GetCharacter(font, c);
+		Character character = App->userInterface->GetCharacter(fontID, c);
 		glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
 		glBindTexture(GL_TEXTURE_2D, character.textureID);
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
-
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);

@@ -66,24 +66,25 @@ void ModuleUserInterface::AddFont(const std::string& fontPath) {
 	*/
 }
 
-Character ModuleUserInterface::GetCharacter(const std::string& font, char c) { // Should this return a Character*?
-	std::unordered_map<std::string, ResourceFont*>::const_iterator existsKey = fonts.find(font);
+Character ModuleUserInterface::GetCharacter(UID font, char c) { // Should this return a Character*?
+	//std::unordered_map<std::string, UID>::const_iterator existsKey = fonts.find(font);
+	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
 
-	if (existsKey == fonts.end()) {
+	if (fontResource == nullptr) {
 		return Character();
 	}
-	return fonts[font]->characters[c];
+	return fontResource->characters[c];
 }
 
-void ModuleUserInterface::GetCharactersInString(const std::string& font, const std::string& sentence, std::vector<Character>& charsInSentence) {
-	std::unordered_map<std::string, ResourceFont*>::const_iterator existsKey = fonts.find(font);
+void ModuleUserInterface::GetCharactersInString(UID font, const std::string& sentence, std::vector<Character>& charsInSentence) {
+	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
 
-	if (existsKey == fonts.end()) {
+	if (fontResource == nullptr) {
 		return;
 	}
 
 	for (std::string::const_iterator i = sentence.begin(); i != sentence.end(); ++i) {
-		charsInSentence.push_back(fonts[font]->characters[*i]);
+		charsInSentence.push_back(fontResource->characters[*i]);
 	}
 }
 

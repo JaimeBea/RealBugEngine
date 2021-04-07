@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
+#include "Components/UI/ComponentText.h"
+
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
 
@@ -97,8 +99,12 @@ void PanelInspector::Update() {
 				case ComponentType::TOGGLE:
 					cName = "Toggle";
 					break;
+				case ComponentType::TEXT:
+					cName = "Text";
+					break;
 				case ComponentType::SELECTABLE:
 					cName = "Selectable";
+					break;
 				case ComponentType::SKYBOX:
 					cName = "Skybox";
 					break;
@@ -232,6 +238,16 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 		bool newUISelectableCreated = false; // In addition, if it is a selectable element, a ComponentBoundingBox2D will also be created
 		if (ImGui::MenuItem("Image")) {
 			ComponentImage* component = selected->CreateComponent<ComponentImage>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+
+		if (ImGui::MenuItem("Text")) {
+			ComponentText* component = selected->CreateComponent<ComponentText>();
 			if (component != nullptr) {
 				component->Init();
 				newUIComponentCreated = true;

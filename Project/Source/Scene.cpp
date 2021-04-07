@@ -126,6 +126,9 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::TOGGLE:
 		if (!toggleComponents.Has(componentId)) return nullptr;
 		return &toggleComponents.Get(componentId);
+	case ComponentType::TEXT:
+		if (!textComponents.Has(componentId)) return nullptr;
+		return &textComponents.Get(componentId);
 	case ComponentType::SELECTABLE:
 		if (!selectableComponents.Has(componentId)) return nullptr;
 		return &selectableComponents.Get(componentId);
@@ -170,6 +173,8 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 		return &boundingBox2DComponents.Put(componentId, ComponentBoundingBox2D(owner, componentId, owner->IsActive()));
 	case ComponentType::TOGGLE:
 		return &toggleComponents.Put(componentId, ComponentToggle(owner, componentId, owner->IsActive()));
+	case ComponentType::TEXT:
+		return &textComponents.Put(componentId, ComponentText(owner, componentId, owner->IsActive()));
 	case ComponentType::SELECTABLE:
 		return &selectableComponents.Put(componentId, ComponentSelectable(owner, componentId, owner->IsActive()));
 	case ComponentType::SKYBOX:
@@ -236,6 +241,10 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::TOGGLE:
 		if (!toggleComponents.Has(componentId)) return;
 		toggleComponents.Remove(componentId);
+		break;
+	case ComponentType::TEXT:
+		if (!textComponents.Has(componentId)) return;
+		textComponents.Remove(componentId);
 		break;
 	case ComponentType::SELECTABLE:
 		if (!selectableComponents.Has(componentId)) return;

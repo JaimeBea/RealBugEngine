@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Libs\imgui\imgui_stdlib.h" />
+    <ClInclude Include="Source\Components\UI\ComponentText.h" />
     <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
     <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
     <ClInclude Include="Libs\freetype\include\freetype\ftadvanc.h" />
@@ -242,6 +244,8 @@
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Libs\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentText.cpp" />
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />

@@ -17,6 +17,7 @@
 #include "Components/ComponentEventSystem.h"
 #include "Components/UI/ComponentButton.h"
 #include "Components/UI/ComponentToggle.h"
+#include "Components/UI/ComponentText.h"
 #include "Components/ComponentSkybox.h"
 #include "Components/ComponentAnimation.h"
 
@@ -61,6 +62,7 @@ public:
 	VectorMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
 	VectorMap<UID, ComponentEventSystem> eventSystemComponents;
 	VectorMap<UID, ComponentToggle> toggleComponents;
+	VectorMap<UID, ComponentText> textComponents;
 	VectorMap<UID, ComponentButton> buttonComponents;
 	VectorMap<UID, ComponentSelectable> selectableComponents;
 	VectorMap<UID, ComponentSkyBox> skyboxComponents;
