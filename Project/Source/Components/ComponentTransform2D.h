@@ -15,6 +15,7 @@ public:
 	void OnEditorUpdate() override;						// Works as input of the different values of the component
 	void Save(JsonValue jComponent) const override;		// Serializes Component
 	void Load(JsonValue jComponent) override;			// Deserializes Component
+	void DrawGizmos() override;
 
 	void SetPosition(float3 position);					// Sets this position to value
 	void SetSize(float2 size);							// Sets this size to value
@@ -24,7 +25,7 @@ public:
 	void SetAnchorX(float2 anchorX);					// Sets this anchorX to value
 	void SetAnchorY(float2 anchorY);					// Sets this anchorY to value
 	const float4x4 GetGlobalMatrix();					// Returns GlobalMatrix
-	const float4x4 GetGlobalMatrixWithSize();			// Returns GlobalMatrix with the size of the item
+	const float4x4 GetGlobalMatrixWithSize(bool isRunning = false);			// Returns GlobalMatrix with the size of the item
 
 	float3 GetPosition() const;							// Returns the position
 	float2 GetSize() const;								// Returns the size
