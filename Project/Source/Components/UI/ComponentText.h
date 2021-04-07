@@ -38,10 +38,11 @@ private:
 	float textHeight = 0;
 	float fontSize = 12.0f;
 	float4 color = float4::one;
+	float4 colorTint = float4::one;		// to reuse shader
 
-	unsigned int program = 0;
+	unsigned int vbo;
+	unsigned int vao;
 	UID textureID;
 	UID shaderID;
 	UID fontID;
-	unsigned int vbo;
 };

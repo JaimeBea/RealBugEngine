@@ -18,6 +18,11 @@ void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 			componentImage->Draw(transform2D);
 		}
 
+		ComponentText* componentText = gameObject->GetComponent<ComponentText>();
+		if (componentText != nullptr) {
+			componentText->Draw(transform2D);
+		}
+
 		/*ComponentButton* componentButton = gameObject->GetComponent<ComponentButton>();
 		if (componentButton != nullptr) {
 			componentButton->Draw();
