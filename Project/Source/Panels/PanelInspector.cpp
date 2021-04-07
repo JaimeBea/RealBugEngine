@@ -99,6 +99,7 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::SELECTABLE:
 					cName = "Selectable";
+					break;
 				case ComponentType::SKYBOX:
 					cName = "Skybox";
 					break;
