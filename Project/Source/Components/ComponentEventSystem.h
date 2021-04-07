@@ -32,6 +32,5 @@ private:
 	std::vector<ComponentSelectable*> hoveredSelectables; //vector of SelectableComponents* it updates (adding/removing) with mouse events
 
 public:
-	static std::vector<ComponentSelectable*> m_Selectables; //Vector of all selectable components
-	ComponentSelectable* firstSelected = nullptr;			//Reference to the "first selected selectableComponent", this is not used directly but Unity implements it so that users can access it
+	ComponentSelectable* firstSelected = nullptr; //Reference to the "first selected selectableComponent", this is not used directly but Unity implements it so that users can access it
 };

@@ -22,15 +22,7 @@ void ComponentToggle ::SetOn(bool b) {
 	OnValueChanged();
 }
 
-void ComponentToggle::OnPointerEnter() {
-	ComponentSelectable::OnPointerEnter();
-}
-
-void ComponentToggle::OnPointerExit() {
-	ComponentSelectable::OnPointerExit();
-}
-
 void ComponentToggle::DuplicateComponent(GameObject& owner) {
 	ComponentToggle* component = owner.CreateComponent<ComponentToggle>();
-	//TO DO
+	component->isOn = isOn;
 }

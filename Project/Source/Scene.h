@@ -55,6 +55,8 @@ public:
 	VectorMap<UID, ComponentEventSystem> eventSystemComponents;
 	VectorMap<UID, ComponentToggle> toggleComponents;
 	VectorMap<UID, ComponentButton> buttonComponents;
+	VectorMap<UID, ComponentSelectable> selectableComponents;
+
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

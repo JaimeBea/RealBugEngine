@@ -7,33 +7,27 @@
 class GameObject;
 
 // Component UI Button that allows user interaction by clicking/pressing the button. Inherits ComponentSelectable and implements IMouseClickHandler.
-class ComponentButton : public ComponentSelectable 
-					  , public IMouseClickHandler {
+class ComponentButton : public Component
+	, public IMouseClickHandler {
 public:
-	REGISTER_COMPONENT_SELECTABLE(ComponentButton, ComponentType::BUTTON, false);
-	void Init() override;											// Inits the component
-	void OnEditorUpdate() override;									// Works as input of the Colors and the Selectable interface
-	void Save(JsonValue jComponent) const override;					// Serializes object
-	void Load(JsonValue jComponent) override;						// Deserializes object
-	
-	void OnClicked() override;										// Action to perform when the button is clicked
-	void Update() override;											// Updates clicked variable if the button is Left-clicked mouse
-	void DuplicateComponent(GameObject& obj) override;				// TODO
-	void OnPointerEnter() override;									// Action to perform when the pointer enters
-	void OnPointerExit() override;									// Action to perform when the pointer exits
+	REGISTER_COMPONENT(ComponentButton, ComponentType::BUTTON, false);
+	void Init() override;							// Inits the component
+	void OnEditorUpdate() override;					// Works as input of the Colors and the Selectable interface
+	void Save(JsonValue jComponent) const override; // Serializes object
+	void Load(JsonValue jComponent) override;		// Deserializes object
 
-	bool IsClicked() const;											// Returns true if the button is clicked
-	void SetClicked(bool b);										// Sets clicked to the value
+	void OnClicked() override;						   // Action to perform when the button is clicked
+	void Update() override;							   // Updates clicked variable if the button is Left-clicked mouse
+	void DuplicateComponent(GameObject& obj) override; // TODO
 
-	const float4 GetHoverColor() const;								// Returns colorHovered
-	const float4 GetClickColor() const;								// Returns colorClicked
-	const float4 GetDisableColor() const;							// Returns colorDisabled
-	const float4 GetTintColor() const;								// Returns the correspondant color of the current state
+	bool IsClicked() const;	 // Returns true if the button is clicked
+	void SetClicked(bool b); // Sets clicked to the value
+
+	const float4 GetTintColor() const;	// Returns the correspondant color of the current state
+	const float4 GetClickColor() const; // Returns colorClicked
 
 private:
-	bool clicked = false;											// Clicked state
+	bool clicked = false; // Clicked state
 
-	float4 colorHovered = float4(0.84f, 0.84f, 0.84f, 1.f);				// The color when the button is hovered
-	float4 colorClicked = float4(0.64f, 0.64f, 0.64f, 1.f);				// The color when the button is clicked
-	float4 colorDisabled = float4(0.73f, 0.73f, 0.73f, 1.f);				// The color when the button is disabled
+	float4 colorClicked = float4(0.64f, 0.64f, 0.64f, 1.f); // The color when the button is clicked
 };

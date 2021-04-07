@@ -119,16 +119,16 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 	switch (e.type) {
 	case Event::EventType::MOUSE_UPDATE:
 		if (currentEvSys) {
-			for (ComponentSelectable* selectable : ComponentEventSystem::m_Selectables) {
-				ComponentBoundingBox2D* bb = selectable->GetOwner().GetComponent<ComponentBoundingBox2D>();
+			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
+				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
 
-				if (!selectable->IsHovered()) {
+				if (!selectable.IsHovered()) {
 					if (bb->GetWorldAABB().Contains(mousePos)) {
-						selectable->OnPointerEnter();
+						selectable.OnPointerEnter();
 					}
 				} else {
 					if (!bb->GetWorldAABB().Contains(mousePos)) {
-						selectable->OnPointerExit();
+						selectable.OnPointerExit();
 					}
 				}
 			}
@@ -140,7 +140,7 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
-					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable);
+					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
 					if (i != nullptr) {
 						i->OnClicked();
 					}

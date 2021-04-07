@@ -9,6 +9,7 @@
 #include "Components/ComponentCanvasRenderer.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentSelectable.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
@@ -239,6 +240,7 @@ void PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
 	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
-
+	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
 	newGameObject->InitComponents();
+	selectable->SetSelectableType(button->GetType());
 }

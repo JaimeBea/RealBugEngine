@@ -1,11 +1,10 @@
 #pragma once
 
-//#include "Components/Component.h"
-#include "Components/UI/ComponentSelectable.h"
+#include "Components/Component.h"
 
-class ComponentToggle : public ComponentSelectable {
+class ComponentToggle : public Component {
 public:
-	REGISTER_COMPONENT_SELECTABLE(ComponentToggle, ComponentType::TOGGLE, false);
+	REGISTER_COMPONENT(ComponentToggle, ComponentType::TOGGLE, false);
 
 	void Init() override;
 
@@ -14,8 +13,6 @@ public:
 	bool IsOn();
 	void SetOn(bool b);
 	void DuplicateComponent(GameObject& obj) override;
-	void OnPointerEnter() override;
-	void OnPointerExit() override;
 
 private:
 	bool isOn = false;

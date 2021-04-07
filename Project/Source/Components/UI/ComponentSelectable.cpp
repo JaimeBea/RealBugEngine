@@ -13,7 +13,7 @@
 
 //TODO: ACTUALLY TRANSITION WHEN HIGHLIGHTING HAPPENS, REQUIRES CLASS GRAPHICS FOR SPRITES/IMAGES
 void ComponentSelectable::Highlight(bool b) {
-	switch (m_Transition) {
+	switch (transitionType) {
 	case TransitionType::COLOR_CHANGE:
 		break;
 	case TransitionType::ANIMATION:
@@ -25,19 +25,12 @@ void ComponentSelectable::Highlight(bool b) {
 	highlighted = b;
 }
 
-ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active)
-	: Component(type_, owner, componentID_, active) {
-}
+//ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active)
+//	: Component(type_, owner, componentID_, active) {
+//}
 
 ComponentSelectable::~ComponentSelectable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
-	if (selectableIndex > -1) {
-		//Subtitute my position in vector with last element of vector
-		ComponentEventSystem::m_Selectables[selectableIndex] = ComponentEventSystem::m_Selectables[ComponentEventSystem::m_Selectables.size()];
-		//Remove last position from vector, effectively removing myself
-		ComponentEventSystem::m_Selectables.pop_back();
-		selectableIndex = -1;
-	}
 }
 
 bool ComponentSelectable::IsInteractable() const {
@@ -51,18 +44,17 @@ void ComponentSelectable::SetInteractable(bool b) {
 ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 	if (!App->userInterface->GetCurrentEventSystem()) return nullptr;
 
-	switch (m_NavigationType) {
+	switch (navigationType) {
 	case NavigationType::AUTOMATIC: {
 		ComponentSelectable* bestCandidate = nullptr;
 		float minDistance = FLT_MAX;
 		float3 thisPos = this->GetOwner().GetComponent<ComponentTransform2D>()->GetPosition();
 
 		// Get Gameobjects with the same parent
-		/*for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
-		ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
-		if (!selectable) continue;*/
-		// TODO: This is a hotfix because GetComponent doesn't support Component hierarchy. Ideally, should use the code commented above.
-		for (ComponentSelectable* selectable : ComponentEventSystem::m_Selectables) {
+		for (GameObject* brother : this->GetOwner().GetParent()->GetChildren()) {
+			ComponentSelectable* selectable = brother->GetComponent<ComponentSelectable>();
+			if (!selectable) continue;
+
 			GameObject selectableObject = selectable->GetOwner();
 			if (selectableObject.GetParent()->GetID() != this->GetOwner().GetParent()->GetID()) continue;
 
@@ -75,13 +67,13 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 				if (dir.x > 0.6f && direction.x > 0.6f) {
 					bestCandidate = selectable;
 					minDistance = distance;
-				} else if (dir.x < -0.6f && direction.x > -0.6f) {
+				} else if (dir.x < -0.6f && direction.x < -0.6f) {
 					bestCandidate = selectable;
 					minDistance = distance;
 				} else if (dir.y > 0.6f && direction.y > 0.6f) {
 					bestCandidate = selectable;
 					minDistance = distance;
-				} else if (dir.y < -0.6f && direction.y > -0.6f) {
+				} else if (dir.y < -0.6f && direction.y < -0.6f) {
 					bestCandidate = selectable;
 					minDistance = distance;
 				}
@@ -92,13 +84,13 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 	}
 	case NavigationType::MANUAL: {
 		if (dir.x > 0.6f) {
-			return onAxisRight;
+			return GetOwner().scene->GetGameObject(onAxisRight)->GetComponent<ComponentSelectable>();
 		} else if (dir.x < -0.6f) {
-			return onAxisLeft;
+			return GetOwner().scene->GetGameObject(onAxisLeft)->GetComponent<ComponentSelectable>();
 		} else if (dir.y > 0.6f) {
-			return onAxisUp;
+			return GetOwner().scene->GetGameObject(onAxisUp)->GetComponent<ComponentSelectable>();
 		} else if (dir.y < -0.6f) {
-			return onAxisDown;
+			return GetOwner().scene->GetGameObject(onAxisDown)->GetComponent<ComponentSelectable>();
 		}
 		break;
 	}
@@ -120,18 +112,15 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	ComponentEventSystem::m_Selectables.push_back(this);
-
 	interactable = false;
 	highlighted = false;
 	selected = false;
-	m_NavigationType = NavigationType::AUTOMATIC;
-	onAxisDown = nullptr;
-	onAxisLeft = nullptr;
-	onAxisRight = nullptr;
-	onAxisUp = nullptr;
-	selectableIndex = -1;
-	m_Transition = TransitionType::NONE;
+	navigationType = NavigationType::AUTOMATIC;
+	onAxisDown = 0;
+	onAxisLeft = 0;
+	onAxisRight = 0;
+	onAxisUp = 0;
+	transitionType = TransitionType::NONE;
 
 	//TODO: add as listener to MouseMoved event?
 }
@@ -147,12 +136,12 @@ void ComponentSelectable::OnEditorUpdate() {
 
 	// Navigation Type combo box
 	const char* navigationTypeItems[] = {"None", "Automatic", "Manual"};
-	const char* navigationCurrent = navigationTypeItems[(int) m_NavigationType];
+	const char* navigationCurrent = navigationTypeItems[(int) navigationType];
 	if (ImGui::BeginCombo("Navigation Mode", navigationCurrent)) {
 		for (int n = 0; n < IM_ARRAYSIZE(navigationTypeItems); ++n) {
 			bool isSelected = (navigationCurrent == navigationTypeItems[n]);
 			if (ImGui::Selectable(navigationTypeItems[n], isSelected)) {
-				m_NavigationType = NavigationType(n);
+				navigationType = NavigationType(n);
 			}
 			if (isSelected) {
 				ImGui::SetItemDefaultFocus();
@@ -163,12 +152,12 @@ void ComponentSelectable::OnEditorUpdate() {
 
 	//Transition Type combo box
 	const char* transitionTypeItems[] = {"None", "Color Transition", "Animation"};
-	const char* transitionCurrent = transitionTypeItems[(int) m_Transition];
+	const char* transitionCurrent = transitionTypeItems[(int) transitionType];
 	if (ImGui::BeginCombo("Transition", transitionCurrent)) {
 		for (int n = 0; n < IM_ARRAYSIZE(transitionTypeItems); ++n) {
 			bool isSelected = (transitionCurrent == transitionTypeItems[n]);
 			if (ImGui::Selectable(transitionTypeItems[n], isSelected)) {
-				m_Transition = TransitionType(n);
+				transitionType = TransitionType(n);
 			}
 			if (isSelected) {
 				ImGui::SetItemDefaultFocus();
@@ -176,15 +165,14 @@ void ComponentSelectable::OnEditorUpdate() {
 		}
 		ImGui::EndCombo();
 	}
+	ImGui::ColorEdit4("Disable Color##", colorDisabled.ptr());
+	ImGui::ColorEdit4("Hovered Color##", colorHovered.ptr());
+	ImGui::ColorEdit4("Selected Color##", colorSelected.ptr());
 
 	//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
 }
 
 void ComponentSelectable::Enable() {
-	if (ComponentEventSystem* evSyst = App->userInterface->GetCurrentEventSystem()) {
-		selectableIndex = evSyst->m_Selectables.size();
-		evSyst->m_Selectables.push_back(this);
-	}
 }
 
 void ComponentSelectable::Disable() {
@@ -193,12 +181,6 @@ void ComponentSelectable::Disable() {
 			evSys->SetSelected(nullptr);
 		}
 	}
-	//Subtitute my position in vector with last element of vector
-	ComponentEventSystem::m_Selectables[selectableIndex] = ComponentEventSystem::m_Selectables[ComponentEventSystem::m_Selectables.size()];
-
-	//Remove last position from vector, effectively removing myself
-	ComponentEventSystem::m_Selectables.pop_back();
-	selectableIndex = -1;
 }
 
 void ComponentSelectable::OnPointerEnter() {
@@ -210,6 +192,10 @@ void ComponentSelectable::OnPointerEnter() {
 	}
 }
 
+const float4 ComponentSelectable::GetDisabledColor() const {
+	return colorDisabled;
+}
+
 void ComponentSelectable::OnPointerExit() {
 	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
 		hovered = false;
@@ -219,6 +205,115 @@ void ComponentSelectable::OnPointerExit() {
 	}
 }
 
+void ComponentSelectable::DuplicateComponent(GameObject& owner) {
+	ComponentSelectable* component = owner.CreateComponent<ComponentSelectable>();
+	component->interactable = interactable;
+	component->colorDisabled = colorDisabled;
+	component->colorHovered = colorHovered;
+	component->onAxisDown = onAxisDown;
+	component->onAxisUp = onAxisUp;
+	component->onAxisRight = onAxisRight;
+	component->onAxisLeft = onAxisLeft;
+	component->selectableType = selectableType;
+	component->navigationType = navigationType;
+	component->transitionType = transitionType;
+}
+
 bool ComponentSelectable::IsHovered() const {
 	return hovered;
+}
+
+bool ComponentSelectable::IsSelected() const {
+	return selected;
+}
+
+void ComponentSelectable::Save(JsonValue jsonVal) const {
+	JsonValue jColorHover = jsonVal[JSON_TAG_COLOR_HOVERED];
+	jColorHover[0] = colorHovered.x;
+	jColorHover[1] = colorHovered.y;
+	jColorHover[2] = colorHovered.z;
+	jColorHover[3] = colorHovered.w;
+
+	JsonValue jColorDisable = jsonVal[JSON_TAG_COLOR_DISABLED];
+	jColorDisable[0] = colorDisabled.x;
+	jColorDisable[1] = colorDisabled.y;
+	jColorDisable[2] = colorDisabled.z;
+	jColorDisable[3] = colorDisabled.w;
+
+	JsonValue jColorSelected = jsonVal[JSON_TAG_COLOR_SELECTED];
+	jColorSelected[0] = colorSelected.x;
+	jColorSelected[1] = colorSelected.y;
+	jColorSelected[2] = colorSelected.z;
+	jColorSelected[3] = colorSelected.w;
+
+	//TO DO RESEARCH WHY THIS RETURNS ERROR
+	JsonValue jInteractable = jsonVal[JSON_TAG_INTERACTABLE];
+	jInteractable = interactable;
+
+	JsonValue jNavigationType = jsonVal[JSON_TAG_NAVIGATION_TYPE];
+	jNavigationType = (int) navigationType;
+
+	JsonValue jTransitiontype = jsonVal[JSON_TAG_TRANSITION_TYPE];
+	jTransitiontype = (int) transitionType;
+
+	jsonVal[JSON_TAG_ON_AXIS_DOWN] = onAxisDown;
+
+	jsonVal[JSON_TAG_ON_AXIS_UP] = onAxisUp;
+
+	jsonVal[JSON_TAG_ON_AXIS_RIGHT] = onAxisRight;
+
+	jsonVal[JSON_TAG_ON_AXIS_LEFT] = onAxisLeft;
+}
+
+void ComponentSelectable::Load(JsonValue jsonVal) {
+	JsonValue jColorHover = jsonVal[JSON_TAG_COLOR_HOVERED];
+	colorHovered.Set(jColorHover[0], jColorHover[1], jColorHover[2], jColorHover[3]);
+
+	JsonValue jColorDisabled = jsonVal[JSON_TAG_COLOR_DISABLED];
+	colorDisabled.Set(jColorDisabled[0], jColorDisabled[1], jColorDisabled[2], jColorDisabled[3]);
+
+	JsonValue jColorSelected = jsonVal[JSON_TAG_COLOR_SELECTED];
+	colorDisabled.Set(jColorSelected[0], jColorSelected[1], jColorSelected[2], jColorSelected[3]);
+
+	JsonValue jInteractable = jsonVal[JSON_TAG_INTERACTABLE];
+	interactable = jInteractable;
+
+	JsonValue jNavigationType = jsonVal[JSON_TAG_NAVIGATION_TYPE];
+	navigationType = (NavigationType)((int) jsonVal[JSON_TAG_NAVIGATION_TYPE]);
+
+	JsonValue jTransitionType = jsonVal[JSON_TAG_TRANSITION_TYPE];
+	transitionType = (TransitionType)((int) jsonVal[JSON_TAG_TRANSITION_TYPE]);
+
+	//TO DO MOVE THESE THANGS TO POST LOAD
+
+	onAxisDown = jsonVal[JSON_TAG_ON_AXIS_DOWN];
+
+	onAxisUp = jsonVal[JSON_TAG_ON_AXIS_UP];
+
+	onAxisRight = jsonVal[JSON_TAG_ON_AXIS_RIGHT];
+
+	onAxisLeft = jsonVal[JSON_TAG_ON_AXIS_LEFT];
+}
+
+const float4 ComponentSelectable::GetHoverColor() const {
+	return colorHovered;
+}
+
+const float4 ComponentSelectable::GetSelectedColor() const {
+	return colorSelected;
+}
+
+Component* ComponentSelectable::GetSelectableComponent() {
+	switch (selectableType) {
+	case ComponentType::BUTTON:
+		return GetOwner().GetComponent<ComponentButton>();
+	case ComponentType::TOGGLE:
+		return GetOwner().GetComponent<ComponentToggle>();
+	default:
+		return nullptr;
+	}
+}
+
+void ComponentSelectable::SetSelectableType(ComponentType type_) {
+	selectableType = type_;
 }

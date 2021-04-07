@@ -97,6 +97,9 @@ void PanelInspector::Update() {
 				case ComponentType::TOGGLE:
 					cName = "Toggle";
 					break;
+				case ComponentType::SELECTABLE:
+					cName = "Selectable";
+					break;
 				default:
 					cName = "";
 					break;
@@ -220,11 +223,14 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 		// ...
 
 		// Selectables
+		ComponentType tmpType = ComponentType::UNKNOWN;
+
 		if (ImGui::MenuItem("Button")) {
 			ComponentButton* component = selected->CreateComponent<ComponentButton>();
 			if (component != nullptr) {
 				component->Init();
-				ComponentEventSystem::m_Selectables.push_back(component);
+				tmpType = component->GetType();
+				//ComponentEventSystem::m_Selectables.push_back(component);
 				newUIComponentCreated = true;
 				newUISelectableCreated = true;
 			} else {
@@ -247,7 +253,12 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 
 			if (newUISelectableCreated) {
 				ComponentBoundingBox2D* boundingBox2d = selected->CreateComponent<ComponentBoundingBox2D>();
+				ComponentSelectable* selectable = selected->CreateComponent<ComponentSelectable>();
 				if (boundingBox2d != nullptr) boundingBox2d->Init();
+				if (selectable != nullptr) {
+					selectable->Init();
+					selectable->SetSelectableType(tmpType);
+				}
 			}
 		}
 		ImGui::EndMenu();
