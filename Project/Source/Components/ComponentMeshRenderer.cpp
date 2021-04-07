@@ -228,7 +228,8 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			}
 			ImGui::EndColumns();
 
-		} else if (material.materialType == ShaderType::STANDARD) {
+		}
+		else if (material.materialType == ShaderType::STANDARD) {
 			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 			//First Column with the text names of widgets
 			{
@@ -325,7 +326,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::EndTabItem();
 				}
 			}
-			if (material.specularMap != nullptr) {
+			if (material.specularMap != nullptr && material.materialType != ShaderType::STANDARD) {
 				if (ImGui::BeginTabItem("Specular##map")) {
 					ImGui::TextColored(App->editor->titleColor, "Specular Texture");
 					ImGui::TextWrapped("Size:");
@@ -336,6 +337,20 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
 					ImGui::TextWrapped("%d x %d", width, height);
 					ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
+					ImGui::EndTabItem();
+				}
+			}
+			if (material.metallicMap != nullptr && material.materialType == ShaderType::STANDARD) {
+				if (ImGui::BeginTabItem("Metallic##map")) {
+					ImGui::TextColored(App->editor->titleColor, "Metallic Texture");
+					ImGui::TextWrapped("Size:");
+					ImGui::SameLine();
+					int width;
+					int height;
+					glGetTextureLevelParameteriv(material.metallicMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+					glGetTextureLevelParameteriv(material.metallicMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+					ImGui::TextWrapped("%d x %d", width, height);
+					ImGui::Image((void*) material.metallicMap->glTexture, ImVec2(200, 200));
 					ImGui::EndTabItem();
 				}
 			}
