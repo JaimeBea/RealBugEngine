@@ -25,5 +25,6 @@ enum class ComponentType {
 	CAMERA = 4,
 	LIGHT = 5,
 	SKYBOX = 6,
-	SCRIPT = 7
+	SCRIPT = 7,
+	ANIMATION = 8
 };

@@ -77,6 +77,8 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::SCRIPT:
 					cName = "Script";
+				case ComponentType::ANIMATION:
+					cName = "Animation";
 					break;
 				default:
 					cName = "";
@@ -154,6 +156,14 @@ void PanelInspector::Update() {
 					ComponentScript* script = selected->CreateComponent<ComponentScript>();
 					if (script != nullptr) {
 						script->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Animation")) {
+					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
+					if (animation != nullptr) {
+						animation->Init();
 					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}

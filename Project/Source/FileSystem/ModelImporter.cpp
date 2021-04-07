@@ -10,10 +10,12 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentAnimation.h"
 #include "Resources/ResourceMesh.h"
 #include "Resources/ResourceMaterial.h"
 #include "Resources/ResourceTexture.h"
 #include "Resources/ResourcePrefab.h"
+#include "Resources/ResourceAnimation.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
@@ -31,7 +33,7 @@
 #define JSON_TAG_ID "Id"
 #define JSON_TAG_ROOT "Root"
 
-ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* assimpMesh, unsigned& resourceIndex) {
+static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* assimpMesh, unsigned& resourceIndex, std::vector<const char*>& bones) {
 	// Timer to measure importing a mesh
 	MSTimer timer;
 	timer.Start();
@@ -39,19 +41,24 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 	unsigned numVertices = assimpMesh->mNumVertices;
 	unsigned numIndices = assimpMesh->mNumFaces * 3;
 	unsigned materialIndex = assimpMesh->mMaterialIndex;
+	unsigned numBones = assimpMesh->mNumBones;
 
 	// Save to custom format buffer
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
 	unsigned uvSize = sizeof(float) * 2;
+	unsigned bonesIDSize = sizeof(unsigned) * 4;
+	unsigned weightsSize = sizeof(float) * 4;
 	unsigned indexSize = sizeof(unsigned);
+	unsigned boneSize = sizeof(unsigned) + sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
 
-	unsigned headerSize = sizeof(unsigned) * 2;
-	unsigned vertexSize = positionSize + normalSize + uvSize;
+	unsigned headerSize = sizeof(unsigned) * 3;
+	unsigned vertexSize = positionSize + normalSize + uvSize + bonesIDSize + weightsSize;
 	unsigned vertexBufferSize = vertexSize * numVertices;
 	unsigned indexBufferSize = indexSize * numIndices;
+	unsigned bonesBufferSize = boneSize * numBones;
 
-	size_t size = headerSize + vertexBufferSize + indexBufferSize;
+	size_t size = headerSize + bonesBufferSize + vertexBufferSize + indexBufferSize;
 	Buffer<char> buffer = Buffer<char>(size);
 	char* cursor = buffer.Data();
 
@@ -59,6 +66,61 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 	cursor += sizeof(unsigned);
 	*((unsigned*) cursor) = numIndices;
 	cursor += sizeof(unsigned);
+	*((unsigned*) cursor) = numBones;
+	cursor += sizeof(unsigned);
+
+	std::vector<ResourceMesh::Attach> attaches;
+	attaches.resize(numVertices);
+	for (unsigned i = 0; i < assimpMesh->mNumBones; ++i) {
+		aiBone* aiBone = assimpMesh->mBones[i];
+
+		bones.push_back(aiBone->mName.C_Str());
+
+		*((unsigned*) cursor) = aiBone->mName.length;
+		cursor += sizeof(unsigned);
+
+		memcpy_s(cursor, aiBone->mName.length * sizeof(char), aiBone->mName.data, aiBone->mName.length * sizeof(char));
+		cursor += FILENAME_MAX * sizeof(char);
+
+		//Transform
+		aiVector3D position, scaling;
+		aiQuaternion rotation;
+		aiBone->mOffsetMatrix.Decompose(scaling, rotation, position);
+
+		//Position
+		*((float*) cursor) = position.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = position.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = position.z;
+		cursor += sizeof(float);
+
+		// Scaling
+		*((float*) cursor) = scaling.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = scaling.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = scaling.z;
+		cursor += sizeof(float);
+
+		// Rotation
+		*((float*) cursor) = rotation.x;
+		cursor += sizeof(float);
+		*((float*) cursor) = rotation.y;
+		cursor += sizeof(float);
+		*((float*) cursor) = rotation.z;
+		cursor += sizeof(float);
+		*((float*) cursor) = rotation.w;
+		cursor += sizeof(float);
+
+		for (unsigned j = 0; j < aiBone->mNumWeights; j++) {
+			aiVertexWeight vtxWeight = aiBone->mWeights[j];
+
+			attaches[vtxWeight.mVertexId].bones[attaches[vtxWeight.mVertexId].numBones] = i;
+			attaches[vtxWeight.mVertexId].weights[attaches[vtxWeight.mVertexId].numBones] = vtxWeight.mWeight;
+			attaches[vtxWeight.mVertexId].numBones++;
+		}
+	}
 
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
 		aiVector3D& vertex = assimpMesh->mVertices[i];
@@ -80,6 +142,26 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].x : 0;
 		cursor += sizeof(float);
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].y : 0;
+		cursor += sizeof(float);
+
+		float weight = attaches[i].weights[0] + attaches[i].weights[1] + attaches[i].weights[2] + attaches[i].weights[3];
+
+		*((unsigned*) cursor) = attaches[i].bones[0];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[1];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[2];
+		cursor += sizeof(unsigned);
+		*((unsigned*) cursor) = attaches[i].bones[3];
+		cursor += sizeof(unsigned);
+
+		*((float*) cursor) = attaches[i].weights[0] / weight;
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[1] / weight;
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[2] / weight;
+		cursor += sizeof(float);
+		*((float*) cursor) = attaches[i].weights[3] / weight;
 		cursor += sizeof(float);
 	}
 
@@ -131,7 +213,139 @@ ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMes
 	return mesh;
 }
 
-void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, Scene* scene, GameObject* parent, std::vector<UID>& materialIds, const float4x4& accumulatedTransform, unsigned& resourceIndex) {
+static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue jMeta, const aiAnimation* aiAnim, const aiScene* assimpScene, unsigned& resourceIndex) {
+	// Timer to measure importing an animation
+	MSTimer timer;
+	timer.Start();
+
+	unsigned headerSize = sizeof(unsigned) * 2 + sizeof(float);
+
+	unsigned numKeyFrames = std::max(aiAnim->mChannels[0]->mNumPositionKeys, aiAnim->mChannels[0]->mNumRotationKeys);
+	unsigned numChannels = aiAnim->mNumChannels;
+
+	unsigned keyFrameVSize = sizeof(ResourceAnimation::Channel);
+	unsigned keyFrameKSize = FILENAME_MAX / 2 * sizeof(char);
+	unsigned keyFrameKLengthSize = sizeof(unsigned);
+	unsigned keyFrameTotalSize = keyFrameVSize + keyFrameKSize + keyFrameKLengthSize;
+	unsigned bufferSize = headerSize + numKeyFrames * numChannels * keyFrameTotalSize;
+
+	Buffer<char> buffer(bufferSize);
+	char* cursor = buffer.Data();
+
+	float ticks = static_cast<float>(aiAnim->mTicksPerSecond);
+	float duration = static_cast<float>(aiAnim->mDuration);
+	float durationInSeconds = ticks > 0 ? (duration / ticks) : 0;
+	*((float*) cursor) = durationInSeconds;
+	cursor += sizeof(float);
+
+	std::vector<ResourceAnimation::KeyFrameChannels> keyFrames;
+	keyFrames.resize(numKeyFrames);
+
+	aiNode* rootNode = assimpScene->mRootNode;
+
+	for (unsigned int i = 0; i < aiAnim->mNumChannels; ++i) {
+		aiNodeAnim* aiChannel = aiAnim->mChannels[i];
+		std::string channelName(aiChannel->mNodeName.C_Str());
+
+		aiNode* parent = rootNode->FindNode(aiChannel->mNodeName.C_Str())->mParent;
+
+		size_t pos = channelName.find("_$AssimpFbx$");
+		if (pos != std::string::npos) {
+			channelName = channelName.substr(0, pos);
+		}
+
+		float4x4 accumulatedTransform = float4x4::identity;
+		bool assimpNode = (std::string(parent->mName.C_Str()).find("$AssimpFbx$") != std::string::npos);
+
+		while (assimpNode) {
+			aiVector3D pos, scale;
+			aiQuaternion rot;
+			(parent->mTransformation).Decompose(scale, rot, pos);
+			accumulatedTransform = float4x4::FromTRS(float3(pos.x, pos.y, pos.z), Quat(rot.x, rot.y, rot.z, rot.w), float3(scale.x, scale.y, scale.z)) * accumulatedTransform;
+			parent = parent->mParent;
+			assimpNode = (std::string(parent->mName.C_Str()).find("$AssimpFbx$") != std::string::npos);
+		}
+
+		unsigned int frame = 0;
+
+		for (unsigned int j = 0; j < numKeyFrames; ++j) {
+			aiQuaternion aiQuat = (aiChannel->mNumRotationKeys > 1) ? aiChannel->mRotationKeys[j].mValue : aiChannel->mRotationKeys[0].mValue;
+			aiVector3D aiV3D = (aiChannel->mNumPositionKeys > 1) ? aiChannel->mPositionKeys[j].mValue : aiChannel->mPositionKeys[0].mValue;
+
+			float3 accumulatedPosition, accumulatedScaling;
+			Quat accumulatedRotation;
+			accumulatedTransform.Decompose(accumulatedPosition, accumulatedRotation, accumulatedScaling);
+
+			ResourceAnimation::Channel channel = keyFrames[frame].channels[channelName];
+			channel.rotation = channel.rotation * accumulatedRotation * Quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
+			channel.tranlation = channel.tranlation + accumulatedPosition + float3(aiV3D.x, aiV3D.y, aiV3D.z);
+
+			keyFrames[frame++].channels[channelName] = channel;
+		}
+	}
+
+	*((unsigned*) cursor) = keyFrames.size();
+	cursor += sizeof(unsigned);
+
+	*((unsigned*) cursor) = keyFrames[0].channels.size();
+	cursor += sizeof(unsigned);
+
+	for (const ResourceAnimation::KeyFrameChannels& keyFrame : keyFrames) {
+		for (const auto& entry : keyFrame.channels) {
+			const std::string& channelName = entry.first;
+			const ResourceAnimation::Channel& channel = entry.second;
+
+			*((unsigned*) cursor) = channelName.length();
+			cursor += sizeof(unsigned);
+
+			memcpy_s(cursor, channelName.size() * sizeof(char), channelName.data(), channelName.size() * sizeof(char));
+			cursor += (FILENAME_MAX / 2) * sizeof(char);
+
+			// Translation
+			*((float*) cursor) = channel.tranlation.x;
+			cursor += sizeof(float);
+			*((float*) cursor) = channel.tranlation.y;
+			cursor += sizeof(float);
+			*((float*) cursor) = channel.tranlation.z;
+			cursor += sizeof(float);
+
+			// Rotation
+			*((float*) cursor) = channel.rotation.x;
+			cursor += sizeof(float);
+			*((float*) cursor) = channel.rotation.y;
+			cursor += sizeof(float);
+			*((float*) cursor) = channel.rotation.z;
+			cursor += sizeof(float);
+			*((float*) cursor) = channel.rotation.w;
+			cursor += sizeof(float);
+		}
+	}
+
+	// Create animation
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	JsonValue jResource = jResources[resourceIndex];
+	UID id = jResource[JSON_TAG_ID];
+	ResourceAnimation* animation = App->resources->CreateResource<ResourceAnimation>(modelFilePath, id ? id : GenerateUID());
+
+	// Add resource to meta file
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(animation->GetType());
+	jResource[JSON_TAG_ID] = animation->GetId();
+	resourceIndex += 1;
+
+	// Save buffer to file
+	const std::string& resourceFilePath = animation->GetResourceFilePath();
+	bool saved = App->files->Save(resourceFilePath.c_str(), buffer);
+	if (!saved) {
+		LOG("Failed to save animation resource.");
+		return false;
+	}
+
+	unsigned timeMs = timer.Stop();
+	LOG("Animation imported in %ums", timeMs);
+	return animation;
+}
+
+static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assimpScene, const aiNode* node, Scene* scene, GameObject* parent, std::vector<UID>& materialIds, const float4x4& accumulatedTransform, unsigned& resourceIndex, std::vector<const char*>& bones) {
 	std::string name = node->mName.C_Str();
 	LOG("Importing node: \"%s\"", name.c_str());
 
@@ -139,7 +353,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
 			const float4x4& transform = accumulatedTransform * (*(float4x4*) &node->mTransformation);
-			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, parent, materialIds, transform, resourceIndex);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, parent, materialIds, transform, resourceIndex, bones);
 		}
 	} else { // Normal node
 		// Create GameObject
@@ -168,7 +382,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 			aiMesh* assimpMesh = assimpScene->mMeshes[node->mMeshes[i]];
 
 			ComponentMeshRenderer* meshRenderer = gameObject->CreateComponent<ComponentMeshRenderer>();
-			meshRenderer->meshId = ImportMesh(modelFilePath, jMeta, assimpMesh, resourceIndex)->GetId();
+			meshRenderer->meshId = ImportMesh(modelFilePath, jMeta, assimpMesh, resourceIndex, bones)->GetId();
 			meshRenderer->materialId = materialIds[assimpMesh->mMaterialIndex];
 
 			// Update min and max points
@@ -192,7 +406,7 @@ void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene* assim
 
 		// Import children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; ++i) {
-			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, gameObject, materialIds, float4x4::identity, resourceIndex);
+			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, gameObject, materialIds, float4x4::identity, resourceIndex, bones);
 		}
 	}
 }
@@ -407,7 +621,61 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	LOG("Importing scene tree.");
 	GameObject* root = scene.CreateGameObject(nullptr, GenerateUID(), "Root");
 	root->CreateComponent<ComponentTransform>();
-	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, &scene, root, materialIds, float4x4::identity, resourceIndex);
+
+	std::vector<const char*> bones;
+	ImportNode(filePath, jMeta, assimpScene, assimpScene->mRootNode, &scene, root, materialIds, float4x4::identity, resourceIndex, bones);
+
+	// Load animations
+	if (assimpScene->mNumAnimations > 0) {
+		LOG("Importing animations");
+		std::vector<ResourceAnimation*> animations;
+		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
+		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
+			animationComponent->animationController.animationID = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex)->GetId();
+		}
+		// TODO: Improve for multiple animations
+	}
+
+	// Cache bones for skinning
+	aiNode* rootBone = nullptr;
+
+	if (!bones.empty()) {
+		rootBone = assimpScene->mRootNode->FindNode(bones[0]);
+		aiNode* rootBoneParent = rootBone->mParent;
+		bool foundInBones = false;
+		do {
+			// Ignore assimp middle nodes
+			std::string name = rootBoneParent->mName.C_Str();
+			while (name.find("$AssimpFbx$") != std::string::npos) {
+				rootBoneParent = rootBoneParent->mParent;
+				name = rootBoneParent->mName.C_Str();
+			}
+			// Find if node in bones
+			foundInBones = false;
+			for (const char* bone : bones) {
+				if (std::strcmp(rootBoneParent->mName.C_Str(), bone) != 0) continue;
+
+				foundInBones = true;
+				rootBone = rootBoneParent;
+				rootBoneParent = rootBone->mParent;
+			}
+		} while (foundInBones);
+	}
+
+	if (!bones.empty()) {
+		GameObject* rootBoneGO = root->FindDescendant(rootBone->mName.C_Str())->GetParent();
+		root->GetChildren()[0]->SetRootBone(rootBoneGO);
+
+		std::unordered_map<std::string, GameObject*> goBones;
+		// TODO: check if CtrlGrp is generated always
+		CacheBones(rootBoneGO, goBones);
+
+		for (GameObject* child : root->GetChildren()) {
+			if (child->name != rootBoneGO->name) {
+				SaveBones(child, goBones);
+			}
+		}
+	}
 
 	// Save prefab
 	SavePrefab(filePath, jMeta, root->GetChildren()[0], resourceIndex);
@@ -453,4 +721,21 @@ bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject
 	}
 
 	return true;
+}
+
+void ModelImporter::CacheBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	for (GameObject* child : node->GetChildren()) {
+		goBones[child->name] = child;
+		CacheBones(child, goBones);
+	}
+}
+
+void ModelImporter::SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
+	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
+		meshRenderer->goBones = goBones;
+	}
+
+	for (GameObject* child : node->GetChildren()) {
+		SaveBones(child, goBones);
+	}
 }

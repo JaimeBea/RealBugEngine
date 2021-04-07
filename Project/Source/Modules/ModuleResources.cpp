@@ -12,6 +12,7 @@
 #include "Resources/ResourceTexture.h"
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceScript.h"
+#include "Resources/ResourceAnimation.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
@@ -402,6 +403,8 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::SCRIPT:
 		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
+	case ResourceType::ANIMATION:
+		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);
