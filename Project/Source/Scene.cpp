@@ -129,6 +129,12 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::SELECTABLE:
 		if (!selectableComponents.Has(componentId)) return nullptr;
 		return &selectableComponents.Get(componentId);
+	case ComponentType::SKYBOX:
+		if (!skyboxComponents.Has(componentId)) return nullptr;
+		return &skyboxComponents.Get(componentId);
+	case ComponentType::ANIMATION:
+		if (!animationComponents.Has(componentId)) return nullptr;
+		return &animationComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -166,6 +172,10 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 		return &toggleComponents.Put(componentId, ComponentToggle(owner, componentId, owner->IsActive()));
 	case ComponentType::SELECTABLE:
 		return &selectableComponents.Put(componentId, ComponentSelectable(owner, componentId, owner->IsActive()));
+	case ComponentType::SKYBOX:
+		return &skyboxComponents.Put(componentId, ComponentSkyBox(owner, componentId, owner->IsActive()));
+	case ComponentType::ANIMATION:
+		return &animationComponents.Put(componentId, ComponentAnimation(owner, componentId, owner->IsActive()));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -230,6 +240,14 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::SELECTABLE:
 		if (!selectableComponents.Has(componentId)) return;
 		selectableComponents.Remove(componentId);
+		break;
+	case ComponentType::SKYBOX:
+		if (!skyboxComponents.Has(componentId)) return;
+		skyboxComponents.Remove(componentId);
+		break;
+	case ComponentType::ANIMATION:
+		if (!animationComponents.Has(componentId)) return;
+		animationComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);
