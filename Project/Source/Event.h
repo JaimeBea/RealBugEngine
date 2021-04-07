@@ -3,6 +3,7 @@
 #include "GameObject.h"
 
 class Resource;
+struct AssetFolder;
 
 enum class EventType {
 	UNKNOWN,

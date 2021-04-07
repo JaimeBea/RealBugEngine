@@ -12,18 +12,6 @@
 #include <thread>
 #include <concurrent_queue.h>
 
-//
-//enum class ResourceEventType {
-//	ADD_RESOURCE,
-//	REMOVE_RESOURCE,
-//	UPDATE_FOLDERS
-//};
-//
-//struct ResourceEvent {
-//	ResourceEventType type = ResourceEventType::ADD_RESOURCE;
-//	void* object = nullptr;
-//};
-
 class ModuleResources : public Module {
 public:
 	bool Init() override;
@@ -58,9 +46,6 @@ private:
 	std::unordered_map<UID, Resource*> resources;
 	std::unordered_map<UID, unsigned> referenceCounts;
 	AssetFolder* rootFolder = nullptr;
-
-	//concurrency::concurrent_queue<ResourceEvent> resourceEventQueue;
-
 	std::thread importThread;
 	bool stopImportThread = false;
 };
@@ -69,8 +54,6 @@ template<typename T>
 inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {
 	std::string resourceFilePath = GenerateResourcePath(id);
 	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
-	//resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});
-
 	SendAddResourceEvent(resource);
 	return resource;
 }

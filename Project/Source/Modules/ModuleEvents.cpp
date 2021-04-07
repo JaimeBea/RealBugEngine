@@ -4,12 +4,6 @@
 
 #include "Utils/Leaks.h"
 
-ModuleEvents::ModuleEvents() {
-}
-
-ModuleEvents ::~ModuleEvents() {
-}
-
 void ModuleEvents::AddEvent(const Event& newEvent) {
 	eventQueue.push(newEvent);
 }

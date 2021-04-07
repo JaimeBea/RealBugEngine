@@ -8,19 +8,7 @@
 #include <unordered_map>
 
 class ModuleEvents : public Module {
-private:
-	concurrency::concurrent_queue<Event> eventQueue;
-	void ProcessEvent(Event& e);
-	std::unordered_map<EventType, std::vector<Module*>> observerMap;
-
-private:
-	Event PopEvent();
-	void ProcessEvents();
-
 public:
-	ModuleEvents();
-	~ModuleEvents();
-
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
 	UpdateStatus Update() override;
@@ -34,4 +22,13 @@ public:
 	void RemoveObserverFromEvent(EventType type, Module* moduletoRemove);
 	void AddEvent(const Event& newEvent);
 	bool CleanUp() override;
+
+private:
+	Event PopEvent();
+	void ProcessEvents();
+	void ProcessEvent(Event& e);
+
+private:
+	concurrency::concurrent_queue<Event> eventQueue;
+	std::unordered_map<EventType, std::vector<Module*>> observerMap;
 };
