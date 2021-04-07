@@ -67,8 +67,8 @@ void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 		//Right now to calculate position we add half the size of the WindowScene because all textures are "centered" for their coordinates
 
 		//IF EDITOR
-		worldAABB.minPoint = t2d->GetPosition().xy() + App->editor->panelScene.GetSceneWindowSize() / 2 + localAABB.minPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
-		worldAABB.maxPoint = t2d->GetPosition().xy() + App->editor->panelScene.GetSceneWindowSize() / 2 + localAABB.maxPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
+		worldAABB.minPoint = t2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.minPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
+		worldAABB.maxPoint = t2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.maxPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
 		//ENDIF
 	}
 }
