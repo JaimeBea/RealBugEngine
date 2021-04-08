@@ -3,7 +3,7 @@
 #include <Components/Component.h>
 #include "Resources/ResourceTexture.h"
 #include "UI/FontImporter.h"
-#include <Components/ComponentTransform2D.h>
+#include "Components/UI/ComponentTransform2D.h"
 #include <Math/float3.h>
 
 // Component that renders a Text
