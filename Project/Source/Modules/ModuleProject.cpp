@@ -11,6 +11,8 @@
 
 #include "Script.h"
 
+#if TESSERACT_ENGINE
+
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
@@ -18,6 +20,8 @@
 #include "fmt/format.h"
 
 #include "physfs.h"
+
+#endif //  TESSERACT_ENGINE
 
 #include <Windows.h>
 #include <shellapi.h>
@@ -119,7 +123,7 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 	std::string enginePath = FileDialog::GetFileFolder(FileDialog::GetAbsolutePath("").c_str());
 
 #ifdef _DEBUG
-	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", enginePath);
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", enginePath);
 #else
 	std::string result = fmt::format(project, name, UIDProject, enginePath + "Source", enginePath + "/Lib/");
 #endif

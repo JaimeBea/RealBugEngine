@@ -1,9 +1,13 @@
 #pragma once
 
-#include "Globals.h"
-
 #include <string>
 #include <map>
+
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
 
 class Script;
 class Creator;

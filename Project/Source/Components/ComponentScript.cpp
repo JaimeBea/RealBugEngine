@@ -35,7 +35,9 @@ void ComponentScript::OnStart() {
 void ComponentScript::OnUpdate() {
 	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
 	if (resource != nullptr) {
-		resource->script->Update();
+		if (resource->script) {
+			resource->script->Update();
+		}
 	}
 }
 

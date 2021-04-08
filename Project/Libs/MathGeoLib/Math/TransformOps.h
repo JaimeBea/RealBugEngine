@@ -23,11 +23,16 @@
 
 MATH_BEGIN_NAMESPACE
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 /// A structure that represents the translate operation for 3D objects.
 /** This structure is used to optimize special cases of 3D transformation concatenations. The use of this
 	class occurs transparently to the user. You do not need to instantiate new TranslateOp objects in your code. */
-class ALIGN16 TranslateOp
-{
+class TESSERACT_ENGINE_API ALIGN16 TranslateOp {
 public:
 	vec offset;
 

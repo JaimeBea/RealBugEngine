@@ -64,6 +64,9 @@ void PanelScene::Update() {
 			} else {
 				if (ImGui::Button("Play")) {
 					App->BroadCastEvent(Event(Event::EventType::PRESSED_PLAY));
+					for (auto it : App->scene->scene->scriptComponents) {
+						it.OnStart();
+					}
 				}
 			}
 			ImGui::SameLine();
