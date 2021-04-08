@@ -77,6 +77,7 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::SCRIPT:
 					cName = "Script";
+					break;
 				case ComponentType::ANIMATION:
 					cName = "Animation";
 					break;

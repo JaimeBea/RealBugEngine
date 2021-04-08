@@ -384,6 +384,7 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::SCRIPT:
 		if (!scene->scriptComponents.Has(componentId)) return;
 		scene->scriptComponents.Remove(componentId);
+		break;
 	case ComponentType::ANIMATION:
 		if (!scene->animationComponents.Has(componentId)) return;
 		scene->animationComponents.Remove(componentId);

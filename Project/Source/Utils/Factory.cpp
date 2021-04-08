@@ -3,19 +3,19 @@
 #include "Creator.h"
 
 void Factory::RegisterScript(const std::string& className, Creator* creator) {
-	Get_table()[className] = creator;
+	GetTable()[className] = creator;
 }
 
 Script* Factory::Create(const std::string& className) {
-	auto it = Get_table().find(className);
-	if (it != Get_table().end()) {
+	auto it = GetTable().find(className);
+	if (it != GetTable().end()) {
 		return it->second->Create();
 	} else {
 		return (Script*) nullptr;
 	}
 }
 
-std::map < std::string, Creator*> &Factory::Get_table() {
+std::map < std::string, Creator*> &Factory::GetTable() {
 	static std::map<std::string, Creator*> table;
 	return table;
 }

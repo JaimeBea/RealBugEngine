@@ -18,5 +18,5 @@ public:
 	static void RegisterScript(const std::string& classname, Creator* creator);
 
 private:
-	static std::map<std::string, Creator*>& Get_table();
+	static std::map<std::string, Creator*>& GetTable();
 };
