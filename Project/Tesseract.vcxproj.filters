@@ -112,7 +112,6 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_platform_winrt.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
     <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
-    <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
@@ -130,6 +129,11 @@
     <ClCompile Include="Source\Resources\ResourceTexture.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\AnimationController.cpp" />
+    <ClCompile Include="Source\Components\ComponentSkyBox.cpp" />
+    <ClCompile Include="Source\Resources\ResourceSkybox.cpp" />
+    <ClCompile Include="Source\FileSystem\SkyboxImporter.cpp" />
+    <ClCompile Include="Source\Utils\AssetFile.cpp" />
+    <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -279,7 +283,6 @@
     <ClInclude Include="Source\Resources\ResourceType.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
-    <ClInclude Include="Source\Modules\ModuleEventSystem.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
     <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
@@ -298,6 +301,11 @@
     <ClInclude Include="Source\Resources\ResourceTexture.h" />
     <ClInclude Include="Source\Utils\VectorMap.h" />
     <ClInclude Include="Source\AnimationController.h" />
+    <ClInclude Include="Source\Components\ComponentSkyBox.h" />
+    <ClInclude Include="Source\Resources\ResourceSkybox.h" />
+    <ClInclude Include="Source\FileSystem\SkyboxImporter.h" />
+    <ClInclude Include="Source\Utils\AssetFile.h" />
+    <ClInclude Include="Source\Modules\ModuleEvents.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
