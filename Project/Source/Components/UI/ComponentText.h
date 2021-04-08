@@ -16,14 +16,12 @@ public:
 	void Update() override;
 	void OnEditorUpdate() override;
 
-	//Serialization
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 
 	void Draw(ComponentTransform2D* transform);
 	void SetText(const std::string& newText);
 
-	// For Fonts
 	void SetFontSize(float newfontSize);
 
 	void SetFontColor(const float4& newColor);
@@ -32,16 +30,11 @@ public:
 private:
 	std::string text = "Text";
 
-	//For font importer
-	float textWidth = 0;
-	float textHeight = 0;
 	float fontSize = 12.0f;
 	float4 color = float4::one;
-	float4 colorTint = float4::one;		// to reuse shader
 
 	unsigned int vbo;
 	unsigned int vao;
-	UID textureID;
-	UID shaderID;
-	UID fontID;
+	UID shaderID = 0;
+	UID fontID = 0;
 };

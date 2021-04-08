@@ -17,10 +17,12 @@
 #include "Utils/ImGuiUtils.h"
 #include "imgui_stdlib.h"
 
-#define JSON_TAG_TEXTURE_SHADERID "ShaderID"
-#define JSON_TAG_TEXTURE_TEXTUREID "TextureID"
+#define JSON_TAG_TEXT_SHADERID "ShaderID"
+#define JSON_TAG_TEXT_FONTID "FontID"
+#define JSON_TAG_TEXT_FONTSIZE "FontSize"
+#define JSON_TAG_TEXT_VALUE "Value"
 #define JSON_TAG_COLOR "Color"
-#define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
+
 
 ComponentText::~ComponentText() {
 	glDeleteBuffers(1, &vbo);
@@ -52,9 +54,31 @@ void ComponentText::OnEditorUpdate() {
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_TEXT_SHADERID] = shaderID;
+	jComponent[JSON_TAG_TEXT_FONTID] = fontID;
+	jComponent[JSON_TAG_TEXT_FONTSIZE] = fontSize;
+	jComponent[JSON_TAG_TEXT_VALUE] = text.c_str();
+
+	JsonValue jColor = jComponent[JSON_TAG_COLOR];
+	jColor[0] = color.x;
+	jColor[1] = color.y;
+	jColor[2] = color.z;
+	jColor[3] = color.w;
 }
 
 void ComponentText::Load(JsonValue jComponent) {
+	shaderID = jComponent[JSON_TAG_TEXT_SHADERID];
+	App->resources->IncreaseReferenceCount(shaderID);
+
+	fontID = jComponent[JSON_TAG_TEXT_FONTID];
+	App->resources->IncreaseReferenceCount(fontID);
+
+	fontSize = jComponent[JSON_TAG_TEXT_FONTSIZE];
+
+	text = jComponent[JSON_TAG_TEXT_VALUE];
+
+	JsonValue jColor = jComponent[JSON_TAG_COLOR];
+	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) {
