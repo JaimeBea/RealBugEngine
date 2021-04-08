@@ -144,13 +144,13 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	//}
 	float3 position = transform->GetPosition();
 
+	// THESE NEED TO BE GET FROM T2D
+	float x = position.x;
+	float y = position.y;
+	float scale = 1;
+
 	for (char c : text) {
 		Character character = App->userInterface->GetCharacter(fontID, c);
-
-		// THESE NEED TO BE GET FROM T2D
-		float x = position.x;
-		float y = position.y;
-		float scale = 1;
 
 		float xpos = x + character.bearing.x * scale;
 		float ypos = y - (character.size.y - character.bearing.y) * scale;
