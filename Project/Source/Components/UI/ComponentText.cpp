@@ -40,11 +40,7 @@ void ComponentText::Init() {
 	glBindVertexArray(0);
 }
 
-void ComponentText::Update() {
-}
-
 void ComponentText::OnEditorUpdate() {
-
 	static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
 	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
