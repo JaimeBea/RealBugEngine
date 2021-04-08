@@ -9,7 +9,7 @@ class Script;
 class TESSERACT_ENGINE_API Creator {
 public:
 	Creator(const std::string& className) {
-		Factory::registerScript(className, this);
+		Factory::RegisterScript(className, this);
 	}
 	virtual ~Creator() {};
 

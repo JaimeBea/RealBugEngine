@@ -14,7 +14,7 @@ void ResourceScript::Load() {
 	App->project->CompileProject(Configuration::RELEASE_EDITOR);
 #endif // _DEBUG
 
-	script = Factory::create(name);
+	script = Factory::Create(name);
 }
 
 void ResourceScript::Unload() {
