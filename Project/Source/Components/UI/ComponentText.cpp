@@ -10,6 +10,7 @@
 #include "Resources/ResourceTexture.h""
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceFont.h"
+#include "GameObject.h"
 #include "GL/glew.h"
 #include "Math/TransformOps.h"
 #include "FileSystem/JsonValue.h"
@@ -75,6 +76,22 @@ void ComponentText::Load(JsonValue jComponent) {
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
+}
+
+void ComponentText::DuplicateComponent(GameObject& owner) {
+	ComponentText* component = owner.CreateComponent<ComponentText>();
+	component->shaderID = shaderID;
+	component->fontID = fontID;
+	component->fontSize = fontSize;
+	component->text = text;
+	component->color = color;
+
+	if (shaderID != 0) {
+		App->resources->IncreaseReferenceCount(shaderID);
+	}
+	if (fontID != 0) {
+		App->resources->IncreaseReferenceCount(fontID);
+	}
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) {
