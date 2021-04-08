@@ -3,21 +3,16 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTime.h"
-#include "GameObject.h"
-#include "ComponentBoundingBox2D.h"
-
 #include "debugdraw.h"
-#include "imgui.h"
-#include "Math/TransformOps.h"
 
-#define JSON_TAG_POSITION "Position"
-#define JSON_TAG_ROTATION "Rotation"
-#define JSON_TAG_SCALE "Scale"
-#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
-#define JSON_TAG_PIVOT "Pivot"
-#define JSON_TAG_SIZE "Size"
-#define JSON_TAG_ANCHOR_X "AnchorX"
-#define JSON_TAG_ANCHOR_Y "AnchorY"
+#include "../ComponentBoundingBox2D.h"
+
+#include "GameObject.h"
+
+#include <imgui.h>
+#include <Math/TransformOps.h>
+
+#include "Utils/Leaks.h"
 
 void ComponentTransform2D::Update() {
 	CalculateGlobalMatrix();
@@ -122,6 +117,8 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 
 	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
 	anchorY.Set(jAnchorY[0], jAnchorY[1]);
+
+	dirty = true;
 }
 
 void ComponentTransform2D::DrawGizmos() {
@@ -137,6 +134,10 @@ void ComponentTransform2D::SetPosition(float3 position_) {
 	for (Component* component : GetOwner().GetComponents()) {
 		component->OnTransformUpdate();
 	}
+}
+
+void ComponentTransform2D::SetPivot(float2 pivot_) {
+	pivot = pivot_;
 }
 
 void ComponentTransform2D::SetSize(float2 size_) {
@@ -204,21 +205,23 @@ const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
-	localMatrix = float4x4::FromTRS(position, rotation, scale);
+	if (dirty) {
+		localMatrix = float4x4::FromTRS(position, rotation, scale);
 
-	GameObject* parent = GetOwner().GetParent();
-	if (parent != nullptr) {
-		ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
+		GameObject* parent = GetOwner().GetParent();
+		if (parent != nullptr) {
+			ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
 
-		if (parentTransform != nullptr) {
-			parentTransform->CalculateGlobalMatrix();
-			globalMatrix = parentTransform->globalMatrix * localMatrix;
+			if (parentTransform != nullptr) {
+				parentTransform->CalculateGlobalMatrix();
+				globalMatrix = parentTransform->globalMatrix * localMatrix;
+			} else {
+				globalMatrix = localMatrix;
+			}
+
 		} else {
 			globalMatrix = localMatrix;
 		}
-
-	} else {
-		globalMatrix = localMatrix;
 	}
 }
 
@@ -253,17 +256,12 @@ void ComponentTransform2D::Invalidate() {
 
 void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	ComponentTransform2D* component = owner.CreateComponent<ComponentTransform2D>();
-	component->size = size;
-	component->scale = scale;
-	component->position = position;
-	component->rotation = rotation;
-	component->pivot = pivot;
-	component->anchorX = anchorX;
-	component->anchorY = anchorY;
+	component->SetPivot(pivot);
+	component->SetSize(size);
+	component->SetPosition(position);
+	component->SetRotation(rotation);
+	component->SetScale(scale);
+	component->SetAnchorX(anchorX);
+	component->SetAnchorY(anchorX);
+	component->dirty = true;
 }
-
-//void ComponentBoundingBox::DuplicateComponent(GameObject& owner) {
-//	ComponentBoundingBox* component = owner.CreateComponent<ComponentBoundingBox>();
-//	component->SetLocalBoundingBox(this->localAABB);
-//	//component->bbActive = this->bbActive;
-//}

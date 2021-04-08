@@ -60,15 +60,15 @@ void ComponentEventSystem::OnEditorUpdate() {
 		ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), GetCurrentSelected()->GetOwner().name.c_str());
 	}
 
-	//TO DO
+	//TO DO FIRST SELECTED RESOURCE SLOT <GAMEOBJECT>
 }
 
 void ComponentEventSystem::Save(JsonValue jComponent) const {
-	//TO DO
+	jComponent[JSON_TAG_FIRST_SELECTED_ID] = firstSelected;
 }
 
 void ComponentEventSystem::Load(JsonValue jComponent) {
-	//TO DO
+	firstSelected = jComponent[JSON_TAG_FIRST_SELECTED_ID];
 }
 
 void ComponentEventSystem::Enable() {
@@ -97,7 +97,7 @@ void ComponentEventSystem::SetSelected(UID newSelectableComponentID) {
 
 void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
 	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
-	//TO DO
+	component->firstSelected = firstSelected;
 }
 
 void ComponentEventSystem::EnteredPointerOnSelectable(ComponentSelectable* newHoveredComponent) {

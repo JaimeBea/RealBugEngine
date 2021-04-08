@@ -6,8 +6,9 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Panels/PanelScene.h"
-#include <Components/ComponentTransform2D.h>
+#include <Components/UI/ComponentTransform2D.h>
 #include "GameObject.h"
 #include <Resources/ResourceTexture.h>
 #include <Resources/ResourceShader.h>
@@ -25,11 +26,10 @@
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
 ComponentImage::~ComponentImage() {
-	DestroyVBO();
+	//TO DO DECREASE REFERENCE COUNT OF SHADER AND TEXTURE, MAYBE IN A NEW COMPONENT::CLEANUP?
 }
 
 void ComponentImage::Init() {
-	CreateVBO();
 }
 
 void ComponentImage::Update() {
@@ -43,7 +43,7 @@ void ComponentImage::OnEditorUpdate() {
 	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
-	
+
 	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 
@@ -87,81 +87,21 @@ void ComponentImage::Save(JsonValue jComponent) const {
 }
 
 void ComponentImage::Load(JsonValue jComponent) {
+	//ID == 0 means no Resource loaded
 	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
-	App->resources->IncreaseReferenceCount(shaderID);
+
+	if (shaderID != 0)
+		App->resources->IncreaseReferenceCount(shaderID);
 
 	textureID = jComponent[JSON_TAG_TEXTURE_TEXTUREID];
-	App->resources->IncreaseReferenceCount(textureID);
+
+	if (textureID != 0)
+		App->resources->IncreaseReferenceCount(textureID);
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
 
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
-}
-
-void ComponentImage::CreateVBO() {
-	//float buffer_data[] = {
-	//	 0.0f, 0.0f, 0.0f, //  v0 pos
-	//	 1.0f, 0.0f, 0.0f, // v1 pos
-	//	 0.0f, 1.0f, 0.0f, //  v2 pos
-
-	//	 1.0f, 0.0f, 0.0f, //  v3 pos
-	//	 1.0f, 1.0f, 0.0f, // v4 pos
-	//	 0.0f, 1.0f, 0.0f, //  v5 pos
-
-	//	0.0f, 0.0f, //  v0 texcoord
-	//	1.0f, 0.0f, //  v1 texcoord
-	//	0.0f, 1.0f, //  v2 texcoord
-
-	//	1.0f, 0.0f, //  v3 texcoord
-	//	1.0f, 1.0f, //  v4 texcoord
-	//	0.0f, 1.0f //  v5 texcoord
-	//};
-
-	// centered position
-	float buffer_data[] = {
-		-0.5f,
-		-0.5f,
-		0.0f, //  v0 pos
-		0.5f,
-		-0.5f,
-		0.0f, // v1 pos
-		-0.5f,
-		0.5f,
-		0.0f, //  v2 pos
-
-		0.5f,
-		-0.5f,
-		0.0f, //  v3 pos
-		0.5f,
-		0.5f,
-		0.0f, // v4 pos
-		-0.5f,
-		0.5f,
-		0.0f, //  v5 pos
-
-		0.0f,
-		0.0f, //  v0 texcoord
-		1.0f,
-		0.0f, //  v1 texcoord
-		0.0f,
-		1.0f, //  v2 texcoord
-
-		1.0f,
-		0.0f, //  v3 texcoord
-		1.0f,
-		1.0f, //  v4 texcoord
-		0.0f,
-		1.0f //  v5 texcoord
-	};
-
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
-	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
-}
-
-void ComponentImage::DestroyVBO() {
-	glDeleteBuffers(1, &vbo);
 }
 
 const float4 ComponentImage::GetTintColor() const {
@@ -186,7 +126,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, App->userInterface->GetQuadVBO());
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
@@ -217,6 +157,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
 
 	glBindTexture(GL_TEXTURE_2D, texResource->glTexture);
+
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -226,5 +167,16 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();
-	//TO DO
+	component->shaderID = shaderID;
+	component->textureID = textureID;
+
+	if (shaderID != 0) {
+		App->resources->IncreaseReferenceCount(shaderID);
+	}
+	if (textureID != 0) {
+		App->resources->IncreaseReferenceCount(textureID);
+	}
+
+	component->color = color;
+	component->alphaTransparency = alphaTransparency;
 }

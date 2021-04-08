@@ -1,6 +1,6 @@
 #include "ComponentCanvasRenderer.h"
-#include "UI/ComponentImage.h"
-#include "ComponentTransform2D.h"
+#include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentTransform2D.h"
 
 #include "GameObject.h"
 
@@ -12,7 +12,9 @@ void ComponentCanvasRenderer::Load(JsonValue jComponent) {
 
 void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 	ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
-	if (transform2D != nullptr && AnyParentHasCanvas(&GetOwner()) != nullptr) {		// Get the Parent in a variable if needed and add canvas customization to render
+	if (transform2D != nullptr && AnyParentHasCanvas(&GetOwner()) != nullptr) { // Get the Parent in a variable if needed and add canvas customization to render
+
+		//IF OTHER COMPONENTS THAT RENDER IN UI ARE IMPLEMENTED, THEY MUST HAVE THEIR DRAW METHODS CALLED HERE
 		ComponentImage* componentImage = gameObject->GetComponent<ComponentImage>();
 		if (componentImage != nullptr) {
 			componentImage->Draw(transform2D);
@@ -22,17 +24,11 @@ void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 		if (componentText != nullptr) {
 			componentText->Draw(transform2D);
 		}
-
-		/*ComponentButton* componentButton = gameObject->GetComponent<ComponentButton>();
-		if (componentButton != nullptr) {
-			componentButton->Draw();
-		}*/
 	}
 }
 
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
 	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
-	//TO DO
 }
 
 GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) {

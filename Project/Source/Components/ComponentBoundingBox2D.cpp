@@ -1,18 +1,18 @@
 #include "ComponentBoundingBox2D.h"
 
-#include "Utils/Logging.h"
-#include "GameObject.h"
-#include "Components/ComponentTransform2D.h"
-
-#include "Geometry/AABB.h"
-#include "Geometry/OBB2D.h"
-
-#include "debugdraw.h"
-#include "Math/float3x3.h"
-#include "Geometry/Circle.h"
-
 #include "Application.h"
-#include <Modules/ModuleInput.h>
+#include "debugdraw.h"
+#include "Modules/ModuleInput.h"
+#include "Components/UI/ComponentTransform2D.h"
+
+#include "GameObject.h"
+#include "Utils/Logging.h"
+
+#include <Geometry/AABB.h>
+#include <Geometry/OBB2D.h>
+#include <Geometry/Circle.h>
+#include <Math/float3x3.h>
+
 
 //IF EDITOR
 #include <Panels/PanelScene.h>
@@ -20,8 +20,6 @@
 //ENDIF
 
 #include "Utils/Leaks.h"
-
-#define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
 void ComponentBoundingBox2D::Init() {
 	ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
@@ -90,4 +88,5 @@ void ComponentBoundingBox2D::Update() {
 
 void ComponentBoundingBox2D::DuplicateComponent(GameObject& owner) {
 	ComponentBoundingBox2D* component = owner.CreateComponent<ComponentBoundingBox2D>();
+	component->SetLocalBoundingBox(AABB2D(localAABB));
 }
