@@ -6,14 +6,16 @@
 
 class ComponentCamera : public Component {
 public:
-	REGISTER_COMPONENT(ComponentCamera, ComponentType::CAMERA); // Refer to ComponentType for the Constructor
+	REGISTER_COMPONENT(ComponentCamera, ComponentType::CAMERA, false); // Refer to ComponentType for the Constructor
 
 	// ------- Core Functions ------ //
+	void Init() override;
 	void DrawGizmos() override;
 	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	void DuplicateComponent(GameObject& owner) override;
 
 	Frustum BuildDefaultFrustum() const; // Builds a frustum object, at origin, facing Z direction, with specified FOV.
 

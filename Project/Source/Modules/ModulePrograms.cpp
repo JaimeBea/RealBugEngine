@@ -17,7 +17,7 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 	if (shaderId == 0) {
 		return 0;
 	}
-	std::string v = "#version 460\n";
+	std::string v = GLSL_VERSION "\n";
 	std::string defineVertexShader = "#define VERTEX  \n";
 	std::string defineFragmentShader = "#define FRAGMENT\n";
 
@@ -49,17 +49,16 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 	return shaderId;
 }
 
-static unsigned CreateProgram(const char* shaderFilePath) {
+unsigned ModulePrograms::CreateProgram(const char* ShaderFilePath) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
-	LOG("Compiling Vertex...");
-	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, shaderFilePath);
+	LOG("Compiling shaders...");
+	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, ShaderFilePath);
 	DEFER {
 		glDeleteShader(vertexShader);
 	};
-	LOG("Compiling Fragment...");
-	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, shaderFilePath);
+	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, ShaderFilePath);
 	DEFER {
 		glDeleteShader(fragmentShader);
 	};
@@ -90,19 +89,14 @@ static unsigned CreateProgram(const char* shaderFilePath) {
 	return programId;
 }
 
-bool ModulePrograms::Start() {
-	defaultProgram = CreateProgram("Shaders/test.glsl");
-	standardProgram = CreateProgram("Shaders/standardMetallic.glsl");
-	standardSpecularProgram = CreateProgram("Shaders/standardSpecular.glsl");
-	skyboxProgram = CreateProgram("Shaders/skybox.glsl");
+void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
+	glDeleteProgram(IdProgram);
+}
 
+bool ModulePrograms::Start() {
 	return true;
 }
 
 bool ModulePrograms::CleanUp() {
-	glDeleteProgram(defaultProgram);
-	glDeleteProgram(standardProgram);
-	glDeleteProgram(standardSpecularProgram);
-	glDeleteProgram(skyboxProgram);
 	return true;
 }

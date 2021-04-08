@@ -1,7 +1,7 @@
 #include "PanelInspector.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
 #include "Modules/ModuleEditor.h"
@@ -31,19 +31,22 @@ void PanelInspector::Update() {
 			ImGui::SameLine();
 			ImGui::TextColored(App->editor->textColor, "%llu", selected->GetID());
 
-			char name[100];
-			sprintf_s(name, 100, "%s", selected->name.c_str());
-			if (ImGui::InputText("Name", name, 100)) {
-				selected->name = name;
-			}
 			bool active = selected->IsActive();
-			if (ImGui::Checkbox("Active##game_object", &active)) {
+			if (ImGui::Checkbox("##game_object", &active)) {
+				// TODO: EventSystem would generate an event here
 				if (active) {
 					selected->Enable();
 				} else {
 					selected->Disable();
 				}
 			}
+			ImGui::SameLine();
+			char name[100];
+			sprintf_s(name, 100, "%s", selected->name.c_str());
+			if (ImGui::InputText("", name, 100)) {
+				selected->name = name;
+			}
+
 			// TODO: Fix Me
 			ImGui::SameLine();
 			HelpMarker("To Fix it.");
@@ -52,12 +55,12 @@ void PanelInspector::Update() {
 
 			// Show Component info
 			std::string cName = "";
-			for (Component* component : selected->components) {
+			for (Component* component : selected->GetComponents()) {
 				switch (component->GetType()) {
 				case ComponentType::TRANSFORM:
 					cName = "Transformation";
 					break;
-				case ComponentType::MESH:
+				case ComponentType::MESH_RENDERER:
 					cName = "Mesh Renderer";
 					break;
 				case ComponentType::CAMERA:
@@ -68,6 +71,12 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::BOUNDING_BOX:
 					cName = "Bounding Box";
+					break;
+				case ComponentType::SKYBOX:
+					cName = "Skybox";
+					break;
+				case ComponentType::ANIMATION:
+					cName = "Animation";
 					break;
 				default:
 					cName = "";
@@ -109,15 +118,45 @@ void PanelInspector::Update() {
 			if (ImGui::Button("Add New Component", ImVec2(ImGui::GetContentRegionAvail().x, 25))) { ImGui::OpenPopup("AddComponentPopup"); }
 			if (ImGui::BeginPopup("AddComponentPopup")) {
 				// Add a Component of type X. If a Component of the same type exists, it wont be created and the modal COMPONENT_EXISTS will show up.
-				// Do not include the if() before AddComponent() and the modalToOpen part if the GameObject can have multiple instances of that Component type.
 				if (ImGui::MenuItem("Mesh Renderer")) {
-					selected->AddComponent(ComponentType::MESH); // TODO: Add more than 1 mesh renderer? or all meshes inside the same component?
+					ComponentMeshRenderer* meshRenderer = selected->CreateComponent<ComponentMeshRenderer>();
+					if (meshRenderer != nullptr) {
+						meshRenderer->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
 				}
 				if (ImGui::MenuItem("Camera")) {
-					if (!selected->AddComponent(ComponentType::CAMERA)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					ComponentCamera* camera = selected->CreateComponent<ComponentCamera>();
+					if (camera != nullptr) {
+						camera->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
 				}
 				if (ImGui::MenuItem("Light")) {
-					if (!selected->AddComponent(ComponentType::LIGHT)) App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					ComponentLight* light = selected->CreateComponent<ComponentLight>();
+					if (light != nullptr) {
+						light->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Skybox")) {
+					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
+					if (skybox != nullptr) {
+						skybox->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Animation")) {
+					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
+					if (animation != nullptr) {
+						animation->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
 				}
 				// TRANSFORM is always there, cannot add a new one.
 				ImGui::EndPopup();

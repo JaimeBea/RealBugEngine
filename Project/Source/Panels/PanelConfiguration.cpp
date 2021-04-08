@@ -40,6 +40,7 @@ void PanelConfiguration::Update() {
 				App->renderer->SetVSync(App->time->vsync);
 			}
 			ImGui::SliderInt("Step delta time (MS)", &App->time->stepDeltaTimeMs, 1, 1000);
+			ImGui::SliderFloat("TimeScale", &App->time->timeScale, 0.f, 4.f);
 
 			// FPS Graph
 			char title[25];
@@ -191,20 +192,21 @@ void PanelConfiguration::Update() {
 		// Scene
 		if (ImGui::CollapsingHeader("Scene")) {
 			// TODO: Change the Skybox images
+			Scene* scene = App->scene->scene;
 			ImGui::TextColored(App->editor->titleColor, "Gizmos");
 			ImGui::Checkbox("Draw Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
 			ImGui::Checkbox("Draw Quadtree", &App->renderer->drawQuadtree);
 			ImGui::Separator();
-			ImGui::InputFloat2("Min Point", App->scene->quadtreeBounds.minPoint.ptr());
-			ImGui::InputFloat2("Max Point", App->scene->quadtreeBounds.maxPoint.ptr());
-			ImGui::InputScalar("Max Depth", ImGuiDataType_U32, &App->scene->quadtreeMaxDepth);
-			ImGui::InputScalar("Elements Per Node", ImGuiDataType_U32, &App->scene->quadtreeElementsPerNode);
+			ImGui::InputFloat2("Min Point", scene->quadtreeBounds.minPoint.ptr());
+			ImGui::InputFloat2("Max Point", scene->quadtreeBounds.maxPoint.ptr());
+			ImGui::InputScalar("Max Depth", ImGuiDataType_U32, &scene->quadtreeMaxDepth);
+			ImGui::InputScalar("Elements Per Node", ImGuiDataType_U32, &scene->quadtreeElementsPerNode);
 			if (ImGui::Button("Clear Quadtree")) {
-				App->scene->ClearQuadtree();
+				scene->ClearQuadtree();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Rebuild Quadtree")) {
-				App->scene->RebuildQuadtree();
+				scene->RebuildQuadtree();
 			}
 			ImGui::Separator();
 

@@ -7,19 +7,23 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
-#include "FileSystem/MeshImporter.h"
+#include "Utils/ImGuiUtils.h"
 #include "FileSystem/TextureImporter.h"
-#include "Resources/GameObject.h"
-#include "Resources/Texture.h"
-#include "Resources/Mesh.h"
+#include "GameObject.h"
+#include "Resources/ResourceMaterial.h"
+#include "Resources/ResourceMesh.h"
+#include "Resources/ResourceShader.h"
+#include "Resources/ResourceTexture.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentLight.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleTime.h"
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
@@ -28,8 +32,8 @@
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_FILENAME "FileName"
-#define JSON_TAG_MATERIAL_INDEX "MaterialIndex"
+#define JSON_TAG_MESH_ID "MeshID"
+#define JSON_TAG_MATERIAL_ID "MaterialID"
 
 // TODO: Move to Material Importer class
 
@@ -40,8 +44,10 @@
 #define JSON_TAG_HAS_SPECULAR_MAP "HasSpecularMap"
 #define JSON_TAG_SPECULAR_COLOR "SpecularColor"
 #define JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME "SpecularMapFileName"
+#define JSON_TAG_SHININESS "Shininess"
+#define JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
 #define JSON_TAG_SMOOTHNESS "Smoothness"
-#define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
+#define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
 #define JSON_TAG_METALLIC_MAP_FILE_NAME "MetallicMapFileName"
 #define JSON_TAG_METALLIC "Metallic"
 
@@ -151,364 +157,242 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
-	// MESH
+
+	UID oldMeshId = meshId;
+	ImGui::ResourceSlot<ResourceMesh>("Mesh", &meshId);
+	if (oldMeshId != meshId) {
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		transform->InvalidateHierarchy();
+	}
+	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
+
 	if (ImGui::TreeNode("Mesh")) {
-		ImGui::TextColored(App->editor->titleColor, "Geometry");
-		ImGui::TextWrapped("Num Vertices: ");
-		ImGui::SameLine();
-		ImGui::TextColored(App->editor->textColor, "%d", mesh->numVertices);
-		ImGui::TextWrapped("Num Triangles: ");
-		ImGui::SameLine();
-		ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);
+		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshId);
+		if (mesh != nullptr) {
+			ImGui::TextColored(App->editor->titleColor, "Geometry");
+			ImGui::TextWrapped("Num Vertices: ");
+			ImGui::SameLine();
+			ImGui::TextColored(App->editor->textColor, "%d", mesh->numVertices);
+			ImGui::TextWrapped("Num Triangles: ");
+			ImGui::SameLine();
+			ImGui::TextColored(App->editor->textColor, "%d", mesh->numIndices / 3);
+			ImGui::Separator();
+			ImGui::TextColored(App->editor->titleColor, "Bounding Box");
+
+			ImGui::Checkbox("Draw", &bbActive);
+			if (bbActive) {
+				ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
+				boundingBox->DrawBoundingBox();
+			}
+		}
 		ImGui::TreePop();
 	}
-	// MATERIAL
+
 	if (ImGui::TreeNode("Material")) {
-		ImGui::TextColored(App->editor->titleColor, "Shader");
+		ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
+		if (material != nullptr) {
+			ImGui::ResourceSlot<ResourceShader>("Shader", &material->shaderId);
 
-		// Material types
-		const char* materialTypes[] = {"Standard (specular settings)", "Standard"};
-		const char* materialTypesCurrent = materialTypes[(int) material.materialType];
-		if (ImGui::BeginCombo("Type", materialTypesCurrent)) {
-			for (int n = 0; n < IM_ARRAYSIZE(materialTypes); ++n) {
-				bool isSelected = (materialTypesCurrent == materialTypes[n]);
-				if (ImGui::Selectable(materialTypes[n], isSelected)) {
-					material.materialType = ShaderType(n);
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-			ImGui::Text("");
-		}
-		if (material.materialType == ShaderType::STANDARD_SPECULAR) {
-			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
-			//First Column with the text names of widgets
-			{
-				//Diffuse
-				{
-					DrawFrame(1, material.diffuseMap ? material.diffuseMap->glTexture : 0, TextureType::DIFFUSE_MAP);
-					ImGui::SameLine();
-					ImGui::Text("Diffuse");
-					if (ImGui::Button("No map##diffuse")) {
-						material.diffuseMap = nullptr;
+			ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
+			if (shader != nullptr) {
+				if (shader->GetShaderType() == ShaderType::PHONG) {
+					// Diffuse Texture Combo
+					const char* diffuseItems[] = {"Diffuse Color", "Diffuse Texture"};
+					const char* diffuseItemCurrent = diffuseItems[material->hasDiffuseMap];
+					ImGui::TextColored(App->editor->textColor, "Diffuse Settings:");
+					if (ImGui::BeginCombo("##diffuse", diffuseItemCurrent)) {
+						for (int n = 0; n < IM_ARRAYSIZE(diffuseItems); ++n) {
+							bool isSelected = (diffuseItemCurrent == diffuseItems[n]);
+							if (ImGui::Selectable(diffuseItems[n], isSelected)) {
+								material->hasDiffuseMap = n ? 1 : 0;
+							}
+							if (isSelected) {
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+					if (diffuseItemCurrent == diffuseItems[0]) {
+						ImGui::ColorEdit3("Color##diffuse", material->diffuseColor.ptr());
+					} else {
+						ImGui::ResourceSlot<ResourceTexture>("Diffuse Texture", &material->diffuseMapId);
+					}
+					ImGui::Text("");
+
+					// Specular Texture Combo
+					const char* specularItems[] = {"Specular Color", "Specular Texture"};
+					const char* specularItemCurrent = specularItems[material->hasSpecularMap];
+					ImGui::TextColored(App->editor->textColor, "Specular Settings:");
+					if (ImGui::BeginCombo("##specular", specularItemCurrent)) {
+						for (int n = 0; n < IM_ARRAYSIZE(specularItems); ++n) {
+							bool isSelected = (specularItemCurrent == specularItems[n]);
+							if (ImGui::Selectable(specularItems[n], isSelected)) {
+								material->hasSpecularMap = n ? 1 : 0;
+							};
+							if (isSelected) {
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+					if (specularItemCurrent == specularItems[0]) {
+						ImGui::ColorEdit3("Color##specular", material->specularColor.ptr());
+					} else {
+						ImGui::ResourceSlot<ResourceTexture>("Specular Texture", &material->specularMapId);
+					}
+
+					// Smoothness Combo
+					const char* smoothnessItems[] = {"Smoothness Value", "Smoothness Alpha"};
+					const char* smoothnessItemCurrent = smoothnessItems[material->hasSmoothnessInAlphaChannel];
+					if (ImGui::BeginCombo("##smoothness", smoothnessItemCurrent)) {
+						for (int n = 0; n < IM_ARRAYSIZE(smoothnessItems); ++n) {
+							bool isSelected = (smoothnessItemCurrent == smoothnessItems[n]);
+							if (ImGui::Selectable(smoothnessItems[n], isSelected)) {
+								material->hasSmoothnessInAlphaChannel = n ? 1 : 0;
+							}
+							if (isSelected) {
+								ImGui::SetItemDefaultFocus();
+							}
+						}
+						ImGui::EndCombo();
+					}
+					if (smoothnessItemCurrent == smoothnessItems[0]) {
+						ImGui::DragFloat("Smoothness##smoothness", &material->smoothness, App->editor->dragSpeed3f, 0.0f, 1000.0f);
 					}
 				}
-				//Specular
-				{
-					DrawFrame(2, material.specularMap ? material.specularMap->glTexture : 0, TextureType::SPECULAR_MAP);
-					ImGui::SameLine();
-					ImGui::Text("Specular");
-					if (ImGui::Button("No map##specular")) {
-						material.specularMap = nullptr;
-					}
-				}
-			}
-
-			ImGui::NextColumn();
-			//Second column with the widgets
-			{
-				std::string id_cd("##color_d");
-				ImGui::PushID(id_cd.c_str());
-				ImGui::ColorEdit4("", &material.diffuseColor[0], ImGuiColorEditFlags_NoInputs);
-				ImGui::PopID();
-
-				ImGui::NewLine();
-				ImGui::NewLine();
-
-				if (material.specularMap == nullptr) {
-					std::string id_cs("##color_s");
-					ImGui::PushID(id_cs.c_str());
-					ImGui::ColorEdit4("", &material.specularColor[0], ImGuiColorEditFlags_NoInputs);
-					ImGui::PopID();
-				} else {
-					ImGui::NewLine();
-				}
-			}
-			ImGui::EndColumns();
-
-		}
-		else if (material.materialType == ShaderType::STANDARD) {
-			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
-			//First Column with the text names of widgets
-			{
-				//Diffuse
-				{
-					DrawFrame(1, material.diffuseMap ? material.diffuseMap->glTexture : 0, TextureType::DIFFUSE_MAP);
-					ImGui::SameLine();
-					ImGui::Text("Diffuse");
-					if (ImGui::Button("No map##diffuse")) {
-						material.diffuseMap = nullptr;
-					}
-				}
-				//Specular
-				{
-					DrawFrame(2, material.metallicMap ? material.metallicMap->glTexture : 0, TextureType::METALLIC_MAP);
-					ImGui::SameLine();
-					ImGui::Text("Metallic");
-					if (ImGui::Button("No map##metallic")) {
-						material.metallicMap = nullptr;
-					}
-				}
-			}
-
-			ImGui::NextColumn();
-			//Second column with the widgets
-			{
-				std::string id_cd("##color_d");
-				//id_c.append();
-				ImGui::PushID(id_cd.c_str());
-				ImGui::ColorEdit4("", &material.diffuseColor[0], ImGuiColorEditFlags_NoInputs);
-				ImGui::PopID();
-
-				ImGui::NewLine();
-				ImGui::NewLine();
-
-				if (material.metallicMap == nullptr) {
-					std::string id_m("##metalness");
-					ImGui::PushID(id_m.c_str());
-					ImGui::SliderFloat("", &material.metallic, 0, 1);
-					ImGui::PopID();
-				} else {
-					ImGui::NewLine();
-				}
-			}
-			ImGui::EndColumns();
-		}
-		ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
-		{
-			ImGui::Text("Smoothness");
-			// Smoothness combo
-			const char* smoothnessItems[] = {"Diffuse Alpha", "Specular Alpha"};
-			const char* smoothnessItemCurrent = smoothnessItems[material.hasSmoothnessInAlphaChannel];
-			if (ImGui::BeginCombo("##smoothness", smoothnessItemCurrent)) {
-				for (int n = 0; n < IM_ARRAYSIZE(smoothnessItems); ++n) {
-					bool isSelected = (smoothnessItemCurrent == smoothnessItems[n]);
-					if (ImGui::Selectable(smoothnessItems[n], isSelected)) {
-						material.hasSmoothnessInAlphaChannel = n;
-					}
-					if (isSelected) {
-						ImGui::SetItemDefaultFocus();
-					}
-				}
-				ImGui::EndCombo();
-			}
-		}
-		ImGui::NextColumn();
-		{
-			ImGui::NewLine();
-			std::string id_s("##smooth_");
-			ImGui::PushID(id_s.c_str());
-			ImGui::SliderFloat(id_s.c_str(), &material.smoothness, 0, 1);
-			ImGui::PopID();
-		}
-		ImGui::EndColumns();
-
-		// Normal
-		DrawFrame(3, 0, TextureType::NORMAL_MAP);
-		ImGui::SameLine();
-		ImGui::Text("Normal");
 
 		ImGui::Separator();
-		if (ImGui::BeginTabBar("Textures")) {
+		if (ImGui::BeginTabBar("TexturesTab")) {
 			if (material.diffuseMap != nullptr) {
-				if (ImGui::BeginTabItem("Diffuse##map")) {
-					ImGui::TextColored(App->editor->titleColor, "Diffuse Texture");
-					ImGui::TextWrapped("Size:");
-					ImGui::SameLine();
+				if (ImGui::BeginTabItem("Diffuse Texture", nullptr, ImGuiTabItemFlags_None)) {
 					int width;
 					int height;
 					glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
 					glGetTextureLevelParameteriv(material.diffuseMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-					ImGui::TextWrapped("%d x %d", width, height);
+					ImGui::TextWrapped("Size: %d x %d", width, height);
 					ImGui::Image((void*) material.diffuseMap->glTexture, ImVec2(200, 200));
 					ImGui::EndTabItem();
 				}
 			}
-			if (material.specularMap != nullptr && material.materialType != ShaderType::STANDARD) {
-				if (ImGui::BeginTabItem("Specular##map")) {
-					ImGui::TextColored(App->editor->titleColor, "Specular Texture");
-					ImGui::TextWrapped("Size:");
-					ImGui::SameLine();
+			if (material.specularMap != nullptr) {
+				if (ImGui::BeginTabItem("Specular Texture", nullptr, ImGuiTabItemFlags_None)) {
 					int width;
 					int height;
 					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
 					glGetTextureLevelParameteriv(material.specularMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-					ImGui::TextWrapped("%d x %d", width, height);
+					ImGui::TextWrapped("Size: %d x %d", width, height);
 					ImGui::Image((void*) material.specularMap->glTexture, ImVec2(200, 200));
 					ImGui::EndTabItem();
 				}
+				
 			}
-			if (material.metallicMap != nullptr && material.materialType == ShaderType::STANDARD) {
-				if (ImGui::BeginTabItem("Metallic##map")) {
-					ImGui::TextColored(App->editor->titleColor, "Metallic Texture");
-					ImGui::TextWrapped("Size:");
-					ImGui::SameLine();
-					int width;
-					int height;
-					glGetTextureLevelParameteriv(material.metallicMap->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-					glGetTextureLevelParameteriv(material.metallicMap->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
-					ImGui::TextWrapped("%d x %d", width, height);
-					ImGui::Image((void*) material.metallicMap->glTexture, ImVec2(200, 200));
-					ImGui::EndTabItem();
-				}
-			}
-			ImGui::EndTabBar();
 		}
 		ImGui::TreePop();
 	}
 }
 
+void ComponentMeshRenderer::Init() {
+	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	if (!mesh) return;
+
+	palette.resize(mesh->numBones);
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		palette[i] = float4x4::identity;
+	}
+}
+
+void ComponentMeshRenderer::Update() {
+	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	if (!mesh) return;
+
+	if (App->time->GetDeltaTime() <= 0) return;
+
+	for (unsigned i = 0; i < mesh->numBones; ++i) {
+		const GameObject* bone = goBones.at(mesh->bones[i].boneName);
+		// TODO: if(bone) might not be necessary
+		if (bone) {
+			const GameObject* parent = GetOwner().GetParent();
+			const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
+			const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+			palette[i] = invertedRootBoneTransform * bone->GetComponent<ComponentTransform>()->GetGlobalMatrix() * mesh->bones[i].transform;
+		} else {
+			palette[i] = float4x4::identity;
+		}
+	}
+}
+
 void ComponentMeshRenderer::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_FILENAME] = mesh->fileName.c_str();
-	jComponent[JSON_TAG_MATERIAL_INDEX] = mesh->materialIndex;
-
-	// TODO: Save only the Material FileName when saved in separate resource
-
-	JsonValue jMaterial = jComponent[JSON_TAG_MATERIAL];
-
-	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
-	jDiffuseColor[0] = material.diffuseColor.x;
-	jDiffuseColor[1] = material.diffuseColor.y;
-	jDiffuseColor[2] = material.diffuseColor.z;
-	jDiffuseColor[3] = material.diffuseColor.w;
-	if (material.diffuseMap != nullptr) jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME] = material.diffuseMap->fileName.c_str();
-
-	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
-	jSpecularColor[0] = material.specularColor.x;
-	jSpecularColor[1] = material.specularColor.y;
-	jSpecularColor[2] = material.specularColor.z;
-	jSpecularColor[3] = material.specularColor.w;
-
-	if (material.specularMap != nullptr) jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME] = material.specularMap->fileName.c_str();
-
-	jMaterial[JSON_TAG_METALLIC] = material.metallic;
-	if (material.metallicMap != nullptr) jMaterial[JSON_TAG_METALLIC_MAP_FILE_NAME] = material.metallicMap->fileName.c_str();
-
-	jMaterial[JSON_TAG_SMOOTHNESS] = material.smoothness;
-	jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL] = material.hasSmoothnessInAlphaChannel;
+	jComponent[JSON_TAG_MESH_ID] = meshId;
+	jComponent[JSON_TAG_MATERIAL_ID] = materialId;
 }
 
 void ComponentMeshRenderer::Load(JsonValue jComponent) {
-	std::string fileName = jComponent[JSON_TAG_FILENAME];
-	for (Mesh& otherMesh : App->resources->meshes) {
-		if (otherMesh.fileName == fileName) {
-			mesh = &otherMesh;
-		}
-	}
-	if (mesh == nullptr) {
-		mesh = App->resources->ObtainMesh();
-		mesh->fileName = fileName;
-	}
-	mesh->materialIndex = jComponent[JSON_TAG_MATERIAL_INDEX];
+	meshId = jComponent[JSON_TAG_MESH_ID];
+	if (meshId != 0) App->resources->IncreaseReferenceCount(meshId);
+	materialId = jComponent[JSON_TAG_MATERIAL_ID];
+	if (materialId != 0) App->resources->IncreaseReferenceCount(materialId);
+}
 
-	MeshImporter::UnloadMesh(mesh);
-	MeshImporter::LoadMesh(mesh);
-
-	// TODO: Load using Material Importer
-
-	JsonValue jMaterial = jComponent[JSON_TAG_MATERIAL];
-
-	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
-	material.diffuseColor.Set(jDiffuseColor[0], jDiffuseColor[1], jDiffuseColor[2], jDiffuseColor[3]);
-	std::string diffuseFileName = jMaterial[JSON_TAG_DIFFUSE_MAP_FILE_NAME];
-	if (!diffuseFileName.empty()) {
-		for (Texture& texture : App->resources->textures) {
-			if (texture.fileName == diffuseFileName) {
-				material.diffuseMap = &texture;
-			}
-		}
-		if (material.diffuseMap == nullptr) {
-			material.diffuseMap = App->resources->ObtainTexture();
-			material.diffuseMap->fileName = diffuseFileName;
-		}
-
-		TextureImporter::UnloadTexture(material.diffuseMap);
-		TextureImporter::LoadTexture(material.diffuseMap);
-	} else if (material.diffuseMap != nullptr) {
-		App->resources->ReleaseTexture(material.diffuseMap);
-		material.diffuseMap = nullptr;
-	}
-
-	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
-	material.specularColor.Set(jSpecularColor[0], jSpecularColor[1], jSpecularColor[2], jSpecularColor[3]);
-	std::string specularFileName = jMaterial[JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME];
-	if (!specularFileName.empty()) {
-		for (Texture& texture : App->resources->textures) {
-			if (texture.fileName == specularFileName) {
-				material.specularMap = &texture;
-			}
-		}
-		if (material.specularMap == nullptr) {
-			material.specularMap = App->resources->ObtainTexture();
-			material.specularMap->fileName = specularFileName;
-		}
-
-		TextureImporter::UnloadTexture(material.specularMap);
-		TextureImporter::LoadTexture(material.specularMap);
-	} else if (material.specularMap != nullptr) {
-		App->resources->ReleaseTexture(material.specularMap);
-		material.specularMap = nullptr;
-	}
-
-	material.metallic = jMaterial[JSON_TAG_METALLIC];
-	std::string metallicFileName = jMaterial[JSON_TAG_METALLIC_MAP_FILE_NAME];
-	if (!metallicFileName.empty()) {
-		for (Texture& texture : App->resources->textures) {
-			if (texture.fileName == metallicFileName) {
-				material.metallicMap = &texture;
-			}
-		}
-		if (material.metallicMap == nullptr) {
-			material.metallicMap = App->resources->ObtainTexture();
-			material.metallicMap->fileName = metallicFileName;
-		}
-
-		TextureImporter::UnloadTexture(material.metallicMap);
-		TextureImporter::LoadTexture(material.metallicMap);
-	} else if (material.metallicMap != nullptr) {
-		App->resources->ReleaseTexture(material.metallicMap);
-		material.metallicMap = nullptr;
-	}
-
-	material.smoothness = jMaterial[JSON_TAG_SMOOTHNESS];
-	material.hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL];
+void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
+	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
+	component->meshId = meshId;
+	component->materialId = materialId;
 }
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
-	if (!IsActive()) return;
+	if (!IsActiveInHierarchy()) return;
 
-	// Light controlling
+	ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshId);
+	if (mesh == nullptr) return;
+
+	ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
+	if (material == nullptr) return;
+
+	ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
+	if (shader == nullptr) return;
+
+	unsigned program = shader->GetShaderProgram();
+
+	float4x4 viewMatrix = App->camera->GetViewMatrix();
+	float4x4 projMatrix = App->camera->GetProjectionMatrix();
+	unsigned glTextureDiffuse = 0;
+	unsigned glTextureSpecular = 0;
+
+	ResourceTexture* diffuse = (ResourceTexture*) App->resources->GetResource(material->diffuseMapId);
+	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
+	ResourceTexture* specular = (ResourceTexture*) App->resources->GetResource(material->specularMapId);
+	glTextureSpecular = specular ? specular->glTexture : 0;
+
 	ComponentLight* directionalLight = nullptr;
 	std::vector<ComponentLight*> pointLightsVector;
 	std::vector<float> pointDistancesVector;
 	std::vector<ComponentLight*> spotLightsVector;
 	std::vector<float> spotDistancesVector;
 
-	float farPointDistance = 0;
-	ComponentLight* farPointLight = nullptr;
-	float farSpotDistance = 0;
-	ComponentLight* farSpotLight = nullptr;
+	if (shader->GetShaderType() == ShaderType::PHONG) {
+		float farPointDistance = 0;
+		ComponentLight* farPointLight = nullptr;
+		float farSpotDistance = 0;
+		ComponentLight* farSpotLight = nullptr;
 
-	for (GameObject& object : App->scene->gameObjects) {
-		ComponentLight* light = object.GetComponent<ComponentLight>();
-		if (light == nullptr) continue;
+		for (GameObject& object : GetOwner().scene->gameObjects) {
+			ComponentLight* light = object.GetComponent<ComponentLight>();
+			if (light == nullptr) continue;
 
-		if (light->lightType == LightType::DIRECTIONAL) {
-			// It takes the first actived Directional Light inside the Pool
-			if (light->IsActive() && directionalLight == nullptr) {
-				directionalLight = light;
-				continue;
-			}
-		} else if (light->lightType == LightType::POINT) {
-			if (light->IsActive()) {
-				float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
-				float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
-				float distance = Distance(meshPosition, lightPosition);
-				if (pointLightsVector.size() < 8) {
-					pointDistancesVector.push_back(distance);
-					pointLightsVector.push_back(light);
+			if (light->lightType == LightType::DIRECTIONAL) {
+				// It takes the first actived Directional Light inside the Pool
+				if (light->IsActiveInHierarchy() && directionalLight == nullptr) {
+					directionalLight = light;
+					continue;
+				}
+			} else if (light->lightType == LightType::POINT) {
+				if (light->IsActiveInHierarchy()) {
+					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
+					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
+					float distance = Distance(meshPosition, lightPosition);
+					if (pointLightsVector.size() < 8) {
+						pointDistancesVector.push_back(distance);
+						pointLightsVector.push_back(light);
 
 					if (distance > farPointDistance) {
 						farPointLight = light;
@@ -537,19 +421,19 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 							count += 1;
 						}
 
-						farPointDistance = maxDistance;
-						farPointLight = pointLightsVector[selected];
+							farPointDistance = maxDistance;
+							farPointLight = pointLightsVector[selected];
+						}
 					}
 				}
-			}
-		} else if (light->lightType == LightType::SPOT) {
-			if (light->IsActive()) {
-				float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
-				float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
-				float distance = Distance(meshPosition, lightPosition);
-				if (spotLightsVector.size() < 8) {
-					spotDistancesVector.push_back(distance);
-					spotLightsVector.push_back(light);
+			} else if (light->lightType == LightType::SPOT) {
+				if (light->IsActiveInHierarchy()) {
+					float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
+					float3 lightPosition = object.GetComponent<ComponentTransform>()->GetPosition();
+					float distance = Distance(meshPosition, lightPosition);
+					if (spotLightsVector.size() < 8) {
+						spotDistancesVector.push_back(distance);
+						spotLightsVector.push_back(light);
 
 					if (distance > farSpotDistance) {
 						farSpotLight = light;
@@ -586,63 +470,16 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		}
 	}
 
-	unsigned program = App->programs->defaultProgram;
-
-	float4x4 viewMatrix = App->camera->GetViewMatrix();
-	float4x4 projMatrix = App->camera->GetProjectionMatrix();
-
-	unsigned glTextureDiffuse = 0;
-	Texture* diffuse = material.diffuseMap;
-	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
-
-	if (material.materialType == ShaderType::STANDARD_SPECULAR) {
-		unsigned glTextureSpecular = 0;
-		Texture* specular = material.specularMap;
-		glTextureSpecular = specular ? specular->glTexture : 0;
-
-		program = App->programs->standardSpecularProgram;
 		glUseProgram(program);
 
-		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material.specularColor.ptr());
-		int hasSpecularMap = (material.specularMap !=  nullptr) ? 1 : 0;
+		glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
+		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
+		int hasDiffuseMap = diffuse ? 1 : 0;
+		int hasSpecularMap = specular ? 1 : 0;
+		int hasShininessInAlphaChannel = (material->hasSmoothnessInAlphaChannel) ? 1 : 0;
+		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
-
-		glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, glTextureSpecular);
-
-	} else if (material.materialType == ShaderType::STANDARD) {
-		unsigned glTextureMetallic = 0;
-		Texture* metallic = material.metallicMap;
-		glTextureMetallic = metallic ? metallic->glTexture : 0;
-
-		program = App->programs->standardProgram;
-		glUseProgram(program);
-
-		glUniform1f(glGetUniformLocation(program, "metalness"), material.metallic);
-
-		int hasMetallicMap = (material.metallicMap != nullptr) ? 1 : 0;
-		glUniform1i(glGetUniformLocation(program, "hasMetallicMap"), hasMetallicMap);
-
-		glUniform1i(glGetUniformLocation(program, "metallicMap"), 1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, glTextureMetallic);
-
-	} else {
-		glUseProgram(program);
-	}
-
-	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
-
-	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
-	glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material.diffuseColor.ptr());
-	glUniform1f(glGetUniformLocation(program, "smoothness"), material.smoothness);
-	glUniform1i(glGetUniformLocation(program, "hasSmoothnessAlpha"), material.hasSmoothnessInAlphaChannel);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, glTextureDiffuse);
+		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
 
 	// Lights uniforms setting
 	glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambientColor.ptr());
@@ -810,7 +647,26 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	}
 	glUniform1i(glGetUniformLocation(program, "light.numSpots"), spotLightsVector.size());
 
-	glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
+		glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
+	} else {
+		glUseProgram(program);
+	}
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, viewMatrix.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, projMatrix.ptr());
+	if (palette.size() > 0) {
+		glUniformMatrix4fv(glGetUniformLocation(program, "palette"), palette.size(), GL_TRUE, palette[0].ptr());
+	}
+	glUniform1i(glGetUniformLocation(program, "hasBones"), goBones.size());
+
+	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
+	glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, glTextureDiffuse);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, glTextureSpecular);
 
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
