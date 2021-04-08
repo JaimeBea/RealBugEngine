@@ -22,54 +22,11 @@
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
-#define FONT_MAX_SIZE 72.f
-#define FONT_MIN_SIZE 12.f
-
 ComponentText::~ComponentText() {
 	glDeleteBuffers(1, &vbo);
 }
 
 void ComponentText::Init() {
-	//float buffer_data[] = {
-	//	-0.5f,
-	//	-0.5f,
-	//	0.0f, //  v0 pos
-	//	0.5f,
-	//	-0.5f,
-	//	0.0f, // v1 pos
-	//	-0.5f,
-	//	0.5f,
-	//	0.0f, //  v2 pos
-
-	//	0.5f,
-	//	-0.5f,
-	//	0.0f, //  v3 pos
-	//	0.5f,
-	//	0.5f,
-	//	0.0f, // v4 pos
-	//	-0.5f,
-	//	0.5f,
-	//	0.0f, //  v5 pos
-
-	//	0.0f,
-	//	0.0f, //  v0 texcoord
-	//	1.0f,
-	//	0.0f, //  v1 texcoord
-	//	0.0f,
-	//	1.0f, //  v2 texcoord
-
-	//	1.0f,
-	//	0.0f, //  v3 texcoord
-	//	1.0f,
-	//	1.0f, //  v4 texcoord
-	//	0.0f,
-	//	1.0f //  v5 texcoord
-	//};
-
-	//glGenBuffers(1, &vbo);
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
-
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glBindVertexArray(vao);
@@ -90,7 +47,7 @@ void ComponentText::OnEditorUpdate() {
 	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
-	ImGui::DragFloat("Font Size", &fontSize, 0.2f, FONT_MIN_SIZE, FONT_MAX_SIZE);
+	ImGui::DragFloat("Font Size", &fontSize, 0.2f, 0, FLT_MAX);
 	ImGui::ColorEdit4("Color##", color.ptr());
 }
 
@@ -133,26 +90,12 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj->ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
-	/*std::vector<Character> characters;
-	App->userInterface->GetCharactersInString(fontID, text, characters);*/
-
-	// Iterate through all characters
-
-	//for (Character character : characters){
-	//
-	//	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	//	glBindTexture(GL_TEXTURE_2D, character.textureID);
-	//	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//	glBindTexture(GL_TEXTURE_2D, 0);
-	//	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//}
 	float3 position = transform->GetPosition();
 
-	// THESE NEED TO BE GET FROM T2D
 	float x = position.x;
 	float y = position.y;
-	//(note that advance is number of 1/64 pixels)
-	float scale = fontSize / 64.f;
+	// FontSize / size of imported font
+	float scale = fontSize / 48.0f;
 
 	for (char c : text) {
 		Character character = App->userInterface->GetCharacter(fontID, c);
@@ -192,9 +135,6 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 
 void ComponentText::SetText(const std::string& newText) {
 	text = newText;
-}
-
-void ComponentText::SetFont() {
 }
 
 void ComponentText::SetFontSize(float newfontSize) {

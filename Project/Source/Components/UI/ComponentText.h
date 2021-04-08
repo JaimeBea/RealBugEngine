@@ -24,7 +24,6 @@ public:
 	void SetText(const std::string& newText);
 
 	// For Fonts
-	void SetFont();
 	void SetFontSize(float newfontSize);
 
 	void SetFontColor(const float4& newColor);

@@ -32,6 +32,7 @@ void ResourceFont::Load() {
 		return;
 	}
 
+	// IF THE HEIGHT IS CHANGED (48), COMPONENTTEXT SCALINGFACTOR MUST BE CHANGED!
 	FT_Set_Pixel_Sizes(face, 0, 48);
 
 	//Disable byte-alignment restriction.

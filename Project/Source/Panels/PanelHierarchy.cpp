@@ -99,12 +99,10 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			}
 
 			if (ImGui::MenuItem("Text")) {
-				// TODO
 				CreateUIText(gameObject);
 			}
 
 			if (ImGui::MenuItem("Button")) {
-				// TODO
 				CreateUIButton(gameObject);
 			}
 
@@ -228,9 +226,18 @@ GameObject* PanelHierarchy::CreateUIImage(GameObject* gameObject) {
 }
 
 GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
-	return nullptr;
-	// TODO
-	//return newGameObject;
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Text");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentText* text = newGameObject->CreateComponent<ComponentText>();
+
+	newGameObject->InitComponents();
+	return newGameObject;
 }
 
 GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
