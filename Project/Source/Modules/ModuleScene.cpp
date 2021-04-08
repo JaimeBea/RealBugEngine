@@ -21,7 +21,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEditor.h"
-#include "Modules/ModuleEventSystem.h"
+#include "Modules/ModuleEvents.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -64,7 +64,7 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->eventSystem->AddObserverToEvent(Event::EventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(EventType::GAMEOBJECT_DESTROYED, this);
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
@@ -138,14 +138,15 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 	for (GameObject* child : children) {
 		DestroyGameObjectDeferred(child);
 	}
-
-	App->BroadCastEvent(Event(Event::EventType::GAMEOBJECT_DESTROYED, gameObject));
+	Event ev(EventType::GAMEOBJECT_DESTROYED);
+	ev.destroyGameObject.ptr = gameObject;
+	App->events->AddEvent(ev);
 }
 
 void ModuleScene::ReceiveEvent(const Event& e) {
 	switch (e.type) {
-	case Event::EventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.objPtr.ptr);
+	case EventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.destroyGameObject.ptr);
 		break;
 	}
 }

@@ -24,6 +24,8 @@
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleEvents.h"
+#include "Event.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
@@ -42,12 +44,6 @@
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
 #define JSON_TAG_TIMESTAMP "Timestamp"
-
-AssetFile::AssetFile(const char* path_)
-	: path(path_) {}
-
-AssetFolder::AssetFolder(const char* path_)
-	: path(path_) {}
 
 bool ReadMetaFile(const char* filePath, rapidjson::Document& document) {
 	// Read from file
@@ -81,6 +77,9 @@ bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
 
+	App->events->AddObserverToEvent(EventType::ADD_RESOURCE, this);
+	App->events->AddObserverToEvent(EventType::UPDATE_FOLDERS, this);
+
 	return true;
 }
 
@@ -99,27 +98,6 @@ UpdateStatus ModuleResources::Update() {
 		FileDialog::Copy(droppedFilePath, newFilePath.c_str());
 		App->input->ReleaseDroppedFilePath();
 	}
-
-	// Manage events
-	while (!resourceEventQueue.empty()) {
-		ResourceEvent resourceEvent;
-		resourceEventQueue.try_pop(resourceEvent);
-		if (resourceEvent.type == ResourceEventType::ADD_RESOURCE) {
-			Resource* resource = (Resource*) resourceEvent.object;
-			UID id = resource->GetId();
-			resources.emplace(id, resource);
-			if (GetReferenceCount(id) > 0) {
-				resource->Load();
-			}
-		} else if (resourceEvent.type == ResourceEventType::REMOVE_RESOURCE) {
-		} else if (resourceEvent.type == ResourceEventType::UPDATE_FOLDERS) {
-			RELEASE(rootFolder);
-			rootFolder = (AssetFolder*) resourceEvent.object;
-		} else {
-			assert(false); // ERROR: Unexpected event type
-		}
-	}
-
 	return UpdateStatus::CONTINUE;
 }
 
@@ -133,13 +111,21 @@ bool ModuleResources::CleanUp() {
 
 	RELEASE(rootFolder);
 
-	while (!resourceEventQueue.empty()) {
-		ResourceEvent resourceEvent;
-		resourceEventQueue.try_pop(resourceEvent);
-		RELEASE(resourceEvent.object);
-	}
-
 	return true;
+}
+
+void ModuleResources::ReceiveEvent(const Event& ev) {
+	if (ev.type == EventType::ADD_RESOURCE) {
+		Resource* resource = ev.addResource.resource;
+		UID id = resource->GetId();
+		resources.emplace(id, resource);
+		if (GetReferenceCount(id) > 0) {
+			resource->Load();
+		}
+	} else if (ev.type == EventType::UPDATE_FOLDERS) {
+		RELEASE(rootFolder);
+		rootFolder = ev.updateFolders.folder;
+	}
 }
 
 std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
@@ -352,7 +338,10 @@ void ModuleResources::UpdateAsync() {
 		// Check if there are any new assets and build cached folder structure
 		AssetFolder* newFolder = new AssetFolder(ASSETS_PATH);
 		CheckForNewAssetsRecursive(ASSETS_PATH, newFolder);
-		resourceEventQueue.push({ResourceEventType::UPDATE_FOLDERS, newFolder});
+
+		Event updateFoldersEv(EventType::UPDATE_FOLDERS);
+		updateFoldersEv.updateFolders.folder = newFolder;
+		App->events->AddEvent(updateFoldersEv);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(TIME_BETWEEN_RESOURCE_UPDATES_MS));
 	}
@@ -411,6 +400,12 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		assert(false); // ERROR: Resource type not registered
 		return nullptr;
 	}
-	resourceEventQueue.push({ResourceEventType::ADD_RESOURCE, resource});
+	SendAddResourceEvent(resource);
 	return resource;
+}
+
+void ModuleResources::SendAddResourceEvent(Resource* resource) {
+	Event addResourceEvent(EventType::ADD_RESOURCE);
+	addResourceEvent.addResource.resource = resource;
+	App->events->AddEvent(addResourceEvent);
 }

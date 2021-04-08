@@ -33,12 +33,16 @@
     <ClInclude Include="Source\Resources\ResourceType.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
-    <ClInclude Include="Source\Modules\ModuleEventSystem.h" />
+    <ClInclude Include="Source\Modules\ModuleEvents.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
     <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
+<<<<<<< HEAD
     <ClInclude Include="Source\Utils\Factory.h" />
+=======
+    <ClInclude Include="Source\Utils\AssetFile.h" />
+>>>>>>> develop
     <ClInclude Include="Source\Utils\FileDialog.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -209,13 +213,14 @@
     <ClCompile Include="Libs\fmt-7.1.3\include\src\format.cc" />
     <ClCompile Include="Libs\fmt-7.1.3\include\src\os.cc" />
     <ClCompile Include="Source\Modules\ModuleProject.cpp" />
-    <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
+    <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
     <ClCompile Include="Source\Resources\ResourcePrefab.cpp" />
     <ClCompile Include="Source\Utils\Factory.cpp" />
+    <ClCompile Include="Source\Utils\AssetFile.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Source\Components\ComponentAnimation.cpp" />
     <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
