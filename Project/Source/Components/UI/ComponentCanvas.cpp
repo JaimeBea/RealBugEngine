@@ -1,7 +1,10 @@
+#include "Application.h"
+
+#include "Modules/ModuleUserInterface.h"
+
 #include "ComponentCanvas.h"
 #include "ComponentCanvasRenderer.h"
-#include <Modules/ModuleUserInterface.h>
-#include "Application.h"
+
 #include "GameObject.h"
 
 void ComponentCanvas::Init() {
@@ -12,10 +15,6 @@ void ComponentCanvas::Save(JsonValue jComponent) const {
 }
 
 void ComponentCanvas::Load(JsonValue jComponent) {
-}
-
-void ComponentCanvas::Render() {
-	//RenderGameObject(&GetOwner());
 }
 
 void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
@@ -32,5 +31,4 @@ void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
 
 void ComponentCanvas::DuplicateComponent(GameObject& owner) {
 	ComponentCanvas* component = owner.CreateComponent<ComponentCanvas>();
-	//TO DO
 }

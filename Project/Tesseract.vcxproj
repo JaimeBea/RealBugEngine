@@ -62,11 +62,11 @@
     <ClInclude Include="Source\UI\Interfaces\IMouseClickHandler.h" />
     <ClInclude Include="Source\UI\Interfaces\IPointerEnterHandler.h" />
     <ClInclude Include="Source\UI\Interfaces\IPointerExitHandler.h" />
-    <ClInclude Include="Source\Components\ComponentCanvas.h" />
-    <ClInclude Include="Source\Components\ComponentCanvasRenderer.h" />
+    <ClInclude Include="Source\Components\UI\ComponentCanvas.h" />
+    <ClInclude Include="Source\Components\UI\ComponentCanvasRenderer.h" />
     <ClInclude Include="Source\UI\FontImporter.h" />
     <ClInclude Include="Source\Components\UI\ComponentImage.h" />
-    <ClInclude Include="Source\Components\ComponentTransform2D.h" />
+    <ClInclude Include="Source\Components\UI\ComponentTransform2D.h" />
     <ClInclude Include="Source\Panels\PanelProject.h" />
     <ClInclude Include="Source\Resources\ResourceType.h" />
     <ClInclude Include="Source\Scene.h" />
@@ -99,7 +99,7 @@
     <ClInclude Include="Source\Resources\Resource.h" />
     <ClInclude Include="Source\Globals.h" />
     <ClInclude Include="Source\Application.h" />
-    <ClInclude Include="Source\Components\ComponentEventSystem.h" />
+    <ClInclude Include="Source\Components\UI\ComponentEventSystem.h" />
     <ClInclude Include="Source\Modules\ModuleUserInterface.h" />
     <ClInclude Include="Source\Components\UI\ComponentButton.h" />
     <ClInclude Include="Source\Components\UI\ComponentSelectable.h" />
@@ -245,11 +245,11 @@
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
-    <ClCompile Include="Source\Components\ComponentCanvas.cpp" />
-    <ClCompile Include="Source\Components\ComponentCanvasRenderer.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentCanvas.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentCanvasRenderer.cpp" />
     <ClCompile Include="Source\UI\FontImporter.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentImage.cpp" />
-    <ClCompile Include="Source\Components\ComponentTransform2D.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentTransform2D.cpp" />
     <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
@@ -290,7 +290,7 @@
     <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\Application.cpp" />
-    <ClCompile Include="Source\Components\ComponentEventSystem.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleUserInterface.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentButton.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentSelectable.cpp" />

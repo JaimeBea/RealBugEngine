@@ -8,7 +8,7 @@
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Panels/PanelScene.h"
-#include <Components/ComponentTransform2D.h>
+#include <Components/UI/ComponentTransform2D.h>
 #include "GameObject.h"
 #include <Resources/ResourceTexture.h>
 #include <Resources/ResourceShader.h>
@@ -26,15 +26,7 @@
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
 ComponentImage::~ComponentImage() {
-	//TO DO
-
-	//if (shaderID != 0) {
-	//	App->resources->DecreaseReferenceCount(shaderID);
-	//}
-
-	//if (textureID != 0) {
-	//	App->resources->DecreaseReferenceCount(textureID);
-	//}
+	//TO DO DECREASE REFERENCE COUNT OF SHADER AND TEXTURE, MAYBE IN A NEW COMPONENT::CLEANUP?
 }
 
 void ComponentImage::Init() {
@@ -95,11 +87,16 @@ void ComponentImage::Save(JsonValue jComponent) const {
 }
 
 void ComponentImage::Load(JsonValue jComponent) {
+	//ID == 0 means no Resource loaded
 	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
-	App->resources->IncreaseReferenceCount(shaderID);
+
+	if (shaderID != 0)
+		App->resources->IncreaseReferenceCount(shaderID);
 
 	textureID = jComponent[JSON_TAG_TEXTURE_TEXTUREID];
-	App->resources->IncreaseReferenceCount(textureID);
+
+	if (textureID != 0)
+		App->resources->IncreaseReferenceCount(textureID);
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);

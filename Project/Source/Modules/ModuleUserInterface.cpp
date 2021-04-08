@@ -11,12 +11,13 @@
 #include "GameObject.h"
 #include "Resources/ResourceFont.h"
 #include "Scene.h"
-#include "Components/ComponentCanvas.h"
+#include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentSelectable.h"
 
-#include "Components/ComponentEventSystem.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentEventSystem.h"
 #include "Components/ComponentBoundingBox2D.h"
-#include "Components/ComponentEventSystem.h"
+
 #include "Event.h"
 
 #include "UI/Interfaces/IPointerEnterHandler.h"
@@ -36,12 +37,6 @@ bool ModuleUserInterface::Init() {
 
 bool ModuleUserInterface::Start() {
 	CreateQuadVBO();
-
-	/* Testing font importer
-	AddFont("./Fonts/fa-solid-900.ttf");
-	GetCharacter("fa-solid-900", 'b');
-	std::vector<Character> phrase;
-	GetCharactersInString("fa-solid-900", "-This Is a test-", phrase); */
 	return true;
 }
 
@@ -90,20 +85,6 @@ void ModuleUserInterface::GetCharactersInString(const std::string& font, const s
 }
 
 void ModuleUserInterface::Render() {
-	//GameObject* canvasRenderer = canvas->GetChildren()[0];
-	// if (importFont) {
-	// 	// Temporary code to check font resource is loading fine
-	// 	std::vector<UID>& fontResourcesID = App->resources->ImportAsset("Assets/fa-solid-900.ttf");
-	// 	UID fontId = fontResourcesID[0];
-	// 	App->resources->IncreaseReferenceCount(fontId);
-	// 	ResourceFont* font = (ResourceFont*)App->resources->GetResource(fontId);
-	// 	font->name = "fa-solid-900";
-	// 	fonts.insert(std::pair<std::string, ResourceFont*>(font->name, font));
-	// 	GetCharacter("fa-solid-900", 'b');
-	// 	std::vector<Character> phrase;
-	// 	GetCharactersInString("fa-solid-900", "-This Is a test-", phrase);
-	// 	importFont = false;
-	//}
 	Scene* scene = App->scene->scene;
 	if (scene != nullptr) {
 		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {

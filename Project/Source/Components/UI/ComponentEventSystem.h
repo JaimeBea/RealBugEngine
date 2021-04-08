@@ -1,10 +1,14 @@
 #pragma once
+
 #include <queue>
-#include <Components/Component.h>
+
+#include "Components/Component.h"
 
 class GameObject;
 class ComponentSelectable;
 class IPointerEnterHandler;
+
+#define JSON_TAG_FIRST_SELECTED_ID "FirstSelectedID"
 
 class ComponentEventSystem : public Component {
 public:
@@ -30,7 +34,6 @@ public:
 private:
 	UID currentSelected = 0; //Currently selected SelectableComponent*
 
-	//ESTO VA A DAR POR CULO 100%
 	std::vector<UID> hoveredSelectables; //vector of SelectableComponents* it updates (adding/removing) with mouse events
 
 public:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Component.h"
+#include "Components/Component.h"
 
 #include "Math/float4x4.h"
 #include "Math/float2.h"
@@ -16,7 +16,6 @@ public:
 	void Load(JsonValue jComponent) override;
 
 	void Init() override;
-	void Render();
 	void RenderGameObject(GameObject* gameObject);
 	void DuplicateComponent(GameObject& owner) override;
 };

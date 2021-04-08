@@ -1,6 +1,6 @@
 #include "ComponentSelectable.h"
 #include "Application.h"
-#include "Components/ComponentEventSystem.h"
+#include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentSelectable.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
@@ -10,24 +10,6 @@
 #include "imgui.h"
 
 #include "Utils/Logging.h"
-
-//TODO: ACTUALLY TRANSITION WHEN HIGHLIGHTING HAPPENS, REQUIRES CLASS GRAPHICS FOR SPRITES/IMAGES
-void ComponentSelectable::Highlight(bool b) {
-	switch (transitionType) {
-	case TransitionType::COLOR_CHANGE:
-		break;
-	case TransitionType::ANIMATION:
-		break;
-	default:
-		break;
-	}
-
-	highlighted = b;
-}
-
-//ComponentSelectable::ComponentSelectable(ComponentType type_, GameObject* owner, UID componentID_, bool active)
-//	: Component(type_, owner, componentID_, active) {
-//}
 
 ComponentSelectable::~ComponentSelectable() {
 	//TO DO IF SELECTED SET SELECTED TO NULL
@@ -103,17 +85,14 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 
 void ComponentSelectable::OnSelect() {
 	selected = true;
-	Highlight(true);
 }
 
 void ComponentSelectable::OnDeselect() {
 	selected = false;
-	Highlight(false);
 }
 
 void ComponentSelectable::Init() {
 	interactable = false;
-	highlighted = false;
 	selected = false;
 	navigationType = NavigationType::AUTOMATIC;
 	onAxisDown = 0;
@@ -121,8 +100,7 @@ void ComponentSelectable::Init() {
 	onAxisRight = 0;
 	onAxisUp = 0;
 	transitionType = TransitionType::NONE;
-
-	//TODO: add as listener to MouseMoved event?
+	selectableType = ComponentType::UNKNOWN;
 }
 
 void ComponentSelectable::Update() {
@@ -210,6 +188,7 @@ void ComponentSelectable::DuplicateComponent(GameObject& owner) {
 	component->interactable = interactable;
 	component->colorDisabled = colorDisabled;
 	component->colorHovered = colorHovered;
+	component->colorSelected = colorSelected;
 	component->onAxisDown = onAxisDown;
 	component->onAxisUp = onAxisUp;
 	component->onAxisRight = onAxisRight;
@@ -256,6 +235,9 @@ void ComponentSelectable::Save(JsonValue jsonVal) const {
 	JsonValue jTransitiontype = jsonVal[JSON_TAG_TRANSITION_TYPE];
 	jTransitiontype = (int) transitionType;
 
+	JsonValue jSelectableType = jsonVal[JSON_TAG_SELECTABLE_TYPE];
+	jSelectableType = (int) selectableType;
+
 	jsonVal[JSON_TAG_ON_AXIS_DOWN] = onAxisDown;
 
 	jsonVal[JSON_TAG_ON_AXIS_UP] = onAxisUp;
@@ -273,7 +255,7 @@ void ComponentSelectable::Load(JsonValue jsonVal) {
 	colorDisabled.Set(jColorDisabled[0], jColorDisabled[1], jColorDisabled[2], jColorDisabled[3]);
 
 	JsonValue jColorSelected = jsonVal[JSON_TAG_COLOR_SELECTED];
-	colorDisabled.Set(jColorSelected[0], jColorSelected[1], jColorSelected[2], jColorSelected[3]);
+	colorSelected.Set(jColorSelected[0], jColorSelected[1], jColorSelected[2], jColorSelected[3]);
 
 	JsonValue jInteractable = jsonVal[JSON_TAG_INTERACTABLE];
 	interactable = jInteractable;
@@ -284,7 +266,8 @@ void ComponentSelectable::Load(JsonValue jsonVal) {
 	JsonValue jTransitionType = jsonVal[JSON_TAG_TRANSITION_TYPE];
 	transitionType = (TransitionType)((int) jsonVal[JSON_TAG_TRANSITION_TYPE]);
 
-	//TO DO MOVE THESE THANGS TO POST LOAD
+	JsonValue jSelectableType = jsonVal[JSON_TAG_SELECTABLE_TYPE];
+	selectableType = (ComponentType)((int) jsonVal[JSON_TAG_SELECTABLE_TYPE]);
 
 	onAxisDown = jsonVal[JSON_TAG_ON_AXIS_DOWN];
 
@@ -301,6 +284,10 @@ const float4 ComponentSelectable::GetHoverColor() const {
 
 const float4 ComponentSelectable::GetSelectedColor() const {
 	return colorSelected;
+}
+
+ComponentSelectable::TransitionType ComponentSelectable::GetTransitionType() const {
+	return transitionType;
 }
 
 Component* ComponentSelectable::GetSelectableComponent() {

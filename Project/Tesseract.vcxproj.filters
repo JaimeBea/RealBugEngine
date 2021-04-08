@@ -130,6 +130,21 @@
     <ClCompile Include="Source\Resources\ResourceTexture.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\AnimationController.cpp" />
+    <ClCompile Include="Source\Resources\ResourceFont.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
+    <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
+    <ClCompile Include="Source\UI\FontImporter.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentImage.cpp" />
+    <ClCompile Include="Source\Components\ComponentSkyBox.cpp" />
+    <ClCompile Include="Source\Resources\ResourceSkybox.cpp" />
+    <ClCompile Include="Source\FileSystem\SkyboxImporter.cpp" />
+    <ClCompile Include="Source\Modules\ModuleUserInterface.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentButton.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentSelectable.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentEventSystem.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentTransform2D.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentCanvasRenderer.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentCanvas.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -298,6 +313,69 @@
     <ClInclude Include="Source\Resources\ResourceTexture.h" />
     <ClInclude Include="Source\Utils\VectorMap.h" />
     <ClInclude Include="Source\AnimationController.h" />
+    <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftadvanc.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftbbox.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftbdf.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftbitmap.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftbzip2.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftcache.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftchapters.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftcid.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftcolor.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftdriver.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\fterrdef.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\fterrors.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftfntfmt.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftgasp.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftglyph.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftgxval.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftgzip.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftimage.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftincrem.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftlcdfil.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftlist.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftlzw.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftmac.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftmm.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftmodapi.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftmoderr.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftotval.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftoutln.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftparams.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftpfr.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftrender.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftsizes.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftsnames.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftstroke.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftsynth.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftsystem.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\fttrigon.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\fttypes.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ftwinfnt.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\t1tables.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\ttnameid.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\tttables.h" />
+    <ClInclude Include="Libs\freetype\include\freetype\tttags.h" />
+    <ClInclude Include="Libs\freetype\include\ft2build.h" />
+    <ClInclude Include="Source\Resources\ResourceFont.h" />
+    <ClInclude Include="Source\Components\ComponentBoundingBox2D.h" />
+    <ClInclude Include="Source\UI\Interfaces\IMouseClickHandler.h" />
+    <ClInclude Include="Source\UI\Interfaces\IPointerEnterHandler.h" />
+    <ClInclude Include="Source\UI\Interfaces\IPointerExitHandler.h" />
+    <ClInclude Include="Source\UI\FontImporter.h" />
+    <ClInclude Include="Source\Components\UI\ComponentImage.h" />
+    <ClInclude Include="Source\Components\ComponentSkyBox.h" />
+    <ClInclude Include="Source\Resources\ResourceSkybox.h" />
+    <ClInclude Include="Source\FileSystem\SkyboxImporter.h" />
+    <ClInclude Include="Source\Modules\ModuleUserInterface.h" />
+    <ClInclude Include="Source\Components\UI\ComponentButton.h" />
+    <ClInclude Include="Source\Components\UI\ComponentSelectable.h" />
+    <ClInclude Include="Source\Components\UI\ComponentEventSystem.h" />
+    <ClInclude Include="Source\Components\UI\ComponentTransform2D.h" />
+    <ClInclude Include="Source\Components\UI\ComponentCanvasRenderer.h" />
+    <ClInclude Include="Source\Components\UI\ComponentCanvas.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
@@ -312,5 +390,18 @@
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
+    <None Include="..\Game\Shaders\default_fragment.glsl" />
+    <None Include="..\Game\Shaders\default_vertex.glsl" />
+    <None Include="..\Game\Shaders\phong_fragment.glsl" />
+    <None Include="..\Game\Shaders\phong_pbr_fragment.glsl" />
+    <None Include="..\Game\Shaders\phong_pbr_vertex.glsl" />
+    <None Include="..\Game\Shaders\phong_vertex.glsl" />
+    <None Include="..\Game\Shaders\skybox_fragment.glsl" />
+    <None Include="..\Game\Shaders\skybox_vertex.glsl" />
+    <None Include="..\Game\Shaders\ui_fragment.glsl" />
+    <None Include="..\Game\Shaders\ui_vertex.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Libs\freetype\lib\freetype.lib" />
   </ItemGroup>
 </Project>
