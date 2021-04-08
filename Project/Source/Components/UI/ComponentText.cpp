@@ -26,7 +26,7 @@
 
 
 ComponentText::~ComponentText() {
-	glDeleteBuffers(1, &vbo);
+	//TO DO DECREASE REFERENCE COUNT OF SHADER AND FONT, MAYBE IN A NEW COMPONENT::CLEANUP?
 }
 
 void ComponentText::Init() {
