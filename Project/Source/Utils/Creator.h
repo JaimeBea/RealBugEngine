@@ -13,7 +13,7 @@ public:
 	}
 	virtual ~Creator() {};
 
-	virtual Script* create() = 0;
+	virtual Script* Create() = 0;
 };
 
 template<class T>
@@ -23,7 +23,7 @@ public:
 
 	virtual ~CreatorImplementation<T>() {}
 
-	virtual Script* create() {
+	virtual Script* Create() {
 		return new T;
 	}
 };

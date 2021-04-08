@@ -27,14 +27,15 @@ void ComponentScript::Update() {
 void ComponentScript::OnStart() {
 	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
 	if (resource != nullptr) {
-		resource->script->Start();
+		if (resource->script != nullptr)
+			resource->script->Start();
 	}
 }
 
 void ComponentScript::OnUpdate() {
 	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
 	if (resource != nullptr) {
-		if (resource->script) {
+		if (resource->script != nullptr) {
 			resource->script->Update();
 		}
 	}
@@ -46,7 +47,6 @@ void ComponentScript::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
-	UID idAnt = id;
 	ImGui::ResourceSlot<ResourceScript>("Script", &id);
 
 	static char name[1024] = "";
