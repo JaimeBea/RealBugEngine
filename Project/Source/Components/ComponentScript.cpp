@@ -2,7 +2,6 @@
 
 #include "Application.h"
 #include "Modules/ModuleProject.h"
-#include "Modules/ModuleEventSystem.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Resources/ResourceScript.h"

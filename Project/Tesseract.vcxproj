@@ -38,11 +38,8 @@
     <ClInclude Include="Source\Event.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
-<<<<<<< HEAD
     <ClInclude Include="Source\Utils\Factory.h" />
-=======
     <ClInclude Include="Source\Utils\AssetFile.h" />
->>>>>>> develop
     <ClInclude Include="Source\Utils\FileDialog.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
