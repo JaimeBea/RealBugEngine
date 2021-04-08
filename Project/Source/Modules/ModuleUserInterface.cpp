@@ -35,6 +35,8 @@ bool ModuleUserInterface::Init() {
 }
 
 bool ModuleUserInterface::Start() {
+	CreateQuadVBO();
+
 	/* Testing font importer
 	AddFont("./Fonts/fa-solid-900.ttf");
 	GetCharacter("fa-solid-900", 'b');
@@ -154,7 +156,62 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 }
 
 bool ModuleUserInterface::CleanUp() {
+	glDeleteBuffers(1, &quadVBO);
 	return true;
+}
+
+unsigned int ModuleUserInterface::GetQuadVBO() {
+	return quadVBO;
+}
+
+void ModuleUserInterface::CreateQuadVBO() {
+	float buffer_data[] = {
+		-0.5f,
+		-0.5f,
+		0.0f, //  v0 pos
+
+		0.5f,
+		-0.5f,
+		0.0f, // v1 pos
+
+		-0.5f,
+		0.5f,
+		0.0f, //  v2 pos
+
+		0.5f,
+		-0.5f,
+		0.0f, //  v3 pos
+
+		0.5f,
+		0.5f,
+		0.0f, // v4 pos
+
+		-0.5f,
+		0.5f,
+		0.0f, //  v5 pos
+
+		0.0f,
+		0.0f, //  v0 texcoord
+
+		1.0f,
+		0.0f, //  v1 texcoord
+
+		0.0f,
+		1.0f, //  v2 texcoord
+
+		1.0f,
+		0.0f, //  v3 texcoord
+
+		1.0f,
+		1.0f, //  v4 texcoord
+
+		0.0f,
+		1.0f //  v5 texcoord
+	};
+
+	glGenBuffers(1, &quadVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO); // set vbo active
+	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
 }
 
 void ModuleUserInterface::SetCurrentEventSystem(ComponentEventSystem* ev) {

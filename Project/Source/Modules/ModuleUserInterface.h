@@ -26,10 +26,16 @@ public:
 
 	bool CleanUp() override;
 
+	unsigned int GetQuadVBO();
+
+private:
+	void CreateQuadVBO(); // Creates a vbo made by two triangles centered that form a Quad
+
 private:
 	std::unordered_map<std::string, ResourceFont*> fonts; //Container for different fonts with the name of the font as key.
 	//bool importFont = true; // Temporary to check font resource is loading fine
 	static ComponentEventSystem* currentEvSys;
+	unsigned int quadVBO;
 
 public:
 	GameObject* canvas = nullptr;

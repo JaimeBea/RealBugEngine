@@ -6,6 +6,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Panels/PanelScene.h"
 #include <Components/ComponentTransform2D.h>
 #include "GameObject.h"
@@ -25,11 +26,18 @@
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
 ComponentImage::~ComponentImage() {
-	DestroyVBO();
+	//TO DO
+
+	//if (shaderID != 0) {
+	//	App->resources->DecreaseReferenceCount(shaderID);
+	//}
+
+	//if (textureID != 0) {
+	//	App->resources->DecreaseReferenceCount(textureID);
+	//}
 }
 
 void ComponentImage::Init() {
-	CreateVBO();
 }
 
 void ComponentImage::Update() {
@@ -43,7 +51,7 @@ void ComponentImage::OnEditorUpdate() {
 	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
-	
+
 	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 
@@ -99,71 +107,6 @@ void ComponentImage::Load(JsonValue jComponent) {
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
-void ComponentImage::CreateVBO() {
-	//float buffer_data[] = {
-	//	 0.0f, 0.0f, 0.0f, //  v0 pos
-	//	 1.0f, 0.0f, 0.0f, // v1 pos
-	//	 0.0f, 1.0f, 0.0f, //  v2 pos
-
-	//	 1.0f, 0.0f, 0.0f, //  v3 pos
-	//	 1.0f, 1.0f, 0.0f, // v4 pos
-	//	 0.0f, 1.0f, 0.0f, //  v5 pos
-
-	//	0.0f, 0.0f, //  v0 texcoord
-	//	1.0f, 0.0f, //  v1 texcoord
-	//	0.0f, 1.0f, //  v2 texcoord
-
-	//	1.0f, 0.0f, //  v3 texcoord
-	//	1.0f, 1.0f, //  v4 texcoord
-	//	0.0f, 1.0f //  v5 texcoord
-	//};
-
-	// centered position
-	float buffer_data[] = {
-		-0.5f,
-		-0.5f,
-		0.0f, //  v0 pos
-		0.5f,
-		-0.5f,
-		0.0f, // v1 pos
-		-0.5f,
-		0.5f,
-		0.0f, //  v2 pos
-
-		0.5f,
-		-0.5f,
-		0.0f, //  v3 pos
-		0.5f,
-		0.5f,
-		0.0f, // v4 pos
-		-0.5f,
-		0.5f,
-		0.0f, //  v5 pos
-
-		0.0f,
-		0.0f, //  v0 texcoord
-		1.0f,
-		0.0f, //  v1 texcoord
-		0.0f,
-		1.0f, //  v2 texcoord
-
-		1.0f,
-		0.0f, //  v3 texcoord
-		1.0f,
-		1.0f, //  v4 texcoord
-		0.0f,
-		1.0f //  v5 texcoord
-	};
-
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo); // set vbo active
-	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
-}
-
-void ComponentImage::DestroyVBO() {
-	glDeleteBuffers(1, &vbo);
-}
-
 const float4 ComponentImage::GetTintColor() const {
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
@@ -186,7 +129,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, App->userInterface->GetQuadVBO());
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
@@ -217,6 +160,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
 
 	glBindTexture(GL_TEXTURE_2D, texResource->glTexture);
+
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -226,5 +170,16 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();
-	//TO DO
+	component->shaderID = shaderID;
+	component->textureID = textureID;
+
+	if (shaderID != 0) {
+		App->resources->IncreaseReferenceCount(shaderID);
+	}
+	if (textureID != 0) {
+		App->resources->IncreaseReferenceCount(textureID);
+	}
+
+	component->color = color;
+	component->alphaTransparency = alphaTransparency;
 }

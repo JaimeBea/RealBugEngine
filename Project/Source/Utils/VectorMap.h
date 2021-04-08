@@ -32,7 +32,7 @@ public:
 	V& Put(K key, V&& value) {
 		keyToIndexMap[key] = values.size();
 		indexToKeyMap[values.size()] = key;
-		values.push_back(value);
+		values.emplace_back(value);
 		return values.back();
 	}
 
