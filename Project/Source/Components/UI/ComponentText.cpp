@@ -22,6 +22,9 @@
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
+#define FONT_MAX_SIZE 72.f
+#define FONT_MIN_SIZE 12.f
+
 ComponentText::~ComponentText() {
 	glDeleteBuffers(1, &vbo);
 }
@@ -87,6 +90,7 @@ void ComponentText::OnEditorUpdate() {
 	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
+	ImGui::DragFloat("Font Size", &fontSize, 0.2f, FONT_MIN_SIZE, FONT_MAX_SIZE);
 	ImGui::ColorEdit4("Color##", color.ptr());
 }
 
@@ -147,7 +151,8 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	// THESE NEED TO BE GET FROM T2D
 	float x = position.x;
 	float y = position.y;
-	float scale = 1;
+	//(note that advance is number of 1/64 pixels)
+	float scale = fontSize / 64.f;
 
 	for (char c : text) {
 		Character character = App->userInterface->GetCharacter(fontID, c);
