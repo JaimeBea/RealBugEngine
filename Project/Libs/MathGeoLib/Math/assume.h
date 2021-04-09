@@ -75,6 +75,12 @@
 
 MATH_BEGIN_NAMESPACE
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 /// Assigns mathBreakOnAssume = isEnabled;
 void SetMathBreakOnAssume(bool isEnabled);
 
@@ -84,7 +90,7 @@ bool MathBreakOnAssume();
 
 /// Breaks to debugger if math break-on-assume flag
 /// Returns the current state of the math break-on-assume flag.
-bool AssumeFailed();
+TESSERACT_ENGINE_API bool AssumeFailed();
 
 template<typename T>
 inline StringT ObjToString(const T &obj)

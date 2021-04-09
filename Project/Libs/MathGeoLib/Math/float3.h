@@ -29,9 +29,14 @@
 
 MATH_BEGIN_NAMESPACE
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 /// A vector of form (x,y,z).
-class float3
-{
+class TESSERACT_ENGINE_API float3 {
 public:
 	enum
 	{

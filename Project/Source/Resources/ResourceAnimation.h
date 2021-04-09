@@ -15,12 +15,6 @@ public:
 		Quat rotation = Quat::identity;
 	};
 
-	/*
-	struct MorphChannel {
-		std::vector<float> wheights;
-	};
-	*/
-
 	struct KeyFrameChannels {
 		std::unordered_map<std::string, Channel> channels;
 	};

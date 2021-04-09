@@ -45,7 +45,7 @@ void ResourceMesh::Load() {
 	bones.resize(numBones);
 
 	// Bones
-	for (unsigned i = 0; i < numBones; i++) {
+	for (unsigned i = 0; i < numBones; ++i) {
 		float3 position, scaling;
 		Quat rotation;
 
@@ -58,9 +58,6 @@ void ResourceMesh::Load() {
 		cursor += FILENAME_MAX * sizeof(char);
 
 		name[lengthName] = '\0';
-
-		// TODO: Init the bones map only with the Key. In the scene importer, add the pointers to the GameObject-Bone.
-		//bones.emplace(name, nullptr);
 
 		// Translation
 		position.x = *((float*) cursor);
@@ -141,7 +138,6 @@ void ResourceMesh::Load() {
 void ResourceMesh::Unload() {
 	if (!vao) return;
 
-	//attaches.clear();
 	bones.clear();
 
 	glDeleteVertexArrays(1, &vao);
@@ -165,7 +161,7 @@ std::vector<Triangle> ResourceMesh::ExtractTriangles(const float4x4& modelMatrix
 	cursor += sizeof(unsigned);
 
 	// Bones
-	for (unsigned i = 0; i < numBones; i++) {
+	for (unsigned i = 0; i < numBones; ++i) {
 		// bone name size
 		cursor += sizeof(unsigned);
 		// bone name
@@ -175,21 +171,28 @@ std::vector<Triangle> ResourceMesh::ExtractTriangles(const float4x4& modelMatrix
 	}
 
 	// Vertices
+	unsigned normalSize = sizeof(float) * 3;
+	unsigned uvSize = sizeof(float) * 2;
+	unsigned bonesIDSize = sizeof(unsigned) * 4;
+	unsigned weightsSize = sizeof(float) * 4;
+	unsigned nonPosVertexAttributesSize = normalSize + uvSize + bonesIDSize + weightsSize;
 	std::vector<float3> vertices;
-	for (unsigned i = 0; i < numVertices; i++) {
+	for (unsigned i = 0; i < numVertices; ++i) {
 		float vertex[3] = {};
 		vertex[0] = *((float*) cursor);
 		cursor += sizeof(float);
 		vertex[1] = *((float*) cursor);
 		cursor += sizeof(float);
 		vertex[2] = *((float*) cursor);
-		cursor += sizeof(float) * 14;
+		cursor += sizeof(float);
+		cursor += nonPosVertexAttributesSize;
+
 		vertices.push_back((modelMatrix * float4(vertex[0], vertex[1], vertex[2], 1)).xyz());
 	}
 
 	std::vector<Triangle> triangles;
 	triangles.reserve(numIndices / 3);
-	for (unsigned i = 0; i < numIndices / 3; i++) {
+	for (unsigned i = 0; i < numIndices / 3; ++i) {
 		unsigned triangeIndices[3] = {};
 		triangeIndices[0] = *((unsigned*) cursor);
 		cursor += sizeof(unsigned);

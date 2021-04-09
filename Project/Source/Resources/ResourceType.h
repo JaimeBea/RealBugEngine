@@ -24,6 +24,7 @@ enum class ResourceType {
 	SHADER,
 	TEXTURE,
 	SKYBOX,
+	SCRIPT,
 	ANIMATION,
 	STATE_MACHINE
 };

@@ -3,6 +3,12 @@
 #include "Module.h"
 #include "Utils/MSTimer.h"
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 class ModuleTime : public Module {
 public:
 	ModuleTime();
@@ -16,8 +22,8 @@ public:
 	bool HasGameStarted() const;
 	bool IsGameRunning() const;
 
-	float GetDeltaTime() const;
-	float GetRealTimeDeltaTime() const;
+	TESSERACT_ENGINE_API float GetDeltaTime() const;
+	TESSERACT_ENGINE_API float GetRealTimeDeltaTime() const;
 	float GetTimeSinceStartup() const;
 	float GetRealTimeSinceStartup() const;
 

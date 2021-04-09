@@ -64,7 +64,6 @@ void ResourceAnimation::Load() {
 
 	unsigned timeMs = timer.Stop();
 	LOG("Animation loaded in %ums", timeMs);
-
 }
 
 void ResourceAnimation::Unload() {

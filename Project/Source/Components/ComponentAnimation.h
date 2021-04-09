@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Component.h"
 #include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceStates.h"
@@ -14,11 +15,8 @@ class ComponentAnimation : public Component {
 public:
 	REGISTER_COMPONENT(ComponentAnimation, ComponentType::ANIMATION, false); // Refer to ComponentType for the Constructor
 
-	//void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
-	//void DrawGizmos() override;
-	//void OnTransformUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;

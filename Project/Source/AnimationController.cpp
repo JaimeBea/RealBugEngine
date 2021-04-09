@@ -1,4 +1,5 @@
 #include "AnimationController.h"
+
 #include "Resources/ResourceAnimation.h"
 #include "Resources/ResourceStateMachine.h"
 #include "Resources/AnimationInterpolation.h"

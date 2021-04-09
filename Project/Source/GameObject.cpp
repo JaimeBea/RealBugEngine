@@ -147,7 +147,7 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-GameObject* GameObject::FindDescendant(std::string name) const {
+GameObject* GameObject::FindDescendant(const std::string& name) const {
 	for (GameObject* child : children) {
 		if (child->name == name) {
 			return child;
@@ -317,6 +317,9 @@ Component* GameObject::GetComponentByTypeAndId(ComponentType type, UID component
 	case ComponentType::SKYBOX:
 		if (!scene->skyboxComponents.Has(componentId)) return nullptr;
 		return &scene->skyboxComponents.Get(componentId);
+	case ComponentType::SCRIPT:
+		if (!scene->scriptComponents.Has(componentId)) return nullptr;
+		return &scene->scriptComponents.Get(componentId);
 	case ComponentType::ANIMATION:
 		if (!scene->animationComponents.Has(componentId)) return nullptr;
 		return &scene->animationComponents.Get(componentId);
@@ -341,6 +344,8 @@ Component* GameObject::CreateComponentByTypeAndId(ComponentType type, UID compon
 		return &scene->lightComponents.Put(componentId, ComponentLight(this, componentId, active));
 	case ComponentType::SKYBOX:
 		return &scene->skyboxComponents.Put(componentId, ComponentSkyBox(this, componentId, active));
+	case ComponentType::SCRIPT:
+		return &scene->scriptComponents.Put(componentId, ComponentScript(this, componentId, active));
 	case ComponentType::ANIMATION:
 		return &scene->animationComponents.Put(componentId, ComponentAnimation(this, componentId, active));
 	default:
@@ -375,6 +380,10 @@ void GameObject::RemoveComponentByTypeAndId(ComponentType type, UID componentId)
 	case ComponentType::SKYBOX:
 		if (!scene->skyboxComponents.Has(componentId)) return;
 		scene->skyboxComponents.Remove(componentId);
+		break;
+	case ComponentType::SCRIPT:
+		if (!scene->scriptComponents.Has(componentId)) return;
+		scene->scriptComponents.Remove(componentId);
 		break;
 	case ComponentType::ANIMATION:
 		if (!scene->animationComponents.Has(componentId)) return;

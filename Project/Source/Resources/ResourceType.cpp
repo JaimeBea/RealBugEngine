@@ -20,6 +20,8 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Texture";
 	case ResourceType::SKYBOX:
 		return "Skybox";
+	case ResourceType::SCRIPT:
+		return "Script";
 	case ResourceType::ANIMATION:
 		return "Animation";
 	case ResourceType::STATE_MACHINE:
@@ -46,6 +48,8 @@ ResourceType GetResourceTypeFromName(const char* name) {
 		return ResourceType::TEXTURE;
 	} else if (strcmp(name, "Skybox") == 0) {
 		return ResourceType::SKYBOX;
+	} else if (strcmp(name, "Script") == 0) {
+		return ResourceType::SCRIPT;
 	} else if (strcmp(name, "Animation") == 0) {
 		return ResourceType::ANIMATION;
 	} else if (strcmp(name, "StateMachine") == 0) {

@@ -51,7 +51,6 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	unsigned bonesIDSize = sizeof(unsigned) * 4;
 	unsigned weightsSize = sizeof(float) * 4;
 	unsigned indexSize = sizeof(unsigned);
-	//unsigned attachSize = sizeof(ResourceMesh::Attach);
 	unsigned boneSize = sizeof(unsigned) + sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
 
 	unsigned headerSize = sizeof(unsigned) * 3;
@@ -59,7 +58,6 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	unsigned vertexBufferSize = vertexSize * numVertices;
 	unsigned indexBufferSize = indexSize * numIndices;
 	unsigned bonesBufferSize = boneSize * numBones;
-	//unsigned attachesBufferSize = attachSize * numVertices;
 
 	size_t size = headerSize + bonesBufferSize + vertexBufferSize + indexBufferSize;
 	Buffer<char> buffer = Buffer<char>(size);
