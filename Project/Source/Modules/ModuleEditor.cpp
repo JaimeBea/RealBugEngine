@@ -3,11 +3,13 @@
 #include "Globals.h"
 #include "Application.h"
 #include "FileSystem/SceneImporter.h"
+#include "Utils/FileDialog.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleEvents.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -23,7 +25,6 @@
 #include "Event.h"
 
 #include "Utils/Leaks.h"
-#include "Utils/FileDialog.h"
 
 static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
@@ -210,11 +211,20 @@ UpdateStatus ModuleEditor::Update() {
 
 	// Modals
 	switch (modalToOpen) {
+	case Modal::NEW_PROJECT:
+		ImGui::OpenPopup("New project");
+		break;
 	case Modal::NEW_SCENE:
 		ImGui::OpenPopup("New scene");
 		break;
+	case Modal::LOAD_PROJECT:
+		FileDialog::Init("Load project", false, (AllowedExtensionsFlag::PROJECT), gamePath);
+		break;
 	case Modal::LOAD_SCENE:
 		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), gamePath);
+		break;
+	case Modal::SAVE_PROJECT:
+		FileDialog::Init("Save project", true, (AllowedExtensionsFlag::PROJECT), gamePath);
 		break;
 	case Modal::SAVE_SCENE:
 		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), gamePath);
@@ -373,21 +383,15 @@ bool ModuleEditor::CleanUp() {
 }
 
 void ModuleEditor::OnMouseMoved() {
-	App->BroadCastEvent(Event(Event::EventType::MOUSE_UPDATE, panelScene.GetMousePosOnScene()));
+	Event mouseEvent = Event(EventType::MOUSE_UPDATE);
+	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
+	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
+	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseClicked() {
-	App->BroadCastEvent(Event(Event::EventType::MOUSE_CLICKED, panelScene.GetMousePosOnScene()));
+	Event mouseEvent = Event(EventType::MOUSE_CLICKED);
+	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
+	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
+	App->events->AddEvent(mouseEvent);
 }
-
-//void ModuleEditor::ReceiveEvent(const Event& ev) {
-//	switch (ev.type) {
-//	case Event::EventType::MOUSE_UPDATE:
-//		float2 actualMousePos = panelScene.GetMousePosOnScene();
-//		ev.point2d = actualMousePos
-//		//TO DO
-//		break;
-//	default:
-//		break;
-//	}
-//}

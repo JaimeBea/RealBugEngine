@@ -4,7 +4,11 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Components/UI/ComponentSelectable.h"
-#include <Utils/Logging.h>
+#include "Utils/Logging.h"
+
+#include <imgui.h>
+
+#include "Utils/Leaks.h"
 
 #define JSON_TAG_COLOR_HOVER "ColorHover"
 #define JSON_TAG_COLOR_CLICK "ColorClick"

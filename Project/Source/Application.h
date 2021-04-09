@@ -21,7 +21,8 @@ class ModuleScene;
 class ModuleTime;
 class ModuleUserInterface;
 class ModuleAudio;
-class ModuleEventSystem;
+class ModuleProject;
+class ModuleEvents;
 
 class ComponentEventSystem;
 
@@ -38,7 +39,6 @@ public:
 	bool CleanUp();		   // Calls the memory cleaning methods of each module, to release all the memory used by the app before quitting
 
 	void RequestBrowser(char* url);		 // Opens the url passed as parameter in a new window your default Internet Borwser
-	void BroadCastEvent(const Event& e); //This method exists only with the purpose of being used by those modules that generate events but do not receive them
 
 public:
 	// ---- Application Modules ---- //
@@ -56,7 +56,8 @@ public:
 	ModuleTime* time = nullptr;
 	ModuleUserInterface* userInterface = nullptr;
 	ModuleAudio* audio = nullptr;
-	ModuleEventSystem* eventSystem = nullptr;
+	ModuleProject* project = nullptr;
+	ModuleEvents* events = nullptr;
 
 	// - Application Configuration - //
 	char appName[20] = "Tesseract";

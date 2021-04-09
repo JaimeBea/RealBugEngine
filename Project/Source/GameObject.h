@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-class GameObject {
+class TESSERACT_ENGINE_API GameObject {
 public:
 	void InitComponents();
 	void Update();

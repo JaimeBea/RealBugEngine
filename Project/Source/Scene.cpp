@@ -138,6 +138,9 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::ANIMATION:
 		if (!animationComponents.Has(componentId)) return nullptr;
 		return &animationComponents.Get(componentId);
+	case ComponentType::SCRIPT:
+		if (!scriptComponents.Has(componentId)) return nullptr;
+		return &scriptComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -181,6 +184,8 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 		return &skyboxComponents.Put(componentId, ComponentSkyBox(owner, componentId, owner->IsActive()));
 	case ComponentType::ANIMATION:
 		return &animationComponents.Put(componentId, ComponentAnimation(owner, componentId, owner->IsActive()));
+	case ComponentType::SCRIPT:
+		return &scriptComponents.Put(componentId, ComponentScript(owner, componentId, owner->IsActive()));
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -258,10 +263,13 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 		if (!animationComponents.Has(componentId)) return;
 		animationComponents.Remove(componentId);
 		break;
+	case ComponentType::SCRIPT:
+		if (!scriptComponents.Has(componentId)) return;
+		scriptComponents.Remove(componentId);
+		break;
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);
 		assert(false);
 		break;
 	}
 }
-

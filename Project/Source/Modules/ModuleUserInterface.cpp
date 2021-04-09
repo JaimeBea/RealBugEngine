@@ -2,7 +2,7 @@
 
 #include "Application.h"
 #include "ModuleFiles.h"
-#include "ModuleEventSystem.h"
+#include "ModuleEvents.h"
 #include "Modules/ModuleResources.h"
 #include "ModuleScene.h"
 #include "Utils/FileDialog.h"
@@ -30,8 +30,8 @@
 ComponentEventSystem* ModuleUserInterface::currentEvSys = nullptr;
 
 bool ModuleUserInterface::Init() {
-	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_UPDATE, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::MOUSE_CLICKED, this);
+	App->events->AddObserverToEvent(EventType::MOUSE_UPDATE, this);
+	App->events->AddObserverToEvent(EventType::MOUSE_CLICKED, this);
 	return true;
 }
 
@@ -99,9 +99,10 @@ GameObject* ModuleUserInterface::GetCanvas() const {
 }
 
 void ModuleUserInterface::ReceiveEvent(const Event& e) {
-	float2 mousePos = float2(e.point2d.x, e.point2d.y);
+	float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
+
 	switch (e.type) {
-	case Event::EventType::MOUSE_UPDATE:
+	case EventType::MOUSE_UPDATE:
 		if (currentEvSys) {
 			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
 				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
@@ -119,7 +120,7 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 		}
 		break;
 
-	case Event::EventType::MOUSE_CLICKED:
+	case EventType::MOUSE_CLICKED:
 		if (currentEvSys != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {

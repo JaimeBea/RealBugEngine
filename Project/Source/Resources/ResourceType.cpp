@@ -22,6 +22,8 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Font";
 	case ResourceType::SKYBOX:
 		return "Skybox";
+	case ResourceType::SCRIPT:
+		return "Script";
 	case ResourceType::ANIMATION:
 		return "Animation";
 	default:
@@ -48,6 +50,8 @@ ResourceType GetResourceTypeFromName(const char* name) {
 		return ResourceType::FONT;
 	} else if (strcmp(name, "Skybox") == 0) {
 		return ResourceType::SKYBOX;
+	} else if (strcmp(name, "Script") == 0) {
+		return ResourceType::SCRIPT;
 	} else if (strcmp(name, "Animation") == 0) {
 		return ResourceType::ANIMATION;
 	} else {

@@ -19,6 +19,7 @@
 #include "Components/UI/ComponentText.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentSkybox.h"
+#include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
 
 #include <unordered_map>
@@ -66,6 +67,7 @@ public:
 	VectorMap<UID, ComponentButton> buttonComponents;
 	VectorMap<UID, ComponentSelectable> selectableComponents;
 	VectorMap<UID, ComponentSkyBox> skyboxComponents;
+	VectorMap<UID, ComponentScript> scriptComponents;
 	VectorMap<UID, ComponentAnimation> animationComponents;
 
 	// ---- Quadtree Parameters ---- //

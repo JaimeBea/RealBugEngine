@@ -6,10 +6,12 @@
 #include "Modules/ModuleResources.h"
 #include "FileSystem/JsonValue.h"
 
+#ifdef TESSERACT_ENGINE
 #include "rapidjson/error/en.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/document.h"
+#endif //  TESSERACT_ENGINE
 
 #include <vector>
 #include <string>

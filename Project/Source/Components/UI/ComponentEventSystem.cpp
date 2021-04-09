@@ -8,6 +8,7 @@
 #include "Event.h"
 
 #include <Components/UI/ComponentSelectable.h>
+#include <imgui.h>
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
 

@@ -27,8 +27,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
-#include "Modules/ModuleEventSystem.h"
-
+#include "Modules/ModuleEvents.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -45,7 +44,10 @@
 #include "rapidjson/error/en.h"
 #include <string>
 #include "Brofiler.h"
-#include "Event.h"
+
+#include <Windows.h>
+#include <array>
+
 #include "Utils/Leaks.h"
 
 static aiLogStream logStream = {nullptr, nullptr};
@@ -68,7 +70,7 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->eventSystem->AddObserverToEvent(Event::EventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(EventType::GAMEOBJECT_DESTROYED, this);
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
@@ -142,14 +144,15 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 	for (GameObject* child : children) {
 		DestroyGameObjectDeferred(child);
 	}
-
-	App->BroadCastEvent(Event(Event::EventType::GAMEOBJECT_DESTROYED, gameObject));
+	Event ev(EventType::GAMEOBJECT_DESTROYED);
+	ev.destroyGameObject.ptr = gameObject;
+	App->events->AddEvent(ev);
 }
 
 void ModuleScene::ReceiveEvent(const Event& e) {
 	switch (e.type) {
-	case Event::EventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.objPtr.ptr);
+	case EventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.destroyGameObject.ptr);
 		break;
 	}
 }

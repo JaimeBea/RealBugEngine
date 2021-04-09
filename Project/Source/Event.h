@@ -2,26 +2,58 @@
 
 #include "GameObject.h"
 
+class Resource;
+struct AssetFolder;
+
+enum class EventType {
+	UNKNOWN,
+	GAMEOBJECT_DESTROYED,
+	PRESSED_PLAY,
+	PRESSED_PAUSE,
+	PRESSED_RESUME,
+	PRESSED_STEP,
+	PRESSED_STOP,
+	ADD_RESOURCE,
+	UPDATE_FOLDERS,
+	MOUSE_UPDATE,
+	MOUSE_CLICKED
+};
+
+//STEPS TO CREATE A NEW EVENT:
+//1 - CREATE ENUM CLASS EVENTYPE
+//2 - ESTABLISH SWITCH EXCEPTION FOR TYPETOSTRING
+//3 - GENERATE A STRUCT CALLED EVENT+NAMEOFTHEEVENT CONTAINING THE NECESARY INFORMATION FOR SAID EVENT
+//4 - ADD SAID STRUCT TO THE UNION
+//5 - (OPTIONAL) IF THIS PARTICULAR EVENT USES A POINTER, MAKE SURE SAID POINTER IS RELEASED ON EVENTSMODULE CLEANUP (THERE'S A SWITCH)
+
 struct Event {
 public:
-	enum class EventType {
-		GAMEOBJECT_DESTROYED = 0,
-		PRESSED_PLAY = 1,
-		PRESSED_PAUSE = 2,
-		PRESSED_RESUME = 3,
-		PRESSED_STEP = 4,
-		PRESSED_STOP = 5,
-		MOUSE_UPDATE = 6,
-		FILE_DROPPED = 7,
-		MOUSE_CLICKED = 8,
-	} type;
+	struct EventDestroyGameObject {
+		GameObject* ptr;
+	};
+
+	struct EventAddResource {
+		Resource* resource;
+	};
+
+	struct EventUpdateFolders {
+		AssetFolder* folder;
+	};
+
+	struct EventMouseUpdate {
+		float mouseX;
+		float mouseY;
+	};
+
+	struct EventMouseClicked {
+		float mouseX;
+		float mouseY;
+	};
 
 	static const char* TypeToString(EventType v) {
 		switch (v) {
 		case EventType::GAMEOBJECT_DESTROYED:
 			return "GameObject destroyed";
-		case EventType::FILE_DROPPED:
-			return "File dropped";
 		case EventType::PRESSED_PLAY:
 			return "Pressed play";
 		case EventType::PRESSED_PAUSE:
@@ -36,40 +68,34 @@ public:
 			return "Mouse moved";
 		case EventType::MOUSE_CLICKED:
 			return "Mouse clicked";
+		case EventType::ADD_RESOURCE:
+			return "Add Resource";
+		case EventType::UPDATE_FOLDERS:
+			return "Update folders";
 		default:
 			return "Unkown event type";
 		}
 	}
 
-	Event(EventType aType)
-		: type(aType) {
-		point2d.x = point2d.y = 0;
-		objPtr.ptr = nullptr;
+	Event(EventType type_)
+		: type(type_) {
 	}
 
-	Event(EventType aType, float2 aFloat2)
-		: type(aType) {
-		// TODO: float to int?
-		point2d.x = aFloat2.x;
-		point2d.y = aFloat2.y;
-	}
-
-	Event(EventType aType, GameObject* obj)
-		: type(aType) {
-		objPtr.ptr = obj;
-	}
+	//Event()
+	//	: type(EventType::UNKNOWN) {
+	//}
 
 	~Event() {
 	}
 
 public:
+	EventType type;
+
 	union {
-		struct {
-			GameObject* ptr;
-		} objPtr;
-		struct
-		{
-			int x, y;
-		} point2d;
+		EventDestroyGameObject destroyGameObject;
+		EventAddResource addResource;
+		EventUpdateFolders updateFolders;
+		EventMouseUpdate mouseUpdate;
+		EventMouseClicked mouseClicked;
 	};
 };

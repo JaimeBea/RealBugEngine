@@ -25,6 +25,7 @@ enum class ResourceType {
 	TEXTURE,
 	FONT,
 	SKYBOX,
+	SCRIPT,
 	ANIMATION
 };
 

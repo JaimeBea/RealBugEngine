@@ -35,5 +35,7 @@ enum class ComponentType {
 	SELECTABLE = 14,
 	SKYBOX = 15,
 	ANIMATION = 16,
-	TEXT = 17
+	TEXT = 17,
+	SCRIPT = 18
+
 };
