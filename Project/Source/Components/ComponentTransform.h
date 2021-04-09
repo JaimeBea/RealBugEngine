@@ -34,6 +34,9 @@ public:
 	float3 GetPosition() const;
 	Quat GetRotation() const;
 	float3 GetScale() const;
+	float3 GetGlobalPosition();
+	Quat GetGlobalRotation();
+	float3 GetGlobalScale();
 	const float4x4& GetLocalMatrix();
 	const float4x4& GetGlobalMatrix();
 
