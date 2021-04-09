@@ -1,0 +1,11 @@
+#include "{0}.h"
+
+GENERATE_BODY_IMPL({0});
+
+void {0}::Start() {1}
+	
+{2}
+
+void {0}::Update() {1}
+	
+{2}

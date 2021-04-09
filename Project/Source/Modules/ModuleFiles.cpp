@@ -115,13 +115,19 @@ long long ModuleFiles::GetLocalFileModificationTime(const char* path) const {
 	return fileStats.modtime;
 }
 std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
+	const char* realDir = PHYSFS_getRealDir(file);
+
+	if (realDir == nullptr) {
+		realDir = "";
+	}
+
 #ifdef _DEBUG
-	return std::string(PHYSFS_getBaseDir()) + "..\\..\\" + std::string(PHYSFS_getRealDir(file)) + "\\" + file;
+	return std::string(PHYSFS_getBaseDir()) + "..\\..\\Game\\" + std::string(realDir) + "\\" + file;
 #else
-	return std::string(PHYSFS_getBaseDir()) + std::string(PHYSFS_getRealDir(file)) + "\\" + file;
+	return std::string(PHYSFS_getBaseDir()) + std::string(realDir) + "\\" + file;
 #endif
 }
 
 void ModuleFiles::AddSearchPath(const char* searchPath) const {
-	PHYSFS_mount(searchPath, NULL, 1);
+	PHYSFS_mount(searchPath, nullptr, 1);
 }
