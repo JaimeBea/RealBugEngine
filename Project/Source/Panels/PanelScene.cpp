@@ -15,6 +15,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
 
 #include "imgui.h"
@@ -63,6 +64,9 @@ void PanelScene::Update() {
 				}
 			} else {
 				if (ImGui::Button("Play")) {
+					for (auto it : App->scene->scene->scriptComponents) {
+						it.OnStart();
+					}
 					App->events->AddEvent(Event(EventType::PRESSED_PLAY));
 				}
 			}

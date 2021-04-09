@@ -107,7 +107,7 @@ void main() {
 	vec3 viewN = normalize(viewPos - fragPos);
 
 	// diffuse
-	vec3 diffuseColor = hasDiffuseMap * pow(texture(diffuseMap, vec2(uv.x, 1 - uv.y)).rgb, vec3(2.2)) + (1 - hasDiffuseMap) * diffuseColor;
+	vec3 diffuseColor = hasDiffuseMap * pow(texture(diffuseMap, uv).rgb, vec3(2.2)) + (1 - hasDiffuseMap) * diffuseColor;
 
 	// specular
 	vec4 specularColor = hasSpecularMap * pow(texture(specularMap, uv), vec4(2.2)) + (1 - hasSpecularMap) * vec4(specularColor, 0.0);

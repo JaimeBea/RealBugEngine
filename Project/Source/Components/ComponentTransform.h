@@ -5,7 +5,12 @@
 #include "Math/float3.h"
 #include "Math/Quat.h"
 #include "Math/float4x4.h"
-#include "imgui.h"
+
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
 
 class ComponentTransform : public Component {
 public:
@@ -24,21 +29,23 @@ public:
 
 	// ---------- Setters ---------- //
 	// These setters will broadcast the OnTransformUpdate() signal to the Components.
-	void SetPosition(float3 position);
-	void SetRotation(Quat rotation);
-	void SetRotation(float3 rotation);
-	void SetScale(float3 scale);
-	void SetTRS(float4x4& newTransform);
+	TESSERACT_ENGINE_API void SetPosition(float3 position);
+	TESSERACT_ENGINE_API void SetRotation(Quat rotation);
+	TESSERACT_ENGINE_API void SetRotation(float3 rotation);
+	TESSERACT_ENGINE_API void SetScale(float3 scale);
+	TESSERACT_ENGINE_API void SetTRS(float4x4& newTransform);
 
 	// ---------- Getters ---------- //
-	float3 GetPosition() const;
-	Quat GetRotation() const;
-	float3 GetScale() const;
+
+	TESSERACT_ENGINE_API float3 GetPosition() const;
+	TESSERACT_ENGINE_API Quat GetRotation() const;
+	TESSERACT_ENGINE_API float3 GetScale() const;
+	TESSERACT_ENGINE_API const float4x4& GetLocalMatrix();
+	TESSERACT_ENGINE_API const float4x4& GetGlobalMatrix();
+
 	float3 GetGlobalPosition();
 	Quat GetGlobalRotation();
 	float3 GetGlobalScale();
-	const float4x4& GetLocalMatrix();
-	const float4x4& GetGlobalMatrix();
 
 private:
 	float3 position = float3::zero;			// Position of the GameObject in world coordinates.

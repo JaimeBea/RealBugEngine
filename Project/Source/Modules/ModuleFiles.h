@@ -6,14 +6,18 @@
 
 #include <string>
 #include <vector>
-constexpr char* extensions[] = {".jpg", ".png", ".dds", ".scene"};
+
+constexpr char* extensions[] = {".jpg", ".png", ".dds", ".scene", ".sln"};
+
 enum class AllowedExtensionsFlag {
 	ALL = 0,
 	JPG = 1,
 	PNG = 1 << 1,
 	DDS = 1 << 2,
-	SCENE = 1 << 3
+	SCENE = 1 << 3,
+	PROJECT = 1 << 4
 };
+
 inline AllowedExtensionsFlag operator|(AllowedExtensionsFlag l, AllowedExtensionsFlag r) {
 	return static_cast<AllowedExtensionsFlag>(static_cast<int>(l) + static_cast<int>(r));
 }
@@ -28,7 +32,7 @@ public:
 	bool Save(const char* filePath, const char* buffer, size_t size, bool append = false) const;
 	void CreateFolder(const char* folderPath) const;
 	void Erase(const char* path) const;
-	void AddSearchPath(const char* searchPath) const;
+	bool AddSearchPath(const char* searchPath) const;
 
 	bool Exists(const char* filePath) const;
 	bool IsDirectory(const char* path) const;
