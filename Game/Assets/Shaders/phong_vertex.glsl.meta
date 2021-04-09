@@ -1,9 +1,10 @@
 {
     "Resources": [
         {
-            "Id": 14309831587313892548,
-            "Type": "Shader"
+            "Id": 17778128950747621239,
+            "Type": "Shader",
+            "ShaderType": 0
         }
     ],
-    "Timestamp": 1617643543
+    "Timestamp": 1617928374
 }

@@ -1,13 +1,18 @@
+#ifdef VERTEX
+
 #define PI 3.1415926538
 
-#ifdef VERTEX
 in layout(location=0) vec3 pos;
 in layout(location=1) vec3 normal;
 in layout(location=2) vec2 uvs;
+in layout(location=3) uvec4 boneIndices;
+in layout(location=4) vec4 boneWeitghts;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
+uniform mat4 palette[MAX_BONES];
+uniform bool hasBones;
 
 out vec3 fragNormal;
 out vec3 fragPos;
@@ -15,10 +20,23 @@ out vec2 uv;
 
 void main()
 {
- gl_Position = proj * view * model * vec4(pos, 1.0);
- fragNormal = normalize(transpose(inverse(mat3(model))) * normal);
- fragPos = vec3(model * vec4(pos, 1.0));
- uv = uvs;
+    vec4 position;
+	vec4 normal;
+	if (hasBones) {
+		mat4 skinT = palette[boneIndices[0]] * boneWeitghts[0] + palette[boneIndices[1]] * boneWeitghts[1]
+		+ palette[boneIndices[2]] * boneWeitghts[2] + palette[boneIndices[3]] * boneWeitghts[3];
+		position = skinT * vec4(pos, 1.0);
+		normal = skinT * vec4(norm, 0.0);
+	}
+	else {
+		position = vec4(pos, 1.0);
+		normal = vec4(norm, 0.0);
+	}
+
+	gl_Position = proj * view * model * position;
+	fragNormal = normalize(transpose(inverse(mat3(model))) * normal.xyz);
+	fragPos = vec3(model * position);
+	uv = uvs;
 }
 #endif
 
@@ -31,10 +49,10 @@ out vec4 outColor;
 // Material
 uniform vec3 diffuseColor;
 layout(binding=0) uniform sampler2D diffuseMap;
-uniform float metalness;
-layout(binding=1) uniform sampler2D metallicMap;
+uniform vec3 specularColor;
+layout(binding=1) uniform sampler2D specularMap;
 
-uniform int hasMetallicMap;
+uniform int hasSpecularMap;
 uniform int hasSmoothnessAlpha; // else: Diffuse alpha channel
 uniform float smoothness;
 
@@ -190,37 +208,32 @@ void main()
 	vec3 viewDir = normalize(viewPos - fragPos);
 
 	vec4 colorDiffuse = pow(texture(diffuseMap, uv), vec4(2.2)) * vec4(diffuseColor, 1.0);
-	vec4 colorMetallic = pow(texture(metallicMap, uv), vec4(2.2));
-	float metalnessMask = hasMetallicMap * colorMetallic.r + (1 - hasMetallicMap) * metalness;
+	vec4 colorSpecular = hasSpecularMap * pow(texture(specularMap, uv), vec4(2.2)) + (1 - hasSpecularMap) * vec4(specularColor, 1.0);
 
-    float roughness = pow(1 - smoothness, 2) * pow(1 - (hasSmoothnessAlpha * colorMetallic.a + (1 - hasSmoothnessAlpha) * colorDiffuse.a), 2);
+    float roughness = pow(1 - smoothness, 2) * pow(1 - smoothness * (hasSmoothnessAlpha * colorSpecular.a + (1 - hasSmoothnessAlpha) * colorDiffuse.a), 2);
 
     vec3 colorAccumulative = colorDiffuse.rgb * light.ambient.color;
-
-    // Schlick Fresnel
-    vec3 Cd = colorDiffuse.rgb * (1 - metalnessMask);
-    vec3 F0 = mix(vec3(0.04), colorDiffuse.rgb, metalnessMask);
 
     // Directional Light
     if (light.directional.isActive == 1)
     {
-    	colorAccumulative += ProcessDirectionalLight(light.directional, fragNormal, viewDir, Cd, F0, roughness);
+    	colorAccumulative += ProcessDirectionalLight(light.directional, fragNormal, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
     }
 
 	// Point Light
 	for(int i = 0; i < light.numPoints; i++)
 	{
-    	colorAccumulative += ProcessPointLight(light.points[i], fragNormal, fragPos, viewDir, Cd, F0, roughness);
+    	colorAccumulative += ProcessPointLight(light.points[i], fragNormal, fragPos, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
 	}
 
     // Spot Light
 	for(int i = 0; i < light.numSpots; i++)
 	{
-    	colorAccumulative += ProcessSpotLight(light.spots[i], fragNormal, fragPos, viewDir, Cd, F0, roughness);
+    	colorAccumulative += ProcessSpotLight(light.spots[i], fragNormal, fragPos, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
 	}
 
     vec3 ldr = colorAccumulative.rgb / (colorAccumulative.rgb + vec3(1.0)); // reinhard tone mapping
 	ldr = pow(ldr, vec3(1/2.2)); // gamma correction
 	outColor = vec4(ldr, 1.0);
   }
-  #endif
+#endif

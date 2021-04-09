@@ -28,6 +28,7 @@ public:
 	UID specularMapId = 0;
 
 	// Metalness
+	float metallic = 1.f;
 	UID metallicMapId = 0;
 
 	// Normal

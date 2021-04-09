@@ -21,15 +21,13 @@ public:
 
 	void Draw(const float4x4& modelMatrix) const;
 
-private:
-	void DrawFrame(int frameId, unsigned int texId, TextureType texType);
-
 public:
 	UID meshId = 0;
 	UID materialId = 0;
 	std::vector<float4x4> palette;
 
 	std::unordered_map<std::string, GameObject*> goBones;
+
 private:
 	bool bbActive = false;
 };

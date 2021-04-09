@@ -47,7 +47,7 @@ AssetFile::AssetFile(const char* path_)
 AssetFolder::AssetFolder(const char* path_)
 	: path(path_) {}
 
-bool ReadMetaFile(const char* filePath, rapidjson::Document& document) {
+static bool ReadMetaFile(const char* filePath, rapidjson::Document& document) {
 	// Read from file
 	Buffer<char> buffer = App->files->Load(filePath);
 	if (buffer.Size() == 0) {
@@ -65,7 +65,7 @@ bool ReadMetaFile(const char* filePath, rapidjson::Document& document) {
 	return true;
 }
 
-void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
+static void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
