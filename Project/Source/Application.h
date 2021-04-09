@@ -21,6 +21,7 @@ class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
 class ModuleAudio;
+class ModuleProject;
 class ModuleEvents;
 
 struct Event;
@@ -52,6 +53,7 @@ public:
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
 	ModuleAudio* audio = nullptr;
+	ModuleProject* project = nullptr;
 	ModuleEvents* events = nullptr;
 
 	// - Application Configuration - //
