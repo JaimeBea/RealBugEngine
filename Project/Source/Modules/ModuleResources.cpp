@@ -392,6 +392,7 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::SCRIPT:
 		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
+		break;
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
 		break;
