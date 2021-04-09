@@ -11,17 +11,8 @@
 
 #include "Script.h"
 
-#if TESSERACT_ENGINE
-
-#include "rapidjson/document.h"
-#include "rapidjson/prettywriter.h"
-#include "rapidjson/error/en.h"
 #include "fmt/core.h"
 #include "fmt/format.h"
-
-#include "physfs.h"
-
-#endif //  TESSERACT_ENGINE
 
 #include <Windows.h>
 #include <shellapi.h>
@@ -31,9 +22,6 @@
 
 #define JSON_TAG_PROJECT_NAME "ProjectName"
 #define JSON_TAG_SCENES "Scenes"
-
-#define EXAMPLE(classname, pointer, variable, value) \
-	static_cast<classname*>(pointer)->variable = value
 
 bool ModuleProject::Init() {
 	LoadProject("Penteract/Penteract.sln");
@@ -54,12 +42,9 @@ void ModuleProject::LoadProject(const char* path) {
 		CompileProject(Configuration::RELEASE_EDITOR);
 #endif // _DEBUG
 	}
-
-	//ShellExecute(NULL, "open", (App->files->GetFilePath(projectName.c_str())).c_str(), NULL, NULL, SW_MAXIMIZE);
 }
 
 void ModuleProject::CreateScript(std::string& name) {
-	//CreateSymbolicLink
 	Buffer<char> bufferHeader = App->files->Load("Templates/Header");
 	Buffer<char> bufferSource = App->files->Load("Templates/Source");
 
@@ -76,20 +61,15 @@ void ModuleProject::CreateScript(std::string& name) {
 
 	result = fmt::format(source, name, "{", "}");
 	App->files->Save((assetsPath + name + ".cpp").c_str(), result.data(), result.size());
-
-	//assert(CreateSymbolicLinkA((assetsPath + name + ".h").c_str(), (realPath + name + ".h").c_str(), 0x0));
-	//assert(CreateSymbolicLinkA((assetsPath + name + ".cpp").c_str(), (realPath + name + ".cpp").c_str(), 0x0));
 }
 
 void ModuleProject::CreateNewProject(const char* name, const char* path) {
 	std::string fullPath = std::string(path) + name;
-	std::string sourcePath = fullPath + "/Source";
 	std::string batchPath = fullPath + "/Batches";
 
 	App->files->CreateFolder(fullPath.c_str());
 	App->files->AddSearchPath(fullPath.c_str());
 
-	App->files->CreateFolder(sourcePath.c_str());
 	App->files->CreateFolder(batchPath.c_str());
 
 	std::string UIDProject("{");
@@ -123,9 +103,9 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 	std::string enginePath = FileDialog::GetFileFolder(FileDialog::GetAbsolutePath("").c_str());
 
 #ifdef _DEBUG
-	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", enginePath);
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", enginePath);
 #else
-	std::string result = fmt::format(project, name, UIDProject, enginePath + "Source", enginePath + "/Lib/");
+	std::string result = fmt::format(project, name, UIDProject, enginePath + "Engine/Source", enginePath + "Engine/Libs/MatheGeoLib", enginePath + "Engine/Libs/SDL/include", enginePath + "Engine/Lib");
 #endif
 
 	App->files->Save(path, result.data(), result.size());
