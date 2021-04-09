@@ -75,6 +75,12 @@ void PanelInspector::Update() {
 				case ComponentType::SKYBOX:
 					cName = "Skybox";
 					break;
+				case ComponentType::SCRIPT:
+					cName = "Script";
+					break;
+				case ComponentType::ANIMATION:
+					cName = "Animation";
+					break;
 				default:
 					cName = "";
 					break;
@@ -143,6 +149,22 @@ void PanelInspector::Update() {
 					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
 					if (skybox != nullptr) {
 						skybox->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Script")) {
+					ComponentScript* script = selected->CreateComponent<ComponentScript>();
+					if (script != nullptr) {
+						script->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Animation")) {
+					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
+					if (animation != nullptr) {
+						animation->Init();
 					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}

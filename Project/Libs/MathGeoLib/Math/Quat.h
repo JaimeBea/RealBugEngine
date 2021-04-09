@@ -28,9 +28,14 @@
 
 MATH_BEGIN_NAMESPACE
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 /// Represents a rotation or an orientation of a 3D object.
-class ALIGN16 Quat
-{
+class TESSERACT_ENGINE_API ALIGN16 Quat {
 public:
 
 #ifdef MATH_SIMD

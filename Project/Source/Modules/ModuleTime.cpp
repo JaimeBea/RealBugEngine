@@ -6,7 +6,7 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
-#include "Modules/ModuleEventSystem.h"
+#include "Modules/ModuleEvents.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
 #include <ctime>
@@ -20,11 +20,11 @@ ModuleTime::ModuleTime() {
 }
 
 bool ModuleTime::Init() {
-	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PAUSE, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_PLAY, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_RESUME, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STEP, this);
-	App->eventSystem->AddObserverToEvent(Event::EventType::PRESSED_STOP, this);
+	App->events->AddObserverToEvent(EventType::PRESSED_PAUSE, this);
+	App->events->AddObserverToEvent(EventType::PRESSED_PLAY, this);
+	App->events->AddObserverToEvent(EventType::PRESSED_RESUME, this);
+	App->events->AddObserverToEvent(EventType::PRESSED_STEP, this);
+	App->events->AddObserverToEvent(EventType::PRESSED_STOP, this);
 	return true;
 }
 
@@ -94,14 +94,6 @@ long long ModuleTime::GetCurrentTimestamp() const {
 	return std::time(0);
 }
 
-float ModuleTime::GetTimeScale() const {
-	return timeScale;
-}
-
-void ModuleTime::SetTimeScale(float timeScale) {
-	timeScale = std::max(0.0f, timeScale);
-}
-
 unsigned int ModuleTime::GetFrameCount() const {
 	return frameCount;
 }
@@ -150,19 +142,19 @@ void ModuleTime::StepGame() {
 
 void ModuleTime::ReceiveEvent(const Event& e) {
 	switch (e.type) {
-	case Event::EventType::PRESSED_PLAY:
+	case EventType::PRESSED_PLAY:
 		StartGame();
 		break;
-	case Event::EventType::PRESSED_STOP:
+	case EventType::PRESSED_STOP:
 		StopGame();
 		break;
-	case Event::EventType::PRESSED_RESUME:
+	case EventType::PRESSED_RESUME:
 		ResumeGame();
 		break;
-	case Event::EventType::PRESSED_PAUSE:
+	case EventType::PRESSED_PAUSE:
 		PauseGame();
 		break;
-	case Event::EventType::PRESSED_STEP:
+	case EventType::PRESSED_STEP:
 		StepGame();
 		break;
 	default:
