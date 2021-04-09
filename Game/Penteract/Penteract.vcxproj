@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Penteract</RootNamespace>
-	<ProjectGuid>{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}</ProjectGuid>
+	<ProjectGuid>{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,7 +70,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" >
-    <Tesseract_IncludePath>../../Project/Source/;../../Project/Libs/MathGeoLib</Tesseract_IncludePath>
+    <Tesseract_IncludePath>../../Project/Source/;../../Project/Libs/MathGeoLib;../../Project/Libs/SDL/include</Tesseract_IncludePath>
     <Tesseract_LibraryPath>D:\Documentos\Jordi\UPC\Master Engine\Tesseract\Build\Debug</Tesseract_LibraryPath>
   </PropertyGroup>
   <ItemGroup>

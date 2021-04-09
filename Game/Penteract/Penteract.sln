@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Penteract", "Penteract.vcxproj", "{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Penteract", "Penteract.vcxproj", "{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,27 +16,27 @@ Global
 		ReleaseEditor|x86 = ReleaseEditor|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Debug|Win32.Build.0 = Debug|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Debug|x86.ActiveCfg = Debug|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Debug|x86.Build.0 = Debug|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.DebugEditor|Win32.ActiveCfg = DebugEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.DebugEditor|Win32.Build.0 = DebugEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.DebugEditor|x86.ActiveCfg = DebugEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.DebugEditor|x86.Build.0 = DebugEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Release|Win32.ActiveCfg = Release|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Release|Win32.Build.0 = Release|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Release|x86.ActiveCfg = Release|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.Release|x86.Build.0 = Release|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.ReleaseEditor|Win32.ActiveCfg = ReleaseEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.ReleaseEditor|Win32.Build.0 = ReleaseEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.ReleaseEditor|x86.ActiveCfg = ReleaseEditor|Win32
-		{DB15A381-417A-45FF-A7F0-330B8F7DE5A8}.ReleaseEditor|x86.Build.0 = ReleaseEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Debug|Win32.Build.0 = Debug|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Debug|x86.ActiveCfg = Debug|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Debug|x86.Build.0 = Debug|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.DebugEditor|Win32.ActiveCfg = DebugEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.DebugEditor|Win32.Build.0 = DebugEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.DebugEditor|x86.ActiveCfg = DebugEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.DebugEditor|x86.Build.0 = DebugEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Release|Win32.ActiveCfg = Release|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Release|Win32.Build.0 = Release|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Release|x86.ActiveCfg = Release|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.Release|x86.Build.0 = Release|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.ReleaseEditor|Win32.ActiveCfg = ReleaseEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.ReleaseEditor|Win32.Build.0 = ReleaseEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.ReleaseEditor|x86.ActiveCfg = ReleaseEditor|Win32
+		{EFFEE2A6-67A1-4651-8540-4F2FE81D3CA6}.ReleaseEditor|x86.Build.0 = ReleaseEditor|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2056F977-9CC5-433E-A663-38A0C8F5D889}
+		SolutionGuid = {62D93732-65A2-400E-A79E-F1F37C2DF3F5}
 	EndGlobalSection
 EndGlobal
