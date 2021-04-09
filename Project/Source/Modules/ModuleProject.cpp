@@ -68,6 +68,7 @@ void ModuleProject::CreateNewProject(const char* name, const char* path) {
 	std::string batchPath = fullPath + "/Batches";
 
 	App->files->CreateFolder(fullPath.c_str());
+	App->files->AddSearchPath(fullPath.c_str());
 
 	App->files->CreateFolder(batchPath.c_str());
 
