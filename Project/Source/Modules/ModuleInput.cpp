@@ -2,16 +2,13 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Utils/Logging.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
-
-//IF EDITOR
 #include "Modules/ModuleEditor.h"
-//ENDIF
-
 #include "Modules/ModuleUserInterface.h"
+#include "Utils/Logging.h"
+
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
 #include "Brofiler.h"

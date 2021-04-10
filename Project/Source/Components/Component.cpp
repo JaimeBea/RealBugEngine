@@ -31,10 +31,12 @@ void Component::DuplicateComponent(GameObject& owner) {}
 
 void Component::Enable() {
 	active = true;
+	OnEnable();
 }
 
 void Component::Disable() {
 	active = false;
+	OnDisable();
 }
 
 ComponentType Component::GetType() const {

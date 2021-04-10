@@ -4,7 +4,6 @@
 
 #include "Math/float4x4.h"
 #include "Math/float2.h"
-
 #include "GL/glew.h"
 #include <vector>
 

@@ -1,11 +1,11 @@
-#include "Application.h"
+#include "ComponentCanvas.h"
 
+#include "Application.h"
+#include "GameObject.h"
+#include "ComponentCanvasRenderer.h"
 #include "Modules/ModuleUserInterface.h"
 
-#include "ComponentCanvas.h"
-#include "ComponentCanvasRenderer.h"
-
-#include "GameObject.h"
+#include "Utils/Leaks.h"
 
 void ComponentCanvas::Init() {
 	App->userInterface->canvas = &GetOwner();

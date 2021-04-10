@@ -6,16 +6,16 @@
 #include <unordered_map>
 
 struct Character {
-	unsigned int textureID;
-	float2 size;
-	float2 bearing;
-	unsigned int advance;
+	unsigned int textureID = 0;
+	float2 size = float2::zero;
+	float2 bearing = float2::zero;
+	unsigned int advance = 0;
 };
 
 class ResourceFont : public Resource {
 public:
 	REGISTER_RESOURCE(ResourceFont, ResourceType::FONT);
-	
+
 	void Load() override;
 	void Unload() override;
 

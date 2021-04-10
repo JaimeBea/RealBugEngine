@@ -1,33 +1,28 @@
 #include "ComponentBoundingBox2D.h"
 
 #include "Application.h"
-#include "debugdraw.h"
 #include "Modules/ModuleInput.h"
 #include "Components/UI/ComponentTransform2D.h"
-
 #include "GameObject.h"
 #include "Utils/Logging.h"
+#include "Panels/PanelScene.h"
+#include "Modules/ModuleEditor.h"
 
-#include <Geometry/AABB.h>
-#include <Geometry/OBB2D.h>
-#include <Geometry/Circle.h>
-#include <Math/float3x3.h>
-
-
-//IF EDITOR
-#include <Panels/PanelScene.h>
-#include <Modules/ModuleEditor.h>
-//ENDIF
+#include "debugdraw.h"
+#include "Geometry/AABB.h"
+#include "Geometry/OBB2D.h"
+#include "Geometry/Circle.h"
+#include "Math/float3x3.h"
 
 #include "Utils/Leaks.h"
 
 void ComponentBoundingBox2D::Init() {
 	ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
 	if (transform2D) {
-		float3 minPoint = float3(-0.5f, -0.5f, 0.0f);
-		float3 maxPoint = float3(0.5f, 0.5f, 0.0f);
+		float2 minPoint = float2(-0.5f, -0.5f);
+		float2 maxPoint = float2(0.5f, 0.5f);
 
-		SetLocalBoundingBox(AABB2D(minPoint.xy(), maxPoint.xy()));
+		SetLocalBoundingBox(AABB2D(minPoint, maxPoint));
 		CalculateWorldBoundingBox();
 	}
 }
@@ -59,15 +54,13 @@ void ComponentBoundingBox2D::SetLocalBoundingBox(const AABB2D& boundingBox) {
 
 void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 	if (dirty || force) {
-		ComponentTransform2D* t2d = GetOwner().GetComponent<ComponentTransform2D>();
+		ComponentTransform2D* transform2d = GetOwner().GetComponent<ComponentTransform2D>();
 
 		//worldAABB minPoint is the localAABB's min point mulitplied by the rect transform's scale and size, adding the rect transform position
 		//Right now to calculate position we add half the size of the WindowScene because all textures are "centered" for their coordinates
 
-		//IF EDITOR
-		worldAABB.minPoint = t2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.minPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
-		worldAABB.maxPoint = t2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.maxPoint.Mul(t2d->GetSize().Mul(t2d->GetScale().xy() * 1.01f));
-		//ENDIF
+		worldAABB.minPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
+		worldAABB.maxPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
 	}
 }
 

@@ -17,10 +17,7 @@
 #include "Modules/ModuleAudio.h"
 #include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
-
 #include "Modules/ModuleUserInterface.h"
-
-#include "Event.h"
 
 #include "SDL_timer.h"
 #include <windows.h>

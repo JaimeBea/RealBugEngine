@@ -24,8 +24,6 @@ class ModuleAudio;
 class ModuleProject;
 class ModuleEvents;
 
-class ComponentEventSystem;
-
 struct Event;
 
 class Application {

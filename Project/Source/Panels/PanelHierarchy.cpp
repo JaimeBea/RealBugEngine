@@ -129,7 +129,6 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 			UID payloadGameObjectId = *(UID*) payload->Data;
 			GameObject* payloadGameObject = App->scene->scene->GetGameObject(payloadGameObjectId);
 			if (!gameObject->IsDescendantOf(payloadGameObject)) {
-
 				// First of all, set the new Parent for the object
 				payloadGameObject->SetParent(gameObject);
 
@@ -193,9 +192,7 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 
 		newGameObject->InitComponents();
 		return newGameObject;
-	} /*else {
-		gameObject = &ComponentEventSystem::currentEvSys->GetOwner();
-	}*/
+	}
 }
 
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {

@@ -2,11 +2,6 @@
 
 #include "Globals.h"
 #include "Components/ComponentType.h"
-#include "FileSystem/ModelImporter.h"
-
-#include <Math/myassert.h>
-#include <rapidjson/document.h>
-
 #include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentImage.h"
@@ -14,6 +9,10 @@
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "FileSystem/ModelImporter.h"
+
+#include "Math/myassert.h"
+#include "rapidjson/document.h"
 
 #include "Utils/Leaks.h"
 

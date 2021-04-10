@@ -1,4 +1,7 @@
 #include "ComponentImage.h"
+
+#include "GameObject.h"
+#include "Components/UI/ComponentTransform2D.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -8,25 +11,26 @@
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Panels/PanelScene.h"
-#include <Components/UI/ComponentTransform2D.h>
-#include "GameObject.h"
-#include <Resources/ResourceTexture.h>
-#include <Resources/ResourceShader.h>
+#include "Resources/ResourceTexture.h"
+#include "Resources/ResourceShader.h"
 #include "FileSystem/TextureImporter.h"
-#include "Math/TransformOps.h"
 #include "FileSystem/JsonValue.h"
+
 #include "Utils/ImGuiUtils.h"
+#include "Math/TransformOps.h"
 #include "imgui.h"
 #include "GL/glew.h"
 #include "debugdraw.h"
 
-#define JSON_TAG_TEXTURE_SHADERID "ShaderID"
-#define JSON_TAG_TEXTURE_TEXTUREID "TextureID"
+#include "Utils/Leaks.h"
+
+#define JSON_TAG_TEXTURE_SHADERID "ShaderId"
+#define JSON_TAG_TEXTURE_TEXTUREID "TextureId"
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
 ComponentImage::~ComponentImage() {
-	//TO DO DECREASE REFERENCE COUNT OF SHADER AND TEXTURE, MAYBE IN A NEW COMPONENT::CLEANUP?
+	//TODO DECREASE REFERENCE COUNT OF SHADER AND TEXTURE, MAYBE IN A NEW COMPONENT::CLEANUP?
 }
 
 void ComponentImage::Init() {
@@ -47,18 +51,18 @@ void ComponentImage::OnEditorUpdate() {
 	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 
-	ResourceTexture* tex = (ResourceTexture*) App->resources->GetResource(textureID);
+	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
 
-	if (tex != nullptr) {
+	if (textureResource != nullptr) {
 		int width;
 		int height;
-		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_WIDTH, &width);
-		glGetTextureLevelParameteriv(tex->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
+		glGetTextureLevelParameteriv(textureResource->glTexture, 0, GL_TEXTURE_WIDTH, &width);
+		glGetTextureLevelParameteriv(textureResource->glTexture, 0, GL_TEXTURE_HEIGHT, &height);
 
 		if (oldID != textureID) {
-			ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
-			if (transform != nullptr) {
-				transform->SetSize(float2(width, height));
+			ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
+			if (transform2D != nullptr) {
+				transform2D->SetSize(float2(width, height));
 			}
 		}
 
@@ -68,7 +72,7 @@ void ComponentImage::OnEditorUpdate() {
 		ImGui::TextWrapped("Size:");
 		ImGui::SameLine();
 		ImGui::TextWrapped("%d x %d", width, height);
-		ImGui::Image((void*) tex->glTexture, ImVec2(200, 200));
+		ImGui::Image((void*) textureResource->glTexture, ImVec2(200, 200));
 		ImGui::Separator();
 	}
 }
@@ -90,13 +94,15 @@ void ComponentImage::Load(JsonValue jComponent) {
 	//ID == 0 means no Resource loaded
 	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
 
-	if (shaderID != 0)
+	if (shaderID != 0) {
 		App->resources->IncreaseReferenceCount(shaderID);
+	}
 
 	textureID = jComponent[JSON_TAG_TEXTURE_TEXTUREID];
 
-	if (textureID != 0)
+	if (textureID != 0) {
 		App->resources->IncreaseReferenceCount(textureID);
+	}
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
@@ -104,7 +110,7 @@ void ComponentImage::Load(JsonValue jComponent) {
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
-const float4 ComponentImage::GetTintColor() const {
+const float4& ComponentImage::GetTintColor() const {
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
 		return button->GetTintColor();
@@ -118,8 +124,8 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
 	}
-	ResourceTexture* texResource = (ResourceTexture*) App->resources->GetResource(textureID);
-	if (texResource == nullptr) return;
+	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+	if (textureResource == nullptr) return;
 
 	if (alphaTransparency) {
 		glEnable(GL_BLEND);
@@ -156,7 +162,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
 	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
 
-	glBindTexture(GL_TEXTURE_2D, texResource->glTexture);
+	glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);

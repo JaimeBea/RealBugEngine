@@ -1,9 +1,10 @@
 #pragma once
-#include <Math/float4x4.h>
-#include <GL/glew.h>
-#include <vector>
 
 #include "Components/Component.h"
+
+#include "GL/glew.h"
+#include "Math/float4x4.h"
+#include <vector>
 
 class ComponentCanvasRenderer : public Component {
 public:

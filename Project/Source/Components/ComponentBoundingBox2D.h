@@ -2,8 +2,8 @@
 
 #include "Component.h"
 
-#include <Geometry/AABB2D.h>
-#include <Geometry/OBB.h>
+#include "Geometry/AABB2D.h"
+#include "Geometry/OBB.h"
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
@@ -15,14 +15,13 @@ public:
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void Init() override;
+	void Update() override;
+	void DuplicateComponent(GameObject& owner) override;
 
 	void SetLocalBoundingBox(const AABB2D& boundingBox);
 	void CalculateWorldBoundingBox(bool force = false);
 	void DrawBoundingBox();
 	void Invalidate();
-	void Update() override;
-	void DuplicateComponent(GameObject& owner) override;
-
 	const AABB2D& GetWorldAABB() const;
 
 private:

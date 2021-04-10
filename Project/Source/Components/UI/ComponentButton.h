@@ -2,8 +2,7 @@
 
 #include "ComponentSelectable.h"
 #include "UI/Interfaces/IMouseClickHandler.h"
-
-#include <Math/float4.h>
+#include "Math/float4.h"
 
 class GameObject;
 
@@ -12,6 +11,7 @@ class ComponentButton : public Component
 	, public IMouseClickHandler {
 public:
 	REGISTER_COMPONENT(ComponentButton, ComponentType::BUTTON, false);
+
 	void Init() override;							// Inits the component
 	void OnEditorUpdate() override;					// Works as input of the Colors and the Selectable interface
 	void Save(JsonValue jComponent) const override; // Serializes object
@@ -21,11 +21,11 @@ public:
 	void Update() override;							   // Updates clicked variable if the button is Left-clicked mouse
 	void DuplicateComponent(GameObject& obj) override; // TODO
 
-	bool IsClicked() const;	 // Returns true if the button is clicked
-	void SetClicked(bool b); // Sets clicked to the value
+	bool IsClicked() const;		   // Returns true if the button is clicked
+	void SetClicked(bool clicked_); // Sets clicked to the value
 
-	const float4 GetTintColor() const;	// Returns the correspondant color of the current state
-	const float4 GetClickColor() const; // Returns colorClicked
+	const float4& GetTintColor() const;	 // Returns the correspondant color of the current state
+	const float4& GetClickColor() const; // Returns colorClicked
 
 private:
 	bool clicked = false; // Clicked state

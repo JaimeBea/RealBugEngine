@@ -81,10 +81,6 @@ public:
 		: type(type_) {
 	}
 
-	//Event()
-	//	: type(EventType::UNKNOWN) {
-	//}
-
 	~Event() {
 	}
 

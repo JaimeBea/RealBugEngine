@@ -1,33 +1,27 @@
 #include "ModuleUserInterface.h"
 
+#include "GameObject.h"
+#include "Components/UI/ComponentCanvas.h"
+#include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
 #include "ModuleFiles.h"
 #include "ModuleEvents.h"
 #include "Modules/ModuleResources.h"
 #include "ModuleScene.h"
-#include "Utils/FileDialog.h"
-#include "FileSystem/TextureImporter.h"
-
-#include "GameObject.h"
-#include "Resources/ResourceFont.h"
-#include "Scene.h"
-#include "Components/UI/ComponentCanvas.h"
-#include "Components/UI/ComponentSelectable.h"
-
-#include "Components/UI/ComponentEventSystem.h"
-#include "Components/UI/ComponentEventSystem.h"
-#include "Components/ComponentBoundingBox2D.h"
-
-#include "Event.h"
-
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
 #include "UI/Interfaces/IMouseClickHandler.h"
-
+#include "Scene.h"
+#include "Event.h"
+#include "Resources/ResourceFont.h"
+#include "Utils/FileDialog.h"
+#include "FileSystem/TextureImporter.h"
 #include "Utils/Logging.h"
-#include "Utils/Leaks.h"
 
-ComponentEventSystem* ModuleUserInterface::currentEvSys = nullptr;
+#include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
 	App->events->AddObserverToEvent(EventType::MOUSE_UPDATE, this);
@@ -40,31 +34,7 @@ bool ModuleUserInterface::Start() {
 	return true;
 }
 
-void ModuleUserInterface::AddFont(const std::string& fontPath) {
-	//Right now we have FileDialog, it may change in the future
-	//FileDialog::GetFileName(fontPath.c_str());
-
-	//OLD VERSION, TO DO USE NEW SYSTEM, AS STATED IN THE PREVIOUS COMMENT
-	/*
-	std::string fontName = FileDialog::GetFileName(fontPath.c_str());
-
-	std::unordered_map<std::string, ResourceFont*>::const_iterator existsKey = fonts.find(fontName);
-
-	if (existsKey == fonts.end()) {
-		ResourceFont* font = FontImporter::ImportFont(fontPath);
-		//FontImporter::LoadFont(fontPath, characters);
-		if (font) { // TODO: This is a bad check right now. It will always be initialized. Change it when we have the resource manager
-			font->name = fontName;
-			fonts.insert(std::pair<std::string, ResourceFont*>(fontName, font));
-		} else {
-			LOG("Couldn't load font %s", fontPath.c_str());
-		}
-	}
-	*/
-}
-
-Character ModuleUserInterface::GetCharacter(UID font, char c) { // Should this return a Character*?
-	//std::unordered_map<std::string, UID>::const_iterator existsKey = fonts.find(font);
+Character ModuleUserInterface::GetCharacter(UID font, char c) {
 	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
 
 	if (fontResource == nullptr) {
@@ -125,9 +95,10 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
-					IMouseClickHandler* i = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
-					if (i != nullptr) {
-						i->OnClicked();
+					IMouseClickHandler* mouseClickHandler = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
+
+					if (mouseClickHandler != nullptr) {
+						mouseClickHandler->OnClicked();
 					}
 				}
 			}
