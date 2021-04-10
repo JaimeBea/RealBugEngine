@@ -12,7 +12,7 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/document.h"
 
-#include "Leaks.h"
+#include "Utils/Leaks.h"
 
 #define META_EXTENSION ".meta"
 #define JSON_TAG_RESOURCES "Resources"
