@@ -10,7 +10,7 @@
 enum class UpdateStatus {
 	CONTINUE,
 	STOP,
-	FAIL
+	ERROR
 };
 
 // Constants -----------

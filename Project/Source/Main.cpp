@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 	// Initialize logging
 	logString = new std::string();
-	
+
 	// Game loop
 	int mainReturn = EXIT_FAILURE;
 	MainState state = MainState::CREATION;
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 		case MainState::UPDATE: {
 			UpdateStatus updateReturn = App->Update();
 
-			if (updateReturn == UpdateStatus::FAIL) {
+			if (updateReturn == UpdateStatus::ERROR) {
 				LOG("Application Update exits with error -----");
 				state = MainState::EXIT;
 			}
