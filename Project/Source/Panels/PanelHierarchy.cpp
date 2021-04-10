@@ -118,7 +118,6 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 
 				payloadGameObject->SetParent(gameObject);
 				transform->InvalidateHierarchy();
-				transform->CalculateGlobalMatrix();
 			}
 		}
 

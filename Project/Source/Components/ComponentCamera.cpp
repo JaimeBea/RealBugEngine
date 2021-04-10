@@ -25,22 +25,17 @@
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
 
 void ComponentCamera::Init() {
-	OnTransformUpdate();
+	UpdateFrustum();
+}
+
+void ComponentCamera::Update() {
+	UpdateFrustum();
 }
 
 void ComponentCamera::DrawGizmos() {
 	if (activeCamera) return;
 
 	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
-}
-
-void ComponentCamera::OnTransformUpdate() {
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	frustum.SetPos(transform->GetPosition());
-
-	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetRotation());
-	frustum.SetFront(rotationMatrix * float3::unitZ);
-	frustum.SetUp(rotationMatrix * float3::unitY);
 }
 
 void ComponentCamera::OnEditorUpdate() {
@@ -109,6 +104,15 @@ void ComponentCamera::Load(JsonValue jComponent) {
 void ComponentCamera::DuplicateComponent(GameObject& owner) {
 	ComponentCamera* component = owner.CreateComponent<ComponentCamera>();
 	component->frustum = this->frustum;
+}
+
+void ComponentCamera::UpdateFrustum() {
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+	frustum.SetPos(transform->GetPosition());
+
+	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetRotation());
+	frustum.SetFront(rotationMatrix * float3::unitZ);
+	frustum.SetUp(rotationMatrix * float3::unitY);
 }
 
 Frustum ComponentCamera::BuildDefaultFrustum() const {
