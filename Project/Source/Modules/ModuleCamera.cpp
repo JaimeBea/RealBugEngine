@@ -326,7 +326,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 			float3 modelCenter;
 			float distance;
 			if (gameObject->HasChildren()) {
-				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalPosition();
 				float3 minPoint = float3::inf, maxPoint = -float3::inf;
 				CalculateExtremePointsRecursive(gameObject, minPoint, maxPoint);
 				if (minPoint.IsFinite() && maxPoint.IsFinite()) {
@@ -336,7 +336,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 				}
 			} else {
 				// But if it doesn't have children, simply return its position as center and the default distance
-				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalPosition();
 				distance = 30.f;
 			}
 			SetPosition(modelCenter - GetFront() * distance);

@@ -36,9 +36,13 @@ public:
 	TESSERACT_ENGINE_API void SetTRS(float4x4& newTransform);
 
 	// ---------- Getters ---------- //
+
 	TESSERACT_ENGINE_API float3 GetPosition() const;
 	TESSERACT_ENGINE_API Quat GetRotation() const;
 	TESSERACT_ENGINE_API float3 GetScale() const;
+	TESSERACT_ENGINE_API float3 GetGlobalPosition();
+	TESSERACT_ENGINE_API Quat GetGlobalRotation();
+	TESSERACT_ENGINE_API float3 GetGlobalScale();
 	TESSERACT_ENGINE_API const float4x4& GetLocalMatrix();
 	TESSERACT_ENGINE_API const float4x4& GetGlobalMatrix();
 
