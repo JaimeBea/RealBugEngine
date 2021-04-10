@@ -2,9 +2,6 @@
 
 #include "Resource.h"
 
-#include "assimp/Importer.hpp"
-#include "assimp/scene.h"
-#include "assimp/postprocess.h"
 #include "Resources/ResourceShader.h"
 #include "FileSystem/JsonValue.h"
 

@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef TESSERACT_ENGINE
 #include "rapidjson/document.h"
+
 #include "string"
 
 class JsonValue {
@@ -52,3 +54,5 @@ inline JsonValue JsonValue::operator[](T* key) const {
 
 	return JsonValue(document, value[key]);
 }
+
+#endif // TESSERACT_ENGINE

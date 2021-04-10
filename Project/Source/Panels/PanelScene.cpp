@@ -15,6 +15,8 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleProject.h"
+#include "Modules/ModuleEvents.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -48,26 +50,29 @@ void PanelScene::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
-					App->BroadCastEvent(Event(Event::EventType::PRESSED_STOP));
+					App->events->AddEvent(Event(EventType::PRESSED_STOP));
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
-						App->BroadCastEvent(Event(Event::EventType::PRESSED_PAUSE));
+						App->events->AddEvent(Event(EventType::PRESSED_PAUSE));
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
-						App->BroadCastEvent(Event(Event::EventType::PRESSED_RESUME));
+						App->events->AddEvent(Event(EventType::PRESSED_RESUME));
 					}
 				}
 			} else {
 				if (ImGui::Button("Play")) {
-					App->BroadCastEvent(Event(Event::EventType::PRESSED_PLAY));
+					for (auto it : App->scene->scene->scriptComponents) {
+						it.OnStart();
+					}
+					App->events->AddEvent(Event(EventType::PRESSED_PLAY));
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Step")) {
-				App->BroadCastEvent(Event(Event::EventType::PRESSED_STEP));
+				App->events->AddEvent(Event(EventType::PRESSED_STEP));
 			}
 
 			ImGui::SameLine();
@@ -224,10 +229,10 @@ void PanelScene::Update() {
 
 		float viewManipulateSize = 100;
 		ImGuizmo::ViewManipulate(cameraView.ptr(), 4, ImVec2(viewManipulateRight - viewManipulateSize, viewManipulateTop), ImVec2(viewManipulateSize, viewManipulateSize), 0x10101010);
-
-		float4x4 newCameraView = cameraView.InverseTransposed();
-		App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
-
+		if (ImGui::IsWindowFocused()) {
+			float4x4 newCameraView = cameraView.InverseTransposed();
+			App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
+		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}

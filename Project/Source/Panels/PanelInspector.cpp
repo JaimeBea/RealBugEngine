@@ -53,6 +53,12 @@ void PanelInspector::Update() {
 
 			ImGui::Separator();
 
+			// Don't show Scene PanelInpector information
+			if (selected->GetParent() == nullptr) {
+				ImGui::End();
+				return;
+			}
+
 			// Show Component info
 			std::string cName = "";
 			for (Component* component : selected->GetComponents()) {
@@ -74,6 +80,9 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::SKYBOX:
 					cName = "Skybox";
+					break;
+				case ComponentType::SCRIPT:
+					cName = "Script";
 					break;
 				case ComponentType::ANIMATION:
 					cName = "Animation";
@@ -146,6 +155,14 @@ void PanelInspector::Update() {
 					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
 					if (skybox != nullptr) {
 						skybox->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Script")) {
+					ComponentScript* script = selected->CreateComponent<ComponentScript>();
+					if (script != nullptr) {
+						script->Init();
 					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
