@@ -21,8 +21,8 @@ public:
 	virtual void DuplicateComponent(GameObject& owner); // Used when duplicating GameObjects. It duplicates this Component into a new Component in owner.
 
 	// ---- Visibility Setters ----- //
-	void Enable();
-	void Disable();
+	virtual void Enable();
+	virtual void Disable();
 
 	// ---------- Getters ---------- //
 	ComponentType GetType() const;
@@ -32,8 +32,10 @@ public:
 	bool IsActiveInHierarchy() const;
 
 private:
-	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.
+	UID id = 0;			// Unique identifier for the component
+	bool active = true; // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
 	GameObject* owner = nullptr;				 // References the GameObject this Component applies its functionality to. Its 'parent'.
-	UID id = 0;									 // Unique identifier for the component
-	bool active = true;							 // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
+
+protected:
+	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.
 };

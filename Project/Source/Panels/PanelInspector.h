@@ -3,6 +3,7 @@
 #include "Panel.h"
 
 class Component;
+class GameObject;
 
 class PanelInspector : public Panel {
 public:
@@ -15,4 +16,7 @@ public:
 
 private:
 	Component* componentToDelete = nullptr; // Setted in PanelInspector, when using the button "Delete" on the Component Options menu. If not nullptr, the PostUpdate() will delete the component it points to.
+
+	void AddUIComponentsOptions(GameObject* selected);
+	
 };

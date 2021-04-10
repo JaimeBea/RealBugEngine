@@ -17,8 +17,13 @@ public:
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
 
-	void ViewportResized(int width, int height); // Resets the GL FrameBuffer. Called when the PanelViewport is resized.
-	void SetVSync(bool vsync);					 // Activates or deactivates Vertical Sync.
+	void ViewportResized(int width, int height);
+
+	void SetVSync(bool vsync);
+	void EnableOrtographicRender();
+	void DisableOrtographicRender();
+	void ReceiveEvent(const Event& ev) override;
+
 
 public:
 	void* context = nullptr; // SDL context.
@@ -47,4 +52,7 @@ private:
 	void DrawGameObject(GameObject* gameObject);											// ??
 	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
 	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
+	void RenderUI();
+	void SetOrtographicRender();
+	void SetPerspectiveRender();
 };

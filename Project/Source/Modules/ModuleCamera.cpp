@@ -62,6 +62,8 @@ bool ModuleCamera::Init() {
 	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 	activeFrustum->SetFront(vec::unitZ);
 	activeFrustum->SetUp(vec::unitY);
+	editorFrustum = new Frustum();
+	editorFrustum->SetOrthographic(400, 400);
 
 	SetPosition(vec(2, 3, -5));
 	LookAt(0, 0, 0);
@@ -449,6 +451,15 @@ Frustum* ModuleCamera::GetCullingFrustum() const {
 
 const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
 	return frustumPlanes;
+}
+
+void ModuleCamera::EnableOrtographic() {
+	activeFrustum->SetOrthographic((float) App->renderer->viewportWidth, (float) App->renderer->viewportHeight);
+}
+
+void ModuleCamera::EnablePerspective() {
+	activeFrustum->SetPerspective(1.3f, 1.f);
+	ViewportResized(App->renderer->viewportWidth, App->renderer->viewportHeight);
 }
 
 void ModuleCamera::GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects) {

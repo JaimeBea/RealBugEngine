@@ -18,6 +18,10 @@
 #include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
 
+#include "Modules/ModuleUserInterface.h"
+
+#include "Event.h"
+
 #include "SDL_timer.h"
 #include <windows.h>
 #include "Brofiler.h"
@@ -39,6 +43,7 @@ Application::Application() {
 
 	modules.push_back(project = new ModuleProject());
 	modules.push_back(scene = new ModuleScene());
+	modules.push_back(userInterface = new ModuleUserInterface());
 	modules.push_back(editor = new ModuleEditor());
 	modules.push_back(debugDraw = new ModuleDebugDraw());
 
