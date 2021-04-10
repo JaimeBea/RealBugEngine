@@ -35,13 +35,14 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	JsonValue jStateMachine(document, document);
 
 	// Save JSON values
-	jStateMachine[JSON_TAG_CLIPS] = "JMS";
+	document.SetObject();
 	rapidjson::Value myArray(rapidjson::kArrayType);
 	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 	std::list<Clip*>::iterator it;
 	for (it = clips.begin(); it != clips.end(); ++it) {		
 		rapidjson::Value objValue(rapidjson::kObjectType);
-		//objValue.AddMember("name", (*it)->name, allocator);
+		rapidjson::Value name((*it)->name.c_str(), allocator);
+		objValue.AddMember("name", name, allocator);
 		objValue.AddMember("animationUID", (*it)->animationUID, allocator);
 		objValue.AddMember("beginIndex", (*it)->beginIndex, allocator);
 		objValue.AddMember("endIndex", (*it)->endIndex, allocator);
