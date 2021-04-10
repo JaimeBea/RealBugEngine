@@ -53,6 +53,12 @@ void PanelInspector::Update() {
 
 			ImGui::Separator();
 
+			// Don't show Scene PanelInpector information
+			if (selected->GetParent() == nullptr) {
+				ImGui::End();
+				return;
+			}
+
 			// Show Component info
 			std::string cName = "";
 			for (Component* component : selected->GetComponents()) {
