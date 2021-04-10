@@ -303,7 +303,7 @@ void ModuleResources::UpdateAsync() {
 						// Resources to remove only if we want to regenerate the asset resources
 						resourcesToRemove.push_back(entry.first);
 						continue;
-					} else if(it != assetsToNotUpdate.end()){
+					} else if (it != assetsToNotUpdate.end()) {
 						// Instead of removing its resources and its meta, just update the timestamp
 						jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
 						SaveMetaFile(metaFilePath.c_str(), document);
