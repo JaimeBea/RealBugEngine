@@ -27,6 +27,7 @@ public:
 	std::vector<float4x4> palette;
 
 	std::unordered_map<std::string, GameObject*> goBones;
+
 private:
 	bool bbActive = false;
 };

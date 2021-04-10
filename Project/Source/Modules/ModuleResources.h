@@ -42,6 +42,9 @@ private:
 	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
 	void SendAddResourceEvent(Resource* resource);
 
+public:
+	std::unordered_set<std::string> assetsToNotUpdate;
+
 private:
 	std::unordered_map<UID, Resource*> resources;
 	std::unordered_map<UID, unsigned> referenceCounts;
