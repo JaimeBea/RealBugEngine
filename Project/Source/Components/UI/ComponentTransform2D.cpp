@@ -129,24 +129,17 @@ void ComponentTransform2D::DrawGizmos() {
 
 void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
-
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 void ComponentTransform2D::SetPivot(float2 pivot_) {
 	pivot = pivot_;
+	InvalidateHierarchy();
 }
 
 void ComponentTransform2D::SetSize(float2 size_) {
 	size = size_;
-
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
@@ -154,43 +147,27 @@ void ComponentTransform2D::SetRotation(Quat rotation_) {
 	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 void ComponentTransform2D::SetRotation(float3 rotation_) {
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
-
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 void ComponentTransform2D::SetScale(float3 scale_) {
 	scale = scale_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 void ComponentTransform2D::SetAnchorX(float2 anchorX_) {
 	anchorX = anchorX_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	anchorY = anchorY_;
 	InvalidateHierarchy();
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
 }
 
 const float4x4 ComponentTransform2D::GetGlobalMatrix() {

@@ -32,8 +32,13 @@ void ComponentBoundingBox2D::Init() {
 	}
 }
 
-void ComponentBoundingBox2D::OnTransformUpdate() {
-	CalculateWorldBoundingBox(true);
+void ComponentBoundingBox2D::Update() {
+	CalculateWorldBoundingBox();
+}
+
+void ComponentBoundingBox2D::DuplicateComponent(GameObject& owner) {
+	ComponentBoundingBox2D* component = owner.CreateComponent<ComponentBoundingBox2D>();
+	component->SetLocalBoundingBox(AABB2D(localAABB));
 }
 
 void ComponentBoundingBox2D::Save(JsonValue jComponent) const {
@@ -81,12 +86,4 @@ void ComponentBoundingBox2D::Invalidate() {
 
 const AABB2D& ComponentBoundingBox2D::GetWorldAABB() const {
 	return worldAABB;
-}
-
-void ComponentBoundingBox2D::Update() {
-}
-
-void ComponentBoundingBox2D::DuplicateComponent(GameObject& owner) {
-	ComponentBoundingBox2D* component = owner.CreateComponent<ComponentBoundingBox2D>();
-	component->SetLocalBoundingBox(AABB2D(localAABB));
 }

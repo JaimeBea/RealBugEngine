@@ -24,7 +24,6 @@ public:
 	void DisableOrtographicRender();
 	void ReceiveEvent(const Event& ev) override;
 
-
 public:
 	void* context = nullptr; // SDL context.
 
@@ -47,7 +46,7 @@ public:
 
 private:
 	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb); // Draws the quadrtee nodes if 'drawQuadtree' is set to true.
-	void DrawSceneIterative(const Quadtree<GameObject>& quadtree);							// ??
+	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
 	void DrawGameObject(GameObject* gameObject);											// ??
 	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
