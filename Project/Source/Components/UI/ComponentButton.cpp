@@ -4,6 +4,7 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
 
 #include <imgui.h>
@@ -44,8 +45,17 @@ void ComponentButton::Load(JsonValue jComponent) {
 void ComponentButton::OnClicked() {
 	clicked = true;
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
-	LOG("I was clicked");
-	//TO DO
+
+	std::vector<ComponentScript*> scriptComponents = GetOwner().GetComponents<ComponentScript>();
+	for (ComponentScript* scriptComponent : scriptComponents) {
+		Resource* scriptResource = App->resources->GetResource(scriptComponent->GetScriptID());
+		if (scriptResource != nullptr) {
+			Script* script = ((ResourceScript*) scriptResource)->script;
+			if (script != nullptr) {
+				script->OnButtonClick();
+			}
+		}
+	}
 }
 
 bool ComponentButton::IsClicked() const {
