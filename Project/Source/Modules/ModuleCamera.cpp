@@ -161,6 +161,7 @@ UpdateStatus ModuleCamera::Update() {
 }
 
 bool ModuleCamera::CleanUp() {
+	RELEASE(editorFrustum);
 	return true;
 }
 

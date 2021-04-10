@@ -10,6 +10,7 @@
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
+#include "Event.h"
 #include "FileSystem/MaterialImporter.h"
 
 #include "ImGuizmo.h"
@@ -23,7 +24,6 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
-#include "Event.h"
 
 #include "Utils/Leaks.h"
 

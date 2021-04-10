@@ -5,7 +5,7 @@
 #include "Event.h"
 
 #include "Utils/Leaks.h"
-#include "Event.h"
+
 Module::~Module() {}
 
 bool Module::Init() {

@@ -17,6 +17,7 @@
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleTime.h"
+#include "Event.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -25,7 +26,6 @@
 #include "GL/glew.h"
 #include "SDL.h"
 #include "Brofiler.h"
-#include "Event.h"
 
 #include "Utils/Leaks.h"
 
@@ -114,12 +114,12 @@ bool ModuleRender::Init() {
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 
-	//#ifdef _DEBUG
-	//	glEnable(GL_DEBUG_OUTPUT);
-	//	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	//	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr);
-	//	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
-	//#endif
+#ifdef _DEBUG
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
+#endif
 
 	glGenFramebuffers(1, &framebuffer);
 	glGenRenderbuffers(1, &depthRenderbuffer);
@@ -234,19 +234,6 @@ void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
 }
 
-void ModuleRender::EnableOrtographicRender() {
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
-}
-
-void ModuleRender::DisableOrtographicRender() {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	// TODO
-	//gluPerspective()
-}
-
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
 	if (node.IsBranch()) {
 		vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
@@ -282,7 +269,6 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 }
 
 void ModuleRender::ReceiveEvent(const Event& ev) {
-
 }
 
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
@@ -406,8 +392,8 @@ void ModuleRender::RenderUI() {
 		SetOrtographicRender();
 		App->camera->EnableOrtographic();
 	}
-	
-	glDisable(GL_DEPTH_TEST);		// In order to not clip with Models
+
+	glDisable(GL_DEPTH_TEST); // In order to not clip with Models
 	App->userInterface->Render();
 	glEnable(GL_DEPTH_TEST);
 

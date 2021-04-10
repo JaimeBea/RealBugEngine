@@ -4,6 +4,8 @@
 #include "Components/UI/ComponentTransform2D.h"
 #include "GameObject.h"
 
+#include "Utils/Leaks.h"
+
 void ComponentCanvasRenderer::Save(JsonValue jComponent) const {
 }
 

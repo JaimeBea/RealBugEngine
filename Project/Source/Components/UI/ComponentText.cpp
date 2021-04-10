@@ -1,4 +1,6 @@
 #include "ComponentText.h"
+
+#include "GameObject.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -7,16 +9,18 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleEditor.h"
-#include "Resources/ResourceTexture.h""
+#include "Resources/ResourceTexture.h"
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceFont.h"
-#include "GameObject.h"
+#include "FileSystem/JsonValue.h"
+
 #include "GL/glew.h"
 #include "Math/TransformOps.h"
-#include "FileSystem/JsonValue.h"
 #include "Utils/Logging.h"
 #include "Utils/ImGuiUtils.h"
 #include "imgui_stdlib.h"
+
+#include "Utils/Leaks.h"
 
 #define JSON_TAG_TEXT_SHADERID "ShaderID"
 #define JSON_TAG_TEXT_FONTID "FontID"
@@ -24,9 +28,8 @@
 #define JSON_TAG_TEXT_VALUE "Value"
 #define JSON_TAG_COLOR "Color"
 
-
 ComponentText::~ComponentText() {
-	//TO DO DECREASE REFERENCE COUNT OF SHADER AND FONT, MAYBE IN A NEW COMPONENT::CLEANUP?
+	//TODO DECREASE REFERENCE COUNT OF SHADER AND FONT, MAYBE IN A NEW COMPONENT::CLEANUP?
 }
 
 void ComponentText::Init() {
@@ -42,7 +45,7 @@ void ComponentText::Init() {
 }
 
 void ComponentText::OnEditorUpdate() {
-	static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+	ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
 	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
@@ -185,4 +188,3 @@ void ComponentText::SetFontColor(const float4& newColor) {
 float4 ComponentText::GetFontColor() const {
 	return color;
 }
-

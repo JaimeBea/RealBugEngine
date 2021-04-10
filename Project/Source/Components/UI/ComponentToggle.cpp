@@ -1,10 +1,14 @@
 #include "ComponentToggle.h"
+
+#include "Utils/Logging.h"
 #include "GameObject.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Application.h"
 #include "Modules/ModuleUserInterface.h"
 
-#include "Utils/Logging.h"
+#include "Utils/Leaks.h"
+
+#define JSON_TAG_IS_ON "IsOn"
 
 ComponentToggle ::~ComponentToggle() {}
 

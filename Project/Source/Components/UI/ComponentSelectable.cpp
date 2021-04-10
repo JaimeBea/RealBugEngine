@@ -1,26 +1,42 @@
 #include "ComponentSelectable.h"
-#include "Application.h"
+
+#include "Utils/Logging.h"
+#include "GameObject.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleUserInterface.h"
 
-#include "GameObject.h"
 #include "imgui.h"
 
-#include "Utils/Logging.h"
+#include "Utils/Leaks.h"
+
+#define JSON_TAG_COLOR_HOVERED "ColorHover"
+#define JSON_TAG_COLOR_DISABLED "ColorDisable"
+#define JSON_TAG_COLOR_SELECTED "ColorDisable"
+
+#define JSON_TAG_INTERACTABLE "Interactable"
+#define JSON_TAG_ON_AXIS_DOWN "OnAxisDown"
+#define JSON_TAG_ON_AXIS_UP "OnAxisUp"
+#define JSON_TAG_ON_AXIS_RIGHT "OnAxisRight"
+#define JSON_TAG_ON_AXIS_LEFT "OnAxisLeft"
+#define JSON_TAG_TRANSITION_TYPE "TransitionType"
+#define JSON_TAG_NAVIGATION_TYPE "NavigationType"
+
+#define JSON_TAG_SELECTABLE_TYPE "SelectableType"
 
 ComponentSelectable::~ComponentSelectable() {
-	//TO DO IF SELECTED SET SELECTED TO NULL
+	//TODO IF SELECTED SET SELECTED TO NULL
 }
 
 bool ComponentSelectable::IsInteractable() const {
 	return interactable;
 }
 
-void ComponentSelectable::SetInteractable(bool b) {
-	interactable = b;
+void ComponentSelectable::SetInteractable(bool interactable_) {
+	interactable = interactable_;
 }
 
 ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
@@ -147,13 +163,13 @@ void ComponentSelectable::OnEditorUpdate() {
 	ImGui::ColorEdit4("Hovered Color##", colorHovered.ptr());
 	ImGui::ColorEdit4("Selected Color##", colorSelected.ptr());
 
-	//TO DO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
+	//TODO Drag/Drop for manual navigation references (4 ComponentSelectable pointers)
 }
 
-void ComponentSelectable::Enable() {
+void ComponentSelectable::OnEnable() {
 }
 
-void ComponentSelectable::Disable() {
+void ComponentSelectable::OnDisable() {
 	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
 		if (selected) {
 			evSys->SetSelected(0);
@@ -225,7 +241,7 @@ void ComponentSelectable::Save(JsonValue jsonVal) const {
 	jColorSelected[2] = colorSelected.z;
 	jColorSelected[3] = colorSelected.w;
 
-	//TO DO RESEARCH WHY THIS RETURNS ERROR
+	//TODO RESEARCH WHY THIS RETURNS ERROR
 	JsonValue jInteractable = jsonVal[JSON_TAG_INTERACTABLE];
 	jInteractable = interactable;
 

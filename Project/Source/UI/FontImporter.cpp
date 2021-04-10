@@ -5,7 +5,6 @@
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourceFont.h"
 #include "Utils/Buffer.h"
-
 #include "Utils/Logging.h"
 
 #include "Utils/Leaks.h"

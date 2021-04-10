@@ -39,7 +39,6 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
-	//void ReceiveEvent(const Event& ev) override;
 	void OnMouseMoved();
 	void OnMouseClicked();
 

@@ -16,14 +16,11 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
+	void ReceiveEvent(const Event& ev) override;
 
 	void ViewportResized(int width, int height);
 
 	void SetVSync(bool vsync);
-	void EnableOrtographicRender();
-	void DisableOrtographicRender();
-	void ReceiveEvent(const Event& ev) override;
-
 
 public:
 	void* context = nullptr; // SDL context.

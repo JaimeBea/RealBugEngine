@@ -1,14 +1,11 @@
 #pragma once
 
-#include <queue>
-
 #include "Components/Component.h"
+#include <queue>
 
 class GameObject;
 class ComponentSelectable;
 class IPointerEnterHandler;
-
-#define JSON_TAG_FIRST_SELECTED_ID "FirstSelectedID"
 
 class ComponentEventSystem : public Component {
 public:
@@ -21,21 +18,21 @@ public:
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
-	void Enable() override;
-	void Disable() override;
+	void OnEnable() override;
+	void OnDisable() override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void SetSelected(UID newSelectableComponentID);
+	void SetSelected(UID newSelectableComponentId);
 	void EnteredPointerOnSelectable(ComponentSelectable* newHoveredComponent);	//Interface implementation
 	void ExitedPointerOnSelectable(ComponentSelectable* newUnHoveredComponent); //Interface implementation
 	ComponentSelectable* GetCurrentSelected() const;							//Returns currently selected ComponentSelectable
 	ComponentSelectable* GetCurrentlyHovered() const;							//Returns last Selectable that was hovered over with mouse
 
 private:
-	UID currentSelected = 0; //Currently selected SelectableComponent*
+	UID selectedId = 0; //Currently selected SelectableComponent*
 
-	std::vector<UID> hoveredSelectables; //vector of SelectableComponents* it updates (adding/removing) with mouse events
+	std::vector<UID> hoveredSelectableIds; //vector of SelectableComponents* it updates (adding/removing) with mouse events
 
 public:
-	UID firstSelected = 0; //Reference to the "first selected selectableComponent", this is not used directly but Unity implements it so that users can access it
+	UID firstSelectedId = 0; //Reference to the "first selected selectableComponent", this is not used directly but Unity implements it so that users can access it
 };

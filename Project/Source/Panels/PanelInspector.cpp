@@ -1,18 +1,16 @@
 #include "PanelInspector.h"
 
-#include "Application.h"
 #include "GameObject.h"
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
 #include "Components/UI/ComponentText.h"
-
+#include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
 #include "Math/float4x4.h"
-
 #include "GL/glew.h"
 #include "imgui.h"
 #include "IconsFontAwesome5.h"
@@ -140,7 +138,9 @@ void PanelInspector::Update() {
 				// Options POPUP
 				if (ImGui::BeginPopup("Component Options")) {
 					if (component->GetType() != ComponentType::TRANSFORM) {
-						if (ImGui::MenuItem("Remove Component")) componentToDelete = component;
+						if (ImGui::MenuItem("Remove Component")) {
+							componentToDelete = component;
+						}
 						// TODO: force remove other components that this one requires for functioning
 					}
 					// More Options items ...
