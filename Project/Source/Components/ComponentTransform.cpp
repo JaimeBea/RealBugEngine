@@ -27,7 +27,7 @@ void ComponentTransform::OnEditorUpdate() {
 	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(pos);
 	}
-	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0.0001f, inf, "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
 		SetScale(scl);
 	}
 
@@ -157,6 +157,24 @@ Quat ComponentTransform::GetRotation() const {
 
 float3 ComponentTransform::GetScale() const {
 	return scale;
+}
+
+float3 ComponentTransform::GetGlobalPosition() {
+	CalculateGlobalMatrix();
+	return globalMatrix.TranslatePart();
+}
+
+Quat ComponentTransform::GetGlobalRotation() {
+	CalculateGlobalMatrix();
+	float4x4 newTransform_ = globalMatrix;
+	newTransform_.Orthogonalize3();
+	newTransform_.Orthonormalize3();
+	return Quat(newTransform_.SubMatrix(3, 3));
+}
+
+float3 ComponentTransform::GetGlobalScale() {
+	CalculateGlobalMatrix();
+	return globalMatrix.GetScale();
 }
 
 const float4x4& ComponentTransform::GetLocalMatrix() {

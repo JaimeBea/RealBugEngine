@@ -108,9 +108,9 @@ void ComponentCamera::DuplicateComponent(GameObject& owner) {
 
 void ComponentCamera::UpdateFrustum() {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	frustum.SetPos(transform->GetPosition());
+	frustum.SetPos(transform->GetGlobalPosition());
 
-	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetRotation());
+	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetGlobalRotation());
 	frustum.SetFront(rotationMatrix * float3::unitZ);
 	frustum.SetUp(rotationMatrix * float3::unitY);
 }

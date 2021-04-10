@@ -396,8 +396,8 @@ void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation
 	for (const GameObject* childen : gameObject->GetChildren()) {
 		ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
 
-		dd::point(transform->GetGlobalMatrix().TranslatePart(), dd::colors::Red, 5);
-		dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().TranslatePart(), transform->GetGlobalMatrix().TranslatePart(), dd::colors::Cyan, 0, false);
+		dd::point(transform->GetGlobalPosition(), dd::colors::Red, 5);
+		dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalPosition(), transform->GetGlobalPosition(), dd::colors::Cyan, 0, false);
 
 		DrawAnimation(childen, true);
 	}

@@ -11,6 +11,7 @@
 #include "Resources/ResourceShader.h"
 #include "Resources/ResourceTexture.h"
 #include "Resources/ResourceSkybox.h"
+#include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
@@ -19,6 +20,7 @@
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
+#include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
@@ -187,6 +189,9 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
+		} else if (extension == ".h") {
+			// Script files
+			ScriptImporter::ImportScript(filePath, jMeta);
 		} else {
 			assetImported = false;
 		}
@@ -384,6 +389,9 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::SKYBOX:
 		resource = new ResourceSkybox(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::SCRIPT:
+		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());

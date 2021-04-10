@@ -17,8 +17,8 @@ public:
 		// Allocate
 		size = amount;
 		count = 0;
-		data = new T[amount];
-		nextFree = new T*[amount];
+		data = (T*) ::operator new(amount * sizeof(T));
+		nextFree = (T**) ::operator new(amount * sizeof(T*));
 		firstFree = data;
 
 		// Initialize free list
@@ -30,8 +30,14 @@ public:
 	void Clear() {
 		size = 0;
 		count = 0;
-		RELEASE_ARRAY(data);
-		RELEASE_ARRAY(nextFree);
+		if (data != nullptr) {
+			::operator delete(data);
+			data = nullptr;
+		}
+		if (nextFree != nullptr) {
+			::operator delete(nextFree);
+			nextFree = nullptr;
+		}
 		firstFree = nullptr;
 	}
 

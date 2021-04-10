@@ -22,6 +22,12 @@
 
 MATH_BEGIN_NAMESPACE
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 /// A bitfield type that describes single or multiple log channels (each bit represents a channel).
 typedef unsigned int MathLogChannel;
 
@@ -34,8 +40,8 @@ const MathLogChannel MathLogErrorNoCallstack = MathLogError|65536;
 const MathLogChannel MathLogWarningNoCallstack = MathLogWarning|65536;
 }
 
-void PrintToConsoleVariadic(MathLogChannel channel, const char *format, ...);
-void PrintToConsole(MathLogChannel channel, const char *str);
+TESSERACT_ENGINE_API void PrintToConsoleVariadic(MathLogChannel channel, const char *format, ...);
+TESSERACT_ENGINE_API void PrintToConsole(MathLogChannel channel, const char *str);
 
 #define STRINGIZE_HELPER(x) #x
 #define STRINGIZE(x) STRINGIZE_HELPER(x)
