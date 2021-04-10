@@ -12,7 +12,7 @@ enum class AllowedExtensionsFlag {
 	JPG = 1,
 	PNG = 1 << 1,
 	DDS = 1 << 2,
-	SCENE = 1 << 3
+	SCENE = 1 << 3,
 };
 inline AllowedExtensionsFlag operator|(AllowedExtensionsFlag l, AllowedExtensionsFlag r) {
 	return static_cast<AllowedExtensionsFlag>(static_cast<int>(l) + static_cast<int>(r));
@@ -35,6 +35,6 @@ public:
 
 	std::string GetFilePath(const char* file, bool absolute = false) const;
 	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
-	
+
 	long long GetLocalFileModificationTime(const char* path) const;
 };

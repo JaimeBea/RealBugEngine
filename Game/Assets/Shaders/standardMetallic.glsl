@@ -1,9 +1,9 @@
 #ifdef VERTEX
 
-#define PI 3.1415926538
+#define MAX_BONES 100
 
 in layout(location=0) vec3 pos;
-in layout(location=1) vec3 normal;
+in layout(location=1) vec3 norm;
 in layout(location=2) vec2 uvs;
 in layout(location=3) uvec4 boneIndices;
 in layout(location=4) vec4 boneWeitghts;
@@ -41,6 +41,9 @@ void main()
 #endif
 
 #ifdef FRAGMENT
+
+#define PI 3.1415926538
+
 in vec3 fragNormal;
 in vec3 fragPos;
 in vec2 uv;

@@ -300,10 +300,17 @@ void ModuleResources::UpdateAsync() {
 				JsonValue jMeta(document, document);
 				if (success) {
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+					std::unordered_set<std::string>::iterator it = assetsToNotUpdate.find(assetFilePath);
+					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp && it == assetsToNotUpdate.end()) {
 						// ASK: What happens when we update an asset?
+						// Resources to remove only if we want to regenerate the asset resources
 						resourcesToRemove.push_back(entry.first);
 						continue;
+					} else if(it != assetsToNotUpdate.end()){
+						// Instead of removing its resources and its meta, just update the timestamp
+						jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
+						SaveMetaFile(metaFilePath.c_str(), document);
+						assetsToNotUpdate.erase(it);
 					}
 				} else {
 					resourcesToRemove.push_back(entry.first);

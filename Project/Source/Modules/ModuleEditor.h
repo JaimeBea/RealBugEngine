@@ -22,6 +22,7 @@ enum class Modal {
 	LOAD_SCENE,
 	SAVE_SCENE,
 	COMPONENT_EXISTS,
+	CREATE_MATERIAL,
 	QUIT
 };
 

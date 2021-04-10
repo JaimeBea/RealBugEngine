@@ -88,6 +88,16 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	if (ImGui::TreeNode("Material")) {
 		ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
 		if (material != nullptr) {
+			if (ImGui::Button("Save")) {
+				std::string assetPath = material->GetAssetFilePath();
+				if (FileDialog::GetFileExtension(assetPath.c_str()) == MATERIAL_EXTENSION) {
+					App->resources->assetsToNotUpdate.emplace(assetPath);
+					material->SaveToFile(assetPath.c_str());
+					material->SaveToFile(material->GetResourceFilePath().c_str());
+				} else {
+					material->SaveToFile(material->GetResourceFilePath().c_str());
+				}
+			}
 			ImGui::ResourceSlot<ResourceShader>("Shader", &material->shaderId);
 
 			ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
@@ -111,7 +121,6 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::EndCombo();
 					ImGui::Text("");
 				}
-				ImGui::SameLine();
 				if (ImGui::Button("Apply##type")) {
 					shader->SaveShaderType();
 				}
