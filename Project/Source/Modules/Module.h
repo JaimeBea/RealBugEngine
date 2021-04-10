@@ -1,6 +1,7 @@
 #pragma once
 
 enum class UpdateStatus;
+
 struct Event;
 
 class Module {

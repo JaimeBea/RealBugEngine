@@ -14,7 +14,9 @@ enum class EventType {
 	PRESSED_STEP,
 	PRESSED_STOP,
 	ADD_RESOURCE,
-	UPDATE_FOLDERS
+	UPDATE_FOLDERS,
+	MOUSE_UPDATE,
+	MOUSE_CLICKED
 };
 
 //STEPS TO CREATE A NEW EVENT:
@@ -38,6 +40,16 @@ public:
 		AssetFolder* folder;
 	};
 
+	struct EventMouseUpdate {
+		float mouseX;
+		float mouseY;
+	};
+
+	struct EventMouseClicked {
+		float mouseX;
+		float mouseY;
+	};
+
 	static const char* TypeToString(EventType v) {
 		switch (v) {
 		case EventType::GAMEOBJECT_DESTROYED:
@@ -52,6 +64,10 @@ public:
 			return "Pressed step";
 		case EventType::PRESSED_STOP:
 			return "Pressed stop";
+		case EventType::MOUSE_UPDATE:
+			return "Mouse moved";
+		case EventType::MOUSE_CLICKED:
+			return "Mouse clicked";
 		case EventType::ADD_RESOURCE:
 			return "Add Resource";
 		case EventType::UPDATE_FOLDERS:
@@ -65,6 +81,10 @@ public:
 		: type(type_) {
 	}
 
+	//Event()
+	//	: type(EventType::UNKNOWN) {
+	//}
+
 	~Event() {
 	}
 
@@ -75,5 +95,7 @@ public:
 		EventDestroyGameObject destroyGameObject;
 		EventAddResource addResource;
 		EventUpdateFolders updateFolders;
+		EventMouseUpdate mouseUpdate;
+		EventMouseClicked mouseClicked;
 	};
 };

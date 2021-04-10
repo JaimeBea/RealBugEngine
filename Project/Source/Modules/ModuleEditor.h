@@ -15,6 +15,7 @@
 #include <vector>
 
 class Panel;
+struct Event;
 
 enum class Modal {
 	NONE,
@@ -37,6 +38,9 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
+	//void ReceiveEvent(const Event& ev) override;
+	void OnMouseMoved();
+	void OnMouseClicked();
 
 public:
 	Modal modalToOpen = Modal::NONE; // Used in the MenuBar to popup a Modal Window of the specific type.

@@ -64,6 +64,8 @@ public:
 	Frustum* GetActiveFrustum() const;
 	Frustum* GetCullingFrustum() const;
 	const FrustumPlanes& GetFrustumPlanes() const;
+	void EnableOrtographic();
+	void EnablePerspective();
 
 public:
 	float movementSpeed = 0.4f;				 // Deltatime multiplier for the camera movement speed.
@@ -71,6 +73,7 @@ public:
 	float zoomSpeed = 0.001f;				 // Deltatime multiplier for the camera zooming speed.
 	float shiftMultiplier = 5.0f;			 // Multiplier of the previows three, applied when the SHIFT key is pressed.
 	Frustum engineCameraFrustum = Frustum(); // Default Engine frustum.
+	Frustum* editorFrustum = nullptr;		 // Editor frustum.
 
 private:
 	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects); // Subfunction of CalculateFrustumNearestObject(). Checks the Quatree for the GameObjects which BoundingBox intersect with the click (ray).
