@@ -13,6 +13,7 @@
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/ResourceStateMachine.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
@@ -394,6 +395,9 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::STATE_MACHINE:
+		resource = new ResourceStateMachine(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);

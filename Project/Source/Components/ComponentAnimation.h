@@ -1,10 +1,13 @@
 #pragma once
 
 #include "Component.h"
+#include "Application.h"
+#include "Modules/ModuleResources.h"
 #include "Resources/ResourceStateMachine.h"
 #include "Resources/ResourceStates.h"
 #include <string>
 #include "AnimationController.h"
+#include "Utils/UID.h"
 
 class GameObject;
 class ResourceAnimation;
@@ -24,16 +27,16 @@ public:
 	void OnUpdate();
 	
 	AnimationController* animationController = nullptr;
-	ResourceStateMachine* stateMachineResource = nullptr;
+	UID stateMachineResourceUID = 0;
 
 	void SendTrigger(std::string trigger);
 
 	ResourceStates* GetCurrentState() {
-		if (stateMachineResource == nullptr) {
+		if (stateMachineResourceUID == 0) {
 			return nullptr;
 		}
-
-		return stateMachineResource->GetCurrentState();
+		ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*)App->resources->GetResource(stateMachineResourceUID);
+		return resourceStateMachine->GetCurrentState();
 	}
 
 private:

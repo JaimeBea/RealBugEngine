@@ -116,7 +116,6 @@
     <ClCompile Include="Source\Resources\ResourceStates.cpp" />
     <ClCompile Include="Source\Resources\Clip.cpp" />
     <ClCompile Include="Source\Resources\ResourceTransition.cpp" />
-    <ClCompile Include="Source\Modules\ModuleEventSystem.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
@@ -148,6 +147,7 @@
     <ClCompile Include="Source\GameplaySystems.cpp" />
     <ClCompile Include="Source\Utils\AssetFile.cpp" />
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
+    <ClCompile Include="Source\FileSystem\StateMachineImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -345,6 +345,8 @@
     <ClInclude Include="Source\FileSystem\SkyboxImporter.h" />
     <ClInclude Include="Source\Utils\AssetFile.h" />
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
+    <ClInclude Include="Source\Resources\AnimationInterpolation.h" />
+    <ClInclude Include="Source\FileSystem\StateMachineImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

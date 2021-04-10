@@ -662,10 +662,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
 
-			Clip* clip = new Clip(clipName + parsedI, animation);
-			clip->setEndIndex(60);
-			clip->setBeginIndex(0);
-			clip->loop = true;
+			Clip* clip = new Clip(clipName + parsedI, animation->GetId(), 60, 0, true);
 
 			resourceStateMachine->AddState(stateName + parsedI, clip);
 		}
@@ -673,17 +670,11 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		//Setting machine state
 		std::string sState2 = "State2";
 		std::string clipName2 = "testClip2";
-		Clip* clip2 = new Clip(clipName2, testAnim);
-		clip2->setEndIndex(360); //361
-		clip2->setBeginIndex(290);
-		clip2->loop = false;
+		Clip* clip2 = new Clip(clipName2, testAnim->GetId(), 360, 290, false);
 
 		std::string sState3 = "State3";
 		std::string clipName3 = "testClip3";
-		Clip* clip3 = new Clip(clipName3, testAnim);
-		clip3->setEndIndex(120); //361
-		clip3->setBeginIndex(60);
-		clip3->loop = true;
+		Clip* clip3 = new Clip(clipName3, testAnim->GetId(), 120, 60, true);
 
 		//Mocking transition
 		ResourceStates* state2 = resourceStateMachine->AddState(sState2, clip2);
@@ -701,16 +692,19 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		//resourceStateMachine->SetCurrentState(state);
 
 		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
-		animationComponent->animationController = new AnimationController(testAnim);
-		animationComponent->animationController->SetAnimationResource(testAnim); // TODO improve for multiple animations
-		animationComponent->stateMachineResource = resourceStateMachine;
+		animationComponent->animationController = new AnimationController(/*testAnim*/);
+		//animationComponent->animationController->SetAnimationResource(testAnim); // TODO improve for multiple animations
+		animationComponent->stateMachineResourceUID = resourceStateMachine->GetId();
+
 
 		//animationComponent->SendTrigger(tName1);
 		//animationComponent->SendTrigger(tName2);
 
 		//resourceStateMachine.ChangeState(tName1);
 		//resourceStateMachine.ChangeState(tName2);
-		//esourceStateMachine.GetCurrentState();
+		//resourceStateMachine.GetCurrentState();
+		resourceStateMachine->SaveToFile(resourceStateMachine->GetResourceFilePath().c_str());
+		bool ok = true;
 	}
 
 	// Cache bones for skinning
