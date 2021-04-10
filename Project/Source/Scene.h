@@ -9,6 +9,15 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "Components/UI/ComponentCanvas.h"
+#include "Components/UI/ComponentCanvasRenderer.h"
+#include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentToggle.h"
+#include "Components/UI/ComponentText.h"
+#include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentSkybox.h"
 #include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
@@ -30,6 +39,11 @@ public:
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
+	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
+
+	template<class T> T* GetComponent(UID id);
 
 public:
 	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
@@ -42,6 +56,16 @@ public:
 	VectorMap<UID, ComponentBoundingBox> boundingBoxComponents;
 	VectorMap<UID, ComponentCamera> cameraComponents;
 	VectorMap<UID, ComponentLight> lightComponents;
+	VectorMap<UID, ComponentCanvas> canvasComponents;
+	VectorMap<UID, ComponentCanvasRenderer> canvasRendererComponents;
+	VectorMap<UID, ComponentImage> imageComponents;
+	VectorMap<UID, ComponentTransform2D> transform2DComponents;
+	VectorMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
+	VectorMap<UID, ComponentEventSystem> eventSystemComponents;
+	VectorMap<UID, ComponentToggle> toggleComponents;
+	VectorMap<UID, ComponentText> textComponents;
+	VectorMap<UID, ComponentButton> buttonComponents;
+	VectorMap<UID, ComponentSelectable> selectableComponents;
 	VectorMap<UID, ComponentSkyBox> skyboxComponents;
 	VectorMap<UID, ComponentScript> scriptComponents;
 	VectorMap<UID, ComponentAnimation> animationComponents;
@@ -60,3 +84,8 @@ public:
 	CubeMap* skyboxCubeMap = 0;
 	*/
 };
+
+template<class T>
+inline T* Scene::GetComponent(UID id) {
+	return (T*) GetComponentByTypeAndId(T::staticType, id);
+}

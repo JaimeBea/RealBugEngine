@@ -23,6 +23,7 @@ enum class ResourceType {
 	SCENE,
 	SHADER,
 	TEXTURE,
+	FONT,
 	SKYBOX,
 	SCRIPT,
 	ANIMATION

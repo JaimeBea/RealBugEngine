@@ -1,10 +1,11 @@
 #include "Module.h"
 
 #include "Globals.h"
+#include "Utils/Logging.h"
 #include "Event.h"
 
 #include "Utils/Leaks.h"
-
+#include "Event.h"
 Module::~Module() {}
 
 bool Module::Init() {

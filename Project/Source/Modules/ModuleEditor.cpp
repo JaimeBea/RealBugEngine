@@ -7,7 +7,9 @@
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleEvents.h"
 #include "FileSystem/MaterialImporter.h"
 
 #include "ImGuizmo.h"
@@ -21,6 +23,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include "Event.h"
 
 #include "Utils/Leaks.h"
 
@@ -213,6 +216,7 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panelAbout.name, "", &panelAbout.enabled);
 		ImGui::EndMenu();
 	}
+
 	ImGui::EndMainMenuBar();
 
 	// Modals
@@ -312,6 +316,15 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndPopup();
 	}
 
+	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Quit")) {
+		ImGui::Text("Do you really want to quit?");
+		if (ImGui::Button("Quit")) {
+			return UpdateStatus::STOP;
+		}
+	}
+	ImGui::SameLine();
+
 	// ALREADY EXISTING COMPONENT MODAL
 	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Already existing Component", nullptr, ImGuiWindowFlags_NoResize)) {
@@ -398,4 +411,18 @@ bool ModuleEditor::CleanUp() {
 	ImGui::DestroyContext();
 
 	return true;
+}
+
+void ModuleEditor::OnMouseMoved() {
+	Event mouseEvent = Event(EventType::MOUSE_UPDATE);
+	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
+	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
+	App->events->AddEvent(mouseEvent);
+}
+
+void ModuleEditor::OnMouseClicked() {
+	Event mouseEvent = Event(EventType::MOUSE_CLICKED);
+	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
+	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
+	App->events->AddEvent(mouseEvent);
 }

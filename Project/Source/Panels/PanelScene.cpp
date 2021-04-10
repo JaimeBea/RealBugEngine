@@ -27,7 +27,7 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include <algorithm>
-
+#include <Event.h>
 #include "Utils/Leaks.h"
 
 PanelScene::PanelScene()
@@ -119,6 +119,10 @@ void PanelScene::Update() {
 			}
 			ImGui::PopItemWidth();
 
+			ImGui::SameLine();
+			ImGui::Checkbox("2D", &view2D);
+			ImGui::SameLine();
+
 			ImGui::EndMenuBar();
 		}
 
@@ -171,10 +175,12 @@ void PanelScene::Update() {
 			}
 
 			ImGui::CaptureKeyboardFromApp(false);
+			ImGui::CaptureMouseFromApp(true);
+			ImGuiIO& io = ImGui::GetIO();
+			mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
+			mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
 
 			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
-				ImGui::CaptureMouseFromApp(true);
-				ImGuiIO& io = ImGui::GetIO();
 				float2 mousePosNormalized;
 				mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
 				mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
@@ -185,6 +191,7 @@ void PanelScene::Update() {
 
 		float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
 		float viewManipulateTop = framebufferPosition.y;
+
 		ImGuizmo::SetDrawlist();
 		ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
 
@@ -236,4 +243,16 @@ void PanelScene::Update() {
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
+}
+
+float2 PanelScene::GetMousePosOnScene()const {
+	return mousePosOnScene;
+}
+
+float2 PanelScene::GetSceneWindowSize() const {
+	return framebufferSize;
+}
+
+const bool PanelScene::IsUsing2D() const {
+	return view2D;
 }
