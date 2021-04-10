@@ -12,6 +12,8 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/document.h"
 
+#include "Leaks.h"
+
 #define META_EXTENSION ".meta"
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
@@ -62,6 +64,14 @@ void ResourceShader::Load() {
 
 void ResourceShader::Unload() {
 	App->programs->DeleteProgram(shaderProgram);
+}
+
+ShaderType ResourceShader::GetShaderType() {
+	return shaderType;
+}
+
+void ResourceShader::SetShaderType(const ShaderType type) {
+	shaderType = type;
 }
 
 void ResourceShader::SaveShaderType() const {

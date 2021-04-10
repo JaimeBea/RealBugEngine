@@ -15,17 +15,16 @@ public:
 	void Load() override;
 	void Unload() override;
 
+	ShaderType GetShaderType();
+
+	void SetShaderType(const ShaderType type);
+
 	void SaveShaderType() const;
 
 	unsigned int GetShaderProgram() {
 		return shaderProgram;
 	}
-	ShaderType GetShaderType() {
-		return shaderType;
-	}
-	void SetShaderType(const ShaderType type) {
-		shaderType = type;
-	}
+
 
 private:
 	unsigned int shaderProgram = 0;

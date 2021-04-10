@@ -170,12 +170,12 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 						ImGui::ResourceSlot<ResourceTexture>("Specular Texture", &material->specularMapId);
 					}
 					// Shininess Combo
-					const char* smoothnessItems[] = {"Shininess Value", "Shininess Alpha"};
-					const char* smoothnessItemCurrent = smoothnessItems[material->hasSmoothnessInAlphaChannel];
-					if (ImGui::BeginCombo("##shininess", smoothnessItemCurrent)) {
-						for (int n = 0; n < IM_ARRAYSIZE(smoothnessItems); ++n) {
-							bool isSelected = (smoothnessItemCurrent == smoothnessItems[n]);
-							if (ImGui::Selectable(smoothnessItems[n], isSelected)) {
+					const char* shininessItems[] = {"Shininess Value", "Shininess Alpha"};
+					const char* shininessItemCurrent = shininessItems[material->hasSmoothnessInAlphaChannel];
+					if (ImGui::BeginCombo("##shininess", shininessItemCurrent)) {
+						for (int n = 0; n < IM_ARRAYSIZE(shininessItems); ++n) {
+							bool isSelected = (shininessItemCurrent == shininessItems[n]);
+							if (ImGui::Selectable(shininessItems[n], isSelected)) {
 								material->hasSmoothnessInAlphaChannel = n ? 1 : 0;
 							}
 							if (isSelected) {
@@ -184,7 +184,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 						}
 						ImGui::EndCombo();
 					}
-					if (smoothnessItemCurrent == smoothnessItems[0]) {
+					if (shininessItemCurrent == shininessItems[0]) {
 						ImGui::DragFloat("Shininess##shininess", &material->smoothness, App->editor->dragSpeed3f, 0.0f, 1000.0f);
 					}
 
@@ -546,11 +546,9 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		glUseProgram(program);
 
 		glUniform3fv(glGetUniformLocation(program, "specularColor"), 1, material->specularColor.ptr());
-		int hasDiffuseMap = diffuse ? 1 : 0;
-		int hasSpecularMap = specular ? 1 : 0;
 		int hasShininessInAlphaChannel = (material->hasSmoothnessInAlphaChannel) ? 1 : 0;
-		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
-		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), hasSpecularMap);
+		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), material->hasDiffuseMap);
+		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), material->hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
 
 		glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
