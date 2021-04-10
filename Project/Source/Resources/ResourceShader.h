@@ -2,7 +2,11 @@
 
 #include "Resources/Resource.h"
 
-enum class ShaderType { PHONG };
+enum class ShaderType {
+	PHONG,
+	STANDARD_SPECULAR,
+	STANDARD
+};
 
 class ResourceShader : public Resource {
 public:
@@ -11,12 +15,16 @@ public:
 	void Load() override;
 	void Unload() override;
 
+	ShaderType GetShaderType();
+
+	void SetShaderType(const ShaderType type);
+
+	void SaveShaderType() const;
+
 	unsigned int GetShaderProgram() {
 		return shaderProgram;
 	}
-	ShaderType GetShaderType() {
-		return shaderType; 
-	}
+
 
 private:
 	unsigned int shaderProgram = 0;

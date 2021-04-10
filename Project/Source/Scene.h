@@ -39,7 +39,7 @@ public:
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
-	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	TESSERACT_ENGINE_API Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
 	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
 	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
 

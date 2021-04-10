@@ -1,13 +1,13 @@
 #include "ComponentButton.h"
-#include "GameObject.h"
+
 #include "Application.h"
+#include "imgui.h"
+#include "GameObject.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
-
-#include <imgui.h>
-
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_COLOR_HOVER "ColorHover"
@@ -16,11 +16,9 @@
 #define JSON_TAG_CLICKED "Clicked"
 
 void ComponentButton::Init() {
-	//ComponentSelectable::Init();
 }
 
 void ComponentButton::OnEditorUpdate() {
-	//ComponentSelectable::OnEditorUpdate();
 	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
 }
 
@@ -44,38 +42,47 @@ void ComponentButton::Load(JsonValue jComponent) {
 void ComponentButton::OnClicked() {
 	clicked = true;
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
-	LOG("I was clicked");
-	//TO DO
+
+	std::vector<ComponentScript*> scriptComponents = GetOwner().GetComponents<ComponentScript>();
+	for (ComponentScript* scriptComponent : scriptComponents) {
+		Resource* scriptResource = App->resources->GetResource(scriptComponent->GetScriptID());
+		if (scriptResource != nullptr) {
+			Script* script = ((ResourceScript*) scriptResource)->script;
+			if (script != nullptr) {
+				script->OnButtonClick();
+			}
+		}
+	}
 }
 
 bool ComponentButton::IsClicked() const {
 	return clicked;
 }
 
-void ComponentButton::SetClicked(bool b) {
-	clicked = b;
+void ComponentButton::SetClicked(bool clicked_) {
+	clicked = clicked_;
 }
 
-const float4 ComponentButton::GetClickColor() const {
+const float4& ComponentButton::GetClickColor() const {
 	return colorClicked;
 }
 
-const float4 ComponentButton::GetTintColor() const {
-	if (IsActive()) {
-		ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
+const float4& ComponentButton::GetTintColor() const {
+	if (!IsActive()) return float4::one;
 
-		if (!sel) return float4::one;
+	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
 
-		if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
-			if (!sel->IsInteractable()) {
-				return sel->GetDisabledColor();
-			} else if (IsClicked()) {
-				return colorClicked;
-			} else if (sel->IsSelected()) {
-				return sel->GetSelectedColor();
-			} else if (sel->IsHovered()) {
-				return sel->GetHoverColor();
-			}
+	if (!sel) return float4::one;
+
+	if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
+		if (!sel->IsInteractable()) {
+			return sel->GetDisabledColor();
+		} else if (IsClicked()) {
+			return colorClicked;
+		} else if (sel->IsSelected()) {
+			return sel->GetSelectedColor();
+		} else if (sel->IsHovered()) {
+			return sel->GetHoverColor();
 		}
 	}
 

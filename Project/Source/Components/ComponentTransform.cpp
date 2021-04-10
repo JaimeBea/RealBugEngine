@@ -13,6 +13,11 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_POSITION "Position"
+#define JSON_TAG_ROTATION "Rotation"
+#define JSON_TAG_SCALE "Scale"
+#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
+
 void ComponentTransform::OnEditorUpdate() {
 	float3 pos = position;
 	float3 scl = scale;

@@ -1,14 +1,10 @@
 #include "PanelScene.h"
 
 #include "Globals.h"
-#include "Application.h"
-#include "Utils/Logging.h"
 #include "GameObject.h"
-#include "Event.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
-#include "Resources/ResourcePrefab.h"
-#include "Resources/ResourceScene.h"
+#include "Application.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
@@ -17,6 +13,10 @@
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
+#include "Utils/Logging.h"
+#include "Event.h"
+#include "Resources/ResourcePrefab.h"
+#include "Resources/ResourceScene.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -27,7 +27,7 @@
 #include "SDL_mouse.h"
 #include "SDL_scancode.h"
 #include <algorithm>
-#include <Event.h>
+
 #include "Utils/Leaks.h"
 
 PanelScene::PanelScene()
@@ -245,7 +245,7 @@ void PanelScene::Update() {
 	}
 }
 
-float2 PanelScene::GetMousePosOnScene()const {
+float2 PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
 }
 

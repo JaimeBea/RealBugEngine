@@ -10,6 +10,8 @@
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
+#include "Event.h"
+#include "FileSystem/MaterialImporter.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -22,7 +24,6 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
-#include "Event.h"
 
 #include "Utils/Leaks.h"
 
@@ -184,6 +185,15 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndMenu();
 	}
+	if (ImGui::BeginMenu("Assets")) {
+		if (ImGui::BeginMenu("Create")) {
+			if (ImGui::MenuItem("Material")) {
+				modalToOpen = Modal::CREATE_MATERIAL;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenu();
+	}
 	if (ImGui::BeginMenu("View")) {
 		ImGui::MenuItem(panelScene.name, "", &panelScene.enabled);
 		ImGui::MenuItem(panelConsole.name, "", &panelConsole.enabled);
@@ -235,6 +245,9 @@ UpdateStatus ModuleEditor::Update() {
 	case Modal::COMPONENT_EXISTS:
 		ImGui::OpenPopup("Already existing Component");
 		break;
+	case Modal::CREATE_MATERIAL:
+		ImGui::OpenPopup("Name the material");
+		break;
 	}
 	modalToOpen = Modal::NONE;
 
@@ -267,6 +280,24 @@ UpdateStatus ModuleEditor::Update() {
 		std::string filePath = std::string(SCENES_PATH "/") + FileDialog::GetFileName(selectedFile.c_str()) + SCENE_EXTENSION;
 		SceneImporter::SaveScene(filePath.c_str());
 		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Name the material", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
+		static char name[FILENAME_MAX] = "New mat";
+		ImGui::InputText("Name##matName", name, IM_ARRAYSIZE(name));
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Save", ImVec2(50, 20))) {
+			std::string path = MATERIALS_PATH "/" + std::string(name) + MATERIAL_EXTENSION;
+			MaterialImporter::CreateAndSaveMaterial(path.c_str());
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);

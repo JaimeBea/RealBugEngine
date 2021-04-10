@@ -12,11 +12,6 @@
 #define TESSERACT_ENGINE_API __declspec(dllexport)
 #endif
 
-#define JSON_TAG_POSITION "Position"
-#define JSON_TAG_ROTATION "Rotation"
-#define JSON_TAG_SCALE "Scale"
-#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
-
 class ComponentTransform : public Component {
 public:
 	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM, false); // Refer to ComponentType for the Constructor

@@ -26,6 +26,7 @@ enum class Modal {
 	SAVE_PROJECT,
 	SAVE_SCENE,
 	COMPONENT_EXISTS,
+	CREATE_MATERIAL,
 	QUIT
 };
 
@@ -38,7 +39,6 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
-	//void ReceiveEvent(const Event& ev) override;
 	void OnMouseMoved();
 	void OnMouseClicked();
 

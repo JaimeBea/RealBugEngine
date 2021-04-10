@@ -1,19 +1,11 @@
 #pragma once
 
 #include "Components/Component.h"
-#include <Math/float2.h	 >
-#include <Math/float3.h	 >
-#include <Math/float4x4.h>
-#include <Math/Quat.h>
 
-#define JSON_TAG_POSITION "Position"
-#define JSON_TAG_ROTATION "Rotation"
-#define JSON_TAG_SCALE "Scale"
-#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
-#define JSON_TAG_PIVOT "Pivot"
-#define JSON_TAG_SIZE "Size"
-#define JSON_TAG_ANCHOR_X "AnchorX"
-#define JSON_TAG_ANCHOR_Y "AnchorY"
+#include "Math/float2.h"
+#include "Math/float3.h"
+#include "Math/float4x4.h"
+#include "Math/Quat.h"
 
 //TODO THIS CLASS CURRENTLY ONLY WORKS FOR OBJECTS THAT USE THE CENTER OF THE SCREEN AS THE CENTER OF COORDINATES,
 //NEITHER PIVOT NOR ANCHOR ARE TAKEN INTO ACCOUNT IN ANY WAY, NOR ARE THEY MODIFIABLE LIKE THEY WOULD IN UNITY

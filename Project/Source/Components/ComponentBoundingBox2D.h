@@ -2,8 +2,8 @@
 
 #include "Component.h"
 
-#include <Geometry/AABB2D.h>
-#include <Geometry/OBB.h>
+#include "Geometry/AABB2D.h"
+#include "Geometry/OBB.h"
 
 #define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
@@ -22,7 +22,6 @@ public:
 	void CalculateWorldBoundingBox(bool force = false);
 	void DrawBoundingBox();
 	void Invalidate();
-
 	const AABB2D& GetWorldAABB() const;
 
 private:

@@ -1,29 +1,16 @@
 #pragma once
-#include <Math/float2.h>
-#include <vector>
-#include <Components/Component.h>
+
+#include "Components/Component.h"
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
 
+#include <vector>
+#include "Math/float2.h"
 #include "Math/float4.h"
 
 class ComponentEventSystem;
 
-#define JSON_TAG_COLOR_HOVERED "ColorHover"
-#define JSON_TAG_COLOR_DISABLED "ColorDisable"
-#define JSON_TAG_COLOR_SELECTED "ColorDisable"
-
-#define JSON_TAG_INTERACTABLE "Interactable"
-#define JSON_TAG_ON_AXIS_DOWN "OnAxisDown"
-#define JSON_TAG_ON_AXIS_UP "OnAxisUp"
-#define JSON_TAG_ON_AXIS_RIGHT "OnAxisRight"
-#define JSON_TAG_ON_AXIS_LEFT "OnAxisLeft"
-#define JSON_TAG_TRANSITION_TYPE "TransitionType"
-#define JSON_TAG_NAVIGATION_TYPE "NavigationType"
-
-#define JSON_TAG_SELECTABLE_TYPE "SelectableType"
-
-//TO DO	DECIDE WETHER WE ARE GOING TO USE DIFFERENT TRANSITION_TYPES SUCH AS ANIMATIONS, AND IF SO, IMPLEMENT ANIMATIONS AS TRANSITION
+//TODO	DECIDE WETHER WE ARE GOING TO USE DIFFERENT TRANSITION_TYPES SUCH AS ANIMATIONS, AND IF SO, IMPLEMENT ANIMATIONS AS TRANSITION
 
 class ComponentSelectable : public Component
 	, IPointerEnterHandler
@@ -46,7 +33,7 @@ public:
 
 	~ComponentSelectable();
 	bool IsInteractable() const;
-	void SetInteractable(bool b);
+	void SetInteractable(bool interactable_);
 	ComponentSelectable* FindSelectableOnDir(float2 dir);
 
 	virtual void OnSelect();
@@ -55,8 +42,8 @@ public:
 	void Init() override;
 	void Update() override;
 	void OnEditorUpdate() override;
-	void Enable() override;
-	void Disable() override;
+	void OnEnable() override;
+	void OnDisable() override;
 	bool IsHovered() const;
 	bool IsSelected() const;
 	void Save(JsonValue jsonVal) const override;

@@ -1,18 +1,26 @@
 #include "ComponentTransform2D.h"
+
+#include "GameObject.h"
+#include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTime.h"
+
 #include "debugdraw.h"
-
-#include "../ComponentBoundingBox2D.h"
-
-#include "GameObject.h"
-
-#include <imgui.h>
-#include <Math/TransformOps.h>
+#include "imgui.h"
+#include "Math/TransformOps.h"
 
 #include "Utils/Leaks.h"
+
+#define JSON_TAG_POSITION "Position"
+#define JSON_TAG_ROTATION "Rotation"
+#define JSON_TAG_SCALE "Scale"
+#define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
+#define JSON_TAG_PIVOT "Pivot"
+#define JSON_TAG_SIZE "Size"
+#define JSON_TAG_ANCHOR_X "AnchorX"
+#define JSON_TAG_ANCHOR_Y "AnchorY"
 
 void ComponentTransform2D::Update() {
 	CalculateGlobalMatrix();
@@ -228,7 +236,9 @@ void ComponentTransform2D::InvalidateHierarchy() {
 void ComponentTransform2D::Invalidate() {
 	dirty = true;
 	ComponentBoundingBox2D* boundingBox = GetOwner().GetComponent<ComponentBoundingBox2D>();
-	if (boundingBox) boundingBox->Invalidate();
+	if (boundingBox != nullptr) {
+		boundingBox->Invalidate();
+	}
 }
 
 void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
