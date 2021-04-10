@@ -27,7 +27,7 @@ void ComponentTransform::OnEditorUpdate() {
 	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(pos);
 	}
-	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0.0001, inf, "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0.0001f, inf, "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
 		SetScale(scl);
 	}
 
