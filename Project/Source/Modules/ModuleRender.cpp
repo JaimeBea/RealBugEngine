@@ -162,7 +162,7 @@ UpdateStatus ModuleRender::Update() {
 		}
 	}
 	if (scene->quadtree.IsOperative()) {
-		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
+		DrawSceneIterative(scene->quadtree);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
@@ -262,42 +262,56 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 	}
 }
 
-void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
-	AABB aabb3d = AABB({aabb.minPoint.x, -1000000.0f, aabb.minPoint.y}, {aabb.maxPoint.x, 1000000.0f, aabb.maxPoint.y});
-	if (CheckIfInsideFrustum(aabb3d, OBB(aabb3d))) {
-		if (node.IsBranch()) {
-			vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
+void ModuleRender::DrawSceneIterative(const Quadtree<GameObject>& quadtree) {
+	BROFILER_EVENT("DrawIterative")
 
-			const Quadtree<GameObject>::Node& topLeft = node.childNodes->nodes[0];
-			AABB2D topLeftAABB = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
-			DrawSceneRecursive(topLeft, topLeftAABB);
+	std::vector<std::pair<const Quadtree<GameObject>::Node*, AABB2D>> stack;
+	stack.reserve(quadtree.maxNodeElements);
 
-			const Quadtree<GameObject>::Node& topRight = node.childNodes->nodes[1];
-			AABB2D topRightAABB = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
-			DrawSceneRecursive(topRight, topRightAABB);
+	stack.push_back({&quadtree.root, quadtree.bounds});
 
-			const Quadtree<GameObject>::Node& bottomLeft = node.childNodes->nodes[2];
-			AABB2D bottomLeftAABB = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
-			DrawSceneRecursive(bottomLeft, bottomLeftAABB);
+	while (!stack.empty()) {
+		std::pair<const Quadtree<GameObject>::Node*, AABB2D> current = stack.back();
+		const Quadtree<GameObject>::Node& node = *current.first;
+		AABB2D aabb = current.second;
+		stack.pop_back();
 
-			const Quadtree<GameObject>::Node& bottomRight = node.childNodes->nodes[3];
-			AABB2D bottomRightAABB = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
-			DrawSceneRecursive(bottomRight, bottomRightAABB);
-		} else {
-			const Quadtree<GameObject>::Element* element = node.firstElement;
-			while (element != nullptr) {
-				GameObject* gameObject = element->object;
-				if (!gameObject->flag) {
-					ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
-					const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
-					const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
-					if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
-						DrawGameObject(gameObject);
+		AABB aabb3d = AABB({aabb.minPoint.x, -1000000.0f, aabb.minPoint.y}, {aabb.maxPoint.x, 1000000.0f, aabb.maxPoint.y});
+		if (CheckIfInsideFrustum(aabb3d, OBB(aabb3d))) {
+			if (node.IsBranch()) {
+				vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
+
+				const Quadtree<GameObject>::Node& topLeft = node.childNodes->nodes[0];
+				AABB2D topLeftAABB = {{aabb.minPoint.x, center.y}, {center.x, aabb.maxPoint.y}};
+				stack.push_back({&topLeft, topLeftAABB});
+
+				const Quadtree<GameObject>::Node& topRight = node.childNodes->nodes[1];
+				AABB2D topRightAABB = {{center.x, center.y}, {aabb.maxPoint.x, aabb.maxPoint.y}};
+				stack.push_back({&topRight, topRightAABB});
+
+				const Quadtree<GameObject>::Node& bottomLeft = node.childNodes->nodes[2];
+				AABB2D bottomLeftAABB = {{aabb.minPoint.x, aabb.minPoint.y}, {center.x, center.y}};
+				stack.push_back({&bottomLeft, bottomLeftAABB});
+
+				const Quadtree<GameObject>::Node& bottomRight = node.childNodes->nodes[3];
+				AABB2D bottomRightAABB = {{center.x, aabb.minPoint.y}, {aabb.maxPoint.x, center.y}};
+				stack.push_back({&bottomRight, bottomRightAABB});
+			} else {
+				const Quadtree<GameObject>::Element* element = node.firstElement;
+				while (element != nullptr) {
+					GameObject* gameObject = element->object;
+					if (!gameObject->flag) {
+						ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
+						const AABB& gameObjectAABB = boundingBox->GetWorldAABB();
+						const OBB& gameObjectOBB = boundingBox->GetWorldOBB();
+						if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
+							DrawGameObject(gameObject);
+						}
+
+						gameObject->flag = true;
 					}
-
-					gameObject->flag = true;
+					element = element->next;
 				}
-				element = element->next;
 			}
 		}
 	}

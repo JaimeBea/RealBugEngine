@@ -42,7 +42,7 @@ public:
 
 private:
 	void DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb); // Draws the quadrtee nodes if 'drawQuadtree' is set to true.
-	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
+	void DrawSceneIterative(const Quadtree<GameObject>& quadtree);							// ??
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
 	void DrawGameObject(GameObject* gameObject);											// ??
 	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
