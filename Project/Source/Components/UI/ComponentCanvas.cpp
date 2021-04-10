@@ -4,7 +4,6 @@
 
 #include "ComponentCanvas.h"
 #include "ComponentCanvasRenderer.h"
-
 #include "GameObject.h"
 
 void ComponentCanvas::Init() {

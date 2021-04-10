@@ -17,10 +17,11 @@ public:
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const;
 	void Load(JsonValue jComponent);
+	UID GetScriptID() const;
 
 public:
 	bool onGame = false;
 
 private:
-	UID id = 0;
+	UID scriptID = 0;
 };

@@ -25,6 +25,8 @@
 #include "UI/Interfaces/IMouseClickHandler.h"
 
 #include "Utils/Logging.h"
+#include "GL/glew.h"
+
 #include "Utils/Leaks.h"
 
 ComponentEventSystem* ModuleUserInterface::currentEvSys = nullptr;
