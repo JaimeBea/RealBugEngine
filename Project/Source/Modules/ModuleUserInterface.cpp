@@ -21,6 +21,8 @@
 #include "FileSystem/TextureImporter.h"
 #include "Utils/Logging.h"
 
+#include "GL/glew.h"
+
 #include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {

@@ -24,6 +24,7 @@
 #define JSON_TAG_SPECULAR_COLOR "SpecularColor"
 #define JSON_TAG_SPECULAR_MAP "SpecularMap"
 #define JSON_TAG_METALLIC_MAP "MetallicMap"
+#define JSON_TAG_METALLIC "Metalness"
 #define JSON_TAG_NORMAL_MAP "NormalMap"
 #define JSON_TAG_SMOOTHNESS "Smoothness"
 #define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
@@ -59,6 +60,7 @@ void ResourceMaterial::Load() {
 	specularMapId = jMaterial[JSON_TAG_SPECULAR_MAP];
 	App->resources->IncreaseReferenceCount(specularMapId);
 
+	metallic = jMaterial[JSON_TAG_METALLIC];
 	metallicMapId = jMaterial[JSON_TAG_METALLIC_MAP];
 	App->resources->IncreaseReferenceCount(metallicMapId);
 	normalMapId = jMaterial[JSON_TAG_NORMAL_MAP];
@@ -106,8 +108,9 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	jSpecularColor[1] = specularColor.y;
 	jSpecularColor[2] = specularColor.z;
 	jSpecularColor[3] = specularColor.w;
-	jMaterial[JSON_TAG_SPECULAR_MAP] = diffuseMapId;
+	jMaterial[JSON_TAG_SPECULAR_MAP] = specularMapId;
 
+	jMaterial[JSON_TAG_METALLIC] = metallic;
 	jMaterial[JSON_TAG_METALLIC_MAP] = metallicMapId;
 	jMaterial[JSON_TAG_NORMAL_MAP] = normalMapId;
 
