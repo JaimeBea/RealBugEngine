@@ -19,38 +19,160 @@
 #include "Utils/Buffer.h"
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_CLIPS "Clips"
 #define JSON_TAG_STATES "States"
-#define JSON_TAG_CLIPS "Cips"
 #define JSON_TAG_TRANSITIONS "Transitions"
 
+#define JSON_TAG_CLIP_ID "ClipId"
+
+#define JSON_TAG_NAME "Name"
+#define JSON_TAG_ANIMATION_UID "AnimationUID"
+#define JSON_TAG_BEGIN_INDEX "BeginIndex"
+#define JSON_TAG_END_INDEX "EndIndex"
+#define JSON_TAG_LOOP "Loop"
+#define JSON_TAG_ID "Id"
+
+#define JSON_TAG_CURRENTTIME "CurrentTime"
+#define JSON_TAG_SOURCE "Source"
+#define JSON_TAG_TARGET "Target"
+#define JSON_TAG_TRIGGER_NAME "Trigger"
+#define JSON_TAG_INTERPOLATION_DURATION "Interpolation"
+
+
+void ResourceStateMachine::Load() {
+	// Timer to measure loading a material
+	MSTimer timer;
+	timer.Start();
+	std::string filePath = GetResourceFilePath();
+	LOG("Loading material from path: \"%s\".", filePath.c_str());
+
+	Buffer<char> buffer = App->files->Load(filePath.c_str());
+	if (buffer.Size() == 0) return;
+
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(buffer.Data());
+	if (document.HasParseError()) {
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return;
+	}
+	JsonValue jMaterial(document, document);
+
+
+	/*const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS];
+	assert(clipsArray.IsArray());
+	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
+		const rapidjson::Value::ConstMemberIterator currentAttribute = itr->FindMember(JSON_TAG_NAME);
+		printf("%d ", itr->GetInt());
+		itr->GetString()[JSON_TAG_NAME]
+
+	}*/
+
+	std::unordered_map<UID, Clip*> clipsMap;
+	for (auto const& p : document[JSON_TAG_CLIPS].GetArray()) {
+		std::string name = p[JSON_TAG_NAME].GetString();
+		UID id = p[JSON_TAG_ID].GetUint64();
+		UID animationUID = p[JSON_TAG_ANIMATION_UID].GetUint64();
+		unsigned int beginIndex = p[JSON_TAG_BEGIN_INDEX].GetUint();
+		unsigned int endIndex = p[JSON_TAG_END_INDEX].GetUint();
+		bool loop = p[JSON_TAG_LOOP].GetBool();
+		Clip* clip = new Clip(name, animationUID, beginIndex, endIndex, loop, id);
+		clips.push_back(clip);
+		clipsMap.insert(std::make_pair(id, clip));
+	}
+
+	std::unordered_map<UID, ResourceStates*> stateMap;
+	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
+			UID id = p[JSON_TAG_ID].GetUint64();
+			std::string name = p[JSON_TAG_NAME].GetString();
+			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
+			float currentTime = p[JSON_TAG_CURRENTTIME].GetFloat();
+			ResourceStates* state = new ResourceStates(name, clipsMap.find(clipId)->second, currentTime);
+			states.push_back(state);
+			stateMap.insert(std::make_pair(id, state));
+
+	}
+
+	for (auto const& p : document[JSON_TAG_TRANSITIONS].GetArray()) {
+		std::string triggerName = p[JSON_TAG_TRIGGER_NAME].GetString();
+		UID id = p[JSON_TAG_ID].GetUint64();
+		UID source = p[JSON_TAG_SOURCE].GetUint64();
+		UID target = p[JSON_TAG_TARGET].GetUint64();
+		float interpolationDuration = p[JSON_TAG_INTERPOLATION_DURATION].GetFloat();
+		ResourceTransition* transition = new ResourceTransition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration,id);
+		transitions.insert(std::make_pair(triggerName, transition));
+	}	
+
+	unsigned timeMs = timer.Stop();
+	LOG("Material loaded in %ums", timeMs);
+}
+
+void ResourceStateMachine::Unload() {
+	/*App->resources->DecreaseReferenceCount(shaderId);
+	App->resources->DecreaseReferenceCount(diffuseMapId);
+	App->resources->DecreaseReferenceCount(specularMapId);
+	App->resources->DecreaseReferenceCount(metallicMapId);
+	App->resources->DecreaseReferenceCount(normalMapId);*/
+}
 
 void ResourceStateMachine::SaveToFile(const char* filePath) {
 	LOG("Saving material to path: \"%s\".", filePath);
 
 	MSTimer timer;
 	timer.Start();
-
+	
 	// Create document
 	rapidjson::Document document;
 	JsonValue jStateMachine(document, document);
 
 	// Save JSON values
 	document.SetObject();
-	rapidjson::Value myArray(rapidjson::kArrayType);
-	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
-	std::list<Clip*>::iterator it;
-	for (it = clips.begin(); it != clips.end(); ++it) {		
-		rapidjson::Value objValue(rapidjson::kObjectType);
-		rapidjson::Value name((*it)->name.c_str(), allocator);
-		objValue.AddMember("name", name, allocator);
-		objValue.AddMember("animationUID", (*it)->animationUID, allocator);
-		objValue.AddMember("beginIndex", (*it)->beginIndex, allocator);
-		objValue.AddMember("endIndex", (*it)->endIndex, allocator);
-		objValue.AddMember("loop", (*it)->loop, allocator);
 
-		myArray.PushBack(objValue, allocator);
+	rapidjson::Value clipsArrayJson(rapidjson::kArrayType);
+	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+	std::list<Clip*>::iterator itClip;
+	for (itClip = clips.begin(); itClip != clips.end(); ++itClip) {		
+		rapidjson::Value objValue(rapidjson::kObjectType);
+		rapidjson::Value name((*itClip)->name.c_str(), allocator);
+		objValue.AddMember(JSON_TAG_NAME, name, allocator);
+		objValue.AddMember(JSON_TAG_ID, (*itClip)->id, allocator);
+		objValue.AddMember(JSON_TAG_ANIMATION_UID, (*itClip)->animationUID, allocator);
+		objValue.AddMember(JSON_TAG_BEGIN_INDEX, (*itClip)->beginIndex, allocator);
+		objValue.AddMember(JSON_TAG_END_INDEX, (*itClip)->endIndex, allocator);
+		objValue.AddMember(JSON_TAG_LOOP, (*itClip)->loop, allocator);
+
+		clipsArrayJson.PushBack(objValue, allocator);
 	}
-	document.AddMember("clips", myArray, allocator);
+	document.AddMember(JSON_TAG_CLIPS, clipsArrayJson, allocator);
+
+	rapidjson::Value statesArrayJson(rapidjson::kArrayType);
+	std::list<ResourceStates*>::iterator itState;
+	for (itState = states.begin(); itState != states.end(); ++itState) {		
+		rapidjson::Value objValue(rapidjson::kObjectType);
+		rapidjson::Value name((*itState)->name.c_str(), allocator);
+		objValue.AddMember(JSON_TAG_ID, (*itState)->id, allocator);
+		objValue.AddMember(JSON_TAG_NAME, name, allocator);
+		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState)->clip->id, allocator);		
+		objValue.AddMember(JSON_TAG_CURRENTTIME, (*itState)->currentTime, allocator);
+
+		statesArrayJson.PushBack(objValue, allocator);
+	}
+	document.AddMember(JSON_TAG_STATES, statesArrayJson, allocator);
+	
+	//Saving transitions
+	rapidjson::Value transitionsArrayJson(rapidjson::kArrayType);
+	for (const auto &element : transitions) {
+		rapidjson::Value objValue(rapidjson::kObjectType);
+		rapidjson::Value triggerName(element.first.c_str(), allocator);
+		objValue.AddMember(JSON_TAG_TRIGGER_NAME, triggerName, allocator);
+		objValue.AddMember(JSON_TAG_ID, element.second->id, allocator);
+		objValue.AddMember(JSON_TAG_SOURCE, element.second->source->id, allocator);
+		objValue.AddMember(JSON_TAG_TARGET, element.second->target->id, allocator);
+		objValue.AddMember(JSON_TAG_INTERPOLATION_DURATION, element.second->interpolationDuration, allocator);
+
+		transitionsArrayJson.PushBack(objValue, allocator);
+	}
+	document.AddMember(JSON_TAG_TRANSITIONS, transitionsArrayJson, allocator);
+
 
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;
@@ -101,7 +223,7 @@ void ResourceStateMachine::AddTransition(ResourceStates* from, ResourceStates* t
 		return;
 	}
 
-	transition = new ResourceTransition(from, to, name, interpolation);
+	transition = new ResourceTransition(from, to, interpolation);
 	transitions.insert(std::make_pair(name,transition));
 }
 

@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Penteract</RootNamespace>
-	<ProjectGuid>{04E80711-15BA-4A0B-AE47-AD562D1291A4}</ProjectGuid>
+	<ProjectGuid>{AA8110BE-C0CB-4E95-8243-48857E1EA880}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

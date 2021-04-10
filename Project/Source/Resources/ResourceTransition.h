@@ -1,21 +1,21 @@
 #pragma once
 #include <string>
-
+#include "Utils/UID.h"
 class ResourceStates;
 class ResourceTransition {
 	
 public:
-	ResourceTransition(ResourceStates* mSource, ResourceStates* mTarget, std::string& mTrigger, float mInterpolation)
+	ResourceTransition(ResourceStates* mSource, ResourceStates* mTarget, float mInterpolation,UID mid = 0)
 		: source(mSource)
 		, target(mTarget)
-		, trigger(mTrigger)
 		, interpolationDuration(mInterpolation)
 	{
-
+		id = mid != 0 ? mid :GenerateUID();
 	}
+
+public:
+	UID id;
 	ResourceStates* source = nullptr;
 	ResourceStates* target = nullptr;
-	std::string trigger = "";
 	float interpolationDuration = 0;
-	float currentDuration = 0;
 };

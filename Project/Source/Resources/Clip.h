@@ -9,13 +9,15 @@
 
 class Clip {
 public:
-	Clip(std::string& mName, UID mAnimationUID = 0, unsigned int mBeginIndex = 0, unsigned int mEndIndex = 0, bool mLoop = false)
+	Clip(std::string& mName, UID mAnimationUID = 0, unsigned int mBeginIndex = 0, unsigned int mEndIndex = 0, bool mLoop = false, UID mid = 0)
 		: name(mName)
 		, animationUID(mAnimationUID)
 		, loop(mLoop)
 	{
 		if (animationUID != 0) {
+			id = mid != 0 ? mid :GenerateUID();
 			ResourceAnimation* animationResource = GetResourceAnimation();
+			App->resources->IncreaseReferenceCount(mAnimationUID);
 			setEndIndex(mEndIndex);
 			setBeginIndex(mBeginIndex);
 		}
@@ -40,10 +42,12 @@ public:
 	}
 
 	ResourceAnimation* GetResourceAnimation() {
-		return (ResourceAnimation*) App->resources->GetResource(animationUID);
+		ResourceAnimation* a = (ResourceAnimation*) App->resources->GetResource(animationUID);
+		return a;
 	}
 
 public:
+	UID id;
 	std::string name;
 	UID animationUID;
 	bool loop = false;

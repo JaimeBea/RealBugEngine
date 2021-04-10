@@ -227,7 +227,6 @@
     <ClCompile Include="Source\Utils\AssetFile.cpp" />
     <ClCompile Include="Source\Utils\FileDialog.cpp" />
     <ClCompile Include="Source\Resources\Clip.cpp" />
-    <ClCompile Include="Source\Resources\ResourceStates.cpp" />
     <ClCompile Include="Source\Components\ComponentAnimation.cpp" />
     <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
     <ClCompile Include="Libs\PhysicsFS\physfs.c" />
@@ -356,7 +355,6 @@
     <ClCompile Include="Libs\MathGeoLib\Math\SSEMath.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Math\TransformOps.cpp" />
     <ClCompile Include="Libs\MathGeoLib\Time\Clock.cpp" />
-    <ClCompile Include="Source\Resources\ResourceTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

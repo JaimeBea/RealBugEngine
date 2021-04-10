@@ -113,9 +113,7 @@
     <ClCompile Include="Libs\PhysicsFS\physfs_unicode.c" />
     <ClCompile Include="Source\Components\ComponentMeshRenderer.cpp" />
     <ClCompile Include="Source\Resources\ResourceStateMachine.cpp" />
-    <ClCompile Include="Source\Resources\ResourceStates.cpp" />
     <ClCompile Include="Source\Resources\Clip.cpp" />
-    <ClCompile Include="Source\Resources\ResourceTransition.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />

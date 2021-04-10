@@ -662,7 +662,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
 
-			Clip* clip = new Clip(clipName + parsedI, animation->GetId(), 60, 0, true);
+			Clip* clip = new Clip(clipName + parsedI, animation->GetId(), 0, 60, true);
 
 			resourceStateMachine->AddState(stateName + parsedI, clip);
 		}
@@ -670,11 +670,11 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		//Setting machine state
 		std::string sState2 = "State2";
 		std::string clipName2 = "testClip2";
-		Clip* clip2 = new Clip(clipName2, testAnim->GetId(), 360, 290, false);
+		Clip* clip2 = new Clip(clipName2, testAnim->GetId(), 290, 360, false);
 
 		std::string sState3 = "State3";
 		std::string clipName3 = "testClip3";
-		Clip* clip3 = new Clip(clipName3, testAnim->GetId(), 120, 60, true);
+		Clip* clip3 = new Clip(clipName3, testAnim->GetId(), 60, 120, true);
 
 		//Mocking transition
 		ResourceStates* state2 = resourceStateMachine->AddState(sState2, clip2);
