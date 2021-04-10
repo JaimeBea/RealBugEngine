@@ -24,7 +24,7 @@
 
 #include "assimp/mesh.h"
 #include "GL/glew.h"
-#include <imgui_internal.h>
+#include "imgui_internal.h"
 #include "imgui.h"
 
 #include "Utils/Leaks.h"
