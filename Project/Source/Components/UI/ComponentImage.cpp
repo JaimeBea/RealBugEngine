@@ -165,9 +165,9 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
 	if (textureResource != nullptr) {
 		glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
-		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), true);
+		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), 1);
 	} else {
-		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), false);
+		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), 0);
 	}
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
