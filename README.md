@@ -133,6 +133,8 @@ _Jordi Gil Gonzalez_ (https://jordi-gil.github.io/)
 
 _Cristian Ferrer Galan_ (https://github.com/Yonimevicio)
 
+"To fix" 
+
 ## Github
 
 https://github.com/TBD-org/Tesseract
