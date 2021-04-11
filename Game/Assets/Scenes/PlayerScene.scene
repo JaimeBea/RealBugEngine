@@ -1,0 +1,268 @@
+{
+    "QuadtreeBounds": [
+        -1000.0,
+        -1000.0,
+        1000.0,
+        1000.0
+    ],
+    "QuadtreeMaxDepth": 4,
+    "QuadtreeElementsPerNode": 200,
+    "Root": {
+        "Id": 3809383876994809169,
+        "Name": "Scene",
+        "Active": true,
+        "RootBoneId": 0,
+        "Components": [
+            {
+                "Type": 1,
+                "Id": 7732459645155999335,
+                "Active": true,
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "LocalEulerAngles": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "Children": [
+            {
+                "Id": 5949829412191539030,
+                "Name": "Directional Light",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Id": 16993820891725836714,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            300.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.7071068286895752,
+                            0.0,
+                            0.0,
+                            0.7071068286895752
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            90.00000762939453,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": 5,
+                        "Id": 15854739743764398907,
+                        "Active": true,
+                        "LightType": 0,
+                        "Color": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "Intensity": 1.0,
+                        "Kl": 0.04500000178813934,
+                        "Kq": 0.007499999832361937,
+                        "InnerAngle": 0.2617993950843811,
+                        "OuterAngle": 0.5235987901687622
+                    }
+                ],
+                "Children": null
+            },
+            {
+                "Id": 16819207460988766960,
+                "Name": "Game Camera",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Id": 7345955842300867427,
+                        "Active": true,
+                        "Position": [
+                            2.0,
+                            3.0,
+                            -5.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": 4,
+                        "Id": 16597657754110890926,
+                        "Active": true,
+                        "Frustum": {
+                            "Pos": [
+                                2.0,
+                                3.0,
+                                -5.0
+                            ],
+                            "Up": [
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            "Front": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "NearPlaneDistance": 0.10000000149011612,
+                            "FarPlaneDistance": 200.0,
+                            "HorizontalFov": 1.5707963705062867,
+                            "VerticalFov": 1.3113912343978882
+                        },
+                        "CameraSelected": true
+                    },
+                    {
+                        "Type": 6,
+                        "Id": 11920068452143466087,
+                        "Active": true,
+                        "skybox": 16160610022364638900
+                    },
+                    {
+                        "Type": 7,
+                        "Id": 12650455727713570460,
+                        "Active": true,
+                        "Script": 2966145001173625070
+                    }
+                ],
+                "Children": null
+            },
+            {
+                "Id": 6587659028512439269,
+                "Name": "RootNode",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Id": 10711113319251456386,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
+                    }
+                ],
+                "Children": [
+                    {
+                        "Id": 17576692222021269120,
+                        "Name": "Hearse",
+                        "Active": true,
+                        "RootBoneId": 0,
+                        "Components": [
+                            {
+                                "Type": 1,
+                                "Id": 2994511342110561058,
+                                "Active": true,
+                                "Position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "Rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "Scale": [
+                                    0.009999999776482582,
+                                    0.009999999776482582,
+                                    0.009999999776482582
+                                ],
+                                "LocalEulerAngles": [
+                                    -0.0,
+                                    0.0,
+                                    -0.0
+                                ]
+                            },
+                            {
+                                "Type": 2,
+                                "Id": 7017934887462382004,
+                                "Active": true,
+                                "MeshID": 9083130218055011487,
+                                "MaterialID": 16715803232905191362
+                            },
+                            {
+                                "Type": 3,
+                                "Id": 8454454854203943553,
+                                "Active": true,
+                                "LocalBoundingBox": [
+                                    -102.79621887207031,
+                                    -0.00004348754737293348,
+                                    -324.2380676269531,
+                                    102.79621887207031,
+                                    186.87110900878907,
+                                    324.2380676269531
+                                ]
+                            },
+                            {
+                                "Type": 7,
+                                "Id": 15783217687612769217,
+                                "Active": true,
+                                "Script": 15284738188358707951
+                            }
+                        ],
+                        "Children": null
+                    }
+                ]
+            }
+        ]
+    }
+}

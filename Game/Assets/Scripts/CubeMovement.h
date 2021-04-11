@@ -4,9 +4,9 @@
 
 class GameObject;
 
-class Camera : public Script
+class CubeMovement : public Script
 {
-	GENERATE_BODY(Camera);
+	GENERATE_BODY(CubeMovement);
 
 public:
 
@@ -16,5 +16,8 @@ public:
 public:
 
 	GameObject* gameObject = nullptr;
-	GameObject* player = nullptr;
+
+private:
+
+	int speed = 10;
 };
