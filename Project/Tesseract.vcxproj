@@ -267,6 +267,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Libs\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentText.cpp" />
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
