@@ -19,8 +19,6 @@ void Component::Update() {}
 
 void Component::DrawGizmos() {}
 
-void Component::OnTransformUpdate() {}
-
 void Component::OnEditorUpdate() {}
 
 void Component::Save(JsonValue jComponent) const {}

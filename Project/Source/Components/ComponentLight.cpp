@@ -22,14 +22,12 @@
 #define JSON_TAG_INNER_ANGLE "InnerAngle"
 #define JSON_TAG_OUTER_ANGLE "OuterAngle"
 
-void ComponentLight::OnTransformUpdate() {
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	pos = transform->GetGlobalPosition();
-	direction = transform->GetGlobalRotation() * float3::unitZ;
+void ComponentLight::Init() {
+	UpdateLight();
 }
 
-void ComponentLight::Init() {
-	OnTransformUpdate();
+void ComponentLight::Update() {
+	UpdateLight();
 }
 
 void ComponentLight::DrawGizmos() {
@@ -162,4 +160,10 @@ void ComponentLight::DuplicateComponent(GameObject& owner) {
 	component->kq = this->kq;
 	component->innerAngle = this->innerAngle;
 	component->outerAngle = this->outerAngle;
+}
+
+void ComponentLight::UpdateLight() {
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+	pos = transform->GetGlobalPosition();
+	direction = transform->GetGlobalRotation() * float3::unitZ;
 }
