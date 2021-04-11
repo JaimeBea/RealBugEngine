@@ -63,7 +63,9 @@ void ModuleUserInterface::Render() {
 	Scene* scene = App->scene->scene;
 	if (scene != nullptr) {
 		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {
-			canvasRenderer.Render(&canvasRenderer.GetOwner());
+			if (canvasRenderer.GetOwner().IsActiveInHierarchy()) {
+				canvasRenderer.Render(&canvasRenderer.GetOwner());
+			}
 		}
 	}
 }
