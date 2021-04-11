@@ -125,3 +125,7 @@ Frustum ComponentCamera::BuildDefaultFrustum() const {
 	newFrustum.SetPos(vec::zero);
 	return newFrustum;
 }
+
+Frustum* ComponentCamera::GetFrustum() {
+	return &frustum;
+}

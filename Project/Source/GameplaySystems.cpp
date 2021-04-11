@@ -4,14 +4,15 @@
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleCamera.h"
 #include "FileSystem/SceneImporter.h"
-
-float GameplaySystems::GetDeltaTime() {
-	return App->time->GetDeltaTime();
-}
 
 GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
+}
+
+float Time::GetDeltaTime() {
+	return App->time->GetDeltaTime();
 }
 
 bool Input::GetMouseButtonDown(int button) {
@@ -36,6 +37,10 @@ bool Input::GetKeyCodeUp(KEYCODE keycode) {
 
 bool Input::GetKeyCode(KEYCODE keycode) {
 	return App->input->GetKeyboard()[keycode] == KS_REPEAT;
+}
+
+const float2& Input::GetMouseMotion(){
+	return App->input->GetMouseMotion();
 }
 
 void SceneManager::SceneLoad(const char* filePath) {

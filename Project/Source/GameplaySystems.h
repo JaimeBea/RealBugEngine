@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Math/float2.h"
+
 #if defined(TESSERACT_ENGINE_API)
 /* do nothing. */
 #elif defined(_MSC_VER)
@@ -9,10 +11,12 @@
 class GameObject;
 
 namespace GameplaySystems {
-	TESSERACT_ENGINE_API float GetDeltaTime();
 	TESSERACT_ENGINE_API GameObject* GetGameObject(const char* name);
 }; // namespace GameplaySystems
 
+namespace Time {
+	TESSERACT_ENGINE_API float GetDeltaTime();
+}
 namespace Input {
 	enum KEYCODE {
 		KEY_UNKNOWN = 0,
@@ -340,6 +344,7 @@ namespace Input {
 	TESSERACT_ENGINE_API bool GetKeyCodeDown(KEYCODE keycode);
 	TESSERACT_ENGINE_API bool GetKeyCodeUp(KEYCODE keycode);
 	TESSERACT_ENGINE_API bool GetKeyCode(KEYCODE keycode);
+	TESSERACT_ENGINE_API const float2& GetMouseMotion();
 }; // namespace Input
 
 namespace SceneManager {
