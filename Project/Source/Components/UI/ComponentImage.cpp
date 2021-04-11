@@ -123,9 +123,9 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
+	} else {
+		return;
 	}
-	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
-	if (textureResource == nullptr) return;
 
 	if (alphaTransparency) {
 		glEnable(GL_BLEND);
@@ -162,7 +162,13 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
 	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
 
-	glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
+	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+	if (textureResource != nullptr) {
+		glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
+		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), 1);
+	} else {
+		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), 0);
+	}
 
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glBindTexture(GL_TEXTURE_2D, 0);

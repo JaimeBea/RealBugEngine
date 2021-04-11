@@ -23,14 +23,15 @@ void main()
 in vec2 uv0;
 
 uniform sampler2D diffuse;
+uniform int hasDiffuse;
 uniform vec4 inputColor;
 uniform vec4 tintColor;
 
 out vec4 outColor;
 
 void main()
-{
-	outColor = texture2D(diffuse, uv0) * inputColor * tintColor;
+{	
+	outColor = (hasDiffuse * texture2D(diffuse, uv0) + 1 - hasDiffuse) * inputColor * tintColor;
 }
 
 #endif 
