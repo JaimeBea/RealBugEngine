@@ -9,11 +9,13 @@ GENERATE_BODY_IMPL(WinLose);
 void WinLose::Start() {
 	gameObject = GameplaySystems::GetGameObject("Win");
 	player = GameplaySystems::GetGameObject("Hearse");
+	UI = GameplaySystems::GetGameObject("InfoText");
 }
 
 void WinLose::Update() {
 	if (player->GetComponent<ComponentTransform>()->GetPosition().x >= WinPointX) {
 		player->GetComponent<ComponentTransform>()->SetPosition(float3(0.0f, 0.0f, 0.0f));
+		UI->Enable();
 		SceneManager::SceneLoad("Assets/Scenes/LoseScene.scene");
 	}
 	if (player->GetComponent<ComponentTransform>()->GetPosition().x <= LosePointX) {

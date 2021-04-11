@@ -16,6 +16,7 @@ public:
 
 	GameObject* gameObject = nullptr;
 	GameObject* player = nullptr;
+	GameObject* UI = nullptr;
 
 public:
 	float WinPointX = 13.0f;
