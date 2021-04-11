@@ -16,12 +16,14 @@ public:
 
 	// ------- Core Functions ------ //
 	void Init() override;
+	void Update() override;
 	void DrawGizmos() override;
-	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
+
+	void UpdateLight();
 
 public:
 	bool drawGizmos = true;						  // If true, the Gizmos will be drawn on DrawGizmos().

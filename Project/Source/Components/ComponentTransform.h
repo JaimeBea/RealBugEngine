@@ -23,12 +23,9 @@ public:
 	void DuplicateComponent(GameObject& owner) override;
 
 	void InvalidateHierarchy();						// Marks all the hierarchy of the owner GameObject as 'dirty'
-	void Invalidate();								// Marks this Transform and the BoundingBox of the GameObject as 'dirty'. Used also in the InvalidateHierarchy() recursion.
 	void CalculateGlobalMatrix(bool force = false); // Recalculates the Transformation Matrix from 'position', 'rotation' and 'scale'.
-	void TransformChanged();						// It is called on a SetPosition/Rotation/Scale(), and signals the onTransformUpdate() to all other components. It has recursivity to all the 'owner' GameObject children.
-
+	
 	// ---------- Setters ---------- //
-	// These setters will broadcast the OnTransformUpdate() signal to the Components.
 	TESSERACT_ENGINE_API void SetPosition(float3 position);
 	TESSERACT_ENGINE_API void SetRotation(Quat rotation);
 	TESSERACT_ENGINE_API void SetRotation(float3 rotation);

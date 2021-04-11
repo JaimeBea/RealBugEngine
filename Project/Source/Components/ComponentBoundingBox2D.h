@@ -11,12 +11,12 @@ class ComponentBoundingBox2D : public Component {
 public:
 	REGISTER_COMPONENT(ComponentBoundingBox2D, ComponentType::BOUNDING_BOX_2D, false);
 
-	void OnTransformUpdate() override;
-	void Save(JsonValue jComponent) const override;
-	void Load(JsonValue jComponent) override;
 	void Init() override;
 	void Update() override;
 	void DuplicateComponent(GameObject& owner) override;
+
+	void Save(JsonValue jComponent) const override;
+	void Load(JsonValue jComponent) override;
 
 	void SetLocalBoundingBox(const AABB2D& boundingBox);
 	void CalculateWorldBoundingBox(bool force = false);

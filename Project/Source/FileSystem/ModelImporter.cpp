@@ -369,7 +369,6 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 		transform->SetPosition(position);
 		transform->SetRotation(rotation);
 		transform->SetScale(scale);
-		transform->CalculateGlobalMatrix();
 		LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
 
 		// Save min and max points
