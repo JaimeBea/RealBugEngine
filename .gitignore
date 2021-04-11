@@ -12,3 +12,7 @@
 
 # Library folder
 /Game/Library/
+
+# Penteract solution
+/Game/Penteract/Penteract.sln
+/Game/Penteract/Penteract.vcx.proj
