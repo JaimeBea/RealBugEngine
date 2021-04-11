@@ -16,7 +16,8 @@ enum class EventType {
 	ADD_RESOURCE,
 	UPDATE_FOLDERS,
 	MOUSE_UPDATE,
-	MOUSE_CLICKED
+	MOUSE_CLICKED,
+	MOUSE_RELEASED
 };
 
 //STEPS TO CREATE A NEW EVENT:
@@ -68,6 +69,8 @@ public:
 			return "Mouse moved";
 		case EventType::MOUSE_CLICKED:
 			return "Mouse clicked";
+		case EventType::MOUSE_RELEASED:
+			return "Mouse released";
 		case EventType::ADD_RESOURCE:
 			return "Add Resource";
 		case EventType::UPDATE_FOLDERS:

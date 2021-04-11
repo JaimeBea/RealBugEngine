@@ -426,3 +426,8 @@ void ModuleEditor::OnMouseClicked() {
 	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
+
+void ModuleEditor::OnMouseReleased() {
+	Event mouseEvent = Event(EventType::MOUSE_RELEASED);
+	App->events->AddEvent(mouseEvent);
+}

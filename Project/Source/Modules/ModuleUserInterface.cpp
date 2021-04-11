@@ -28,6 +28,8 @@
 bool ModuleUserInterface::Init() {
 	App->events->AddObserverToEvent(EventType::MOUSE_UPDATE, this);
 	App->events->AddObserverToEvent(EventType::MOUSE_CLICKED, this);
+	App->events->AddObserverToEvent(EventType::MOUSE_RELEASED, this);
+
 	return true;
 }
 
@@ -105,6 +107,16 @@ void ModuleUserInterface::ReceiveEvent(const Event& e) {
 				}
 			}
 		}
+		break;
+
+	case EventType::MOUSE_RELEASED:
+		if (currentEvSys != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+			if (lastHoveredSelectable != nullptr) {
+				lastHoveredSelectable->OnDeselect();
+			}
+		}
+
 		break;
 	default:
 		break;
