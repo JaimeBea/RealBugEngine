@@ -110,13 +110,10 @@ void ComponentSelectable::OnDeselect() {
 void ComponentSelectable::Init() {
 	interactable = false;
 	selected = false;
-	navigationType = NavigationType::AUTOMATIC;
 	onAxisDown = 0;
 	onAxisLeft = 0;
 	onAxisRight = 0;
 	onAxisUp = 0;
-	transitionType = TransitionType::NONE;
-	selectableType = ComponentType::UNKNOWN;
 }
 
 void ComponentSelectable::Update() {
