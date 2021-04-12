@@ -22,6 +22,8 @@ public:
 
 	void SetVSync(bool vsync);
 
+	void UpdateShadingMode(const char* shadingMode);
+
 public:
 	void* context = nullptr; // SDL context.
 
@@ -37,7 +39,6 @@ public:
 	// -- Debugging Tools Toggles -- //
 	bool drawQuadtree = true;
 	bool drawAllBoundingBoxes = false;
-	bool skyboxActive = true;
 
 	float3 ambientColor = {0.0f, 0.0f, 0.0f}; // Color of ambient Light
 	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
@@ -47,7 +48,6 @@ private:
 	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
 	void DrawGameObject(GameObject* gameObject);											// ??
-	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
 	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
 	void RenderUI();
 	void SetOrtographicRender();

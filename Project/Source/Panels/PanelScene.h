@@ -12,14 +12,19 @@ public:
 	PanelScene();
 
 	void Update() override;
+
+	bool IsUsing2D() const;
+
+	// Getters
 	float2 GetMousePosOnScene() const;
 	float2 GetSceneWindowSize() const;
-
-	const bool IsUsing2D() const;
+	const char* GetCurrentShadingMode() const;
 
 private:
 	float2 framebufferSize = {0.0f, 0.0f};
 	float2 mousePosOnScene = {0.0f, 0.0f};
+
+	const char* currentShadingMode = "Shaded";
 
 	bool view2D = false;
 };

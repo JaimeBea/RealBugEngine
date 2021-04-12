@@ -11,10 +11,12 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleProject.h"
+#include "Modules/ModuleScene.h"
 #include "Utils/Logging.h"
 #include "Event.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceScene.h"
+#include "Resources/ResourceMesh.h"
 #include "Panels/PanelControlEditor.h"
 
 #include "imgui_internal.h"
@@ -45,10 +47,104 @@ void PanelScene::Update() {
 		App->editor->panelControlEditor.GetImguizmoSnap(snap);
 
 		if (ImGui::BeginMenuBar()) {
-			ImGui::Text("Shadered");
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
+			const char* shadingMode[2] = {"Shaded", "Wireframe"};
+			if (ImGui::Button(currentShadingMode)) {
+				ImGui::OpenPopup("DrawMode");
+			}
+
+			if (ImGui::BeginPopup("DrawMode")) {
+				ImGui::TextColored(App->editor->titleColor, "Shading Mode");
+				ImGui::Separator();
+				for (int i = 0; i < IM_ARRAYSIZE(shadingMode); i++) {
+					bool isSelected = (currentShadingMode == shadingMode[i]);
+					if (ImGui::Selectable(shadingMode[i])) {
+						currentShadingMode = shadingMode[i];
+						App->renderer->UpdateShadingMode(currentShadingMode);
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 			ImGui::Checkbox("2D", &view2D);
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 
+			std::string camera = std::string(ICON_FA_VIDEO);
+			if (ImGui::Button(camera.c_str())) {
+				ImGui::OpenPopup("Camera");
+			}
+			if (ImGui::BeginPopup("Camera")) {
+				Frustum& frustum = App->camera->GetEngineFrustum();
+				vec front = frustum.Front();
+				vec up = frustum.Up();
+				ImGui::TextColored(App->editor->titleColor, "Frustum");
+				ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+				float nearPlane = frustum.NearPlaneDistance();
+				float farPlane = frustum.FarPlaneDistance();
+				if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
+					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+				}
+				if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
+					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+				}
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+
+			if (ImGui::Button("Gizmos")) {
+				ImGui::OpenPopup("Gizmos");
+			}
+			if (ImGui::BeginPopup("Gizmos")) {
+				ImGui::Text("General");
+				ImGui::Separator();
+				ImGui::Checkbox("Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
+				ImGui::Checkbox("Quadtree", &App->renderer->drawQuadtree);
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+
+			if (ImGui::Button("Stats")) {
+				ImGui::OpenPopup("Stats");
+			}
+			if (ImGui::BeginPopup("Stats")) {
+				char fps[10];
+				sprintf_s(fps, 10, "%.1f", fpsLog[fpsLogIndex]);
+				char ms[10];
+				sprintf_s(ms, 10, "%.1f", msLog[fpsLogIndex]);
+
+				int triangles = 0;
+				for (ComponentMeshRenderer& meshComponent : App->scene->scene->meshRendererComponents) {
+					ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
+					triangles += mesh->numIndices / 3;
+				}
+
+				ImGui::TextColored(App->editor->titleColor, "Framerate");
+				ImGui::Text("Frames: ");
+				ImGui::SameLine();
+				ImGui::TextColored(App->editor->textColor, fps);
+				ImGui::Text("Milliseconds: ");
+				ImGui::SameLine();
+				ImGui::TextColored(App->editor->textColor, ms);
+				ImGui::Separator();
+				ImGui::TextColored(App->editor->titleColor, "Triangles / scene");
+				ImGui::Text("Number: ");
+				ImGui::SameLine();
+				char trianglesChar[10];
+				sprintf_s(trianglesChar, 10, "%d", triangles);
+				ImGui::TextColored(App->editor->textColor, trianglesChar);
+
+				ImGui::EndPopup();
+			}
+			ImGui::PopStyleVar();
 			ImGui::EndMenuBar();
 		}
 
@@ -174,6 +270,10 @@ void PanelScene::Update() {
 	}
 }
 
+bool PanelScene::IsUsing2D() const {
+	return view2D;
+}
+
 float2 PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
 }
@@ -182,6 +282,6 @@ float2 PanelScene::GetSceneWindowSize() const {
 	return framebufferSize;
 }
 
-const bool PanelScene::IsUsing2D() const {
-	return view2D;
+const char* PanelScene::GetCurrentShadingMode() const {
+	return currentShadingMode;
 }

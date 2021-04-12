@@ -193,9 +193,7 @@ void PanelConfiguration::Update() {
 		if (ImGui::CollapsingHeader("Scene")) {
 			// TODO: Change the Skybox images
 			Scene* scene = App->scene->scene;
-			ImGui::TextColored(App->editor->titleColor, "Gizmos");
-			ImGui::Checkbox("Draw Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
-			ImGui::Checkbox("Draw Quadtree", &App->renderer->drawQuadtree);
+			ImGui::TextColored(App->editor->titleColor, "Quadtree");
 			ImGui::Separator();
 			ImGui::InputFloat2("Min Point", scene->quadtreeBounds.minPoint.ptr());
 			ImGui::InputFloat2("Max Point", scene->quadtreeBounds.maxPoint.ptr());
@@ -209,29 +207,9 @@ void PanelConfiguration::Update() {
 				scene->RebuildQuadtree();
 			}
 			ImGui::Separator();
-
-			ImGui::Checkbox("Skybox", &App->renderer->skyboxActive);
+			ImGui::TextColored(App->editor->titleColor, "Background Settings");
 			ImGui::ColorEdit3("Background", App->renderer->clearColor.ptr());
 			ImGui::ColorEdit3("Ambient Color", App->renderer->ambientColor.ptr());
-		}
-
-		// Camera
-		if (ImGui::CollapsingHeader("Engine Camera")) {
-			Frustum& frustum = App->camera->GetEngineFrustum();
-			vec front = frustum.Front();
-			vec up = frustum.Up();
-			ImGui::TextColored(App->editor->titleColor, "Frustum");
-			ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-			ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-
-			float nearPlane = frustum.NearPlaneDistance();
-			float farPlane = frustum.FarPlaneDistance();
-			if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
-				App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
-			}
-			if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
-				App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
-			}
 		}
 	}
 	ImGui::End();
