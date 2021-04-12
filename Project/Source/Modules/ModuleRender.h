@@ -48,7 +48,9 @@ private:
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
 	void DrawGameObject(GameObject* gameObject);											// ??
 	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
+	#if !GAME
 	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
+	#endif // !GAME
 	void RenderUI();
 	void SetOrtographicRender();
 	void SetPerspectiveRender();

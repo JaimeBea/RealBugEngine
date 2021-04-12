@@ -25,7 +25,9 @@ bool ModuleWindow::Init() {
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-
+#if GAME
+	flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 	SDL_DisplayMode desktopDisplayMode;
 	SDL_GetDesktopDisplayMode(0, &desktopDisplayMode);
 	window = SDL_CreateWindow(App->appName, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, desktopDisplayMode.w - 100, desktopDisplayMode.h - 100, flags);

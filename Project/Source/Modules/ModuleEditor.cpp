@@ -167,7 +167,9 @@ UpdateStatus ModuleEditor::Update() {
 
 	ImGui::CaptureMouseFromApp(true);
 	ImGui::CaptureKeyboardFromApp(true);
-
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif
 	// Main menu bar
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("File")) {
@@ -185,6 +187,7 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndMenu();
 	}
+
 	if (ImGui::BeginMenu("Assets")) {
 		if (ImGui::BeginMenu("Create")) {
 			if (ImGui::MenuItem("Material")) {

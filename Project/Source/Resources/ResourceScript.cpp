@@ -10,7 +10,7 @@ void ResourceScript::Load() {
 
 #ifdef _DEBUG
 	App->project->CompileProject(Configuration::DEBUG_EDITOR);
-#else
+#elif !GAME
 	App->project->CompileProject(Configuration::RELEASE_EDITOR);
 #endif // _DEBUG
 

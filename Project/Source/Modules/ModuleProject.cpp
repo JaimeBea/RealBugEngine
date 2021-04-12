@@ -23,12 +23,17 @@
 #define JSON_TAG_PROJECT_NAME "ProjectName"
 #define JSON_TAG_SCENES "Scenes"
 
-bool ModuleProject::Init() {
-	LoadProject("Penteract/Penteract.sln");
 
+bool ModuleProject::Init() {
+	#ifdef GAME
+	LoadGameCodeDLL("Penteract.dll");
+	#else
+		LoadProject("Penteract/Penteract.sln");
+	#endif
 	return true;
 }
 
+#ifndef GAME
 void ModuleProject::LoadProject(const char* path) {
 	projectPath = FileDialog::GetFileFolder(path);
 	projectName = FileDialog::GetFileNameAndExtension(path);
@@ -199,3 +204,4 @@ void ModuleProject::CompileProject(Configuration config) {
 	buildPath += name + ".dll";
 	LoadGameCodeDLL(buildPath.c_str());
 }
+#endif // !Game

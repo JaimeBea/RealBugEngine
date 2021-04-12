@@ -17,6 +17,8 @@ class ModuleProject : public Module {
 public:
 	bool Init() override;
 
+#ifndef GAME
+
 	void CreateScript(std::string& name);
 	void CreateNewProject(const char* name, const char* path);
 	void LoadProject(const char* path);
@@ -31,4 +33,6 @@ private:
 public:
 	std::string projectName = "";
 	std::string projectPath = "";
+
+#endif // !GAME
 };
