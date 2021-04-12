@@ -1,6 +1,8 @@
 #include "ModuleDebugDraw.h"
 
 #include "Globals.h"
+#include "Application.h"
+#include "Modules/ModuleCamera.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "debugdraw.h" // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
@@ -554,8 +556,9 @@ bool ModuleDebugDraw::CleanUp() {
 UpdateStatus ModuleDebugDraw::Update() {
 	BROFILER_CATEGORY("ModuleDebugDraw - Update", Profiler::Color::Purple)
 
-	//dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
-	dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+	if (App->camera->IsEngineCameraActive()) {
+		dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+	}
 
 	return UpdateStatus::CONTINUE;
 }
