@@ -42,7 +42,6 @@ void ResourcePrefab::BuildPrefab(GameObject* parent) {
 	gameObject->id = GenerateUID();
 	scene->gameObjectsIdMap[gameObject->GetID()] = gameObject;
 	gameObject->SetParent(parent);
-	gameObject->InitComponents();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Prefab built in %ums.", timeMs);

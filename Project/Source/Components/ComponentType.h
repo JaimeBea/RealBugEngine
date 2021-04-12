@@ -5,7 +5,7 @@
 *    2. Add REGISTER_COMPONENT to the .h of the new component
 *    3. Add the new component to the GetComponentTypeName and GetComponentTypeFromName functions in ComponentType.cpp
 *    4. Create a new VectorMap for the new component in Scene.h
-*    5. Add the new component to the ByTypeAndId functions in GameObject.cpp
+*    5. Add the new component to the functions in Scene.cpp
 *    6. Implement DuplicateComponent for the new component
 *    7. Add the "Add Component" functionality in PanelInspector.cpp (ln. 62)
 */

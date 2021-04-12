@@ -20,11 +20,11 @@ ModuleTime::ModuleTime() {
 }
 
 bool ModuleTime::Init() {
-	App->events->AddObserverToEvent(EventType::PRESSED_PAUSE, this);
-	App->events->AddObserverToEvent(EventType::PRESSED_PLAY, this);
-	App->events->AddObserverToEvent(EventType::PRESSED_RESUME, this);
-	App->events->AddObserverToEvent(EventType::PRESSED_STEP, this);
-	App->events->AddObserverToEvent(EventType::PRESSED_STOP, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PAUSE, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PLAY, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_RESUME, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STEP, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STOP, this);
 	return true;
 }
 
@@ -52,6 +52,28 @@ UpdateStatus ModuleTime::PreUpdate() {
 	LogDeltaMS((float) realTimeDeltaMs);
 
 	return UpdateStatus::CONTINUE;
+}
+
+void ModuleTime::ReceiveEvent(TesseractEvent& e) {
+	switch (e.type) {
+	case TesseractEventType::PRESSED_PLAY:
+		StartGame();
+		break;
+	case TesseractEventType::PRESSED_STOP:
+		StopGame();
+		break;
+	case TesseractEventType::PRESSED_RESUME:
+		ResumeGame();
+		break;
+	case TesseractEventType::PRESSED_PAUSE:
+		PauseGame();
+		break;
+	case TesseractEventType::PRESSED_STEP:
+		StepGame();
+		break;
+	default:
+		break;
+	}
 }
 
 void ModuleTime::WaitForEndOfFrame() {
@@ -138,26 +160,4 @@ void ModuleTime::StepGame() {
 	if (gameRunning) PauseGame();
 
 	gameStepOnce = true;
-}
-
-void ModuleTime::ReceiveEvent(const Event& e) {
-	switch (e.type) {
-	case EventType::PRESSED_PLAY:
-		StartGame();
-		break;
-	case EventType::PRESSED_STOP:
-		StopGame();
-		break;
-	case EventType::PRESSED_RESUME:
-		ResumeGame();
-		break;
-	case EventType::PRESSED_PAUSE:
-		PauseGame();
-		break;
-	case EventType::PRESSED_STEP:
-		StepGame();
-		break;
-	default:
-		break;
-	}
 }

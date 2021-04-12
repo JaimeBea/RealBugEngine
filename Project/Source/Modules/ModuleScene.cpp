@@ -70,7 +70,9 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->events->AddObserverToEvent(EventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
+
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
@@ -90,12 +92,6 @@ UpdateStatus ModuleScene::Update() {
 }
 
 bool ModuleScene::CleanUp() {
-	// TODO: (Texture resource) make skybox work
-	/*
-	glDeleteVertexArrays(1, &skyboxVao);
-	glDeleteBuffers(1, &skyboxVbo);
-	*/
-
 	scene->ClearScene();
 	RELEASE(scene);
 
@@ -106,6 +102,17 @@ bool ModuleScene::CleanUp() {
 	return true;
 }
 
+void ModuleScene::ReceiveEvent(TesseractEvent& e) {
+	switch (e.type) {
+	case TesseractEventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.destroyGameObject.gameObject);
+		break;
+	case TesseractEventType::ADD_COMPONENT:
+		scene->AddComponent(e.addComponent.component);
+		break;
+	}
+}
+
 void ModuleScene::CreateEmptyScene() {
 	scene->ClearScene();
 
@@ -113,7 +120,6 @@ void ModuleScene::CreateEmptyScene() {
 	GameObject* root = scene->CreateGameObject(nullptr, GenerateUID(), "Scene");
 	scene->root = root;
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
-	root->InitComponents();
 
 	// Create Directional Light
 	GameObject* dirLight = scene->CreateGameObject(root, GenerateUID(), "Directional Light");
@@ -122,7 +128,6 @@ void ModuleScene::CreateEmptyScene() {
 	dirLightTransform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	dirLightTransform->SetScale(float3(1, 1, 1));
 	ComponentLight* dirLightLight = dirLight->CreateComponent<ComponentLight>();
-	dirLight->InitComponents();
 
 	// Create Game Camera
 	GameObject* gameCamera = scene->CreateGameObject(root, GenerateUID(), "Game Camera");
@@ -134,7 +139,6 @@ void ModuleScene::CreateEmptyScene() {
 
 	// Create Skybox
 	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
-	gameCamera->InitComponents();
 }
 
 void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
@@ -144,15 +148,7 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 	for (GameObject* child : children) {
 		DestroyGameObjectDeferred(child);
 	}
-	Event ev(EventType::GAMEOBJECT_DESTROYED);
-	ev.destroyGameObject.ptr = gameObject;
-	App->events->AddEvent(ev);
-}
-
-void ModuleScene::ReceiveEvent(const Event& e) {
-	switch (e.type) {
-	case EventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.destroyGameObject.ptr);
-		break;
-	}
+	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
+	e.destroyGameObject.gameObject = gameObject;
+	App->events->AddEvent(e);
 }

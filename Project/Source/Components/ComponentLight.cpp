@@ -148,7 +148,7 @@ void ComponentLight::Load(JsonValue jComponent) {
 }
 
 void ComponentLight::DuplicateComponent(GameObject& owner) {
-	ComponentLight* component = owner.CreateComponent<ComponentLight>();
+	ComponentLight* component = owner.CreateComponentDeferred<ComponentLight>();
 	component->drawGizmos = this->drawGizmos;
 	component->lightType = this->lightType;
 	component->pos = this->pos;

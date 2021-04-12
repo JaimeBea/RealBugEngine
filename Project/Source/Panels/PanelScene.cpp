@@ -14,7 +14,7 @@
 #include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
 #include "Utils/Logging.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceScene.h"
 
@@ -50,16 +50,16 @@ void PanelScene::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button("Stop")) {
-					App->events->AddEvent(Event(EventType::PRESSED_STOP));
+					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STOP));
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button("Pause")) {
-						App->events->AddEvent(Event(EventType::PRESSED_PAUSE));
+						App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PAUSE));
 					}
 				} else {
 					if (ImGui::Button("Resume")) {
-						App->events->AddEvent(Event(EventType::PRESSED_RESUME));
+						App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_RESUME));
 					}
 				}
 			} else {
@@ -67,12 +67,12 @@ void PanelScene::Update() {
 					for (auto it : App->scene->scene->scriptComponents) {
 						it.OnStart();
 					}
-					App->events->AddEvent(Event(EventType::PRESSED_PLAY));
+					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PLAY));
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Step")) {
-				App->events->AddEvent(Event(EventType::PRESSED_STEP));
+				App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STEP));
 			}
 
 			ImGui::SameLine();
