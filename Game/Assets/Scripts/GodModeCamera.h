@@ -22,6 +22,7 @@ public:
 	float speed = 0.f;
 	float rotationSpeedX = 0.f;
 	float rotationSpeedY = 0.f;
+	float focusDistance = 0.f;
 
 private:
 	Frustum* frustum = nullptr;

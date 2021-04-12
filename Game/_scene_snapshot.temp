@@ -8,14 +8,14 @@
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
     "Root": {
-        "Id": 14678543569747896563,
+        "Id": 8214943391894094072,
         "Name": "Scene",
         "Active": true,
         "RootBoneId": 0,
         "Components": [
             {
                 "Type": 1,
-                "Id": 15206387116627233277,
+                "Id": 17059086994543427081,
                 "Active": true,
                 "Position": [
                     0.0,
@@ -42,14 +42,14 @@
         ],
         "Children": [
             {
-                "Id": 8847690728081011496,
+                "Id": 4056845108801697511,
                 "Name": "Directional Light",
                 "Active": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
                         "Type": 1,
-                        "Id": 976409527908255290,
+                        "Id": 4867556678680642908,
                         "Active": true,
                         "Position": [
                             0.0,
@@ -75,7 +75,7 @@
                     },
                     {
                         "Type": 5,
-                        "Id": 3710740737356329722,
+                        "Id": 7204021028066680028,
                         "Active": true,
                         "LightType": 0,
                         "Color": [
@@ -93,14 +93,14 @@
                 "Children": null
             },
             {
-                "Id": 12790079866266006874,
+                "Id": 5113485047404546535,
                 "Name": "Game Camera",
                 "Active": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
                         "Type": 1,
-                        "Id": 15395959414453001440,
+                        "Id": 12680583294244138125,
                         "Active": true,
                         "Position": [
                             2.0,
@@ -126,7 +126,7 @@
                     },
                     {
                         "Type": 4,
-                        "Id": 9249756273142431400,
+                        "Id": 14899205797968442070,
                         "Active": true,
                         "Frustum": {
                             "Pos": [
@@ -153,15 +153,15 @@
                     },
                     {
                         "Type": 15,
-                        "Id": 5587982526373043453,
+                        "Id": 682788350745478210,
                         "Active": true,
                         "skybox": 0
                     },
                     {
                         "Type": 18,
-                        "Id": 9199094632194453192,
+                        "Id": 10535184172705510790,
                         "Active": true,
-                        "Script": 15573499868584242413
+                        "Script": 3211584222579644126
                     }
                 ],
                 "Children": null

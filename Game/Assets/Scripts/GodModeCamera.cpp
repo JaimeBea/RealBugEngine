@@ -16,6 +16,7 @@ void GodModeCamera::Start() {
 	speed = 10.f;
 	rotationSpeedX = 10.f;
 	rotationSpeedY = 10.f;
+	focusDistance = 10.f;
 }
 
 void GodModeCamera::Update() {
@@ -47,65 +48,18 @@ void GodModeCamera::Update() {
 		transform->SetPosition(transform->GetPosition() + frustum->Up().Normalized() * speed * Time::GetDeltaTime());
 	}
 
-
-	//if (Input::GetMouseButton(1)) LOG("Mouse1Pressed");
-	//if (Input::GetMouseButton(2)) LOG("Mouse2Pressed");
-	//if (Input::GetMouseButton(3)) LOG("Mouse3Pressed");
-	//if (Input::GetMouseButton(4)) LOG("Mouse4Pressed");
-	//if (Input::GetMouseButton(5)) LOG("Mouse5Pressed");
-
-
 	// Rotation
 	if (Input::GetMouseButton(2)) {
 		
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_LALT)) {
 			// --- Orbiting
-			/*vec oldFocus = transform->GetPosition() + frustum->Front().Normalized() * 1000;
-			LOG("%f,%f,%f", frustum->Front().Normalized().x, frustum->Front().Normalized().y, frustum->Front().Normalized().z);
+			// TODO: focusdistance!!!
+			vec oldFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
 			Quat yIncrement = Quat::RotateY(-Input::GetMouseMotion().x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
 			Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -Input::GetMouseMotion().y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
 			transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
-
-			vec newFocus = transform->GetPosition() + frustum->Front().Normalized() * 1000;
-			LOG("%f,%f,%f", frustum->Front().Normalized().x, frustum->Front().Normalized().y, frustum->Front().Normalized().z);
-			transform->SetPosition(transform->GetPosition() + (oldFocus - newFocus));*/
-
-			/*
-			float3 origin = float3(0, 0, 0);
-			float3 oldPos = transform->GetPosition();
-			float3 distVector = oldPos - origin;
-			transform->SetPosition(origin);
-
-			Quat yIncrement = Quat::RotateY(-Input::GetMouseMotion().x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
-			Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -Input::GetMouseMotion().y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
-			transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
-			distVector = yIncrement * xIncrement * distVector;
-
-			transform->SetPosition(transform->GetPosition() - distVector);
-			*/
-
-			float3 origin = float3(0, 0, 0);
-			float3 oldPos = transform->GetPosition();
-			float3 distVector = oldPos - origin;
-
-			float4x4 localMatrix = transform->GetLocalMatrix();
-			localMatrix.SetCol3(0, float3(0, 0, 0));
-			float3x3 yIncrement = float3x3::RotateY(-Input::GetMouseMotion().x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
-			float3x3 xIncrement = float3x3::RotateAxisAngle(frustum->WorldRight().Normalized(), -Input::GetMouseMotion().y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
-			
-			localMatrix.SetRotatePart(yIncrement * xIncrement * transform->GetRotation());
-			distVector = yIncrement * xIncrement * distVector;
-
-			localMatrix.SetCol3(0, origin-distVector);
-			transform->SetTRS(localMatrix);
-			
-		/*
-		vec oldFocus = activeFrustum->Pos() + activeFrustum->Front().Normalized() * focusDistance;
-		Rotate(float3x3::RotateAxisAngle(activeFrustum->WorldRight().Normalized(), -mouseMotion.y * rotationSpeed * DEGTORAD));
-		Rotate(float3x3::RotateY(-mouseMotion.x * rotationSpeed * DEGTORAD));
-		vec newFocus = activeFrustum->Pos() + activeFrustum->Front().Normalized() * focusDistance;
-		activeFrustum->SetPos(activeFrustum->Pos() + (oldFocus - newFocus));
-		*/
+			vec newFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
+			transform->SetPosition(transform->GetPosition() + (oldFocus - newFocus));
 		} else {
 			// --- Panning
 			Quat yIncrement = Quat::RotateY(-Input::GetMouseMotion().x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
@@ -113,7 +67,6 @@ void GodModeCamera::Update() {
 			transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
 		}
 	}
-		
 
 	// Func
 	// --- Show Quadtree
