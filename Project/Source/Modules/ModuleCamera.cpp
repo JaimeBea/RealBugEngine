@@ -62,8 +62,6 @@ bool ModuleCamera::Init() {
 	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
 	activeFrustum->SetFront(vec::unitZ);
 	activeFrustum->SetUp(vec::unitY);
-	editorFrustum = new Frustum();
-	editorFrustum->SetOrthographic(400, 400);
 
 	SetPosition(vec(2, 3, -5));
 	LookAt(0, 0, 0);
@@ -158,11 +156,6 @@ UpdateStatus ModuleCamera::Update() {
 	}
 
 	return UpdateStatus::CONTINUE;
-}
-
-bool ModuleCamera::CleanUp() {
-	RELEASE(editorFrustum);
-	return true;
 }
 
 void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
@@ -268,6 +261,13 @@ void ModuleCamera::CalculateFrustumPlanes() {
 	frustumPlanes.planes[3] = cullingFrustum->BottomPlane();
 	frustumPlanes.planes[4] = cullingFrustum->FarPlane();
 	frustumPlanes.planes[5] = cullingFrustum->NearPlane();
+}
+
+bool ModuleCamera::IsEngineCameraActive() const {
+	if (activeFrustum == &engineCameraFrustum) {
+		return true;
+	}
+	return false;
 }
 
 void ModuleCamera::Translate(const vec& translation) {

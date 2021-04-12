@@ -169,13 +169,15 @@ UpdateStatus ModuleRender::Update() {
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
-	// Draw Guizmos
-	GameObject* selectedGameObject = App->editor->selectedGameObject;
-	if (selectedGameObject) selectedGameObject->DrawGizmos();
+	if (App->camera->IsEngineCameraActive()) {
+		// Draw Guizmos
+		GameObject* selectedGameObject = App->editor->selectedGameObject;
+		if (selectedGameObject) selectedGameObject->DrawGizmos();
 
-	// Draw quadtree
-	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+		// Draw quadtree
+		if (drawQuadtree) {
+			DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+		}
 	}
 
 	//Render UI
@@ -352,7 +354,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
-	if (boundingBox && drawAllBoundingBoxes) {
+	if (boundingBox && drawAllBoundingBoxes && App->camera->IsEngineCameraActive()) {
 		boundingBox->DrawBoundingBox();
 	}
 
