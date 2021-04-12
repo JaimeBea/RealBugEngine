@@ -30,5 +30,5 @@ void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
 }
 
 void ComponentCanvas::DuplicateComponent(GameObject& owner) {
-	ComponentCanvas* component = owner.CreateComponent<ComponentCanvas>();
+	ComponentCanvas* component = owner.CreateComponentDeferred<ComponentCanvas>();
 }

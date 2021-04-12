@@ -197,7 +197,7 @@ void ComponentSelectable::OnPointerExit() {
 }
 
 void ComponentSelectable::DuplicateComponent(GameObject& owner) {
-	ComponentSelectable* component = owner.CreateComponent<ComponentSelectable>();
+	ComponentSelectable* component = owner.CreateComponentDeferred<ComponentSelectable>();
 	component->interactable = interactable;
 	component->colorDisabled = colorDisabled;
 	component->colorHovered = colorHovered;

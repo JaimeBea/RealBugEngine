@@ -17,7 +17,7 @@
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleTime.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -268,9 +268,6 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 		};
 		dd::box(points, dd::colors::White);
 	}
-}
-
-void ModuleRender::ReceiveEvent(const Event& ev) {
 }
 
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
