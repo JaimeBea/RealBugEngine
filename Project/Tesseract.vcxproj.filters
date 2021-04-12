@@ -157,6 +157,7 @@
     <ClCompile Include="Source\GameplaySystems.cpp" />
     <ClCompile Include="Source\Utils\AssetFile.cpp" />
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
+    <ClCompile Include="Source\Components\ComponentType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />

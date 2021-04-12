@@ -151,41 +151,41 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId) {
 	switch (type) {
 	case ComponentType::TRANSFORM:
-		return &transformComponents.Put(componentId, ComponentTransform(owner, componentId, owner->IsActive()));
+		return &transformComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::MESH_RENDERER:
-		return &meshRendererComponents.Put(componentId, ComponentMeshRenderer(owner, componentId, owner->IsActive()));
+		return &meshRendererComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::BOUNDING_BOX:
-		return &boundingBoxComponents.Put(componentId, ComponentBoundingBox(owner, componentId, owner->IsActive()));
+		return &boundingBoxComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::CAMERA:
-		return &cameraComponents.Put(componentId, ComponentCamera(owner, componentId, owner->IsActive()));
+		return &cameraComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::LIGHT:
-		return &lightComponents.Put(componentId, ComponentLight(owner, componentId, owner->IsActive()));
+		return &lightComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::CANVAS:
-		return &canvasComponents.Put(componentId, ComponentCanvas(owner, componentId, owner->IsActive()));
+		return &canvasComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::CANVASRENDERER:
-		return &canvasRendererComponents.Put(componentId, ComponentCanvasRenderer(owner, componentId, owner->IsActive()));
+		return &canvasRendererComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::IMAGE:
-		return &imageComponents.Put(componentId, ComponentImage(owner, componentId, owner->IsActive()));
+		return &imageComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::TRANSFORM2D:
-		return &transform2DComponents.Put(componentId, ComponentTransform2D(owner, componentId, owner->IsActive()));
+		return &transform2DComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::BUTTON:
-		return &buttonComponents.Put(componentId, ComponentButton(owner, componentId, owner->IsActive()));
+		return &buttonComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::EVENT_SYSTEM:
-		return &eventSystemComponents.Put(componentId, ComponentEventSystem(owner, componentId, owner->IsActive()));
+		return &eventSystemComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::BOUNDING_BOX_2D:
-		return &boundingBox2DComponents.Put(componentId, ComponentBoundingBox2D(owner, componentId, owner->IsActive()));
+		return &boundingBox2DComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::TOGGLE:
-		return &toggleComponents.Put(componentId, ComponentToggle(owner, componentId, owner->IsActive()));
+		return &toggleComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::TEXT:
-		return &textComponents.Put(componentId, ComponentText(owner, componentId, owner->IsActive()));
+		return &textComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SELECTABLE:
-		return &selectableComponents.Put(componentId, ComponentSelectable(owner, componentId, owner->IsActive()));
+		return &selectableComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SKYBOX:
-		return &skyboxComponents.Put(componentId, ComponentSkyBox(owner, componentId, owner->IsActive()));
+		return &skyboxComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::ANIMATION:
-		return &animationComponents.Put(componentId, ComponentAnimation(owner, componentId, owner->IsActive()));
+		return &animationComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SCRIPT:
-		return &scriptComponents.Put(componentId, ComponentScript(owner, componentId, owner->IsActive()));
+		return &scriptComponents.Put(componentId, owner, componentId, owner->IsActive());
 	default:
 		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
