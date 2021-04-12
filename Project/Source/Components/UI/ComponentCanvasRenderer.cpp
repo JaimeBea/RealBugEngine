@@ -30,7 +30,7 @@ void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 }
 
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
-	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
+	ComponentCanvasRenderer* component = owner.CreateComponentDeferred<ComponentCanvasRenderer>();
 }
 
 GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) {

@@ -17,7 +17,7 @@
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleTime.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -173,15 +173,16 @@ UpdateStatus ModuleRender::Update() {
 		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
-
 #if !GAME
-	// Draw Guizmos
-	GameObject* selectedGameObject = App->editor->selectedGameObject;
-	if (selectedGameObject) selectedGameObject->DrawGizmos();
+	if (App->camera->IsEngineCameraActive()) {
+		// Draw Guizmos
+		GameObject* selectedGameObject = App->editor->selectedGameObject;
+		if (selectedGameObject) selectedGameObject->DrawGizmos();
 
-	// Draw quadtree
-	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+		// Draw quadtree
+		if (drawQuadtree) {
+			DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+		}
 	}
 #endif
 
@@ -277,9 +278,6 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 	}
 }
 
-void ModuleRender::ReceiveEvent(const Event& ev) {
-}
-
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
 	AABB aabb3d = AABB({aabb.minPoint.x, -1000000.0f, aabb.minPoint.y}, {aabb.maxPoint.x, 1000000.0f, aabb.maxPoint.y});
 	if (CheckIfInsideFrustum(aabb3d, OBB(aabb3d))) {
@@ -364,7 +362,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
-	if (boundingBox && drawAllBoundingBoxes) {
+	if (boundingBox && drawAllBoundingBoxes && App->camera->IsEngineCameraActive()) {
 		boundingBox->DrawBoundingBox();
 	}
 

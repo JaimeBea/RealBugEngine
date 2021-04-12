@@ -25,13 +25,6 @@
 #define JSON_TAG_COMPONENTS "Components"
 #define JSON_TAG_CHILDREN "Children"
 
-void GameObject::InitComponents() {
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
-		component->Init();
-	}
-}
-
 void GameObject::Update() {
 	if (IsActiveInHierarchy()) {
 		for (const std::pair<ComponentType, UID>& pair : components) {
@@ -183,7 +176,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 		std::pair<ComponentType, UID> pair = components[i];
 		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
-		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
+		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ID] = component->GetID();
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
 		component->Save(jComponent);
@@ -206,13 +199,15 @@ void GameObject::Load(JsonValue jGameObject) {
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {
 		JsonValue jComponent = jComponents[i];
 
-		ComponentType type = (ComponentType)(unsigned) jComponent[JSON_TAG_TYPE];
+		std::string typeName = jComponent[JSON_TAG_TYPE];
 		UID componentId = jComponent[JSON_TAG_ID];
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
+		ComponentType type = GetComponentTypeFromName(typeName.c_str());
 		components.push_back(std::pair<ComponentType, UID>(type, componentId));
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
 		component->Load(jComponent);
+		component->Init();
 	}
 
 	JsonValue jChildren = jGameObject[JSON_TAG_CHILDREN];
@@ -225,7 +220,6 @@ void GameObject::Load(JsonValue jGameObject) {
 		child->Load(jChild);
 		scene->gameObjectsIdMap[child->id] = child;
 		child->SetParent(this);
-		child->InitComponents();
 	}
 
 	UID rootBoneId = jGameObject[JSON_TAG_ROOT_BONE_ID];
@@ -249,7 +243,7 @@ void GameObject::SavePrototype(JsonValue jGameObject) const {
 		std::pair<ComponentType, UID> pair = components[i];
 		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
-		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
+		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
 		component->Save(jComponent);
 	}
@@ -271,13 +265,15 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {
 		JsonValue jComponent = jComponents[i];
 
-		ComponentType type = (ComponentType)(unsigned) jComponent[JSON_TAG_TYPE];
+		std::string typeName = jComponent[JSON_TAG_TYPE];
 		UID componentId = GenerateUID();
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
+		ComponentType type = GetComponentTypeFromName(typeName.c_str());
 		components.push_back(std::pair<ComponentType, UID>(type, componentId));
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
 		component->Load(jComponent);
+		component->Init();
 	}
 
 	JsonValue jChildren = jGameObject[JSON_TAG_CHILDREN];
@@ -291,7 +287,6 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		child->id = GenerateUID();
 		scene->gameObjectsIdMap[child->id] = child;
 		child->SetParent(this);
-		child->InitComponents();
 	}
 
 	std::string rootBoneName = jGameObject[JSON_TAG_ROOT_BONE_NAME];

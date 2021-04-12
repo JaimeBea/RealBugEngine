@@ -23,12 +23,12 @@ public:
 	// ------- Core Functions ------ //
 	bool Init() override;
 	UpdateStatus Update() override;
-	bool CleanUp() override;
 
 	void CalculateFrustumNearestObject(float2 pos);			  // Mouse Picking function. Detects the nearest object to the camera and selects it on a mouse left click. 'pos' is the x,y coordinates of the clicked pixel on the viewport.
 	void ChangeActiveFrustum(Frustum& frustum, bool change);  // Called from the Inspector, on a ComponentCamera. Changes the Engine camera to that Component if 'change'=true, and back to the default camera if false.
 	void ChangeCullingFrustum(Frustum& frustum, bool change); // Called from the Inspector, on a ComponentCamera. Changes the camera that will perform the frustum culling.
 	void CalculateFrustumPlanes();							  // Calculates the geometry of the 'planes' and 'points' that define the frustum, from the 'cullingFrustum' properties.
+	bool IsEngineCameraActive() const;
 
 	// ------ Camera Movement ------ //
 	void Translate(const vec& translation);																	// Move the frustum origin to the specified world position.
@@ -73,7 +73,6 @@ public:
 	float zoomSpeed = 0.001f;				 // Deltatime multiplier for the camera zooming speed.
 	float shiftMultiplier = 5.0f;			 // Multiplier of the previows three, applied when the SHIFT key is pressed.
 	Frustum engineCameraFrustum = Frustum(); // Default Engine frustum.
-	Frustum* editorFrustum = nullptr;		 // Editor frustum.
 
 private:
 	void GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects); // Subfunction of CalculateFrustumNearestObject(). Checks the Quatree for the GameObjects which BoundingBox intersect with the click (ray).

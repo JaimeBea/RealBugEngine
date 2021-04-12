@@ -1,6 +1,5 @@
 #include "ComponentEventSystem.h"
 
-#include "Event.h"
 #include "GameObject.h"
 #include "Components/UI/ComponentSelectable.h"
 #include "Application.h"
@@ -96,7 +95,7 @@ void ComponentEventSystem::SetSelected(UID newSelectableComponentId) {
 }
 
 void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
-	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
+	ComponentEventSystem* component = owner.CreateComponentDeferred<ComponentEventSystem>();
 	component->firstSelectedId = firstSelectedId;
 }
 
