@@ -318,15 +318,6 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndPopup();
 	}
 
-	ImGui::SetNextWindowSize(ImVec2(250, 100), ImGuiCond_FirstUseEver);
-	if (ImGui::BeginPopupModal("Quit")) {
-		ImGui::Text("Do you really want to quit?");
-		if (ImGui::Button("Quit")) {
-			return UpdateStatus::STOP;
-		}
-	}
-	ImGui::SameLine();
-
 	// ALREADY EXISTING COMPONENT MODAL
 	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Already existing Component", nullptr, ImGuiWindowFlags_NoResize)) {
