@@ -10,22 +10,20 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
-#include "Modules/ModuleTime.h"
 #include "Modules/ModuleProject.h"
-#include "Modules/ModuleEvents.h"
 #include "Utils/Logging.h"
 #include "Event.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceScene.h"
+#include "Panels/PanelControlEditor.h"
 
-#include "imgui.h"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 #include "IconsFontAwesome5.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
 #include "Geometry/OBB.h"
 #include "SDL_mouse.h"
-#include "SDL_scancode.h"
 #include <algorithm>
 
 #include "Utils/Leaks.h"
@@ -34,94 +32,22 @@ PanelScene::PanelScene()
 	: Panel("Scene", true) {}
 
 void PanelScene::Update() {
-	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT)) {
-		if (App->input->GetKey(SDL_SCANCODE_W)) currentGuizmoOperation = ImGuizmo::TRANSLATE; // W key
-		if (App->input->GetKey(SDL_SCANCODE_E)) currentGuizmoOperation = ImGuizmo::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R)) currentGuizmoOperation = ImGuizmo::SCALE; // R key
-	}
-
 	ImGui::SetNextWindowDockID(App->editor->dockMainId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_BORDER_ALL " ") + name;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
+
 	if (ImGui::Begin(windowName.c_str(), &enabled, flags)) {
-		// MenuBar Scene
+		ImGuizmo::OPERATION currentGuizmoOperation = App->editor->panelControlEditor.GetImGuizmoOperation();
+		ImGuizmo::MODE currentGuizmoMode = App->editor->panelControlEditor.GetImGuizmoMode();
+		bool useSnap = App->editor->panelControlEditor.GetImGuizmoUseSnap();
+		float snap[3];
+		App->editor->panelControlEditor.GetImguizmoSnap(snap);
+
 		if (ImGui::BeginMenuBar()) {
-			// Play / Pause / Step buttons
-			if (App->time->HasGameStarted()) {
-				if (ImGui::Button("Stop")) {
-					App->events->AddEvent(Event(EventType::PRESSED_STOP));
-				}
-				ImGui::SameLine();
-				if (App->time->IsGameRunning()) {
-					if (ImGui::Button("Pause")) {
-						App->events->AddEvent(Event(EventType::PRESSED_PAUSE));
-					}
-				} else {
-					if (ImGui::Button("Resume")) {
-						App->events->AddEvent(Event(EventType::PRESSED_RESUME));
-					}
-				}
-			} else {
-				if (ImGui::Button("Play")) {
-					for (auto it : App->scene->scene->scriptComponents) {
-						it.OnStart();
-					}
-					App->events->AddEvent(Event(EventType::PRESSED_PLAY));
-				}
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Step")) {
-				App->events->AddEvent(Event(EventType::PRESSED_STEP));
-			}
-
-			ImGui::SameLine();
+			ImGui::Text("Shadered");
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Translate", currentGuizmoOperation == ImGuizmo::TRANSLATE)) currentGuizmoOperation = ImGuizmo::TRANSLATE;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Rotate", currentGuizmoOperation == ImGuizmo::ROTATE)) currentGuizmoOperation = ImGuizmo::ROTATE;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", currentGuizmoOperation == ImGuizmo::SCALE)) currentGuizmoOperation = ImGuizmo::SCALE;
-
-			if (currentGuizmoOperation != ImGuizmo::SCALE) {
-				ImGui::SameLine();
-				ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-				ImGui::SameLine();
-				if (ImGui::RadioButton("Local", currentGuizmoMode == ImGuizmo::LOCAL)) currentGuizmoMode = ImGuizmo::LOCAL;
-				ImGui::SameLine();
-				if (ImGui::RadioButton("World", currentGuizmoMode == ImGuizmo::WORLD)) currentGuizmoMode = ImGuizmo::WORLD;
-			} else {
-				currentGuizmoMode = ImGuizmo::LOCAL;
-			}
-
-			ImGui::SameLine();
-			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::SameLine();
-
-			ImGui::TextColored(App->editor->titleColor, "Snap");
-			ImGui::SameLine();
-			ImGui::Checkbox("##snap", &useSnap);
-			ImGui::SameLine();
-
-			ImGui::PushItemWidth(150);
-			switch (currentGuizmoOperation) {
-			case ImGuizmo::TRANSLATE:
-				ImGui::InputFloat3("Snap", &snap[0]);
-				break;
-			case ImGuizmo::ROTATE:
-				ImGui::InputFloat("Snap Angle", &snap[0]);
-				break;
-			case ImGuizmo::SCALE:
-				ImGui::InputFloat("Snap Scale", &snap[0]);
-				break;
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::SameLine();
 			ImGui::Checkbox("2D", &view2D);
-			ImGui::SameLine();
 
 			ImGui::EndMenuBar();
 		}
