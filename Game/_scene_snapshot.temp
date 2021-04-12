@@ -1,0 +1,171 @@
+{
+    "QuadtreeBounds": [
+        -1000.0,
+        -1000.0,
+        1000.0,
+        1000.0
+    ],
+    "QuadtreeMaxDepth": 4,
+    "QuadtreeElementsPerNode": 200,
+    "Root": {
+        "Id": 14678543569747896563,
+        "Name": "Scene",
+        "Active": true,
+        "RootBoneId": 0,
+        "Components": [
+            {
+                "Type": 1,
+                "Id": 15206387116627233277,
+                "Active": true,
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "LocalEulerAngles": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            }
+        ],
+        "Children": [
+            {
+                "Id": 8847690728081011496,
+                "Name": "Directional Light",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Id": 976409527908255290,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            300.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.7071068286895752,
+                            0.0,
+                            0.0,
+                            0.7071068286895752
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            90.00000762939453,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": 5,
+                        "Id": 3710740737356329722,
+                        "Active": true,
+                        "LightType": 0,
+                        "Color": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "Intensity": 1.0,
+                        "Kl": 0.04500000178813934,
+                        "Kq": 0.007499999832361937,
+                        "InnerAngle": 0.2617993950843811,
+                        "OuterAngle": 0.5235987901687622
+                    }
+                ],
+                "Children": null
+            },
+            {
+                "Id": 12790079866266006874,
+                "Name": "Game Camera",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Id": 15395959414453001440,
+                        "Active": true,
+                        "Position": [
+                            2.0,
+                            3.0,
+                            -5.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": 4,
+                        "Id": 9249756273142431400,
+                        "Active": true,
+                        "Frustum": {
+                            "Pos": [
+                                2.0,
+                                3.0,
+                                -5.0
+                            ],
+                            "Up": [
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            "Front": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "NearPlaneDistance": 0.10000000149011612,
+                            "FarPlaneDistance": 200.0,
+                            "HorizontalFov": 1.5707963705062867,
+                            "VerticalFov": 1.3113912343978882
+                        },
+                        "CameraSelected": false
+                    },
+                    {
+                        "Type": 15,
+                        "Id": 5587982526373043453,
+                        "Active": true,
+                        "skybox": 0
+                    },
+                    {
+                        "Type": 18,
+                        "Id": 9199094632194453192,
+                        "Active": true,
+                        "Script": 15573499868584242413
+                    }
+                ],
+                "Children": null
+            }
+        ]
+    }
+}

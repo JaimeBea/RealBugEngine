@@ -23,8 +23,16 @@ bool Input::GetMouseButtonUp(int button) {
 	return App->input->GetMouseButtons()[button] == KS_UP;
 }
 
-bool Input::GetMouseButton(int button) {
+bool Input::GetMouseButtonRepeat(int button) {
 	return App->input->GetMouseButtons()[button] == KS_REPEAT;
+}
+
+bool Input::GetMouseButton(int button) {
+	return App->input->GetMouseButtons()[button];
+}
+
+const float2& Input::GetMouseMotion() {
+	return App->input->GetMouseMotion();
 }
 
 bool Input::GetKeyCodeDown(KEYCODE keycode) {
@@ -35,12 +43,12 @@ bool Input::GetKeyCodeUp(KEYCODE keycode) {
 	return App->input->GetKeyboard()[keycode] == KS_UP;
 }
 
-bool Input::GetKeyCode(KEYCODE keycode) {
+bool Input::GetKeyCodeRepeat(KEYCODE keycode) {
 	return App->input->GetKeyboard()[keycode] == KS_REPEAT;
 }
 
-const float2& Input::GetMouseMotion(){
-	return App->input->GetMouseMotion();
+bool Input::GetKeyCode(KEYCODE keycode) {
+	return App->input->GetKeyboard()[keycode];
 }
 
 void SceneManager::SceneLoad(const char* filePath) {

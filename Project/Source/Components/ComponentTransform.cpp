@@ -107,6 +107,7 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
+			globalMatrix.Orthogonalize3();	// Solution for non-uniform scaled objects
 		} else {
 			globalMatrix = localMatrix;
 		}
