@@ -35,6 +35,7 @@
     <ClCompile Include="Source\Panels\PanelHierarchy.cpp" />
     <ClCompile Include="Source\Panels\PanelInspector.cpp" />
     <ClCompile Include="Source\Panels\PanelScene.cpp" />
+    <ClCompile Include="Source\Panels\PanelControlEditor.cpp" />
     <ClCompile Include="Libs\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="Libs\ImGuizmo\ImGradient.cpp" />
     <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Source\Panels\PanelHierarchy.h" />
     <ClInclude Include="Source\Panels\PanelInspector.h" />
     <ClInclude Include="Source\Panels\PanelScene.h" />
+    <ClInclude Include="Source\Panels\PanelControlEditor.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
     <ClInclude Include="Libs\ImGuizmo\ImCurveEdit.h" />

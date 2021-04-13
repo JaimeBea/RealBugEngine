@@ -10,22 +10,21 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
-#include "Modules/ModuleTime.h"
 #include "Modules/ModuleProject.h"
-#include "Modules/ModuleEvents.h"
+#include "Modules/ModuleScene.h"
 #include "Utils/Logging.h"
-#include "TesseractEvent.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceScene.h"
+#include "Resources/ResourceMesh.h"
+#include "Panels/PanelControlEditor.h"
 
-#include "imgui.h"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 #include "IconsFontAwesome5.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
 #include "Geometry/OBB.h"
 #include "SDL_mouse.h"
-#include "SDL_scancode.h"
 #include <algorithm>
 
 #include "Utils/Leaks.h"
@@ -34,95 +33,117 @@ PanelScene::PanelScene()
 	: Panel("Scene", true) {}
 
 void PanelScene::Update() {
-	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT)) {
-		if (App->input->GetKey(SDL_SCANCODE_W)) currentGuizmoOperation = ImGuizmo::TRANSLATE; // W key
-		if (App->input->GetKey(SDL_SCANCODE_E)) currentGuizmoOperation = ImGuizmo::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R)) currentGuizmoOperation = ImGuizmo::SCALE; // R key
-	}
-
 	ImGui::SetNextWindowDockID(App->editor->dockMainId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_BORDER_ALL " ") + name;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
+
 	if (ImGui::Begin(windowName.c_str(), &enabled, flags)) {
-		// MenuBar Scene
+		ImGuizmo::OPERATION currentGuizmoOperation = App->editor->panelControlEditor.GetImGuizmoOperation();
+		ImGuizmo::MODE currentGuizmoMode = App->editor->panelControlEditor.GetImGuizmoMode();
+		bool useSnap = App->editor->panelControlEditor.GetImGuizmoUseSnap();
+		float snap[3];
+		App->editor->panelControlEditor.GetImguizmoSnap(snap);
+
 		if (ImGui::BeginMenuBar()) {
-			// Play / Pause / Step buttons
-			if (App->time->HasGameStarted()) {
-				if (ImGui::Button("Stop")) {
-					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STOP));
-				}
-				ImGui::SameLine();
-				if (App->time->IsGameRunning()) {
-					if (ImGui::Button("Pause")) {
-						App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PAUSE));
-					}
-				} else {
-					if (ImGui::Button("Resume")) {
-						App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_RESUME));
-					}
-				}
-			} else {
-				if (ImGui::Button("Play")) {
-					for (auto it : App->scene->scene->scriptComponents) {
-						it.OnStart();
-					}
-					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PLAY));
-				}
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Step")) {
-				App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STEP));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
+			const char* shadingMode[2] = {"Shaded", "Wireframe"};
+			if (ImGui::Button(currentShadingMode)) {
+				ImGui::OpenPopup("DrawMode");
 			}
 
-			ImGui::SameLine();
+			if (ImGui::BeginPopup("DrawMode")) {
+				ImGui::TextColored(App->editor->titleColor, "Shading Mode");
+				ImGui::Separator();
+				for (int i = 0; i < IM_ARRAYSIZE(shadingMode); i++) {
+					bool isSelected = (currentShadingMode == shadingMode[i]);
+					if (ImGui::Selectable(shadingMode[i])) {
+						currentShadingMode = shadingMode[i];
+						App->renderer->UpdateShadingMode(currentShadingMode);
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Translate", currentGuizmoOperation == ImGuizmo::TRANSLATE)) currentGuizmoOperation = ImGuizmo::TRANSLATE;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Rotate", currentGuizmoOperation == ImGuizmo::ROTATE)) currentGuizmoOperation = ImGuizmo::ROTATE;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", currentGuizmoOperation == ImGuizmo::SCALE)) currentGuizmoOperation = ImGuizmo::SCALE;
-
-			if (currentGuizmoOperation != ImGuizmo::SCALE) {
-				ImGui::SameLine();
-				ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-				ImGui::SameLine();
-				if (ImGui::RadioButton("Local", currentGuizmoMode == ImGuizmo::LOCAL)) currentGuizmoMode = ImGuizmo::LOCAL;
-				ImGui::SameLine();
-				if (ImGui::RadioButton("World", currentGuizmoMode == ImGuizmo::WORLD)) currentGuizmoMode = ImGuizmo::WORLD;
-			} else {
-				currentGuizmoMode = ImGuizmo::LOCAL;
-			}
-
-			ImGui::SameLine();
-			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::SameLine();
-
-			ImGui::TextColored(App->editor->titleColor, "Snap");
-			ImGui::SameLine();
-			ImGui::Checkbox("##snap", &useSnap);
-			ImGui::SameLine();
-
-			ImGui::PushItemWidth(150);
-			switch (currentGuizmoOperation) {
-			case ImGuizmo::TRANSLATE:
-				ImGui::InputFloat3("Snap", &snap[0]);
-				break;
-			case ImGuizmo::ROTATE:
-				ImGui::InputFloat("Snap Angle", &snap[0]);
-				break;
-			case ImGuizmo::SCALE:
-				ImGui::InputFloat("Snap Scale", &snap[0]);
-				break;
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::SameLine();
 			ImGui::Checkbox("2D", &view2D);
-			ImGui::SameLine();
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 
+			std::string camera = std::string(ICON_FA_VIDEO);
+			if (ImGui::Button(camera.c_str())) {
+				ImGui::OpenPopup("Camera");
+			}
+			if (ImGui::BeginPopup("Camera")) {
+				Frustum& frustum = App->camera->GetEngineFrustum();
+				vec front = frustum.Front();
+				vec up = frustum.Up();
+				ImGui::TextColored(App->editor->titleColor, "Frustum");
+				ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+				float nearPlane = frustum.NearPlaneDistance();
+				float farPlane = frustum.FarPlaneDistance();
+				if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
+					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+				}
+				if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
+					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+				}
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+
+			if (ImGui::Button("Gizmos")) {
+				ImGui::OpenPopup("Gizmos");
+			}
+			if (ImGui::BeginPopup("Gizmos")) {
+				ImGui::Text("General");
+				ImGui::Separator();
+				ImGui::Checkbox("Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
+				ImGui::Checkbox("Quadtree", &App->renderer->drawQuadtree);
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+
+			if (ImGui::Button("Stats")) {
+				ImGui::OpenPopup("Stats");
+			}
+			if (ImGui::BeginPopup("Stats")) {
+				char fps[10];
+				sprintf_s(fps, 10, "%.1f", fpsLog[fpsLogIndex]);
+				char ms[10];
+				sprintf_s(ms, 10, "%.1f", msLog[fpsLogIndex]);
+
+				int triangles = 0;
+				for (ComponentMeshRenderer& meshComponent : App->scene->scene->meshRendererComponents) {
+					ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
+					triangles += mesh->numIndices / 3;
+				}
+
+				ImGui::TextColored(App->editor->titleColor, "Framerate");
+				ImGui::Text("Frames: ");
+				ImGui::SameLine();
+				ImGui::TextColored(App->editor->textColor, fps);
+				ImGui::Text("Milliseconds: ");
+				ImGui::SameLine();
+				ImGui::TextColored(App->editor->textColor, ms);
+				ImGui::Separator();
+				ImGui::TextColored(App->editor->titleColor, "Triangles / scene");
+				ImGui::Text("Number: ");
+				ImGui::SameLine();
+				char trianglesChar[10];
+				sprintf_s(trianglesChar, 10, "%d", triangles);
+				ImGui::TextColored(App->editor->textColor, trianglesChar);
+
+				ImGui::EndPopup();
+			}
+			ImGui::PopStyleVar();
 			ImGui::EndMenuBar();
 		}
 
@@ -248,6 +269,10 @@ void PanelScene::Update() {
 	}
 }
 
+bool PanelScene::IsUsing2D() const {
+	return view2D;
+}
+
 float2 PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
 }
@@ -256,6 +281,6 @@ float2 PanelScene::GetSceneWindowSize() const {
 	return framebufferSize;
 }
 
-const bool PanelScene::IsUsing2D() const {
-	return view2D;
+const char* PanelScene::GetCurrentShadingMode() const {
+	return currentShadingMode;
 }
