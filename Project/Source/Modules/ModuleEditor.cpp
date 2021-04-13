@@ -10,7 +10,7 @@
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 #include "FileSystem/MaterialImporter.h"
 
 #include "ImGuizmo.h"
@@ -408,20 +408,20 @@ bool ModuleEditor::CleanUp() {
 }
 
 void ModuleEditor::OnMouseMoved() {
-	Event mouseEvent = Event(EventType::MOUSE_UPDATE);
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
 	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
 	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseClicked() {
-	Event mouseEvent = Event(EventType::MOUSE_CLICKED);
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
 	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
 	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseReleased() {
-	Event mouseEvent = Event(EventType::MOUSE_RELEASED);
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_RELEASED);
 	App->events->AddEvent(mouseEvent);
 }

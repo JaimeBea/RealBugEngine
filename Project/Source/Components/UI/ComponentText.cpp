@@ -82,7 +82,7 @@ void ComponentText::Load(JsonValue jComponent) {
 }
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
-	ComponentText* component = owner.CreateComponent<ComponentText>();
+	ComponentText* component = owner.CreateComponentDeferred<ComponentText>();
 	component->shaderID = shaderID;
 	component->fontID = fontID;
 	component->fontSize = fontSize;

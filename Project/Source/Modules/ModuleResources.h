@@ -7,6 +7,7 @@
 #include "Utils/AssetFile.h"
 
 #include <vector>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
@@ -18,7 +19,7 @@ public:
 	bool Start() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
-	void ReceiveEvent(const Event& ev) override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
 	std::vector<UID> ImportAsset(const char* filePath);
 
@@ -46,9 +47,9 @@ public:
 	std::unordered_set<std::string> assetsToNotUpdate;
 
 private:
-	std::unordered_map<UID, Resource*> resources;
+	std::unordered_map<UID, std::unique_ptr<Resource>> resources;
 	std::unordered_map<UID, unsigned> referenceCounts;
-	AssetFolder* rootFolder = nullptr;
+	std::unique_ptr<AssetFolder> rootFolder;
 	std::thread importThread;
 	bool stopImportThread = false;
 };

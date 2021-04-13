@@ -159,6 +159,7 @@
     <ClCompile Include="Source\Utils\AssetFile.cpp" />
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
+    <ClCompile Include="Source\TesseractEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -310,7 +311,7 @@
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
-    <ClInclude Include="Source\Event.h" />
+    <ClInclude Include="Source\TesseractEvent.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
     <ClInclude Include="Source\Utils\FileDialog.h" />
