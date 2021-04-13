@@ -10,6 +10,7 @@
 #include "Panels/PanelInspector.h"
 #include "Panels/PanelHierarchy.h"
 #include "Panels/PanelAbout.h"
+#include "Panels/PanelControlEditor.h"
 
 #include "imgui.h"
 #include <vector>
@@ -48,6 +49,7 @@ public:
 
 	// ---------- Docking ----------
 	unsigned dockMainId = 0;
+	unsigned dockUpId = 0;
 	unsigned dockLeftId = 0;
 	unsigned dockRightId = 0;
 	unsigned dockDownId = 0;
@@ -61,6 +63,7 @@ public:
 	PanelInspector panelInspector;
 	PanelHierarchy panelHierarchy;
 	PanelAbout panelAbout;
+	PanelControlEditor panelControlEditor;
 
 	GameObject* selectedGameObject = nullptr;			   // Pointer to the GameObject that will be shown in the inspector.
 	ImVec4 titleColor = ImVec4(0.35f, 0.69f, 0.87f, 1.0f); // Color used for the titles in ImGui

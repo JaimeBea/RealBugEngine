@@ -4,7 +4,6 @@
 
 #include "Math/float2.h"
 #include "imgui.h"
-#include "ImGuizmo.h"
 
 struct ImDrawList;
 
@@ -13,19 +12,19 @@ public:
 	PanelScene();
 
 	void Update() override;
+
+	bool IsUsing2D() const;
+
+	// Getters
 	float2 GetMousePosOnScene() const;
 	float2 GetSceneWindowSize() const;
-
-	const bool IsUsing2D() const;
+	const char* GetCurrentShadingMode() const;
 
 private:
 	float2 framebufferSize = {0.0f, 0.0f};
 	float2 mousePosOnScene = {0.0f, 0.0f};
-	//ImGuizmo
-	ImGuizmo::OPERATION currentGuizmoOperation = ImGuizmo::TRANSLATE;
-	ImGuizmo::MODE currentGuizmoMode = ImGuizmo::WORLD;
 
-	bool useSnap = false;
+	const char* currentShadingMode = "Shaded";
+
 	bool view2D = false;
-	float snap[3] = {1.f, 1.f, 1.f};
 };
