@@ -108,7 +108,6 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	interactable = false;
 	selected = false;
 	onAxisDown = 0;
 	onAxisLeft = 0;

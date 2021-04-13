@@ -8,11 +8,11 @@
 void ResourceScript::Load() {
 	std::string name = FileDialog::GetFileName(GetAssetFilePath().c_str());
 
-#ifdef _DEBUG
-	App->project->CompileProject(Configuration::DEBUG_EDITOR);
-#elif !GAME
-	App->project->CompileProject(Configuration::RELEASE_EDITOR);
-#endif // _DEBUG
+//#ifdef _DEBUG
+//	App->project->CompileProject(Configuration::DEBUG_EDITOR);
+//#else
+//	App->project->CompileProject(Configuration::RELEASE_EDITOR);
+//#endif // _DEBUG
 
 	script = Factory::Create(name);
 }
