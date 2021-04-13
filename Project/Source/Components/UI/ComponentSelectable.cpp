@@ -81,16 +81,19 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 		break;
 	}
 	case NavigationType::MANUAL: {
+		GameObject* onAxisObj = nullptr;
+
 		if (dir.x > 0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisRight)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisRight);
 		} else if (dir.x < -0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisLeft)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisLeft);
 		} else if (dir.y > 0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisUp)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisUp);
 		} else if (dir.y < -0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisDown)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisDown);
 		}
-		break;
+
+		return onAxisObj == nullptr ? nullptr : onAxisObj->GetComponent<ComponentSelectable>();
 	}
 	default:
 		break;

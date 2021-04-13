@@ -476,7 +476,7 @@
                                     1.0
                                 ],
                                 "Interactable": true,
-                                "NavigationType": 2,
+                                "NavigationType": 1,
                                 "TransitionType": 1,
                                 "SelectableType": 10,
                                 "OnAxisDown": 0,
