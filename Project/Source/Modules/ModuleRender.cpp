@@ -167,8 +167,10 @@ UpdateStatus ModuleRender::Update() {
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
 	// Draw Gizmos 
-	GameObject* selectedGameObject = App->editor->selectedGameObject;
-	if (selectedGameObject) selectedGameObject->DrawGizmos();
+	if (App->camera->IsEngineCameraActive()) {
+		GameObject* selectedGameObject = App->editor->selectedGameObject;
+		if (selectedGameObject) selectedGameObject->DrawGizmos();
+	}
 	// --- All Gizmos options
 	if (drawCameraFrustums) {
 		for (ComponentCamera camera : scene->cameraComponents) {
@@ -180,7 +182,6 @@ UpdateStatus ModuleRender::Update() {
 			light.DrawGizmos();
 		}
 	}
-
 	// Draw quadtree
 	if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 
@@ -273,8 +274,7 @@ void ModuleRender::ToggleDrawLightGizmos() {
 void ModuleRender::UpdateShadingMode(const char* shadingMode) {
 	if (shadingMode == "Shaded") {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	else if (shadingMode == "Wireframe") {
+	}else if (shadingMode == "Wireframe") {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 }
