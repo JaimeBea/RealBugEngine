@@ -212,9 +212,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 }
 
 Resource* ModuleResources::GetResource(UID id) const {
-	auto it = resources.find(id);
-	return it != resources.end() ? it->second.get() : nullptr;
-	/*return resources.find(id) != resources.end() ? resources.at(id).get() : nullptr;*/
+	return resources.find(id) != resources.end() ? resources.at(id).get() : nullptr;
 }
 
 AssetFolder* ModuleResources::GetRootFolder() const {
