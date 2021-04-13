@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "ComponentCanvasRenderer.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Modules/ModuleRender.h"
 
 #include "Utils/Leaks.h"
 
@@ -31,4 +32,9 @@ void ComponentCanvas::RenderGameObject(GameObject* gameObject) {
 
 void ComponentCanvas::DuplicateComponent(GameObject& owner) {
 	ComponentCanvas* component = owner.CreateComponentDeferred<ComponentCanvas>();
+}
+
+float ComponentCanvas::GetScreenFactor() const {
+	float2 factor = float2(App->renderer->viewportWidth, App->renderer->viewportHeight).Div(screenBaseRes);
+	return factor.x < factor.y ? factor.x : factor.y;
 }

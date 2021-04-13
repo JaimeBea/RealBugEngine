@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentCanvas.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -118,7 +119,7 @@ const float4& ComponentImage::GetTintColor() const {
 	return float4::one;
 }
 
-void ComponentImage::Draw(ComponentTransform2D* transform) {
+void ComponentImage::Draw(ComponentTransform2D* transform, ComponentCanvas* canvas) {
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
 	if (shaderResouce) {
@@ -139,14 +140,13 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	float4x4 modelMatrix;
+	float4x4 modelMatrix = float4x4::identity;
 	float4x4* proj = &App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
 		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 		modelMatrix = transform->GetGlobalMatrixWithSize();
-
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4* view = &App->camera->GetViewMatrix();

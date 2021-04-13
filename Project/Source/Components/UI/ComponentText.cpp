@@ -137,6 +137,9 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	// FontSize / size of imported font
 	float scale = fontSize / 48.0f;
 
+	//This makes scaling with screen size actually work
+	//scale *= modelMatrix.GetScale().x;
+
 	for (char c : text) {
 		Character character = App->userInterface->GetCharacter(fontID, c);
 

@@ -190,8 +190,10 @@ const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	float factor = canvasRenderer->GetCanvasScreenFactor();
 	if (dirty) {
-		localMatrix = float4x4::FromTRS(position, rotation, scale);
+		localMatrix = float4x4::FromTRS(position * factor, rotation, scale * factor);
 
 		GameObject* parent = GetOwner().GetParent();
 		if (parent != nullptr) {
