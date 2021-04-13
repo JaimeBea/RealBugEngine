@@ -152,6 +152,10 @@ UpdateStatus ModuleRender::PreUpdate() {
 UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
+#if GAME
+	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
+#endif
+
 	// Draw the scene
 	App->camera->CalculateFrustumPlanes();
 	Scene* scene = App->scene->scene;
@@ -237,7 +241,6 @@ void ModuleRender::ViewportResized(int width, int height) {
 		LOG("ERROR: Framebuffer is not complete!");
 	}
 #endif
-
 }
 
 void ModuleRender::SetVSync(bool vsync) {
