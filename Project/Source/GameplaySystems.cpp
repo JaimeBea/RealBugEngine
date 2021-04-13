@@ -100,6 +100,10 @@ void SceneManager::SceneLoad(const char* filePath) {
 	SceneImporter::LoadScene(filePath);
 }
 
+TESSERACT_ENGINE_API UpdateStatus SceneManager::ExitGame() {
+	return UpdateStatus::STOP;
+}
+
 float Screen::GetScreenWitdh() {
 	return App->window->GetWidth();
 }
