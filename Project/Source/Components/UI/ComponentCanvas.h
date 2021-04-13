@@ -8,12 +8,15 @@ public:
 
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
-
 	void Init() override;
-	void RenderGameObject(GameObject* gameObject);
 	void DuplicateComponent(GameObject& owner) override;
+	void OnEditorUpdate() override;
+
+	void RenderGameObject(GameObject* gameObject);
+
+	void SetScreenReferenceSize(float2 screenReferenceSize_);
 	float GetScreenFactor() const;
 
 private:
-	float2 screenBaseRes = float2(1920, 1080);
+	float2 screenReferenceSize = float2(1920, 1080);
 };
