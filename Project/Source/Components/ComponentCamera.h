@@ -20,6 +20,9 @@ public:
 	void UpdateFrustum();
 	Frustum BuildDefaultFrustum() const; // Builds a frustum object, at origin, facing Z direction, with specified FOV.
 
+	// ------- Getters ------ //
+	TESSERACT_ENGINE_API Frustum* GetFrustum();
+
 public:
 	Frustum frustum = BuildDefaultFrustum(); // Frustum geometry of the camera
 private:

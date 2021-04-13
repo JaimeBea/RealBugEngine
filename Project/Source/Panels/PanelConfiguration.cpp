@@ -193,7 +193,13 @@ void PanelConfiguration::Update() {
 		if (ImGui::CollapsingHeader("Scene")) {
 			// TODO: Change the Skybox images
 			Scene* scene = App->scene->scene;
-			ImGui::TextColored(App->editor->titleColor, "Quadtree");
+			ImGui::TextColored(App->editor->titleColor, "Gizmos");
+			ImGui::Checkbox("Enable/Disable All", &App->renderer->drawDebugDraw);
+			ImGui::Checkbox("Draw Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
+			ImGui::Checkbox("Draw Animation Bones", &App->renderer->drawAllBones);
+			ImGui::Checkbox("Draw Camera Frustums", &App->renderer->drawCameraFrustums);
+			ImGui::Checkbox("Draw Light Gizmos", &App->renderer->drawLightGizmos);
+			ImGui::Checkbox("Draw Quadtree", &App->renderer->drawQuadtree);
 			ImGui::Separator();
 			ImGui::InputFloat2("Min Point", scene->quadtreeBounds.minPoint.ptr());
 			ImGui::InputFloat2("Max Point", scene->quadtreeBounds.maxPoint.ptr());
