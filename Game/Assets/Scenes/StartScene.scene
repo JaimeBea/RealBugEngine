@@ -146,10 +146,10 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.5232278108596802,
+                            "HorizontalFov": 1.753051519393921,
                             "VerticalFov": 1.0
                         },
-                        "CameraSelected": true
+                        "CameraSelected": false
                     },
                     {
                         "Type": "Skybox",
@@ -303,8 +303,8 @@
                                     0.5
                                 ],
                                 "Size": [
-                                    1600.0,
-                                    900.0
+                                    2200.0,
+                                    1238.0
                                 ],
                                 "AnchorX": [
                                     0.0,
@@ -324,8 +324,8 @@
                                 "Type": "Image",
                                 "Id": 5494725855711796091,
                                 "Active": true,
-                                "ShaderId": 5178687166460380320,
-                                "TextureId": 12103245762144111188,
+                                "ShaderId": 13048234700482507163,
+                                "TextureId": 8069872287533214316,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -333,6 +333,12 @@
                                     1.0
                                 ],
                                 "AlphaTransparency": false
+                            },
+                            {
+                                "Type": "Script",
+                                "Id": 7446872428317093426,
+                                "Active": true,
+                                "Script": 0
                             }
                         ],
                         "Children": null
@@ -440,8 +446,8 @@
                                     0.5
                                 ],
                                 "Size": [
-                                    709.0,
-                                    181.0
+                                    711.0,
+                                    180.0
                                 ],
                                 "AnchorX": [
                                     0.0,
@@ -472,8 +478,8 @@
                                 "Type": "Image",
                                 "Id": 2339619138975874497,
                                 "Active": true,
-                                "ShaderId": 5178687166460380320,
-                                "TextureId": 1646265323513474744,
+                                "ShaderId": 13048234700482507163,
+                                "TextureId": 7404678640619488490,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -510,7 +516,7 @@
                                     0.5,
                                     1.0
                                 ],
-                                "Interactable": false,
+                                "Interactable": true,
                                 "NavigationType": 2,
                                 "TransitionType": 2,
                                 "SelectableType": 10,
@@ -523,7 +529,7 @@
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
                                 "Active": true,
-                                "Script": 8825729167442038128
+                                "Script": 16937886377311180006
                             }
                         ],
                         "Children": null
