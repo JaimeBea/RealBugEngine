@@ -9,6 +9,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
 #include "FileSystem/SceneImporter.h"
+#include "SDL_events.h"
 
 // ----------- GAMEPLAY ------------ //
 GameObject* GameplaySystems::GetGameObject(const char* name) {
@@ -97,11 +98,13 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 
 // --------- SCENE MANAGER --------- //
 void SceneManager::SceneLoad(const char* filePath) {
-	SceneImporter::LoadScene(filePath);
+	SceneImporter::LoadScene(filePath);  
 }
 
-TESSERACT_ENGINE_API UpdateStatus SceneManager::ExitGame() {
-	return UpdateStatus::STOP;
+void SceneManager::ExitGame() {
+	SDL_Event event;
+	event.type = SDL_QUIT;
+	SDL_PushEvent(&event);
 }
 
 float Screen::GetScreenWitdh() {

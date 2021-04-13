@@ -88,6 +88,10 @@ void ModuleTime::WaitForEndOfFrame() {
 	}
 }
 
+UpdateStatus ModuleTime::ExitGame() {
+	return UpdateStatus::STOP;
+}
+
 bool ModuleTime::HasGameStarted() const {
 	return gameStarted;
 }
