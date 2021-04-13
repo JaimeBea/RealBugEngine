@@ -49,6 +49,10 @@ void Debug::ToggleDrawLightGizmos() {
 	App->renderer->ToggleDrawLightGizmos();
 }
 
+void Debug::UpdateShadingMode(const char* shadingMode) {
+	App->renderer->UpdateShadingMode(shadingMode);
+}
+
 // ------------- TIME -------------- //
 float Time::GetDeltaTime() {
 	return App->time->GetDeltaTime();

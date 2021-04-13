@@ -14,6 +14,7 @@ void GodModeCamera::Start() {
 	rotationSpeedX = 10.f;
 	rotationSpeedY = 10.f;
 	focusDistance = 10.f;
+	showWireframe = false;
 
 	godCamera = GameplaySystems::GetGameObject("God Camera");
 	if (godCamera) {
@@ -70,9 +71,15 @@ void GodModeCamera::Update() {
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_Z)) {
 		Debug::ToggleDebugDraw();
 	}
-	// --- Show/Hide Skybox
+	// --- Show/Hide Wireframe
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_X)) {
-		Debug::ToggleDrawSkybox(); // TODO: not implemented
+		if (showWireframe) {
+			Debug::UpdateShadingMode("Shaded");
+		}
+		else {
+			Debug::UpdateShadingMode("Wireframe");
+		}
+		showWireframe = !showWireframe;
 	}
 	// --- Show/Hide Quadtree
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_C)) {
@@ -94,9 +101,9 @@ void GodModeCamera::Update() {
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_M)) {
 		Debug::ToggleDrawCameraFrustums();
 	}
-	// --- Show/Hide Wireframe
+	// --- Show/Hide Skybox
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_F)) {
-		// TODO
+		Debug::ToggleDrawSkybox(); // TODO: not implemented
 	}
 }
 

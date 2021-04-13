@@ -29,5 +29,6 @@ private:
 	ComponentTransform* transform = nullptr;
 	float yaw = 0.f;
 	float pitch = 0.f;
+	bool showWireframe = false;
 };
 
