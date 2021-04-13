@@ -120,6 +120,7 @@ void ModuleScene::CreateEmptyScene() {
 	GameObject* root = scene->CreateGameObject(nullptr, GenerateUID(), "Scene");
 	scene->root = root;
 	ComponentTransform* sceneTransform = root->CreateComponent<ComponentTransform>();
+	root->InitComponents();
 
 	// Create Directional Light
 	GameObject* dirLight = scene->CreateGameObject(root, GenerateUID(), "Directional Light");
@@ -128,6 +129,7 @@ void ModuleScene::CreateEmptyScene() {
 	dirLightTransform->SetRotation(Quat::FromEulerXYZ(pi / 2, 0.0f, 0.0));
 	dirLightTransform->SetScale(float3(1, 1, 1));
 	ComponentLight* dirLightLight = dirLight->CreateComponent<ComponentLight>();
+	dirLight->InitComponents();
 
 	// Create Game Camera
 	GameObject* gameCamera = scene->CreateGameObject(root, GenerateUID(), "Game Camera");
@@ -136,9 +138,8 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
-
-	// Create Skybox
-	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
+	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
+	gameCamera->InitComponents();
 }
 
 void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
