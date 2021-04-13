@@ -12,6 +12,7 @@ class GameObject;
 
 namespace GameplaySystems {
 	TESSERACT_ENGINE_API GameObject* GetGameObject(const char* name);
+	TESSERACT_ENGINE_API void SetRenderCamera(GameObject* camera);
 }; // namespace GameplaySystems
 
 namespace Debug {

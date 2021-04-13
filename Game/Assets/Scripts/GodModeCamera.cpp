@@ -10,7 +10,7 @@
 GENERATE_BODY_IMPL(GodModeCamera);
 
 void GodModeCamera::Start() {
-	godCamera = GameplaySystems::GetGameObject("Game Camera");
+	godCamera = GameplaySystems::GetGameObject("God Camera");
 	transform = godCamera->GetComponent<ComponentTransform>();
 	frustum = godCamera->GetComponent<ComponentCamera>()->GetFrustum();
 	speed = 10.f;
@@ -90,6 +90,10 @@ void GodModeCamera::Update() {
 	// --- Show/Hide All Camera Frustums
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_M)) {
 		Debug::ToggleDrawCameraFrustums();
+	}
+	// --- Show/Hide Wireframe
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_F)) {
+		// TODO
 	}
 }
 

@@ -8,14 +8,14 @@
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
     "Root": {
-        "Id": 14722900781182381751,
+        "Id": 14963254313288878136,
         "Name": "Scene",
         "Active": true,
         "RootBoneId": 0,
         "Components": [
             {
                 "Type": 1,
-                "Id": 6142810795875238771,
+                "Id": 8274767738265024621,
                 "Active": true,
                 "Position": [
                     0.0,
@@ -42,14 +42,14 @@
         ],
         "Children": [
             {
-                "Id": 5806364476595287104,
+                "Id": 15223108716337817533,
                 "Name": "Directional Light",
                 "Active": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
                         "Type": 1,
-                        "Id": 15999771047441295641,
+                        "Id": 11673379751156081061,
                         "Active": true,
                         "Position": [
                             0.0,
@@ -75,7 +75,7 @@
                     },
                     {
                         "Type": 5,
-                        "Id": 3260209257805409970,
+                        "Id": 17385741686234394497,
                         "Active": true,
                         "LightType": 0,
                         "Color": [
@@ -93,14 +93,14 @@
                 "Children": null
             },
             {
-                "Id": 12183249578099320407,
+                "Id": 6435762695612532978,
                 "Name": "Game Camera",
                 "Active": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
                         "Type": 1,
-                        "Id": 15616630349269203997,
+                        "Id": 7914835280462703907,
                         "Active": true,
                         "Position": [
                             2.0,
@@ -126,7 +126,7 @@
                     },
                     {
                         "Type": 4,
-                        "Id": 10596629603541377817,
+                        "Id": 15800167966186331774,
                         "Active": true,
                         "Frustum": {
                             "Pos": [
@@ -153,15 +153,56 @@
                     },
                     {
                         "Type": 15,
-                        "Id": 3853173634705692414,
+                        "Id": 16295846359106251822,
                         "Active": true,
                         "skybox": 0
+                    }
+                ],
+                "Children": null
+            },
+            {
+                "Id": 1158592957204711630,
+                "Name": "Game Controller",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": 1,
+                        "Id": 1016466409550501868,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
                     },
                     {
                         "Type": 18,
-                        "Id": 16015954892710315231,
+                        "Id": 14090747380234940100,
                         "Active": true,
-                        "Script": 13688128493963348366
+                        "Script": 0
+                    },
+                    {
+                        "Type": 18,
+                        "Id": 9261301680364916523,
+                        "Active": true,
+                        "Script": 1370499872638306285
                     }
                 ],
                 "Children": null
