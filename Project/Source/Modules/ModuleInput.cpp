@@ -190,3 +190,11 @@ const float2& ModuleInput::GetMouseMotion() const {
 const float2& ModuleInput::GetMousePosition() const {
 	return mouse;
 }
+
+KeyState* ModuleInput::GetMouseButtons() {
+	return mouseButtons;
+}
+
+KeyState* ModuleInput::GetKeyboard() {
+	return keyboard;
+}

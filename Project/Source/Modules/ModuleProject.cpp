@@ -32,6 +32,7 @@ bool ModuleProject::Init() {
 void ModuleProject::LoadProject(const char* path) {
 	projectPath = FileDialog::GetFileFolder(path);
 	projectName = FileDialog::GetFileNameAndExtension(path);
+	App->files->AddSearchPath(projectPath.c_str());
 
 	if (!App->files->Exists(projectName.c_str())) {
 		CreateNewProject(projectPath.c_str(), "");
@@ -68,8 +69,6 @@ void ModuleProject::CreateNewProject(const char* name, const char* path) {
 	std::string batchPath = fullPath + "/Batches";
 
 	App->files->CreateFolder(fullPath.c_str());
-	App->files->AddSearchPath(fullPath.c_str());
-
 	App->files->CreateFolder(batchPath.c_str());
 
 	std::string UIDProject("{");
@@ -105,7 +104,7 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 #ifdef _DEBUG
 	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", enginePath);
 #else
-	std::string result = fmt::format(project, name, UIDProject, enginePath + "/Engine/Source", enginePath + "/Engine/Libs/MathGeoLib", enginePath + "/Engine/Libs/SDL/include", enginePath + "/Engine/Lib");
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", enginePath);
 #endif
 
 	App->files->Save(path, result.data(), result.size());
