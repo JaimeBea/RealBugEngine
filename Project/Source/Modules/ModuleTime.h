@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Module.h"
 #include "Utils/MSTimer.h"
 
@@ -38,6 +37,7 @@ public:
 	void PauseGame();
 	void ResumeGame();
 	void StepGame();
+	UpdateStatus ExitGame();
 
 public:
 	int maxFps = 60;			// Maximum FPS when the framerate is limited.

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Globals.h";
-
 #if defined(TESSERACT_ENGINE_API)
 /* do nothing. */
 #elif defined(_MSC_VER)
@@ -351,5 +349,5 @@ namespace Screen {
 
 namespace SceneManager {
 	TESSERACT_ENGINE_API void SceneLoad(const char* filePath);
-	TESSERACT_ENGINE_API UpdateStatus ExitGame();
+	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager
