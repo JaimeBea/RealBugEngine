@@ -11,9 +11,14 @@ void buttonTest::Start() {
 }
 
 void buttonTest::Update() {
+	ComponentTransform2D* transform2D = Button->GetComponent<ComponentTransform2D>();
+	float aspectRatioImg = transform2D->GetSize().x / transform2D->GetSize().y;
+	float newHeight = Screen::GetScreenHeight() * 0.2f;
+	float newWidth = newHeight * aspectRatioImg;
+	transform2D->SetSize(float2(newWidth, newHeight));
 }
 
 void buttonTest::OnButtonClick() {
-	/*SceneManager::SceneLoad("Assets/Scenes/LoseScene.scene");*/
+	SceneManager::SceneLoad("Assets/Scenes/TestScene.scene");
 	LOG("Click");
 }

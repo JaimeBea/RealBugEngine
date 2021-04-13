@@ -243,7 +243,7 @@
                 "Children": [
                     {
                         "Id": 4922552144984103269,
-                        "Name": "Image",
+                        "Name": "Background",
                         "Active": true,
                         "RootBoneId": 0,
                         "Components": [
@@ -303,7 +303,7 @@
                                     0.5
                                 ],
                                 "Size": [
-                                    2200.0,
+                                    20.0,
                                     1238.0
                                 ],
                                 "AnchorX": [
@@ -325,7 +325,7 @@
                                 "Id": 5494725855711796091,
                                 "Active": true,
                                 "ShaderId": 13048234700482507163,
-                                "TextureId": 8069872287533214316,
+                                "TextureId": 521065984043234873,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -338,7 +338,7 @@
                                 "Type": "Script",
                                 "Id": 7446872428317093426,
                                 "Active": true,
-                                "Script": 0
+                                "Script": 15067037922062104221
                             }
                         ],
                         "Children": null
@@ -479,7 +479,7 @@
                                 "Id": 2339619138975874497,
                                 "Active": true,
                                 "ShaderId": 13048234700482507163,
-                                "TextureId": 7404678640619488490,
+                                "TextureId": 9377222940719934675,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -516,7 +516,7 @@
                                     0.5,
                                     1.0
                                 ],
-                                "Interactable": true,
+                                "Interactable": false,
                                 "NavigationType": 2,
                                 "TransitionType": 2,
                                 "SelectableType": 10,
@@ -529,7 +529,192 @@
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
                                 "Active": true,
-                                "Script": 16937886377311180006
+                                "Script": 16483317036567277589
+                            }
+                        ],
+                        "Children": null
+                    }
+                ]
+            },
+            {
+                "Id": 14737886719263861153,
+                "Name": "Canvas",
+                "Active": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": "Transform",
+                        "Id": 7917346744535437630,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    {
+                        "Type": "Canvas",
+                        "Id": 3586383841911003989,
+                        "Active": true
+                    }
+                ],
+                "Children": [
+                    {
+                        "Id": 656647871624026947,
+                        "Name": "Button",
+                        "Active": true,
+                        "RootBoneId": 0,
+                        "Components": [
+                            {
+                                "Type": "Transform",
+                                "Id": 11973782208775318147,
+                                "Active": true,
+                                "Position": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "Rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "Scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ],
+                                "LocalEulerAngles": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ]
+                            },
+                            {
+                                "Type": "Transform2D",
+                                "Id": 8592738533445290801,
+                                "Active": true,
+                                "Position": [
+                                    0.0,
+                                    -200.0,
+                                    0.0
+                                ],
+                                "Rotation": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "Scale": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ],
+                                "LocalEulerAngles": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "Pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "Size": [
+                                    711.0,
+                                    180.0
+                                ],
+                                "AnchorX": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "AnchorY": [
+                                    0.0,
+                                    0.0
+                                ]
+                            },
+                            {
+                                "Type": "CanvasRenderer",
+                                "Id": 779774440067937745,
+                                "Active": true
+                            },
+                            {
+                                "Type": "BoundingBox2D",
+                                "Id": 8272962213766092630,
+                                "Active": true,
+                                "LocalBoundingBox2D": [
+                                    -0.5,
+                                    -0.5,
+                                    0.5,
+                                    0.5
+                                ]
+                            },
+                            {
+                                "Type": "Image",
+                                "Id": 3177153763005474015,
+                                "Active": true,
+                                "ShaderId": 13048234700482507163,
+                                "TextureId": 3139071930911311310,
+                                "Color": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ],
+                                "AlphaTransparency": true
+                            },
+                            {
+                                "Type": "Button",
+                                "Id": 17302975225701254326,
+                                "Active": true,
+                                "Clicked": false,
+                                "ColorClick": [
+                                    0.6399999856948853,
+                                    0.6399999856948853,
+                                    0.6399999856948853,
+                                    1.0
+                                ]
+                            },
+                            {
+                                "Type": "Selectable",
+                                "Id": 4967062016911949417,
+                                "Active": true,
+                                "ColorHover": [
+                                    0.8399999737739563,
+                                    0.8399999737739563,
+                                    0.8399999737739563,
+                                    1.0
+                                ],
+                                "ColorDisable": [
+                                    0.5,
+                                    0.5,
+                                    0.5,
+                                    1.0
+                                ],
+                                "Interactable": true,
+                                "NavigationType": 1,
+                                "TransitionType": 1,
+                                "SelectableType": 10,
+                                "OnAxisDown": 0,
+                                "OnAxisUp": 0,
+                                "OnAxisRight": 0,
+                                "OnAxisLeft": 0
                             }
                         ],
                         "Children": null

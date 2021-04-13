@@ -1,9 +1,11 @@
 #include "GameplaySystems.h"
 
 #include "Application.h"
+#include "Components/UI/ComponentTransform2D.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleWindow.h"
 #include "FileSystem/SceneImporter.h"
 
 float GameplaySystems::GetDeltaTime() {
@@ -40,4 +42,12 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 
 void SceneManager::SceneLoad(const char* filePath) {
 	SceneImporter::LoadScene(filePath);
+}
+
+float Screen::GetScreenWitdh() {
+	return App->window->GetWidth();
+}
+
+float Screen::GetScreenHeight() {
+	return App->window->GetHeight();
 }
