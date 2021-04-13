@@ -1,5 +1,7 @@
 #pragma once
 
+
+#include "Math/float2.h"
 #include "Globals.h";
 
 #if defined(TESSERACT_ENGINE_API)
@@ -11,9 +13,24 @@
 class GameObject;
 
 namespace GameplaySystems {
-	TESSERACT_ENGINE_API float GetDeltaTime();
 	TESSERACT_ENGINE_API GameObject* GetGameObject(const char* name);
+	TESSERACT_ENGINE_API void SetRenderCamera(GameObject* camera);
 }; // namespace GameplaySystems
+
+namespace Debug {
+	TESSERACT_ENGINE_API void ToggleDebugDraw();
+	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
+	TESSERACT_ENGINE_API void ToggleDrawBBoxes();
+	TESSERACT_ENGINE_API void ToggleDrawSkybox();
+	TESSERACT_ENGINE_API void ToggleDrawAnimationBones();
+	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
+	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
+	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
+}
+
+namespace Time {
+	TESSERACT_ENGINE_API float GetDeltaTime();
+}
 
 namespace Input {
 	enum KEYCODE {
@@ -338,9 +355,12 @@ namespace Input {
 	};
 	TESSERACT_ENGINE_API bool GetMouseButtonDown(int button);
 	TESSERACT_ENGINE_API bool GetMouseButtonUp(int button);
+	TESSERACT_ENGINE_API bool GetMouseButtonRepeat(int button);
 	TESSERACT_ENGINE_API bool GetMouseButton(int button);
+	TESSERACT_ENGINE_API const float2& GetMouseMotion();
 	TESSERACT_ENGINE_API bool GetKeyCodeDown(KEYCODE keycode);
 	TESSERACT_ENGINE_API bool GetKeyCodeUp(KEYCODE keycode);
+	TESSERACT_ENGINE_API bool GetKeyCodeRepeat(KEYCODE keycode);
 	TESSERACT_ENGINE_API bool GetKeyCode(KEYCODE keycode);
 }; // namespace Input
 

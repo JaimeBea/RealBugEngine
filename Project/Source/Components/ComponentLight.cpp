@@ -31,7 +31,7 @@ void ComponentLight::Update() {
 }
 
 void ComponentLight::DrawGizmos() {
-	if (IsActiveInHierarchy() && drawGizmos) {
+	if (IsActiveInHierarchy()) {
 		if (lightType == LightType::DIRECTIONAL) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 			dd::cone(pos, direction * 200, dd::colors::White, 1.0f, 1.0f);
@@ -52,10 +52,6 @@ void ComponentLight::OnEditorUpdate() {
 	if (ImGui::Checkbox("Active", &active)) {
 		active ? Enable() : Disable();
 	}
-	ImGui::Separator();
-
-	ImGui::Checkbox("Draw Gizmos", &drawGizmos);
-	ImGui::Separator();
 
 	ImGui::TextColored(App->editor->titleColor, "Parameters");
 
@@ -148,8 +144,7 @@ void ComponentLight::Load(JsonValue jComponent) {
 }
 
 void ComponentLight::DuplicateComponent(GameObject& owner) {
-	ComponentLight* component = owner.CreateComponentDeferred<ComponentLight>();
-	component->drawGizmos = this->drawGizmos;
+	ComponentLight* component = owner.CreateComponent<ComponentLight>();
 	component->lightType = this->lightType;
 	component->pos = this->pos;
 	component->direction = this->direction;
