@@ -15,7 +15,7 @@ GameObject* GameplaySystems::GetGameObject(const char* name) {
 
 // ------------- DEBUG ------------- //
 void Debug::ToggleDebugDraw() {
-	App->renderer->ToggleDrawQuadtree();
+	App->renderer->ToggleDebugDraw();
 }
 
 void Debug::ToggleDrawQuadtree() {

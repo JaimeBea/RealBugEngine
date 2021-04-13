@@ -64,31 +64,31 @@ void GodModeCamera::Update() {
 
 	// Func
 	// --- Show/Hide DebugDraw
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_Z)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_Z)) {
 		Debug::ToggleDebugDraw();
 	}
 	// --- Show/Hide Skybox
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_X)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_X)) {
 		Debug::ToggleDrawSkybox();
 	}
 	// --- Show/Hide Quadtree
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_C)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_C)) {
 		Debug::ToggleDrawQuadtree();
 	}
 	// --- Show/Hide Bounding Boxes
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_V)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_V)) {
 		Debug::ToggleDrawBBoxes();
 	}
-	// --- Show/Hide animation bones
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_B)) {
+	// --- Show/Hide Animation Bones
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_B)) {
 		Debug::ToggleDrawAnimationBones();
 	}
 	// --- Show/Hide All Light Gizmos
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_N)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_N)) {
 		Debug::ToggleDrawLightGizmos();
 	}
 	// --- Show/Hide All Camera Frustums
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_M)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_M)) {
 		Debug::ToggleDrawCameraFrustums();
 	}
 }
