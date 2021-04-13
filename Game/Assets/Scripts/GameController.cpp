@@ -11,10 +11,10 @@ GENERATE_BODY_IMPL(GameController);
 
 void GameController::Start() {
 
-	speed = 10.f;
+	speed = 50.f;
 	rotationSpeedX = 10.f;
 	rotationSpeedY = 10.f;
-	focusDistance = 10.f;
+	focusDistance = 100.f;
 	showWireframe = false;
 
 
@@ -50,29 +50,28 @@ void GameController::Update() {
 	if (godCameraActive) {
 		// Movement
 		// --- Forward
-		if (Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
+		if (Input::GetKeyCode(Input::KEYCODE::KEY_UP)) {
 			transform->SetPosition(transform->GetPosition() + frustum->Front().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// --- Left
-		if (Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
+		if (Input::GetKeyCode(Input::KEYCODE::KEY_LEFT)) {
 			transform->SetPosition(transform->GetPosition() + frustum->WorldRight().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		// --- Backward
-		if (Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
+		if (Input::GetKeyCode(Input::KEYCODE::KEY_DOWN)) {
 			transform->SetPosition(transform->GetPosition() + frustum->Front().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		// --- Right
-		if (Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
+		if (Input::GetKeyCode(Input::KEYCODE::KEY_RIGHT)) {
 			transform->SetPosition(transform->GetPosition() + frustum->WorldRight().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// --- Down
-		if (Input::GetKeyCode(Input::KEYCODE::KEY_Q)) {
+		if (Input::GetKeyCode(Input::KEYCODE::KEY_COMMA)) {
 			transform->SetPosition(transform->GetPosition() + frustum->Up().Normalized() * -speed * Time::GetDeltaTime());
 		}
-		if (Input::GetKeyCode(Input::KEYCODE::KEY_E)) {
+		if (Input::GetKeyCode(Input::KEYCODE::KEY_PERIOD)) {
 			transform->SetPosition(transform->GetPosition() + frustum->Up().Normalized() * speed * Time::GetDeltaTime());
 		}
-
 		// Rotation
 		if (Input::GetMouseButton(2)) { // TODO: Why a 2?! It should be a 3!
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_LALT)) {
@@ -109,7 +108,7 @@ void GameController::Update() {
 		}
 		// --- Show/Hide Bounding Boxes
 		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_V)) {
-			Debug::ToggleDrawBBoxes();
+			//Debug::ToggleDrawBBoxes(); //TODO: Disabled until better level building
 		}
 		// --- Show/Hide Animation Bones
 		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_B)) {

@@ -4,35 +4,35 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
-GENERATE_BODY_IMPL(FrangMovement);
+GENERATE_BODY_IMPL(FangMovement);
 
-void FrangMovement::Start() {
+void FangMovement::Start() {
 	gameObject = GameplaySystems::GetGameObject("Fang");
+	speed = 5;
 }
 
-void FrangMovement::Update() {
+void FangMovement::Update() {
+	if (!gameObject) return;
+
 	if (Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
 		ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 		float3 newPosition = transform->GetPosition();
-		newPosition.z += speed * Time::GetDeltaTime();
+		newPosition.z -= speed * Time::GetDeltaTime();
 		transform->SetPosition(newPosition);
 	}
 	if (Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
-		LOG("A");
 		ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 		float3 newPosition = transform->GetPosition();
 		newPosition.x -= speed * Time::GetDeltaTime();
 		transform->SetPosition(newPosition);
 	}
 	if (Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
-		LOG("S");
 		ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 		float3 newPosition = transform->GetPosition();
-		newPosition.z -= speed * Time::GetDeltaTime();
+		newPosition.z += speed * Time::GetDeltaTime();
 		transform->SetPosition(newPosition);
 	}
 	if (Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
-		LOG("D");
 		ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 		float3 newPosition = transform->GetPosition();
 		newPosition.x += speed * Time::GetDeltaTime();

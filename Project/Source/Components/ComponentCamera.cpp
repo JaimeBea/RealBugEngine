@@ -33,7 +33,7 @@ void ComponentCamera::Update() {
 }
 
 void ComponentCamera::DrawGizmos() {
-	if (activeCamera) return;
+	if (App->camera->GetActiveFrustum() == &frustum) return; //TODO: Possible bug when adding more components (component pointer invalidates)
 
 	if (IsActiveInHierarchy()) dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }

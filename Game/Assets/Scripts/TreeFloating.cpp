@@ -16,7 +16,5 @@ void TreeFloating::Start() {
 void TreeFloating::Update() {
 	if (!transform) return;
 	offset = offset+Time::GetDeltaTime();
-	LOG("%f", offset);
-	LOG("%f", Sin(offset));
-	transform->SetPosition(transform->GetPosition() + float3(0.f, Sin(offset), 0.f));
+	transform->SetPosition(transform->GetPosition() + float3(0.f, Sin(offset)*0.02, 0.f));
 }
