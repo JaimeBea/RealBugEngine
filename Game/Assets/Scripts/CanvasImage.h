@@ -4,20 +4,14 @@
 
 class GameObject;
 
-class PlayerMovement : public Script
+class CanvasImage : public Script
 {
-	GENERATE_BODY(PlayerMovement);
+	GENERATE_BODY(CanvasImage);
 
 public:
 
 	void Start() override;
 	void Update() override;
-
 public:
-
 	GameObject* gameObject = nullptr;
-
-private:
-
-	int speed = 10;
 };

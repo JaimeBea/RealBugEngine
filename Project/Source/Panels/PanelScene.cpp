@@ -10,22 +10,21 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
-#include "Modules/ModuleTime.h"
 #include "Modules/ModuleProject.h"
-#include "Modules/ModuleEvents.h"
+#include "Modules/ModuleScene.h"
 #include "Utils/Logging.h"
-#include "Event.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceScene.h"
+#include "Resources/ResourceMesh.h"
+#include "Panels/PanelControlEditor.h"
 
-#include "imgui.h"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 #include "IconsFontAwesome5.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
 #include "Geometry/OBB.h"
 #include "SDL_mouse.h"
-#include "SDL_scancode.h"
 #include <algorithm>
 
 #include "Utils/Leaks.h"
@@ -34,95 +33,117 @@ PanelScene::PanelScene()
 	: Panel("Scene", true) {}
 
 void PanelScene::Update() {
-	if (!App->input->GetMouseButton(SDL_BUTTON_RIGHT)) {
-		if (App->input->GetKey(SDL_SCANCODE_W)) currentGuizmoOperation = ImGuizmo::TRANSLATE; // W key
-		if (App->input->GetKey(SDL_SCANCODE_E)) currentGuizmoOperation = ImGuizmo::ROTATE;
-		if (App->input->GetKey(SDL_SCANCODE_R)) currentGuizmoOperation = ImGuizmo::SCALE; // R key
-	}
-
 	ImGui::SetNextWindowDockID(App->editor->dockMainId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FA_BORDER_ALL " ") + name;
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoScrollWithMouse;
+
 	if (ImGui::Begin(windowName.c_str(), &enabled, flags)) {
-		// MenuBar Scene
+		ImGuizmo::OPERATION currentGuizmoOperation = App->editor->panelControlEditor.GetImGuizmoOperation();
+		ImGuizmo::MODE currentGuizmoMode = App->editor->panelControlEditor.GetImGuizmoMode();
+		bool useSnap = App->editor->panelControlEditor.GetImGuizmoUseSnap();
+		float snap[3];
+		App->editor->panelControlEditor.GetImguizmoSnap(snap);
+
 		if (ImGui::BeginMenuBar()) {
-			// Play / Pause / Step buttons
-			if (App->time->HasGameStarted()) {
-				if (ImGui::Button("Stop")) {
-					App->events->AddEvent(Event(EventType::PRESSED_STOP));
-				}
-				ImGui::SameLine();
-				if (App->time->IsGameRunning()) {
-					if (ImGui::Button("Pause")) {
-						App->events->AddEvent(Event(EventType::PRESSED_PAUSE));
-					}
-				} else {
-					if (ImGui::Button("Resume")) {
-						App->events->AddEvent(Event(EventType::PRESSED_RESUME));
-					}
-				}
-			} else {
-				if (ImGui::Button("Play")) {
-					for (auto it : App->scene->scene->scriptComponents) {
-						it.OnStart();
-					}
-					App->events->AddEvent(Event(EventType::PRESSED_PLAY));
-				}
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Step")) {
-				App->events->AddEvent(Event(EventType::PRESSED_STEP));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
+			const char* shadingMode[2] = {"Shaded", "Wireframe"};
+			if (ImGui::Button(currentShadingMode)) {
+				ImGui::OpenPopup("DrawMode");
 			}
 
-			ImGui::SameLine();
+			if (ImGui::BeginPopup("DrawMode")) {
+				ImGui::TextColored(App->editor->titleColor, "Shading Mode");
+				ImGui::Separator();
+				for (int i = 0; i < IM_ARRAYSIZE(shadingMode); i++) {
+					bool isSelected = (currentShadingMode == shadingMode[i]);
+					if (ImGui::Selectable(shadingMode[i])) {
+						currentShadingMode = shadingMode[i];
+						App->renderer->UpdateShadingMode(currentShadingMode);
+					}
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::SameLine();
-
-			if (ImGui::RadioButton("Translate", currentGuizmoOperation == ImGuizmo::TRANSLATE)) currentGuizmoOperation = ImGuizmo::TRANSLATE;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Rotate", currentGuizmoOperation == ImGuizmo::ROTATE)) currentGuizmoOperation = ImGuizmo::ROTATE;
-			ImGui::SameLine();
-			if (ImGui::RadioButton("Scale", currentGuizmoOperation == ImGuizmo::SCALE)) currentGuizmoOperation = ImGuizmo::SCALE;
-
-			if (currentGuizmoOperation != ImGuizmo::SCALE) {
-				ImGui::SameLine();
-				ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-				ImGui::SameLine();
-				if (ImGui::RadioButton("Local", currentGuizmoMode == ImGuizmo::LOCAL)) currentGuizmoMode = ImGuizmo::LOCAL;
-				ImGui::SameLine();
-				if (ImGui::RadioButton("World", currentGuizmoMode == ImGuizmo::WORLD)) currentGuizmoMode = ImGuizmo::WORLD;
-			} else {
-				currentGuizmoMode = ImGuizmo::LOCAL;
-			}
-
-			ImGui::SameLine();
-			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::SameLine();
-
-			ImGui::TextColored(App->editor->titleColor, "Snap");
-			ImGui::SameLine();
-			ImGui::Checkbox("##snap", &useSnap);
-			ImGui::SameLine();
-
-			ImGui::PushItemWidth(150);
-			switch (currentGuizmoOperation) {
-			case ImGuizmo::TRANSLATE:
-				ImGui::InputFloat3("Snap", &snap[0]);
-				break;
-			case ImGuizmo::ROTATE:
-				ImGui::InputFloat("Snap Angle", &snap[0]);
-				break;
-			case ImGuizmo::SCALE:
-				ImGui::InputFloat("Snap Scale", &snap[0]);
-				break;
-			}
-			ImGui::PopItemWidth();
-
-			ImGui::SameLine();
 			ImGui::Checkbox("2D", &view2D);
-			ImGui::SameLine();
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 
+			std::string camera = std::string(ICON_FA_VIDEO);
+			if (ImGui::Button(camera.c_str())) {
+				ImGui::OpenPopup("Camera");
+			}
+			if (ImGui::BeginPopup("Camera")) {
+				Frustum& frustum = App->camera->GetEngineFrustum();
+				vec front = frustum.Front();
+				vec up = frustum.Up();
+				ImGui::TextColored(App->editor->titleColor, "Frustum");
+				ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+				ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+				float nearPlane = frustum.NearPlaneDistance();
+				float farPlane = frustum.FarPlaneDistance();
+				if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
+					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+				}
+				if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
+					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+				}
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+
+			if (ImGui::Button("Gizmos")) {
+				ImGui::OpenPopup("Gizmos");
+			}
+			if (ImGui::BeginPopup("Gizmos")) {
+				ImGui::Text("General");
+				ImGui::Separator();
+				ImGui::Checkbox("Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
+				ImGui::Checkbox("Quadtree", &App->renderer->drawQuadtree);
+
+				ImGui::EndPopup();
+			}
+
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+
+			if (ImGui::Button("Stats")) {
+				ImGui::OpenPopup("Stats");
+			}
+			if (ImGui::BeginPopup("Stats")) {
+				char fps[10];
+				sprintf_s(fps, 10, "%.1f", fpsLog[fpsLogIndex]);
+				char ms[10];
+				sprintf_s(ms, 10, "%.1f", msLog[fpsLogIndex]);
+
+				int triangles = 0;
+				for (ComponentMeshRenderer& meshComponent : App->scene->scene->meshRendererComponents) {
+					ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
+					triangles += mesh->numIndices / 3;
+				}
+
+				ImGui::TextColored(App->editor->titleColor, "Framerate");
+				ImGui::Text("Frames: ");
+				ImGui::SameLine();
+				ImGui::TextColored(App->editor->textColor, fps);
+				ImGui::Text("Milliseconds: ");
+				ImGui::SameLine();
+				ImGui::TextColored(App->editor->textColor, ms);
+				ImGui::Separator();
+				ImGui::TextColored(App->editor->titleColor, "Triangles / scene");
+				ImGui::Text("Number: ");
+				ImGui::SameLine();
+				char trianglesChar[10];
+				sprintf_s(trianglesChar, 10, "%d", triangles);
+				ImGui::TextColored(App->editor->textColor, trianglesChar);
+
+				ImGui::EndPopup();
+			}
+			ImGui::PopStyleVar();
 			ImGui::EndMenuBar();
 		}
 
@@ -143,27 +164,81 @@ void PanelScene::Update() {
 		// Draw
 		ImGui::Image((void*) App->renderer->renderTexture, size, ImVec2(0, 1), ImVec2(1, 0));
 
-		// Drag and drop
-		if (ImGui::BeginDragDropTarget()) {
-			std::string payloadTypePrefab = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypePrefab.c_str())) {
-				UID prefabId = *(UID*) payload->Data;
-				ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
-				if (prefab != nullptr) {
-					prefab->BuildPrefab(App->scene->scene->root);
+		if (App->camera->IsEngineCameraActive()) {
+			// Drag and drop
+			if (ImGui::BeginDragDropTarget()) {
+				std::string payloadTypePrefab = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypePrefab.c_str())) {
+					UID prefabId = *(UID*) payload->Data;
+					ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+					if (prefab != nullptr) {
+						prefab->BuildPrefab(App->scene->scene->root);
+					}
+				}
+
+				// TODO: "Are you sure?" Popup to avoid losing the current scene
+				std::string payloadTypeScene = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::SCENE);
+				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypeScene.c_str())) {
+					UID sceneId = *(UID*) payload->Data;
+					ResourceScene* scene = (ResourceScene*) App->resources->GetResource(sceneId);
+					if (scene != nullptr) {
+						scene->BuildScene();
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+			float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
+			float viewManipulateTop = framebufferPosition.y;
+
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
+
+			Frustum& engineFrustum = App->camera->GetEngineFrustum();
+			float4x4 cameraView = float4x4(engineFrustum.ViewMatrix()).Transposed();
+			float4x4 cameraProjection = engineFrustum.ProjectionMatrix().Transposed();
+
+			GameObject* selectedGameObject = App->editor->selectedGameObject;
+			if (selectedGameObject) {
+				ComponentTransform* transform = selectedGameObject->GetComponent<ComponentTransform>();
+				float4x4 globalMatrix = transform->GetGlobalMatrix().Transposed();
+
+				ImGuizmo::Manipulate(cameraView.ptr(), cameraProjection.ptr(), currentGuizmoOperation, currentGuizmoMode, globalMatrix.ptr(), NULL, useSnap ? snap : NULL);
+
+				if (ImGuizmo::IsUsing()) {
+					GameObject* parent = selectedGameObject->GetParent();
+					float4x4 inverseParentMatrix = float4x4::identity;
+					if (parent != nullptr) {
+						ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
+						inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
+					}
+					float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
+
+					float3 translation;
+					Quat rotation;
+					float3 scale;
+					localMatrix.Decompose(translation, rotation, scale);
+
+					switch (currentGuizmoOperation) {
+					case ImGuizmo::TRANSLATE:
+						transform->SetPosition(translation);
+						break;
+					case ImGuizmo::ROTATE:
+						transform->SetRotation(rotation);
+						break;
+					case ImGuizmo::SCALE:
+						transform->SetScale(scale);
+						break;
+					}
 				}
 			}
 
-			// TODO: "Are you sure?" Popup to avoid losing the current scene
-			std::string payloadTypeScene = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::SCENE);
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypeScene.c_str())) {
-				UID sceneId = *(UID*) payload->Data;
-				ResourceScene* scene = (ResourceScene*) App->resources->GetResource(sceneId);
-				if (scene != nullptr) {
-					scene->BuildScene();
-				}
+			float viewManipulateSize = 100;
+			ImGuizmo::ViewManipulate(cameraView.ptr(), 4, ImVec2(viewManipulateRight - viewManipulateSize, viewManipulateTop), ImVec2(viewManipulateSize, viewManipulateSize), 0x10101010);
+			if (ImGui::IsWindowFocused()) {
+				float4x4 newCameraView = cameraView.InverseTransposed();
+				App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
 			}
-			ImGui::EndDragDropTarget();
 		}
 
 		// Capture input
@@ -188,61 +263,13 @@ void PanelScene::Update() {
 			}
 			ImGui::CaptureMouseFromApp(false);
 		}
-
-		float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
-		float viewManipulateTop = framebufferPosition.y;
-
-		ImGuizmo::SetDrawlist();
-		ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
-
-		Frustum& engineFrustum = App->camera->GetEngineFrustum();
-		float4x4 cameraView = float4x4(engineFrustum.ViewMatrix()).Transposed();
-		float4x4 cameraProjection = engineFrustum.ProjectionMatrix().Transposed();
-
-		GameObject* selectedGameObject = App->editor->selectedGameObject;
-		if (selectedGameObject) {
-			ComponentTransform* transform = selectedGameObject->GetComponent<ComponentTransform>();
-			float4x4 globalMatrix = transform->GetGlobalMatrix().Transposed();
-
-			ImGuizmo::Manipulate(cameraView.ptr(), cameraProjection.ptr(), currentGuizmoOperation, currentGuizmoMode, globalMatrix.ptr(), NULL, useSnap ? snap : NULL);
-
-			if (ImGuizmo::IsUsing()) {
-				GameObject* parent = selectedGameObject->GetParent();
-				float4x4 inverseParentMatrix = float4x4::identity;
-				if (parent != nullptr) {
-					ComponentTransform* parentTransform = parent->GetComponent<ComponentTransform>();
-					inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
-				}
-				float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
-
-				float3 translation;
-				Quat rotation;
-				float3 scale;
-				localMatrix.Decompose(translation, rotation, scale);
-
-				switch (currentGuizmoOperation) {
-				case ImGuizmo::TRANSLATE:
-					transform->SetPosition(translation);
-					break;
-				case ImGuizmo::ROTATE:
-					transform->SetRotation(rotation);
-					break;
-				case ImGuizmo::SCALE:
-					transform->SetScale(scale);
-					break;
-				}
-			}
-		}
-
-		float viewManipulateSize = 100;
-		ImGuizmo::ViewManipulate(cameraView.ptr(), 4, ImVec2(viewManipulateRight - viewManipulateSize, viewManipulateTop), ImVec2(viewManipulateSize, viewManipulateSize), 0x10101010);
-		if (ImGui::IsWindowFocused()) {
-			float4x4 newCameraView = cameraView.InverseTransposed();
-			App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
-		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
+}
+
+bool PanelScene::IsUsing2D() const {
+	return view2D;
 }
 
 float2 PanelScene::GetMousePosOnScene() const {
@@ -253,6 +280,6 @@ float2 PanelScene::GetSceneWindowSize() const {
 	return framebufferSize;
 }
 
-const bool PanelScene::IsUsing2D() const {
-	return view2D;
+const char* PanelScene::GetCurrentShadingMode() const {
+	return currentShadingMode;
 }

@@ -17,7 +17,7 @@
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleTime.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -261,6 +261,7 @@ void ModuleRender::ToggleDrawSkybox() {
 	skyboxActive = !skyboxActive;
 }
 
+
 void ModuleRender::ToggleDrawAnimationBones() {
 	drawAllBones = !drawAllBones;
 }
@@ -273,6 +274,14 @@ void ModuleRender::ToggleDrawLightGizmos() {
 	drawLightGizmos = !drawLightGizmos;
 }
 
+void ModuleRender::UpdateShadingMode(const char* shadingMode) {
+	if (shadingMode == "Shaded") {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	else if (shadingMode == "Wireframe") {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+}
 
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
 	if (node.IsBranch()) {
@@ -306,9 +315,6 @@ void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node,
 		};
 		dd::box(points, dd::colors::White);
 	}
-}
-
-void ModuleRender::ReceiveEvent(const Event& ev) {
 }
 
 void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
@@ -395,36 +401,13 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
-	if (boundingBox && drawAllBoundingBoxes) {
+	if (boundingBox && drawAllBoundingBoxes && App->camera->IsEngineCameraActive()) {
 		boundingBox->DrawBoundingBox();
 	}
 
 	for (ComponentMeshRenderer* mesh : meshes) {
 		mesh->Draw(transform->GetGlobalMatrix());
 	}
-}
-
-void ModuleRender::DrawSkyBox() {
-	// TODO: (Texture resource) Make skybox work
-	/*
-	if (skyboxActive) {
-		glDepthFunc(GL_LEQUAL);
-
-		unsigned program = App->programs->skyboxProgram;
-		glUseProgram(program);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
-		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
-		glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
-
-		glBindVertexArray(App->scene->skyboxVao);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, App->scene->skyboxCubeMap->glTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-
-		glDepthFunc(GL_LESS);
-	}
-	*/
 }
 
 void ModuleRender::RenderUI() {

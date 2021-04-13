@@ -183,7 +183,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 		std::pair<ComponentType, UID> pair = components[i];
 		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
-		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
+		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ID] = component->GetID();
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
 		component->Save(jComponent);
@@ -206,10 +206,11 @@ void GameObject::Load(JsonValue jGameObject) {
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {
 		JsonValue jComponent = jComponents[i];
 
-		ComponentType type = (ComponentType)(unsigned) jComponent[JSON_TAG_TYPE];
+		std::string typeName = jComponent[JSON_TAG_TYPE];
 		UID componentId = jComponent[JSON_TAG_ID];
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
+		ComponentType type = GetComponentTypeFromName(typeName.c_str());
 		components.push_back(std::pair<ComponentType, UID>(type, componentId));
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
 		component->Load(jComponent);
@@ -249,7 +250,7 @@ void GameObject::SavePrototype(JsonValue jGameObject) const {
 		std::pair<ComponentType, UID> pair = components[i];
 		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
-		jComponent[JSON_TAG_TYPE] = (unsigned) component->GetType();
+		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
 		component->Save(jComponent);
 	}
@@ -271,10 +272,11 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {
 		JsonValue jComponent = jComponents[i];
 
-		ComponentType type = (ComponentType)(unsigned) jComponent[JSON_TAG_TYPE];
+		std::string typeName = jComponent[JSON_TAG_TYPE];
 		UID componentId = GenerateUID();
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
+		ComponentType type = GetComponentTypeFromName(typeName.c_str());
 		components.push_back(std::pair<ComponentType, UID>(type, componentId));
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
 		component->Load(jComponent);

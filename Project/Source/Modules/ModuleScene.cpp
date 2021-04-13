@@ -70,7 +70,9 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->events->AddObserverToEvent(EventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
+
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
@@ -90,12 +92,6 @@ UpdateStatus ModuleScene::Update() {
 }
 
 bool ModuleScene::CleanUp() {
-	// TODO: (Texture resource) make skybox work
-	/*
-	glDeleteVertexArrays(1, &skyboxVao);
-	glDeleteBuffers(1, &skyboxVbo);
-	*/
-
 	scene->ClearScene();
 	RELEASE(scene);
 
@@ -104,6 +100,17 @@ bool ModuleScene::CleanUp() {
 #endif
 
 	return true;
+}
+
+void ModuleScene::ReceiveEvent(TesseractEvent& e) {
+	switch (e.type) {
+	case TesseractEventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.destroyGameObject.gameObject);
+		break;
+	case TesseractEventType::ADD_COMPONENT:
+		scene->AddComponent(e.addComponent.component);
+		break;
+	}
 }
 
 void ModuleScene::CreateEmptyScene() {
@@ -131,9 +138,7 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
-
-	// Create Skybox
-	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
+	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	gameCamera->InitComponents();
 }
 
@@ -144,15 +149,7 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 	for (GameObject* child : children) {
 		DestroyGameObjectDeferred(child);
 	}
-	Event ev(EventType::GAMEOBJECT_DESTROYED);
-	ev.destroyGameObject.ptr = gameObject;
-	App->events->AddEvent(ev);
-}
-
-void ModuleScene::ReceiveEvent(const Event& e) {
-	switch (e.type) {
-	case EventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.destroyGameObject.ptr);
-		break;
-	}
+	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
+	e.destroyGameObject.gameObject = gameObject;
+	App->events->AddEvent(e);
 }

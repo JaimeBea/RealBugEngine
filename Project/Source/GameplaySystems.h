@@ -361,6 +361,11 @@ namespace Input {
 	TESSERACT_ENGINE_API bool GetKeyCode(KEYCODE keycode);
 }; // namespace Input
 
+namespace Screen {
+	TESSERACT_ENGINE_API float GetScreenWitdh();
+	TESSERACT_ENGINE_API float GetScreenHeight();
+}; // namespace Screen
+
 namespace SceneManager {
 	TESSERACT_ENGINE_API void SceneLoad(const char* filePath);
 }; // namespace SceneManager

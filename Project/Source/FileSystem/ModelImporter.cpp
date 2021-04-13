@@ -400,7 +400,6 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 		if (minPoint.x < maxPoint.x) {
 			ComponentBoundingBox* boundingBox = gameObject->CreateComponent<ComponentBoundingBox>();
 			boundingBox->SetLocalBoundingBox(AABB(minPoint, maxPoint));
-			boundingBox->CalculateWorldBoundingBox();
 		}
 
 		// Import children nodes

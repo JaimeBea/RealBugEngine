@@ -4,17 +4,19 @@
 
 class GameObject;
 
-class Camera : public Script
+class FrangMovement : public Script
 {
-	GENERATE_BODY(Camera);
+	GENERATE_BODY(FrangMovement);
 
 public:
 
 	void Start() override;
 	void Update() override;
-
 public:
 
 	GameObject* gameObject = nullptr;
-	GameObject* player = nullptr;
+
+private:
+
+	int speed = 100;
 };

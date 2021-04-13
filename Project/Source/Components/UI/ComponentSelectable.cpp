@@ -108,7 +108,6 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	interactable = false;
 	selected = false;
 	onAxisDown = 0;
 	onAxisLeft = 0;
@@ -197,7 +196,7 @@ void ComponentSelectable::OnPointerExit() {
 }
 
 void ComponentSelectable::DuplicateComponent(GameObject& owner) {
-	ComponentSelectable* component = owner.CreateComponent<ComponentSelectable>();
+	ComponentSelectable* component = owner.CreateComponentDeferred<ComponentSelectable>();
 	component->interactable = interactable;
 	component->colorDisabled = colorDisabled;
 	component->colorHovered = colorHovered;

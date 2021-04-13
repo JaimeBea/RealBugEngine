@@ -104,7 +104,7 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 #ifdef _DEBUG
 	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", enginePath);
 #else
-	std::string result = fmt::format(project, name, UIDProject, enginePath + "Engine/Source", enginePath + "Engine/Libs/MatheGeoLib", enginePath + "Engine/Libs/SDL/include", enginePath + "Engine/Lib");
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", enginePath);
 #endif
 
 	App->files->Save(path, result.data(), result.size());

@@ -16,9 +16,10 @@ public:
 
 	GameObject* gameObject = nullptr;
 	GameObject* player = nullptr;
-	GameObject* UI = nullptr;
+	GameObject* loseText = nullptr;
+	GameObject* winText = nullptr;
 
 public:
-	float WinPointX = 13.0f;
-	float LosePointX = -13.0f;
+	float WinPointX = 230.0f;
+	float LosePointX = -130.0f;
 };

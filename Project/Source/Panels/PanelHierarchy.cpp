@@ -187,9 +187,7 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
 		newGameObject->CreateComponent<ComponentTransform>();
 		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
-
 		App->userInterface->SetCurrentEventSystem(component);
-
 		newGameObject->InitComponents();
 		return newGameObject;
 	}
@@ -201,7 +199,6 @@ GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
-
 	newGameObject->InitComponents();
 
 	return newGameObject;
@@ -217,8 +214,8 @@ GameObject* PanelHierarchy::CreateUIImage(GameObject* gameObject) {
 	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
 	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
-
 	newGameObject->InitComponents();
+
 	return newGameObject;
 }
 
@@ -232,8 +229,8 @@ GameObject* PanelHierarchy::CreateUIText(GameObject* gameObject) {
 	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
 	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
 	ComponentText* text = newGameObject->CreateComponent<ComponentText>();
-
 	newGameObject->InitComponents();
+
 	return newGameObject;
 }
 
@@ -250,7 +247,8 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
 	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
 	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
-	newGameObject->InitComponents();
 	selectable->SetSelectableType(button->GetType());
+	newGameObject->InitComponents();
+
 	return newGameObject;
 }

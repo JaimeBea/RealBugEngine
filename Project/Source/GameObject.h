@@ -3,10 +3,13 @@
 #include "Components/Component.h"
 #include "Application.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleEvents.h"
 #include "Utils/Logging.h"
 #include "Utils/UID.h"
 #include "FileSystem/JsonValue.h"
+#include "TesseractEvent.h"
 
+#include "Math/myassert.h"
 #include <vector>
 #include <string>
 
@@ -23,7 +26,8 @@ public:
 
 	UID GetID() const;
 
-	template<class T> T* CreateComponent(bool active = true);
+	template<class T> T* CreateComponent();
+	template<class T> T* CreateComponentDeferred();
 	template<class T> bool HasComponent() const;
 	template<class T> T* GetComponent() const;
 	template<class T> std::vector<T*> GetComponents() const;
@@ -60,20 +64,37 @@ public:
 
 	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree
 
+	std::vector<std::pair<ComponentType, UID>> components;
+
 private:
 	bool active = true;
 	GameObject* parent = nullptr;
 	GameObject* rootBoneHierarchy = nullptr;
-	std::vector<std::pair<ComponentType, UID>> components;
 	std::vector<GameObject*> children;
 };
 
 template<class T>
-inline T* GameObject::CreateComponent(bool active) {
+inline T* GameObject::CreateComponent() {
 	if (!T::allowMultipleComponents && HasComponent<T>()) return nullptr;
 	UID componentId = GenerateUID();
 	components.push_back(std::pair<ComponentType, UID>(T::staticType, componentId));
 	return (T*) scene->CreateComponentByTypeAndId(this, T::staticType, componentId);
+}
+
+template<class T>
+inline T* GameObject::CreateComponentDeferred() {
+	if (!T::allowMultipleComponents && HasComponent<T>()) return nullptr;
+	if (scene != App->scene->scene) {
+		LOG("Deferred component creation is not allowed outside of the main scene.");
+		assert(false);
+		return nullptr;
+	}
+
+	TesseractEvent e(TesseractEventType::ADD_COMPONENT);
+	e.addComponent.component = new T(this, GenerateUID(), active);
+	App->events->AddEvent(e);
+
+	return (T*) e.addComponent.component;
 }
 
 template<class T>
