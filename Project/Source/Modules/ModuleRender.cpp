@@ -173,32 +173,47 @@ UpdateStatus ModuleRender::Update() {
 	if (scene->quadtree.IsOperative()) {
 		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
-	//LOG("Scene draw: %llu mis", timer.Stop());
+
 #if !GAME
+	// Draw Gizmos 
 	if (App->camera->IsEngineCameraActive()) {
-		// Draw Guizmos
 		GameObject* selectedGameObject = App->editor->selectedGameObject;
 		if (selectedGameObject) selectedGameObject->DrawGizmos();
-
-		// Draw quadtree
-		if (drawQuadtree) {
-			DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
-		}
 	}
 #endif
+
+	// --- All Gizmos options
+	if (drawCameraFrustums) {
+		for (ComponentCamera camera : scene->cameraComponents) {
+			camera.DrawGizmos();
+		}
+	}
+
+	if (drawLightGizmos) {
+		for (ComponentLight light : scene->lightComponents) {
+			light.DrawGizmos();
+		}
+	}
+
+	// Draw quadtree
+	if (drawQuadtree) {
+		DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+	}
 
 	//Render UI
 	RenderUI();
 
-#if !GAME
 	// Draw debug draw
-	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
-
-	// Draw debug Animations
-	for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
-		DrawAnimation(animationComponent.GetOwner().GetRootBone());
+	if (drawDebugDraw){
+		 App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 	}
-#endif // !GAME
+
+	// Draw Animations
+	if (drawAllBones) {
+		for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+			DrawAnimation(animationComponent.GetOwner().GetRootBone());
+		}
+	}
 
 	return UpdateStatus::CONTINUE;
 }
@@ -247,10 +262,38 @@ void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
 }
 
+void ModuleRender::ToggleDebugDraw() {
+	drawDebugDraw = !drawDebugDraw;
+
+}
+void ModuleRender::ToggleDrawQuadtree() {
+	drawQuadtree = !drawQuadtree;
+}
+
+void ModuleRender::ToggleDrawBBoxes() {
+	drawAllBoundingBoxes = !drawAllBoundingBoxes;
+}
+
+void ModuleRender::ToggleDrawSkybox() {  // TODO: review Godmodecamera
+	skyboxActive = !skyboxActive;
+}
+
+void ModuleRender::ToggleDrawAnimationBones() {
+	drawAllBones = !drawAllBones;
+}
+
+void ModuleRender::ToggleDrawCameraFrustums() {
+	drawCameraFrustums = !drawCameraFrustums;
+}
+
+void ModuleRender::ToggleDrawLightGizmos() {
+	drawLightGizmos = !drawLightGizmos;
+}
+
 void ModuleRender::UpdateShadingMode(const char* shadingMode) {
 	if (shadingMode == "Shaded") {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	} else if (shadingMode == "Wireframe") {
+	}else if (shadingMode == "Wireframe") {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 }

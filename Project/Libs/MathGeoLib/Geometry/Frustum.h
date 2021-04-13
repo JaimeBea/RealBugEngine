@@ -26,6 +26,12 @@
 
 MATH_BEGIN_NAMESPACE
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 /// A Frustum can be set to one of the two common different forms.
 enum FrustumType
 {
@@ -91,8 +97,7 @@ enum FrustumHandedness
 };
 
 /// Represents either an orthographic or a perspective viewing frustum.
-class Frustum
-{
+class TESSERACT_ENGINE_API Frustum {
 private:
 	/// Specifies whether this frustum is a perspective or an orthographic frustum.
 	/** [noscript] @todo Remove the noscript attribute. */
