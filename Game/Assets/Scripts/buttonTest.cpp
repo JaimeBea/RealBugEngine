@@ -15,5 +15,4 @@ void buttonTest::Update() {
 
 void buttonTest::OnButtonClick() {
 	SceneManager::SceneLoad("Assets/Scenes/TestScene.scene");
-	LOG("Click");
 }

@@ -146,7 +146,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.753051519393921,
+                            "HorizontalFov": 1.6784718036651612,
                             "VerticalFov": 1.0
                         },
                         "CameraSelected": false
@@ -303,7 +303,7 @@
                                     0.5
                                 ],
                                 "Size": [
-                                    20.0,
+                                    2200.0,
                                     1238.0
                                 ],
                                 "AnchorX": [
@@ -325,7 +325,7 @@
                                 "Id": 5494725855711796091,
                                 "Active": true,
                                 "ShaderId": 13048234700482507163,
-                                "TextureId": 521065984043234873,
+                                "TextureId": 6918997292656258028,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -479,7 +479,7 @@
                                 "Id": 2339619138975874497,
                                 "Active": true,
                                 "ShaderId": 13048234700482507163,
-                                "TextureId": 9377222940719934675,
+                                "TextureId": 14349373242646959496,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -516,9 +516,9 @@
                                     0.5,
                                     1.0
                                 ],
-                                "Interactable": false,
+                                "Interactable": true,
                                 "NavigationType": 2,
-                                "TransitionType": 2,
+                                "TransitionType": 1,
                                 "SelectableType": 10,
                                 "OnAxisDown": 0,
                                 "OnAxisUp": 0,
@@ -529,7 +529,7 @@
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
                                 "Active": true,
-                                "Script": 16483317036567277589
+                                "Script": 17995409620589219510
                             }
                         ],
                         "Children": null

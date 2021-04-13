@@ -26,7 +26,7 @@ enum class TesseractEventType {
 	UPDATE_FOLDERS,
 	MOUSE_UPDATE,
 	MOUSE_CLICKED,
-	MOUSE_RELEASED
+	MOUSE_RELEASED,
 };
 
 struct TesseractEvent {
