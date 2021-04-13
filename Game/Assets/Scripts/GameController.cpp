@@ -18,9 +18,11 @@ void GameController::Update() {
 
 		if (godCameraActive) {
 			GameplaySystems::SetRenderCamera(gameCamera);
+			godCameraActive = false;
 		}
 		else {
 			GameplaySystems::SetRenderCamera(godCamera);
+			godCameraActive = true;
 		}
 	}
 }

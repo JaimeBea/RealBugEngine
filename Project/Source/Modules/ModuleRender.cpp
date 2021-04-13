@@ -145,9 +145,6 @@ UpdateStatus ModuleRender::PreUpdate() {
 UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
-	// Draw Skybox as a first element
-	if (skyboxActive) DrawSkyBox();
-
 	// Draw the scene
 	//PerformanceTimer timer;
 	//timer.Start();
@@ -257,10 +254,9 @@ void ModuleRender::ToggleDrawBBoxes() {
 	drawAllBoundingBoxes = !drawAllBoundingBoxes;
 }
 
-void ModuleRender::ToggleDrawSkybox() {
+void ModuleRender::ToggleDrawSkybox() {  // TODO: review Godmodecamera
 	skyboxActive = !skyboxActive;
 }
-
 
 void ModuleRender::ToggleDrawAnimationBones() {
 	drawAllBones = !drawAllBones;

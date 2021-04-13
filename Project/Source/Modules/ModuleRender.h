@@ -25,7 +25,7 @@ public:
 	TESSERACT_ENGINE_API void ToggleDebugDraw();
 	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
 	TESSERACT_ENGINE_API void ToggleDrawBBoxes();
-	TESSERACT_ENGINE_API void ToggleDrawSkybox();
+	TESSERACT_ENGINE_API void ToggleDrawSkybox();  // TODO: review Godmodecamera
 	TESSERACT_ENGINE_API void ToggleDrawAnimationBones();
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
@@ -48,7 +48,7 @@ public:
 	bool drawDebugDraw = true;
 	bool drawQuadtree = true;
 	bool drawAllBoundingBoxes = false;
-	bool skyboxActive = true;
+	bool skyboxActive = true; // TODO: review Godmodecamera
 	bool drawAllBones = true;
 	bool drawCameraFrustums = false;
 	bool drawLightGizmos = false;

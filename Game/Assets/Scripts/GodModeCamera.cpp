@@ -10,13 +10,16 @@
 GENERATE_BODY_IMPL(GodModeCamera);
 
 void GodModeCamera::Start() {
-	godCamera = GameplaySystems::GetGameObject("God Camera");
-	transform = godCamera->GetComponent<ComponentTransform>();
-	frustum = godCamera->GetComponent<ComponentCamera>()->GetFrustum();
 	speed = 10.f;
 	rotationSpeedX = 10.f;
 	rotationSpeedY = 10.f;
 	focusDistance = 10.f;
+
+	godCamera = GameplaySystems::GetGameObject("God Camera");
+	if (godCamera) {
+		transform = godCamera->GetComponent<ComponentTransform>();
+		frustum = godCamera->GetComponent<ComponentCamera>()->GetFrustum();
+	}
 }
 
 void GodModeCamera::Update() {
@@ -69,7 +72,7 @@ void GodModeCamera::Update() {
 	}
 	// --- Show/Hide Skybox
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_X)) {
-		Debug::ToggleDrawSkybox();
+		Debug::ToggleDrawSkybox(); // TODO: not implemented
 	}
 	// --- Show/Hide Quadtree
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_C)) {
