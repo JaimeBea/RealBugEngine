@@ -22,6 +22,15 @@ public:
 
 	void SetVSync(bool vsync);
 
+	// -------- Game Debug --------- //
+	TESSERACT_ENGINE_API void ToggleDebugDraw();
+	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
+	TESSERACT_ENGINE_API void ToggleDrawBBoxes();
+	TESSERACT_ENGINE_API void ToggleDrawSkybox();
+	TESSERACT_ENGINE_API void ToggleDrawAnimationBones();
+	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
+	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
+
 public:
 	void* context = nullptr; // SDL context.
 
@@ -35,9 +44,13 @@ public:
 	unsigned viewportHeight = 0;
 
 	// -- Debugging Tools Toggles -- //
+	bool drawDebugDraw = true;
 	bool drawQuadtree = true;
 	bool drawAllBoundingBoxes = false;
 	bool skyboxActive = true;
+	bool drawAllBones = true;
+	bool drawCameraFrustums = false;
+	bool drawLightGizmos = false;
 
 	float3 ambientColor = {0.0f, 0.0f, 0.0f}; // Color of ambient Light
 	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames

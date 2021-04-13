@@ -49,45 +49,47 @@ void GodModeCamera::Update() {
 	}
 
 	// Rotation
-	if (Input::GetMouseButton(2)) {
-		
+	if (Input::GetMouseButton(2)) { // TODO: Why a 2?! It should be a 3!
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_LALT)) {
 			// --- Orbiting
-			// TODO: focusdistance!!!
 			vec oldFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
-			Quat yIncrement = Quat::RotateY(-Input::GetMouseMotion().x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
-			Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -Input::GetMouseMotion().y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
-			transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
+			Rotate(Input::GetMouseMotion());
 			vec newFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
 			transform->SetPosition(transform->GetPosition() + (oldFocus - newFocus));
 		} else {
 			// --- Panning
-			Quat yIncrement = Quat::RotateY(-Input::GetMouseMotion().x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
-			Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -Input::GetMouseMotion().y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
-			transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
+			Rotate(Input::GetMouseMotion());
 		}
 	}
 
 	// Func
-	// --- Show Quadtree
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_Q)) {
-		// Show Quad func
+	// --- Show/Hide DebugDraw
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_Z)) {
+		Debug::ToggleDebugDraw();
 	}
-	// --- Show Bounding Boxes
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_B)) {
-		// Show/Hide BB for all GO
+	// --- Show/Hide Skybox
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_X)) {
+		Debug::ToggleDrawSkybox();
 	}
-	// --- Show animation bones
+	// --- Show/Hide Quadtree
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_C)) {
+		Debug::ToggleDrawQuadtree();
+	}
+	// --- Show/Hide Bounding Boxes
 	if (Input::GetKeyCode(Input::KEYCODE::KEY_V)) {
-		// TODO: Show/Hide bones
+		Debug::ToggleDrawBBoxes();
 	}
-	// --- Pause Frame / Continue play
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_P)) {
-
+	// --- Show/Hide animation bones
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_B)) {
+		Debug::ToggleDrawAnimationBones();
 	}
-	// --- Step Frame
-	if (Input::GetKeyCode(Input::KEYCODE::KEY_F)) {
-
+	// --- Show/Hide All Light Gizmos
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_N)) {
+		Debug::ToggleDrawLightGizmos();
+	}
+	// --- Show/Hide All Camera Frustums
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_M)) {
+		Debug::ToggleDrawCameraFrustums();
 	}
 }
 
@@ -96,9 +98,3 @@ void GodModeCamera::Rotate(float2 mouseMotion) {
 	Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -mouseMotion.y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
 	transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
 }
-/*void GodModeCamera::Rotate(const float3x3& rotationMatrix) {
-	vec oldFront = frustum->Front().Normalized();
-	vec oldUp = frustum->Up().Normalized();
-	frustum->SetFront(rotationMatrix * oldFront);
-	frustum->SetUp(rotationMatrix * oldUp);
-}*/

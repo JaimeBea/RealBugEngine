@@ -14,9 +14,20 @@ namespace GameplaySystems {
 	TESSERACT_ENGINE_API GameObject* GetGameObject(const char* name);
 }; // namespace GameplaySystems
 
+namespace Debug {
+	TESSERACT_ENGINE_API void ToggleDebugDraw();
+	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
+	TESSERACT_ENGINE_API void ToggleDrawBBoxes();
+	TESSERACT_ENGINE_API void ToggleDrawSkybox();
+	TESSERACT_ENGINE_API void ToggleDrawAnimationBones();
+	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
+	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
+}
+
 namespace Time {
 	TESSERACT_ENGINE_API float GetDeltaTime();
 }
+
 namespace Input {
 	enum KEYCODE {
 		KEY_UNKNOWN = 0,

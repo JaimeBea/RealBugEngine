@@ -146,7 +146,7 @@ UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
 	// Draw Skybox as a first element
-	DrawSkyBox();
+	if (skyboxActive) DrawSkyBox();
 
 	// Draw the scene
 	//PerformanceTimer timer;
@@ -169,24 +169,35 @@ UpdateStatus ModuleRender::Update() {
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
-	// Draw Guizmos
+	// Draw Gizmos 
 	GameObject* selectedGameObject = App->editor->selectedGameObject;
 	if (selectedGameObject) selectedGameObject->DrawGizmos();
+	// --- All Gizmos options
+	if (drawCameraFrustums) {
+		for (ComponentCamera camera : scene->cameraComponents) {
+			camera.DrawGizmos();
+		}
+	}
+	if (drawLightGizmos) {
+		for (ComponentLight light : scene->lightComponents) {
+			light.DrawGizmos();
+		}
+	}
 
 	// Draw quadtree
-	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
-	}
+	if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 
 	//Render UI
 	RenderUI();
 
 	// Draw debug draw
-	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+	if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
 
 	// Draw Animations
-	for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
-		DrawAnimation(animationComponent.GetOwner().GetRootBone());
+	if (drawAllBones) {
+		for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+			DrawAnimation(animationComponent.GetOwner().GetRootBone());
+		}
 	}
 
 	return UpdateStatus::CONTINUE;
@@ -233,6 +244,35 @@ void ModuleRender::ViewportResized(int width, int height) {
 void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
 }
+
+void ModuleRender::ToggleDebugDraw() {
+	drawDebugDraw = !drawDebugDraw;
+
+}
+void ModuleRender::ToggleDrawQuadtree() {
+	drawQuadtree = !drawQuadtree;
+}
+
+void ModuleRender::ToggleDrawBBoxes() {
+	drawAllBoundingBoxes = !drawAllBoundingBoxes;
+}
+
+void ModuleRender::ToggleDrawSkybox() {
+	skyboxActive = !skyboxActive;
+}
+
+void ModuleRender::ToggleDrawAnimationBones() {
+	drawAllBones = !drawAllBones;
+}
+
+void ModuleRender::ToggleDrawCameraFrustums() {
+	drawCameraFrustums = !drawCameraFrustums;
+}
+
+void ModuleRender::ToggleDrawLightGizmos() {
+	drawLightGizmos = !drawLightGizmos;
+}
+
 
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
 	if (node.IsBranch()) {
