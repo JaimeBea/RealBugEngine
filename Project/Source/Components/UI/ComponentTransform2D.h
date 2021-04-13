@@ -7,6 +7,12 @@
 #include "Math/float4x4.h"
 #include "Math/Quat.h"
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 //TODO THIS CLASS CURRENTLY ONLY WORKS FOR OBJECTS THAT USE THE CENTER OF THE SCREEN AS THE CENTER OF COORDINATES,
 //NEITHER PIVOT NOR ANCHOR ARE TAKEN INTO ACCOUNT IN ANY WAY, NOR ARE THEY MODIFIABLE LIKE THEY WOULD IN UNITY
 
@@ -21,7 +27,7 @@ public:
 	void DrawGizmos() override;
 
 	void SetPosition(float3 position);								// Sets this position to value
-	void SetSize(float2 size);										// Sets this size to value
+	TESSERACT_ENGINE_API void SetSize(float2 size);					// Sets this size to value
 	void SetRotation(Quat rotation);								// Sets this rotation to value and calculates Euler Angles rotation
 	void SetRotation(float3 rotation);								// Sets this eulerAngles to value and calculates Quat rotation
 	void SetScale(float3 scale);									// Sets this scale to value
@@ -31,9 +37,9 @@ public:
 	const float4x4 GetGlobalMatrix();								// Returns GlobalMatrix
 	const float4x4 GetGlobalMatrixWithSize(bool isRunning = false); // Returns GlobalMatrix with the size of the item
 
-	float3 GetPosition() const; // Returns the position
-	float2 GetSize() const;		// Returns the size
-	float3 GetScale() const;	// Returns the scale
+	float3 GetPosition() const;					 // Returns the position
+	TESSERACT_ENGINE_API float2 GetSize() const; // Returns the size
+	float3 GetScale() const;					 // Returns the scale
 
 	void InvalidateHierarchy();							 // Invalidates hierarchy
 	void Invalidate();									 // Invalidates component

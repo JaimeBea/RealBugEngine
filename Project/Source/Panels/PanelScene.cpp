@@ -188,29 +188,6 @@ void PanelScene::Update() {
 				ImGui::EndDragDropTarget();
 			}
 
-			// Capture input
-			if (ImGui::IsWindowFocused()) {
-				if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT)) {
-					ImGuizmo::Enable(false);
-				} else {
-					ImGuizmo::Enable(true);
-				}
-
-				ImGui::CaptureKeyboardFromApp(false);
-				ImGui::CaptureMouseFromApp(true);
-				ImGuiIO& io = ImGui::GetIO();
-				mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
-				mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
-
-				if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
-					float2 mousePosNormalized;
-					mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
-					mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
-					App->camera->CalculateFrustumNearestObject(mousePosNormalized);
-				}
-				ImGui::CaptureMouseFromApp(false);
-			}
-
 			float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
 			float viewManipulateTop = framebufferPosition.y;
 
@@ -264,6 +241,28 @@ void PanelScene::Update() {
 			}
 		}
 
+		// Capture input
+		if (ImGui::IsWindowFocused()) {
+			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT)) {
+				ImGuizmo::Enable(false);
+			} else {
+				ImGuizmo::Enable(true);
+			}
+
+			ImGui::CaptureKeyboardFromApp(false);
+			ImGui::CaptureMouseFromApp(true);
+			ImGuiIO& io = ImGui::GetIO();
+			mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
+			mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
+
+			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
+				float2 mousePosNormalized;
+				mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
+				mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
+				App->camera->CalculateFrustumNearestObject(mousePosNormalized);
+			}
+			ImGui::CaptureMouseFromApp(false);
+		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
