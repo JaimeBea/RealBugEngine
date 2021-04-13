@@ -78,7 +78,7 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(SCENES_PATH);
 
 	#if GAME
-	SceneImporter::LoadScene("Assets/Scenes/ZombunnyScene.scene");
+	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
 	ComponentCamera& camera = *(scene->cameraComponents.begin());
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
 	App->camera->ChangeActiveFrustum(camera.frustum, true);
