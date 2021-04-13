@@ -2,10 +2,12 @@
 
 #include "Application.h"
 #include "Utils/Logging.h"
+#include "TesseractEvent.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEvents.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleScene.h"
 
 #include "imgui_internal.h"
 #include "IconsFontAwesome5.h"
@@ -96,16 +98,16 @@ void PanelControlEditor::Update() {
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button(stop.c_str())) {
-					App->events->AddEvent(Event(EventType::PRESSED_STOP));
+					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STOP));
 				}
 				ImGui::SameLine();
 				if (App->time->IsGameRunning()) {
 					if (ImGui::Button(pause.c_str())) {
-						App->events->AddEvent(Event(EventType::PRESSED_PAUSE));
+						App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PAUSE));
 					}
 				} else {
 					if (ImGui::Button(play.c_str())) {
-						App->events->AddEvent(Event(EventType::PRESSED_RESUME));
+						App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_RESUME));
 					}
 				}
 			} else {
@@ -113,12 +115,12 @@ void PanelControlEditor::Update() {
 					for (auto it : App->scene->scene->scriptComponents) {
 						it.OnStart();
 					}
-					App->events->AddEvent(Event(EventType::PRESSED_PLAY));
+					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PLAY));
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button(step.c_str())) {
-				App->events->AddEvent(Event(EventType::PRESSED_STEP));
+				App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STEP));
 			}
 
 			ImGui::PopItemWidth();
