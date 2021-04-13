@@ -373,6 +373,13 @@ void ComponentMeshRenderer::Update() {
 	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
 	if (!mesh) return;
 
+	if (palette.empty()) {
+		palette.resize(mesh->numBones);
+		for (unsigned i = 0; i < mesh->numBones; ++i) {
+			palette[i] = float4x4::identity;
+		}
+	}
+
 	if (App->time->GetDeltaTime() <= 0) return;
 
 	const GameObject* parent = GetOwner().GetParent();

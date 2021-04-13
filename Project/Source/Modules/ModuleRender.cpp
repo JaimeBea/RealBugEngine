@@ -135,13 +135,13 @@ bool ModuleRender::Init() {
 UpdateStatus ModuleRender::PreUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PreUpdate", Profiler::Color::Green)
 
-	#if GAME
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
-	#else
+#if !GAME
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glViewport(0, 0, viewportWidth, viewportHeight);
-	#endif
+#else
+	App->camera->ViewportResized(App->window->GetWidth(), App->window->GetHeight());
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+#endif
 
 	glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -219,6 +219,7 @@ void ModuleRender::ViewportResized(int width, int height) {
 	viewportWidth = width;
 	viewportHeight = height;
 
+#if !GAME
 	// Framebuffer calculations
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -235,6 +236,8 @@ void ModuleRender::ViewportResized(int width, int height) {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		LOG("ERROR: Framebuffer is not complete!");
 	}
+#endif
+
 }
 
 void ModuleRender::SetVSync(bool vsync) {

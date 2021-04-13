@@ -155,6 +155,10 @@ bool ModuleEditor::Start() {
 UpdateStatus ModuleEditor::PreUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PreUpdate", Profiler::Color::Azure)
 
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif
+
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
@@ -168,9 +172,11 @@ UpdateStatus ModuleEditor::Update() {
 
 	ImGui::CaptureMouseFromApp(true);
 	ImGui::CaptureKeyboardFromApp(true);
+
 #if GAME
 	return UpdateStatus::CONTINUE;
 #endif
+
 	// Main menu bar
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("File")) {
@@ -374,6 +380,10 @@ UpdateStatus ModuleEditor::Update() {
 
 UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif //  GAME
 
 	// Deleting Components
 	if (panelInspector.GetComponentToDelete()) {
