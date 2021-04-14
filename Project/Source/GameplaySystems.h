@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Math/float2.h"
+
 #if defined(TESSERACT_ENGINE_API)
 /* do nothing. */
 #elif defined(_MSC_VER)
@@ -22,7 +24,7 @@ namespace Debug {
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
 	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
-}
+} // namespace Debug
 
 namespace Time {
 	TESSERACT_ENGINE_API float GetDeltaTime();
