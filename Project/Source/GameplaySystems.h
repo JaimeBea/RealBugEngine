@@ -26,7 +26,7 @@ namespace Debug {
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
 	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
-}
+} // namespace Debug
 
 namespace Time {
 	TESSERACT_ENGINE_API float GetDeltaTime();
@@ -371,5 +371,5 @@ namespace Screen {
 
 namespace SceneManager {
 	TESSERACT_ENGINE_API void SceneLoad(const char* filePath);
-	TESSERACT_ENGINE_API UpdateStatus ExitGame();
+	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager
