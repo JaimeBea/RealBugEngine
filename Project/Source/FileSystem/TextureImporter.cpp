@@ -43,13 +43,6 @@ bool TextureImporter::ImportTexture(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	// Flip image if neccessary
-	ILinfo info;
-	iluGetImageInfo(&info);
-	if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
-		iluFlipImage();
-	}
-
 	ilSetInteger(IL_DXTC_FORMAT, IL_DXT5);
 	size_t size = ilSaveL(IL_DDS, nullptr, 0);
 	if (size == 0) {

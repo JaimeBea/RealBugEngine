@@ -10,6 +10,7 @@
 #include "ModuleFiles.h"
 #include "ModuleEvents.h"
 #include "Modules/ModuleResources.h"
+#include "Modules/ModuleTime.h"
 #include "ModuleScene.h"
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
@@ -66,6 +67,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 		break;
 
 	case TesseractEventType::MOUSE_CLICKED:
+		if (!App->time->IsGameRunning()) break;
 		if (currentEvSys != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
@@ -81,6 +83,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 		break;
 
 	case TesseractEventType::MOUSE_RELEASED:
+		if (!App->time->IsGameRunning()) break;
 		if (currentEvSys != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
