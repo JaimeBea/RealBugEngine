@@ -11,7 +11,12 @@ void CanvasImage::Start() {
 }
 
 void CanvasImage::Update() {
-	ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
-	float2 newSize = float2(Screen::GetScreenWitdh(), Screen::GetScreenHeight());
-	transform2D->SetSize(newSize);
+	if (gameObject != nullptr) {
+		ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
+		if (transform2D) {
+			float2 newSize = float2(Screen::GetScreenWitdh(), Screen::GetScreenHeight());
+			transform2D->SetSize(newSize);
+		}
+	}
+	
 }
