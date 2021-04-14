@@ -455,7 +455,6 @@ void ModuleRender::SetPerspectiveRender() {
 	glMatrixMode(GL_MODELVIEW);
 }
 
-#if !GAME
 void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {
 	for (const GameObject* childen : gameObject->GetChildren()) {
 		ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
@@ -466,4 +465,3 @@ void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation
 		DrawAnimation(childen, true);
 	}
 }
-#endif // !GAME

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Globals.h"
 
 #include "Math/float2.h"
-#include "Globals.h";
 
 #if defined(TESSERACT_ENGINE_API)
 /* do nothing. */

@@ -292,7 +292,7 @@ void ModuleResources::UpdateAsync() {
 				JsonValue jMeta(document, document);
 
 				if (success) {
-					/*
+#if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
 					//if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
 					//	// ASK: What happens when we update an asset?
@@ -312,7 +312,7 @@ void ModuleResources::UpdateAsync() {
 						SaveMetaFile(metaFilePath.c_str(), document);
 						assetsToNotUpdate.erase(it);
 					}
-					*/
+#endif
 
 				} else {
 					resourcesToRemove.push_back(entry.first);
@@ -411,6 +411,7 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::SCRIPT:
 		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
+		resource->Load();
 		break;
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
