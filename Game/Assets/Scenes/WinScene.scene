@@ -338,7 +338,7 @@
                                 "Type": "Script",
                                 "Id": 7446872428317093426,
                                 "Active": true,
-                                "Script": 15067037922062104221
+                                "Script": 9160783976481650406
                             }
                         ],
                         "Children": null
@@ -386,7 +386,7 @@
                 "Children": [
                     {
                         "Id": 8518242787381405817,
-                        "Name": "ReplayButton",
+                        "Name": "RetryButton",
                         "Active": true,
                         "RootBoneId": 0,
                         "Components": [
@@ -479,7 +479,7 @@
                                 "Id": 2339619138975874497,
                                 "Active": true,
                                 "ShaderId": 4385028194795985875,
-                                "TextureId": 4189977625739486125,
+                                "TextureId": 537104181751856637,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -768,7 +768,7 @@
                 "Children": [
                     {
                         "Id": 8874010573057474772,
-                        "Name": "Image",
+                        "Name": "GameOverImg",
                         "Active": true,
                         "RootBoneId": 0,
                         "Components": [
@@ -850,7 +850,7 @@
                                 "Id": 18024777887493163762,
                                 "Active": true,
                                 "ShaderId": 4385028194795985875,
-                                "TextureId": 3031286547918677712,
+                                "TextureId": 16425872898193563289,
                                 "Color": [
                                     1.0,
                                     1.0,
