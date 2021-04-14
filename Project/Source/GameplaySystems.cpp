@@ -8,6 +8,7 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
+#include "TesseractEvent.h"
 #include "FileSystem/SceneImporter.h"
 #include "SDL_events.h"
 
@@ -106,8 +107,10 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 }
 
 // --------- SCENE MANAGER --------- //
-void SceneManager::SceneLoad(const char* filePath) {
-	SceneImporter::LoadScene(filePath);
+void SceneManager::ChangeScene(const char* scenePath) {
+	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
+	e.changeScene.scenePath = scenePath;
+	App->events->AddEvent(e);
 }
 
 void SceneManager::ExitGame() {

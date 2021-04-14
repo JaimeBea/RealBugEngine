@@ -256,7 +256,7 @@ void ModuleRender::SetVSync(bool vsync) {
 }
 
 void ModuleRender::ToggleDebugMode() {
-	debugMode != debugMode;
+	debugMode = !debugMode;
 }
 
 void ModuleRender::ToggleDebugDraw() {

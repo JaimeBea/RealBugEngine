@@ -21,12 +21,13 @@ void WinLose::Update() {
 		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().x >= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x - LoseOffsetX
 		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z <= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z + LoseOffsetZ
 		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z >= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z - LoseOffsetZ) {
-		SceneManager::SceneLoad("Assets/Scenes/WinScene.scene");
+		//player->GetComponent<ComponentTransform>()->SetPosition
+		SceneManager::ChangeScene("Assets/Scenes/WinScene.scene");
 	}
-	if (player->GetComponent<ComponentTransform>()->GetGlobalPosition().x <= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x + LoseOffsetX
+	else if (player->GetComponent<ComponentTransform>()->GetGlobalPosition().x <= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x + LoseOffsetX
 		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().x >= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x - LoseOffsetX
 		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z <= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z + LoseOffsetZ
 		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z >= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z - LoseOffsetZ) {
-		SceneManager::SceneLoad("Assets/Scenes/LoseScene.scene");
+		SceneManager::ChangeScene("Assets/Scenes/LoseScene.scene");
 	}
 }

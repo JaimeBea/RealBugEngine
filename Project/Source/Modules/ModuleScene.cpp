@@ -72,6 +72,7 @@ bool ModuleScene::Init() {
 bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
 	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
+	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
 
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
@@ -81,7 +82,7 @@ bool ModuleScene::Start() {
 	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
 	ComponentCamera& camera = *(scene->cameraComponents.begin());
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
-	App->camera->ChangeActiveFrustum(camera.frustum, true);
+	//App->camera->ChangeActiveFrustum(camera.frustum, true);
 	#else
 	CreateEmptyScene();
 	#endif
@@ -116,6 +117,9 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 		break;
 	case TesseractEventType::ADD_COMPONENT:
 		scene->AddComponent(e.addComponent.component);
+		break;
+	case TesseractEventType::CHANGE_SCENE:
+		SceneImporter::LoadScene(e.changeScene.scenePath);
 		break;
 	}
 }

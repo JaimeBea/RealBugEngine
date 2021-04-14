@@ -13,6 +13,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleTime.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -112,6 +113,12 @@ void SceneImporter::LoadScene(const char* filePath) {
 	scene->quadtreeMaxDepth = jScene[JSON_TAG_QUADTREE_MAX_DEPTH];
 	scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
 	scene->RebuildQuadtree();
+
+	if (App->time->IsGameRunning()) {
+		for (auto it : scene->scriptComponents) {
+			it.OnStart();
+		}
+	}
 
 	unsigned timeMs = timer.Stop();
 	LOG("Scene loaded in %ums.", timeMs);

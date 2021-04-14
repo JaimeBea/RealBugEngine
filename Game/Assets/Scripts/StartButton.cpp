@@ -14,5 +14,5 @@ void StartButton::Update() {
 }
 
 void StartButton::OnButtonClick() {
-	SceneManager::SceneLoad("Assets/Scenes/Level1.scene");
+	SceneManager::ChangeScene("Assets/Scenes/Level1.scene");
 }

@@ -18,6 +18,5 @@ public:
 
 private:
 	float offset = 0.f;
-	ComponentTransform* transform = nullptr;
 };
 

@@ -18,5 +18,5 @@ void CanvasImage::Update() {
 			transform2D->SetSize(newSize);
 		}
 	}
-	
+
 }

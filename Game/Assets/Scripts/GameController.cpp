@@ -23,15 +23,12 @@ void GameController::Start() {
 	GameplaySystems::SetRenderCamera(gameCamera);
 	godCameraActive = false;
 	if (gameCamera && godCamera) godModeAvailable = true;
-	if (godCamera) {
-		transform = godCamera->GetComponent<ComponentTransform>();
-		frustum = godCamera->GetComponent<ComponentCamera>()->GetFrustum();
-	}
 }
 
 void GameController::Update() {
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_G)) {
 		if (godModeAvailable) {
+			Debug::ToggleDebugMode();
 			if (godCameraActive) {
 				GameplaySystems::SetRenderCamera(gameCamera);
 				godCameraActive = false;
@@ -44,46 +41,52 @@ void GameController::Update() {
 	}
 
 	// Godmode Controls
+	ComponentCamera* camera = nullptr;
+	ComponentTransform* transform = nullptr;
+	if (godCamera) {
+		transform = godCamera->GetComponent<ComponentTransform>();
+		camera = godCamera->GetComponent<ComponentCamera>();
+	}
 	if (!transform) return;
-	if (!&frustum) return;
+	if (!camera) return;
 
 	if (godCameraActive) {
 		// Movement
 		// --- Forward
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_UP)) {
-			transform->SetPosition(transform->GetPosition() + frustum->Front().Normalized() * speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Front().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// --- Left
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_LEFT)) {
-			transform->SetPosition(transform->GetPosition() + frustum->WorldRight().Normalized() * -speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->WorldRight().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		// --- Backward
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_DOWN)) {
-			transform->SetPosition(transform->GetPosition() + frustum->Front().Normalized() * -speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Front().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		// --- Right
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_RIGHT)) {
-			transform->SetPosition(transform->GetPosition() + frustum->WorldRight().Normalized() * speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->WorldRight().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// --- Down
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_COMMA)) {
-			transform->SetPosition(transform->GetPosition() + frustum->Up().Normalized() * -speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Up().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_PERIOD)) {
-			transform->SetPosition(transform->GetPosition() + frustum->Up().Normalized() * speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Up().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// Rotation
 		if (Input::GetMouseButton(2)) { // TODO: Why a 2?! It should be a 3!
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_LALT)) {
 				// --- Orbiting
 				vec oldFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
-				Rotate(Input::GetMouseMotion());
+				Rotate(Input::GetMouseMotion(), camera->GetFrustum(), transform);
 				vec newFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
 				transform->SetPosition(transform->GetPosition() + (oldFocus - newFocus));
 			}
 			else {
 				// --- Panning
-				Rotate(Input::GetMouseMotion());
+				Rotate(Input::GetMouseMotion(), camera->GetFrustum(), transform);
 			}
 		}
 
@@ -139,7 +142,7 @@ void GameController::Update() {
 	}
 }
 
-void GameController::Rotate(float2 mouseMotion) {
+void GameController::Rotate(float2 mouseMotion, Frustum* frustum, ComponentTransform* transform) {
 	Quat yIncrement = Quat::RotateY(-mouseMotion.x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
 	Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -mouseMotion.y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
 	transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());

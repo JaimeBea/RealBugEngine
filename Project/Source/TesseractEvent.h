@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 class GameObject;
 class Component;
@@ -26,7 +27,8 @@ enum class TesseractEventType {
 	UPDATE_FOLDERS,
 	MOUSE_UPDATE,
 	MOUSE_CLICKED,
-	MOUSE_RELEASED
+	MOUSE_RELEASED,
+	CHANGE_SCENE
 };
 
 struct TesseractEvent {
@@ -62,5 +64,9 @@ public:
 			float mouseX = 0.0f;
 			float mouseY = 0.0f;
 		} mouseClicked;
+
+		struct ChangeScene {
+			const char* scenePath = nullptr;
+		} changeScene;
 	};
 };

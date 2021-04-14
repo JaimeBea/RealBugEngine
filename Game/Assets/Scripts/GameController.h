@@ -15,7 +15,7 @@ public:
 	void Start() override;
 	void Update() override;
 
-	void Rotate(float2 mouseMotion);
+	void Rotate(float2 mouseMotion, Frustum* frustum, ComponentTransform* transform);
 
 public:
 	GameObject* gameCamera = nullptr;
@@ -26,8 +26,6 @@ public:
 	float focusDistance = 0.f;
 
 private:
-	Frustum* frustum = nullptr;
-	ComponentTransform* transform = nullptr;
 	float yaw = 0.f;
 	float pitch = 0.f;
 	bool showWireframe = false;
