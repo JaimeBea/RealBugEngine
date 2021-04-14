@@ -157,6 +157,12 @@
                         "Active": true,
                         "Shader": 0,
                         "Skybox": 0
+                    },
+                    {
+                        "Type": "Script",
+                        "Id": 3484346894341599072,
+                        "Active": true,
+                        "Script": 8205703692535477266
                     }
                 ],
                 "Children": null
