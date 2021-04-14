@@ -17,8 +17,6 @@ public:
 	GameObject* winCon = nullptr;
 	GameObject* loseCon = nullptr;
 	GameObject* player = nullptr;
-	GameObject* loseText = nullptr;
-	GameObject* winText = nullptr;
 
 public:
 	float LoseOffsetX = 2.0f;

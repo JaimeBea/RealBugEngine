@@ -529,7 +529,7 @@
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
                                 "Active": true,
-                                "Script": 16483317036567277589
+                                "Script": 15139721463718087939
                             }
                         ],
                         "Children": null
@@ -715,6 +715,12 @@
                                 "OnAxisUp": 0,
                                 "OnAxisRight": 0,
                                 "OnAxisLeft": 0
+                            },
+                            {
+                                "Type": "Script",
+                                "Id": 14822243745977685801,
+                                "Active": true,
+                                "Script": 11787012945619397912
                             }
                         ],
                         "Children": null

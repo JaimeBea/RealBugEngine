@@ -3,9 +3,9 @@
 #include "Script.h"
 class GameObject;
 
-class LoseButton : public Script
+class ExitButton : public Script
 {
-	GENERATE_BODY(LoseButton);
+	GENERATE_BODY(ExitButton);
 
 public:
 

@@ -1,18 +1,18 @@
-#include "LoseButton.h"
+#include "ExitButton.h"
 
 #include "Utils/Logging.h"
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
-GENERATE_BODY_IMPL(LoseButton);
+GENERATE_BODY_IMPL(ExitButton);
 
-void LoseButton::Start() {
-	Button = GameplaySystems::GetGameObject("StartButton");
+void ExitButton::Start() {
+	Button = GameplaySystems::GetGameObject("ExitButton");
 }
 
-void LoseButton::Update() {
+void ExitButton::Update() {
 }
 
-void LoseButton::OnButtonClick() {
-	SceneManager::SceneLoad("Assets/Scenes/Level1.scene");
+void ExitButton::OnButtonClick() {
+	SceneManager::ExitGame();
 }
