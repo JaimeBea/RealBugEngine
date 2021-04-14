@@ -8,7 +8,11 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
+#include "Modules/ModuleEditor.h"
+#include "Modules/ModuleRender.h"
+#include "Modules/ModuleCamera.h"
 #include "FileSystem/SceneImporter.h"
+#include "Geometry/Frustum.h"
 #include <SDL_events.h>
 
 // ----------- GAMEPLAY ------------ //
@@ -118,4 +122,24 @@ float Screen::GetScreenWitdh() {
 
 float Screen::GetScreenHeight() {
 	return App->window->GetHeight();
+}
+
+float Time::GetFPS() {
+	return App->time->GetFPS();
+}
+
+float Time::GetMS() {
+	return App->time->GetMS();
+}
+
+int Debug::GetTotalTriangles() {
+	return App->scene->scene->GetTotalTriangles();
+}
+
+int Debug::GetCulledTriangles() {
+	return App->renderer->GetCulledTriangles();
+}
+
+const float3 Debug::GetCameraDirection() {
+	return App->camera->GetActiveFrustum()->Front();
 }

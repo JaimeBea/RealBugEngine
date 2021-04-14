@@ -17,6 +17,7 @@
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleTime.h"
+#include "Resources/ResourceMesh.h"
 #include "TesseractEvent.h"
 
 #include "Geometry/AABB.h"
@@ -155,6 +156,7 @@ UpdateStatus ModuleRender::Update() {
 #if GAME
 	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
 #endif
+	culledTriangles = 0;
 
 	// Draw the scene
 	App->camera->CalculateFrustumPlanes();
@@ -293,6 +295,10 @@ void ModuleRender::UpdateShadingMode(const char* shadingMode) {
 	}
 }
 
+int ModuleRender::GetCulledTriangles() const {
+	return culledTriangles;
+}
+
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
 	if (node.IsBranch()) {
 		vec2d center = aabb.minPoint + (aabb.maxPoint - aabb.minPoint) * 0.5f;
@@ -417,6 +423,9 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 
 	for (ComponentMeshRenderer* mesh : meshes) {
 		mesh->Draw(transform->GetGlobalMatrix());
+
+		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
+		culledTriangles += resourceMesh->numIndices / 3;
 	}
 }
 

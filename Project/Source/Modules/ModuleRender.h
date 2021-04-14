@@ -33,6 +33,8 @@ public:
 
 	void UpdateShadingMode(const char* shadingMode);
 
+	int GetCulledTriangles() const;
+
 public:
 	void* context = nullptr; // SDL context.
 
@@ -54,6 +56,7 @@ public:
 	bool drawAllBones = true;
 	bool drawCameraFrustums = false;
 	bool drawLightGizmos = false;
+	int culledTriangles = 0;
 
 	float3 ambientColor = {0.0f, 0.0f, 0.0f}; // Color of ambient Light
 	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
