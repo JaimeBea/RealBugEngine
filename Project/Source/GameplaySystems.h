@@ -16,6 +16,7 @@ namespace GameplaySystems {
 }; // namespace GameplaySystems
 
 namespace Debug {
+	TESSERACT_ENGINE_API void ToggleDebugMode();
 	TESSERACT_ENGINE_API void ToggleDebugDraw();
 	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
 	TESSERACT_ENGINE_API void ToggleDrawBBoxes();

@@ -166,37 +166,38 @@ UpdateStatus ModuleRender::Update() {
 	}
 	//LOG("Scene draw: %llu mis", timer.Stop());
 
-	// Draw Gizmos 
-	if (App->camera->IsEngineCameraActive()) {
+	// Draw Gizmos
+	if (App->camera->IsEngineCameraActive() || debugMode) {
 		GameObject* selectedGameObject = App->editor->selectedGameObject;
 		if (selectedGameObject) selectedGameObject->DrawGizmos();
-	}
-	// --- All Gizmos options
-	if (drawCameraFrustums) {
-		for (ComponentCamera camera : scene->cameraComponents) {
-			camera.DrawGizmos();
+
+		// --- All Gizmos options
+		if (drawCameraFrustums) {
+			for (ComponentCamera camera : scene->cameraComponents) {
+				camera.DrawGizmos();
+			}
+		}
+		if (drawLightGizmos) {
+			for (ComponentLight light : scene->lightComponents) {
+				light.DrawGizmos();
+			}
+		}
+		// Draw quadtree
+		if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+
+		// Draw debug draw
+		if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+
+		// Draw Animations
+		if (drawAllBones) {
+			for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+				DrawAnimation(animationComponent.GetOwner().GetRootBone());
+			}
 		}
 	}
-	if (drawLightGizmos) {
-		for (ComponentLight light : scene->lightComponents) {
-			light.DrawGizmos();
-		}
-	}
-	// Draw quadtree
-	if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 
 	//Render UI
 	RenderUI();
-
-	// Draw debug draw
-	if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
-
-	// Draw Animations
-	if (drawAllBones) {
-		for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
-			DrawAnimation(animationComponent.GetOwner().GetRootBone());
-		}
-	}
 
 	return UpdateStatus::CONTINUE;
 }
@@ -243,9 +244,12 @@ void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
 }
 
+void ModuleRender::ToggleDebugMode() {
+	debugMode != debugMode;
+}
+
 void ModuleRender::ToggleDebugDraw() {
 	drawDebugDraw = !drawDebugDraw;
-
 }
 void ModuleRender::ToggleDrawQuadtree() {
 	drawQuadtree = !drawQuadtree;
@@ -255,7 +259,7 @@ void ModuleRender::ToggleDrawBBoxes() {
 	drawAllBoundingBoxes = !drawAllBoundingBoxes;
 }
 
-void ModuleRender::ToggleDrawSkybox() {  // TODO: review Godmodecamera
+void ModuleRender::ToggleDrawSkybox() { // TODO: review Godmodecamera
 	skyboxActive = !skyboxActive;
 }
 
@@ -274,7 +278,7 @@ void ModuleRender::ToggleDrawLightGizmos() {
 void ModuleRender::UpdateShadingMode(const char* shadingMode) {
 	if (shadingMode == "Shaded") {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}else if (shadingMode == "Wireframe") {
+	} else if (shadingMode == "Wireframe") {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 }
@@ -397,7 +401,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
-	if (boundingBox && drawAllBoundingBoxes && App->camera->IsEngineCameraActive()) {
+	if (boundingBox && drawAllBoundingBoxes && (App->camera->IsEngineCameraActive() || debugMode)) {
 		boundingBox->DrawBoundingBox();
 	}
 
