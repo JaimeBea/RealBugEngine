@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "GameObject.h"
+#include "Resources/ResourceMesh.h"
 
 Scene::Scene(unsigned numGameObjects) {
 	gameObjects.Allocate(numGameObjects);
@@ -337,4 +338,13 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 		assert(false);
 		break;
 	}
+}
+
+int Scene::GetTotalTriangles() const {
+	int triangles = 0;
+	for (const ComponentMeshRenderer& meshComponent : meshRendererComponents) {
+		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
+		triangles += mesh->numIndices / 3;
+	}
+	return triangles;
 }

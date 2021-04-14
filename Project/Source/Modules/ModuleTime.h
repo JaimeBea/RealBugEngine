@@ -23,6 +23,8 @@ public:
 
 	TESSERACT_ENGINE_API float GetDeltaTime() const;
 	TESSERACT_ENGINE_API float GetRealTimeDeltaTime() const;
+	TESSERACT_ENGINE_API float GetFPS() const;
+	TESSERACT_ENGINE_API float GetMS() const;
 	float GetTimeSinceStartup() const;
 	float GetRealTimeSinceStartup() const;
 
