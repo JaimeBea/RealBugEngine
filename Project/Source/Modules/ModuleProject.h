@@ -22,7 +22,6 @@ enum class Configuration {
 class ModuleProject : public Module {
 public:
 	bool Init() override;
-
 	bool CleanUp() override;
 
 	void CreateScript(std::string& name);
@@ -32,6 +31,7 @@ public:
 	void CompileProject(Configuration config);
 
 public:
+	HMODULE gameCodeDLL = nullptr;
 	std::string projectName = "";
 	std::string projectPath = "";
 
@@ -42,6 +42,4 @@ private:
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
 	void CreateBatches();
 
-public:
-	HMODULE gameCodeDLL = nullptr;
 };
