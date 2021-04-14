@@ -31,15 +31,15 @@ void GameController::Start() {
 
 void GameController::Update() {
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_G)) {
-		if (!godModeAvailable) return;
-
-		if (godCameraActive) {
-			GameplaySystems::SetRenderCamera(gameCamera);
-			godCameraActive = false;
-		}
-		else {
-			GameplaySystems::SetRenderCamera(godCamera);
-			godCameraActive = true;
+		if (godModeAvailable) {
+			if (godCameraActive) {
+				GameplaySystems::SetRenderCamera(gameCamera);
+				godCameraActive = false;
+			}
+			else {
+				GameplaySystems::SetRenderCamera(godCamera);
+				godCameraActive = true;
+			}
 		}
 	}
 
@@ -123,8 +123,18 @@ void GameController::Update() {
 			Debug::ToggleDrawCameraFrustums();
 		}
 		// --- Show/Hide Skybox
-		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_F)) {
-			Debug::ToggleDrawSkybox(); // TODO: not implemented
+		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_K)) {
+			ComponentSkyBox* skybox = gameCamera->GetComponent<ComponentSkyBox>();
+			if (skybox->IsActive()) {
+				skybox->Disable();
+			}
+			else {
+				skybox->Enable();
+			}
+		}
+		// --- SHow/Hide Performance Stats
+		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_F2)) {
+			Debug::ToggleShowStats();
 		}
 	}
 }

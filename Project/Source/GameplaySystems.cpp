@@ -54,6 +54,10 @@ void Debug::UpdateShadingMode(const char* shadingMode) {
 	App->renderer->UpdateShadingMode(shadingMode);
 }
 
+void Debug::ToggleShowStats() {
+	App->renderer; // TODO;
+}
+
 // ------------- TIME -------------- //
 float Time::GetDeltaTime() {
 	return App->time->GetDeltaTime();

@@ -24,6 +24,7 @@ namespace Debug {
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
 	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
+	TESSERACT_ENGINE_API void ToggleShowStats();
 }
 
 namespace Time {
