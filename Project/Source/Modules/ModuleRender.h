@@ -63,6 +63,7 @@ private:
 	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
 	void DrawGameObject(GameObject* gameObject);											// ??
+	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
 	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
 	void RenderUI();
 	void SetOrtographicRender();

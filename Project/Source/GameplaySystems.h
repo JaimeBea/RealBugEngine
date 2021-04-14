@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Globals.h"
+
 #include "Math/float2.h"
 
 #if defined(TESSERACT_ENGINE_API)

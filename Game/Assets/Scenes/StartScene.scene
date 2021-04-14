@@ -146,7 +146,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.6784718036651612,
+                            "HorizontalFov": 1.468343734741211,
                             "VerticalFov": 1.0
                         },
                         "CameraSelected": false
@@ -324,8 +324,8 @@
                                 "Type": "Image",
                                 "Id": 5494725855711796091,
                                 "Active": true,
-                                "ShaderId": 13048234700482507163,
-                                "TextureId": 6918997292656258028,
+                                "ShaderId": 17655744972283174179,
+                                "TextureId": 18247200916341790183,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -338,52 +338,11 @@
                                 "Type": "Script",
                                 "Id": 7446872428317093426,
                                 "Active": true,
-                                "Script": 15067037922062104221
+                                "Script": 14708543293375634621
                             }
                         ],
                         "Children": null
-                    }
-                ]
-            },
-            {
-                "Id": 18095672743356305134,
-                "Name": "Canvas",
-                "Active": true,
-                "RootBoneId": 0,
-                "Components": [
-                    {
-                        "Type": "Transform",
-                        "Id": 14897984629683826342,
-                        "Active": true,
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "Rotation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "LocalEulerAngles": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
                     },
-                    {
-                        "Type": "Canvas",
-                        "Id": 4177967945025684497,
-                        "Active": true
-                    }
-                ],
-                "Children": [
                     {
                         "Id": 8518242787381405817,
                         "Name": "StartButton",
@@ -411,9 +370,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -478,8 +437,8 @@
                                 "Type": "Image",
                                 "Id": 2339619138975874497,
                                 "Active": true,
-                                "ShaderId": 13048234700482507163,
-                                "TextureId": 14349373242646959496,
+                                "ShaderId": 17655744972283174179,
+                                "TextureId": 15943195067963467603,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -517,7 +476,7 @@
                                     1.0
                                 ],
                                 "Interactable": true,
-                                "NavigationType": 2,
+                                "NavigationType": 1,
                                 "TransitionType": 1,
                                 "SelectableType": 10,
                                 "OnAxisDown": 0,
@@ -529,52 +488,11 @@
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
                                 "Active": true,
-                                "Script": 17995409620589219510
+                                "Script": 6593348154499281048
                             }
                         ],
                         "Children": null
-                    }
-                ]
-            },
-            {
-                "Id": 14737886719263861153,
-                "Name": "Canvas",
-                "Active": true,
-                "RootBoneId": 0,
-                "Components": [
-                    {
-                        "Type": "Transform",
-                        "Id": 7917346744535437630,
-                        "Active": true,
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "Rotation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "LocalEulerAngles": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
                     },
-                    {
-                        "Type": "Canvas",
-                        "Id": 3586383841911003989,
-                        "Active": true
-                    }
-                ],
-                "Children": [
                     {
                         "Id": 656647871624026947,
                         "Name": "Button",
@@ -602,9 +520,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -669,8 +587,8 @@
                                 "Type": "Image",
                                 "Id": 3177153763005474015,
                                 "Active": true,
-                                "ShaderId": 13048234700482507163,
-                                "TextureId": 3139071930911311310,
+                                "ShaderId": 17655744972283174179,
+                                "TextureId": 3551015821122983693,
                                 "Color": [
                                     1.0,
                                     1.0,

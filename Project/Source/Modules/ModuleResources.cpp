@@ -87,6 +87,7 @@ bool ModuleResources::Init() {
 
 bool ModuleResources::Start() {
 	stopImportThread = false;
+
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);
 
 	return true;
@@ -268,6 +269,7 @@ void ModuleResources::UpdateAsync() {
 		// Check if any asset file has been modified / deleted
 		std::vector<UID> resourcesToRemove;
 		std::vector<UID> resourcesToReimport;
+
 		for (std::pair<const UID, std::unique_ptr<Resource>>& entry : resources) {
 			Resource* resource = entry.second.get();
 			const std::string& resourceFilePath = resource->GetResourceFilePath();
@@ -288,13 +290,15 @@ void ModuleResources::UpdateAsync() {
 				rapidjson::Document document;
 				bool success = ReadMetaFile(metaFilePath.c_str(), document);
 				JsonValue jMeta(document, document);
+
 				if (success) {
+#if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					/*if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
-						// ASK: What happens when we update an asset?
-						resourcesToRemove.push_back(entry.first);
-						continue;
-					}*/
+					//if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+					//	// ASK: What happens when we update an asset?
+					//	resourcesToRemove.push_back(entry.first);
+					//	continue;
+					//}
 					// TODO: Review and delete this
 					std::unordered_set<std::string>::iterator it = assetsToNotUpdate.find(assetFilePath);
 					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp && it == assetsToNotUpdate.end()) {
@@ -308,12 +312,13 @@ void ModuleResources::UpdateAsync() {
 						SaveMetaFile(metaFilePath.c_str(), document);
 						assetsToNotUpdate.erase(it);
 					}
+#endif
+
 				} else {
 					resourcesToRemove.push_back(entry.first);
 					continue;
 				}
 			}
-
 			// Check for deleted resources
 			if (!App->files->Exists(resourceFilePath.c_str())) {
 				resourcesToReimport.push_back(entry.first);
@@ -406,6 +411,7 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::SCRIPT:
 		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
+		resource->Load();
 		break;
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());

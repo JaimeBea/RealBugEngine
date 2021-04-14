@@ -4,9 +4,9 @@
 
 class GameObject;
 
-class FrangMovement : public Script
+class FangMovement : public Script
 {
-	GENERATE_BODY(FrangMovement);
+	GENERATE_BODY(FangMovement);
 
 public:
 

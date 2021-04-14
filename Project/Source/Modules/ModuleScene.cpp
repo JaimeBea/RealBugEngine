@@ -77,7 +77,14 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
+	#if GAME
+	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
+	ComponentCamera& camera = *(scene->cameraComponents.begin());
+	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
+	App->camera->ChangeActiveFrustum(camera.frustum, true);
+	#else
 	CreateEmptyScene();
+	#endif
 
 	return true;
 }
