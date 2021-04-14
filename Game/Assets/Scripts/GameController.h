@@ -20,6 +20,11 @@ public:
 public:
 	GameObject* gameCamera = nullptr;
 	GameObject* godCamera = nullptr;
+	GameObject* staticCamera1 = nullptr;
+	GameObject* staticCamera2 = nullptr;
+	GameObject* staticCamera3 = nullptr;
+	GameObject* staticCamera4 = nullptr;
+	 
 	float speed = 0.f;
 	float rotationSpeedX = 0.f;
 	float rotationSpeedY = 0.f;
@@ -31,5 +36,6 @@ private:
 	bool showWireframe = false;
 	bool godCameraActive = false;
 	bool godModeAvailable = false;
+
 };
 

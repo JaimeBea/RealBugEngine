@@ -20,6 +20,11 @@ void GameController::Start() {
 
 	gameCamera = GameplaySystems::GetGameObject("Game Camera");
 	godCamera = GameplaySystems::GetGameObject("God Camera");
+	staticCamera1 = GameplaySystems::GetGameObject("staticCamera1");
+	staticCamera2 = GameplaySystems::GetGameObject("staticCamera2");
+	staticCamera3 = GameplaySystems::GetGameObject("staticCamera3");
+	staticCamera4 = GameplaySystems::GetGameObject("staticCamera4");
+
 	GameplaySystems::SetRenderCamera(gameCamera);
 	godCameraActive = false;
 	if (gameCamera && godCamera) godModeAvailable = true;
@@ -38,6 +43,28 @@ void GameController::Update() {
 				godCameraActive = true;
 			}
 		}
+	}
+
+	// Static cameras
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_0) && gameCamera) {
+		GameplaySystems::SetRenderCamera(gameCamera);
+		godCameraActive = false;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_1) && staticCamera1) {
+		GameplaySystems::SetRenderCamera(staticCamera1);
+		godCameraActive = false;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_2) && staticCamera2) {
+		GameplaySystems::SetRenderCamera(staticCamera2);
+		godCameraActive = false;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_3) && staticCamera3) {
+		GameplaySystems::SetRenderCamera(staticCamera3);
+		godCameraActive = false;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_4) && staticCamera4) {
+		GameplaySystems::SetRenderCamera(staticCamera4);
+		godCameraActive = false;
 	}
 
 	// Godmode Controls
