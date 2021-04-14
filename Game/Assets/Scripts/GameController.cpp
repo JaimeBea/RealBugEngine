@@ -16,7 +16,8 @@ void GameController::Start() {
 	rotationSpeedY = 10.f;
 	focusDistance = 100.f;
 	showWireframe = false;
-
+	transitionFinished = false;
+	LOG("SCRIPT STARTED");
 
 	gameCamera = GameplaySystems::GetGameObject("Game Camera");
 	godCamera = GameplaySystems::GetGameObject("God Camera");
@@ -25,12 +26,18 @@ void GameController::Start() {
 	staticCamera3 = GameplaySystems::GetGameObject("staticCamera3");
 	staticCamera4 = GameplaySystems::GetGameObject("staticCamera4");
 
+	player = GameplaySystems::GetGameObject("Fang");
+
 	GameplaySystems::SetRenderCamera(gameCamera);
 	godCameraActive = false;
 	if (gameCamera && godCamera) godModeAvailable = true;
 }
 
 void GameController::Update() {
+	if (!transitionFinished) {
+		DoTransition();
+	}
+
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_G)) {
 		if (godModeAvailable) {
 			Debug::ToggleDebugMode();
@@ -169,4 +176,21 @@ void GameController::Rotate(float2 mouseMotion, Frustum* frustum, ComponentTrans
 	Quat yIncrement = Quat::RotateY(-mouseMotion.x * rotationSpeedY * DEGTORAD * Time::GetDeltaTime());
 	Quat xIncrement = Quat::RotateAxisAngle(frustum->WorldRight().Normalized(), -mouseMotion.y * rotationSpeedX * DEGTORAD * Time::GetDeltaTime());
 	transform->SetRotation(yIncrement * xIncrement * transform->GetRotation());
+}
+
+void GameController::DoTransition()
+{
+	if (player != nullptr) {
+		float3 finalPosition = float3(-164, 478, 449);
+		float3 currentPosition = gameCamera->GetComponent<ComponentTransform>()->GetPosition();
+
+		if (currentPosition.x > finalPosition.x) {
+			currentPosition.x -= transitionSpeed * Time::GetDeltaTime();
+			gameCamera->GetComponent<ComponentTransform>()->SetPosition(currentPosition);
+		}
+		else {
+			transitionFinished = true;
+			gameCamera->GetComponent<ComponentTransform>()->SetPosition(finalPosition);
+		}
+	}
 }

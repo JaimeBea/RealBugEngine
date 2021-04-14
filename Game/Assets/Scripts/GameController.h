@@ -24,11 +24,17 @@ public:
 	GameObject* staticCamera2 = nullptr;
 	GameObject* staticCamera3 = nullptr;
 	GameObject* staticCamera4 = nullptr;
+	
+	GameObject* player = nullptr;
 	 
 	float speed = 0.f;
 	float rotationSpeedX = 0.f;
 	float rotationSpeedY = 0.f;
 	float focusDistance = 0.f;
+	float transitionSpeed = 1000.f;
+
+private:
+	void DoTransition();
 
 private:
 	float yaw = 0.f;
@@ -36,6 +42,7 @@ private:
 	bool showWireframe = false;
 	bool godCameraActive = false;
 	bool godModeAvailable = false;
+	bool transitionFinished = false;
 
 };
 
