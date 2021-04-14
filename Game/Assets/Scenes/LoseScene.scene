@@ -303,8 +303,8 @@
                                     0.5
                                 ],
                                 "Size": [
-                                    1920.0,
-                                    1080.0
+                                    2200.0,
+                                    1238.0
                                 ],
                                 "AnchorX": [
                                     0.0,
@@ -325,7 +325,7 @@
                                 "Id": 5494725855711796091,
                                 "Active": true,
                                 "ShaderId": 4385028194795985875,
-                                "TextureId": 15169611369025577498,
+                                "TextureId": 6942929480755552844,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -479,7 +479,7 @@
                                 "Id": 2339619138975874497,
                                 "Active": true,
                                 "ShaderId": 4385028194795985875,
-                                "TextureId": 537104181751856637,
+                                "TextureId": 9446298709316817845,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -670,7 +670,7 @@
                                 "Id": 3177153763005474015,
                                 "Active": true,
                                 "ShaderId": 4385028194795985875,
-                                "TextureId": 12653537025457751972,
+                                "TextureId": 943873689796820877,
                                 "Color": [
                                     1.0,
                                     1.0,
@@ -721,143 +721,6 @@
                                 "Id": 14822243745977685801,
                                 "Active": true,
                                 "Script": 11787012945619397912
-                            }
-                        ],
-                        "Children": null
-                    }
-                ]
-            },
-            {
-                "Id": 10313771551699892697,
-                "Name": "Canvas",
-                "Active": true,
-                "RootBoneId": 0,
-                "Components": [
-                    {
-                        "Type": "Transform",
-                        "Id": 255959354329834920,
-                        "Active": true,
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "Rotation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "LocalEulerAngles": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    },
-                    {
-                        "Type": "Canvas",
-                        "Id": 13267431115525410297,
-                        "Active": true
-                    }
-                ],
-                "Children": [
-                    {
-                        "Id": 8874010573057474772,
-                        "Name": "GameOverImg",
-                        "Active": true,
-                        "RootBoneId": 0,
-                        "Components": [
-                            {
-                                "Type": "Transform",
-                                "Id": 6147758499839507095,
-                                "Active": true,
-                                "Position": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ],
-                                "Rotation": [
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    1.0
-                                ],
-                                "Scale": [
-                                    1.0,
-                                    1.0,
-                                    1.0
-                                ],
-                                "LocalEulerAngles": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ]
-                            },
-                            {
-                                "Type": "Transform2D",
-                                "Id": 4600311732357542255,
-                                "Active": true,
-                                "Position": [
-                                    0.0,
-                                    200.0,
-                                    0.0
-                                ],
-                                "Rotation": [
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    1.0
-                                ],
-                                "Scale": [
-                                    1.0,
-                                    1.0,
-                                    1.0
-                                ],
-                                "LocalEulerAngles": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ],
-                                "Pivot": [
-                                    0.5,
-                                    0.5
-                                ],
-                                "Size": [
-                                    711.0,
-                                    180.0
-                                ],
-                                "AnchorX": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "AnchorY": [
-                                    0.0,
-                                    0.0
-                                ]
-                            },
-                            {
-                                "Type": "CanvasRenderer",
-                                "Id": 17941461129442472420,
-                                "Active": true
-                            },
-                            {
-                                "Type": "Image",
-                                "Id": 18024777887493163762,
-                                "Active": true,
-                                "ShaderId": 4385028194795985875,
-                                "TextureId": 16425872898193563289,
-                                "Color": [
-                                    1.0,
-                                    1.0,
-                                    1.0,
-                                    1.0
-                                ],
-                                "AlphaTransparency": true
                             }
                         ],
                         "Children": null
