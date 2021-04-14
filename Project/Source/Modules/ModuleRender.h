@@ -22,10 +22,11 @@ public:
 	void SetVSync(bool vsync);
 
 	// -------- Game Debug --------- //
+	TESSERACT_ENGINE_API void ToggleDebugMode();
 	TESSERACT_ENGINE_API void ToggleDebugDraw();
 	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
 	TESSERACT_ENGINE_API void ToggleDrawBBoxes();
-	TESSERACT_ENGINE_API void ToggleDrawSkybox();  // TODO: review Godmodecamera
+	TESSERACT_ENGINE_API void ToggleDrawSkybox(); // TODO: review Godmodecamera
 	TESSERACT_ENGINE_API void ToggleDrawAnimationBones();
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
@@ -45,6 +46,7 @@ public:
 	unsigned viewportHeight = 0;
 
 	// -- Debugging Tools Toggles -- //
+	bool debugMode = false; // Flag to activate DrawOptions only ingame (not use in the engine)
 	bool drawDebugDraw = true;
 	bool drawQuadtree = true;
 	bool drawAllBoundingBoxes = false;
@@ -61,6 +63,7 @@ private:
 	void DrawSceneRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb);	// ??
 	bool CheckIfInsideFrustum(const AABB& aabb, const OBB& obb);							// ??
 	void DrawGameObject(GameObject* gameObject);											// ??
+	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
 	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
 	void RenderUI();
 	void SetOrtographicRender();

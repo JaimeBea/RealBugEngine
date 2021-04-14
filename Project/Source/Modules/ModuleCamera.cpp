@@ -59,7 +59,12 @@ static void WarpMouseOnEdges() {
 bool ModuleCamera::Init() {
 	activeFrustum->SetKind(FrustumSpaceGL, FrustumRightHanded);
 	activeFrustum->SetViewPlaneDistances(0.1f, 2000.0f);
+#if GAME
+	float ar = (float) App->window->GetWidth() / (float) App->window->GetHeight();
+	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, ar);
+#else
 	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+#endif
 	activeFrustum->SetFront(vec::unitZ);
 	activeFrustum->SetUp(vec::unitY);
 

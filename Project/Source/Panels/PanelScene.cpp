@@ -102,10 +102,14 @@ void PanelScene::Update() {
 			}
 			if (ImGui::BeginPopup("Gizmos")) {
 				ImGui::Text("General");
+				ImGui::Checkbox("Enable/Disable All", &App->renderer->drawDebugDraw);
 				ImGui::Separator();
 				ImGui::Checkbox("Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
 				ImGui::Checkbox("Quadtree", &App->renderer->drawQuadtree);
-
+				ImGui::Checkbox("Camera Frustums", &App->renderer->drawCameraFrustums);
+				ImGui::Checkbox("Light Gizmos", &App->renderer->drawLightGizmos);
+				ImGui::Checkbox("Animation Bones", &App->renderer->drawAllBones);
+				ImGui::Separator();
 				ImGui::EndPopup();
 			}
 

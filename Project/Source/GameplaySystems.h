@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Globals.h"
+
 #include "Math/float2.h"
-#include "Globals.h";
+
 #if defined(TESSERACT_ENGINE_API)
 /* do nothing. */
 #elif defined(_MSC_VER)
@@ -16,6 +18,7 @@ namespace GameplaySystems {
 }; // namespace GameplaySystems
 
 namespace Debug {
+	TESSERACT_ENGINE_API void ToggleDebugMode();
 	TESSERACT_ENGINE_API void ToggleDebugDraw();
 	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
 	TESSERACT_ENGINE_API void ToggleDrawBBoxes();
