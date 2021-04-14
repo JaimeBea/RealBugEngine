@@ -67,10 +67,6 @@ void Debug::UpdateShadingMode(const char* shadingMode) {
 	App->renderer->UpdateShadingMode(shadingMode);
 }
 
-void Debug::ToggleShowStats() {
-	App->renderer; // TODO;
-}
-
 int Debug::GetTotalTriangles() {
 	return App->scene->scene->GetTotalTriangles();
 }

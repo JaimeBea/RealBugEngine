@@ -135,10 +135,6 @@ void GameController::Update() {
 				skybox->Enable();
 			}
 		}
-		// --- SHow/Hide Performance Stats
-		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_F2)) {
-			Debug::ToggleShowStats();
-		}
 	}
 }
 

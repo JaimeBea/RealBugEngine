@@ -27,7 +27,6 @@ namespace Debug {
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
 	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
-	TESSERACT_ENGINE_API void ToggleShowStats();
 	TESSERACT_ENGINE_API int GetTotalTriangles();
 	TESSERACT_ENGINE_API int GetCulledTriangles();
 	TESSERACT_ENGINE_API const float3 GetCameraDirection();
