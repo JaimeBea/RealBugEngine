@@ -22,6 +22,11 @@ TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
 }
 
 // ------------- DEBUG ------------- //
+
+void Debug::ToggleDebugMode() {
+	App->renderer->ToggleDebugMode();
+}
+
 void Debug::ToggleDebugDraw() {
 	App->renderer->ToggleDebugDraw();
 }
@@ -98,7 +103,7 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 
 // --------- SCENE MANAGER --------- //
 void SceneManager::SceneLoad(const char* filePath) {
-	SceneImporter::LoadScene(filePath);  
+	SceneImporter::LoadScene(filePath);
 }
 
 void SceneManager::ExitGame() {
