@@ -48,6 +48,8 @@ public:
 
 	template<class T> T* GetComponent(UID id);
 
+	int GetTotalTriangles() const;
+
 public:
 	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
 	Pool<GameObject> gameObjects;						   // Pool of GameObjects. Stores all the memory of all existing GameObject in a contiguous memory space.

@@ -28,11 +28,16 @@ namespace Debug {
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
 	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
 	TESSERACT_ENGINE_API void ToggleShowStats();
-}
+	TESSERACT_ENGINE_API int GetTotalTriangles();
+	TESSERACT_ENGINE_API int GetCulledTriangles();
+	TESSERACT_ENGINE_API const float3 GetCameraDirection();
+} // namespace Debug
 
 namespace Time {
 	TESSERACT_ENGINE_API float GetDeltaTime();
-}
+	TESSERACT_ENGINE_API float GetFPS();
+	TESSERACT_ENGINE_API float GetMS();
+} // namespace Time
 
 namespace Input {
 	enum KEYCODE {

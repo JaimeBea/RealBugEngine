@@ -9,8 +9,15 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
 #include "TesseractEvent.h"
+#include "Modules/ModuleEditor.h"
+#include "Modules/ModuleRender.h"
+#include "Modules/ModuleCamera.h"
 #include "FileSystem/SceneImporter.h"
+
+#include "Geometry/Frustum.h"
 #include "SDL_events.h"
+
+#include "Utils/Leaks.h"
 
 // ----------- GAMEPLAY ------------ //
 GameObject* GameplaySystems::GetGameObject(const char* name) {
@@ -64,9 +71,29 @@ void Debug::ToggleShowStats() {
 	App->renderer; // TODO;
 }
 
+int Debug::GetTotalTriangles() {
+	return App->scene->scene->GetTotalTriangles();
+}
+
+int Debug::GetCulledTriangles() {
+	return App->renderer->GetCulledTriangles();
+}
+
+const float3 Debug::GetCameraDirection() {
+	return App->camera->GetActiveFrustum()->Front();
+}
+
 // ------------- TIME -------------- //
 float Time::GetDeltaTime() {
 	return App->time->GetDeltaTime();
+}
+
+float Time::GetFPS() {
+	return App->time->GetFPS();
+}
+
+float Time::GetMS() {
+	return App->time->GetMS();
 }
 
 // ------------- INPUT ------------- //

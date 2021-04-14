@@ -124,11 +124,7 @@ void PanelScene::Update() {
 				char ms[10];
 				sprintf_s(ms, 10, "%.1f", msLog[fpsLogIndex]);
 
-				int triangles = 0;
-				for (ComponentMeshRenderer& meshComponent : App->scene->scene->meshRendererComponents) {
-					ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
-					triangles += mesh->numIndices / 3;
-				}
+				int triangles = App->scene->scene->GetTotalTriangles();
 
 				ImGui::TextColored(App->editor->titleColor, "Framerate");
 				ImGui::Text("Frames: ");

@@ -108,6 +108,14 @@ float ModuleTime::GetRealTimeDeltaTime() const {
 	return realTimeDeltaMs / 1000.0f;
 }
 
+float ModuleTime::GetFPS() const {
+	return fpsLog[fpsLogIndex];
+}
+
+float ModuleTime::GetMS() const {
+	return msLog[fpsLogIndex];
+}
+
 float ModuleTime::GetTimeSinceStartup() const {
 	return timeLastMs / 1000.0f;
 }
