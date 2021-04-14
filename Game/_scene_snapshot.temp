@@ -149,7 +149,7 @@
                             "HorizontalFov": 1.5737056732177735,
                             "VerticalFov": 1.0
                         },
-                        "CameraSelected": true
+                        "CameraSelected": false
                     },
                     {
                         "Type": "Skybox",
@@ -337,7 +337,8 @@
                             {
                                 "Type": "Script",
                                 "Id": 7446872428317093426,
-                                "Active": true
+                                "Active": true,
+                                "Script": 6593348154499281048
                             }
                         ],
                         "Children": null
@@ -486,7 +487,8 @@
                             {
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
-                                "Active": true
+                                "Active": true,
+                                "Script": 6593348154499281048
                             }
                         ],
                         "Children": null

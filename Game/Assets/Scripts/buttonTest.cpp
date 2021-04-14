@@ -8,6 +8,7 @@ GENERATE_BODY_IMPL(buttonTest);
 
 void buttonTest::Start() {
 	Button = GameplaySystems::GetGameObject("StartButton");
+	LOG("Button test workind");
 }
 
 void buttonTest::Update() {

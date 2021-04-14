@@ -49,7 +49,7 @@ static std::string GetLastErrorStdStr() {
 bool ModuleProject::Init() {
 #if GAME
 	UnloadGameCodeDLL();
-	if (!LoadGameCodeDLL("Penteract/Build/ReleaseEditor/Penteract.dll")) {
+	if (!LoadLibrary("Penteract/Build/ReleaseEditor/Penteract.dll")) {
 		LOG("%s", GetLastErrorStdStr().c_str());
 	}
 #else
@@ -63,7 +63,6 @@ bool ModuleProject::CleanUp() {
 	return true;
 }
 
-#if !GAME
 void ModuleProject::LoadProject(const char* path) {
 	projectPath = FileDialog::GetFileFolder(path);
 	projectName = FileDialog::GetFileNameAndExtension(path);
@@ -235,7 +234,6 @@ void ModuleProject::CompileProject(Configuration config) {
 		LOG("DLL NOT LOADED");
 	};
 }
-#endif // !Game
 
 bool ModuleProject::LoadGameCodeDLL(const char* path) {
 	if (gameCodeDLL) {

@@ -149,7 +149,7 @@
                             "HorizontalFov": 1.468343734741211,
                             "VerticalFov": 1.0
                         },
-                        "CameraSelected": true
+                        "CameraSelected": false
                     },
                     {
                         "Type": "Skybox",

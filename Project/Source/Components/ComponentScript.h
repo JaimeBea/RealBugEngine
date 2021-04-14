@@ -14,11 +14,9 @@ public:
 	void OnStart();
 	void OnUpdate();
 
-	#if !GAME
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const;
 	void Load(JsonValue jComponent);
-	#endif
 
 	UID GetScriptID() const;
 

@@ -25,14 +25,11 @@ public:
 
 	bool CleanUp() override;
 
-#if !GAME
-
 	void CreateScript(std::string& name);
 	void CreateNewProject(const char* name, const char* path);
 	void LoadProject(const char* path);
 
 	void CompileProject(Configuration config);
-#endif
 
 public:
 	std::string projectName = "";
@@ -41,12 +38,9 @@ public:
 private:
 	bool LoadGameCodeDLL(const char* path);
 	bool UnloadGameCodeDLL();
-
-#if !GAME
 	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
 	void CreateBatches();
-#endif
 
 public:
 	HMODULE gameCodeDLL = nullptr;

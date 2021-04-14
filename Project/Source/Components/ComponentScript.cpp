@@ -42,7 +42,6 @@ void ComponentScript::OnUpdate() {
 	}
 }
 
-#if !GAME
 void ComponentScript::OnEditorUpdate() {
 	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
@@ -67,7 +66,6 @@ void ComponentScript::Load(JsonValue jComponent) {
 	scriptID = jComponent[JSON_TAG_SCRIPT];
 	if (scriptID != 0) App->resources->IncreaseReferenceCount(scriptID);
 }
-#endif
 
 UID ComponentScript::GetScriptID() const {
 	return scriptID;
