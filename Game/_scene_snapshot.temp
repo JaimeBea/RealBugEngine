@@ -151,7 +151,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.568559169769287,
+                            "HorizontalFov": 1.557679533958435,
                             "VerticalFov": 1.0
                         },
                         "CameraSelected": false

@@ -19,6 +19,6 @@ public:
 
 private:
 
-	int speed = 5;
+	int speed = 10;
 	float cameraXPosition = -163;
 };
