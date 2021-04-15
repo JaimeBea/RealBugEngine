@@ -7,6 +7,11 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
+    "AmbientLight": [
+        0.0,
+        0.0,
+        0.0
+    ],
     "Root": {
         "Id": 12361491663351238,
         "Name": "Scene",
@@ -157,6 +162,12 @@
                         "Active": true,
                         "Shader": 0,
                         "Skybox": 0
+                    },
+                    {
+                        "Type": "Script",
+                        "Id": 17245331235330755757,
+                        "Active": true,
+                        "Script": 8205703692535477266
                     }
                 ],
                 "Children": null

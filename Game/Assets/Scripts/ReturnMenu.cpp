@@ -7,13 +7,21 @@ GENERATE_BODY_IMPL(ReturnMenu);
 
 void ReturnMenu::Start() {
 	button = GameplaySystems::GetGameObject("ExitButton");
+	ComponentTransform2D* transform2D = button->GetComponent<ComponentTransform2D>();
+	if (transform2D) {
+		float2 buttonSize = transform2D->GetSize();
+		float2 newSize = float2(Screen::GetScreenWitdh(), Screen::GetScreenHeight());
+		transform2D->SetPosition(float3(newSize.x / 2 - buttonSize.x - padding, newSize.y / 2 - buttonSize.y - padding, transform2D->GetPosition().z));
+	}
 }
 
 void ReturnMenu::Update() {
-	ComponentTransform2D* transform = button->GetComponent<ComponentTransform2D>();
-	float2 buttonSize = transform->GetSize();
-	float2 newSize = float2(Screen::GetScreenWitdh(), Screen::GetScreenHeight());
-	transform->SetPosition(float3(newSize.x / 2 - buttonSize.x - padding, newSize.y / 2 - buttonSize.y - padding, transform->GetPosition().z));
+	ComponentTransform2D* transform2D = button->GetComponent<ComponentTransform2D>();
+	if (transform2D) {
+		float2 buttonSize = transform2D->GetSize();
+		float2 newSize = float2(Screen::GetScreenWitdh(), Screen::GetScreenHeight());
+		transform2D->SetPosition(float3(newSize.x / 2 - buttonSize.x - padding, newSize.y / 2 - buttonSize.y - padding, transform2D->GetPosition().z));
+	}
 }
 
 void ReturnMenu::OnButtonClick() {

@@ -14,7 +14,6 @@ public:
 
 public:
 	GameObject* button = nullptr;
-
 	float padding = 20;
 };
 

@@ -1,6 +1,5 @@
 #include "WinLose.h"
 
-#include "Utils/Logging.h"
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
@@ -17,17 +16,24 @@ void WinLose::Update() {
 	if (loseCon == nullptr) return;
 	if (player == nullptr) return;
 
-	if (player->GetComponent<ComponentTransform>()->GetGlobalPosition().x <= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x + LoseOffsetX
-		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().x >= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x - LoseOffsetX
-		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z <= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z + LoseOffsetZ
-		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z >= winCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z - LoseOffsetZ) {
-		//player->GetComponent<ComponentTransform>()->SetPosition
+	ComponentTransform* playerTransform = player->GetComponent<ComponentTransform>();
+	ComponentTransform* winConTransform = winCon->GetComponent<ComponentTransform>();
+	ComponentTransform* loseConTransform = loseCon->GetComponent<ComponentTransform>();
+	if (!playerTransform || !winConTransform || !loseConTransform) return;
+
+	float3 position = playerTransform->GetGlobalPosition();
+	float3 winConPos = winConTransform->GetGlobalPosition();
+	float3 loseConPos = loseConTransform->GetGlobalPosition();
+	if (position.x <= winConPos.x + LoseOffsetX
+		&& position.x >= winConPos.x - LoseOffsetX
+		&& position.z <= winConPos.z + LoseOffsetZ
+		&& position.z >= winConPos.z - LoseOffsetZ) {
 		SceneManager::ChangeScene("Assets/Scenes/WinScene.scene");
 	}
-	else if (player->GetComponent<ComponentTransform>()->GetGlobalPosition().x <= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x + LoseOffsetX
-		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().x >= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().x - LoseOffsetX
-		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z <= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z + LoseOffsetZ
-		&& player->GetComponent<ComponentTransform>()->GetGlobalPosition().z >= loseCon->GetComponent<ComponentTransform>()->GetGlobalPosition().z - LoseOffsetZ) {
+	else if (position.x <= loseConPos.x + LoseOffsetX
+		&& position.x >= loseConPos.x - LoseOffsetX
+		&& position.z <= loseConPos.z + LoseOffsetZ
+		&& position.z >= loseConPos.z - LoseOffsetZ) {
 		SceneManager::ChangeScene("Assets/Scenes/LoseScene.scene");
 	}
 }

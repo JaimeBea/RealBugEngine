@@ -5,6 +5,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Resources/ResourceScript.h"
+#include "Modules/ModuleScene.h"
 #include "Utils/FileDialog.h"
 #include "Utils/ImGuiUtils.h"
 
@@ -19,7 +20,7 @@ void ComponentScript::Init() {
 }
 
 void ComponentScript::Update() {
-	if (App->time->HasGameStarted()) {
+	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
 		ResourceScript* resource = (ResourceScript*) App->resources->GetResource(scriptID);
 		if (resource != nullptr) {
 			if (resource->script != nullptr) {

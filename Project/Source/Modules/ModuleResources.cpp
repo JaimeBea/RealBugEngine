@@ -359,6 +359,8 @@ void ModuleResources::UpdateAsync() {
 		updateFoldersEv.updateFolders.folder = newFolder;
 		App->events->AddEvent(updateFoldersEv);
 
+		App->events->AddEvent(TesseractEventType::RESOURCES_LOADED);
+
 		std::this_thread::sleep_for(std::chrono::milliseconds(TIME_BETWEEN_RESOURCE_UPDATES_MS));
 	}
 }

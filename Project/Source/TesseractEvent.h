@@ -28,7 +28,8 @@ enum class TesseractEventType {
 	MOUSE_UPDATE,
 	MOUSE_CLICKED,
 	MOUSE_RELEASED,
-	CHANGE_SCENE
+	CHANGE_SCENE,
+	RESOURCES_LOADED
 };
 
 struct TesseractEvent {

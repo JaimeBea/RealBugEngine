@@ -1,10 +1,8 @@
 #include "StatsDisplayer.h"
 
-#include "Utils/Logging.h"
 #include "GameObject.h"
 #include "Components/UI/ComponentText.h"
 #include "GameplaySystems.h"
-
 
 GENERATE_BODY_IMPL(StatsDisplayer);
 
@@ -35,6 +33,7 @@ void StatsDisplayer::Update() {
 		panelActive = !panelActive;
 	} 
 
+	if (!canvas) return;
 	if (panelActive) {
 		canvas->Enable();
 		if (fpsText != nullptr) {

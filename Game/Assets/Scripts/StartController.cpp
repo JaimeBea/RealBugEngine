@@ -1,6 +1,5 @@
 #include "StartController.h"
 
-#include "GameObject.h"
 #include "GameplaySystems.h"
 
 GENERATE_BODY_IMPL(StartController);
@@ -11,5 +10,4 @@ void StartController::Start() {
 }
 
 void StartController::Update() {
-
 }

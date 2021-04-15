@@ -2,6 +2,8 @@
 
 #include "Script.h"
 
+#include "Math/float3.h"
+
 class GameObject;
 class ComponentTransform;
 class TreeFloating : public Script
@@ -18,5 +20,7 @@ public:
 
 private:
 	float offset = 0.f;
+	float3 initialPosition = float3(0,0,0);
+	ComponentTransform* transform = nullptr;
 };
 
