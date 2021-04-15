@@ -36,5 +36,5 @@ public:
 
 	// Smoothness
 	float smoothness = 300;
-	bool hasSmoothnessInAlphaChannel = true;
+	bool hasSmoothnessInAlphaChannel = false;
 };

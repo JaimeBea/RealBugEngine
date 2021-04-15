@@ -557,6 +557,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), material->hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), material->hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
+		glUniform1f(glGetUniformLocation(program, "shininess"), material->smoothness);
 
 		glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
 		glActiveTexture(GL_TEXTURE1);

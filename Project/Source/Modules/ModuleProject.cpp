@@ -49,7 +49,7 @@ static std::string GetLastErrorStdStr() {
 bool ModuleProject::Init() {
 #if GAME
 	UnloadGameCodeDLL();
-	if (!LoadLibrary("Penteract/Build/ReleaseEditor/Penteract.dll")) {
+	if (!LoadLibrary("Penteract.dll")) {
 		LOG("%s", GetLastErrorStdStr().c_str());
 	}
 #else

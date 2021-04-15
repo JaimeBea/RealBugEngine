@@ -39,6 +39,7 @@
 #include <string>
 #include <future>
 #include <chrono>
+#include "Brofiler.h"
 
 #include "Utils/Leaks.h"
 
@@ -94,6 +95,7 @@ bool ModuleResources::Start() {
 }
 
 UpdateStatus ModuleResources::Update() {
+	BROFILER_CATEGORY("ModuleResources - Update", Profiler::Color::Orange)
 	// Copy dropped file to assets folder
 	const char* droppedFilePath = App->input->GetDroppedFilePath();
 	if (droppedFilePath != nullptr) {
@@ -304,7 +306,7 @@ void ModuleResources::UpdateAsync() {
 					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp && it == assetsToNotUpdate.end()) {
 						// ASK: What happens when we update an asset?
 						// Resources to remove only if we want to regenerate the asset resources
-						resourcesToRemove.push_back(entry.first);
+						//resourcesToReimport.push_back(entry.first);
 						continue;
 					} else if (it != assetsToNotUpdate.end()) {
 						// Instead of removing its resources and its meta, just update the timestamp
@@ -358,6 +360,8 @@ void ModuleResources::UpdateAsync() {
 		TesseractEvent updateFoldersEv(TesseractEventType::UPDATE_FOLDERS);
 		updateFoldersEv.updateFolders.folder = newFolder;
 		App->events->AddEvent(updateFoldersEv);
+
+		App->events->AddEvent(TesseractEventType::RESOURCES_LOADED);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(TIME_BETWEEN_RESOURCE_UPDATES_MS));
 	}

@@ -376,6 +376,6 @@ namespace Screen {
 }; // namespace Screen
 
 namespace SceneManager {
-	TESSERACT_ENGINE_API void SceneLoad(const char* filePath);
+	TESSERACT_ENGINE_API void ChangeScene(const char* scenePath);
 	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager

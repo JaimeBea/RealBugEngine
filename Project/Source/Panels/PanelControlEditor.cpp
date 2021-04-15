@@ -112,10 +112,8 @@ void PanelControlEditor::Update() {
 				}
 			} else {
 				if (ImGui::Button(play.c_str())) {
-					for (auto it : App->scene->scene->scriptComponents) {
-						it.OnStart();
-					}
 					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PLAY));
+					
 				}
 			}
 			ImGui::SameLine();

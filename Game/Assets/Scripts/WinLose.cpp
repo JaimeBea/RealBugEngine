@@ -1,38 +1,39 @@
 #include "WinLose.h"
 
-#include "Utils/Logging.h"
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
 GENERATE_BODY_IMPL(WinLose);
 
 void WinLose::Start() {
-	gameObject = GameplaySystems::GetGameObject("Win");
+	winCon = GameplaySystems::GetGameObject("WinCon");
+	loseCon = GameplaySystems::GetGameObject("LoseCon");
 	player = GameplaySystems::GetGameObject("Fang");
-	loseText = GameplaySystems::GetGameObject("LoseText");
-	winText = GameplaySystems::GetGameObject("WinText");
 }
 
 void WinLose::Update() {
-	if (gameObject == nullptr) return;
+	if (winCon == nullptr) return;
+	if (loseCon == nullptr) return;
 	if (player == nullptr) return;
-	if (loseText == nullptr) return;
-	if (winText == nullptr) return;
 
-	if (player->GetComponent<ComponentTransform>()->GetPosition().x >= WinPointX) {
-		//player->GetComponent<ComponentTransform>()->SetPosition(float3(0.0f, 0.0f, 0.0f));
-		winText->Enable();
-		//SceneManager::SceneLoad("Assets/Scenes/LoseScene.scene");
+	ComponentTransform* playerTransform = player->GetComponent<ComponentTransform>();
+	ComponentTransform* winConTransform = winCon->GetComponent<ComponentTransform>();
+	ComponentTransform* loseConTransform = loseCon->GetComponent<ComponentTransform>();
+	if (!playerTransform || !winConTransform || !loseConTransform) return;
+
+	float3 position = playerTransform->GetGlobalPosition();
+	float3 winConPos = winConTransform->GetGlobalPosition();
+	float3 loseConPos = loseConTransform->GetGlobalPosition();
+	if (position.x <= winConPos.x + LoseOffsetX
+		&& position.x >= winConPos.x - LoseOffsetX
+		&& position.z <= winConPos.z + LoseOffsetZ
+		&& position.z >= winConPos.z - LoseOffsetZ) {
+		SceneManager::ChangeScene("Assets/Scenes/WinScene.scene");
 	}
-	else {
-		winText->Disable();
-	}
-	if (player->GetComponent<ComponentTransform>()->GetPosition().x <= LosePointX) {
-		//player->GetComponent<ComponentTransform>()->SetPosition(float3(0.0f, 0.0f, 0.0f));
-		//	SceneManager::SceneLoad("Assets/Scenes/WinScene.scene");
-		loseText->Enable();
-	}
-	else {
-		loseText->Disable();
+	else if (position.x <= loseConPos.x + LoseOffsetX
+		&& position.x >= loseConPos.x - LoseOffsetX
+		&& position.z <= loseConPos.z + LoseOffsetZ
+		&& position.z >= loseConPos.z - LoseOffsetZ) {
+		SceneManager::ChangeScene("Assets/Scenes/LoseScene.scene");
 	}
 }

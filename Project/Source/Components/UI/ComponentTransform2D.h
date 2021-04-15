@@ -26,7 +26,7 @@ public:
 	void Load(JsonValue jComponent) override;		// Deserializes Component
 	void DrawGizmos() override;
 
-	void SetPosition(float3 position);								// Sets this position to value
+	TESSERACT_ENGINE_API void SetPosition(float3 position);			// Sets this position to value
 	TESSERACT_ENGINE_API void SetSize(float2 size);					// Sets this size to value
 	void SetRotation(Quat rotation);								// Sets this rotation to value and calculates Euler Angles rotation
 	void SetRotation(float3 rotation);								// Sets this eulerAngles to value and calculates Quat rotation
@@ -37,7 +37,7 @@ public:
 	const float4x4 GetGlobalMatrix();								// Returns GlobalMatrix
 	const float4x4 GetGlobalMatrixWithSize(bool isRunning = false); // Returns GlobalMatrix with the size of the item
 
-	float3 GetPosition() const;					 // Returns the position
+	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const; // Returns the size
 	float3 GetScale() const;					 // Returns the scale
 

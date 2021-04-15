@@ -15,8 +15,10 @@ public:
 public:
 
 	GameObject* gameObject = nullptr;
+	GameObject* camera = nullptr;
 
 private:
 
-	int speed = 100;
+	int speed = 5;
+	float cameraXPosition = -163;
 };

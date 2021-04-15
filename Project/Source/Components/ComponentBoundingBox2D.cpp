@@ -69,9 +69,9 @@ void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 		worldAABB.minPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
 		worldAABB.maxPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
 #else
-		worldAABB.minPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
-		worldAABB.maxPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
-
+		float2 windowPos = float2(App->window->GetPositionX(), App->window->GetPositionY());
+		worldAABB.minPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
+		worldAABB.maxPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
 #endif
 	}
 }

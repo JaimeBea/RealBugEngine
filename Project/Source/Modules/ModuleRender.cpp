@@ -29,6 +29,7 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
+#include <string>
 
 #if _DEBUG
 static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
@@ -257,7 +258,7 @@ void ModuleRender::SetVSync(bool vsync) {
 }
 
 void ModuleRender::ToggleDebugMode() {
-	debugMode != debugMode;
+	debugMode = !debugMode;
 }
 
 void ModuleRender::ToggleDebugDraw() {
@@ -288,9 +289,9 @@ void ModuleRender::ToggleDrawLightGizmos() {
 }
 
 void ModuleRender::UpdateShadingMode(const char* shadingMode) {
-	if (shadingMode == "Shaded") {
+	if (strcmp(shadingMode, "Shaded") == 0) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	} else if (shadingMode == "Wireframe") {
+	} else if (strcmp(shadingMode, "Wireframe") == 0) {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 }

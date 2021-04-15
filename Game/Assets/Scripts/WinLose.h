@@ -14,12 +14,11 @@ public:
 	void Update() override;
 public:
 
-	GameObject* gameObject = nullptr;
+	GameObject* winCon = nullptr;
+	GameObject* loseCon = nullptr;
 	GameObject* player = nullptr;
-	GameObject* loseText = nullptr;
-	GameObject* winText = nullptr;
 
 public:
-	float WinPointX = 230.0f;
-	float LosePointX = -130.0f;
+	float LoseOffsetX = 2.0f;
+	float LoseOffsetZ = 2.0f;
 };

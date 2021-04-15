@@ -35,6 +35,8 @@ public:
 	int GetCurrentDisplayMode() const;
 	int GetWidth() const;
 	int GetHeight() const;
+	int GetPositionX() const;
+	int GetPositionY() const;
 	float GetBrightness() const;
 	const char* GetTitle() const;
 
