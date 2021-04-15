@@ -39,6 +39,7 @@
 #include <string>
 #include <future>
 #include <chrono>
+#include "Brofiler.h"
 
 #include "Utils/Leaks.h"
 
@@ -94,6 +95,7 @@ bool ModuleResources::Start() {
 }
 
 UpdateStatus ModuleResources::Update() {
+	BROFILER_CATEGORY("ModuleResources - Update", Profiler::Color::Orange)
 	// Copy dropped file to assets folder
 	const char* droppedFilePath = App->input->GetDroppedFilePath();
 	if (droppedFilePath != nullptr) {
