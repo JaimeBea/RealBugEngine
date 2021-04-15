@@ -1,9 +1,10 @@
 #pragma once
 
-class GameObject;
+#include "FileSystem/JsonValue.h"
 
 namespace SceneImporter {
-	bool ImportScene(const char* filePath, GameObject* parent);
-	bool LoadScene(const char* fileName);
-	bool SaveScene(const char* fileName);
+	bool ImportScene(const char* filePath, JsonValue jMeta);
+
+	void LoadScene(const char* filePath);
+	bool SaveScene(const char* filePath);
 } // namespace SceneImporter

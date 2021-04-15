@@ -1,7 +1,7 @@
 #include "ComponentTransform.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Modules/ModuleEditor.h"
@@ -18,35 +18,21 @@
 #define JSON_TAG_SCALE "Scale"
 #define JSON_TAG_LOCAL_EULER_ANGLES "LocalEulerAngles"
 
-void ComponentTransform::Init() {
-	CalculateGlobalMatrix();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::Update() {
-	CalculateGlobalMatrix();
-}
-
 void ComponentTransform::OnEditorUpdate() {
 	float3 pos = position;
 	float3 scl = scale;
 	float3 rot = localEulerAngles;
 
-	if (ImGui::CollapsingHeader("Transformation")) {
-		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetPosition(pos);
-		}
-		if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
-			SetScale(scl);
-		}
+	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetPosition(pos);
+	}
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0.0001f, inf, "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
+		SetScale(scl);
+	}
 
-		if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetRotation(rot);
-		}
-		ImGui::Separator();
+	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetRotation(rot);
 	}
 }
 
@@ -89,54 +75,25 @@ void ComponentTransform::Load(JsonValue jComponent) {
 	dirty = true;
 }
 
+void ComponentTransform::DuplicateComponent(GameObject& owner) {
+	ComponentTransform* component = owner.CreateComponentDeferred<ComponentTransform>();
+	component->SetPosition(this->GetPosition());
+	component->SetRotation(this->GetRotation());
+	component->SetScale(this->GetScale());
+}
+
 void ComponentTransform::InvalidateHierarchy() {
-	Invalidate();
+	if (!dirty) {
+		dirty = true;
+		ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
+		if (boundingBox) boundingBox->Invalidate();
 
-	for (GameObject* child : GetOwner().GetChildren()) {
-		ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
-		if (childTransform != nullptr) {
-			childTransform->Invalidate();
+		for (GameObject* child : GetOwner().GetChildren()) {
+			ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
+			if (childTransform != nullptr) {
+				childTransform->InvalidateHierarchy();
+			}
 		}
-	}
-}
-
-void ComponentTransform::Invalidate() {
-	dirty = true;
-	ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-	if (boundingBox) boundingBox->Invalidate();
-}
-
-void ComponentTransform::SetPosition(float3 position_) {
-	position = position_;
-	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::SetRotation(Quat rotation_) {
-	rotation = rotation_;
-	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
-	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::SetRotation(float3 rotation_) {
-	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
-	localEulerAngles = rotation_;
-	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
-	}
-}
-
-void ComponentTransform::SetScale(float3 scale_) {
-	scale = scale_;
-	InvalidateHierarchy();
-	for (Component* component : GetOwner().components) {
-		component->OnTransformUpdate();
 	}
 }
 
@@ -150,12 +107,45 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
+			globalMatrix.Orthogonalize3();	// Solution for non-uniform scaled objects
 		} else {
 			globalMatrix = localMatrix;
 		}
 
 		dirty = false;
 	}
+}
+
+void ComponentTransform::SetPosition(float3 position_) {
+	position = position_;
+	InvalidateHierarchy();
+}
+
+void ComponentTransform::SetRotation(Quat rotation_) {
+	rotation = rotation_;
+	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
+	InvalidateHierarchy();
+}
+
+void ComponentTransform::SetRotation(float3 rotation_) {
+	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
+	localEulerAngles = rotation_;
+	InvalidateHierarchy();
+}
+
+void ComponentTransform::SetScale(float3 scale_) {
+	scale = scale_;
+	InvalidateHierarchy();
+}
+
+void ComponentTransform::SetTRS(float4x4& newTransform_) {
+	position = newTransform_.Col3(3);
+	newTransform_.Orthogonalize3();
+	scale = float3(newTransform_.Col3(0).Length(), newTransform_.Col3(1).Length(), newTransform_.Col3(2).Length());
+	newTransform_.Orthonormalize3();
+	rotation = Quat(newTransform_.SubMatrix(3, 3));
+	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
+	InvalidateHierarchy();
 }
 
 float3 ComponentTransform::GetPosition() const {
@@ -170,14 +160,30 @@ float3 ComponentTransform::GetScale() const {
 	return scale;
 }
 
-const float4x4& ComponentTransform::GetLocalMatrix() const {
+float3 ComponentTransform::GetGlobalPosition() {
+	CalculateGlobalMatrix();
+	return globalMatrix.TranslatePart();
+}
+
+Quat ComponentTransform::GetGlobalRotation() {
+	CalculateGlobalMatrix();
+	float4x4 newTransform_ = globalMatrix;
+	newTransform_.Orthogonalize3();
+	newTransform_.Orthonormalize3();
+	return Quat(newTransform_.SubMatrix(3, 3));
+}
+
+float3 ComponentTransform::GetGlobalScale() {
+	CalculateGlobalMatrix();
+	return globalMatrix.GetScale();
+}
+
+const float4x4& ComponentTransform::GetLocalMatrix() {
+	CalculateGlobalMatrix();
 	return localMatrix;
 }
 
-const float4x4& ComponentTransform::GetGlobalMatrix() const {
+const float4x4& ComponentTransform::GetGlobalMatrix() {
+	CalculateGlobalMatrix();
 	return globalMatrix;
-}
-
-bool ComponentTransform::GetDirty() const {
-	return dirty;
 }

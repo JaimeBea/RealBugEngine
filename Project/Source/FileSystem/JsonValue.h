@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rapidjson/document.h"
+
 #include "string"
 
 class JsonValue {

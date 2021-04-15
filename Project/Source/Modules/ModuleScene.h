@@ -1,10 +1,19 @@
 #pragma once
 
 #include "Modules/Module.h"
-#include "Resources/GameObject.h"
+#include "Scene.h"
+#include "GameObject.h"
+#include "Utils/Logging.h"
 #include "Utils/UID.h"
 #include "Utils/Pool.h"
 #include "Utils/Quadtree.h"
+#include "Utils/VectorMap.h"
+#include "Components/ComponentTransform.h"
+#include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentCamera.h"
+#include "Components/ComponentLight.h"
+#include <Components/ComponentSkyBox.h>
 
 #include <unordered_map>
 #include <string>
@@ -15,36 +24,19 @@ struct aiNode;
 
 class ModuleScene : public Module {
 public:
+	// ------- Core Functions ------ //
 	bool Init() override;
 	bool Start() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
-	void CreateEmptyScene();
-	void ClearScene();
-	void RebuildQuadtree();
-	void ClearQuadtree();
+	void CreateEmptyScene(); // Crates a new scene with a default game camera and directional light.
 
-	GameObject* CreateGameObject(GameObject* parent);
-	GameObject* DuplicateGameObject(GameObject* parent);
-	void DestroyGameObject(GameObject* gameObject);
-	GameObject* GetGameObject(UID id) const;
+	void DestroyGameObjectDeferred(GameObject* gameObject); //Event dependant destruction, Gameobjects are destroyed upon the receival of an event, so that info is not null
 
 public:
-	std::string fileName = "";
-	GameObject* root = nullptr;
-
-	Pool<GameObject> gameObjects;
-	std::unordered_map<UID, GameObject*> gameObjectsIdMap;
-
-	// Quadtree
-	Quadtree<GameObject> quadtree;
-	AABB2D quadtreeBounds = {{-1000, -1000}, {1000, 1000}};
-	unsigned quadtreeMaxDepth = 4;
-	unsigned quadtreeElementsPerNode = 200;
-
-	// Skybox
-	unsigned skyboxVao = 0;
-	unsigned skyboxVbo = 0;
-	CubeMap* skyboxCubeMap = 0;
+	std::string fileName = ""; // REVIEW. This can be removed? Is it even used for anything?
+	Scene* scene = nullptr;
+	bool sceneLoaded = false;
 };

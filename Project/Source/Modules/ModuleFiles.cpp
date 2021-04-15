@@ -3,32 +3,49 @@
 #include "Globals.h"
 #include "Utils/Logging.h"
 
-#include "Math/MathFunc.h"
-#include <string.h>
-#include <windows.h>
-#include <algorithm>
+#include "physfs.h"
 
 #include "Utils/Leaks.h"
+#include "Math/MathFunc.h"
+
+bool ModuleFiles::Init() {
+	PHYSFS_init(nullptr);
+	PHYSFS_mount(".", nullptr, 0);
+	PHYSFS_setWriteDir(".");
+	return true;
+}
+
+bool ModuleFiles::CleanUp() {
+	PHYSFS_deinit();
+
+	return true;
+}
 
 Buffer<char> ModuleFiles::Load(const char* filePath) const {
 	Buffer<char> buffer = Buffer<char>();
 
-	FILE* file = fopen(filePath, "rb");
+	PHYSFS_File* file = PHYSFS_openRead(filePath);
 	if (!file) {
-		LOG("Error loading file %s (%s).\n", filePath, strerror(errno));
+		LOG("Error opening file %s (%s).\n", filePath, PHYSFS_getLastError());
 		return buffer;
 	}
 	DEFER {
-		fclose(file);
+		PHYSFS_close(file);
 	};
 
-	fseek(file, 0, SEEK_END);
-	size_t size = ftell(file);
-	rewind(file);
+	PHYSFS_sint64 size = PHYSFS_fileLength(file);
+	if (size < 0) {
+		LOG("File size couldn't be determined for %s (%s).\n", filePath, PHYSFS_getLastError());
+		return buffer;
+	}
 
 	buffer.Allocate(size + 1);
 	char* data = buffer.Data();
-	fread(data, sizeof(char), size, file);
+	PHYSFS_sint64 numBytes = PHYSFS_readBytes(file, data, size);
+	if (numBytes < size) {
+		LOG("Error reading file %s (%s).\n", filePath, PHYSFS_getLastError());
+		return buffer;
+	}
 	data[size] = '\0';
 
 	return buffer;
@@ -39,101 +56,96 @@ bool ModuleFiles::Save(const char* filePath, const Buffer<char>& buffer, bool ap
 }
 
 bool ModuleFiles::Save(const char* filePath, const char* buffer, size_t size, bool append) const {
-	FILE* file = fopen(filePath, append ? "ab" : "wb");
+	PHYSFS_File* file = append ? PHYSFS_openAppend(filePath) : PHYSFS_openWrite(filePath);
 	if (!file) {
 		LOG("Error saving file %s (%s).\n", filePath, strerror(errno));
-		return nullptr;
+		return false;
 	}
 	DEFER {
-		fclose(file);
+		PHYSFS_close(file);
 	};
 
-	fwrite(buffer, sizeof(char), size, file);
+	PHYSFS_sint64 numBytes = PHYSFS_writeBytes(file, buffer, size);
+	if (numBytes < size) {
+		LOG("Error writing to file %s (%s).\n", filePath, PHYSFS_getLastError());
+		return false;
+	}
 
 	return true;
 }
 
 void ModuleFiles::CreateFolder(const char* folderPath) const {
-	CreateDirectory(folderPath, nullptr);
+	if (!PHYSFS_mkdir(folderPath)) LOG(PHYSFS_getLastError());
 }
 
-void ModuleFiles::EraseFolder(const char* folderPath) const {
-	RemoveDirectory(folderPath);
-}
-
-void ModuleFiles::EraseFile(const char* filePath) const {
-	remove(filePath);
+void ModuleFiles::Erase(const char* path) const {
+	if (!PHYSFS_delete(path)) {
+		LOG("Can't erase file %s. (%s)\n", path, PHYSFS_getLastError());
+	}
 }
 
 std::vector<std::string> ModuleFiles::GetFilesInFolder(const char* folderPath) const {
-	std::string folderPathEx = std::string(folderPath) + "\\*";
-	std::vector<std::string> filePaths;
-	WIN32_FIND_DATA data;
-	HANDLE handle = FindFirstFile(folderPathEx.c_str(), &data);
-	if (handle == INVALID_HANDLE_VALUE) return filePaths;
+	std::vector<std::string> files;
+	char** filesList = PHYSFS_enumerateFiles(folderPath);
+
 	unsigned i = 0;
-	do {
-		if (i >= 2) // Ignore '.' and '..'
-		{
-			filePaths.push_back(data.cFileName);
+	char* file = filesList[i];
+	while (file != nullptr) {
+		files.push_back(file);
+		file = filesList[++i];
+	}
+
+	PHYSFS_freeList(filesList);
+	return files;
+}
+
+bool ModuleFiles::Exists(const char* path) const {
+	PHYSFS_Stat fileStats;
+	return PHYSFS_stat(path, &fileStats) != 0;
+}
+
+bool ModuleFiles::IsDirectory(const char* path) const {
+	PHYSFS_Stat fileStats;
+	PHYSFS_stat(path, &fileStats);
+	return fileStats.filetype == PHYSFS_FileType::PHYSFS_FILETYPE_DIRECTORY;
+}
+
+long long ModuleFiles::GetLocalFileModificationTime(const char* path) const {
+	PHYSFS_Stat fileStats;
+	PHYSFS_stat(path, &fileStats);
+	return fileStats.modtime;
+}
+
+std::string GetFileFolder(const char* filePath, int upTimes = 1) {
+	std::string result = filePath;
+	for (int i = 0; i < upTimes; ++i) {
+		const char* lastSlash = strrchr(result.c_str(), '/');
+		const char* lastBackslash = strrchr(result.c_str(), '\\');
+		const char* lastSeparator = Max(lastSlash, lastBackslash);
+
+		if (lastSeparator == nullptr) {
+			return std::string();
 		}
-		i++;
-	} while (FindNextFile(handle, &data));
-	FindClose(handle);
-	return filePaths;
+		result = std::string(result).substr(0, lastSeparator - result.c_str());
+	}
+	return result;
 }
 
-std::string ModuleFiles::GetFileNameAndExtension(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
+std::string ModuleFiles::GetFilePath(const char* file, bool absolute) const {
+	const char* localdir = PHYSFS_getRealDir(file);
 
-	if (lastSeparator == nullptr) {
-		return filePath;
+	if (localdir != nullptr) {
+		#ifdef _DEBUG
+				std::string absolutedir = GetFileFolder(PHYSFS_getBaseDir(), 3) + "\\Game\\";
+				return ((absolute) ? absolutedir : "") + ((std::string(localdir) == ".") ? "" : std::string(localdir) + "\\") + file;
+		#else
+				return ((absolute) ? std::string(PHYSFS_getBaseDir()) : "") + std::string(localdir) + "\\" + file;
+		#endif
+	} else {
+		return "";
 	}
-
-	const char* fileNameAndExtension = lastSeparator + 1;
-	return fileNameAndExtension;
 }
 
-std::string ModuleFiles::GetFileName(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-
-	const char* fileName = lastSeparator == nullptr ? filePath : lastSeparator + 1;
-	const char* lastDot = strrchr(fileName, '.');
-
-	if (lastDot == nullptr || lastDot == fileName) {
-		return fileName;
-	}
-
-	return std::string(fileName).substr(0, lastDot - fileName);
-}
-
-std::string ModuleFiles::GetFileExtension(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-	const char* lastDot = strrchr(filePath, '.');
-
-	if (lastDot == nullptr || lastDot == filePath || lastDot < lastSeparator || lastDot == lastSeparator + 1) {
-		return std::string();
-	}
-
-	std::string extension = std::string(lastDot);
-	std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
-	return extension;
-}
-
-std::string ModuleFiles::GetFileFolder(const char* filePath) const {
-	const char* lastSlash = strrchr(filePath, '/');
-	const char* lastBackslash = strrchr(filePath, '\\');
-	const char* lastSeparator = Max(lastSlash, lastBackslash);
-
-	if (lastSeparator == nullptr) {
-		return std::string();
-	}
-
-	return std::string(filePath).substr(0, lastSeparator - filePath);
+bool ModuleFiles::AddSearchPath(const char* searchPath) const {
+	return PHYSFS_mount(searchPath, NULL, 1) == 0;
 }

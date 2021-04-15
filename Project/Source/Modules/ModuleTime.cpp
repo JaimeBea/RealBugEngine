@@ -6,9 +6,10 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
-
+#include "Modules/ModuleEvents.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
+#include <ctime>
 
 #include "Utils/Leaks.h"
 
@@ -16,6 +17,15 @@
 
 ModuleTime::ModuleTime() {
 	timer.Start();
+}
+
+bool ModuleTime::Init() {
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PAUSE, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PLAY, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_RESUME, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STEP, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STOP, this);
+	return true;
 }
 
 UpdateStatus ModuleTime::PreUpdate() {
@@ -44,6 +54,28 @@ UpdateStatus ModuleTime::PreUpdate() {
 	return UpdateStatus::CONTINUE;
 }
 
+void ModuleTime::ReceiveEvent(TesseractEvent& e) {
+	switch (e.type) {
+	case TesseractEventType::PRESSED_PLAY:
+		StartGame();
+		break;
+	case TesseractEventType::PRESSED_STOP:
+		StopGame();
+		break;
+	case TesseractEventType::PRESSED_RESUME:
+		ResumeGame();
+		break;
+	case TesseractEventType::PRESSED_PAUSE:
+		PauseGame();
+		break;
+	case TesseractEventType::PRESSED_STEP:
+		StepGame();
+		break;
+	default:
+		break;
+	}
+}
+
 void ModuleTime::WaitForEndOfFrame() {
 	BROFILER_CATEGORY("ModuleTime - WaitForEndOfFrame", Profiler::Color::Black)
 	if (limitFramerate) {
@@ -56,12 +88,32 @@ void ModuleTime::WaitForEndOfFrame() {
 	}
 }
 
+UpdateStatus ModuleTime::ExitGame() {
+	return UpdateStatus::STOP;
+}
+
+bool ModuleTime::HasGameStarted() const {
+	return gameStarted;
+}
+
+bool ModuleTime::IsGameRunning() const {
+	return gameRunning;
+}
+
 float ModuleTime::GetDeltaTime() const {
 	return timeDeltaMs / 1000.0f;
 }
 
 float ModuleTime::GetRealTimeDeltaTime() const {
 	return realTimeDeltaMs / 1000.0f;
+}
+
+float ModuleTime::GetFPS() const {
+	return fpsLog[fpsLogIndex];
+}
+
+float ModuleTime::GetMS() const {
+	return msLog[fpsLogIndex];
 }
 
 float ModuleTime::GetTimeSinceStartup() const {
@@ -72,20 +124,12 @@ float ModuleTime::GetRealTimeSinceStartup() const {
 	return realTimeLastMs / 1000.0f;
 }
 
-float ModuleTime::GetTimeScale() const {
-	return timeScale;
+long long ModuleTime::GetCurrentTimestamp() const {
+	return std::time(0);
 }
 
-void ModuleTime::SetTimeScale(float timeScale) {
-	timeScale = std::max(0.0f, timeScale);
-}
-
-bool ModuleTime::HasGameStarted() const {
-	return gameStarted;
-}
-
-bool ModuleTime::IsGameRunning() const {
-	return gameRunning;
+unsigned int ModuleTime::GetFrameCount() const {
+	return frameCount;
 }
 
 void ModuleTime::StartGame() {
@@ -101,8 +145,7 @@ void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
-	std::string tempSceneFilePath = std::string(SCENES_PATH) + "/" + TEMP_SCENE_FILE_NAME + SCENE_EXTENSION;
-	App->files->EraseFile(tempSceneFilePath.c_str());
+	App->files->Erase(TEMP_SCENE_FILE_NAME);
 
 	gameStarted = false;
 	gameRunning = false;
@@ -129,8 +172,4 @@ void ModuleTime::StepGame() {
 	if (gameRunning) PauseGame();
 
 	gameStepOnce = true;
-}
-
-unsigned int ModuleTime::GetFrameCount() const {
-	return frameCount;
 }

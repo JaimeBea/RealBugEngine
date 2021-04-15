@@ -27,8 +27,8 @@
 MATH_BEGIN_NAMESPACE
 
 /// A 2D integral (x,y),(w,h) -rectangle.
-class Rect
-{
+
+class TESSERACT_ENGINE_API Rect {
 public:
 	Rect() { left = top = right = bottom = 0; }
 	Rect(int left_, int top_, int width, int height)

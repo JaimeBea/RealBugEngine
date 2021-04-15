@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleCamera.h"
@@ -24,49 +24,46 @@
 #define JSON_TAG_VERTICAL_FOV "VerticalFov"
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
 
-void ComponentCamera::DrawGizmos() {
-	if (activeCamera) return;
-
-	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
+void ComponentCamera::Init() {
+	UpdateFrustum();
 }
 
-void ComponentCamera::OnTransformUpdate() {
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	frustum.SetPos(transform->GetPosition());
+void ComponentCamera::Update() {
+	UpdateFrustum();
+}
 
-	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetRotation());
-	frustum.SetFront(rotationMatrix * float3::unitZ);
-	frustum.SetUp(rotationMatrix * float3::unitY);
+void ComponentCamera::DrawGizmos() {
+	if (App->camera->GetActiveFrustum() == &frustum) return; //TODO: Possible bug when adding more components (component pointer invalidates)
+
+	if (IsActiveInHierarchy()) dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
 
 void ComponentCamera::OnEditorUpdate() {
-	if (ImGui::CollapsingHeader("Camera")) {
-		if (ImGui::Checkbox("Main Camera", &activeCamera)) {
-			App->camera->ChangeActiveFrustum(frustum, activeCamera);
-		}
-		ImGui::Separator();
+	if (ImGui::Checkbox("Main Camera", &activeCamera)) {
+		App->camera->ChangeActiveFrustum(frustum, activeCamera);
+	}
+	if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
+		App->camera->ChangeCullingFrustum(frustum, cullingCamera);
+	}
+	ImGui::Separator();
 
-		vec front = frustum.Front();
-		vec up = frustum.Up();
-		ImGui::TextColored(App->editor->titleColor, "Frustum");
-		ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-		ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+	vec front = frustum.Front();
+	vec up = frustum.Up();
+	ImGui::TextColored(App->editor->titleColor, "Frustum");
+	ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-		float nearPlane = frustum.NearPlaneDistance();
-		float farPlane = frustum.FarPlaneDistance();
-		if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
-			frustum.SetViewPlaneDistances(nearPlane, farPlane);
-		}
-		if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
-			frustum.SetViewPlaneDistances(nearPlane, farPlane);
-		}
-		float fov = frustum.VerticalFov();
-		if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
-			frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
-		}
-		if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
-			App->camera->ChangeCullingFrustum(frustum, cullingCamera);
-		}
+	float nearPlane = frustum.NearPlaneDistance();
+	float farPlane = frustum.FarPlaneDistance();
+	if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
+		frustum.SetViewPlaneDistances(nearPlane, farPlane);
+	}
+	if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
+		frustum.SetViewPlaneDistances(nearPlane, farPlane);
+	}
+	float fov = frustum.VerticalFov();
+	if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
+		frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
 	}
 }
 
@@ -104,6 +101,20 @@ void ComponentCamera::Load(JsonValue jComponent) {
 	activeCamera = jComponent[JSON_TAG_CAMERA_SELECTED];
 }
 
+void ComponentCamera::DuplicateComponent(GameObject& owner) {
+	ComponentCamera* component = owner.CreateComponentDeferred<ComponentCamera>();
+	component->frustum = this->frustum;
+}
+
+void ComponentCamera::UpdateFrustum() {
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+	frustum.SetPos(transform->GetGlobalPosition());
+
+	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetGlobalRotation());
+	frustum.SetFront(rotationMatrix * float3::unitZ);
+	frustum.SetUp(rotationMatrix * float3::unitY);
+}
+
 Frustum ComponentCamera::BuildDefaultFrustum() const {
 	Frustum newFrustum;
 	newFrustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
@@ -113,4 +124,8 @@ Frustum ComponentCamera::BuildDefaultFrustum() const {
 	newFrustum.SetUp(vec::unitY);
 	newFrustum.SetPos(vec::zero);
 	return newFrustum;
+}
+
+Frustum* ComponentCamera::GetFrustum() {
+	return &frustum;
 }

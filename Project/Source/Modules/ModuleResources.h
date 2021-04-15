@@ -2,63 +2,62 @@
 
 #include "Module.h"
 #include "Utils/Pool.h"
-#include "Resources/Texture.h"
-#include "Resources/CubeMap.h"
-#include "Resources/Mesh.h"
+#include "Utils/UID.h"
+#include "Resources/Resource.h"
+#include "Utils/AssetFile.h"
 
-enum class TextureMinFilter {
-	NEAREST,
-	LINEAR,
-	NEAREST_MIPMAP_NEAREST,
-	LINEAR_MIPMAP_NEAREST,
-	NEAREST_MIPMAP_LINEAR,
-	LINEAR_MIPMAP_LINEAR
-};
-
-enum class TextureMagFilter {
-	NEAREST,
-	LINEAR
-};
-
-enum class TextureWrap {
-	REPEAT,
-	CLAMP_TO_EDGE,
-	CLAMP_TO_BORDER,
-	MIRROR_REPEAT,
-	MIRROR_CLAMP_TO_EDGE
-};
+#include <vector>
+#include <memory>
+#include <unordered_set>
+#include <unordered_map>
+#include <thread>
+#include <concurrent_queue.h>
 
 class ModuleResources : public Module {
 public:
 	bool Init() override;
+	bool Start() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
-	Texture* ObtainTexture();
-	void ReleaseTexture(Texture* texture);
+	std::vector<UID> ImportAsset(const char* filePath);
 
-	CubeMap* ObtainCubeMap();
-	void ReleaseCubeMap(CubeMap* cubeMap);
+	Resource* GetResource(UID id) const;
+	AssetFolder* GetRootFolder() const;
 
-	Mesh* ObtainMesh();
-	void ReleaseMesh(Mesh* mesh);
+	void IncreaseReferenceCount(UID id);
+	void DecreaseReferenceCount(UID id);
+	unsigned GetReferenceCount(UID id) const;
 
-	void ReleaseAll();
+	std::string GenerateResourcePath(UID id) const;
 
-	void SetMinFilter(TextureMinFilter filter);
-	void SetMagFilter(TextureMagFilter filter);
-	void SetWrap(TextureWrap wrap);
-
-	TextureMinFilter GetMinFilter() const;
-	TextureMagFilter GetMagFilter() const;
-	TextureWrap GetWrap() const;
-
-public:
-	Pool<Texture> textures;
-	Pool<CubeMap> cubeMaps;
-	Pool<Mesh> meshes;
+	template<typename T>
+	T* CreateResource(const char* assetFilePath, UID id);
 
 private:
-	TextureMinFilter minFilter = TextureMinFilter::NEAREST_MIPMAP_LINEAR;
-	TextureMagFilter magFilter = TextureMagFilter::LINEAR;
-	TextureWrap textureWrap = TextureWrap::REPEAT;
+	void UpdateAsync();
+
+	void CheckForNewAssetsRecursive(const char* path, AssetFolder* folder);
+
+	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
+	void SendAddResourceEvent(Resource* resource);
+
+public:
+	std::unordered_set<std::string> assetsToNotUpdate;
+
+private:
+	std::unordered_map<UID, std::unique_ptr<Resource>> resources;
+	std::unordered_map<UID, unsigned> referenceCounts;
+	std::unique_ptr<AssetFolder> rootFolder;
+	std::thread importThread;
+	bool stopImportThread = false;
 };
+
+template<typename T>
+inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {
+	std::string resourceFilePath = GenerateResourcePath(id);
+	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
+	SendAddResourceEvent(resource);
+	return resource;
+}
