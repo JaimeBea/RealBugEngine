@@ -16,12 +16,16 @@ void FangMovement::Update() {
 
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	if (cameraTransform) {
+		float modifier = 1.0f;
 		if (cameraTransform->GetPosition().x < cameraXPosition) {
+			if (Input::GetKeyCode(Input::KEYCODE::KEY_LSHIFT)) {
+				modifier = 2.0f;
+			}
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
 				ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 				if (transform) {
 					float3 newPosition = transform->GetPosition();
-					newPosition.z -= speed * Time::GetDeltaTime();
+					newPosition.z -= speed * Time::GetDeltaTime() * modifier;
 					transform->SetPosition(newPosition);
 				}
 			}
@@ -29,7 +33,7 @@ void FangMovement::Update() {
 				ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 				if (transform) {
 					float3 newPosition = transform->GetPosition();
-					newPosition.x -= speed * Time::GetDeltaTime();
+					newPosition.x -= speed * Time::GetDeltaTime() * modifier;
 					transform->SetPosition(newPosition);
 				}
 			}
@@ -37,7 +41,7 @@ void FangMovement::Update() {
 				ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 				if (transform) {
 					float3 newPosition = transform->GetPosition();
-					newPosition.z += speed * Time::GetDeltaTime();
+					newPosition.z += speed * Time::GetDeltaTime() * modifier;
 					transform->SetPosition(newPosition);
 				}
 			}
@@ -45,7 +49,7 @@ void FangMovement::Update() {
 				ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
 				if (transform) {
 					float3 newPosition = transform->GetPosition();
-					newPosition.x += speed * Time::GetDeltaTime();
+					newPosition.x += speed * Time::GetDeltaTime() * modifier;
 					transform->SetPosition(newPosition);
 				}
 			}
