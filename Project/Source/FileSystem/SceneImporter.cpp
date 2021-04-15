@@ -14,6 +14,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleRender.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -28,6 +29,7 @@
 #define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
+#define JSON_TAG_AMBIENTLIGHT "AmbientLight"
 
 bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 	// Timer to measure importing a scene
@@ -114,6 +116,9 @@ void SceneImporter::LoadScene(const char* filePath) {
 	scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
 	scene->RebuildQuadtree();
 
+	JsonValue ambientLight = jScene[JSON_TAG_AMBIENTLIGHT];
+	App->renderer->ambientColor = {ambientLight[0], ambientLight[1] ,ambientLight[2]};
+
 	if (App->time->IsGameRunning()) {
 		for (auto it : scene->scriptComponents) {
 			it.OnStart();
@@ -139,6 +144,11 @@ bool SceneImporter::SaveScene(const char* filePath) {
 	jQuadtreeBounds[3] = scene->quadtreeBounds.maxPoint.y;
 	jScene[JSON_TAG_QUADTREE_MAX_DEPTH] = scene->quadtreeMaxDepth;
 	jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = scene->quadtreeElementsPerNode;
+
+	JsonValue ambientLight = jScene[JSON_TAG_AMBIENTLIGHT];
+	ambientLight[0] = App->renderer->ambientColor.x;
+	ambientLight[1] = App->renderer->ambientColor.y;
+	ambientLight[2] = App->renderer->ambientColor.z;
 
 	// Save GameObjects
 	JsonValue jRoot = jScene[JSON_TAG_ROOT];
