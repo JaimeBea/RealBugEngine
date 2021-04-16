@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
 	_CrtMemCheckpoint(&memState);
 #endif
 
-	// Initialize logging
-	logString = new std::string();
+	// Logging
+	logger = new Logger();
 
 	// Game loop
 	int mainReturn = EXIT_FAILURE;
@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 	LOG("Bye :)\n");
 
 	RELEASE(App);
-	RELEASE(logString);
+	RELEASE(logger);
 
 #ifdef _DEBUG
 	_CrtMemDumpAllObjectsSince(&memState);
