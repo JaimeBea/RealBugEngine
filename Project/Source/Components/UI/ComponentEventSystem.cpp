@@ -43,9 +43,12 @@ void ComponentEventSystem::Update() {
 
 	if (keyPressed) {
 		if (selectedId != 0) {
-			ComponentSelectable* newSel = GetCurrentSelected()->FindSelectableOnDir(selectionDir);
-			if (newSel) {
-				SetSelected(newSel->GetID());
+			ComponentSelectable* currentSel = GetCurrentSelected();
+			if (currentSel != nullptr) {
+				ComponentSelectable* newSel = currentSel->FindSelectableOnDir(selectionDir);
+				if (newSel != nullptr) {
+					SetSelected(newSel->GetID());
+				}
 			}
 		}
 	}

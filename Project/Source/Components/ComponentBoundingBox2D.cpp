@@ -7,6 +7,7 @@
 #include "Utils/Logging.h"
 #include "Panels/PanelScene.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleWindow.h"
 
 #include "debugdraw.h"
 #include "Geometry/AABB.h"
@@ -64,8 +65,14 @@ void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 		//worldAABB minPoint is the localAABB's min point mulitplied by the rect transform's scale and size, adding the rect transform position
 		//Right now to calculate position we add half the size of the WindowScene because all textures are "centered" for their coordinates
 
+#if !GAME
 		worldAABB.minPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
 		worldAABB.maxPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
+#else
+		float2 windowPos = float2(App->window->GetPositionX(), App->window->GetPositionY());
+		worldAABB.minPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
+		worldAABB.maxPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f));
+#endif
 	}
 }
 

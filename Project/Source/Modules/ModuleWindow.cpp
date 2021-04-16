@@ -24,7 +24,13 @@ bool ModuleWindow::Init() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
-	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+#if GAME
+	flags |= SDL_WINDOW_MAXIMIZED;
+#else
+	flags |= SDL_WINDOW_RESIZABLE;
+#endif
 
 	SDL_DisplayMode desktopDisplayMode;
 	SDL_GetDesktopDisplayMode(0, &desktopDisplayMode);
@@ -138,6 +144,17 @@ int ModuleWindow::GetHeight() const {
 	int height;
 	SDL_GetWindowSize(window, &width, &height);
 	return height;
+}
+
+int ModuleWindow::GetPositionX() const {
+	int posX, posY;
+	SDL_GetWindowPosition(window, &posX, &posY);
+	return posX;
+}
+int ModuleWindow::GetPositionY() const {
+	int posX, posY;
+	SDL_GetWindowPosition(window, &posX, &posY);
+	return posY;
 }
 
 float ModuleWindow::GetBrightness() const {

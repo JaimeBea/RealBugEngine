@@ -234,6 +234,7 @@ void GameObject::Load(JsonValue jGameObject) {
 	// Recache bones to unordered map
 	if (rootBoneHierarchy) {
 		std::unordered_map<std::string, GameObject*> temporalBonesMap;
+		temporalBonesMap[rootBoneHierarchy->name] = rootBoneHierarchy;
 		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
 		ModelImporter::SaveBones(this, temporalBonesMap);
 	}
@@ -301,6 +302,7 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		rootBoneHierarchy = (rootBoneName == this->name) ? this : FindDescendant(rootBoneName);
 		// Recache bones to unordered map
 		std::unordered_map<std::string, GameObject*> temporalBonesMap;
+		temporalBonesMap[rootBoneHierarchy->name] = rootBoneHierarchy;
 		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
 		ModelImporter::SaveBones(this, temporalBonesMap);
 	}

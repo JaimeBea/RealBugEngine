@@ -1,5 +1,7 @@
 #pragma once
 
+#pragma warning(disable: 4251)
+
 #include "Components/Component.h"
 #include "Application.h"
 #include "Modules/ModuleScene.h"
@@ -12,6 +14,7 @@
 #include "Math/myassert.h"
 #include <vector>
 #include <string>
+
 
 class TESSERACT_ENGINE_API GameObject {
 public:

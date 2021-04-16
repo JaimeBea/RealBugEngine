@@ -102,10 +102,14 @@ void PanelScene::Update() {
 			}
 			if (ImGui::BeginPopup("Gizmos")) {
 				ImGui::Text("General");
+				ImGui::Checkbox("Enable/Disable All", &App->renderer->drawDebugDraw);
 				ImGui::Separator();
 				ImGui::Checkbox("Bounding Boxes", &App->renderer->drawAllBoundingBoxes);
 				ImGui::Checkbox("Quadtree", &App->renderer->drawQuadtree);
-
+				ImGui::Checkbox("Camera Frustums", &App->renderer->drawCameraFrustums);
+				ImGui::Checkbox("Light Gizmos", &App->renderer->drawLightGizmos);
+				ImGui::Checkbox("Animation Bones", &App->renderer->drawAllBones);
+				ImGui::Separator();
 				ImGui::EndPopup();
 			}
 
@@ -116,15 +120,11 @@ void PanelScene::Update() {
 			}
 			if (ImGui::BeginPopup("Stats")) {
 				char fps[10];
-				sprintf_s(fps, 10, "%.1f", fpsLog[fpsLogIndex]);
+				sprintf_s(fps, 10, "%.1f", logger->fpsLog[logger->fpsLogIndex]);
 				char ms[10];
-				sprintf_s(ms, 10, "%.1f", msLog[fpsLogIndex]);
+				sprintf_s(ms, 10, "%.1f", logger->msLog[logger->fpsLogIndex]);
 
-				int triangles = 0;
-				for (ComponentMeshRenderer& meshComponent : App->scene->scene->meshRendererComponents) {
-					ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
-					triangles += mesh->numIndices / 3;
-				}
+				int triangles = App->scene->scene->GetTotalTriangles();
 
 				ImGui::TextColored(App->editor->titleColor, "Framerate");
 				ImGui::Text("Frames: ");
@@ -188,29 +188,6 @@ void PanelScene::Update() {
 				ImGui::EndDragDropTarget();
 			}
 
-			// Capture input
-			if (ImGui::IsWindowFocused()) {
-				if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT)) {
-					ImGuizmo::Enable(false);
-				} else {
-					ImGuizmo::Enable(true);
-				}
-
-				ImGui::CaptureKeyboardFromApp(false);
-				ImGui::CaptureMouseFromApp(true);
-				ImGuiIO& io = ImGui::GetIO();
-				mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
-				mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
-
-				if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
-					float2 mousePosNormalized;
-					mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
-					mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
-					App->camera->CalculateFrustumNearestObject(mousePosNormalized);
-				}
-				ImGui::CaptureMouseFromApp(false);
-			}
-
 			float viewManipulateRight = framebufferPosition.x + framebufferSize.x;
 			float viewManipulateTop = framebufferPosition.y;
 
@@ -264,6 +241,28 @@ void PanelScene::Update() {
 			}
 		}
 
+		// Capture input
+		if (ImGui::IsWindowFocused()) {
+			if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) || App->input->GetKey(SDL_SCANCODE_LALT)) {
+				ImGuizmo::Enable(false);
+			} else {
+				ImGuizmo::Enable(true);
+			}
+
+			ImGui::CaptureKeyboardFromApp(false);
+			ImGui::CaptureMouseFromApp(true);
+			ImGuiIO& io = ImGui::GetIO();
+			mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
+			mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
+
+			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
+				float2 mousePosNormalized;
+				mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
+				mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
+				App->camera->CalculateFrustumNearestObject(mousePosNormalized);
+			}
+			ImGui::CaptureMouseFromApp(false);
+		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}

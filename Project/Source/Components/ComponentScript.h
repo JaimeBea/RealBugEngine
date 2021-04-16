@@ -12,11 +12,11 @@ public:
 	void Init();
 	void Update();
 	void OnStart();
-	void OnUpdate();
 
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const;
 	void Load(JsonValue jComponent);
+
 	UID GetScriptID() const;
 
 public:
