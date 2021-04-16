@@ -44,10 +44,10 @@ void PanelConfiguration::Update() {
 
 			// FPS Graph
 			char title[25];
-			sprintf_s(title, 25, "Framerate %.1f", fpsLog[fpsLogIndex]);
-			ImGui::PlotHistogram("##framerate", &fpsLog[0], FPS_LOG_SIZE, fpsLogIndex, title, 0.0f, 100.0f, ImVec2(310, 100));
-			sprintf_s(title, 25, "Milliseconds %0.1f", msLog[fpsLogIndex]);
-			ImGui::PlotHistogram("##milliseconds", &msLog[0], FPS_LOG_SIZE, fpsLogIndex, title, 0.0f, 40.0f, ImVec2(310, 100));
+			sprintf_s(title, 25, "Framerate %.1f", logger->fpsLog[logger->fpsLogIndex]);
+			ImGui::PlotHistogram("##framerate", &logger->fpsLog[0], FPS_LOG_SIZE, logger->fpsLogIndex, title, 0.0f, 100.0f, ImVec2(310, 100));
+			sprintf_s(title, 25, "Milliseconds %0.1f", logger->msLog[logger->fpsLogIndex]);
+			ImGui::PlotHistogram("##milliseconds", &logger->msLog[0], FPS_LOG_SIZE, logger->fpsLogIndex, title, 0.0f, 40.0f, ImVec2(310, 100));
 		}
 
 		// Hardware

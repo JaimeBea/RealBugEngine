@@ -120,9 +120,9 @@ void PanelScene::Update() {
 			}
 			if (ImGui::BeginPopup("Stats")) {
 				char fps[10];
-				sprintf_s(fps, 10, "%.1f", fpsLog[fpsLogIndex]);
+				sprintf_s(fps, 10, "%.1f", logger->fpsLog[logger->fpsLogIndex]);
 				char ms[10];
-				sprintf_s(ms, 10, "%.1f", msLog[fpsLogIndex]);
+				sprintf_s(ms, 10, "%.1f", logger->msLog[logger->fpsLogIndex]);
 
 				int triangles = App->scene->scene->GetTotalTriangles();
 
