@@ -24,11 +24,8 @@ public:
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void OnUpdate();
+	void OnUpdate();	
 	
-	AnimationController* animationController = nullptr;
-	UID stateMachineResourceUID = 0;
-
 	void SendTrigger(std::string trigger);
 
 	ResourceStates* GetCurrentState() {
@@ -39,9 +36,11 @@ public:
 		return resourceStateMachine->GetCurrentState();
 	}
 
+public:
+	UID stateMachineResourceUID = 0;
+
 private:
 	void UpdateAnimations(GameObject *gameObject);
-	std::string _oldState = "";
 
 	std::list<AnimationInterpolation*> animationInterpolations;
 	int t = 0;

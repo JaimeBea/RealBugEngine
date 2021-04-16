@@ -66,16 +66,12 @@ void ComponentAnimation::OnEditorUpdate() {
 }
 
 void ComponentAnimation::Save(JsonValue jComponent) const {
-	// TODO: Save state machine resource UID
-	//jComponent[JSON_TAG_ANIMATION_ID] = animationController->animationID;
 	jComponent[JSON_TAG_STATE_MACHINE_ID] = stateMachineResourceUID;
 	bool ok = true;
 	//jComponent[JSON_TAG_LOOP] = animationController.loop;
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
-	//animationController->animationID = jComponent[JSON_TAG_ANIMATION_ID];
-	//if (animationController->animationID != 0) App->resources->IncreaseReferenceCount(animationController->animationID);
 	stateMachineResourceUID = jComponent[JSON_TAG_STATE_MACHINE_ID];
 	if (stateMachineResourceUID != 0) App->resources->IncreaseReferenceCount(stateMachineResourceUID);
 	bool ok = true;
@@ -94,9 +90,8 @@ void ComponentAnimation::OnUpdate() {
 	// Update gameobjects matrix
 	GameObject* rootBone = GetOwner().GetRootBone();
 
-	for (GameObject* child : rootBone->GetChildren()) {
-		UpdateAnimations(child);
-	}
+	UpdateAnimations(rootBone);
+
 	ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
 	resourceStateMachine->GetCurrentState()->currentTime += App->time->GetDeltaTime();
 }
@@ -140,7 +135,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
 
 	if (animationInterpolations.size() > 1) {
-		result = animationController->InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, gameObject, position, rotation);
+		result = AnimationController::InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, GetOwner().GetRootBone(), gameObject, position, rotation);
 		CheckFinishInterpolation checkFinishInterpolation;
 		checkFinishInterpolation.stateMachineResourceUID = stateMachineResourceUID;
 		animationInterpolations.remove_if(checkFinishInterpolation);
@@ -148,7 +143,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 			animationInterpolations.clear();
 		}
 	} else {
-		result = animationController->GetTransform(resourceStateMachine->GetCurrentState()->clip, resourceStateMachine->GetCurrentState()->currentTime, gameObject->name.c_str(), position, rotation);
+		result = AnimationController::GetTransform(resourceStateMachine->GetCurrentState()->clip, resourceStateMachine->GetCurrentState()->currentTime, gameObject->name.c_str(), position, rotation);
 	}
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();
@@ -162,8 +157,4 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		UpdateAnimations(child);
 	}
 
-	if (_oldState != resourceStateMachine->GetCurrentState()->name.c_str()) {
-		//animationController->SetAnimationResource(resourceStateMachine->GetCurrentState()->clip->animation); // Update current animation resource
-		_oldState = resourceStateMachine->GetCurrentState()->name.c_str();
-	}
 }

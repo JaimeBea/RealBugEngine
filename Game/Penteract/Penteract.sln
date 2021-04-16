@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31105.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Penteract", "Penteract.vcxproj", "{AA8110BE-C0CB-4E95-8243-48857E1EA880}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Penteract", "Penteract.vcxproj", "{66D1B792-F423-4057-B6F0-AE53429B1FDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,27 +16,27 @@ Global
 		ReleaseEditor|x86 = ReleaseEditor|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Debug|Win32.Build.0 = Debug|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Debug|x86.ActiveCfg = Debug|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Debug|x86.Build.0 = Debug|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.DebugEditor|Win32.ActiveCfg = DebugEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.DebugEditor|Win32.Build.0 = DebugEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.DebugEditor|x86.ActiveCfg = DebugEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.DebugEditor|x86.Build.0 = DebugEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Release|Win32.ActiveCfg = Release|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Release|Win32.Build.0 = Release|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Release|x86.ActiveCfg = Release|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.Release|x86.Build.0 = Release|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.ReleaseEditor|Win32.ActiveCfg = ReleaseEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.ReleaseEditor|Win32.Build.0 = ReleaseEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.ReleaseEditor|x86.ActiveCfg = ReleaseEditor|Win32
-		{AA8110BE-C0CB-4E95-8243-48857E1EA880}.ReleaseEditor|x86.Build.0 = ReleaseEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Debug|Win32.Build.0 = Debug|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Debug|x86.ActiveCfg = Debug|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Debug|x86.Build.0 = Debug|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.DebugEditor|Win32.ActiveCfg = DebugEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.DebugEditor|Win32.Build.0 = DebugEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.DebugEditor|x86.ActiveCfg = DebugEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.DebugEditor|x86.Build.0 = DebugEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Release|Win32.ActiveCfg = Release|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Release|Win32.Build.0 = Release|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Release|x86.ActiveCfg = Release|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.Release|x86.Build.0 = Release|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.ReleaseEditor|Win32.ActiveCfg = ReleaseEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.ReleaseEditor|Win32.Build.0 = ReleaseEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.ReleaseEditor|x86.ActiveCfg = ReleaseEditor|Win32
+		{66D1B792-F423-4057-B6F0-AE53429B1FDD}.ReleaseEditor|x86.Build.0 = ReleaseEditor|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {F04FF7E8-3862-4C87-A7A0-45BBBB165046}
+		SolutionGuid = {3BB0C676-4914-49DF-9670-088D44019D22}
 	EndGlobalSection
 EndGlobal

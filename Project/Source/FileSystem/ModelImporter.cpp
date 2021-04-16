@@ -692,8 +692,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		//resourceStateMachine->SetCurrentState(state);
 
 		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
-		animationComponent->animationController = new AnimationController(/*testAnim*/);
-		//animationComponent->animationController->SetAnimationResource(testAnim); // TODO improve for multiple animations
 		animationComponent->stateMachineResourceUID = resourceStateMachine->GetId();
 
 

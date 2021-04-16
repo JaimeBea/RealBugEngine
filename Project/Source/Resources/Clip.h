@@ -42,14 +42,13 @@ public:
 	}
 
 	ResourceAnimation* GetResourceAnimation() {
-		ResourceAnimation* a = (ResourceAnimation*) App->resources->GetResource(animationUID);
-		return a;
+		return (ResourceAnimation*) App->resources->GetResource(animationUID);
 	}
 
 public:
-	UID id;
-	std::string name;
-	UID animationUID;
+	UID id = 0;
+	std::string name = "";
+	UID animationUID = 0;
 	bool loop = false;
 	unsigned int beginIndex = 0;
 	unsigned int endIndex = 0;
