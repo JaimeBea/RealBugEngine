@@ -2,11 +2,11 @@
 #include "Utils/UID.h"
 #include <string>
 
-class Clip;
+class ResourceClip;
 class ResourceStates {
 
 public:
-	ResourceStates(std::string& mName, Clip* mClip, float mCurrentTime = 0,UID mid = 0)
+	ResourceStates(std::string& mName, ResourceClip* mClip, float mCurrentTime = 0, UID mid = 0)
 		: name(mName)
 		, clip(mClip)
 		, currentTime(mCurrentTime) {
@@ -17,7 +17,7 @@ public:
 public:
 	UID id;
 	std::string name = "";
-	Clip* clip = nullptr;
+	ResourceClip* clip = nullptr;
 	float currentTime = 0;
 
 };

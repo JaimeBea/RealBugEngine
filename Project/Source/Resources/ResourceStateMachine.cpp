@@ -1,7 +1,7 @@
 #include "ResourceStateMachine.h"
 #include "ResourceTransition.h"
 #include "ResourceStates.h"
-#include "Resources/Clip.h"
+#include "Resources/ResourceClip.h"
 
 #include "Application.h"
 
@@ -29,6 +29,7 @@
 #define JSON_TAG_ANIMATION_UID "AnimationUID"
 #define JSON_TAG_BEGIN_INDEX "BeginIndex"
 #define JSON_TAG_END_INDEX "EndIndex"
+#define JSON_TAG_CLIP_UID "ClipUID"
 #define JSON_TAG_LOOP "Loop"
 #define JSON_TAG_ID "Id"
 
@@ -67,17 +68,13 @@ void ResourceStateMachine::Load() {
 
 	}*/
 
-	std::unordered_map<UID, Clip*> clipsMap;
+	std::unordered_map<UID, ResourceClip*> clipsMap;
 	for (auto const& p : document[JSON_TAG_CLIPS].GetArray()) {
-		std::string name = p[JSON_TAG_NAME].GetString();
-		UID id = p[JSON_TAG_ID].GetUint64();
-		UID animationUID = p[JSON_TAG_ANIMATION_UID].GetUint64();
-		unsigned int beginIndex = p[JSON_TAG_BEGIN_INDEX].GetUint();
-		unsigned int endIndex = p[JSON_TAG_END_INDEX].GetUint();
-		bool loop = p[JSON_TAG_LOOP].GetBool();
-		Clip* clip = new Clip(name, animationUID, beginIndex, endIndex, loop, id);
+		UID clipUID = p.GetUint();
+		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
+		App->resources->IncreaseReferenceCount(clipUID);
 		clips.push_back(clip);
-		clipsMap.insert(std::make_pair(id, clip));
+		clipsMap.insert(std::make_pair(clipUID, clip));
 	}
 
 	std::unordered_map<UID, ResourceStates*> stateMap;
@@ -107,15 +104,14 @@ void ResourceStateMachine::Load() {
 }
 
 void ResourceStateMachine::Unload() {
-	/*App->resources->DecreaseReferenceCount(shaderId);
-	App->resources->DecreaseReferenceCount(diffuseMapId);
-	App->resources->DecreaseReferenceCount(specularMapId);
-	App->resources->DecreaseReferenceCount(metallicMapId);
-	App->resources->DecreaseReferenceCount(normalMapId);*/
+	std::list<ResourceClip*>::iterator itClip;
+	for (itClip = clips.begin(); itClip != clips.end(); ++itClip) {
+		App->resources->DecreaseReferenceCount((*itClip)->GetId());
+	}
 }
 
 void ResourceStateMachine::SaveToFile(const char* filePath) {
-	LOG("Saving material to path: \"%s\".", filePath);
+	LOG("Saving ResourceStateMachine to path: \"%s\".", filePath);
 
 	MSTimer timer;
 	timer.Start();
@@ -129,18 +125,10 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 
 	rapidjson::Value clipsArrayJson(rapidjson::kArrayType);
 	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
-	std::list<Clip*>::iterator itClip;
+	std::list<ResourceClip*>::iterator itClip;
 	for (itClip = clips.begin(); itClip != clips.end(); ++itClip) {		
-		rapidjson::Value objValue(rapidjson::kObjectType);
-		rapidjson::Value name((*itClip)->name.c_str(), allocator);
-		objValue.AddMember(JSON_TAG_NAME, name, allocator);
-		objValue.AddMember(JSON_TAG_ID, (*itClip)->id, allocator);
-		objValue.AddMember(JSON_TAG_ANIMATION_UID, (*itClip)->animationUID, allocator);
-		objValue.AddMember(JSON_TAG_BEGIN_INDEX, (*itClip)->beginIndex, allocator);
-		objValue.AddMember(JSON_TAG_END_INDEX, (*itClip)->endIndex, allocator);
-		objValue.AddMember(JSON_TAG_LOOP, (*itClip)->loop, allocator);
-
-		clipsArrayJson.PushBack(objValue, allocator);
+		clipsArrayJson.PushBack( (*itClip)->GetId(), allocator);
+		(*itClip)->SaveToFile((*itClip)->GetResourceFilePath().c_str());
 	}
 	document.AddMember(JSON_TAG_CLIPS, clipsArrayJson, allocator);
 
@@ -190,7 +178,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	LOG("Material saved in %ums", timeMs);
 }
 
-ResourceStates* ResourceStateMachine::AddState(std::string name, Clip* clip) {
+ResourceStates* ResourceStateMachine::AddState(std::string name, ResourceClip* clip) {
 	//Checking for unique name
 	ResourceTransition* transition = FindTransitionGivenName(name);
 	if (transition) {
@@ -210,7 +198,7 @@ ResourceStates* ResourceStateMachine::AddState(std::string name, Clip* clip) {
 	return state;
 }
 
-void ResourceStateMachine::AddClip(Clip* clip) {
+void ResourceStateMachine::AddClip(ResourceClip* clip) {
 	if (!(std::find(clips.begin(), clips.end(), clip) != clips.end())) {
 		clips.push_back(clip);
 	}

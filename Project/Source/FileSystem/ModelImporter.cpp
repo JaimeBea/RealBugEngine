@@ -16,7 +16,7 @@
 #include "Resources/ResourceTexture.h"
 #include "Resources/ResourcePrefab.h"
 #include "Resources/ResourceAnimation.h"
-#include "Resources/Clip.h"
+#include "Resources/ResourceClip.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
@@ -642,6 +642,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		JsonValue jResource = jResources[resourceIndex];
 		UID id = jResource[JSON_TAG_ID];
 		ResourceStateMachine* resourceStateMachine = App->resources->CreateResource<ResourceStateMachine>(filePath, id ? id : GenerateUID());
+		UID uidSM = resourceStateMachine->GetId();
+
 		jResource[JSON_TAG_TYPE] = GetResourceTypeName(resourceStateMachine->GetType());
 		jResource[JSON_TAG_ID] = resourceStateMachine->GetId();
 		resourceIndex += 1;
@@ -662,7 +664,10 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
 
-			Clip* clip = new Clip(clipName + parsedI, animation->GetId(), 0, 60, true);
+			ResourceClip* clip = App->resources->CreateResource<ResourceClip>(filePath, id ? id : GenerateUID());
+			App->resources->IncreaseReferenceCount(clip->GetId());
+			clip->Init(clipName + parsedI, animation->GetId(), 0, 60, true);
+			UID uidC = clip->GetId();
 
 			resourceStateMachine->AddState(stateName + parsedI, clip);
 		}
@@ -670,11 +675,16 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		//Setting machine state
 		std::string sState2 = "State2";
 		std::string clipName2 = "testClip2";
-		Clip* clip2 = new Clip(clipName2, testAnim->GetId(), 290, 360, false);
+		ResourceClip* clip2 = App->resources->CreateResource<ResourceClip>(filePath, id ? id : GenerateUID());
+		App->resources->IncreaseReferenceCount(clip2->GetId());
+		clip2->Init(clipName2, testAnim->GetId(), 290, 360, false);
+		UID uidC1 = clip2->GetId();
 
 		std::string sState3 = "State3";
 		std::string clipName3 = "testClip3";
-		Clip* clip3 = new Clip(clipName3, testAnim->GetId(), 60, 120, true);
+		ResourceClip* clip3 = App->resources->CreateResource<ResourceClip>(filePath, id ? id : GenerateUID());
+		App->resources->IncreaseReferenceCount(clip3->GetId());
+		clip3->Init(clipName3, testAnim->GetId(), 60, 120, true);
 
 		//Mocking transition
 		ResourceStates* state2 = resourceStateMachine->AddState(sState2, clip2);

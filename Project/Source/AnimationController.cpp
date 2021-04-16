@@ -5,13 +5,13 @@
 #include "Resources/ResourceAnimation.h"
 #include "Resources/AnimationInterpolation.h"
 #include "Resources/ResourceStates.h"
-#include "Resources/Clip.h"
+#include "Resources/ResourceClip.h"
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"
 
 #include "Utils/Leaks.h"
 
-bool AnimationController::GetTransform(Clip* clip, float& currentTime, const char* name, float3& pos, Quat& quat) {
+bool AnimationController::GetTransform(ResourceClip* clip, float& currentTime, const char* name, float3& pos, Quat& quat) {
 	if (clip->animationUID == 0) {
 		return false;
 	}
