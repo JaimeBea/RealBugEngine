@@ -5,7 +5,6 @@
 #include "Resources/ResourceTransition.h"
 #include "Resources/AnimationInterpolation.h"
 //#include "Resources/ResourceStates.h"
-#include "Resources/Clip.h"
 #include "GameObject.h"
 #include "AnimationController.h"
 #include "Resources/ResourceAnimation.h"

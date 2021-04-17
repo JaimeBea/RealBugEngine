@@ -26,7 +26,6 @@ public:
 	ResourceAnimation* GetResourceAnimation();
 
 public:
-	UID id = 0;
 	std::string name = "";
 	UID animationUID = 0;
 	bool loop = false;

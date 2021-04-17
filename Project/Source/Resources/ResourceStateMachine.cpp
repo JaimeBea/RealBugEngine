@@ -56,20 +56,22 @@ void ResourceStateMachine::Load() {
 		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
 		return;
 	}
-	JsonValue jMaterial(document, document);
+	JsonValue jStateMachine(document, document);
 
+	document.SetObject();
 
+	std::unordered_map<UID, ResourceClip*> clipsMap;
 	/*const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS];
 	assert(clipsArray.IsArray());
 	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
-		const rapidjson::Value::ConstMemberIterator currentAttribute = itr->FindMember(JSON_TAG_NAME);
-		printf("%d ", itr->GetInt());
-		itr->GetString()[JSON_TAG_NAME]
-
+		UID clipUID = itr->GetUint();
+		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
+		App->resources->IncreaseReferenceCount(clipUID);
+		clips.push_back(clip);
+		clipsMap.insert(std::make_pair(clipUID, clip));
 	}*/
 
-	std::unordered_map<UID, ResourceClip*> clipsMap;
-	for (auto const& p : document[JSON_TAG_CLIPS].GetArray()) {
+	for (auto& p : document[JSON_TAG_CLIPS].GetArray()) {
 		UID clipUID = p.GetUint();
 		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
 		App->resources->IncreaseReferenceCount(clipUID);
@@ -139,7 +141,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 		rapidjson::Value name((*itState)->name.c_str(), allocator);
 		objValue.AddMember(JSON_TAG_ID, (*itState)->id, allocator);
 		objValue.AddMember(JSON_TAG_NAME, name, allocator);
-		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState)->clip->id, allocator);		
+		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState)->clip->GetId(), allocator);
 		objValue.AddMember(JSON_TAG_CURRENTTIME, (*itState)->currentTime, allocator);
 
 		statesArrayJson.PushBack(objValue, allocator);

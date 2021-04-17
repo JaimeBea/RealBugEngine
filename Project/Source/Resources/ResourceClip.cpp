@@ -45,7 +45,6 @@ void ResourceClip::Load() {
 	JsonValue jStateMachine(document, document);
 
 	name = jStateMachine[JSON_TAG_NAME];
-	id = jStateMachine[JSON_TAG_ID];
 	animationUID = jStateMachine[JSON_TAG_ANIMATION_UID];
 	App->resources->IncreaseReferenceCount(animationUID);
 	beginIndex = jStateMachine[JSON_TAG_BEGIN_INDEX];
@@ -72,7 +71,6 @@ void ResourceClip::SaveToFile(const char* filePath) {
 	JsonValue jStateMachine(document, document);
 
 	jStateMachine[JSON_TAG_NAME] = name.c_str();
-	jStateMachine[JSON_TAG_ID] = id;
 	jStateMachine[JSON_TAG_ANIMATION_UID] = animationUID;
 	jStateMachine[JSON_TAG_BEGIN_INDEX] = beginIndex;
 	jStateMachine[JSON_TAG_END_INDEX] = endIndex;
@@ -95,7 +93,6 @@ void ResourceClip::SaveToFile(const char* filePath) {
 }
 
 void ResourceClip::Init(std::string& mName, UID mAnimationUID, unsigned int mBeginIndex, unsigned int mEndIndex, bool mLoop, UID mid) {
-	id = mid != 0 ? mid : GenerateUID();
 	name = mName;
 	animationUID = mAnimationUID;
 	loop = mLoop;
