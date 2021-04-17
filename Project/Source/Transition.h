@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include "Utils/UID.h"
-class ResourceStates;
-class ResourceTransition {
+class States;
+class Transition {
 	
 public:
-	ResourceTransition(ResourceStates* mSource, ResourceStates* mTarget, float mInterpolation,UID mid = 0)
+	Transition(States* mSource, States* mTarget, float mInterpolation,UID mid = 0)
 		: source(mSource)
 		, target(mTarget)
 		, interpolationDuration(mInterpolation)
@@ -15,7 +15,7 @@ public:
 
 public:
 	UID id;
-	ResourceStates* source = nullptr;
-	ResourceStates* target = nullptr;
+	States* source = nullptr;
+	States* target = nullptr;
 	float interpolationDuration = 0;
 };

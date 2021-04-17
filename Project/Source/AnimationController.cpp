@@ -2,9 +2,9 @@
 
 #include "Application.h"
 #include "GameObject.h"
+#include "States.h"
 #include "Resources/ResourceAnimation.h"
-#include "Resources/AnimationInterpolation.h"
-#include "Resources/ResourceStates.h"
+#include "AnimationInterpolation.h"
 #include "Resources/ResourceClip.h"
 #include "Math/float3.h"
 #include "Modules/ModuleTime.h"

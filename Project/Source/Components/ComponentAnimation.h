@@ -2,11 +2,11 @@
 
 #include "Component.h"
 #include "Application.h"
+#include "AnimationController.h"
+#include "States.h"
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourceStateMachine.h"
-#include "Resources/ResourceStates.h"
 #include <string>
-#include "AnimationController.h"
 #include "Utils/UID.h"
 
 class GameObject;
@@ -28,25 +28,25 @@ public:
 	
 	void SendTrigger(std::string trigger);
 
-	ResourceStates* GetCurrentState() {
+	States* GetCurrentState() {
 		return currentState;
 	}
-	void SetCurrentState(ResourceStates* mCurrentState) {
+	void SetCurrentState(States* mCurrentState) {
 		currentState = mCurrentState;
 	}
 
-	ResourceStates* GetInitialState() {
+	States* GetInitialState() {
 		return initialState;
 	}
 
-	void SetInitialState(ResourceStates* mInitalState) {
+	void SetInitialState(States* mInitalState) {
 		initialState = mInitalState;
 	}
 
 public:
 	UID stateMachineResourceUID = 0;
-	ResourceStates* currentState = nullptr;
-	ResourceStates* initialState = nullptr;
+	States* currentState = nullptr;
+	States* initialState = nullptr;
 
 private:
 	void UpdateAnimations(GameObject *gameObject);

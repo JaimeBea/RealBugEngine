@@ -6,8 +6,8 @@
 #include <unordered_map>
 #include "Utils/UID.h"
 
-class ResourceStates;
-class ResourceTransition;
+class States;
+class Transition;
 class ResourceAnimation;
 class ResourceStateMachine : public Resource {
 
@@ -18,17 +18,17 @@ public:
 	void Unload() override;
 	void SaveToFile(const char* filePath);
 
-	ResourceStates* AddState(std::string name,UID clipUid);	//Add state to list of states and add clip to list of clips if dosen't contains him
+	States* AddState(std::string name,UID clipUid);	//Add state to list of states and add clip to list of clips if dosen't contains him
 	void AddClip(UID clipUid);
-	void AddTransition(ResourceStates* from, ResourceStates* to, float interpolation, std::string& name );
-	ResourceTransition* GetValidTransition(std::string& name);
-	ResourceTransition* FindTransitionGivenName(std::string& name);
+	void AddTransition(States* from, States* to, float interpolation, std::string& name );
+	Transition* GetValidTransition(std::string& name);
+	Transition* FindTransitionGivenName(std::string& name);
 
 public:
 	std::unordered_map<std::string, ResourceAnimation*> resourceAnimations;
-	std::list<ResourceStates*> states;
+	std::list<States*> states;
 
 private:
 	std::list<UID> clipsUids;	
-	std::unordered_map<std::string, ResourceTransition*> transitions;
+	std::unordered_map<std::string, Transition*> transitions;
 };

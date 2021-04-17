@@ -1,10 +1,8 @@
 #include "ComponentAnimation.h"
 
 #include "Application.h"
-//#include "Resources/ResourceStateMachine.h"
-#include "Resources/ResourceTransition.h"
-#include "Resources/AnimationInterpolation.h"
-//#include "Resources/ResourceStates.h"
+#include "Transition.h"
+#include "AnimationInterpolation.h"
 #include "GameObject.h"
 #include "AnimationController.h"
 #include "Resources/ResourceAnimation.h"
@@ -110,7 +108,7 @@ void ComponentAnimation::OnUpdate() {
 void ComponentAnimation::SendTrigger(std::string trigger) {
 	ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
 
-	ResourceTransition* transition = resourceStateMachine->GetValidTransition(trigger);
+	Transition* transition = resourceStateMachine->GetValidTransition(trigger);
 	if (transition != nullptr) {
 		if (animationInterpolations.size() == 0) {
 			animationInterpolations.push_front(new AnimationInterpolation(transition->source, currentState->currentTime, 0, transition->interpolationDuration));

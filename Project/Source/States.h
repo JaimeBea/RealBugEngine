@@ -2,10 +2,10 @@
 #include "Utils/UID.h"
 #include <string>
 
-class ResourceStates {
+class States {
 
 public:
-	ResourceStates(std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
+	States(std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
 		: name(mName)
 		, clipUid(mClipUid)
 		, currentTime(mCurrentTime) {

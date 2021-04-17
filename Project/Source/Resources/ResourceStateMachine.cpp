@@ -1,6 +1,6 @@
 #include "ResourceStateMachine.h"
-#include "ResourceTransition.h"
-#include "ResourceStates.h"
+#include "Transition.h"
+#include "States.h"
 #include "Resources/ResourceClip.h"
 
 #include "Application.h"
@@ -63,13 +63,13 @@ void ResourceStateMachine::Load() {
 		clipsUids.push_back(clipUID);
 	}
 
-	std::unordered_map<UID, ResourceStates*> stateMap;
+	std::unordered_map<UID, States*> stateMap;
 	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
 			UID id = p[JSON_TAG_ID].GetUint64();
 			std::string name = p[JSON_TAG_NAME].GetString();
 			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
 			float currentTime = p[JSON_TAG_CURRENTTIME].GetFloat();
-			ResourceStates* state = new ResourceStates(name,  clipId, currentTime);
+			States* state = new States(name, clipId, currentTime, id);
 			states.push_back(state);
 			stateMap.insert(std::make_pair(id, state));
 
@@ -81,7 +81,7 @@ void ResourceStateMachine::Load() {
 		UID source = p[JSON_TAG_SOURCE].GetUint64();
 		UID target = p[JSON_TAG_TARGET].GetUint64();
 		float interpolationDuration = p[JSON_TAG_INTERPOLATION_DURATION].GetFloat();
-		ResourceTransition* transition = new ResourceTransition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration,id);
+		Transition* transition = new Transition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration,id);
 		transitions.insert(std::make_pair(triggerName, transition));
 	}	
 
@@ -122,7 +122,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 
 	// Saving States
 	rapidjson::Value statesArrayJson(rapidjson::kArrayType);
-	std::list<ResourceStates*>::iterator itState;
+	std::list<States*>::iterator itState;
 	for (itState = states.begin(); itState != states.end(); ++itState) {		
 		rapidjson::Value objValue(rapidjson::kObjectType);
 		rapidjson::Value name((*itState)->name.c_str(), allocator);
@@ -167,14 +167,14 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	LOG("Material saved in %ums", timeMs);
 }
 
-ResourceStates* ResourceStateMachine::AddState(std::string name, UID clipUID) {
+States* ResourceStateMachine::AddState(std::string name, UID clipUID) {
 	//Checking for unique name
-	ResourceTransition* transition = FindTransitionGivenName(name);
+	Transition* transition = FindTransitionGivenName(name);
 	if (transition) {
 		return nullptr;
 	}
 
-	ResourceStates *state = new ResourceStates(name,clipUID);	
+	States* state = new States(name, clipUID);	
 	states.push_back(state);
 
 	AddClip(clipUID);
@@ -188,19 +188,19 @@ void ResourceStateMachine::AddClip(UID clipUid) {
 	}
 }
 
-void ResourceStateMachine::AddTransition(ResourceStates* from, ResourceStates* to, float interpolation, std::string& name) {
+void ResourceStateMachine::AddTransition(States* from, States* to, float interpolation, std::string& name) {
 	//Checking for unique name
-	ResourceTransition* transition = FindTransitionGivenName(name);
+	Transition* transition = FindTransitionGivenName(name);
 	if (transition) {
 		return;
 	}
 
-	transition = new ResourceTransition(from, to, interpolation);
+	transition = new Transition(from, to, interpolation);
 	transitions.insert(std::make_pair(name,transition));
 }
 
 
-ResourceTransition* ResourceStateMachine::GetValidTransition(std::string& transitionName) {
+Transition* ResourceStateMachine::GetValidTransition(std::string& transitionName) {
 
 	if (transitions.empty()) {
 		return nullptr;
@@ -209,8 +209,8 @@ ResourceTransition* ResourceStateMachine::GetValidTransition(std::string& transi
 	return FindTransitionGivenName(transitionName);	
 }
 
-ResourceTransition* ResourceStateMachine::FindTransitionGivenName(std::string& name) {
-	std::unordered_map<std::string, ResourceTransition*>::const_iterator it = transitions.find(name);
+Transition* ResourceStateMachine::FindTransitionGivenName(std::string& name) {
+	std::unordered_map<std::string, Transition*>::const_iterator it = transitions.find(name);
 
 	if (it != transitions.end()) {
 		return it->second;

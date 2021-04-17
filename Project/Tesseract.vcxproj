@@ -12,9 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\FileSystem\StateMachineImporter.h" />
-    <ClInclude Include="Source\Resources\AnimationInterpolation.h" />
+    <ClInclude Include="Source\AnimationInterpolation.h" />
     <ClInclude Include="Source\Resources\ResourceClip.h" />
-    <ClInclude Include="Source\Resources\ResourceStates.h" />
+    <ClInclude Include="Source\States.h" />
     <ClInclude Include="Source\GameplaySystems.h" />
     <ClInclude Include="Source\Components\ComponentScript.h" />
     <ClInclude Include="Source\Script.h" />
@@ -206,7 +206,7 @@
     <ClInclude Include="Libs\MathGeoLib\Math\TransformOps.h" />
     <ClInclude Include="Libs\MathGeoLib\Math\vec2d.h" />
     <ClInclude Include="Libs\MathGeoLib\Time\Clock.h" />
-    <ClInclude Include="Source\Resources\ResourceTransition.h" />
+    <ClInclude Include="Source\Transition.h" />
     <ClInclude Include="Source\Utils\VectorMap.h" />
   </ItemGroup>
   <ItemGroup>

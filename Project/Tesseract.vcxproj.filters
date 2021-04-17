@@ -292,8 +292,6 @@
     <ClInclude Include="Libs\PhysicsFS\physfs_platforms.h" />
     <ClInclude Include="Source\Components\ComponentMeshRenderer.h" />
     <ClInclude Include="Source\Resources\ResourceStateMachine.h" />
-    <ClInclude Include="Source\Resources\ResourceStates.h" />
-    <ClInclude Include="Source\Resources\ResourceTransition.h" />
     <ClInclude Include="Source\Panels\PanelProject.h" />
     <ClInclude Include="Source\Resources\ResourceType.h" />
     <ClInclude Include="Source\Scene.h" />
@@ -342,9 +340,11 @@
     <ClInclude Include="Source\FileSystem\SkyboxImporter.h" />
     <ClInclude Include="Source\Utils\AssetFile.h" />
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
-    <ClInclude Include="Source\Resources\AnimationInterpolation.h" />
     <ClInclude Include="Source\FileSystem\StateMachineImporter.h" />
     <ClInclude Include="Source\Resources\ResourceClip.h" />
+    <ClInclude Include="Source\States.h" />
+    <ClInclude Include="Source\Transition.h" />
+    <ClInclude Include="Source\AnimationInterpolation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
