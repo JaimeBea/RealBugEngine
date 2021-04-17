@@ -57,27 +57,26 @@ void ResourceStateMachine::Load() {
 		return;
 	}
 	JsonValue jStateMachine(document, document);
-
-	document.SetObject();
-
+	assert(document.IsObject());
+	//document.SetObject();
 	std::unordered_map<UID, ResourceClip*> clipsMap;
-	/*const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS];
+	const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS].GetArray();
 	assert(clipsArray.IsArray());
 	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
-		UID clipUID = itr->GetUint();
-		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
-		App->resources->IncreaseReferenceCount(clipUID);
-		clips.push_back(clip);
-		clipsMap.insert(std::make_pair(clipUID, clip));
-	}*/
-
-	for (auto& p : document[JSON_TAG_CLIPS].GetArray()) {
-		UID clipUID = p.GetUint();
+		UID clipUID = itr->GetUint64();
 		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
 		App->resources->IncreaseReferenceCount(clipUID);
 		clips.push_back(clip);
 		clipsMap.insert(std::make_pair(clipUID, clip));
 	}
+
+	/*for (auto& p : document[JSON_TAG_CLIPS].GetArray()) {
+		UID clipUID = p.GetUint();
+		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
+		App->resources->IncreaseReferenceCount(clipUID);
+		clips.push_back(clip);
+		clipsMap.insert(std::make_pair(clipUID, clip));
+	}*/
 
 	std::unordered_map<UID, ResourceStates*> stateMap;
 	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
@@ -129,7 +128,9 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 	std::list<ResourceClip*>::iterator itClip;
 	for (itClip = clips.begin(); itClip != clips.end(); ++itClip) {		
-		clipsArrayJson.PushBack( (*itClip)->GetId(), allocator);
+		rapidjson::Value id;
+		id.SetUint64((*itClip)->GetId());
+		clipsArrayJson.PushBack(id, allocator);
 		(*itClip)->SaveToFile((*itClip)->GetResourceFilePath().c_str());
 	}
 	document.AddMember(JSON_TAG_CLIPS, clipsArrayJson, allocator);
