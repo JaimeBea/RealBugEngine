@@ -47,9 +47,11 @@ void ResourceClip::Load() {
 	name = jStateMachine[JSON_TAG_NAME];
 	animationUID = jStateMachine[JSON_TAG_ANIMATION_UID];
 	App->resources->IncreaseReferenceCount(animationUID);
-	beginIndex = jStateMachine[JSON_TAG_BEGIN_INDEX];
 	endIndex = jStateMachine[JSON_TAG_END_INDEX];
+	beginIndex = jStateMachine[JSON_TAG_BEGIN_INDEX];
 	loop = jStateMachine[JSON_TAG_LOOP];
+
+	Init(name, animationUID, beginIndex, endIndex, loop, 0);
 
 	unsigned timeMs = timer.Stop();
 	LOG("Material loaded in %ums", timeMs);

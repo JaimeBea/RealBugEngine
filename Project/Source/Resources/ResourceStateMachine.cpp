@@ -26,11 +26,6 @@
 #define JSON_TAG_CLIP_ID "ClipId"
 
 #define JSON_TAG_NAME "Name"
-#define JSON_TAG_ANIMATION_UID "AnimationUID"
-#define JSON_TAG_BEGIN_INDEX "BeginIndex"
-#define JSON_TAG_END_INDEX "EndIndex"
-#define JSON_TAG_CLIP_UID "ClipUID"
-#define JSON_TAG_LOOP "Loop"
 #define JSON_TAG_ID "Id"
 
 #define JSON_TAG_CURRENTTIME "CurrentTime"
@@ -59,24 +54,14 @@ void ResourceStateMachine::Load() {
 	JsonValue jStateMachine(document, document);
 	assert(document.IsObject());
 	//document.SetObject();
-	std::unordered_map<UID, ResourceClip*> clipsMap;
 	const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS].GetArray();
 	assert(clipsArray.IsArray());
 	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
 		UID clipUID = itr->GetUint64();
-		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
-		App->resources->IncreaseReferenceCount(clipUID);
-		clips.push_back(clip);
-		clipsMap.insert(std::make_pair(clipUID, clip));
+		//ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
+		//App->resources->IncreaseReferenceCount(clipUID);
+		clipsUids.push_back(clipUID);
 	}
-
-	/*for (auto& p : document[JSON_TAG_CLIPS].GetArray()) {
-		UID clipUID = p.GetUint();
-		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
-		App->resources->IncreaseReferenceCount(clipUID);
-		clips.push_back(clip);
-		clipsMap.insert(std::make_pair(clipUID, clip));
-	}*/
 
 	std::unordered_map<UID, ResourceStates*> stateMap;
 	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
@@ -84,7 +69,7 @@ void ResourceStateMachine::Load() {
 			std::string name = p[JSON_TAG_NAME].GetString();
 			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
 			float currentTime = p[JSON_TAG_CURRENTTIME].GetFloat();
-			ResourceStates* state = new ResourceStates(name, clipsMap.find(clipId)->second, currentTime);
+			ResourceStates* state = new ResourceStates(name,  clipId, currentTime);
 			states.push_back(state);
 			stateMap.insert(std::make_pair(id, state));
 
@@ -105,9 +90,9 @@ void ResourceStateMachine::Load() {
 }
 
 void ResourceStateMachine::Unload() {
-	std::list<ResourceClip*>::iterator itClip;
-	for (itClip = clips.begin(); itClip != clips.end(); ++itClip) {
-		App->resources->DecreaseReferenceCount((*itClip)->GetId());
+	std::list<UID>::iterator itClip;
+	for (itClip = clipsUids.begin(); itClip != clipsUids.end(); ++itClip) {
+		App->resources->DecreaseReferenceCount((*itClip));
 	}
 }
 
@@ -124,17 +109,18 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	// Save JSON values
 	document.SetObject();
 
+	// Saving Clips UIDs
 	rapidjson::Value clipsArrayJson(rapidjson::kArrayType);
 	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
-	std::list<ResourceClip*>::iterator itClip;
-	for (itClip = clips.begin(); itClip != clips.end(); ++itClip) {		
+	std::list<UID>::iterator itClip;
+	for (itClip = clipsUids.begin(); itClip != clipsUids.end(); ++itClip) {		
 		rapidjson::Value id;
-		id.SetUint64((*itClip)->GetId());
+		id.SetUint64((*itClip));
 		clipsArrayJson.PushBack(id, allocator);
-		(*itClip)->SaveToFile((*itClip)->GetResourceFilePath().c_str());
 	}
 	document.AddMember(JSON_TAG_CLIPS, clipsArrayJson, allocator);
 
+	// Saving States
 	rapidjson::Value statesArrayJson(rapidjson::kArrayType);
 	std::list<ResourceStates*>::iterator itState;
 	for (itState = states.begin(); itState != states.end(); ++itState) {		
@@ -142,7 +128,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 		rapidjson::Value name((*itState)->name.c_str(), allocator);
 		objValue.AddMember(JSON_TAG_ID, (*itState)->id, allocator);
 		objValue.AddMember(JSON_TAG_NAME, name, allocator);
-		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState)->clip->GetId(), allocator);
+		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState)->clipUid, allocator);
 		objValue.AddMember(JSON_TAG_CURRENTTIME, (*itState)->currentTime, allocator);
 
 		statesArrayJson.PushBack(objValue, allocator);
@@ -181,29 +167,24 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	LOG("Material saved in %ums", timeMs);
 }
 
-ResourceStates* ResourceStateMachine::AddState(std::string name, ResourceClip* clip) {
+ResourceStates* ResourceStateMachine::AddState(std::string name, UID clipUID) {
 	//Checking for unique name
 	ResourceTransition* transition = FindTransitionGivenName(name);
 	if (transition) {
 		return nullptr;
 	}
 
-	ResourceStates *state = new ResourceStates(name,clip);
-	//Setting default state
-	if (states.size() == 0) {
-		currentState = state;
-	}
-
+	ResourceStates *state = new ResourceStates(name,clipUID);	
 	states.push_back(state);
 
-	AddClip(clip);
+	AddClip(clipUID);
 
 	return state;
 }
 
-void ResourceStateMachine::AddClip(ResourceClip* clip) {
-	if (!(std::find(clips.begin(), clips.end(), clip) != clips.end())) {
-		clips.push_back(clip);
+void ResourceStateMachine::AddClip(UID clipUid) {
+	if (!(std::find(clipsUids.begin(), clipsUids.end(), clipUid) != clipsUids.end())) {
+		clipsUids.push_back(clipUid);
 	}
 }
 
@@ -236,8 +217,4 @@ ResourceTransition* ResourceStateMachine::FindTransitionGivenName(std::string& n
 	} 
 
 	return nullptr;
-}
-
-ResourceStates* ResourceStateMachine::GetCurrentState() {
-	return currentState;
 }

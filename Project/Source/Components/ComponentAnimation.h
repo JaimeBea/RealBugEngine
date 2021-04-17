@@ -29,15 +29,24 @@ public:
 	void SendTrigger(std::string trigger);
 
 	ResourceStates* GetCurrentState() {
-		if (stateMachineResourceUID == 0) {
-			return nullptr;
-		}
-		ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*)App->resources->GetResource(stateMachineResourceUID);
-		return resourceStateMachine->GetCurrentState();
+		return currentState;
+	}
+	void SetCurrentState(ResourceStates* mCurrentState) {
+		currentState = mCurrentState;
+	}
+
+	ResourceStates* GetInitialState() {
+		return initialState;
+	}
+
+	void SetInitialState(ResourceStates* mInitalState) {
+		initialState = mInitalState;
 	}
 
 public:
 	UID stateMachineResourceUID = 0;
+	ResourceStates* currentState = nullptr;
+	ResourceStates* initialState = nullptr;
 
 private:
 	void UpdateAnimations(GameObject *gameObject);

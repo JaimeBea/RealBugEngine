@@ -9,7 +9,6 @@
 class ResourceStates;
 class ResourceTransition;
 class ResourceAnimation;
-class ResourceClip;
 class ResourceStateMachine : public Resource {
 
 public:
@@ -19,24 +18,17 @@ public:
 	void Unload() override;
 	void SaveToFile(const char* filePath);
 
-	ResourceStates* AddState(std::string name,ResourceClip* clip);	//Add state to list of states and add clip to list of clips if dosen't contains him
-	void AddClip(ResourceClip* clip);
+	ResourceStates* AddState(std::string name,UID clipUid);	//Add state to list of states and add clip to list of clips if dosen't contains him
+	void AddClip(UID clipUid);
 	void AddTransition(ResourceStates* from, ResourceStates* to, float interpolation, std::string& name );
 	ResourceTransition* GetValidTransition(std::string& name);
 	ResourceTransition* FindTransitionGivenName(std::string& name);
-	ResourceStates* GetCurrentState();
-
-	void SetCurrentState(ResourceStates *newState) {
-		currentState = newState;
-	}
 
 public:
 	std::unordered_map<std::string, ResourceAnimation*> resourceAnimations;
+	std::list<ResourceStates*> states;
 
 private:
-	std::list<ResourceClip*> clips;	
-	std::list<ResourceStates*> states;
+	std::list<UID> clipsUids;	
 	std::unordered_map<std::string, ResourceTransition*> transitions;
-	ResourceStates* currentState = nullptr; //TODO move to component animation
-
 };
