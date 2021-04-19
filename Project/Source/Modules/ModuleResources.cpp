@@ -14,6 +14,7 @@
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/ResourceAudioClip.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
@@ -21,6 +22,7 @@
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
+#include "FileSystem/AudioImporter.h"
 #include "UI/FontImporter.h"
 #include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
@@ -194,6 +196,9 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".h") {
 			// Script files
 			ScriptImporter::ImportScript(filePath, jMeta);
+		} else if (extension == ".wav") {
+			// Script files
+			AudioImporter::ImportAudio(filePath, jMeta);
 		} else {
 			assetImported = false;
 		}
@@ -315,7 +320,6 @@ void ModuleResources::UpdateAsync() {
 						assetsToNotUpdate.erase(it);
 					}
 #endif
-
 				} else {
 					resourcesToRemove.push_back(entry.first);
 					continue;
@@ -419,6 +423,9 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::AUDIO:
+		resource = new ResourceAudioClip(id, assetFilePath, resourceFilePath.c_str());
 		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);
