@@ -59,7 +59,12 @@ static void WarpMouseOnEdges() {
 bool ModuleCamera::Init() {
 	activeFrustum->SetKind(FrustumSpaceGL, FrustumRightHanded);
 	activeFrustum->SetViewPlaneDistances(0.1f, 2000.0f);
+#if GAME
+	float ar = (float) App->window->GetWidth() / (float) App->window->GetHeight();
+	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, ar);
+#else
 	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+#endif
 	activeFrustum->SetFront(vec::unitZ);
 	activeFrustum->SetUp(vec::unitY);
 
@@ -362,7 +367,12 @@ void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject,
 }
 
 void ModuleCamera::ViewportResized(int width, int height) {
-	SetAspectRatio(width / (float) height);
+	
+	for (ComponentCamera& camera : App->scene->scene->cameraComponents) {
+		// TODO: Implement button to force AspectRatio from specific camera
+		camera.frustum.SetVerticalFovAndAspectRatio(camera.frustum.VerticalFov(), width / (float) height);
+	}
+	engineCameraFrustum.SetVerticalFovAndAspectRatio(engineCameraFrustum.VerticalFov(), width / (float) height);
 }
 
 void ModuleCamera::SetFOV(float hFov) {

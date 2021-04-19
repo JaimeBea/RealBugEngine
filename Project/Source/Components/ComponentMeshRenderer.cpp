@@ -373,13 +373,20 @@ void ComponentMeshRenderer::Update() {
 	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
 	if (!mesh) return;
 
+	if (palette.empty()) {
+		palette.resize(mesh->numBones);
+		for (unsigned i = 0; i < mesh->numBones; ++i) {
+			palette[i] = float4x4::identity;
+		}
+	}
+
 	if (App->time->GetDeltaTime() <= 0) return;
 
 	const GameObject* parent = GetOwner().GetParent();
 	const GameObject* rootBone = parent->GetRootBone();
 	if (rootBone != nullptr) {
 		const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
-		const float4x4& invertedRootBoneTransform = (rootBoneParent && rootBoneParent != parent) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+		const float4x4& invertedRootBoneTransform = (rootBoneParent != nullptr) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
 
 		for (unsigned i = 0; i < mesh->numBones; ++i) {
 			const GameObject* bone = goBones.at(mesh->bones[i].boneName);
@@ -550,6 +557,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), material->hasDiffuseMap);
 		glUniform1i(glGetUniformLocation(program, "hasSpecularMap"), material->hasSpecularMap);
 		glUniform1i(glGetUniformLocation(program, "hasShininessInSpecularAlpha"), hasShininessInAlphaChannel);
+		glUniform1f(glGetUniformLocation(program, "shininess"), material->smoothness);
 
 		glUniform1i(glGetUniformLocation(program, "specularMap"), 1);
 		glActiveTexture(GL_TEXTURE1);

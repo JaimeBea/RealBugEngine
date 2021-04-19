@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Module.h"
 #include "Utils/MSTimer.h"
 
@@ -24,6 +23,8 @@ public:
 
 	TESSERACT_ENGINE_API float GetDeltaTime() const;
 	TESSERACT_ENGINE_API float GetRealTimeDeltaTime() const;
+	TESSERACT_ENGINE_API float GetFPS() const;
+	TESSERACT_ENGINE_API float GetMS() const;
 	float GetTimeSinceStartup() const;
 	float GetRealTimeSinceStartup() const;
 
@@ -38,6 +39,7 @@ public:
 	void PauseGame();
 	void ResumeGame();
 	void StepGame();
+	UpdateStatus ExitGame();
 
 public:
 	int maxFps = 60;			// Maximum FPS when the framerate is limited.

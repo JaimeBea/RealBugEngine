@@ -44,13 +44,9 @@ void PanelInspector::Update() {
 			ImGui::SameLine();
 			char name[100];
 			sprintf_s(name, 100, "%s", selected->name.c_str());
-			if (ImGui::InputText("", name, 100)) {
+			if (ImGui::InputText("##game_object_name", name, 100)) {
 				selected->name = name;
 			}
-
-			// TODO: Fix Me
-			ImGui::SameLine();
-			HelpMarker("To Fix it.");
 
 			ImGui::Separator();
 

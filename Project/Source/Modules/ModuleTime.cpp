@@ -49,7 +49,7 @@ UpdateStatus ModuleTime::PreUpdate() {
 		timeDeltaMs = 0;
 	}
 
-	LogDeltaMS((float) realTimeDeltaMs);
+	logger->LogDeltaMS((float) realTimeDeltaMs);
 
 	return UpdateStatus::CONTINUE;
 }
@@ -88,6 +88,10 @@ void ModuleTime::WaitForEndOfFrame() {
 	}
 }
 
+UpdateStatus ModuleTime::ExitGame() {
+	return UpdateStatus::STOP;
+}
+
 bool ModuleTime::HasGameStarted() const {
 	return gameStarted;
 }
@@ -102,6 +106,14 @@ float ModuleTime::GetDeltaTime() const {
 
 float ModuleTime::GetRealTimeDeltaTime() const {
 	return realTimeDeltaMs / 1000.0f;
+}
+
+float ModuleTime::GetFPS() const {
+	return logger->fpsLog[logger->fpsLogIndex];
+}
+
+float ModuleTime::GetMS() const {
+	return logger->msLog[logger->fpsLogIndex];
 }
 
 float ModuleTime::GetTimeSinceStartup() const {

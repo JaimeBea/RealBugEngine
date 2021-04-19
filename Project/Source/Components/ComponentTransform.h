@@ -6,12 +6,6 @@
 #include "Math/Quat.h"
 #include "Math/float4x4.h"
 
-#if defined(TESSERACT_ENGINE_API)
-/* do nothing. */
-#elif defined(_MSC_VER)
-#define TESSERACT_ENGINE_API __declspec(dllexport)
-#endif
-
 class ComponentTransform : public Component {
 public:
 	REGISTER_COMPONENT(ComponentTransform, ComponentType::TRANSFORM, false); // Refer to ComponentType for the Constructor

@@ -32,6 +32,13 @@ void ResourceTexture::Load() {
 		return;
 	}
 
+	// Flip image if neccessary
+	ILinfo info;
+	iluGetImageInfo(&info);
+	if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
+		iluFlipImage();
+	}
+
 	// Generate texture from image
 	glGenTextures(1, &glTexture);
 	glBindTexture(GL_TEXTURE_2D, glTexture);

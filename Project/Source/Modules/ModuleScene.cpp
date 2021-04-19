@@ -28,6 +28,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleEvents.h"
+#include "Modules/ModuleTime.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -72,12 +73,21 @@ bool ModuleScene::Init() {
 bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
 	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
+	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
+	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
 
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
+	#if GAME
+	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
+	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
+	App->renderer->SetVSync(false);
+	App->time->limitFramerate = false;
+	#else
 	CreateEmptyScene();
+	#endif
 
 	return true;
 }
@@ -109,6 +119,18 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 		break;
 	case TesseractEventType::ADD_COMPONENT:
 		scene->AddComponent(e.addComponent.component);
+		break;
+	case TesseractEventType::CHANGE_SCENE:
+		sceneLoaded = false;
+		SceneImporter::LoadScene(e.changeScene.scenePath);
+		break;
+	case TesseractEventType::RESOURCES_LOADED:
+		if (App->time->IsGameRunning() && !sceneLoaded) {
+			sceneLoaded = true;
+			for (auto& it : scene->scriptComponents) {
+				it.OnStart();
+			}
+		}
 		break;
 	}
 }

@@ -6,6 +6,12 @@
 class JsonValue;
 class GameObject;
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 class Component {
 public:
 	Component(ComponentType type, GameObject* owner, UID id, bool active);
@@ -21,8 +27,8 @@ public:
 	virtual void DuplicateComponent(GameObject& owner); // Used when duplicating GameObjects. It duplicates this Component into a new Component in owner.
 
 	// ---- Visibility Setters ----- //
-	void Enable();
-	void Disable();
+	TESSERACT_ENGINE_API void Enable();
+	TESSERACT_ENGINE_API void Disable();
 
 	// ---- Virtual Enable/Disable callbacks ----//
 	virtual void OnEnable() {}
@@ -32,7 +38,7 @@ public:
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;
 	UID GetID() const;
-	bool IsActive() const;
+	TESSERACT_ENGINE_API bool IsActive() const;
 	bool IsActiveInHierarchy() const;
 
 protected:
