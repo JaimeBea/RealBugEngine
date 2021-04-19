@@ -142,6 +142,12 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::SCRIPT:
 		if (!scriptComponents.Has(componentId)) return nullptr;
 		return &scriptComponents.Get(componentId);
+	case ComponentType::AUDIO_LISTENER:
+		if (!audioListenerComponents.Has(componentId)) return nullptr;
+		return &audioListenerComponents.Get(componentId);
+	case ComponentType::AUDIO_SOURCE:
+		if (!audioSourceComponents.Has(componentId)) return nullptr;
+		return &audioSourceComponents.Get(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -187,6 +193,10 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 		return &animationComponents.Put(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SCRIPT:
 		return &scriptComponents.Put(componentId, owner, componentId, owner->IsActive());
+	case ComponentType::AUDIO_LISTENER:
+		return &audioListenerComponents.Put(componentId, owner, componentId, owner->IsActive());
+	case ComponentType::AUDIO_SOURCE:
+		return &audioSourceComponents.Put(componentId, owner, componentId, owner->IsActive());
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -251,6 +261,12 @@ void Scene::AddComponent(const Component* component) {
 		break;
 	case ComponentType::SCRIPT:
 		scriptComponents.Put(component->GetID(), (const ComponentScript&) *component).Init();
+		break;
+	case ComponentType::AUDIO_LISTENER:
+		audioListenerComponents.Put(component->GetID(), (const ComponentAudioListener&) *component).Init();
+		break;
+	case ComponentType::AUDIO_SOURCE:
+		audioSourceComponents.Put(component->GetID(), (const ComponentAudioSource&) *component).Init();
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::AddComponent.", (unsigned) component->GetType());
@@ -332,6 +348,14 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::SCRIPT:
 		if (!scriptComponents.Has(componentId)) return;
 		scriptComponents.Remove(componentId);
+		break;
+	case ComponentType::AUDIO_LISTENER:
+		if (!audioListenerComponents.Has(componentId)) return;
+		audioListenerComponents.Remove(componentId);
+		break;
+	case ComponentType::AUDIO_SOURCE:
+		if (!audioSourceComponents.Has(componentId)) return;
+		audioSourceComponents.Remove(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::RemoveComponentByTypeAndId.", (unsigned) type);

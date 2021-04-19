@@ -21,6 +21,8 @@
 #include "Components/ComponentSkybox.h"
 #include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
+#include "Components/ComponentAudioListener.h"
+#include "Components/ComponentAudioSource.h"
 
 #include <unordered_map>
 
@@ -74,6 +76,8 @@ public:
 	VectorMap<UID, ComponentSkyBox> skyboxComponents;
 	VectorMap<UID, ComponentScript> scriptComponents;
 	VectorMap<UID, ComponentAnimation> animationComponents;
+	VectorMap<UID, ComponentAudioListener> audioListenerComponents;
+	VectorMap<UID, ComponentAudioSource> audioSourceComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;
