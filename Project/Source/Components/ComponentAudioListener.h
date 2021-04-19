@@ -11,11 +11,13 @@ public:
 
 	// ------- Core Functions ------ //
 	void Init() override;
-	void OnTransformUpdate() override;
+	void Update() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
+
+	void UpdateAudioListener();
 
 private:
 	float gain = 1.0f;

@@ -1,7 +1,6 @@
 #include "ComponentAudioSource.h"
 
-#include "Resources/GameObject.h"
-#include "Utils/Leaks.h"
+#include "GameObject.h"
 #include "Application.h"
 #include "Modules/ModuleAudio.h"
 #include "Modules/ModuleEditor.h"
@@ -9,6 +8,8 @@
 #include "debugdraw.h"
 #include "Math/float3.h"
 #include "imgui.h"
+
+#include "Utils/Leaks.h"
 
 #define JSON_TAG_PITCH "Pitch"
 #define JSON_TAG_GAIN "Gain"
@@ -22,7 +23,11 @@
 #define JSON_TAG_GAIN_ATTENUATION "GainAttenuation"
 
 void ComponentAudioSource::Init() {
-	OnTransformUpdate();
+	UpdateAudioSource();
+}
+
+void ComponentAudioSource::Update() {
+	UpdateAudioSource();
 }
 
 void ComponentAudioSource::DrawGizmos() {
@@ -35,10 +40,10 @@ void ComponentAudioSource::DrawGizmos() {
 	}
 }
 
-void ComponentAudioSource::OnTransformUpdate() {
+void ComponentAudioSource::UpdateAudioSource() {
 	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	position = transform->GetPosition();
-	direction = transform->GetRotation() * float3::unitZ;
+	position = transform->GetGlobalPosition();
+	direction = transform->GetGlobalRotation() * float3::unitZ;
 }
 
 void ComponentAudioSource::OnEditorUpdate() {
