@@ -268,13 +268,13 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 
 		unsigned int frame = 0;
 
+		float3 accumulatedPosition, accumulatedScaling;
+		Quat accumulatedRotation;
+		accumulatedTransform.Decompose(accumulatedPosition, accumulatedRotation, accumulatedScaling);
+
 		for (unsigned int j = 0; j < numKeyFrames; ++j) {
 			aiQuaternion aiQuat = (aiChannel->mNumRotationKeys > 1) ? aiChannel->mRotationKeys[j].mValue : aiChannel->mRotationKeys[0].mValue;
 			aiVector3D aiV3D = (aiChannel->mNumPositionKeys > 1) ? aiChannel->mPositionKeys[j].mValue : aiChannel->mPositionKeys[0].mValue;
-
-			float3 accumulatedPosition, accumulatedScaling;
-			Quat accumulatedRotation;
-			accumulatedTransform.Decompose(accumulatedPosition, accumulatedRotation, accumulatedScaling);
 
 			ResourceAnimation::Channel channel = keyFrames[frame].channels[channelName];
 			channel.rotation = channel.rotation * accumulatedRotation * Quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
