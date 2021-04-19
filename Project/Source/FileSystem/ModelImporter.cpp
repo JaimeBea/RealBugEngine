@@ -409,6 +409,43 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 	}
 }
 
+static bool IsInBones(aiNode* bone, const std::vector<const char*>& bones) {
+	for (const char* b : bones) {
+		if (std::strcmp(bone->mName.C_Str(), b) != 0) continue;
+
+		return true;
+	}
+	return false;
+}
+
+static aiNode* SearchRootBone(aiNode* rootBone, aiNode* rootBoneParent, const std::vector<const char*>& bones) {
+	bool foundInBones = false;
+	do {
+		// Ignore assimp middle nodes
+		std::string name = rootBoneParent->mName.C_Str();
+		while (name.find("$AssimpFbx$") != std::string::npos) {
+			rootBoneParent = rootBoneParent->mParent;
+			name = rootBoneParent->mName.C_Str();
+		}
+		// Find if node in bones
+		foundInBones = IsInBones(rootBoneParent, bones);
+		if (foundInBones) {
+			rootBone = rootBoneParent;
+			rootBoneParent = rootBone->mParent;
+		}
+	} while (foundInBones);
+	// Check whether selected root bone has siblings that are bones
+	for (int i = 0; i < rootBoneParent->mNumChildren; ++i) {
+		if (rootBoneParent->mChildren[i] == rootBone) continue;
+
+		if (IsInBones(rootBoneParent->mChildren[i], bones)) {
+			rootBone = rootBoneParent;
+			break;
+		}
+	}
+	return rootBone;
+}
+
 bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	// Timer to measure importing a model
 	MSTimer timer;
@@ -634,30 +671,12 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		// TODO: Improve for multiple animations
 	}
 
-	// Cache bones for skinning
 	aiNode* rootBone = nullptr;
 
 	if (!bones.empty()) {
 		rootBone = assimpScene->mRootNode->FindNode(bones[0]);
 		aiNode* rootBoneParent = rootBone->mParent;
-		bool foundInBones = false;
-		do {
-			// Ignore assimp middle nodes
-			std::string name = rootBoneParent->mName.C_Str();
-			while (name.find("$AssimpFbx$") != std::string::npos) {
-				rootBoneParent = rootBoneParent->mParent;
-				name = rootBoneParent->mName.C_Str();
-			}
-			// Find if node in bones
-			foundInBones = false;
-			for (const char* bone : bones) {
-				if (std::strcmp(rootBoneParent->mName.C_Str(), bone) != 0) continue;
-
-				foundInBones = true;
-				rootBone = rootBoneParent;
-				rootBoneParent = rootBone->mParent;
-			}
-		} while (foundInBones);
+		rootBone = SearchRootBone(rootBone, rootBoneParent, bones);
 	}
 
 	if (!bones.empty()) {
@@ -665,7 +684,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		root->GetChildren()[0]->SetRootBone(rootBoneGO);
 
 		std::unordered_map<std::string, GameObject*> goBones;
-		// TODO: check if CtrlGrp is generated always
 		goBones[rootBoneGO->name] = rootBoneGO;
 		CacheBones(rootBoneGO, goBones);
 
