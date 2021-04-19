@@ -1,6 +1,8 @@
 #include "Module.h"
 
 #include "Globals.h"
+#include "Utils/Logging.h"
+#include "TesseractEvent.h"
 
 #include "Utils/Leaks.h"
 
@@ -29,3 +31,5 @@ UpdateStatus Module::PostUpdate() {
 bool Module::CleanUp() {
 	return true;
 }
+
+void Module::ReceiveEvent(TesseractEvent& e) {}

@@ -1,7 +1,7 @@
 #include "Component.h"
 
 #include "FileSystem/JsonValue.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 
 #include "Utils/Leaks.h"
 
@@ -19,8 +19,6 @@ void Component::Update() {}
 
 void Component::DrawGizmos() {}
 
-void Component::OnTransformUpdate() {}
-
 void Component::OnEditorUpdate() {}
 
 void Component::Save(JsonValue jComponent) const {}
@@ -31,10 +29,12 @@ void Component::DuplicateComponent(GameObject& owner) {}
 
 void Component::Enable() {
 	active = true;
+	OnEnable();
 }
 
 void Component::Disable() {
 	active = false;
+	OnDisable();
 }
 
 ComponentType Component::GetType() const {

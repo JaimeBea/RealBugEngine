@@ -4,12 +4,13 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
-#include "FileSystem/MeshImporter.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
+#include "Resources/ResourceMesh.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
@@ -58,7 +59,12 @@ static void WarpMouseOnEdges() {
 bool ModuleCamera::Init() {
 	activeFrustum->SetKind(FrustumSpaceGL, FrustumRightHanded);
 	activeFrustum->SetViewPlaneDistances(0.1f, 2000.0f);
+#if GAME
+	float ar = (float) App->window->GetWidth() / (float) App->window->GetHeight();
+	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, ar);
+#else
 	activeFrustum->SetHorizontalFovAndAspectRatio(DEGTORAD * 90.0f, 1.3f);
+#endif
 	activeFrustum->SetFront(vec::unitZ);
 	activeFrustum->SetUp(vec::unitY);
 
@@ -157,10 +163,6 @@ UpdateStatus ModuleCamera::Update() {
 	return UpdateStatus::CONTINUE;
 }
 
-bool ModuleCamera::CleanUp() {
-	return true;
-}
-
 void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	MSTimer timer;
 	timer.Start();
@@ -171,7 +173,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	LineSegment ray = engineCameraFrustum.UnProjectLineSegment(pos.x, pos.y);
 
 	// Check with AABB
-	for (GameObject& gameObject : App->scene->gameObjects) {
+	Scene* scene = App->scene->scene;
+	for (GameObject& gameObject : scene->gameObjects) {
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
 
@@ -183,8 +186,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 			intersectingObjects.push_back(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		GetIntersectingAABBRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds, ray, intersectingObjects);
+	if (scene->quadtree.IsOperative()) {
+		GetIntersectingAABBRecursive(scene->quadtree.root, scene->quadtree.bounds, ray, intersectingObjects);
 	}
 
 	GameObject* selectedGameObject = nullptr;
@@ -193,15 +196,17 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	for (GameObject* gameObject : intersectingObjects) {
 		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 		for (ComponentMeshRenderer* mesh : meshes) {
+			ResourceMesh* meshResource = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
+			if (meshResource == nullptr) continue;
+
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
-			std::vector<Triangle> triangles = MeshImporter::ExtractMeshTriangles(mesh->mesh, model);
+			std::vector<Triangle> triangles = meshResource->ExtractTriangles(model);
 			for (Triangle& triangle : triangles) {
-				if (ray.Intersects(triangle, &distance, NULL)) {
-					if (distance < minDistance) {
-						selectedGameObject = gameObject;
-						minDistance = distance;
-					}
-				}
+				if (!ray.Intersects(triangle, &distance, NULL)) continue;
+				if (distance >= minDistance) continue;
+
+				selectedGameObject = gameObject;
+				minDistance = distance;
 			}
 		}
 	}
@@ -263,6 +268,13 @@ void ModuleCamera::CalculateFrustumPlanes() {
 	frustumPlanes.planes[5] = cullingFrustum->NearPlane();
 }
 
+bool ModuleCamera::IsEngineCameraActive() const {
+	if (activeFrustum == &engineCameraFrustum) {
+		return true;
+	}
+	return false;
+}
+
 void ModuleCamera::Translate(const vec& translation) {
 	activeFrustum->SetPos(activeFrustum->Pos() + translation);
 }
@@ -322,7 +334,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 			float3 modelCenter;
 			float distance;
 			if (gameObject->HasChildren()) {
-				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalPosition();
 				float3 minPoint = float3::inf, maxPoint = -float3::inf;
 				CalculateExtremePointsRecursive(gameObject, minPoint, maxPoint);
 				if (minPoint.IsFinite() && maxPoint.IsFinite()) {
@@ -332,7 +344,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 				}
 			} else {
 				// But if it doesn't have children, simply return its position as center and the default distance
-				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix().Col3(3);
+				modelCenter = gameObject->GetComponent<ComponentTransform>()->GetGlobalPosition();
 				distance = 30.f;
 			}
 			SetPosition(modelCenter - GetFront() * distance);
@@ -355,7 +367,12 @@ void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject,
 }
 
 void ModuleCamera::ViewportResized(int width, int height) {
-	SetAspectRatio(width / (float) height);
+	
+	for (ComponentCamera& camera : App->scene->scene->cameraComponents) {
+		// TODO: Implement button to force AspectRatio from specific camera
+		camera.frustum.SetVerticalFovAndAspectRatio(camera.frustum.VerticalFov(), width / (float) height);
+	}
+	engineCameraFrustum.SetVerticalFovAndAspectRatio(engineCameraFrustum.VerticalFov(), width / (float) height);
 }
 
 void ModuleCamera::SetFOV(float hFov) {
@@ -445,6 +462,15 @@ Frustum* ModuleCamera::GetCullingFrustum() const {
 
 const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
 	return frustumPlanes;
+}
+
+void ModuleCamera::EnableOrtographic() {
+	activeFrustum->SetOrthographic((float) App->renderer->viewportWidth, (float) App->renderer->viewportHeight);
+}
+
+void ModuleCamera::EnablePerspective() {
+	activeFrustum->SetPerspective(1.3f, 1.f);
+	ViewportResized(App->renderer->viewportWidth, App->renderer->viewportHeight);
 }
 
 void ModuleCamera::GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects) {

@@ -1,7 +1,7 @@
 #include "ComponentTransform.h"
 
 #include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Modules/ModuleEditor.h"
@@ -27,7 +27,7 @@ void ComponentTransform::OnEditorUpdate() {
 	if (ImGui::DragFloat3("Position", pos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(pos);
 	}
-	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0.0001f, inf, "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
 		SetScale(scl);
 	}
 
@@ -76,27 +76,25 @@ void ComponentTransform::Load(JsonValue jComponent) {
 }
 
 void ComponentTransform::DuplicateComponent(GameObject& owner) {
-	ComponentTransform* component = owner.CreateComponent<ComponentTransform>();
+	ComponentTransform* component = owner.CreateComponentDeferred<ComponentTransform>();
 	component->SetPosition(this->GetPosition());
 	component->SetRotation(this->GetRotation());
 	component->SetScale(this->GetScale());
 }
 
 void ComponentTransform::InvalidateHierarchy() {
-	Invalidate();
+	if (!dirty) {
+		dirty = true;
+		ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
+		if (boundingBox) boundingBox->Invalidate();
 
-	for (GameObject* child : GetOwner().GetChildren()) {
-		ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
-		if (childTransform != nullptr) {
-			childTransform->InvalidateHierarchy();
+		for (GameObject* child : GetOwner().GetChildren()) {
+			ComponentTransform* childTransform = child->GetComponent<ComponentTransform>();
+			if (childTransform != nullptr) {
+				childTransform->InvalidateHierarchy();
+			}
 		}
 	}
-}
-
-void ComponentTransform::Invalidate() {
-	dirty = true;
-	ComponentBoundingBox* boundingBox = GetOwner().GetComponent<ComponentBoundingBox>();
-	if (boundingBox) boundingBox->Invalidate();
 }
 
 void ComponentTransform::CalculateGlobalMatrix(bool force) {
@@ -109,6 +107,7 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 
 			parentTransform->CalculateGlobalMatrix();
 			globalMatrix = parentTransform->globalMatrix * localMatrix;
+			globalMatrix.Orthogonalize3();	// Solution for non-uniform scaled objects
 		} else {
 			globalMatrix = localMatrix;
 		}
@@ -117,39 +116,26 @@ void ComponentTransform::CalculateGlobalMatrix(bool force) {
 	}
 }
 
-void ComponentTransform::TransformChanged() {
-	for (Component* component : GetOwner().GetComponents()) {
-		component->OnTransformUpdate();
-	}
-	for (GameObject* child : GetOwner().GetChildren()) {
-		child->GetComponent<ComponentTransform>()->TransformChanged();
-	}
-}
-
 void ComponentTransform::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
-	TransformChanged();
 }
 
 void ComponentTransform::SetRotation(Quat rotation_) {
 	rotation = rotation_;
 	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
-	TransformChanged();
 }
 
 void ComponentTransform::SetRotation(float3 rotation_) {
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
 	InvalidateHierarchy();
-	TransformChanged();
 }
 
 void ComponentTransform::SetScale(float3 scale_) {
 	scale = scale_;
 	InvalidateHierarchy();
-	TransformChanged();
 }
 
 void ComponentTransform::SetTRS(float4x4& newTransform_) {
@@ -160,7 +146,6 @@ void ComponentTransform::SetTRS(float4x4& newTransform_) {
 	rotation = Quat(newTransform_.SubMatrix(3, 3));
 	localEulerAngles = rotation.ToEulerXYZ().Mul(RADTODEG);
 	InvalidateHierarchy();
-	TransformChanged();
 }
 
 float3 ComponentTransform::GetPosition() const {
@@ -173,6 +158,24 @@ Quat ComponentTransform::GetRotation() const {
 
 float3 ComponentTransform::GetScale() const {
 	return scale;
+}
+
+float3 ComponentTransform::GetGlobalPosition() {
+	CalculateGlobalMatrix();
+	return globalMatrix.TranslatePart();
+}
+
+Quat ComponentTransform::GetGlobalRotation() {
+	CalculateGlobalMatrix();
+	float4x4 newTransform_ = globalMatrix;
+	newTransform_.Orthogonalize3();
+	newTransform_.Orthonormalize3();
+	return Quat(newTransform_.SubMatrix(3, 3));
+}
+
+float3 ComponentTransform::GetGlobalScale() {
+	CalculateGlobalMatrix();
+	return globalMatrix.GetScale();
 }
 
 const float4x4& ComponentTransform::GetLocalMatrix() {

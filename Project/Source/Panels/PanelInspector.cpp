@@ -1,15 +1,16 @@
 #include "PanelInspector.h"
 
-#include "Application.h"
-#include "Resources/GameObject.h"
+#include "GameObject.h"
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
+#include "Components/UI/ComponentText.h"
+#include "Application.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
 #include "Math/float4x4.h"
-
 #include "GL/glew.h"
 #include "imgui.h"
 #include "IconsFontAwesome5.h"
@@ -43,15 +44,17 @@ void PanelInspector::Update() {
 			ImGui::SameLine();
 			char name[100];
 			sprintf_s(name, 100, "%s", selected->name.c_str());
-			if (ImGui::InputText("", name, 100)) {
+			if (ImGui::InputText("##game_object_name", name, 100)) {
 				selected->name = name;
 			}
 
-			// TODO: Fix Me
-			ImGui::SameLine();
-			HelpMarker("To Fix it.");
-
 			ImGui::Separator();
+
+			// Don't show Scene PanelInpector information
+			if (selected->GetParent() == nullptr) {
+				ImGui::End();
+				return;
+			}
 
 			// Show Component info
 			std::string cName = "";
@@ -72,6 +75,45 @@ void PanelInspector::Update() {
 				case ComponentType::BOUNDING_BOX:
 					cName = "Bounding Box";
 					break;
+				case ComponentType::TRANSFORM2D:
+					cName = "Rect Transform";
+					break;
+				case ComponentType::BOUNDING_BOX_2D:
+					cName = "Bounding Box 2D";
+					break;
+				case ComponentType::EVENT_SYSTEM:
+					cName = "Event System";
+					break;
+				case ComponentType::IMAGE:
+					cName = "Image";
+					break;
+				case ComponentType::CANVAS:
+					cName = "Canvas";
+					break;
+				case ComponentType::CANVASRENDERER:
+					cName = "Canvas Renderer";
+					break;
+				case ComponentType::BUTTON:
+					cName = "Button";
+					break;
+				case ComponentType::TOGGLE:
+					cName = "Toggle";
+					break;
+				case ComponentType::TEXT:
+					cName = "Text";
+					break;
+				case ComponentType::SELECTABLE:
+					cName = "Selectable";
+					break;
+				case ComponentType::SKYBOX:
+					cName = "Skybox";
+					break;
+				case ComponentType::SCRIPT:
+					cName = "Script";
+					break;
+				case ComponentType::ANIMATION:
+					cName = "Animation";
+					break;
 				case ComponentType::AUDIO_SOURCE:
 					cName = "Audio Source";
 					break;
@@ -85,6 +127,7 @@ void PanelInspector::Update() {
 
 				ImGui::PushID(component);
 
+				// TODO: Place TransformComponent always th the top of the Inspector
 				bool headerOpen = ImGui::CollapsingHeader(cName.c_str(), ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_DefaultOpen);
 
 				// Options BUTTON (in the same line and at the end of the line)
@@ -97,7 +140,10 @@ void PanelInspector::Update() {
 				// Options POPUP
 				if (ImGui::BeginPopup("Component Options")) {
 					if (component->GetType() != ComponentType::TRANSFORM) {
-						if (ImGui::MenuItem("Remove Component")) componentToDelete = component;
+						if (ImGui::MenuItem("Remove Component")) {
+							componentToDelete = component;
+						}
+						// TODO: force remove other components that this one requires for functioning
 					}
 					// More Options items ...
 					ImGui::EndPopup();
@@ -142,11 +188,36 @@ void PanelInspector::Update() {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
+				if (ImGui::MenuItem("Skybox")) {
+					ComponentSkyBox* skybox = selected->CreateComponent<ComponentSkyBox>();
+					if (skybox != nullptr) {
+						skybox->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Script")) {
+					ComponentScript* script = selected->CreateComponent<ComponentScript>();
+					if (script != nullptr) {
+						script->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Animation")) {
+					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
+					if (animation != nullptr) {
+						animation->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
 				if (ImGui::MenuItem("Audio Source")) {
 					ComponentAudioSource* audioSource = selected->CreateComponent<ComponentAudioSource>();
 					if (audioSource != nullptr) {
 						audioSource->Init();
-					} else {
+					}
+					else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
@@ -154,11 +225,15 @@ void PanelInspector::Update() {
 					ComponentAudioListener* audioListener = selected->CreateComponent<ComponentAudioListener>();
 					if (audioListener != nullptr) {
 						audioListener->Init();
-					} else {
+					}
+					else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
 				// TRANSFORM is always there, cannot add a new one.
+
+				AddUIComponentsOptions(selected);
+
 				ImGui::EndPopup();
 			}
 		}
@@ -172,4 +247,94 @@ Component* PanelInspector::GetComponentToDelete() const {
 
 void PanelInspector::SetComponentToDelete(Component* comp) {
 	componentToDelete = comp;
+}
+
+void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
+	if (ImGui::BeginMenu("UI")) {
+		// ------ CREATING UI HANDLERS -------
+		if (ImGui::MenuItem("Event System")) {
+			ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+			if (component != nullptr) {
+				component->Init();
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+
+		if (ImGui::MenuItem("Canvas")) {
+			ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
+			if (component != nullptr) {
+				component->Init();
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+
+		// ------ CREATING UI ELEMENTS -------
+		bool newUIComponentCreated = false;	 // If a UI component is created, we will create a Transform2D and a CanvasRenderer components for it
+		bool newUISelectableCreated = false; // In addition, if it is a selectable element, a ComponentBoundingBox2D will also be created
+		if (ImGui::MenuItem("Image")) {
+			ComponentImage* component = selected->CreateComponent<ComponentImage>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+
+		if (ImGui::MenuItem("Text")) {
+			ComponentText* component = selected->CreateComponent<ComponentText>();
+			if (component != nullptr) {
+				component->Init();
+				newUIComponentCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+		// MenuItem("TextLabel")
+		// MenuItem("ProgressBar")
+		// ...
+
+		// Selectables
+		ComponentType tmpType = ComponentType::UNKNOWN;
+
+		if (ImGui::MenuItem("Button")) {
+			ComponentButton* component = selected->CreateComponent<ComponentButton>();
+			if (component != nullptr) {
+				component->Init();
+				tmpType = component->GetType();
+				//ComponentEventSystem::m_Selectables.push_back(component);
+				newUIComponentCreated = true;
+				newUISelectableCreated = true;
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+		// MenuItem("Toggle")
+		// MenuItem("InputText")
+		// MenuItem("ScrollBar")
+		// ...
+
+		if (newUIComponentCreated) {
+			// Create new Transform2D
+			ComponentTransform2D* transform2d = selected->CreateComponent<ComponentTransform2D>();
+			if (transform2d != nullptr) transform2d->Init();
+
+			// Create new Canvas Renderer
+			ComponentCanvasRenderer* canvasRender = selected->CreateComponent<ComponentCanvasRenderer>();
+			if (canvasRender != nullptr) canvasRender->Init();
+
+			if (newUISelectableCreated) {
+				ComponentBoundingBox2D* boundingBox2d = selected->CreateComponent<ComponentBoundingBox2D>();
+				ComponentSelectable* selectable = selected->CreateComponent<ComponentSelectable>();
+				if (boundingBox2d != nullptr) boundingBox2d->Init();
+				if (selectable != nullptr) {
+					selectable->Init();
+					selectable->SetSelectableType(tmpType);
+				}
+			}
+		}
+		ImGui::EndMenu();
+	}
 }

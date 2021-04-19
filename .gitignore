@@ -9,3 +9,9 @@
 
 # Build results
 /Build/
+
+# Library folder
+/Game/Library/
+
+# Penteract solution
+/Game/Penteract/

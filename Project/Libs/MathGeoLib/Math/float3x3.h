@@ -57,8 +57,14 @@ MATH_BEGIN_NAMESPACE
 	There the elements for a single column of the matrix hold successive memory addresses.
 	This is exactly opposite from the standard C++ multidimensional arrays, since if you have e.g.
 	int v[10][10], then v[0][9] comes in memory right before v[1][0]. ( [0][0], [0][1], [0][2], ... [1][0], [1][1], ...) */
-class float3x3
-{
+
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
+class TESSERACT_ENGINE_API float3x3 {
 public:
 	/// Specifies the height of this matrix.
 	enum { Rows = 3 };

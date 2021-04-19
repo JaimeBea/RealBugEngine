@@ -6,6 +6,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
+#include "Components/ComponentAnimation.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
@@ -14,6 +15,10 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModulePrograms.h"
+#include "Modules/ModuleUserInterface.h"
+#include "Modules/ModuleTime.h"
+#include "Resources/ResourceMesh.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/AABB.h"
 #include "Geometry/AABB2D.h"
@@ -24,7 +29,9 @@
 #include "Brofiler.h"
 
 #include "Utils/Leaks.h"
+#include <string>
 
+#if _DEBUG
 static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam) {
 	const char *tmpSource = "", *tmpType = "", *tmpSeverity = "";
 	switch (source) {
@@ -97,6 +104,7 @@ static void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint 
 
 	LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>", tmpSource, tmpType, tmpSeverity, id, message);
 }
+#endif
 
 bool ModuleRender::Init() {
 	LOG("Creating Renderer context");
@@ -110,7 +118,7 @@ bool ModuleRender::Init() {
 	glEnable(GL_CULL_FACE);
 	glFrontFace(GL_CCW);
 
-#ifdef _DEBUG
+#if _DEBUG
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr);
@@ -129,8 +137,13 @@ bool ModuleRender::Init() {
 UpdateStatus ModuleRender::PreUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PreUpdate", Profiler::Color::Green)
 
+#if !GAME
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 	glViewport(0, 0, viewportWidth, viewportHeight);
+#else
+	App->camera->ViewportResized(App->window->GetWidth(), App->window->GetHeight());
+	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
+#endif
 
 	glClearColor(clearColor.x, clearColor.y, clearColor.z, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -141,14 +154,15 @@ UpdateStatus ModuleRender::PreUpdate() {
 UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
-	// Draw Skybox as a first element
-	DrawSkyBox();
+#if GAME
+	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
+#endif
+	culledTriangles = 0;
 
 	// Draw the scene
-	//PerformanceTimer timer;
-	//timer.Start();
 	App->camera->CalculateFrustumPlanes();
-	for (ComponentBoundingBox& boundingBox : App->scene->boundingBoxComponents) {
+	Scene* scene = App->scene->scene;
+	for (ComponentBoundingBox& boundingBox : scene->boundingBoxComponents) {
 		GameObject& gameObject = boundingBox.GetOwner();
 		gameObject.flag = false;
 		if (gameObject.isInQuadtree) continue;
@@ -159,22 +173,42 @@ UpdateStatus ModuleRender::Update() {
 			DrawGameObject(&gameObject);
 		}
 	}
-	if (App->scene->quadtree.IsOperative()) {
-		DrawSceneRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
-	}
-	//LOG("Scene draw: %llu mis", timer.Stop());
-
-	// Draw Guizmos
-	GameObject* selectedGameObject = App->editor->selectedGameObject;
-	if (selectedGameObject) selectedGameObject->DrawGizmos();
-
-	// Draw quadtree
-	if (drawQuadtree) {
-		DrawQuadtreeRecursive(App->scene->quadtree.root, App->scene->quadtree.bounds);
+	if (scene->quadtree.IsOperative()) {
+		DrawSceneRecursive(scene->quadtree.root, scene->quadtree.bounds);
 	}
 
-	// Draw debug draw
-	App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+	// Draw Gizmos
+	if (App->camera->IsEngineCameraActive() || debugMode) {
+		GameObject* selectedGameObject = App->editor->selectedGameObject;
+		if (selectedGameObject) selectedGameObject->DrawGizmos();
+
+		// --- All Gizmos options
+		if (drawCameraFrustums) {
+			for (ComponentCamera camera : scene->cameraComponents) {
+				camera.DrawGizmos();
+			}
+		}
+		if (drawLightGizmos) {
+			for (ComponentLight light : scene->lightComponents) {
+				light.DrawGizmos();
+			}
+		}
+		// Draw quadtree
+		if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
+
+		// Draw debug draw
+		if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+
+		// Draw Animations
+		if (drawAllBones) {
+			for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
+				DrawAnimation(animationComponent.GetOwner().GetRootBone());
+			}
+		}
+	}
+
+	//Render UI
+	RenderUI();
 
 	return UpdateStatus::CONTINUE;
 }
@@ -199,6 +233,7 @@ void ModuleRender::ViewportResized(int width, int height) {
 	viewportWidth = width;
 	viewportHeight = height;
 
+#if !GAME
 	// Framebuffer calculations
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
@@ -215,10 +250,54 @@ void ModuleRender::ViewportResized(int width, int height) {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		LOG("ERROR: Framebuffer is not complete!");
 	}
+#endif
 }
 
 void ModuleRender::SetVSync(bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
+}
+
+void ModuleRender::ToggleDebugMode() {
+	debugMode = !debugMode;
+}
+
+void ModuleRender::ToggleDebugDraw() {
+	drawDebugDraw = !drawDebugDraw;
+}
+void ModuleRender::ToggleDrawQuadtree() {
+	drawQuadtree = !drawQuadtree;
+}
+
+void ModuleRender::ToggleDrawBBoxes() {
+	drawAllBoundingBoxes = !drawAllBoundingBoxes;
+}
+
+void ModuleRender::ToggleDrawSkybox() { // TODO: review Godmodecamera
+	skyboxActive = !skyboxActive;
+}
+
+void ModuleRender::ToggleDrawAnimationBones() {
+	drawAllBones = !drawAllBones;
+}
+
+void ModuleRender::ToggleDrawCameraFrustums() {
+	drawCameraFrustums = !drawCameraFrustums;
+}
+
+void ModuleRender::ToggleDrawLightGizmos() {
+	drawLightGizmos = !drawLightGizmos;
+}
+
+void ModuleRender::UpdateShadingMode(const char* shadingMode) {
+	if (strcmp(shadingMode, "Shaded") == 0) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	} else if (strcmp(shadingMode, "Wireframe") == 0) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+}
+
+int ModuleRender::GetCulledTriangles() const {
+	return culledTriangles;
 }
 
 void ModuleRender::DrawQuadtreeRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& aabb) {
@@ -287,6 +366,7 @@ void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, co
 					if (CheckIfInsideFrustum(gameObjectAABB, gameObjectOBB)) {
 						DrawGameObject(gameObject);
 					}
+
 					gameObject->flag = true;
 				}
 				element = element->next;
@@ -338,31 +418,55 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
-	if (boundingBox && drawAllBoundingBoxes) {
+	if (boundingBox && drawAllBoundingBoxes && (App->camera->IsEngineCameraActive() || debugMode)) {
 		boundingBox->DrawBoundingBox();
 	}
 
 	for (ComponentMeshRenderer* mesh : meshes) {
 		mesh->Draw(transform->GetGlobalMatrix());
+
+		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
+		culledTriangles += resourceMesh->numIndices / 3;
 	}
 }
 
-void ModuleRender::DrawSkyBox() {
-	if (skyboxActive) {
-		glDepthFunc(GL_LEQUAL);
+void ModuleRender::RenderUI() {
+	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+		SetOrtographicRender();
+		App->camera->EnableOrtographic();
+	}
 
-		unsigned program = App->programs->skyboxProgram;
-		glUseProgram(program);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, App->camera->GetViewMatrix().ptr());
-		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, App->camera->GetProjectionMatrix().ptr());
-		glUniform1i(glGetUniformLocation(program, "cubemap"), 0);
+	glDisable(GL_DEPTH_TEST); // In order to not clip with Models
+	App->userInterface->Render();
+	glEnable(GL_DEPTH_TEST);
 
-		glBindVertexArray(App->scene->skyboxVao);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, App->scene->skyboxCubeMap->glTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
+	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+		App->camera->EnablePerspective();
+		SetPerspectiveRender();
+	}
+}
 
-		glDepthFunc(GL_LESS);
+void ModuleRender::SetOrtographicRender() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void ModuleRender::SetPerspectiveRender() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(-1, 1, -1, 1, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+}
+
+void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {
+	for (const GameObject* childen : gameObject->GetChildren()) {
+		ComponentTransform* transform = childen->GetComponent<ComponentTransform>();
+
+		dd::point(transform->GetGlobalPosition(), dd::colors::Red, 5);
+		dd::line(gameObject->GetComponent<ComponentTransform>()->GetGlobalPosition(), transform->GetGlobalPosition(), dd::colors::Cyan, 0, false);
+
+		DrawAnimation(childen, true);
 	}
 }

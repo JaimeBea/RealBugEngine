@@ -1,5 +1,11 @@
 #pragma once
 
+#if defined(TESSERACT_ENGINE_API)
+/* do nothing. */
+#elif defined(_MSC_VER)
+#define TESSERACT_ENGINE_API __declspec(dllexport)
+#endif
+
 // Enums -----------
 enum class UpdateStatus {
 	CONTINUE,
@@ -12,15 +18,25 @@ enum class UpdateStatus {
 #define RADTODEG 1.0f / DEGTORAD
 
 // Files -----------
-#define TEXTURES_PATH "Library/Textures"
-#define MESHES_PATH "Library/Meshes"
-#define SCENES_PATH "Library/Scenes"
+#define ASSETS_PATH "Assets"
+#define LIBRARY_PATH "Library"
+#define SKYBOX_PATH "Assets/Skybox"
+#define TEXTURES_PATH "Assets/Textures"
+#define SHADERS_PATH "Assets/Shaders"
+#define SCENES_PATH "Assets/Scenes"
+#define MATERIALS_PATH "Assets/Materials"
 #define TEXTURE_EXTENSION ".dds"
-#define MESH_EXTENSION ".mesh"
+#define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
+#define META_EXTENSION ".meta"
+
+#define PHONG_SHADER_FILE "phong.glsl"
 
 // Configuration -----------
-#define GLSL_VERSION "#version 330"
+#define GLSL_VERSION "#version 460"
+
+// Threads
+#define TIME_BETWEEN_RESOURCE_UPDATES_MS 300
 
 // Delete helpers -----------
 #define RELEASE(x)          \

@@ -1,27 +1,32 @@
 #include "Logging.h"
 
-#include <sstream>
 #include <windows.h>
-#include <stdio.h>
 
 #include "Leaks.h"
 
-void Log(const char file[], int line, const char* format, ...) {
-	static char tmpString[4096];
-	static char tmpString2[4096];
-	static va_list ap;
-
+void Logger::Log(const char file[], int line, const char* format, ...) {
 	// Construct the string from variable arguments
+	logMessageQueueMutex.lock();
+	va_list ap;
 	va_start(ap, format);
 	vsprintf_s(tmpString, 4096, format, ap);
 	va_end(ap);
 	sprintf_s(tmpString2, 4096, "%s(%d) : %s\n", file, line, tmpString);
 	OutputDebugString(tmpString2);
-
-	logString->append(tmpString2);
+	logMessageQueue.push(tmpString2);
+	logMessageQueueMutex.unlock();
 }
 
-void LogDeltaMS(float deltaMs) {
+void Logger::UpdateLogString() {
+	logMessageQueueMutex.lock();
+	while (!logMessageQueue.empty()) {
+		logString += logMessageQueue.front();
+		logMessageQueue.pop();
+	}
+	logMessageQueueMutex.unlock();
+}
+
+void Logger::LogDeltaMS(float deltaMs) {
 	float fps = 1000.0f / deltaMs;
 	fpsLogIndex -= 1;
 	if (fpsLogIndex < 0) {
@@ -31,7 +36,4 @@ void LogDeltaMS(float deltaMs) {
 	msLog[fpsLogIndex] = deltaMs;
 }
 
-std::string* logString = nullptr;
-int fpsLogIndex = FPS_LOG_SIZE - 1;
-float fpsLog[FPS_LOG_SIZE] = {0};
-float msLog[FPS_LOG_SIZE] = {0};
+Logger* logger = nullptr;

@@ -17,13 +17,15 @@ PanelConsole::PanelConsole()
 	: Panel("Console", true) {}
 
 void PanelConsole::Update() {
+	logger->UpdateLogString();
+
 	ImGui::SetNextWindowDockID(App->editor->dockDownId, ImGuiCond_FirstUseEver);
 	std::string windowName = std::string(ICON_FK_TERMINAL " ") + name;
 	if (ImGui::Begin(windowName.c_str(), &enabled)) {
 		// Output
 		const float footerHeightToReserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footerHeightToReserve), false, ImGuiWindowFlags_HorizontalScrollbar);
-		ImGui::TextUnformattedWithColorMD(logString->c_str());
+		ImGui::TextUnformattedWithColorMD(logger->logString.c_str());
 		if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
 			ImGui::SetScrollHereY(1.0f);
 		}
@@ -36,9 +38,9 @@ void PanelConsole::Update() {
 		char inputBuf[256] = {0};
 		ImGuiInputTextFlags inputTextFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory;
 		if (ImGui::InputText("Input", inputBuf, IM_ARRAYSIZE(inputBuf), inputTextFlags, &ExecuteCommand)) {
-			logString->append("$FFB86CFF # ");
-			logString->append(inputBuf);
-			logString->append("\n");
+			logger->logString += "$FFB86CFF # ";
+			logger->logString += inputBuf;
+			logger->logString += "\n";
 			reclaimFocus = true;
 		}
 		ImGui::SetItemDefaultFocus();

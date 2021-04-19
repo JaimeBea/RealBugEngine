@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Utils/alErrors.h"
 #include "Utils/alcErrors.h"
+
 #include "AL/al.h"
 
 #include "Utils/Leaks.h"
