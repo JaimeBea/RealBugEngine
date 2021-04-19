@@ -1,0 +1,102 @@
+#include "ResourceAudioClip.h"
+
+#include "Globals.h"
+#include "Application.h"
+#include "Modules/ModuleFiles.h"
+#include "Utils/Buffer.h"
+
+#include "Utils/MSTimer.h"
+#include <inttypes.h>
+#include "AL/alext.h"
+#include <sndfile.h>
+#include "Utils/Logging.h"
+
+#include "rapidjson/error/en.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/document.h"
+
+#define JSON_TAG_AUDIO "Audio"
+
+void ResourceAudioClip::Load() {
+	MSTimer timer;
+	timer.Start();
+	std::string filePath = GetResourceFilePath();
+	LOG("Loading audio from path: \"%s\".", filePath);
+
+	Buffer<char> audioBuffer = App->files->Load(filePath.c_str());
+	if (audioBuffer.Size() == 0) return;
+
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(audioBuffer.Data());
+	if (document.HasParseError()) {
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return;
+	}
+
+	JsonValue jFile(document, document);
+	JsonValue jAudio = jFile[JSON_TAG_AUDIO];
+
+	ALenum err, format;
+	SNDFILE* sndfile;
+	SF_INFO sfinfo;
+	short* audioData;
+	sf_count_t numFrames;
+	ALsizei size;
+
+	// Open Audio File
+	filePath = jAudio[0];
+	sndfile = sf_open(filePath.c_str(), SFM_READ, &sfinfo);
+	if (!sndfile) {
+		LOG("Could not open audio in %s: %s", filePath, sf_strerror(sndfile));
+		return;
+	}
+	DEFER {
+		free(audioData);
+		sf_close(sndfile);
+	};
+
+	if (sfinfo.frames < 1 || sfinfo.frames > (sf_count_t)(INT_MAX / sizeof(short)) / sfinfo.channels) {
+		LOG("Bad sample count in %s (%" PRId64 ")", filePath, sfinfo.frames);
+		return;
+	}
+
+	format = AL_NONE;
+	if (sfinfo.channels == 1) {
+		format = AL_FORMAT_MONO16;
+	} else if (sfinfo.channels == 2) {
+		format = AL_FORMAT_STEREO16;
+	}
+	if (!format) {
+		LOG("Unsupported channel count: %d", sfinfo.channels);
+		return;
+	}
+
+	// Decode the whole audio file to a buffer
+
+	audioData = static_cast<short*>(malloc((size_t)(sfinfo.frames * sfinfo.channels) * sizeof(short)));
+	numFrames = sf_readf_short(sndfile, audioData, sfinfo.frames);
+	if (numFrames < 1) {
+		LOG("Failed to read samples in %s (%" PRId64 ")", filePath, numFrames);
+		return;
+	}
+	size = (ALsizei)(numFrames * sfinfo.channels) * (ALsizei) sizeof(short);
+
+	ALbuffer = 0;
+	alGenBuffers(1, &ALbuffer);
+	alBufferData(ALbuffer, format, audioData, size, sfinfo.samplerate);
+
+	/* Check if an error occured, and clean up if so. */
+	err = alGetError();
+	if (err != AL_NO_ERROR) {
+		LOG("OpenAL Error: %s", alGetString(err));
+		if (ALbuffer && alIsBuffer(ALbuffer))
+			alDeleteBuffers(1, &ALbuffer);
+		return;
+	}
+}
+
+void ResourceAudioClip::Unload() {
+	alDeleteBuffers(1, &ALbuffer);
+	ALbuffer = 0;
+}

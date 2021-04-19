@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Resources/ResourceAudioClip.h"
 
 #include "AL/al.h"
 #include "Math/float3.h"
@@ -11,13 +12,14 @@ public:
 
 	// ------- Core Functions ------ //
 	void Init() override;
+	void Update() override;
 	void DrawGizmos() override;
-	void OnTransformUpdate() override;
 	void OnEditorUpdate() override;
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
 
+	void UpdateAudioSource();
 	void UpdateSourceParameters() const;
 	void Play();
 	void Stop();
@@ -34,7 +36,7 @@ private:
 	float3 position = {0.f, 0.f, 0.f};
 	float3 direction = {0.f, 0.f, 0.f};
 	bool loopSound = false;
-	ALuint bufferId = 0;
+	UID audioClipId = 0;
 	int spatialBlend = 0;		  // 2D = 0; 3D = 1;
 	int sourceType = 0;			  // Omnidirectional = 0; Directional = 1;
 	float innerAngle = 90.f;	  // In Degrees
