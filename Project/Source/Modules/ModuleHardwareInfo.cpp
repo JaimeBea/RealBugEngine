@@ -48,7 +48,7 @@ bool ModuleHardwareInfo::Start() {
 }
 
 UpdateStatus ModuleHardwareInfo::Update() {
-	BROFILER_CATEGORY("ModuleHardwareInfo - PreUpdate", Profiler::Color::Orange)
+	BROFILER_CATEGORY("ModuleHardwareInfo - Update", Profiler::Color::Orange)
 
 	int vramBudgetKb;
 	int vramAvailableKb;

@@ -39,11 +39,16 @@ public:
 	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
+
+	// --- Component Management --- //
 	TESSERACT_ENGINE_API Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
 	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void AddComponent(const Component* component);
 	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
 
 	template<class T> T* GetComponent(UID id);
+
+	int GetTotalTriangles() const;
 
 public:
 	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
@@ -75,14 +80,6 @@ public:
 	AABB2D quadtreeBounds = {{-1000, -1000}, {1000, 1000}};
 	unsigned quadtreeMaxDepth = 4;
 	unsigned quadtreeElementsPerNode = 200;
-
-	// TODO: (Texture resource) Make skybox work
-	/*
-	// Skybox
-	unsigned skyboxVao = 0;
-	unsigned skyboxVbo = 0;
-	CubeMap* skyboxCubeMap = 0;
-	*/
 };
 
 template<class T>

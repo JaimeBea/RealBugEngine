@@ -27,7 +27,7 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEvents.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
@@ -39,6 +39,7 @@
 #include <string>
 #include <future>
 #include <chrono>
+#include "Brofiler.h"
 
 #include "Utils/Leaks.h"
 
@@ -79,20 +80,22 @@ bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
 
-	App->events->AddObserverToEvent(EventType::ADD_RESOURCE, this);
-	App->events->AddObserverToEvent(EventType::UPDATE_FOLDERS, this);
+	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
+	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
 
 	return true;
 }
 
 bool ModuleResources::Start() {
 	stopImportThread = false;
+
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);
 
 	return true;
 }
 
 UpdateStatus ModuleResources::Update() {
+	BROFILER_CATEGORY("ModuleResources - Update", Profiler::Color::Orange)
 	// Copy dropped file to assets folder
 	const char* droppedFilePath = App->input->GetDroppedFilePath();
 	if (droppedFilePath != nullptr) {
@@ -106,27 +109,21 @@ UpdateStatus ModuleResources::Update() {
 bool ModuleResources::CleanUp() {
 	stopImportThread = true;
 	importThread.join();
-
-	for (std::pair<const UID, Resource*>& entry : resources) {
-		RELEASE(entry.second);
-	}
-
-	RELEASE(rootFolder);
-
 	return true;
 }
 
-void ModuleResources::ReceiveEvent(const Event& ev) {
-	if (ev.type == EventType::ADD_RESOURCE) {
-		Resource* resource = ev.addResource.resource;
+void ModuleResources::ReceiveEvent(TesseractEvent& e) {
+	if (e.type == TesseractEventType::ADD_RESOURCE) {
+		Resource* resource = e.addResource.resource;
 		UID id = resource->GetId();
-		resources.emplace(id, resource);
 		if (GetReferenceCount(id) > 0) {
 			resource->Load();
 		}
-	} else if (ev.type == EventType::UPDATE_FOLDERS) {
-		RELEASE(rootFolder);
-		rootFolder = ev.updateFolders.folder;
+		resources[id].reset(resource);
+		e.addResource.resource = nullptr;
+	} else if (e.type == TesseractEventType::UPDATE_FOLDERS) {
+		rootFolder.reset(e.updateFolders.folder);
+		e.updateFolders.folder = nullptr;
 	}
 }
 
@@ -218,11 +215,11 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 }
 
 Resource* ModuleResources::GetResource(UID id) const {
-	return resources.find(id) != resources.end() ? resources.at(id) : nullptr;
+	return resources.find(id) != resources.end() ? resources.at(id).get() : nullptr;
 }
 
 AssetFolder* ModuleResources::GetRootFolder() const {
-	return rootFolder;
+	return rootFolder.get();
 }
 
 void ModuleResources::IncreaseReferenceCount(UID id) {
@@ -274,8 +271,9 @@ void ModuleResources::UpdateAsync() {
 		// Check if any asset file has been modified / deleted
 		std::vector<UID> resourcesToRemove;
 		std::vector<UID> resourcesToReimport;
-		for (std::pair<const UID, Resource*>& entry : resources) {
-			Resource* resource = entry.second;
+
+		for (std::pair<const UID, std::unique_ptr<Resource>>& entry : resources) {
+			Resource* resource = entry.second.get();
 			const std::string& resourceFilePath = resource->GetResourceFilePath();
 			const std::string& assetFilePath = resource->GetAssetFilePath();
 			std::string metaFilePath = assetFilePath + META_EXTENSION;
@@ -294,19 +292,21 @@ void ModuleResources::UpdateAsync() {
 				rapidjson::Document document;
 				bool success = ReadMetaFile(metaFilePath.c_str(), document);
 				JsonValue jMeta(document, document);
+
 				if (success) {
+#if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					/*if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
-						// ASK: What happens when we update an asset?
-						resourcesToRemove.push_back(entry.first);
-						continue;
-					}*/
+					//if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+					//	// ASK: What happens when we update an asset?
+					//	resourcesToRemove.push_back(entry.first);
+					//	continue;
+					//}
 					// TODO: Review and delete this
 					std::unordered_set<std::string>::iterator it = assetsToNotUpdate.find(assetFilePath);
 					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp && it == assetsToNotUpdate.end()) {
 						// ASK: What happens when we update an asset?
 						// Resources to remove only if we want to regenerate the asset resources
-						resourcesToRemove.push_back(entry.first);
+						//resourcesToReimport.push_back(entry.first);
 						continue;
 					} else if (it != assetsToNotUpdate.end()) {
 						// Instead of removing its resources and its meta, just update the timestamp
@@ -314,19 +314,20 @@ void ModuleResources::UpdateAsync() {
 						SaveMetaFile(metaFilePath.c_str(), document);
 						assetsToNotUpdate.erase(it);
 					}
+#endif
+
 				} else {
 					resourcesToRemove.push_back(entry.first);
 					continue;
 				}
 			}
-
 			// Check for deleted resources
 			if (!App->files->Exists(resourceFilePath.c_str())) {
 				resourcesToReimport.push_back(entry.first);
 			}
 		}
 		for (UID id : resourcesToReimport) {
-			Resource* resource = resources[id];
+			Resource* resource = resources[id].get();
 
 			const std::string& resourceFilePath = resource->GetResourceFilePath();
 			const std::string& assetFilePath = resource->GetAssetFilePath();
@@ -336,7 +337,7 @@ void ModuleResources::UpdateAsync() {
 			}
 		}
 		for (UID id : resourcesToRemove) {
-			Resource* resource = resources[id];
+			Resource* resource = resources[id].get();
 
 			const std::string& assetFilePath = resource->GetAssetFilePath();
 			const std::string& resourceFilePath = resource->GetResourceFilePath();
@@ -349,7 +350,6 @@ void ModuleResources::UpdateAsync() {
 			}
 
 			resource->Unload();
-			delete resource;
 			resources.erase(id);
 		}
 
@@ -357,9 +357,11 @@ void ModuleResources::UpdateAsync() {
 		AssetFolder* newFolder = new AssetFolder(ASSETS_PATH);
 		CheckForNewAssetsRecursive(ASSETS_PATH, newFolder);
 
-		Event updateFoldersEv(EventType::UPDATE_FOLDERS);
+		TesseractEvent updateFoldersEv(TesseractEventType::UPDATE_FOLDERS);
 		updateFoldersEv.updateFolders.folder = newFolder;
 		App->events->AddEvent(updateFoldersEv);
+
+		App->events->AddEvent(TesseractEventType::RESOURCES_LOADED);
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(TIME_BETWEEN_RESOURCE_UPDATES_MS));
 	}
@@ -413,6 +415,7 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		break;
 	case ResourceType::SCRIPT:
 		resource = new ResourceScript(id, assetFilePath, resourceFilePath.c_str());
+		resource->Load();
 		break;
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
@@ -427,7 +430,7 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 }
 
 void ModuleResources::SendAddResourceEvent(Resource* resource) {
-	Event addResourceEvent(EventType::ADD_RESOURCE);
+	TesseractEvent addResourceEvent(TesseractEventType::ADD_RESOURCE);
 	addResourceEvent.addResource.resource = resource;
 	App->events->AddEvent(addResourceEvent);
 }

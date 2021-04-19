@@ -10,7 +10,7 @@
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 #include "FileSystem/MaterialImporter.h"
 
 #include "ImGuizmo.h"
@@ -147,12 +147,17 @@ bool ModuleEditor::Start() {
 	panels.push_back(&panelHierarchy);
 	panels.push_back(&panelInspector);
 	panels.push_back(&panelAbout);
+	panels.push_back(&panelControlEditor);
 
 	return true;
 }
 
 UpdateStatus ModuleEditor::PreUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PreUpdate", Profiler::Color::Azure)
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -167,6 +172,10 @@ UpdateStatus ModuleEditor::Update() {
 
 	ImGui::CaptureMouseFromApp(true);
 	ImGui::CaptureKeyboardFromApp(true);
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif
 
 	// Main menu bar
 	ImGui::BeginMainMenuBar();
@@ -185,6 +194,7 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndMenu();
 	}
+
 	if (ImGui::BeginMenu("Assets")) {
 		if (ImGui::BeginMenu("Create")) {
 			if (ImGui::MenuItem("Material")) {
@@ -201,6 +211,7 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panelInspector.name, "", &panelInspector.enabled);
 		ImGui::MenuItem(panelHierarchy.name, "", &panelHierarchy.enabled);
 		ImGui::MenuItem(panelConfiguration.name, "", &panelConfiguration.enabled);
+		ImGui::MenuItem(panelControlEditor.name, "", &panelControlEditor.enabled);
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu("Help")) {
@@ -336,6 +347,8 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::DockBuilderSetNodeSize(dockSpaceId, viewport->GetWorkSize());
 
 		dockMainId = dockSpaceId;
+		dockUpId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Up, 0.2f, nullptr, &dockMainId);
+		ImGui::DockBuilderSetNodeSize(dockUpId, ImVec2(viewport->GetWorkSize().x, 40));
 		dockRightId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, nullptr, &dockMainId);
 		dockDownId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
 		dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.25f, nullptr, &dockMainId);
@@ -368,6 +381,10 @@ UpdateStatus ModuleEditor::Update() {
 
 UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif //  GAME
 
 	// Deleting Components
 	if (panelInspector.GetComponentToDelete()) {
@@ -405,20 +422,20 @@ bool ModuleEditor::CleanUp() {
 }
 
 void ModuleEditor::OnMouseMoved() {
-	Event mouseEvent = Event(EventType::MOUSE_UPDATE);
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
 	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
 	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseClicked() {
-	Event mouseEvent = Event(EventType::MOUSE_CLICKED);
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
 	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
 	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseReleased() {
-	Event mouseEvent = Event(EventType::MOUSE_RELEASED);
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_RELEASED);
 	App->events->AddEvent(mouseEvent);
 }

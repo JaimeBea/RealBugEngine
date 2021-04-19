@@ -400,7 +400,6 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 		if (minPoint.x < maxPoint.x) {
 			ComponentBoundingBox* boundingBox = gameObject->CreateComponent<ComponentBoundingBox>();
 			boundingBox->SetLocalBoundingBox(AABB(minPoint, maxPoint));
-			boundingBox->CalculateWorldBoundingBox();
 		}
 
 		// Import children nodes
@@ -662,14 +661,15 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	}
 
 	if (!bones.empty()) {
-		GameObject* rootBoneGO = root->FindDescendant(rootBone->mName.C_Str())->GetParent();
+		GameObject* rootBoneGO = root->FindDescendant(rootBone->mName.C_Str());
 		root->GetChildren()[0]->SetRootBone(rootBoneGO);
 
 		std::unordered_map<std::string, GameObject*> goBones;
 		// TODO: check if CtrlGrp is generated always
+		goBones[rootBoneGO->name] = rootBoneGO;
 		CacheBones(rootBoneGO, goBones);
 
-		for (GameObject* child : root->GetChildren()) {
+		for (GameObject* child : root->GetChildren()[0]->GetChildren()) {
 			if (child->name != rootBoneGO->name) {
 				SaveBones(child, goBones);
 			}

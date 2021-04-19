@@ -1,6 +1,5 @@
 #include "ComponentEventSystem.h"
 
-#include "Event.h"
 #include "GameObject.h"
 #include "Components/UI/ComponentSelectable.h"
 #include "Application.h"
@@ -44,9 +43,12 @@ void ComponentEventSystem::Update() {
 
 	if (keyPressed) {
 		if (selectedId != 0) {
-			ComponentSelectable* newSel = GetCurrentSelected()->FindSelectableOnDir(selectionDir);
-			if (newSel) {
-				SetSelected(newSel->GetID());
+			ComponentSelectable* currentSel = GetCurrentSelected();
+			if (currentSel != nullptr) {
+				ComponentSelectable* newSel = currentSel->FindSelectableOnDir(selectionDir);
+				if (newSel != nullptr) {
+					SetSelected(newSel->GetID());
+				}
 			}
 		}
 	}
@@ -96,7 +98,7 @@ void ComponentEventSystem::SetSelected(UID newSelectableComponentId) {
 }
 
 void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
-	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
+	ComponentEventSystem* component = owner.CreateComponentDeferred<ComponentEventSystem>();
 	component->firstSelectedId = firstSelectedId;
 }
 

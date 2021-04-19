@@ -43,6 +43,8 @@ void ComponentSkyBox::OnEditorUpdate() {
 }
 
 void ComponentSkyBox::Draw() {
+	if (!IsActive()) return;
+
 	ResourceShader* shader = (ResourceShader*) App->resources->GetResource(shaderId);
 	if (shader == nullptr) return;
 	ResourceSkybox* skybox = (ResourceSkybox*) App->resources->GetResource(skyboxId);

@@ -21,10 +21,10 @@ public:
 	void Load(JsonValue jComponent) override;				// Deserializes
 	void DuplicateComponent(GameObject& owner) override;	// Duplicates Component
 	
-	void Draw(ComponentTransform2D* transform);				// Draws the text ortographically using the active camera and the position of the Tranform2D. It will apply the color as tint
-	void SetText(const std::string& newText);				// Sets text
-	void SetFontSize(float newfontSize);					// Sets fontSize
-	void SetFontColor(const float4& newColor);				// Sets color
+	void Draw(ComponentTransform2D* transform);						// Draws the text ortographically using the active camera and the position of the Tranform2D. It will apply the color as tint
+	TESSERACT_ENGINE_API void SetText(const std::string& newText);	// Sets text
+	TESSERACT_ENGINE_API void SetFontSize(float newfontSize);		// Sets fontSize
+	TESSERACT_ENGINE_API void SetFontColor(const float4& newColor); // Sets color
 	float4 GetFontColor() const;							// Returns Color
 
 private:

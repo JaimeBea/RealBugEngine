@@ -81,16 +81,19 @@ ComponentSelectable* ComponentSelectable::FindSelectableOnDir(float2 dir) {
 		break;
 	}
 	case NavigationType::MANUAL: {
+		GameObject* onAxisObj = nullptr;
+
 		if (dir.x > 0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisRight)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisRight);
 		} else if (dir.x < -0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisLeft)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisLeft);
 		} else if (dir.y > 0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisUp)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisUp);
 		} else if (dir.y < -0.6f) {
-			return GetOwner().scene->GetGameObject(onAxisDown)->GetComponent<ComponentSelectable>();
+			onAxisObj = GetOwner().scene->GetGameObject(onAxisDown);
 		}
-		break;
+
+		return onAxisObj == nullptr ? nullptr : onAxisObj->GetComponent<ComponentSelectable>();
 	}
 	default:
 		break;
@@ -108,7 +111,6 @@ void ComponentSelectable::OnDeselect() {
 }
 
 void ComponentSelectable::Init() {
-	interactable = false;
 	selected = false;
 	onAxisDown = 0;
 	onAxisLeft = 0;
@@ -197,7 +199,7 @@ void ComponentSelectable::OnPointerExit() {
 }
 
 void ComponentSelectable::DuplicateComponent(GameObject& owner) {
-	ComponentSelectable* component = owner.CreateComponent<ComponentSelectable>();
+	ComponentSelectable* component = owner.CreateComponentDeferred<ComponentSelectable>();
 	component->interactable = interactable;
 	component->colorDisabled = colorDisabled;
 	component->colorHovered = colorHovered;

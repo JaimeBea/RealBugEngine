@@ -33,9 +33,9 @@ void ComponentCamera::Update() {
 }
 
 void ComponentCamera::DrawGizmos() {
-	if (activeCamera) return;
+	if (App->camera->GetActiveFrustum() == &frustum) return; //TODO: Possible bug when adding more components (component pointer invalidates)
 
-	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
+	if (IsActiveInHierarchy()) dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
 
 void ComponentCamera::OnEditorUpdate() {
@@ -102,7 +102,7 @@ void ComponentCamera::Load(JsonValue jComponent) {
 }
 
 void ComponentCamera::DuplicateComponent(GameObject& owner) {
-	ComponentCamera* component = owner.CreateComponent<ComponentCamera>();
+	ComponentCamera* component = owner.CreateComponentDeferred<ComponentCamera>();
 	component->frustum = this->frustum;
 }
 
@@ -124,4 +124,8 @@ Frustum ComponentCamera::BuildDefaultFrustum() const {
 	newFrustum.SetUp(vec::unitY);
 	newFrustum.SetPos(vec::zero);
 	return newFrustum;
+}
+
+Frustum* ComponentCamera::GetFrustum() {
+	return &frustum;
 }

@@ -28,6 +28,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleEvents.h"
+#include "Modules/ModuleTime.h"
 #include "Panels/PanelHierarchy.h"
 
 #include "GL/glew.h"
@@ -70,12 +71,23 @@ bool ModuleScene::Init() {
 }
 
 bool ModuleScene::Start() {
-	App->events->AddObserverToEvent(EventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
+	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
+	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
+	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
+
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
+	#if GAME
+	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
+	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
+	App->renderer->SetVSync(false);
+	App->time->limitFramerate = false;
+	#else
 	CreateEmptyScene();
+	#endif
 
 	return true;
 }
@@ -90,12 +102,6 @@ UpdateStatus ModuleScene::Update() {
 }
 
 bool ModuleScene::CleanUp() {
-	// TODO: (Texture resource) make skybox work
-	/*
-	glDeleteVertexArrays(1, &skyboxVao);
-	glDeleteBuffers(1, &skyboxVbo);
-	*/
-
 	scene->ClearScene();
 	RELEASE(scene);
 
@@ -104,6 +110,29 @@ bool ModuleScene::CleanUp() {
 #endif
 
 	return true;
+}
+
+void ModuleScene::ReceiveEvent(TesseractEvent& e) {
+	switch (e.type) {
+	case TesseractEventType::GAMEOBJECT_DESTROYED:
+		scene->DestroyGameObject(e.destroyGameObject.gameObject);
+		break;
+	case TesseractEventType::ADD_COMPONENT:
+		scene->AddComponent(e.addComponent.component);
+		break;
+	case TesseractEventType::CHANGE_SCENE:
+		sceneLoaded = false;
+		SceneImporter::LoadScene(e.changeScene.scenePath);
+		break;
+	case TesseractEventType::RESOURCES_LOADED:
+		if (App->time->IsGameRunning() && !sceneLoaded) {
+			sceneLoaded = true;
+			for (auto& it : scene->scriptComponents) {
+				it.OnStart();
+			}
+		}
+		break;
+	}
 }
 
 void ModuleScene::CreateEmptyScene() {
@@ -131,9 +160,7 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetRotation(Quat::identity);
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
-
-	// Create Skybox
-	ComponentSkyBox* skybox = gameCamera->CreateComponent<ComponentSkyBox>();
+	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	gameCamera->InitComponents();
 }
 
@@ -144,15 +171,7 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 	for (GameObject* child : children) {
 		DestroyGameObjectDeferred(child);
 	}
-	Event ev(EventType::GAMEOBJECT_DESTROYED);
-	ev.destroyGameObject.ptr = gameObject;
-	App->events->AddEvent(ev);
-}
-
-void ModuleScene::ReceiveEvent(const Event& e) {
-	switch (e.type) {
-	case EventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.destroyGameObject.ptr);
-		break;
-	}
+	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
+	e.destroyGameObject.gameObject = gameObject;
+	App->events->AddEvent(e);
 }

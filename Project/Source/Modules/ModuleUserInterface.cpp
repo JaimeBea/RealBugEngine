@@ -10,12 +10,13 @@
 #include "ModuleFiles.h"
 #include "ModuleEvents.h"
 #include "Modules/ModuleResources.h"
+#include "Modules/ModuleTime.h"
 #include "ModuleScene.h"
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
 #include "UI/Interfaces/IMouseClickHandler.h"
 #include "Scene.h"
-#include "Event.h"
+#include "TesseractEvent.h"
 #include "Resources/ResourceFont.h"
 #include "Utils/FileDialog.h"
 #include "FileSystem/TextureImporter.h"
@@ -26,9 +27,9 @@
 #include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
-	App->events->AddObserverToEvent(EventType::MOUSE_UPDATE, this);
-	App->events->AddObserverToEvent(EventType::MOUSE_CLICKED, this);
-	App->events->AddObserverToEvent(EventType::MOUSE_RELEASED, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_UPDATE, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
 
 	return true;
 }
@@ -36,6 +37,64 @@ bool ModuleUserInterface::Init() {
 bool ModuleUserInterface::Start() {
 	CreateQuadVBO();
 	return true;
+}
+
+bool ModuleUserInterface::CleanUp() {
+	glDeleteBuffers(1, &quadVBO);
+	return true;
+}
+
+void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
+	float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
+
+	switch (e.type) {
+	case TesseractEventType::MOUSE_UPDATE:
+		if (currentEvSys) {
+			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
+				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
+
+				if (!selectable.IsHovered()) {
+					if (bb->GetWorldAABB().Contains(mousePos)) {
+						selectable.OnPointerEnter();
+					}
+				} else {
+					if (!bb->GetWorldAABB().Contains(mousePos)) {
+						selectable.OnPointerExit();
+					}
+				}
+			}
+		}
+		break;
+
+	case TesseractEventType::MOUSE_CLICKED:
+		if (!App->time->IsGameRunning()) break;
+		if (currentEvSys != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+			if (lastHoveredSelectable != nullptr) {
+				if (lastHoveredSelectable->IsInteractable()) {
+					IMouseClickHandler* mouseClickHandler = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
+
+					if (mouseClickHandler != nullptr) {
+						mouseClickHandler->OnClicked();
+					}
+				}
+			}
+		}
+		break;
+
+	case TesseractEventType::MOUSE_RELEASED:
+		if (!App->time->IsGameRunning()) break;
+		if (currentEvSys != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+			if (lastHoveredSelectable != nullptr) {
+				lastHoveredSelectable->OnDeselect();
+			}
+		}
+
+		break;
+	default:
+		break;
+	}
 }
 
 Character ModuleUserInterface::GetCharacter(UID font, char c) {
@@ -72,62 +131,6 @@ void ModuleUserInterface::Render() {
 
 GameObject* ModuleUserInterface::GetCanvas() const {
 	return canvas;
-}
-
-void ModuleUserInterface::ReceiveEvent(const Event& e) {
-	float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
-
-	switch (e.type) {
-	case EventType::MOUSE_UPDATE:
-		if (currentEvSys) {
-			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
-				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
-
-				if (!selectable.IsHovered()) {
-					if (bb->GetWorldAABB().Contains(mousePos)) {
-						selectable.OnPointerEnter();
-					}
-				} else {
-					if (!bb->GetWorldAABB().Contains(mousePos)) {
-						selectable.OnPointerExit();
-					}
-				}
-			}
-		}
-		break;
-
-	case EventType::MOUSE_CLICKED:
-		if (currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
-			if (lastHoveredSelectable != nullptr) {
-				if (lastHoveredSelectable->IsInteractable()) {
-					IMouseClickHandler* mouseClickHandler = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
-
-					if (mouseClickHandler != nullptr) {
-						mouseClickHandler->OnClicked();
-					}
-				}
-			}
-		}
-		break;
-
-	case EventType::MOUSE_RELEASED:
-		if (currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
-			if (lastHoveredSelectable != nullptr) {
-				lastHoveredSelectable->OnDeselect();
-			}
-		}
-
-		break;
-	default:
-		break;
-	}
-}
-
-bool ModuleUserInterface::CleanUp() {
-	glDeleteBuffers(1, &quadVBO);
-	return true;
 }
 
 unsigned int ModuleUserInterface::GetQuadVBO() {

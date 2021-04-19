@@ -13,10 +13,10 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include <Components/ComponentSkyBox.h>
 
 #include <unordered_map>
 #include <string>
-#include <Components/ComponentSkyBox.h>
 
 class CubeMap;
 struct aiScene;
@@ -29,13 +29,14 @@ public:
 	bool Start() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
 	void CreateEmptyScene(); // Crates a new scene with a default game camera and directional light.
 
 	void DestroyGameObjectDeferred(GameObject* gameObject); //Event dependant destruction, Gameobjects are destroyed upon the receival of an event, so that info is not null
-	void ReceiveEvent(const Event& e) override;
 
 public:
-	std::string fileName = "";							   // REVIEW. This can be removed? Is it even used for anything?
+	std::string fileName = ""; // REVIEW. This can be removed? Is it even used for anything?
 	Scene* scene = nullptr;
+	bool sceneLoaded = false;
 };

@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include "GameObject.h"
+#include "Resources/ResourceMesh.h"
 
 Scene::Scene(unsigned numGameObjects) {
 	gameObjects.Allocate(numGameObjects);
@@ -52,7 +53,7 @@ GameObject* Scene::DuplicateGameObject(GameObject* gameObject, GameObject* paren
 	for (Component* component : gameObject->GetComponents()) {
 		component->DuplicateComponent(*newGO);
 	}
-	newGO->InitComponents();
+
 	// Duplicate recursively its children
 	for (GameObject* child : gameObject->GetChildren()) {
 		DuplicateGameObject(child, newGO);
@@ -142,7 +143,7 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 		if (!scriptComponents.Has(componentId)) return nullptr;
 		return &scriptComponents.Get(componentId);
 	default:
-		LOG("Component of type %i hasn't been registered in GaneObject::GetComponentByTypeAndId.", (unsigned) type);
+		LOG("Component of type %i hasn't been registered in Scene::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
 		return nullptr;
 	}
@@ -187,9 +188,74 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 	case ComponentType::SCRIPT:
 		return &scriptComponents.Put(componentId, owner, componentId, owner->IsActive());
 	default:
-		LOG("Component of type %i hasn't been registered in GameObject::CreateComponentByTypeAndId.", (unsigned) type);
+		LOG("Component of type %i hasn't been registered in Scene::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
 		return nullptr;
+	}
+}
+
+void Scene::AddComponent(const Component* component) {
+	component->GetOwner().components.push_back(std::pair<ComponentType, UID>(component->GetType(), component->GetID()));
+
+	switch (component->GetType()) {
+	case ComponentType::TRANSFORM:
+		transformComponents.Put(component->GetID(), (const ComponentTransform&) *component).Init();
+		break;
+	case ComponentType::MESH_RENDERER:
+		meshRendererComponents.Put(component->GetID(), (const ComponentMeshRenderer&) *component).Init();
+		break;
+	case ComponentType::BOUNDING_BOX:
+		boundingBoxComponents.Put(component->GetID(), (const ComponentBoundingBox&) *component).Init();
+		break;
+	case ComponentType::CAMERA:
+		cameraComponents.Put(component->GetID(), (const ComponentCamera&) *component).Init();
+		break;
+	case ComponentType::LIGHT:
+		lightComponents.Put(component->GetID(), (const ComponentLight&) *component).Init();
+		break;
+	case ComponentType::CANVAS:
+		canvasComponents.Put(component->GetID(), (const ComponentCanvas&) *component).Init();
+		break;
+	case ComponentType::CANVASRENDERER:
+		canvasRendererComponents.Put(component->GetID(), (const ComponentCanvasRenderer&) *component).Init();
+		break;
+	case ComponentType::IMAGE:
+		imageComponents.Put(component->GetID(), (const ComponentImage&) *component).Init();
+		break;
+	case ComponentType::TRANSFORM2D:
+		transform2DComponents.Put(component->GetID(), (const ComponentTransform2D&) *component).Init();
+		break;
+	case ComponentType::BUTTON:
+		buttonComponents.Put(component->GetID(), (const ComponentButton&) *component).Init();
+		break;
+	case ComponentType::EVENT_SYSTEM:
+		eventSystemComponents.Put(component->GetID(), (const ComponentEventSystem&) *component).Init();
+		break;
+	case ComponentType::BOUNDING_BOX_2D:
+		boundingBox2DComponents.Put(component->GetID(), (const ComponentBoundingBox2D&) *component).Init();
+		break;
+	case ComponentType::TOGGLE:
+		toggleComponents.Put(component->GetID(), (const ComponentToggle&) *component).Init();
+		break;
+	case ComponentType::TEXT:
+		textComponents.Put(component->GetID(), (const ComponentText&) *component).Init();
+		break;
+	case ComponentType::SELECTABLE:
+		selectableComponents.Put(component->GetID(), (const ComponentSelectable&) *component).Init();
+		break;
+	case ComponentType::SKYBOX:
+		skyboxComponents.Put(component->GetID(), (const ComponentSkyBox&) *component).Init();
+		break;
+	case ComponentType::ANIMATION:
+		animationComponents.Put(component->GetID(), (const ComponentAnimation&) *component).Init();
+		break;
+	case ComponentType::SCRIPT:
+		scriptComponents.Put(component->GetID(), (const ComponentScript&) *component).Init();
+		break;
+	default:
+		LOG("Component of type %i hasn't been registered in Scene::AddComponent.", (unsigned) component->GetType());
+		assert(false);
+		break;
 	}
 }
 
@@ -268,8 +334,17 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 		scriptComponents.Remove(componentId);
 		break;
 	default:
-		LOG("Component of type %i hasn't been registered in GameObject::RemoveComponentByTypeAndId.", (unsigned) type);
+		LOG("Component of type %i hasn't been registered in Scene::RemoveComponentByTypeAndId.", (unsigned) type);
 		assert(false);
 		break;
 	}
+}
+
+int Scene::GetTotalTriangles() const {
+	int triangles = 0;
+	for (const ComponentMeshRenderer& meshComponent : meshRendererComponents) {
+		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
+		triangles += mesh->numIndices / 3;
+	}
+	return triangles;
 }

@@ -16,8 +16,8 @@ class ModuleUserInterface : public Module {
 public:
 	bool Init() override;
 	bool Start() override;
-	void ReceiveEvent(const Event& e) override;
 	bool CleanUp() override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
 	Character GetCharacter(UID font, char c);																	//Returns the Character that matches the given one in the given font or null otherwise.
 	void GetCharactersInString(UID font, const std::string& sentence, std::vector<Character>& charsInSentence); //Fills the given vector with the glyphs of the given font to form the given sentence.

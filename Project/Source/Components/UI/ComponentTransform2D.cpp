@@ -184,7 +184,7 @@ const float4x4 ComponentTransform2D::GetGlobalMatrix() {
 
 const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
 	if (isRunning) {
-		return globalMatrix * float4x4::Scale(size.x / 100, size.y / 100, 0);
+		return globalMatrix * float4x4::Scale(size.x / 100.0f, size.y / 100.0f, 0);
 	}
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
 }
@@ -242,7 +242,7 @@ void ComponentTransform2D::Invalidate() {
 }
 
 void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
-	ComponentTransform2D* component = owner.CreateComponent<ComponentTransform2D>();
+	ComponentTransform2D* component = owner.CreateComponentDeferred<ComponentTransform2D>();
 	component->SetPivot(pivot);
 	component->SetSize(size);
 	component->SetPosition(position);

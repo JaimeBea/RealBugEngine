@@ -70,8 +70,8 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" >
-    <Tesseract_IncludePath>{2};{3};{4}</Tesseract_IncludePath>
-    <Tesseract_LibraryPath>{5}</Tesseract_LibraryPath>
+    <Tesseract_IncludePath>{2};{3};{4};{5}</Tesseract_IncludePath>
+    <Tesseract_LibraryPath>{6}</Tesseract_LibraryPath>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="Tesseract_IncludePath">
@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-	  <AdditionalIncludeDirectories>$(Tesseract_IncludePath);$(ProjectDir)/Source</AdditionalIncludeDirectories>
+	  <AdditionalIncludeDirectories>$(Tesseract_IncludePath);</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
@@ -129,7 +129,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(Tesseract_IncludePath);$(ProjectDir)/Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Tesseract_IncludePath)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(Tesseract_IncludePath);$(ProjectDir)/Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Tesseract_IncludePath)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
@@ -165,7 +165,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(Tesseract_IncludePath);$(ProjectDir)/Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(Tesseract_IncludePath)</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>

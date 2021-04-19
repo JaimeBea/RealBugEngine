@@ -31,6 +31,8 @@ public:
 	float GetMouseWheelMotion() const;
 	const float2& GetMouseMotion() const;
 	const float2& GetMousePosition() const;
+	KeyState* GetMouseButtons();
+	KeyState* GetKeyboard();
 
 private:
 	char* droppedFilePath = nullptr;					  // SDL_DropEvent. Stores the path of a file when it is drag&dropped into the engine.
