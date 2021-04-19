@@ -2,6 +2,9 @@
 
 #include "Resource.h"
 
+#include "FileSystem/JsonValue.h"
+
+#include "AL/al.h"
 #include <string>
 #include <vector>
 
@@ -13,5 +16,5 @@ public:
 	void Unload() override;
 
 public:
-	std::vector<ALuint> p_SoundEffectBuffers;
+	ALuint buffer;
 };

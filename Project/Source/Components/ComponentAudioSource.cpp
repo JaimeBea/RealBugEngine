@@ -8,7 +8,7 @@
 #include "debugdraw.h"
 #include "Math/float3.h"
 #include "imgui.h"
-
+#include "Utils/ImGuiUtils.h"
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_PITCH "Pitch"
@@ -55,6 +55,8 @@ void ComponentAudioSource::OnEditorUpdate() {
 	ImGui::Checkbox("Draw Gizmos", &drawGizmos);
 	ImGui::Separator();
 	ImGui::TextColored(App->editor->titleColor, "General Settings");
+
+	ImGui::ResourceSlot<ResourceAudioClip>("AudioClip", &audioClipId);
 
 	ImGui::Checkbox("Mute", &mute);
 	ImGui::Checkbox("Loop", &loopSound);
@@ -109,9 +111,12 @@ void ComponentAudioSource::OnEditorUpdate() {
 }
 
 void ComponentAudioSource::UpdateSourceParameters() const {
+	ResourceAudioClip* audioResource = (ResourceAudioClip*) App->resources->GetResource(audioClipId);
+	if (audioResource == nullptr) return;
+
 	alSourcef(sourceId, AL_PITCH, pitch);
 	alSourcei(sourceId, AL_LOOPING, loopSound);
-	alSourcei(sourceId, AL_BUFFER, bufferId);
+	alSourcei(sourceId, AL_BUFFER, audioResource->buffer);
 
 	if (!spatialBlend) {
 		alSourcei(sourceId, AL_SOURCE_RELATIVE, AL_TRUE);
@@ -169,7 +174,7 @@ void ComponentAudioSource::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_GAIN] = gain;
 	jComponent[JSON_TAG_MUTE] = mute;
 	jComponent[JSON_TAG_LOOPING] = loopSound;
-	jComponent[JSON_TAG_BUFFER_ID] = bufferId;
+	jComponent[JSON_TAG_BUFFER_ID] = audioClipId;
 	jComponent[JSON_TAG_SPATIAL_BLEND] = spatialBlend;
 	jComponent[JSON_TAG_SOURCE_TYPE] = sourceType;
 	jComponent[JSON_TAG_INNER_ANGLE] = innerAngle;
@@ -182,7 +187,7 @@ void ComponentAudioSource::Load(JsonValue jComponent) {
 	gain = jComponent[JSON_TAG_GAIN];
 	mute = jComponent[JSON_TAG_MUTE];
 	loopSound = jComponent[JSON_TAG_LOOPING];
-	bufferId = jComponent[JSON_TAG_BUFFER_ID];
+	audioClipId = jComponent[JSON_TAG_BUFFER_ID];
 	spatialBlend = jComponent[JSON_TAG_SPATIAL_BLEND];
 	sourceType = jComponent[JSON_TAG_SOURCE_TYPE];
 	innerAngle = jComponent[JSON_TAG_INNER_ANGLE];
@@ -196,7 +201,7 @@ void ComponentAudioSource::DuplicateComponent(GameObject& owner) {
 	component->gain = this->gain;
 	component->mute = this->mute;
 	component->loopSound = this->loopSound;
-	component->bufferId = this->bufferId;
+	component->audioClipId = this->audioClipId;
 	component->spatialBlend = this->spatialBlend;
 	component->sourceType = this->sourceType;
 	component->innerAngle = this->innerAngle;

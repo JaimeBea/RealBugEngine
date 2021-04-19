@@ -196,7 +196,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".h") {
 			// Script files
 			ScriptImporter::ImportScript(filePath, jMeta);
-		} else if (extension == ".wav") {
+		} else if (extension == ".aud") {
 			// Script files
 			AudioImporter::ImportAudio(filePath, jMeta);
 		} else {

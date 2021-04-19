@@ -1,12 +1,44 @@
 #include "ResourceAudioClip.h"
 
+#include "Globals.h"
+#include "Application.h"
+#include "Modules/ModuleFiles.h"
+#include "Utils/Buffer.h"
+
+#include "Utils/MSTimer.h"
 #include <inttypes.h>
 #include "AL/alext.h"
 #include <sndfile.h>
+#include "Utils/Logging.h"
+
+#include "rapidjson/error/en.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/document.h"
+
+#define JSON_TAG_AUDIO "Audio"
 
 void ResourceAudioClip::Load() {
+	MSTimer timer;
+	timer.Start();
+	std::string filePath = GetResourceFilePath();
+	LOG("Loading audio from path: \"%s\".", filePath);
+
+	Buffer<char> audioBuffer = App->files->Load(filePath.c_str());
+	if (audioBuffer.Size() == 0) return;
+
+	rapidjson::Document document;
+	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(audioBuffer.Data());
+	if (document.HasParseError()) {
+		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
+		return;
+	}
+
+	// Load cubemap
+	JsonValue jFile(document, document);
+	JsonValue jAudio = jFile[JSON_TAG_AUDIO];
+
 	ALenum err, format;
-	ALuint buffer;
 	SNDFILE* sndfile;
 	SF_INFO sfinfo;
 	short* membuf;
@@ -14,14 +46,16 @@ void ResourceAudioClip::Load() {
 	ALsizei num_bytes;
 
 	/* Open the audio file and check that it's usable. */
-	std::string filePath = GetResourceFilePath();
+	filePath = jAudio[0];
 	sndfile = sf_open(filePath.c_str(), SFM_READ, &sfinfo);
 	if (!sndfile) {
-		fprintf(stderr, "Could not open audio in %s: %s\n", filePath, sf_strerror(sndfile));
+		LOG("Could not open audio in %s: %s\n", filePath, sf_strerror(sndfile));
+		/*fprintf(stderr, "Could not open audio in %s: %s\n", filePath, sf_strerror(sndfile));*/
 		return;
 	}
 	if (sfinfo.frames < 1 || sfinfo.frames > (sf_count_t)(INT_MAX / sizeof(short)) / sfinfo.channels) {
-		fprintf(stderr, "Bad sample count in %s (%" PRId64 ")\n", filePath, sfinfo.frames);
+		LOG("Bad sample count in %s (%" PRId64 ")\n", filePath, sfinfo.frames);
+		/*fprintf(stderr, "Bad sample count in %s (%" PRId64 ")\n", filePath, sfinfo.frames);*/
 		sf_close(sndfile);
 		return;
 	}
@@ -40,7 +74,8 @@ void ResourceAudioClip::Load() {
 			format = AL_FORMAT_BFORMAT3D_16;
 	}
 	if (!format) {
-		fprintf(stderr, "Unsupported channel count: %d\n", sfinfo.channels);
+		LOG("Unsupported channel count: %d\n", sfinfo.channels);
+		/*fprintf(stderr, "Unsupported channel count: %d\n", sfinfo.channels);*/
 		sf_close(sndfile);
 		return;
 	}
@@ -52,7 +87,7 @@ void ResourceAudioClip::Load() {
 	if (num_frames < 1) {
 		free(membuf);
 		sf_close(sndfile);
-		fprintf(stderr, "Failed to read samples in %s (%" PRId64 ")\n", filePath, num_frames);
+		LOG("Failed to read samples in %s (%" PRId64 ")\n", filePath, num_frames);
 		return;
 	}
 	num_bytes = (ALsizei)(num_frames * sfinfo.channels) * (ALsizei) sizeof(short);
@@ -75,8 +110,6 @@ void ResourceAudioClip::Load() {
 			alDeleteBuffers(1, &buffer);
 		return;
 	}
-
-	p_SoundEffectBuffers.push_back(buffer); // add to the list of known buffers
 }
 
 void ResourceAudioClip::Unload() {
