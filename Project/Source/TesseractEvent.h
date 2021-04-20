@@ -15,7 +15,7 @@ struct AssetFolder;
 */
 
 enum class TesseractEventType {
-	UNKNOWN,
+	UNKNOWN = 0,
 	GAMEOBJECT_DESTROYED,
 	ADD_COMPONENT,
 	PRESSED_PLAY,
@@ -29,7 +29,8 @@ enum class TesseractEventType {
 	MOUSE_CLICKED,
 	MOUSE_RELEASED,
 	CHANGE_SCENE,
-	RESOURCES_LOADED
+	RESOURCES_LOADED,
+	COUNT = 15
 };
 
 struct TesseractEvent {

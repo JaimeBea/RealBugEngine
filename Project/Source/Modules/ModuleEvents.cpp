@@ -19,6 +19,7 @@ static void CleanUpEvent(TesseractEvent& e) {
 }
 
 bool ModuleEvents::Init() {
+	observerArray = new std::vector<Module*>[(int) TesseractEventType::COUNT];
 	return true;
 }
 
@@ -36,7 +37,7 @@ UpdateStatus ModuleEvents::PostUpdate() {
 }
 
 bool ModuleEvents::CleanUp() {
-	observerMap.clear();
+	delete[] observerArray;
 	while (!eventQueue.empty()) {
 		TesseractEvent e(TesseractEventType::UNKNOWN);
 		eventQueue.try_pop(e);
@@ -46,13 +47,13 @@ bool ModuleEvents::CleanUp() {
 }
 
 void ModuleEvents::AddObserverToEvent(TesseractEventType type, Module* moduleToAdd) {
-	observerMap[type].push_back(moduleToAdd);
+	observerArray[(int) type].push_back(moduleToAdd);
 }
 
 void ModuleEvents::RemoveObserverFromEvent(TesseractEventType type, Module* moduleToRemove) {
-	for (std::vector<Module*>::iterator it = observerMap[type].begin(); it != observerMap[type].end(); ++it) {
+	for (std::vector<Module*>::iterator it = observerArray[(int) type].begin(); it != observerArray[(int) type].end(); ++it) {
 		if (*it == moduleToRemove) {
-			observerMap[type].erase(it);
+			observerArray[(int) type].erase(it);
 			return;
 		}
 	}
@@ -72,7 +73,7 @@ void ModuleEvents::ProcessEvents() {
 }
 
 void ModuleEvents::ProcessEvent(TesseractEvent& e) {
-	for (Module* m : observerMap[e.type]) {
+	for (Module* m : observerArray[(int) e.type]) {
 		m->ReceiveEvent(e);
 	}
 }

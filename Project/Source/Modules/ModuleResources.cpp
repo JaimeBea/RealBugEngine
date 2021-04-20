@@ -80,13 +80,13 @@ bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
 
-	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
-	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
-
 	return true;
 }
 
 bool ModuleResources::Start() {
+	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
+	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
+
 	stopImportThread = false;
 
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);

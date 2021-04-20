@@ -19,12 +19,13 @@ ModuleTime::ModuleTime() {
 	timer.Start();
 }
 
-bool ModuleTime::Init() {
+bool ModuleTime::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PAUSE, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PLAY, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_RESUME, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STEP, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STOP, this);
+	
 	return true;
 }
 

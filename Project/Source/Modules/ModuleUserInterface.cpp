@@ -27,15 +27,16 @@
 #include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_UPDATE, this);
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
+
 
 	return true;
 }
 
 bool ModuleUserInterface::Start() {
 	CreateQuadVBO();
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_UPDATE, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
 	return true;
 }
 
