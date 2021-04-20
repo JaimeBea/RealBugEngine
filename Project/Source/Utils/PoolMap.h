@@ -69,7 +69,7 @@ public:
 		return values.begin();
 	}
 
-	typename Pool<const V>::Iterator begin() const {
+	typename Pool<V>::ConstIterator begin() const {
 		return values.begin();
 	}
 
@@ -77,7 +77,7 @@ public:
 		return values.end();
 	}
 
-	typename Pool<const V>::Iterator end() const {
+	typename Pool<V>::ConstIterator end() const {
 		return values.end();
 	}
 
