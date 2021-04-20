@@ -15,7 +15,7 @@
 #define JSON_TAG_GAIN "Gain"
 #define JSON_TAG_MUTE "Mute"
 #define JSON_TAG_LOOPING "Looping"
-#define JSON_TAG_BUFFER_ID "BufferId"
+#define JSON_TAG_AUDIO_CLIP_ID "AudioClipId"
 #define JSON_TAG_SPATIAL_BLEND "SpatialBlend"
 #define JSON_TAG_SOURCE_TYPE "SourceType"
 #define JSON_TAG_INNER_ANGLE "InnerAngle"
@@ -58,11 +58,23 @@ void ComponentAudioSource::OnEditorUpdate() {
 
 	ImGui::ResourceSlot<ResourceAudioClip>("AudioClip", &audioClipId);
 
-	ImGui::Checkbox("Mute", &mute);
-	ImGui::Checkbox("Loop", &loopSound);
-	ImGui::DragFloat("Gain", &gain, App->editor->dragSpeed2f, 0, 1);
-	ImGui::DragFloat("Pitch", &pitch, App->editor->dragSpeed2f, 0.5, 2);
+	if (ImGui::Checkbox("Mute", &mute)) {
+		if (mute) {
+			alSourcef(sourceId, AL_GAIN, 0.0f);
+		} else {
+			alSourcef(sourceId, AL_GAIN, gain);
+		}
+	}
 
+	if (ImGui::Checkbox("Loop", &loopSound)) {
+		alSourcef(sourceId, AL_LOOPING, loopSound);
+	}
+	if (ImGui::DragFloat("Gain", &gain, App->editor->dragSpeed3f, 0, 1)) {
+		alSourcef(sourceId, AL_GAIN, gain);
+	}
+	if (ImGui::DragFloat("Pitch", &pitch, App->editor->dragSpeed3f, 0.5, 2)) {
+		alSourcef(sourceId, AL_PITCH, pitch);
+	}
 	ImGui::Separator();
 	ImGui::TextColored(App->editor->titleColor, "Position Settings");
 	ImGui::Text("Spatial Blend");
@@ -116,7 +128,7 @@ void ComponentAudioSource::UpdateSourceParameters() const {
 
 	alSourcef(sourceId, AL_PITCH, pitch);
 	alSourcei(sourceId, AL_LOOPING, loopSound);
-	alSourcei(sourceId, AL_BUFFER, audioResource->buffer);
+	alSourcei(sourceId, AL_BUFFER, audioResource->ALbuffer);
 
 	if (!spatialBlend) {
 		alSourcei(sourceId, AL_SOURCE_RELATIVE, AL_TRUE);
@@ -174,7 +186,7 @@ void ComponentAudioSource::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_GAIN] = gain;
 	jComponent[JSON_TAG_MUTE] = mute;
 	jComponent[JSON_TAG_LOOPING] = loopSound;
-	jComponent[JSON_TAG_BUFFER_ID] = audioClipId;
+	jComponent[JSON_TAG_AUDIO_CLIP_ID] = audioClipId;
 	jComponent[JSON_TAG_SPATIAL_BLEND] = spatialBlend;
 	jComponent[JSON_TAG_SOURCE_TYPE] = sourceType;
 	jComponent[JSON_TAG_INNER_ANGLE] = innerAngle;
@@ -187,7 +199,7 @@ void ComponentAudioSource::Load(JsonValue jComponent) {
 	gain = jComponent[JSON_TAG_GAIN];
 	mute = jComponent[JSON_TAG_MUTE];
 	loopSound = jComponent[JSON_TAG_LOOPING];
-	audioClipId = jComponent[JSON_TAG_BUFFER_ID];
+	audioClipId = jComponent[JSON_TAG_AUDIO_CLIP_ID];
 	spatialBlend = jComponent[JSON_TAG_SPATIAL_BLEND];
 	sourceType = jComponent[JSON_TAG_SOURCE_TYPE];
 	innerAngle = jComponent[JSON_TAG_INNER_ANGLE];
