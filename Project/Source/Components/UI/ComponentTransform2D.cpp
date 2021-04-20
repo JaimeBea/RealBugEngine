@@ -178,12 +178,12 @@ void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	InvalidateHierarchy();
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrix() {
+const float4x4 ComponentTransform2D::GetGlobalMatrix() const {
 	return globalMatrix;
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
-	if (isRunning) {
+const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) const {
+	if (view3DActive) {
 		return globalMatrix * float4x4::Scale(size.x / 100.0f, size.y / 100.0f, 0);
 	}
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);

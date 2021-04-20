@@ -97,7 +97,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	}
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) {
+void ComponentText::Draw(ComponentTransform2D* transform) const  {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

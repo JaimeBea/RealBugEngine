@@ -129,10 +129,6 @@ void ModuleUserInterface::Render() {
 	}
 }
 
-GameObject* ModuleUserInterface::GetCanvas() const {
-	return canvas;
-}
-
 unsigned int ModuleUserInterface::GetQuadVBO() {
 	return quadVBO;
 }

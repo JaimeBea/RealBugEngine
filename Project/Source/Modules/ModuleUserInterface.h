@@ -35,6 +35,4 @@ private:
 	ComponentEventSystem* currentEvSys = nullptr;
 	unsigned int quadVBO = 0;
 
-public:
-	GameObject* canvas = nullptr;
 };
