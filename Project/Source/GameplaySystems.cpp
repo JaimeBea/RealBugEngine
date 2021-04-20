@@ -1,6 +1,7 @@
 #include "GameplaySystems.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"

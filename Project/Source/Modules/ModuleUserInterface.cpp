@@ -121,7 +121,7 @@ void ModuleUserInterface::GetCharactersInString(UID font, const std::string& sen
 void ModuleUserInterface::Render() {
 	Scene* scene = App->scene->scene;
 	if (scene != nullptr) {
-		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {
+		for (ComponentCanvasRenderer& canvasRenderer : scene->canvasRendererComponents) {
 			if (canvasRenderer.GetOwner().IsActiveInHierarchy()) {
 				canvasRenderer.Render(&canvasRenderer.GetOwner());
 			}

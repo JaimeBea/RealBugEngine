@@ -253,7 +253,8 @@ void ModuleResources::DecreaseReferenceCount(UID id) {
 }
 
 unsigned ModuleResources::GetReferenceCount(UID id) const {
-	return referenceCounts.find(id) != referenceCounts.end() ? referenceCounts.at(id) : 0;
+	auto it = referenceCounts.find(id);
+	return it != referenceCounts.end() ? it->second : 0;
 }
 
 std::string ModuleResources::GenerateResourcePath(UID id) const {

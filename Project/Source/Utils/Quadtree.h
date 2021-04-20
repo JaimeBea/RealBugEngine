@@ -253,8 +253,8 @@ public:
 
 		root.elementCount = 0;
 		root.firstElement = nullptr;
-		quadNodes.Clear();
-		elements.Clear();
+		quadNodes.Deallocate();
+		elements.Deallocate();
 
 		operative = false;
 

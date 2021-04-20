@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/FileDialog.h"
 #include "FileSystem/SceneImporter.h"
@@ -127,8 +128,8 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 	case TesseractEventType::RESOURCES_LOADED:
 		if (App->time->IsGameRunning() && !sceneLoaded) {
 			sceneLoaded = true;
-			for (auto& it : scene->scriptComponents) {
-				it.OnStart();
+			for (ComponentScript& script : scene->scriptComponents) {
+				script.OnStart();
 			}
 		}
 		break;

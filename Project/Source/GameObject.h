@@ -15,6 +15,54 @@
 #include <vector>
 #include <string>
 
+template<typename T>
+class ComponentView {
+public:
+	class Iterator {
+	public:
+		Iterator(const ComponentView<T>& view__, std::vector<Component*>::const_iterator it__)
+			: view(view__), it(it__) {}
+
+		const Iterator& operator++() {
+			++it;
+			while (*this != view.end() && (*it)->GetType() != T::staticType) {
+				++it;
+			}
+			return *this;
+		}
+
+		bool operator!=(const Iterator& other) const {
+			return it != other.it;
+		}
+
+		T& operator*() const {
+			return (T&) **it;
+		}
+
+	private:
+		const ComponentView<T>& view;
+		std::vector<Component*>::const_iterator it;
+	};
+
+public:
+	ComponentView(const std::vector<Component*>& components__)
+		: components(components__) {}
+
+	typename Iterator begin() const {
+		std::vector<Component*>::const_iterator it = components.begin();
+		while (it != components.end() && (*it)->GetType() != T::staticType) {
+			++it;
+		}
+		return Iterator(*this, it);
+	}
+
+	typename Iterator end() const {
+		return Iterator(*this, components.end());
+	}
+
+private:
+	const std::vector<Component*>& components;
+};
 
 class TESSERACT_ENGINE_API GameObject {
 public:
@@ -33,9 +81,9 @@ public:
 	template<class T> T* CreateComponentDeferred();
 	template<class T> bool HasComponent() const;
 	template<class T> T* GetComponent() const;
-	template<class T> std::vector<T*> GetComponents() const;
+	template<class T> ComponentView<T> GetComponents() const;
 	template<class T> GameObject* HasComponentInAnyParent(GameObject* current) const; // Finds in the current object or in any parent of this Object the T Component. Returns the GameObject if found, else nullptr
-	std::vector<Component*> GetComponents() const;
+	const std::vector<Component*>& GetComponents() const;
 	void RemoveComponent(Component* component);
 	void RemoveAllComponents();
 
@@ -67,7 +115,7 @@ public:
 
 	bool flag = false; // Auxiliary variable to help with iterating on the Quadtree
 
-	std::vector<std::pair<ComponentType, UID>> components;
+	std::vector<Component*> components;
 
 private:
 	bool active = true;
@@ -79,9 +127,9 @@ private:
 template<class T>
 inline T* GameObject::CreateComponent() {
 	if (!T::allowMultipleComponents && HasComponent<T>()) return nullptr;
-	UID componentId = GenerateUID();
-	components.push_back(std::pair<ComponentType, UID>(T::staticType, componentId));
-	return (T*) scene->CreateComponentByTypeAndId(this, T::staticType, componentId);
+	T* component = (T*) scene->CreateComponentByTypeAndId(this, T::staticType, GenerateUID());
+	components.push_back(component);
+	return component;
 }
 
 template<class T>
@@ -102,8 +150,8 @@ inline T* GameObject::CreateComponentDeferred() {
 
 template<class T>
 inline bool GameObject::HasComponent() const {
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		if (pair.first == T::staticType) {
+	for (Component* component : components) {
+		if (component->GetType() == T::staticType) {
 			return true;
 		}
 	}
@@ -113,25 +161,17 @@ inline bool GameObject::HasComponent() const {
 
 template<class T>
 inline T* GameObject::GetComponent() const {
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		if (pair.first == T::staticType) {
-			return (T*) scene->GetComponentByTypeAndId(pair.first, pair.second);
+	for (Component* component : components) {
+		if (component->GetType() == T::staticType) {
+			return (T*) component;
 		}
 	}
 	return nullptr;
 }
 
 template<class T>
-inline std::vector<T*> GameObject::GetComponents() const {
-	std::vector<T*> auxComponents;
-
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		if (pair.first == T::staticType) {
-			auxComponents.push_back((T*) scene->GetComponentByTypeAndId(pair.first, pair.second));
-		}
-	}
-
-	return auxComponents;
+inline ComponentView<T> GameObject::GetComponents() const {
+	return ComponentView<T>(components);
 }
 
 template<class T>

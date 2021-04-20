@@ -43,9 +43,8 @@ void ComponentButton::OnClicked() {
 	clicked = true;
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
-	std::vector<ComponentScript*> scriptComponents = GetOwner().GetComponents<ComponentScript>();
-	for (ComponentScript* scriptComponent : scriptComponents) {
-		Resource* scriptResource = App->resources->GetResource(scriptComponent->GetScriptID());
+	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
+		Resource* scriptResource = App->resources->GetResource(scriptComponent.GetScriptID());
 		if (scriptResource != nullptr) {
 			Script* script = ((ResourceScript*) scriptResource)->script;
 			if (script != nullptr) {

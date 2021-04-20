@@ -8,14 +8,14 @@ template<typename T>
 class Pool {
 public:
 	~Pool() {
-		Clear();
+		Deallocate();
 	}
 
 	void Allocate(unsigned amount) {
-		Clear();
+		Deallocate();
 
 		// Allocate
-		size = amount;
+		capacity = amount;
 		count = 0;
 		data = (T*) ::operator new(amount * sizeof(T));
 		nextFree = (T**) ::operator new(amount * sizeof(T*));
@@ -27,8 +27,8 @@ public:
 		}
 	}
 
-	void Clear() {
-		size = 0;
+	void Deallocate() {
+		capacity = 0;
 		count = 0;
 		if (data != nullptr) {
 			::operator delete(data);
@@ -41,13 +41,14 @@ public:
 		firstFree = nullptr;
 	}
 
-	T* Obtain() {
+	template<typename... Args>
+	T* Obtain(Args&&... args) {
 		assert(firstFree != nullptr); // ERROR: The pool hasn't been initialized
 
-		assert(firstFree != data + size); // ERROR: Pool overflow
+		assert(firstFree != data + capacity); // ERROR: Pool overflow
 
 		// Obtain a new object
-		T* object = new (firstFree) T();
+		T* object = new (firstFree) T(std::forward<Args>(args)...);
 		size_t index = object - data;
 		firstFree = nextFree[index];
 		nextFree[index] = nullptr;
@@ -57,7 +58,7 @@ public:
 	}
 
 	void Release(T* object) {
-		assert(object >= data && object < data + size); // ERROR: The object is not in the data array
+		assert(object >= data && object < data + capacity); // ERROR: The object is not in the data array
 
 		size_t index = object - data;
 
@@ -70,15 +71,19 @@ public:
 		count -= 1;
 	}
 
-	void ReleaseAll() {
+	void Clear() {
 		// Reset count and free list
 		count = 0;
 		firstFree = data;
 
 		// Initialize free list
-		for (size_t i = 0; i < size; ++i) {
+		for (size_t i = 0; i < capacity; ++i) {
 			nextFree[i] = data + (i + 1);
 		}
+	}
+
+	size_t Capacity() {
+		return capacity;
 	}
 
 	size_t Count() {
@@ -95,7 +100,7 @@ public:
 
 		const Iterator& operator++() {
 			index += 1;
-			while (index < pool->size && pool->nextFree[index] != nullptr) {
+			while (index < pool->capacity && pool->nextFree[index] != nullptr) {
 				index += 1;
 			}
 			return *this;
@@ -116,7 +121,7 @@ public:
 
 	typename Pool<T>::Iterator begin() {
 		size_t index = 0;
-		while (index < size && nextFree[index] != nullptr) {
+		while (index < capacity && nextFree[index] != nullptr) {
 			index += 1;
 		}
 		return Pool<T>::Iterator(*this, index);
@@ -124,22 +129,22 @@ public:
 
 	typename Pool<const T>::Iterator begin() const {
 		size_t index = 0;
-		while (index < size && nextFree[index] != nullptr) {
+		while (index < capacity && nextFree[index] != nullptr) {
 			index += 1;
 		}
 		return Pool<const T>::Iterator((Pool<const T>&) *this, index);
 	}
 
 	typename Pool<T>::Iterator end() {
-		return Pool<T>::Iterator(*this, size);
+		return Pool<T>::Iterator(*this, capacity);
 	}
 
 	typename Pool<const T>::Iterator end() const {
-		return Pool<const T>::Iterator((Pool<const T>&) *this, size);
+		return Pool<const T>::Iterator((Pool<const T>&) *this, capacity);
 	}
 
 private:
-	size_t size = 0;		// Max number of objects in the pool.
+	size_t capacity = 0;	// Max number of objects in the pool.
 	size_t count = 0;		// Current number of objects in the pool.
 	T* data = nullptr;		// Data storage.
 	T** nextFree = nullptr; // Linked list of free objects. Null pointers mean that the object isn't free. Last item points to the end of the data.

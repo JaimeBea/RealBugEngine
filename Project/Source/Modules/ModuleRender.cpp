@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
@@ -184,12 +185,12 @@ UpdateStatus ModuleRender::Update() {
 
 		// --- All Gizmos options
 		if (drawCameraFrustums) {
-			for (ComponentCamera camera : scene->cameraComponents) {
+			for (ComponentCamera& camera : scene->cameraComponents) {
 				camera.DrawGizmos();
 			}
 		}
 		if (drawLightGizmos) {
-			for (ComponentLight light : scene->lightComponents) {
+			for (ComponentLight& light : scene->lightComponents) {
 				light.DrawGizmos();
 			}
 		}
@@ -423,18 +424,20 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 
 void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
-	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
+	ComponentView<ComponentMeshRenderer> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
 	if (boundingBox && drawAllBoundingBoxes && (App->camera->IsEngineCameraActive() || debugMode)) {
 		boundingBox->DrawBoundingBox();
 	}
 
-	for (ComponentMeshRenderer* mesh : meshes) {
-		mesh->Draw(transform->GetGlobalMatrix());
+	for (ComponentMeshRenderer& mesh : meshes) {
+		mesh.Draw(transform->GetGlobalMatrix());
 
-		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
-		culledTriangles += resourceMesh->numIndices / 3;
+		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh.meshId);
+		if (resourceMesh != nullptr) {
+			culledTriangles += resourceMesh->numIndices / 3;
+		}
 	}
 }
 
