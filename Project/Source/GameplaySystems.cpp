@@ -31,6 +31,13 @@ TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
 
 // ------------- DEBUG ------------- //
 
+void Debug::Log(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	LOG(fmt, args);
+	va_end(args);
+}
+
 void Debug::ToggleDebugMode() {
 	App->renderer->ToggleDebugMode();
 }

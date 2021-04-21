@@ -21,10 +21,10 @@ public:
 
 	void UpdateAudioSource();
 	void UpdateSourceParameters() const;
-	void Play();
-	void Stop();
-	void Pause() const;
-	bool isPlaying() const;
+	TESSERACT_ENGINE_API void Play();
+	TESSERACT_ENGINE_API void Stop();
+	TESSERACT_ENGINE_API void Pause() const;
+	TESSERACT_ENGINE_API bool isPlaying() const;
 
 private:
 	bool drawGizmos = true;
@@ -37,9 +37,9 @@ private:
 	float3 direction = {0.f, 0.f, 0.f};
 	bool loopSound = false;
 	UID audioClipId = 0;
-	int spatialBlend = 0;		  // 2D = 0; 3D = 1;
-	int sourceType = 0;			  // Omnidirectional = 0; Directional = 1;
-	float innerAngle = 90.f;	  // In Degrees
-	float outerAngle = 180.f;	  // In Degrees
-	float gainAttenuation = 0.2f; // Attenuation inside the Outer Angle in Directional Source
+	int spatialBlend = 0;	  // 2D = 0; 3D = 1;
+	int sourceType = 0;		  // Omnidirectional = 0; Directional = 1;
+	float innerAngle = 90.f;  // Inner angle from directional source where gain parameter will be "gain"
+	float outerAngle = 180.f; // Outer angle from directional source where gain parameter will be "outerGain"
+	float outerGain = 0.f;	  // Gain applied outside outerAngle. Between inner and outer, OpenAL do an interpolation
 };

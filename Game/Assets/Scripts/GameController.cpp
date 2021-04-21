@@ -17,7 +17,7 @@ void GameController::Start() {
 	focusDistance = 100.f;
 	showWireframe = false;
 	transitionFinished = false;
-	LOG("SCRIPT STARTED");
+	Debug::Log("SCRIPT STARTED");
 
 	gameCamera = GameplaySystems::GetGameObject("Game Camera");
 	godCamera = GameplaySystems::GetGameObject("God Camera");
