@@ -50,7 +50,7 @@ public:
 	int GetTotalTriangles() const;
 
 public:
-	GameObject* root = nullptr;		 // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
+	GameObject* root = nullptr;			  // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
 	PoolMap<UID, GameObject> gameObjects; // Pool of GameObjects. Stores all the memory of all existing GameObject in a contiguous memory space.
 
 	// ---- Components ---- //
@@ -72,6 +72,8 @@ public:
 	PoolMap<UID, ComponentSkyBox> skyboxComponents;
 	PoolMap<UID, ComponentScript> scriptComponents;
 	PoolMap<UID, ComponentAnimation> animationComponents;
+	PoolMap<UID, ComponentAudioSource> audioSourceComponents;
+	PoolMap<UID, ComponentAudioListener> audioListenerComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

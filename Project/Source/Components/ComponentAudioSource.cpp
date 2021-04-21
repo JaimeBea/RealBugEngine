@@ -5,11 +5,13 @@
 #include "Application.h"
 #include "Modules/ModuleAudio.h"
 #include "Modules/ModuleEditor.h"
+#include "Utils/Logging.h"
+#include "Utils/ImGuiUtils.h"
 
 #include "debugdraw.h"
 #include "Math/float3.h"
 #include "imgui.h"
-#include "Utils/ImGuiUtils.h"
+
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_PITCH "Pitch"
