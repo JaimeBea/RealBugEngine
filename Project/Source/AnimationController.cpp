@@ -10,12 +10,12 @@
 #include "Utils/Leaks.h"
 
 bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat) {
-	ResourceAnimation* animationResource = static_cast<ResourceAnimation*>(App->resources->GetResource(animationID));
+	ResourceAnimation* animationResource = App->resources->GetResource<ResourceAnimation>(animationID);
 
 	if (!animationResource) return false;
 
 	float currentSample = (currentTime * (animationResource->keyFrames.size() - 1)) / animationResource->duration;
-	int intPart = (int)std::floor(currentSample);
+	int intPart = (int) std::floor(currentSample);
 	float decimal = currentSample - intPart;
 
 	//find in hash by name
@@ -34,7 +34,7 @@ bool AnimationController::GetTransform(const char* name, float3& pos, Quat& quat
 }
 
 void AnimationController::Update() {
-	ResourceAnimation* animationResource = static_cast<ResourceAnimation*>(App->resources->GetResource(animationID));
+	ResourceAnimation* animationResource = App->resources->GetResource<ResourceAnimation>(animationID);
 	if (!animationResource) return;
 
 	currentTime += App->time->GetDeltaTime();

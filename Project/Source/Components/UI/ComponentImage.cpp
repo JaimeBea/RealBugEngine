@@ -52,7 +52,7 @@ void ComponentImage::OnEditorUpdate() {
 	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 
-	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+	ResourceTexture* textureResource = App->resources->GetResource<ResourceTexture>(textureID);
 
 	if (textureResource != nullptr) {
 		int width;
@@ -121,7 +121,7 @@ const float4& ComponentImage::GetTintColor() const {
 
 void ComponentImage::Draw(ComponentTransform2D* transform) {
 	unsigned int program = 0;
-	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
 	} else {
@@ -163,7 +163,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
 	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
 
-	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+	ResourceTexture* textureResource = App->resources->GetResource<ResourceTexture>(textureID);
 	if (textureResource != nullptr) {
 		glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
 		glUniform1i(glGetUniformLocation(program, "hasDiffuse"), 1);
