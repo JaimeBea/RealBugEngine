@@ -1,14 +1,13 @@
 #include "ModuleEvents.h"
 
 #include "Utils/Logging.h"
+#include "Resources/Resource.h"
+#include "Utils/AssetFile.h"
 
 #include "Utils/Leaks.h"
 
 static void CleanUpEvent(TesseractEvent& e) {
 	switch (e.type) {
-	case TesseractEventType::ADD_COMPONENT:
-		RELEASE(e.addComponent.component);
-		break;
 	case TesseractEventType::ADD_RESOURCE:
 		RELEASE(e.addResource.resource);
 		break;

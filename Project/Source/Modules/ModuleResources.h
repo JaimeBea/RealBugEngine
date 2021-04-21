@@ -11,7 +11,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
-#include <concurrent_queue.h>
 
 class ModuleResources : public Module {
 public:

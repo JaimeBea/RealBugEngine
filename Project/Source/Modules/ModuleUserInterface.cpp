@@ -5,6 +5,7 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
 #include "ModuleFiles.h"
@@ -121,7 +122,7 @@ void ModuleUserInterface::GetCharactersInString(UID font, const std::string& sen
 void ModuleUserInterface::Render() {
 	Scene* scene = App->scene->scene;
 	if (scene != nullptr) {
-		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {
+		for (ComponentCanvasRenderer& canvasRenderer : scene->canvasRendererComponents) {
 			if (canvasRenderer.GetOwner().IsActiveInHierarchy()) {
 				canvasRenderer.Render(&canvasRenderer.GetOwner());
 			}

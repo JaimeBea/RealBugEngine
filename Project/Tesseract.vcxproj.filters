@@ -329,7 +329,6 @@
     <ClInclude Include="Source\Resources\ResourceMaterial.h" />
     <ClInclude Include="Source\Resources\ResourceMesh.h" />
     <ClInclude Include="Source\Resources\ResourceTexture.h" />
-    <ClInclude Include="Source\Utils\VectorMap.h" />
     <ClInclude Include="Source\AnimationController.h" />
     <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
     <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
@@ -422,6 +421,7 @@
     <ClInclude Include="Source\Components\ComponentAudioSource.h" />
     <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
     <ClInclude Include="Source\FileSystem\AudioImporter.h" />
+    <ClInclude Include="Source\Utils\PoolMap.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
@@ -446,6 +446,7 @@
     <None Include="..\Game\Shaders\skybox_vertex.glsl" />
     <None Include="..\Game\Shaders\ui_fragment.glsl" />
     <None Include="..\Game\Shaders\ui_vertex.glsl" />
+    <None Include="Debugging.props" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libs\freetype\lib\freetype.lib" />

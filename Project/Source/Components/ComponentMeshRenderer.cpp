@@ -408,7 +408,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 }
 
 void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
-	ComponentMeshRenderer* component = owner.CreateComponentDeferred<ComponentMeshRenderer>();
+	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
 	component->meshId = meshId;
 	component->materialId = materialId;
 }

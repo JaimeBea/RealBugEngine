@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Components/ComponentType.h"
+#include "FileSystem/JsonValue.h"
 #include "Utils/UID.h"
 
-class JsonValue;
 class GameObject;
 
 #if defined(TESSERACT_ENGINE_API)

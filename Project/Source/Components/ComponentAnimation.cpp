@@ -36,7 +36,7 @@ void ComponentAnimation::Load(JsonValue jComponent) {
 }
 
 void ComponentAnimation::DuplicateComponent(GameObject& owner) {
-	ComponentAnimation* component = owner.CreateComponentDeferred<ComponentAnimation>();
+	ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
 	component->animationController.animationID = animationController.animationID;
 	component->animationController.loop = animationController.loop;
 	component->animationController.currentTime = animationController.currentTime;

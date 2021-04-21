@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Module.h"
-#include "Globals.h"
 
 struct SDL_version;
 

@@ -1,5 +1,6 @@
 #include "ComponentTransform.h"
 
+#include "Globals.h"
 #include "Application.h"
 #include "GameObject.h"
 #include "Components/ComponentCamera.h"
@@ -76,7 +77,7 @@ void ComponentTransform::Load(JsonValue jComponent) {
 }
 
 void ComponentTransform::DuplicateComponent(GameObject& owner) {
-	ComponentTransform* component = owner.CreateComponentDeferred<ComponentTransform>();
+	ComponentTransform* component = owner.CreateComponent<ComponentTransform>();
 	component->SetPosition(this->GetPosition());
 	component->SetRotation(this->GetRotation());
 	component->SetScale(this->GetScale());

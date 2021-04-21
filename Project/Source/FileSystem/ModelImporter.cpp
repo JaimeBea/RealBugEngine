@@ -730,8 +730,8 @@ void ModelImporter::CacheBones(GameObject* node, std::unordered_map<std::string,
 }
 
 void ModelImporter::SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
-	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
-		meshRenderer->goBones = goBones;
+	for (ComponentMeshRenderer& meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
+		meshRenderer.goBones = goBones;
 	}
 
 	for (GameObject* child : node->GetChildren()) {

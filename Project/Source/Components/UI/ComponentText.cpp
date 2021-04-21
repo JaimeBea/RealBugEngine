@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Application.h"
+#include "ComponentTransform2D.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
@@ -82,7 +83,7 @@ void ComponentText::Load(JsonValue jComponent) {
 }
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
-	ComponentText* component = owner.CreateComponentDeferred<ComponentText>();
+	ComponentText* component = owner.CreateComponent<ComponentText>();
 	component->shaderID = shaderID;
 	component->fontID = fontID;
 	component->fontSize = fontSize;

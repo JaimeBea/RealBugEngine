@@ -3,7 +3,6 @@
 #include "Logging.h"
 
 #include "AL/alc.h"
-#include <iostream>
 #include <string>
 
 #define alcCall(function, device, ...) alcCallImpl(__FILE__, __LINE__, function, device, __VA_ARGS__)

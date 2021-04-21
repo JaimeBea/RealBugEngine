@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
+#include "Utils/MSTimer.h"
 
 #include "Utils/Logging.h"
 #include "IL/il.h"

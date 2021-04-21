@@ -2,11 +2,14 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentAnimation.h"
+#include "Components/ComponentCamera.h"
+#include "Components/ComponentLight.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"
@@ -184,12 +187,12 @@ UpdateStatus ModuleRender::Update() {
 
 		// --- All Gizmos options
 		if (drawCameraFrustums) {
-			for (ComponentCamera camera : scene->cameraComponents) {
+			for (ComponentCamera& camera : scene->cameraComponents) {
 				camera.DrawGizmos();
 			}
 		}
 		if (drawLightGizmos) {
-			for (ComponentLight light : scene->lightComponents) {
+			for (ComponentLight& light : scene->lightComponents) {
 				light.DrawGizmos();
 			}
 		}
@@ -376,15 +379,23 @@ void ModuleRender::DrawSceneRecursive(const Quadtree<GameObject>::Node& node, co
 }
 
 bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
-	float3 points[8];
-	obb.GetCornerPoints(points);
+	float3 points[8] {
+		obb.pos - obb.r.x * obb.axis[0] - obb.r.y * obb.axis[1] - obb.r.z * obb.axis[2],
+		obb.pos - obb.r.x * obb.axis[0] - obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2],
+		obb.pos - obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] - obb.r.z * obb.axis[2],
+		obb.pos - obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2],
+		obb.pos + obb.r.x * obb.axis[0] - obb.r.y * obb.axis[1] - obb.r.z * obb.axis[2],
+		obb.pos + obb.r.x * obb.axis[0] - obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2],
+		obb.pos + obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] - obb.r.z * obb.axis[2],
+		obb.pos + obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2]
+	};
 
 	const FrustumPlanes& frustumPlanes = App->camera->GetFrustumPlanes();
 	for (const Plane& plane : frustumPlanes.planes) {
 		// check box outside/inside of frustum
 		int out = 0;
 		for (int i = 0; i < 8; i++) {
-			out += (plane.SignedDistance(points[i]) > 0 ? 1 : 0);
+			out += (plane.normal.Dot(points[i]) - plane.d > 0 ? 1 : 0);
 		}
 		if (out == 8) return false;
 	}
@@ -415,18 +426,20 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 
 void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	ComponentTransform* transform = gameObject->GetComponent<ComponentTransform>();
-	std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
+	ComponentView<ComponentMeshRenderer> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
 	ComponentBoundingBox* boundingBox = gameObject->GetComponent<ComponentBoundingBox>();
 
 	if (boundingBox && drawAllBoundingBoxes && (App->camera->IsEngineCameraActive() || debugMode)) {
 		boundingBox->DrawBoundingBox();
 	}
 
-	for (ComponentMeshRenderer* mesh : meshes) {
-		mesh->Draw(transform->GetGlobalMatrix());
+	for (ComponentMeshRenderer& mesh : meshes) {
+		mesh.Draw(transform->GetGlobalMatrix());
 
-		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
-		culledTriangles += resourceMesh->numIndices / 3;
+		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh.meshId);
+		if (resourceMesh != nullptr) {
+			culledTriangles += resourceMesh->numIndices / 3;
+		}
 	}
 }
 

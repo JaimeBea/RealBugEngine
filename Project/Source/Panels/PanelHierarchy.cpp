@@ -10,6 +10,8 @@
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentImage.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentButton.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
