@@ -13,8 +13,6 @@
 
 #include "Utils/Leaks.h"
 
-#define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
-
 ModuleTime::ModuleTime() {
 	timer.Start();
 }
