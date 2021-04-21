@@ -28,6 +28,7 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEvents.h"
 #include "TesseractEvent.h"
+#include "Utils/AssetFile.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
@@ -215,7 +216,8 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 }
 
 Resource* ModuleResources::GetResource(UID id) const {
-	return resources.find(id) != resources.end() ? resources.at(id).get() : nullptr;
+	auto it = resources.find(id);
+	return it != resources.end() ? it->second.get() : nullptr;
 }
 
 AssetFolder* ModuleResources::GetRootFolder() const {
@@ -252,7 +254,8 @@ void ModuleResources::DecreaseReferenceCount(UID id) {
 }
 
 unsigned ModuleResources::GetReferenceCount(UID id) const {
-	return referenceCounts.find(id) != referenceCounts.end() ? referenceCounts.at(id) : 0;
+	auto it = referenceCounts.find(id);
+	return it != referenceCounts.end() ? it->second : 0;
 }
 
 std::string ModuleResources::GenerateResourcePath(UID id) const {

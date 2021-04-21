@@ -2,6 +2,8 @@
 
 #include "Utils/Logging.h"
 
+#include "Math/myassert.h"
+
 #include "Utils/Leaks.h"
 
 const char* GetResourceTypeName(ResourceType type) {

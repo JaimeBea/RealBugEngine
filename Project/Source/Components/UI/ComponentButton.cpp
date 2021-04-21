@@ -4,10 +4,15 @@
 #include "imgui.h"
 #include "GameObject.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Components/ComponentScript.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
 #include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
+#include "Script.h"
+
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_COLOR_HOVER "ColorHover"
@@ -43,9 +48,8 @@ void ComponentButton::OnClicked() {
 	clicked = true;
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
-	std::vector<ComponentScript*> scriptComponents = GetOwner().GetComponents<ComponentScript>();
-	for (ComponentScript* scriptComponent : scriptComponents) {
-		Resource* scriptResource = App->resources->GetResource(scriptComponent->GetScriptID());
+	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
+		Resource* scriptResource = App->resources->GetResource(scriptComponent.GetScriptID());
 		if (scriptResource != nullptr) {
 			Script* script = ((ResourceScript*) scriptResource)->script;
 			if (script != nullptr) {
@@ -90,7 +94,7 @@ const float4& ComponentButton::GetTintColor() const {
 }
 
 void ComponentButton::DuplicateComponent(GameObject& owner) {
-	ComponentButton* component = owner.CreateComponentDeferred<ComponentButton>();
+	ComponentButton* component = owner.CreateComponent<ComponentButton>();
 	component->colorClicked = colorClicked;
 }
 

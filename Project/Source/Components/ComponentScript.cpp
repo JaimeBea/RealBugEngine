@@ -8,6 +8,7 @@
 #include "Modules/ModuleScene.h"
 #include "Utils/FileDialog.h"
 #include "Utils/ImGuiUtils.h"
+#include "Script.h"
 
 #include "imgui.h"
 

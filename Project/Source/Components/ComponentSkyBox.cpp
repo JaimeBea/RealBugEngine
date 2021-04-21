@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Utils/ImGuiUtils.h"
 #include "Resources/ResourceShader.h"
+#include "Resources/ResourceSkybox.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleEditor.h"
 #include "ComponentSkyBox.h"

@@ -2,7 +2,6 @@
 
 #include "Module.h"
 
-#include "Utils/Buffer.h"
 #include "Panels/PanelScene.h"
 #include "Panels/PanelProject.h"
 #include "Panels/PanelConsole.h"
@@ -14,9 +13,7 @@
 
 #include "imgui.h"
 #include <vector>
-
-class Panel;
-struct Event;
+#include <string>
 
 enum class Modal {
 	NONE,
