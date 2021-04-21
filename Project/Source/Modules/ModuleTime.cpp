@@ -135,7 +135,9 @@ unsigned int ModuleTime::GetFrameCount() const {
 void ModuleTime::StartGame() {
 	if (gameStarted) return;
 
+#if !GAME
 	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
+#endif
 
 	gameStarted = true;
 	gameRunning = true;
@@ -144,8 +146,10 @@ void ModuleTime::StartGame() {
 void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
+#if !GAME
 	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
 	App->files->Erase(TEMP_SCENE_FILE_NAME);
+#endif
 
 	gameStarted = false;
 	gameRunning = false;
