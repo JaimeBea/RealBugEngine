@@ -28,6 +28,7 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEvents.h"
 #include "TesseractEvent.h"
+#include "Utils/AssetFile.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"

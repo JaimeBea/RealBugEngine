@@ -1,5 +1,6 @@
 #include "ComponentTransform2D.h"
 
+#include "Globals.h"
 #include "GameObject.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"

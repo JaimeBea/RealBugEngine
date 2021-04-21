@@ -13,6 +13,8 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleResources.h"
+#include "Utils/AssetFile.h"
+#include "Resources/Resource.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"

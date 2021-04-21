@@ -8,6 +8,8 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentAnimation.h"
+#include "Components/ComponentCamera.h"
+#include "Components/ComponentLight.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleCamera.h"

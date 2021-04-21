@@ -1,14 +1,11 @@
 #pragma once
 
 #include "Modules/Module.h"
-#include "Scene.h"
 
 #include <string>
 
+class Scene;
 class GameObject;
-class CubeMap;
-struct aiScene;
-struct aiNode;
 
 class ModuleScene : public Module {
 public:

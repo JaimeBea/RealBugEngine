@@ -4,7 +4,6 @@
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
 
-#include <vector>
 #include "Math/float2.h"
 #include "Math/float4.h"
 

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Components/Component.h"
-#include <queue>
+
+#include <vector>
 
 class GameObject;
 class ComponentSelectable;

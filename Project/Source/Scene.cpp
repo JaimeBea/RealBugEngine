@@ -1,7 +1,12 @@
 #include "Scene.h"
 
 #include "GameObject.h"
+#include "Application.h"
+#include "Modules/ModuleResources.h"
 #include "Resources/ResourceMesh.h"
+#include "Utils/Logging.h"
+
+#include "Utils/Leaks.h"
 
 Scene::Scene(unsigned numGameObjects) {
 	gameObjects.Allocate(numGameObjects);

@@ -1,5 +1,6 @@
 #include "ComponentTransform.h"
 
+#include "Globals.h"
 #include "Application.h"
 #include "GameObject.h"
 #include "Components/ComponentCamera.h"

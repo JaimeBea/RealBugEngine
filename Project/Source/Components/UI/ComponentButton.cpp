@@ -4,10 +4,15 @@
 #include "imgui.h"
 #include "GameObject.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Components/ComponentScript.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
 #include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
+#include "Script.h"
+
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_COLOR_HOVER "ColorHover"

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Globals.h"
-
 #include "Math/myassert.h"
 
 template<typename T>

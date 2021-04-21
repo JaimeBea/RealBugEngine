@@ -2,18 +2,14 @@
 
 #pragma warning(disable: 4251)
 
-#include "Components/Component.h"
-#include "Application.h"
-#include "Modules/ModuleScene.h"
-#include "Modules/ModuleEvents.h"
-#include "Utils/Logging.h"
 #include "Utils/UID.h"
 #include "FileSystem/JsonValue.h"
-#include "TesseractEvent.h"
+#include "Scene.h"
 
-#include "Math/myassert.h"
-#include <vector>
 #include <string>
+#include <vector>
+
+class Component;
 
 template<typename T>
 class ComponentView {

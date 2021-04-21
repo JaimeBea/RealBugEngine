@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Utils/UID.h"
 #include "Resources/Resource.h"
 
-#include "Math/float3.h"
+#include "Math/float4.h"
 
 class ResourceMaterial : public Resource {
 public:

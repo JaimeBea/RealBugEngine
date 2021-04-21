@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Component.h"
-#include "Script.h"
-
-#include "FileSystem/JsonValue.h"
 
 class ComponentScript : public Component {
 public:

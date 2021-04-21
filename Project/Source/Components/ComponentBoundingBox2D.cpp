@@ -17,6 +17,8 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
+
 void ComponentBoundingBox2D::Init() {
 	ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
 	if (transform2D) {

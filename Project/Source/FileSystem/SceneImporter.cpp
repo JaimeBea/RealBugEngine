@@ -10,6 +10,7 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentScript.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"

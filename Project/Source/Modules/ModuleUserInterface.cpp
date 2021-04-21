@@ -5,6 +5,7 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
 #include "ModuleFiles.h"

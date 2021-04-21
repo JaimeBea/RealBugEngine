@@ -6,6 +6,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleFiles.h"
 #include "Utils/Logging.h"
+#include "Utils/MSTimer.h"
 
 #include "rapidjson/error/en.h"
 

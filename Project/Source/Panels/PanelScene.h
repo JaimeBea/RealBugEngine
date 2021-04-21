@@ -3,9 +3,6 @@
 #include "Panel.h"
 
 #include "Math/float2.h"
-#include "imgui.h"
-
-struct ImDrawList;
 
 class PanelScene : public Panel {
 public:

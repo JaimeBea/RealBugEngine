@@ -16,6 +16,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentScript.h"
 #include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentTransform2D.h"

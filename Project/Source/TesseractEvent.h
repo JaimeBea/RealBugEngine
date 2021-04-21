@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <string>
-
 class GameObject;
 class Component;
 class Resource;

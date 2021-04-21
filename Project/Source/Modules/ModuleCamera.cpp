@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentCamera.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
 #include "Resources/ResourceMesh.h"
@@ -14,6 +15,7 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
+#include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleEditor.h"
 

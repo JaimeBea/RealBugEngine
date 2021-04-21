@@ -1,7 +1,6 @@
 #pragma once
 
 enum class UpdateStatus;
-
 struct TesseractEvent;
 
 class Module {

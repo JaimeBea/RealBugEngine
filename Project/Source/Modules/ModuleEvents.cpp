@@ -1,6 +1,8 @@
 #include "ModuleEvents.h"
 
 #include "Utils/Logging.h"
+#include "Resources/Resource.h"
+#include "Utils/AssetFile.h"
 
 #include "Utils/Leaks.h"
 

@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentButton.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
