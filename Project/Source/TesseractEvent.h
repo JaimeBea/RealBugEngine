@@ -17,7 +17,6 @@ struct AssetFolder;
 enum class TesseractEventType {
 	UNKNOWN,
 	GAMEOBJECT_DESTROYED,
-	ADD_COMPONENT,
 	PRESSED_PLAY,
 	PRESSED_PAUSE,
 	PRESSED_RESUME,
@@ -43,10 +42,6 @@ public:
 		struct DestroyGameObject {
 			GameObject* gameObject = nullptr;
 		} destroyGameObject;
-
-		struct AddComponent {
-			Component* component = nullptr;
-		} addComponent;
 
 		struct AddResource {
 			Resource* resource = nullptr;

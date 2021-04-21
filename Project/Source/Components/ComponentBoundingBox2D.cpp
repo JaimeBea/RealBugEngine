@@ -33,7 +33,7 @@ void ComponentBoundingBox2D::Update() {
 }
 
 void ComponentBoundingBox2D::DuplicateComponent(GameObject& owner) {
-	ComponentBoundingBox2D* component = owner.CreateComponentDeferred<ComponentBoundingBox2D>();
+	ComponentBoundingBox2D* component = owner.CreateComponent<ComponentBoundingBox2D>();
 	component->SetLocalBoundingBox(AABB2D(localAABB));
 }
 

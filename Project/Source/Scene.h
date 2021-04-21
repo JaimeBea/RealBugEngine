@@ -37,13 +37,13 @@ public:
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
-	// --- Component Management --- //
-	TESSERACT_ENGINE_API Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
-	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
-	void AddComponent(Component* component);
-	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
+	// --- Component Access (other Component-related methods in GameObject.h) --- //
+	template<class T> TESSERACT_ENGINE_API T* GetComponent(UID id);
 
-	template<class T> T* GetComponent(UID id);
+	// --- Component Management (internal, do not use) --- //
+	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
 
 	int GetTotalTriangles() const;
 

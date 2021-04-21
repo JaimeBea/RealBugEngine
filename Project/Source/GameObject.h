@@ -78,7 +78,6 @@ public:
 	UID GetID() const;
 
 	template<class T> T* CreateComponent();
-	template<class T> T* CreateComponentDeferred();
 	template<class T> bool HasComponent() const;
 	template<class T> T* GetComponent() const;
 	template<class T> ComponentView<T> GetComponents() const;
@@ -130,22 +129,6 @@ inline T* GameObject::CreateComponent() {
 	T* component = (T*) scene->CreateComponentByTypeAndId(this, T::staticType, GenerateUID());
 	components.push_back(component);
 	return component;
-}
-
-template<class T>
-inline T* GameObject::CreateComponentDeferred() {
-	if (!T::allowMultipleComponents && HasComponent<T>()) return nullptr;
-	if (scene != App->scene->scene) {
-		LOG("Deferred component creation is not allowed outside of the main scene.");
-		assert(false);
-		return nullptr;
-	}
-
-	TesseractEvent e(TesseractEventType::ADD_COMPONENT);
-	e.addComponent.component = new T(this, GenerateUID(), active);
-	App->events->AddEvent(e);
-
-	return (T*) e.addComponent.component;
 }
 
 template<class T>

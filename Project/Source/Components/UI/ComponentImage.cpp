@@ -178,7 +178,7 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 }
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
-	ComponentImage* component = owner.CreateComponentDeferred<ComponentImage>();
+	ComponentImage* component = owner.CreateComponent<ComponentImage>();
 	component->shaderID = shaderID;
 	component->textureID = textureID;
 

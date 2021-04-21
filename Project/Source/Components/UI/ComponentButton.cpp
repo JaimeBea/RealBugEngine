@@ -89,7 +89,7 @@ const float4& ComponentButton::GetTintColor() const {
 }
 
 void ComponentButton::DuplicateComponent(GameObject& owner) {
-	ComponentButton* component = owner.CreateComponentDeferred<ComponentButton>();
+	ComponentButton* component = owner.CreateComponent<ComponentButton>();
 	component->colorClicked = colorClicked;
 }
 

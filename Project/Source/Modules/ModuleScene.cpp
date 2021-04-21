@@ -73,7 +73,6 @@ bool ModuleScene::Init() {
 
 bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
-	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
 	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
 	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
 
@@ -117,9 +116,6 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::GAMEOBJECT_DESTROYED:
 		scene->DestroyGameObject(e.destroyGameObject.gameObject);
-		break;
-	case TesseractEventType::ADD_COMPONENT:
-		scene->AddComponent(e.addComponent.component);
 		break;
 	case TesseractEventType::CHANGE_SCENE:
 		sceneLoaded = false;
