@@ -45,16 +45,24 @@ void ComponentAudioListener::DuplicateComponent(GameObject& owner) {
 }
 
 void ComponentAudioListener::UpdateAudioListener() {
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	position = transform->GetPosition();
-	float3 directionUp = transform->GetRotation() * float3::unitY;
-	float3 directionRight = transform->GetRotation() * float3::unitX;
-	orientation[0] = directionUp[0];
-	orientation[1] = directionUp[1];
-	orientation[2] = directionUp[2];
-	orientation[3] = directionRight[0];
-	orientation[4] = directionRight[1];
-	orientation[5] = directionRight[2];
+	// For now, the AudioListener will follow the direction / position of the Camera attached to the GameObject
+	ComponentCamera* camera = GetOwner().GetComponent<ComponentCamera>();
+	if (camera == nullptr) {
+		LOG("Warning: AudioListener has to be attached to a GameObject with a Camera Component");
+		alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+		alListener3f(AL_ORIENTATION, 0.0f, 0.0f, 0.0f);
+		return;
+	}
+	Frustum* frustum = camera->GetFrustum();
+	position = frustum->Pos();
+	float3 front = frustum->Front();
+	float3 up = frustum->Up();
+	orientation[0] = front[0];
+	orientation[1] = front[1];
+	orientation[2] = front[2];
+	orientation[3] = up[0];
+	orientation[4] = up[1];
+	orientation[5] = up[2];
 	alListenerfv(AL_POSITION, position.ptr());
 	alListenerfv(AL_ORIENTATION, orientation);
 }
