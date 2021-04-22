@@ -93,15 +93,14 @@ inline T* GameObject::CreateComponentDeferred() {
 	}
 
 	TesseractEvent e(TesseractEventType::ADD_COMPONENT);
-	//e.addComponent.component = new T(this, GenerateUID(), active);
 
-	e.variant.emplace<AddComponentStruct>(AddComponentStruct());
+	e.variant.emplace<AddComponentStruct>(new T(this, GenerateUID(), active));
 
-	std::get<AddComponentStruct>(e.variant).component = new T(this, GenerateUID(), active);
+	//std::get<AddComponentStruct>(e.variant).component = new T(this, GenerateUID(), active);
 
 	App->events->AddEvent(e);
 
-	return (T*) std::get<AddComponentStruct>(e.variant).component;
+	return (T*) e.Get<AddComponentStruct>().component;
 }
 
 template<class T>

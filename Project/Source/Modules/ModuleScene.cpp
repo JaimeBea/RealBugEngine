@@ -175,11 +175,6 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 		DestroyGameObjectDeferred(child);
 	}
 	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
-	//e.destroyGameObject.gameObject = gameObject;
-	//e.destroyGameObject.gameObject = gameObject;
-	e.variant.emplace<DestroyGameObjectStruct>(DestroyGameObjectStruct());
-
-	std::get<DestroyGameObjectStruct>(e.variant).gameObject = gameObject;
-
+	e.variant.emplace<DestroyGameObjectStruct>(gameObject);
 	App->events->AddEvent(e);
 }

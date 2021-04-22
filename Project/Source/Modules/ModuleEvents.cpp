@@ -8,13 +8,13 @@
 static void CleanUpEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::ADD_COMPONENT:
-		//RELEASE(std::get<AddComponentStruct>(e.variant).component);
+		RELEASE(e.Get<AddComponentStruct>().component);
 		break;
 	case TesseractEventType::ADD_RESOURCE:
-		//RELEASE(std::get<AddResourceStruct>(e.variant).resource);
+		RELEASE(e.Get<AddResourceStruct>().resource);
 		break;
 	case TesseractEventType::UPDATE_FOLDERS:
-		//RELEASE(std::get<UpdateFoldersStruct>(e.variant).folder);
+		RELEASE(e.Get<UpdateFoldersStruct>().folder);
 		break;
 	}
 }

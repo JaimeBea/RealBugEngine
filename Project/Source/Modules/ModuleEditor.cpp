@@ -424,29 +424,14 @@ bool ModuleEditor::CleanUp() {
 
 void ModuleEditor::OnMouseMoved() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-	//mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
-	//mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
 
-	//std::get<MouseUpdateStruct>(mouseEvent.variant).mousePos = panelScene.GetMousePosOnScene();
-
-	//MouseUpdateStruct mus = MouseUpdateStruct();
-	//mus.mousePos = panelScene.GetMousePosOnScene();
-	//mouseEvent.variant = EventVariant();
-	mouseEvent.variant.emplace<MouseUpdateStruct>(MouseUpdateStruct());
-
-	std::get<MouseUpdateStruct>(mouseEvent.variant).mousePos = panelScene.GetMousePosOnScene();
-
+	mouseEvent.variant.emplace<MouseUpdateStruct>(panelScene.GetMousePosOnScene());
 	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	//mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
-	//mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
-	mouseEvent.variant.emplace<MouseUpdateStruct>(MouseUpdateStruct());
-
-	std::get<MouseUpdateStruct>(mouseEvent.variant).mousePos = panelScene.GetMousePosOnScene();
-
+	mouseEvent.variant.emplace<MouseUpdateStruct>(panelScene.GetMousePosOnScene());
 	App->events->AddEvent(mouseEvent);
 }
 

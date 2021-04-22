@@ -133,9 +133,9 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 void SceneManager::ChangeScene(const char* scenePath) {
 	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
 	//e.changeScene.scenePath = scenePath;
-	e.variant.emplace<ChangeSceneStruct>(ChangeSceneStruct());
+	e.variant.emplace<ChangeSceneStruct>(scenePath);
 
-	std::get<ChangeSceneStruct>(e.variant).scenePath = scenePath;
+	//std::get<ChangeSceneStruct>(e.variant).scenePath = scenePath;
 
 	App->events->AddEvent(e);
 }

@@ -11,12 +11,13 @@ class Resource;
 
 struct AssetFolder;
 
-#define EventVariant std::variant<DestroyGameObjectStruct, AddComponentStruct, AddResourceStruct, UpdateFoldersStruct, MouseUpdateStruct, MouseClickedStruct, ChangeSceneStruct>
+#define EventVariant std::variant<int, DestroyGameObjectStruct, AddComponentStruct, AddResourceStruct, UpdateFoldersStruct, MouseUpdateStruct, MouseClickedStruct, ChangeSceneStruct>
 
 /* Creating a new event type:
-*    1. Add a new EventType for the new event
-*    2. Add a struct containing the necessary information for said event inside the union below
+*    1. Add a new EventType for the new event (ALWAYS ABOVE COUNT)
+*    2. Add a struct containing the necessary information for said event inside the union below (Make sure it has a constructor)
 *    3. (If allocating) Make sure you release all allocated resources in ModuleEvents.cpp's CleanUpEvent()
+*	 4. Remember to make an std::emplace whenever generating a TesseractEvent, there are no default values so trying to std::get a non initiated variant will return a crash
 */
 
 enum class TesseractEventType {
@@ -40,36 +41,45 @@ enum class TesseractEventType {
 
 struct AddResourceStruct {
 	Resource* resource = nullptr;
+	AddResourceStruct(Resource* resource_)
+		: resource(resource_) {}
 };
 
 struct DestroyGameObjectStruct {
 	GameObject* gameObject = nullptr;
+	DestroyGameObjectStruct(GameObject* gameObject_)
+		: gameObject(gameObject_) {}
 };
 
 struct AddComponentStruct {
 	Component* component = nullptr;
+	AddComponentStruct(Component* component_)
+		: component(component_) {}
 };
 
 struct UpdateFoldersStruct {
 	AssetFolder* folder = nullptr;
+	UpdateFoldersStruct(AssetFolder* folder_)
+		: folder(folder_) {
+	}
 };
 
 struct MouseUpdateStruct {
-	//float mouseX = 0.0f;
-	//float mouseY = 0.0f;
-
 	float2 mousePos = float2::zero;
+	MouseUpdateStruct(float2 mousePos_)
+		: mousePos(mousePos_) {}
 };
 
 struct MouseClickedStruct {
-	//float mouseX = 0.0f;
-	//float mouseY = 0.0f;
-
 	float2 mousePos = float2::zero;
+	MouseClickedStruct(float2 mousePos_)
+		: mousePos(mousePos_) {}
 };
 
 struct ChangeSceneStruct {
 	const char* scenePath = nullptr;
+	ChangeSceneStruct(const char* scenePath_)
+		: scenePath(scenePath_) {}
 };
 
 struct TesseractEvent {
@@ -81,4 +91,11 @@ public:
 
 	EventVariant variant;
 
+	template<typename T>
+	T& Get();
 };
+
+template<typename T>
+inline T& TesseractEvent::Get() {
+	return std::get<T>(variant);
+}
