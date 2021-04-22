@@ -4,16 +4,17 @@
 
 #include "Utils/Leaks.h"
 
+//TODO see why these cleanups generate errors
 static void CleanUpEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::ADD_COMPONENT:
-		RELEASE(e.addComponent.component);
+		//RELEASE(std::get<AddComponentStruct>(e.variant).component);
 		break;
 	case TesseractEventType::ADD_RESOURCE:
-		RELEASE(e.addResource.resource);
+		//RELEASE(std::get<AddResourceStruct>(e.variant).resource);
 		break;
 	case TesseractEventType::UPDATE_FOLDERS:
-		RELEASE(e.updateFolders.folder);
+		//RELEASE(std::get<UpdateFoldersStruct>(e.variant).folder);
 		break;
 	}
 }

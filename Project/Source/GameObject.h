@@ -1,6 +1,6 @@
 #pragma once
 
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
 
 #include "Components/Component.h"
 #include "Application.h"
@@ -14,7 +14,6 @@
 #include "Math/myassert.h"
 #include <vector>
 #include <string>
-
 
 class TESSERACT_ENGINE_API GameObject {
 public:
@@ -94,10 +93,15 @@ inline T* GameObject::CreateComponentDeferred() {
 	}
 
 	TesseractEvent e(TesseractEventType::ADD_COMPONENT);
-	e.addComponent.component = new T(this, GenerateUID(), active);
+	//e.addComponent.component = new T(this, GenerateUID(), active);
+
+	e.variant.emplace<AddComponentStruct>(AddComponentStruct());
+
+	std::get<AddComponentStruct>(e.variant).component = new T(this, GenerateUID(), active);
+
 	App->events->AddEvent(e);
 
-	return (T*) e.addComponent.component;
+	return (T*) std::get<AddComponentStruct>(e.variant).component;
 }
 
 template<class T>

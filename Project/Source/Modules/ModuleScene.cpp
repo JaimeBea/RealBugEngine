@@ -80,14 +80,14 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
-	#if GAME
+#if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
 	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
 	App->renderer->SetVSync(false);
 	App->time->limitFramerate = false;
-	#else
+#else
 	CreateEmptyScene();
-	#endif
+#endif
 
 	return true;
 }
@@ -115,14 +115,17 @@ bool ModuleScene::CleanUp() {
 void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.destroyGameObject.gameObject);
+		//scene->DestroyGameObject(e.destroyGameObject.gameObject);
+		scene->DestroyGameObject(std::get<DestroyGameObjectStruct>(e.variant).gameObject);
 		break;
 	case TesseractEventType::ADD_COMPONENT:
-		scene->AddComponent(e.addComponent.component);
+		//scene->AddComponent(e.addComponent.component);
+		scene->AddComponent(std::get<AddComponentStruct>(e.variant).component);
 		break;
 	case TesseractEventType::CHANGE_SCENE:
 		sceneLoaded = false;
-		SceneImporter::LoadScene(e.changeScene.scenePath);
+		//SceneImporter::LoadScene(e.changeScene.scenePath);
+		SceneImporter::LoadScene(std::get<ChangeSceneStruct>(e.variant).scenePath);
 		break;
 	case TesseractEventType::RESOURCES_LOADED:
 		if (App->time->IsGameRunning() && !sceneLoaded) {
@@ -172,6 +175,11 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 		DestroyGameObjectDeferred(child);
 	}
 	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
-	e.destroyGameObject.gameObject = gameObject;
+	//e.destroyGameObject.gameObject = gameObject;
+	//e.destroyGameObject.gameObject = gameObject;
+	e.variant.emplace<DestroyGameObjectStruct>(DestroyGameObjectStruct());
+
+	std::get<DestroyGameObjectStruct>(e.variant).gameObject = gameObject;
+
 	App->events->AddEvent(e);
 }

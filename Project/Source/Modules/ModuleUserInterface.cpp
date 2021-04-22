@@ -27,8 +27,6 @@
 #include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
-
-
 	return true;
 }
 
@@ -46,11 +44,14 @@ bool ModuleUserInterface::CleanUp() {
 }
 
 void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
-	float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
+	//float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
+
+	float2 mousePos = float2::zero;
 
 	switch (e.type) {
 	case TesseractEventType::MOUSE_UPDATE:
 		if (currentEvSys) {
+			mousePos = std::get<MouseUpdateStruct>(e.variant).mousePos;
 			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
 				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
 
@@ -70,6 +71,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 	case TesseractEventType::MOUSE_CLICKED:
 		if (!App->time->IsGameRunning()) break;
 		if (currentEvSys != nullptr) {
+			mousePos = std::get<MouseClickedStruct>(e.variant).mousePos;
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {

@@ -28,7 +28,9 @@
 #define JSON_TAG_SELECTABLE_TYPE "SelectableType"
 
 ComponentSelectable::~ComponentSelectable() {
-	//TODO IF SELECTED SET SELECTED TO NULL
+	if (App->userInterface->GetCurrentEventSystem()->GetCurrentSelected() == this) {
+		App->userInterface->GetCurrentEventSystem()->SetSelected(0);
+	}
 }
 
 bool ComponentSelectable::IsInteractable() const {

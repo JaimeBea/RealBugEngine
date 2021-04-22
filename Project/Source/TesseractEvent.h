@@ -1,12 +1,17 @@
 #pragma once
-
 #include <memory>
 #include <string>
+#include <variant>
+
+#include "Math/float2.h"
 
 class GameObject;
 class Component;
 class Resource;
+
 struct AssetFolder;
+
+#define EventVariant std::variant<DestroyGameObjectStruct, AddComponentStruct, AddResourceStruct, UpdateFoldersStruct, MouseUpdateStruct, MouseClickedStruct, ChangeSceneStruct>
 
 /* Creating a new event type:
 *    1. Add a new EventType for the new event
@@ -33,6 +38,40 @@ enum class TesseractEventType {
 	COUNT = 15
 };
 
+struct AddResourceStruct {
+	Resource* resource = nullptr;
+};
+
+struct DestroyGameObjectStruct {
+	GameObject* gameObject = nullptr;
+};
+
+struct AddComponentStruct {
+	Component* component = nullptr;
+};
+
+struct UpdateFoldersStruct {
+	AssetFolder* folder = nullptr;
+};
+
+struct MouseUpdateStruct {
+	//float mouseX = 0.0f;
+	//float mouseY = 0.0f;
+
+	float2 mousePos = float2::zero;
+};
+
+struct MouseClickedStruct {
+	//float mouseX = 0.0f;
+	//float mouseY = 0.0f;
+
+	float2 mousePos = float2::zero;
+};
+
+struct ChangeSceneStruct {
+	const char* scenePath = nullptr;
+};
+
 struct TesseractEvent {
 public:
 	TesseractEvent(TesseractEventType type);
@@ -40,35 +79,6 @@ public:
 public:
 	TesseractEventType type = TesseractEventType::UNKNOWN;
 
-	union {
-		struct DestroyGameObject {
-			GameObject* gameObject = nullptr;
-		} destroyGameObject;
+	EventVariant variant;
 
-		struct AddComponent {
-			Component* component = nullptr;
-		} addComponent;
-
-		struct AddResource {
-			Resource* resource = nullptr;
-		} addResource;
-
-		struct UpdateFolders {
-			AssetFolder* folder = nullptr;
-		} updateFolders;
-
-		struct MouseUpdate {
-			float mouseX = 0.0f;
-			float mouseY = 0.0f;
-		} mouseUpdate;
-
-		struct MouseClicked {
-			float mouseX = 0.0f;
-			float mouseY = 0.0f;
-		} mouseClicked;
-
-		struct ChangeScene {
-			const char* scenePath = nullptr;
-		} changeScene;
-	};
 };

@@ -114,16 +114,22 @@ bool ModuleResources::CleanUp() {
 
 void ModuleResources::ReceiveEvent(TesseractEvent& e) {
 	if (e.type == TesseractEventType::ADD_RESOURCE) {
-		Resource* resource = e.addResource.resource;
+		//Assert 		std::holds_alternative<AddResourceStruct>(e.variant); ???
+
+		Resource* resource = std::get<AddResourceStruct>(e.variant).resource;
+
 		UID id = resource->GetId();
 		if (GetReferenceCount(id) > 0) {
 			resource->Load();
 		}
 		resources[id].reset(resource);
-		e.addResource.resource = nullptr;
+		//e.addResource.resource = nullptr;
+		resource = nullptr;
 	} else if (e.type == TesseractEventType::UPDATE_FOLDERS) {
-		rootFolder.reset(e.updateFolders.folder);
-		e.updateFolders.folder = nullptr;
+		AssetFolder* folder = std::get<UpdateFoldersStruct>(e.variant).folder;
+
+		rootFolder.reset(folder);
+		folder = nullptr;
 	}
 }
 
@@ -358,7 +364,12 @@ void ModuleResources::UpdateAsync() {
 		CheckForNewAssetsRecursive(ASSETS_PATH, newFolder);
 
 		TesseractEvent updateFoldersEv(TesseractEventType::UPDATE_FOLDERS);
-		updateFoldersEv.updateFolders.folder = newFolder;
+		//updateFoldersEv.updateFolders.folder = newFolder;
+
+		updateFoldersEv.variant.emplace<UpdateFoldersStruct>(UpdateFoldersStruct());
+
+		std::get<UpdateFoldersStruct>(updateFoldersEv.variant).folder = newFolder;
+
 		App->events->AddEvent(updateFoldersEv);
 
 		App->events->AddEvent(TesseractEventType::RESOURCES_LOADED);
@@ -431,6 +442,10 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 
 void ModuleResources::SendAddResourceEvent(Resource* resource) {
 	TesseractEvent addResourceEvent(TesseractEventType::ADD_RESOURCE);
-	addResourceEvent.addResource.resource = resource;
+	//addResourceEvent.addResource.resource = resource;
+	addResourceEvent.variant.emplace<AddResourceStruct>(AddResourceStruct());
+
+	std::get<AddResourceStruct>(addResourceEvent.variant).resource = resource;
+
 	App->events->AddEvent(addResourceEvent);
 }

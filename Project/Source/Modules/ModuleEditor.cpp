@@ -24,6 +24,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include "Math/float2.h"
 
 #include "Utils/Leaks.h"
 
@@ -423,15 +424,29 @@ bool ModuleEditor::CleanUp() {
 
 void ModuleEditor::OnMouseMoved() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
+	//mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
+	//mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
+
+	//std::get<MouseUpdateStruct>(mouseEvent.variant).mousePos = panelScene.GetMousePosOnScene();
+
+	//MouseUpdateStruct mus = MouseUpdateStruct();
+	//mus.mousePos = panelScene.GetMousePosOnScene();
+	//mouseEvent.variant = EventVariant();
+	mouseEvent.variant.emplace<MouseUpdateStruct>(MouseUpdateStruct());
+
+	std::get<MouseUpdateStruct>(mouseEvent.variant).mousePos = panelScene.GetMousePosOnScene();
+
 	App->events->AddEvent(mouseEvent);
 }
 
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
+	//mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
+	//mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
+	mouseEvent.variant.emplace<MouseUpdateStruct>(MouseUpdateStruct());
+
+	std::get<MouseUpdateStruct>(mouseEvent.variant).mousePos = panelScene.GetMousePosOnScene();
+
 	App->events->AddEvent(mouseEvent);
 }
 
