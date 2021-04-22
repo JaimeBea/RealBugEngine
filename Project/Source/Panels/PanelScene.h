@@ -16,7 +16,7 @@ public:
 	bool IsUsing2D() const;
 
 	// Getters
-	float2 GetMousePosOnScene() const;
+	const float2& GetMousePosOnScene() const;
 	float2 GetSceneWindowSize() const;
 	const char* GetCurrentShadingMode() const;
 

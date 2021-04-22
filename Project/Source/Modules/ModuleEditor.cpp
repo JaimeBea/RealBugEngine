@@ -422,16 +422,8 @@ bool ModuleEditor::CleanUp() {
 	return true;
 }
 
-void ModuleEditor::OnMouseMoved() {
-	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-
-	mouseEvent.variant.emplace<MouseUpdateStruct>(panelScene.GetMousePosOnScene());
-	App->events->AddEvent(mouseEvent);
-}
-
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	mouseEvent.variant.emplace<MouseUpdateStruct>(panelScene.GetMousePosOnScene());
 	App->events->AddEvent(mouseEvent);
 }
 

@@ -11,6 +11,7 @@
 #include "ModuleEvents.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleInput.h"
 #include "ModuleScene.h"
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
@@ -32,10 +33,31 @@ bool ModuleUserInterface::Init() {
 
 bool ModuleUserInterface::Start() {
 	CreateQuadVBO();
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_UPDATE, this);
 	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
 	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
 	return true;
+}
+
+UpdateStatus ModuleUserInterface::Update() {
+	float2 mousePos = App->input->GetMousePosition(true);
+
+	if (currentEvSys) {
+		for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
+			ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
+
+			if (!selectable.IsHovered()) {
+				if (bb->GetWorldAABB().Contains(mousePos)) {
+					selectable.OnPointerEnter();
+				}
+			} else {
+				if (!bb->GetWorldAABB().Contains(mousePos)) {
+					selectable.OnPointerExit();
+				}
+			}
+		}
+	}
+
+	return UpdateStatus::CONTINUE;
 }
 
 bool ModuleUserInterface::CleanUp() {
@@ -46,32 +68,12 @@ bool ModuleUserInterface::CleanUp() {
 void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 	//float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
 
-	float2 mousePos = float2::zero;
+	float2 mousePos = App->input->GetMousePosition(true);
 
 	switch (e.type) {
-	case TesseractEventType::MOUSE_UPDATE:
-		if (currentEvSys) {
-			mousePos = std::get<MouseUpdateStruct>(e.variant).mousePos;
-			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
-				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
-
-				if (!selectable.IsHovered()) {
-					if (bb->GetWorldAABB().Contains(mousePos)) {
-						selectable.OnPointerEnter();
-					}
-				} else {
-					if (!bb->GetWorldAABB().Contains(mousePos)) {
-						selectable.OnPointerExit();
-					}
-				}
-			}
-		}
-		break;
-
 	case TesseractEventType::MOUSE_CLICKED:
 		if (!App->time->IsGameRunning()) break;
 		if (currentEvSys != nullptr) {
-			mousePos = std::get<MouseClickedStruct>(e.variant).mousePos;
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
