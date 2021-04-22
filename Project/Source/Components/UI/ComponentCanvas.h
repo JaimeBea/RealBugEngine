@@ -10,6 +10,5 @@ public:
 	void Load(JsonValue jComponent) override;
 
 	void Init() override;
-	void RenderGameObject(GameObject* gameObject);
 	void DuplicateComponent(GameObject& owner) override;
 };
