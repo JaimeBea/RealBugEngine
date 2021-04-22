@@ -66,8 +66,6 @@ bool ModuleUserInterface::CleanUp() {
 }
 
 void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
-	//float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
-
 	float2 mousePos = App->input->GetMousePosition(true);
 
 	switch (e.type) {
@@ -77,11 +75,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
-					IMouseClickHandler* mouseClickHandler = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
-
-					if (mouseClickHandler != nullptr) {
-						mouseClickHandler->OnClicked();
-					}
+					lastHoveredSelectable->TryToClickOn();
 				}
 			}
 		}

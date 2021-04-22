@@ -307,6 +307,36 @@ ComponentSelectable::TransitionType ComponentSelectable::GetTransitionType() con
 	return transitionType;
 }
 
+void ComponentSelectable::TryToClickOn() const {
+	UID toBeClicked = 0;
+	ComponentType typeToPress = ComponentType::UNKNOWN;
+
+	std::vector<std::pair<ComponentType, UID>>::const_iterator it = GetOwner().components.begin();
+	while (toBeClicked == 0 && it != GetOwner().components.end()) {
+		if ((*it).first == ComponentType::BUTTON || (*it).first == ComponentType::TOGGLE) {
+			toBeClicked = (*it).second;
+			typeToPress = (*it).first;
+		} else {
+			++it;
+		}
+	}
+
+	if (toBeClicked != 0) {
+		Component* componentToPress = nullptr;
+		switch (typeToPress) {
+		case ComponentType::BUTTON:
+			componentToPress = GetOwner().GetComponent<ComponentButton>();
+			((ComponentButton*) componentToPress)->OnClicked();
+			break;
+		case ComponentType::TOGGLE:
+			break;
+		default:
+			assert("This is not supposed to ever happen");
+			break;
+		}
+	}
+}
+
 Component* ComponentSelectable::GetSelectableComponent() {
 	switch (selectableType) {
 	case ComponentType::BUTTON:
