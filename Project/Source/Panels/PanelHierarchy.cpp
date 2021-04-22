@@ -191,6 +191,9 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 		newGameObject->InitComponents();
 		return newGameObject;
 	}
+
+	return nullptr;
+
 }
 
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {

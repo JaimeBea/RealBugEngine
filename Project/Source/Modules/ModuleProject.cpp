@@ -22,7 +22,19 @@
 #define JSON_TAG_PROJECT_NAME "ProjectName"
 #define JSON_TAG_SCENES "Scenes"
 
-static std::string GetLastErrorStdStr() {
+template<class T>
+static T struct_cast(void* ptr, LONG offset = 0) {
+	return static_cast<T>(static_cast<intptr_t>(ptr) + offset);
+}
+
+struct RSDSHeader {
+	DWORD signature;
+	GUID guid;
+	long version;
+	char filename[1];
+};
+
+static std::string& GetLastErrorStdStr() {
 	DWORD error = GetLastError();
 	if (error) {
 		LPVOID lpMsgBuf;
@@ -45,6 +57,246 @@ static std::string GetLastErrorStdStr() {
 	}
 	return std::string();
 }
+
+static bool DebugDirVirtualAddress(PIMAGE_OPTIONAL_HEADER optionalHeader, DWORD& debugDirRva, DWORD& debugDirSize) {
+	if (optionalHeader->Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+		// Represents the optional header format.
+		PIMAGE_OPTIONAL_HEADER64 optionalHeader64 = struct_cast<PIMAGE_OPTIONAL_HEADER64>(optionalHeader);
+		debugDirRva = optionalHeader64->DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
+		debugDirSize = optionalHeader64->DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size;
+	} else {
+		// Represents the optional header format.
+		PIMAGE_OPTIONAL_HEADER32 optionalHeader32 = struct_cast<PIMAGE_OPTIONAL_HEADER32>(optionalHeader);
+		debugDirRva = optionalHeader32->DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].VirtualAddress;
+		debugDirSize = optionalHeader32->DataDirectory[IMAGE_DIRECTORY_ENTRY_DEBUG].Size;
+	}
+
+	if (debugDirRva == 0 && debugDirSize == 0) {
+		return true;
+	} else if (debugDirRva == 0 || debugDirSize == 0) {
+		return false;
+	}
+
+	return true;
+}
+
+static bool FileOffsetVirtualAdress(PIMAGE_NT_HEADERS ntHeaders, DWORD rva, DWORD& fileOffset) {
+	bool found = false;
+
+	// Represents the image section header format.
+	IMAGE_SECTION_HEADER* sectionHeader = IMAGE_FIRST_SECTION(ntHeaders);
+	for (int i = 0; i < ntHeaders->FileHeader.NumberOfSections && !found; i++, sectionHeader++) {
+		auto sectionSize = sectionHeader->Misc.VirtualSize;
+		if ((rva >= sectionHeader->VirtualAddress) && (rva < sectionHeader->VirtualAddress + sectionSize)) {
+			found = true;
+		}
+	}
+
+	if (!found) {
+		return false;
+	}
+
+	const int diff = static_cast<int>(sectionHeader->VirtualAddress - sectionHeader->PointerToRawData);
+	fileOffset = rva - diff;
+	return true;
+}
+
+static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
+	assert(debugDir && imageBase);
+	LPBYTE debugInfo = imageBase + debugDir->PointerToRawData;
+	const auto debugInfoSize = debugDir->SizeOfData;
+	if (debugInfo == 0 || debugInfoSize == 0) {
+		return nullptr;
+	}
+	if (IsBadReadPtr(debugInfo, debugInfoSize)) {
+		return nullptr;
+	}
+	if (debugInfoSize < sizeof(DWORD)) {
+		return nullptr;
+	}
+	if (debugDir->Type == IMAGE_DEBUG_TYPE_CODEVIEW) {
+		auto signature = *(DWORD*) debugInfo;
+		if (signature == 'SDSR') {
+			auto* info = (RSDSHeader*) (debugInfo);
+			if (IsBadReadPtr(debugInfo, sizeof(RSDSHeader))) {
+				return nullptr;
+			}
+			if (IsBadStringPtrA((const char*) info->filename, UINT_MAX)) {
+				return nullptr;
+			}
+			return info->filename;
+		}
+	}
+	return nullptr;
+}
+
+static bool PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB) {
+	std::string _filename(filename);
+
+	HANDLE fp = nullptr;
+	HANDLE filemap = nullptr;
+	LPVOID mem = 0;
+	bool result = false;
+
+	DEFER {
+		if (mem != nullptr) {
+			UnmapViewOfFile(mem);
+		}
+
+		if (filemap != nullptr) {
+			CloseHandle(filemap);
+		}
+
+		if ((fp != nullptr) && (fp != INVALID_HANDLE_VALUE)) {
+			CloseHandle(fp);
+		}
+	};
+
+	fp = CreateFile(_filename.c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if ((fp == INVALID_HANDLE_VALUE) || (fp == nullptr)) {
+		return false;
+	}
+
+	// Creates or opens a named or unnamed file mapping object for a specified file.
+	filemap = CreateFileMapping(fp, nullptr, PAGE_READWRITE, 0, 0, nullptr);
+	if (filemap == nullptr) {
+		return false;
+	}
+
+	// Maps a view of a file mapping into the address space of a calling process.
+	mem = MapViewOfFile(filemap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (mem == nullptr) {
+		return false;
+	}
+
+	//  Represents the DOS header format.
+	PIMAGE_DOS_HEADER dosHeader = struct_cast<PIMAGE_DOS_HEADER>(mem);
+	if (dosHeader == 0) {
+		return false;
+	}
+
+	// Verifies that the calling process has read access to the specified range of memory.
+	if (IsBadReadPtr(dosHeader, sizeof(IMAGE_DOS_HEADER))) {
+		return false;
+	}
+
+	if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
+		return false;
+	}
+
+	// Represents the PE header format.
+	PIMAGE_NT_HEADERS ntHeaders = struct_cast<PIMAGE_NT_HEADERS>(dosHeader, dosHeader->e_lfanew);
+	if (ntHeaders == 0) {
+		return false;
+	}
+
+	// Verifies that the calling process has read access to the specified range of memory.
+	if (IsBadReadPtr(ntHeaders, sizeof(ntHeaders->Signature))) {
+		return false;
+	}
+
+	// Check if signature of the NT header is the correct one
+	if (ntHeaders->Signature != IMAGE_NT_SIGNATURE) {
+		return false;
+	}
+
+	// Verifies that the calling process has read access to the specified range of memory.
+	if (IsBadReadPtr(&ntHeaders->FileHeader, sizeof(IMAGE_FILE_HEADER))) {
+		return false;
+	}
+
+	if (IsBadReadPtr(&ntHeaders->OptionalHeader, ntHeaders->FileHeader.SizeOfOptionalHeader)) {
+		return false;
+	}
+
+	if (ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR32_MAGIC && ntHeaders->OptionalHeader.Magic != IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
+		return false;
+	}
+
+	// Retrieve the contents of PE file sections
+	auto sectionHeaders = IMAGE_FIRST_SECTION(ntHeaders);
+	if (IsBadReadPtr(sectionHeaders, ntHeaders->FileHeader.NumberOfSections * sizeof(IMAGE_SECTION_HEADER))) {
+		return false;
+	}
+
+	DWORD debugDirVirtualAddress = 0;
+	DWORD debugDirSize = 0;
+	if (!DebugDirVirtualAddress(&ntHeaders->OptionalHeader, debugDirVirtualAddress, debugDirSize)) {
+		return false;
+	}
+
+	if (debugDirVirtualAddress == 0 || debugDirSize == 0) {
+		return false;
+	}
+
+	DWORD offset = 0;
+	if (!FileOffsetVirtualAdress(ntHeaders, debugDirVirtualAddress, offset)) {
+		return false;
+	}
+
+	// Represents the debug directory format.
+	PIMAGE_DEBUG_DIRECTORY debugDir = struct_cast<PIMAGE_DEBUG_DIRECTORY>(mem, offset);
+	if (debugDir == 0) {
+		return false;
+	}
+
+	if (IsBadReadPtr(debugDir, debugDirSize)) {
+		return false;
+	}
+
+	if (debugDirSize < sizeof(IMAGE_DEBUG_DIRECTORY)) {
+		return false;
+	}
+
+	int numEntries = debugDirSize / sizeof(IMAGE_DEBUG_DIRECTORY);
+	if (numEntries == 0) {
+		return false;
+	}
+
+	for (int i = 1; i <= numEntries; i++, debugDir++) {
+		char* pdb = PDBFind((LPBYTE) mem, debugDir);
+		if (pdb) {
+			auto len = strlen(pdb);
+			if (len >= strlen(namePDB.c_str())) {
+				originalPDB = pdb;
+				memcpy_s(pdb, len, namePDB.c_str(), namePDB.length());
+				pdb[namePDB.length()] = 0;
+				result = true;
+			}
+		}
+	}
+
+	return result;
+}
+
+namespace Tesseract {
+	std::istream& getline(std::istream& is, std::string& t) {
+		// Clear to add the new value
+		t.clear();
+
+		std::istream::sentry se(is, true);
+		std::streambuf* sb = is.rdbuf();
+
+		for (;;) {
+			int c = sb->sbumpc();
+			switch (c) {
+			case '\n':
+				return is;
+			case '\r':
+				if (sb->sgetc() == '\n')
+					sb->sbumpc();
+				return is;
+			case std::streambuf::traits_type::eof():
+				// Also handle the case when the last line has no line ending
+				if (t.empty())
+					is.setstate(std::ios::eofbit);
+				return is;
+			default:
+				t += (char) c;
+			}
+		}
+	}
+} // namespace Tesseract
 
 bool ModuleProject::Init() {
 #if GAME
@@ -175,7 +427,6 @@ void ModuleProject::CreateBatches() {
 }
 
 void ModuleProject::CompileProject(Configuration config) {
-
 	std::string batchDir = projectPath + "/Batches";
 
 	SHELLEXECUTEINFO sei = {0};
@@ -227,6 +478,26 @@ void ModuleProject::CompileProject(Configuration config) {
 		buildPath += "/Build/DebugEditor/";
 		break;
 	}
+
+	std::string originalPDB;
+	std::string dllPath = buildPath + name + ".dll";
+	PDBReplace(dllPath, name + ".pdb" , originalPDB);
+	std::string logFile = buildPath + name + ".log";
+
+	Buffer<char> buffer = App->files->Load(logFile.c_str());
+	std::string logContent = "";
+	if (buffer.Size() > 0) {
+		logContent = buffer.Data();
+	}
+
+	std::istringstream f(logContent);
+	std::string line;
+	LOG("---------------------GAME COMPILATION---------------------");
+	LOG("%s", logContent.c_str());
+	while (Tesseract::getline(f, line)) {
+		LOG("%s", line.c_str());
+	}
+	LOG("----------------------------------------------------------");
 
 	buildPath += name + ".dll";
 	UnloadGameCodeDLL();

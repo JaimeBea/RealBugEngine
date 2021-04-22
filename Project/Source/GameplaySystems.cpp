@@ -24,12 +24,19 @@ GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
 }
 
-TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
+void GameplaySystems::SetRenderCamera(GameObject* camera) {
 	App->camera->ChangeActiveFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
 	App->camera->ChangeCullingFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
 }
 
 // ------------- DEBUG ------------- //
+
+void Debug::Log(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	LOG(fmt, args);
+	va_end(args);
+}
 
 void Debug::ToggleDebugMode() {
 	App->renderer->ToggleDebugMode();

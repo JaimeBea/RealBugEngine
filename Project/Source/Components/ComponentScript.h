@@ -9,7 +9,6 @@ class ComponentScript : public Component {
 public:
 	REGISTER_COMPONENT(ComponentScript, ComponentType::SCRIPT, true);
 
-	void Init();
 	void Update();
 	void OnStart();
 

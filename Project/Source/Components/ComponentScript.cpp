@@ -16,12 +16,9 @@
 #define JSON_TAG_SCRIPT "Script"
 #define JSON_TAG_NAME "Name"
 
-void ComponentScript::Init() {
-}
-
 void ComponentScript::Update() {
 	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
-		ResourceScript* resource = (ResourceScript*) App->resources->GetResource(scriptID);
+		ResourceScript* resource = static_cast<ResourceScript*>(App->resources->GetResource(scriptID));
 		if (resource != nullptr) {
 			if (resource->script != nullptr) {
 				resource->script->Update();
@@ -31,7 +28,7 @@ void ComponentScript::Update() {
 }
 
 void ComponentScript::OnStart() {
-	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(scriptID);
+	ResourceScript* resource =  static_cast<ResourceScript*>(App->resources->GetResource(scriptID));
 	if (resource != nullptr) {
 		if (resource->script != nullptr) {
 			resource->script->Start();

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Globals.h"
+#include "Utils/Logging.h"
 
 #include "Math/float2.h"
 
@@ -18,6 +18,7 @@ namespace GameplaySystems {
 }; // namespace GameplaySystems
 
 namespace Debug {
+	TESSERACT_ENGINE_API void Log(const char *fmt, ...);
 	TESSERACT_ENGINE_API void ToggleDebugMode();
 	TESSERACT_ENGINE_API void ToggleDebugDraw();
 	TESSERACT_ENGINE_API void ToggleDrawQuadtree();
