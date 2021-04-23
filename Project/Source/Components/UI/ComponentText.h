@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Components/Component.h"
-#include "Components/UI/ComponentTransform2D.h"
-#include "UI/FontImporter.h"
-#include "Resources/ResourceTexture.h"
 
-#include "Math/float3.h"
+#include "Math/float4.h"
+#include <string>
+
+class ComponentTransform2D;
 
 // Component that renders a Text
 class ComponentText : public Component {

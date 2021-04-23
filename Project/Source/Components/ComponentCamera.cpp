@@ -102,7 +102,7 @@ void ComponentCamera::Load(JsonValue jComponent) {
 }
 
 void ComponentCamera::DuplicateComponent(GameObject& owner) {
-	ComponentCamera* component = owner.CreateComponentDeferred<ComponentCamera>();
+	ComponentCamera* component = owner.CreateComponent<ComponentCamera>();
 	component->frustum = this->frustum;
 }
 

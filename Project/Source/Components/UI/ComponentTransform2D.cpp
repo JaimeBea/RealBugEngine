@@ -1,5 +1,6 @@
 #include "ComponentTransform2D.h"
 
+#include "Globals.h"
 #include "GameObject.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
@@ -242,7 +243,7 @@ void ComponentTransform2D::Invalidate() {
 }
 
 void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
-	ComponentTransform2D* component = owner.CreateComponentDeferred<ComponentTransform2D>();
+	ComponentTransform2D* component = owner.CreateComponent<ComponentTransform2D>();
 	component->SetPivot(pivot);
 	component->SetSize(size);
 	component->SetPosition(position);

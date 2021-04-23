@@ -11,7 +11,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
-#include <concurrent_queue.h>
 
 class ModuleResources : public Module {
 public:
@@ -23,7 +22,7 @@ public:
 
 	std::vector<UID> ImportAsset(const char* filePath);
 
-	Resource* GetResource(UID id) const;
+	template<typename T> T* GetResource(UID id) const;
 	AssetFolder* GetRootFolder() const;
 
 	void IncreaseReferenceCount(UID id);
@@ -53,6 +52,12 @@ private:
 	std::thread importThread;
 	bool stopImportThread = false;
 };
+
+template<typename T>
+inline T* ModuleResources::GetResource(UID id) const {
+	auto it = resources.find(id);
+	return it != resources.end() ? static_cast<T*>(it->second.get()) : nullptr;
+}
 
 template<typename T>
 inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {

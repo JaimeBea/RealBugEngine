@@ -3,7 +3,6 @@
 #include "Component.h"
 
 #include "Math/float4x4.h"
-#include "Geometry/Sphere.h"
 #include <unordered_map>
 
 struct aiMesh;

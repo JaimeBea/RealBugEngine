@@ -1,15 +1,14 @@
 #include "ModuleEvents.h"
 
 #include "Utils/Logging.h"
+#include "Resources/Resource.h"
+#include "Utils/AssetFile.h"
 
 #include "Utils/Leaks.h"
 
 //TODO see why these cleanups generate errors
 static void CleanUpEvent(TesseractEvent& e) {
 	switch (e.type) {
-	case TesseractEventType::ADD_COMPONENT:
-		RELEASE(e.Get<AddComponentStruct>().component);
-		break;
 	case TesseractEventType::ADD_RESOURCE:
 		RELEASE(e.Get<AddResourceStruct>().resource);
 		break;

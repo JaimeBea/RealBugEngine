@@ -1,6 +1,8 @@
 #include "ComponentCanvasRenderer.h"
 
 #include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentText.h"
+#include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentTransform2D.h"
 #include "GameObject.h"
 
@@ -30,7 +32,7 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 }
 
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
-	ComponentCanvasRenderer* component = owner.CreateComponentDeferred<ComponentCanvasRenderer>();
+	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
 }
 
 const GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(const GameObject* current) const {

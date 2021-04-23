@@ -16,6 +16,8 @@ bool ModuleFiles::Init() {
 }
 
 bool ModuleFiles::CleanUp() {
+	Erase(TEMP_SCENE_FILE_NAME);
+
 	PHYSFS_deinit();
 
 	return true;

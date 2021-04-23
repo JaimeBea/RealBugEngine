@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/FileDialog.h"
 #include "FileSystem/SceneImporter.h"
@@ -15,6 +16,7 @@
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentScript.h"
 #include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentTransform2D.h"
@@ -72,7 +74,6 @@ bool ModuleScene::Init() {
 
 bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
-	App->events->AddObserverToEvent(TesseractEventType::ADD_COMPONENT, this);
 	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
 	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
 
@@ -115,23 +116,17 @@ bool ModuleScene::CleanUp() {
 void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::GAMEOBJECT_DESTROYED:
-		//scene->DestroyGameObject(e.destroyGameObject.gameObject);
 		scene->DestroyGameObject(std::get<DestroyGameObjectStruct>(e.variant).gameObject);
-		break;
-	case TesseractEventType::ADD_COMPONENT:
-		//scene->AddComponent(e.addComponent.component);
-		scene->AddComponent(std::get<AddComponentStruct>(e.variant).component);
 		break;
 	case TesseractEventType::CHANGE_SCENE:
 		sceneLoaded = false;
-		//SceneImporter::LoadScene(e.changeScene.scenePath);
 		SceneImporter::LoadScene(std::get<ChangeSceneStruct>(e.variant).scenePath);
 		break;
 	case TesseractEventType::RESOURCES_LOADED:
 		if (App->time->IsGameRunning() && !sceneLoaded) {
 			sceneLoaded = true;
-			for (auto& it : scene->scriptComponents) {
-				it.OnStart();
+			for (ComponentScript& script : scene->scriptComponents) {
+				script.OnStart();
 			}
 		}
 		break;

@@ -1,10 +1,13 @@
 #include "GameplaySystems.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/ComponentCamera.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleEvents.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"

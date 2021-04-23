@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentToggle.h"
+#include "Components/UI/ComponentTransform2D.h"
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
@@ -201,7 +204,7 @@ void ComponentSelectable::OnPointerExit() {
 }
 
 void ComponentSelectable::DuplicateComponent(GameObject& owner) {
-	ComponentSelectable* component = owner.CreateComponentDeferred<ComponentSelectable>();
+	ComponentSelectable* component = owner.CreateComponent<ComponentSelectable>();
 	component->interactable = interactable;
 	component->colorDisabled = colorDisabled;
 	component->colorHovered = colorHovered;

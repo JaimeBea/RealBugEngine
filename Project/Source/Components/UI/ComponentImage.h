@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Components/Component.h"
-#include "Resources/ResourceTexture.h"
 
 #include "Math/float4.h"
 

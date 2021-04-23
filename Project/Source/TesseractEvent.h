@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+
 #include <string>
 #include <variant>
 
@@ -11,7 +11,7 @@ class Resource;
 
 struct AssetFolder;
 
-#define EventVariant std::variant<int, DestroyGameObjectStruct, AddComponentStruct, AddResourceStruct, UpdateFoldersStruct, ChangeSceneStruct>
+#define EventVariant std::variant<int, DestroyGameObjectStruct, AddResourceStruct, UpdateFoldersStruct, ChangeSceneStruct>
 
 /* Creating a new event type:
 *    1. Add a new EventType for the new event (ALWAYS ABOVE COUNT)
@@ -23,7 +23,6 @@ struct AssetFolder;
 enum class TesseractEventType {
 	UNKNOWN = 0,
 	GAMEOBJECT_DESTROYED,
-	ADD_COMPONENT,
 	PRESSED_PLAY,
 	PRESSED_PAUSE,
 	PRESSED_RESUME,
@@ -48,12 +47,6 @@ struct DestroyGameObjectStruct {
 	GameObject* gameObject = nullptr;
 	DestroyGameObjectStruct(GameObject* gameObject_)
 		: gameObject(gameObject_) {}
-};
-
-struct AddComponentStruct {
-	Component* component = nullptr;
-	AddComponentStruct(Component* component_)
-		: component(component_) {}
 };
 
 struct UpdateFoldersStruct {

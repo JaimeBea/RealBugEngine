@@ -98,7 +98,7 @@ void ComponentEventSystem::SetSelected(UID newSelectableComponentId) {
 }
 
 void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
-	ComponentEventSystem* component = owner.CreateComponentDeferred<ComponentEventSystem>();
+	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
 	component->firstSelectedId = firstSelectedId;
 }
 

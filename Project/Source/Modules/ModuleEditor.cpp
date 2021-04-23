@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/FileDialog.h"
 #include "Modules/ModuleWindow.h"

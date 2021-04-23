@@ -1,6 +1,7 @@
 #include "SceneImporter.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
 #include "Utils/FileDialog.h"
@@ -9,6 +10,7 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentScript.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"
@@ -102,11 +104,10 @@ void SceneImporter::LoadScene(const char* filePath) {
 
 	// Load GameObjects
 	JsonValue jRoot = jScene[JSON_TAG_ROOT];
-	GameObject* root = scene->gameObjects.Obtain();
+	GameObject* root = scene->gameObjects.Obtain(0);
 	scene->root = root;
 	root->scene = scene;
 	root->Load(jRoot);
-	scene->gameObjectsIdMap[root->GetID()] = root;
 	root->InitComponents();
 
 	// Quadtree generation
@@ -120,8 +121,8 @@ void SceneImporter::LoadScene(const char* filePath) {
 	App->renderer->ambientColor = {ambientLight[0], ambientLight[1] ,ambientLight[2]};
 
 	if (App->time->IsGameRunning()) {
-		for (auto it : scene->scriptComponents) {
-			it.OnStart();
+		for (ComponentScript& script : scene->scriptComponents) {
+			script.OnStart();
 		}
 	}
 
