@@ -314,11 +314,11 @@ void ComponentSelectable::TryToClickOn() const {
 	UID toBeClicked = 0;
 	ComponentType typeToPress = ComponentType::UNKNOWN;
 
-	std::vector<std::pair<ComponentType, UID>>::const_iterator it = GetOwner().components.begin();
+	std::vector<Component*>::const_iterator it = GetOwner().components.begin();
 	while (toBeClicked == 0 && it != GetOwner().components.end()) {
-		if ((*it).first == ComponentType::BUTTON || (*it).first == ComponentType::TOGGLE) {
-			toBeClicked = (*it).second;
-			typeToPress = (*it).first;
+		if ((*it)->GetType() == ComponentType::BUTTON || (*it)->GetType() == ComponentType::TOGGLE) {
+			toBeClicked = (*it)->GetID();
+			typeToPress = (*it)->GetType();
 		} else {
 			++it;
 		}
