@@ -18,12 +18,16 @@ public:
 	void Unload() override;
 	void SaveToFile(const char* filePath);
 
-	void Init(std::string& mName, UID mAnimationUID = 0, unsigned int mBeginIndex = 0, unsigned int mEndIndex = 0, bool mLoop = false, UID mid = 0);
+	void Init(std::string& mName, UID mAnimationUID = 0, unsigned int mBeginIndex = 0, unsigned int mEndIndex = 0, bool mLoop = false, float mSpeed = 1.0f, UID mid = 0);
 
 	void SetBeginIndex(unsigned int index);
 	void SetEndIndex(unsigned int index);
 
-	ResourceAnimation* GetResourceAnimation();
+	void SetSpeed(float mSpeed) {
+		speed = mSpeed;
+	}
+
+	ResourceAnimation* GetResourceAnimation() const;
 
 public:
 	std::string name = "";
@@ -31,6 +35,7 @@ public:
 	bool loop = false;
 	unsigned int beginIndex = 0;
 	unsigned int endIndex = 0;
+	float speed = 1.0f;
 	float duration = 0;
 	unsigned int keyFramesSize = 0;
 };

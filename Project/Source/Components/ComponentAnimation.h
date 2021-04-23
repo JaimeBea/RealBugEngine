@@ -8,11 +8,11 @@
 #include "Resources/ResourceStateMachine.h"
 #include <string>
 #include "Utils/UID.h"
+#include "AnimationInterpolation.h"
 
 class GameObject;
 class ResourceAnimation;
 class ResourceTransition;
-class AnimationInterpolation;
 
 class ComponentAnimation : public Component {
 public:
@@ -28,30 +28,30 @@ public:
 	
 	void SendTrigger(std::string trigger);
 
-	States* GetCurrentState() {
+	States GetCurrentState() {
 		return currentState;
 	}
-	void SetCurrentState(States* mCurrentState) {
+	void SetCurrentState(const States& mCurrentState) {
 		currentState = mCurrentState;
 	}
 
-	States* GetInitialState() {
+	States GetInitialState() {
 		return initialState;
 	}
 
-	void SetInitialState(States* mInitalState) {
+	void SetInitialState(const States& mInitalState) {
 		initialState = mInitalState;
 	}
 
 public:
 	UID stateMachineResourceUID = 0;
-	States* currentState = nullptr;
-	States* initialState = nullptr;
+	States currentState;
+	States initialState;
 
 private:
 	void UpdateAnimations(GameObject *gameObject);
 
-	std::list<AnimationInterpolation*> animationInterpolations;
+	std::list<AnimationInterpolation> animationInterpolations;
 	int t = 0;
 };
 

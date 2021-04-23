@@ -654,11 +654,11 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			
 		ResourceAnimation* testAnim = nullptr; //TODO::Delete this
 
-		States* initialState = nullptr;
+		States initialState;
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			std::string parsedI = std::to_string(i);
 
-			ResourceAnimation* animation = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex); // TODO
+			ResourceAnimation* animation = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex);
 
 			if (testAnim == nullptr) { //TODO::Delete this
 				testAnim = animation;
@@ -668,43 +668,47 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 			JsonValue jResourceClip = jResources[resourceIndex];
 			UID idClip = jResourceClip[JSON_TAG_ID];
-			ResourceClip* clip = App->resources->CreateResource<ResourceClip>(filePath, idClip ? idClip : GenerateUID());
-			clip->Init(clipName + parsedI, animation->GetId(), 0, 60, true);
-			jResourceClip[JSON_TAG_TYPE] = GetResourceTypeName(clip->GetType());
-			jResourceClip[JSON_TAG_ID] = clip->GetId();
+			ResourceClip clip = *App->resources->CreateResource<ResourceClip>(filePath, idClip ? idClip : GenerateUID());
+			clip.Init(clipName + parsedI, animation->GetId(), 0, 60, true);
+			clip.SetSpeed(1.5);
+
+			jResourceClip[JSON_TAG_TYPE] = GetResourceTypeName(clip.GetType());
+			jResourceClip[JSON_TAG_ID] = clip.GetId();
 			resourceIndex += 1;
-			clip->SaveToFile(clip->GetResourceFilePath().c_str());
+			clip.SaveToFile(clip.GetResourceFilePath().c_str());
 
-
-			initialState = resourceStateMachine->AddState(stateName + parsedI, clip->GetId());
+			//Adding initial state
+			initialState = resourceStateMachine->AddState(stateName + parsedI, clip.GetId());
 		}
 
 		//Setting machine state
+		//Dead animation
 		std::string sState2 = "State2";
 		std::string clipName2 = "testClip2";
 		JsonValue jResourceClip2 = jResources[resourceIndex];
 		UID idClip2 = jResourceClip2[JSON_TAG_ID];
-		ResourceClip* clip2 = App->resources->CreateResource<ResourceClip>(filePath, idClip2 ? idClip2 : GenerateUID());
-		clip2->Init(clipName2, testAnim->GetId(), 290, 360, false);
-		jResourceClip2[JSON_TAG_TYPE] = GetResourceTypeName(clip2->GetType());
-		jResourceClip2[JSON_TAG_ID] = clip2->GetId();
+		ResourceClip clip2 = *App->resources->CreateResource<ResourceClip>(filePath, idClip2 ? idClip2 : GenerateUID());
+		clip2.Init(clipName2, testAnim->GetId(), 290, 360, false);
+		jResourceClip2[JSON_TAG_TYPE] = GetResourceTypeName(clip2.GetType());
+		jResourceClip2[JSON_TAG_ID] = clip2.GetId();
 		resourceIndex += 1;
-		clip2->SaveToFile(clip2->GetResourceFilePath().c_str());
+		clip2.SaveToFile(clip2.GetResourceFilePath().c_str());
 
+		//idle animation
 		std::string sState3 = "State3";
 		std::string clipName3 = "testClip3";
 		JsonValue jResourceClip3 = jResources[resourceIndex];
 		UID idClip3 = jResourceClip3[JSON_TAG_ID];
-		ResourceClip* clip3 = App->resources->CreateResource<ResourceClip>(filePath, idClip3 ? idClip3 : GenerateUID());
-		clip3->Init(clipName3, testAnim->GetId(), 60, 120, true);
-		jResourceClip3[JSON_TAG_TYPE] = GetResourceTypeName(clip3->GetType());
-		jResourceClip3[JSON_TAG_ID] = clip3->GetId();
+		ResourceClip clip3 = *App->resources->CreateResource<ResourceClip>(filePath, idClip3 ? idClip3 : GenerateUID());
+		clip3.Init(clipName3, testAnim->GetId(), 60, 120,  true );
+		jResourceClip3[JSON_TAG_TYPE] = GetResourceTypeName(clip3.GetType());
+		jResourceClip3[JSON_TAG_ID] = clip3.GetId();
 		resourceIndex += 1;
-		clip3->SaveToFile(clip3->GetResourceFilePath().c_str());
+		clip3.SaveToFile(clip3.GetResourceFilePath().c_str());
 
 		//Mocking transition
-		States* state2 = resourceStateMachine->AddState(sState2, clip2->GetId());
-		States* state3 = resourceStateMachine->AddState(sState3, clip3->GetId());
+		States state2 = resourceStateMachine->AddState(sState2, clip2.GetId());
+		States state3 = resourceStateMachine->AddState(sState3, clip3.GetId());
 
 		std::string tName1 = "s1Ts2";
 		std::string tName2 = "s2Ts1";

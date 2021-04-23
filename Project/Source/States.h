@@ -5,7 +5,8 @@
 class States {
 
 public:
-	States(std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
+	States() {}
+	States(const std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
 		: name(mName)
 		, clipUid(mClipUid)
 		, currentTime(mCurrentTime) {

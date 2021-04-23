@@ -146,6 +146,7 @@
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\FileSystem\StateMachineImporter.cpp" />
     <ClCompile Include="Source\Resources\ResourceClip.cpp" />
+    <ClCompile Include="Source\FileSystem\ClipImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -345,6 +346,7 @@
     <ClInclude Include="Source\States.h" />
     <ClInclude Include="Source\Transition.h" />
     <ClInclude Include="Source\AnimationInterpolation.h" />
+    <ClInclude Include="Source\FileSystem\ClipImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

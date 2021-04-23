@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Penteract</RootNamespace>
-	<ProjectGuid>{7ED3BB20-961F-488D-B9C3-D8727E835D68}</ProjectGuid>
+	<ProjectGuid>{F431B094-BBEC-4EF9-88C6-862AE2B15750}</ProjectGuid>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" >
     <Tesseract_IncludePath>../../Project/Source/;../../Project/Libs/MathGeoLib;../../Project/Libs/SDL/include</Tesseract_IncludePath>
-    <Tesseract_LibraryPath>D:\Documents\Master\Tesseract\Build\Debug</Tesseract_LibraryPath>
+    <Tesseract_LibraryPath>C:\Users\Saul\Documents\Tesseract\Build\Debug</Tesseract_LibraryPath>
   </PropertyGroup>
   <ItemGroup>
     <BuildMacro Include="Tesseract_IncludePath">

@@ -11,26 +11,27 @@
 
 #include "Utils/Leaks.h"
 
-bool AnimationController::GetTransform(ResourceClip* clip, float& currentTime, const char* name, float3& pos, Quat& quat) {
-	if (clip->animationUID == 0) {
-		return false;
-	}
+bool AnimationController::GetTransform(const ResourceClip& clip, float& currentTime, const char* name,float3& pos,Quat& quat) {
+	assert(clip.animationUID != 0);
+	
 
-	if (clip->loop) {
-		currentTime = currentTime > clip->duration ? 0 : currentTime;
+
+
+	if (clip.loop) {
+		currentTime = currentTime > clip.duration ? 0 : currentTime;
 	} else {
-		currentTime = currentTime > clip->duration ? clip->duration : currentTime;
+		currentTime = currentTime > clip.duration ? clip.duration : currentTime;
 	}
 
-	float currentSample = (currentTime * (clip->keyFramesSize - 1)) / clip->duration;
-	currentSample += clip->beginIndex;
+	float currentSample = (currentTime * (clip.keyFramesSize - 1)) / clip.duration;
+	currentSample += clip.beginIndex;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
 
 	//find in hash by name
-	ResourceAnimation* resourceAnimation = clip->GetResourceAnimation();
+	ResourceAnimation* resourceAnimation = clip.GetResourceAnimation();
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = resourceAnimation->keyFrames[intPart].channels.find(name);
-	unsigned int idNext = intPart == (clip->keyFramesSize - 1) ? 0 : intPart + 1;
+	unsigned int idNext = intPart == (clip.keyFramesSize - 1) ? 0 : intPart + 1;
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = resourceAnimation->keyFrames[idNext].channels.find(name);
 
 	if (channel == resourceAnimation->keyFrames[intPart].channels.end() && channelNext == resourceAnimation->keyFrames[idNext].channels.end()) {
@@ -43,20 +44,20 @@ bool AnimationController::GetTransform(ResourceClip* clip, float& currentTime, c
 	return true;
 }
 
-bool AnimationController::InterpolateTransitions(std::list<AnimationInterpolation*>::iterator it, std::list<AnimationInterpolation*> animationInterpolations, GameObject* rootBone, GameObject* gameObject, float3& pos, Quat& quat) {
-	ResourceClip* clip = (ResourceClip*) App->resources->GetResource((*it)->state->clipUid);
-	bool ok = GetTransform(clip, (*it)->currentTime, gameObject->name.c_str(), pos, quat);
-	if ((*it) != (*std::prev(animationInterpolations.end()))) {
+bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator &it, std::list<AnimationInterpolation> &animationInterpolations, GameObject& rootBone, GameObject& gameObject, float3& pos, Quat& quat) {
+	ResourceClip clip = *((ResourceClip* )App->resources->GetResource( (*it).state.clipUid));
+	bool ok = GetTransform(clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
+	if (&(*it) != &(*std::prev(animationInterpolations.end()))) {
 		float3 position;
 		Quat rotation;
 		AnimationController::InterpolateTransitions(std::next(it), animationInterpolations, rootBone, gameObject, position, rotation);
 
-		(*it)->fadeTime = 1 - ((*it)->TransistionTime - (*it)->currentTime) / (*it)->TransistionTime;
-		pos = float3::Lerp(position, pos, (*it)->fadeTime);
-		quat = AnimationController::Interpolate(rotation, quat, (*it)->fadeTime);
+		(*it).fadeTime = 1 - ((*it).TransistionTime - (*it).currentTime) / (*it).TransistionTime;
+		pos = float3::Lerp(position, pos, (*it).fadeTime);
+		quat = AnimationController::Interpolate(rotation, quat, (*it).fadeTime);
 	}
-	if (gameObject == rootBone) { // Only udate currentTime for the rootBone
-		(*it)->currentTime += App->time->GetDeltaTime();
+	if (&gameObject == &rootBone) { // Only udate currentTime for the rootBone
+		(*it).currentTime += App->time->GetDeltaTime();
 	}
 
 	return ok;
