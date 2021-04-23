@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "AnimationController.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/ResourceClip.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
@@ -100,7 +101,8 @@ void ComponentAnimation::OnUpdate() {
 
 	UpdateAnimations(rootBone);
 
-	currentState.currentTime += App->time->GetDeltaTime();
+	ResourceClip* currentClip = (ResourceClip*) App->resources->GetResource(currentState.clipUid);
+	currentState.currentTime += App->time->GetDeltaTime() * currentClip->speed;
 }
 
 void ComponentAnimation::SendTrigger(std::string trigger) {

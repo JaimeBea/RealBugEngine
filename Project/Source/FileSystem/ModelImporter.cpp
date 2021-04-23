@@ -670,7 +670,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			UID idClip = jResourceClip[JSON_TAG_ID];
 			ResourceClip clip = *App->resources->CreateResource<ResourceClip>(filePath, idClip ? idClip : GenerateUID());
 			clip.Init(clipName + parsedI, animation->GetId(), 0, 60, true);
-			clip.SetSpeed(1.5);
+			clip.SetSpeed(2.0);
 
 			jResourceClip[JSON_TAG_TYPE] = GetResourceTypeName(clip.GetType());
 			jResourceClip[JSON_TAG_ID] = clip.GetId();

@@ -14,9 +14,6 @@
 bool AnimationController::GetTransform(const ResourceClip& clip, float& currentTime, const char* name,float3& pos,Quat& quat) {
 	assert(clip.animationUID != 0);
 	
-
-
-
 	if (clip.loop) {
 		currentTime = currentTime > clip.duration ? 0 : currentTime;
 	} else {
