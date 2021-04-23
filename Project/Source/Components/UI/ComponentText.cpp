@@ -103,7 +103,7 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	unsigned int program = 0;
-	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
 	}

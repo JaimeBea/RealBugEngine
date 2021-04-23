@@ -71,7 +71,7 @@ GameObject* Scene::CreateGameObject(GameObject* parent, UID id, const char* name
 
 GameObject* Scene::DuplicateGameObject(GameObject* gameObject, GameObject* parent) {
 	GameObject* newGO = CreateGameObject(parent, GenerateUID(), (gameObject->name + " (copy)").c_str());
-	
+
 	// Copy the components
 	for (Component* component : gameObject->GetComponents()) {
 		component->DuplicateComponent(*newGO);
@@ -262,7 +262,7 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 int Scene::GetTotalTriangles() const {
 	int triangles = 0;
 	for (const ComponentMeshRenderer& meshComponent : meshRendererComponents) {
-		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshComponent.meshId);
+		ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshComponent.meshId);
 		if (mesh != nullptr) {
 			triangles += mesh->numIndices / 3;
 		}
