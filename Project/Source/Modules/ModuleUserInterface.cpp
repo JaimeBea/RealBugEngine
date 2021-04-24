@@ -67,7 +67,6 @@ bool ModuleUserInterface::CleanUp() {
 }
 
 void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
-	float2 mousePos = App->input->GetMousePosition(true);
 
 	switch (e.type) {
 	case TesseractEventType::MOUSE_CLICKED:

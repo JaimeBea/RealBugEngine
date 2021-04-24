@@ -19,7 +19,6 @@ static void CleanUpEvent(TesseractEvent& e) {
 }
 
 bool ModuleEvents::Init() {
-	observerArray = new std::vector<Module*>[(int) TesseractEventType::COUNT];
 	return true;
 }
 
@@ -37,7 +36,6 @@ UpdateStatus ModuleEvents::PostUpdate() {
 }
 
 bool ModuleEvents::CleanUp() {
-	delete[] observerArray;
 	while (!eventQueue.empty()) {
 		TesseractEvent e(TesseractEventType::UNKNOWN);
 		eventQueue.try_pop(e);

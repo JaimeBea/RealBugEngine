@@ -116,11 +116,11 @@ bool ModuleScene::CleanUp() {
 void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(std::get<DestroyGameObjectStruct>(e.variant).gameObject);
+		scene->DestroyGameObject(e.Get<DestroyGameObjectStruct>().gameObject);
 		break;
 	case TesseractEventType::CHANGE_SCENE:
 		sceneLoaded = false;
-		SceneImporter::LoadScene(std::get<ChangeSceneStruct>(e.variant).scenePath);
+		SceneImporter::LoadScene(e.Get<ChangeSceneStruct>().scenePath);
 		break;
 	case TesseractEventType::RESOURCES_LOADED:
 		if (App->time->IsGameRunning() && !sceneLoaded) {
@@ -170,6 +170,7 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 		DestroyGameObjectDeferred(child);
 	}
 	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
-	e.variant.emplace<DestroyGameObjectStruct>(gameObject);
+	e.Set<DestroyGameObjectStruct>(gameObject);
+
 	App->events->AddEvent(e);
 }

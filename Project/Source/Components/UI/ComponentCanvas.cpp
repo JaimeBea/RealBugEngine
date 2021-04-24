@@ -11,7 +11,6 @@
 #include "Utils/Leaks.h"
 
 void ComponentCanvas::Init() {
-	
 }
 
 void ComponentCanvas::Save(JsonValue jComponent) const {
@@ -22,6 +21,7 @@ void ComponentCanvas::Load(JsonValue jComponent) {
 
 void ComponentCanvas::DuplicateComponent(GameObject& owner) {
 	ComponentCanvas* component = owner.CreateComponent<ComponentCanvas>();
+	component->screenReferenceSize = screenReferenceSize;
 }
 
 void ComponentCanvas::SetScreenReferenceSize(float2 screenReferenceSize_) {

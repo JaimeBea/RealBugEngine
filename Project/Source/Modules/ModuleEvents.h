@@ -30,5 +30,5 @@ private:
 
 private:
 	concurrency::concurrent_queue<TesseractEvent> eventQueue;
-	std::vector<Module*>* observerArray;
+	std::vector<Module*> observerArray[(int) TesseractEventType::COUNT];
 };
