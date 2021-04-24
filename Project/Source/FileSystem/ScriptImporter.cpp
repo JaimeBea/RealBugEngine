@@ -12,11 +12,6 @@
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleTime.h"
 
-#include "rapidjson/error/en.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/prettywriter.h"
-#include "rapidjson/document.h"
-
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_RESOURCES "Resources"

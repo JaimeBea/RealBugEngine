@@ -17,6 +17,8 @@
 
 #include "Utils/Leaks.h"
 
+#define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
+
 void ComponentBoundingBox2D::Init() {
 	ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
 	if (transform2D) {
@@ -33,7 +35,7 @@ void ComponentBoundingBox2D::Update() {
 }
 
 void ComponentBoundingBox2D::DuplicateComponent(GameObject& owner) {
-	ComponentBoundingBox2D* component = owner.CreateComponentDeferred<ComponentBoundingBox2D>();
+	ComponentBoundingBox2D* component = owner.CreateComponent<ComponentBoundingBox2D>();
 	component->SetLocalBoundingBox(AABB2D(localAABB));
 }
 
@@ -68,12 +70,16 @@ void ComponentBoundingBox2D::CalculateWorldBoundingBox(bool force) {
 		float screenFactor = ((ComponentCanvasRenderer*) GetOwner().GetComponent<ComponentCanvasRenderer>())->GetCanvasScreenFactor();
 
 #if !GAME
-		worldAABB.minPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f).Mul(screenFactor));
-		worldAABB.maxPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f).Mul(screenFactor));
+		worldAABB.minPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f 
+		+ localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy()).Mul(screenFactor));
+		worldAABB.maxPoint = transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + App->editor->panelScene.GetSceneWindowSize() / 2.0f 
+		+ localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy()).Mul(screenFactor));
 #else
 		float2 windowPos = float2(App->window->GetPositionX(), App->window->GetPositionY());
-		worldAABB.minPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f).Mul(screenFactor));
-		worldAABB.maxPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f + localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy() * 1.01f).Mul(screenFactor));
+		worldAABB.minPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f 
+		+ localAABB.minPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy()).Mul(screenFactor));
+		worldAABB.maxPoint = windowPos + transform2d->GetPosition().xy().Mul(float2(1.0f, -1.0f).Mul(screenFactor)) + float2(App->window->GetWidth(), App->window->GetHeight()) / 2.0f 
+		+ localAABB.maxPoint.Mul(transform2d->GetSize().Mul(transform2d->GetScale().xy()).Mul(screenFactor));
 #endif
 	}
 }

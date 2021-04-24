@@ -1,5 +1,6 @@
 #include "ComponentTransform2D.h"
 
+#include "Globals.h"
 #include "GameObject.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
@@ -178,12 +179,12 @@ void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	InvalidateHierarchy();
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrix() {
+const float4x4 ComponentTransform2D::GetGlobalMatrix() const {
 	return globalMatrix;
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
-	if (isRunning) {
+const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) const {
+	if (view3DActive) {
 		return globalMatrix * float4x4::Scale(size.x / 100.0f, size.y / 100.0f, 0);
 	}
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
@@ -244,7 +245,7 @@ void ComponentTransform2D::Invalidate() {
 }
 
 void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
-	ComponentTransform2D* component = owner.CreateComponentDeferred<ComponentTransform2D>();
+	ComponentTransform2D* component = owner.CreateComponent<ComponentTransform2D>();
 	component->SetPivot(pivot);
 	component->SetSize(size);
 	component->SetPosition(position);

@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/FileDialog.h"
 #include "Modules/ModuleWindow.h"
@@ -24,6 +25,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include "Math/float2.h"
 
 #include "Utils/Leaks.h"
 
@@ -421,17 +423,8 @@ bool ModuleEditor::CleanUp() {
 	return true;
 }
 
-void ModuleEditor::OnMouseMoved() {
-	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
-	App->events->AddEvent(mouseEvent);
-}
-
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 

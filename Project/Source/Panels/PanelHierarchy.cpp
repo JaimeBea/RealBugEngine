@@ -10,6 +10,8 @@
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentImage.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentButton.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
@@ -156,7 +158,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		std::string prafabPayloadType = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(prafabPayloadType.c_str())) {
 			UID prefabId = *(UID*) payload->Data;
-			ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+			ResourcePrefab* prefab = App->resources->GetResource<ResourcePrefab>(prefabId);
 			if (prefab != nullptr) {
 				prefab->BuildPrefab(gameObject);
 			}

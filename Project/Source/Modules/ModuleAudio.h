@@ -1,7 +1,10 @@
 #pragma once
+
 #include "Module.h"
 
-#include "AL/alc.h"
+struct ALCdevice;
+struct ALCcontext;
+typedef char ALCboolean;
 
 class ModuleAudio : public Module {
 public:

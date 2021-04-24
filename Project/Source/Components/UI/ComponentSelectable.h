@@ -4,7 +4,6 @@
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
 
-#include <vector>
 #include "Math/float2.h"
 #include "Math/float4.h"
 
@@ -60,6 +59,7 @@ public:
 	const float4 GetHoverColor() const;			 // Returns colorHovered
 	const float4 GetSelectedColor() const;		 // Returns colorSelected
 	TransitionType GetTransitionType() const;
+	void TryToClickOn() const;
 
 public:
 	UID onAxisUp = 0;

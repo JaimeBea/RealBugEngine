@@ -64,7 +64,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
 
 	if (ImGui::TreeNode("Mesh")) {
-		ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshId);
+		ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshId);
 		if (mesh != nullptr) {
 			ImGui::TextColored(App->editor->titleColor, "Geometry");
 			ImGui::TextWrapped("Num Vertices: ");
@@ -86,7 +86,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 	}
 
 	if (ImGui::TreeNode("Material")) {
-		ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
+		ResourceMaterial* material = App->resources->GetResource<ResourceMaterial>(materialId);
 		if (material != nullptr) {
 			if (ImGui::Button("Save")) {
 				std::string assetPath = material->GetAssetFilePath();
@@ -100,7 +100,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 			}
 			ImGui::ResourceSlot<ResourceShader>("Shader", &material->shaderId);
 
-			ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
+			ResourceShader* shader = App->resources->GetResource<ResourceShader>(material->shaderId);
 			if (shader != nullptr) {
 				ImGui::TextColored(App->editor->titleColor, "Shader");
 				ImGui::TextUnformatted("Change type:");
@@ -360,7 +360,7 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 }
 
 void ComponentMeshRenderer::Init() {
-	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshId);
 	if (!mesh) return;
 
 	palette.resize(mesh->numBones);
@@ -370,7 +370,7 @@ void ComponentMeshRenderer::Init() {
 }
 
 void ComponentMeshRenderer::Update() {
-	ResourceMesh* mesh = static_cast<ResourceMesh*>(App->resources->GetResource(meshId));
+	ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshId);
 	if (!mesh) return;
 
 	if (palette.empty()) {
@@ -408,7 +408,7 @@ void ComponentMeshRenderer::Load(JsonValue jComponent) {
 }
 
 void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
-	ComponentMeshRenderer* component = owner.CreateComponentDeferred<ComponentMeshRenderer>();
+	ComponentMeshRenderer* component = owner.CreateComponent<ComponentMeshRenderer>();
 	component->meshId = meshId;
 	component->materialId = materialId;
 }
@@ -416,13 +416,13 @@ void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	if (!IsActiveInHierarchy()) return;
 
-	ResourceMesh* mesh = (ResourceMesh*) App->resources->GetResource(meshId);
+	ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshId);
 	if (mesh == nullptr) return;
 
-	ResourceMaterial* material = (ResourceMaterial*) App->resources->GetResource(materialId);
+	ResourceMaterial* material = App->resources->GetResource<ResourceMaterial>(materialId);
 	if (material == nullptr) return;
 
-	ResourceShader* shader = (ResourceShader*) App->resources->GetResource(material->shaderId);
+	ResourceShader* shader = App->resources->GetResource<ResourceShader>(material->shaderId);
 	if (shader == nullptr) return;
 
 	// Light settings
@@ -540,13 +540,13 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	float4x4 projMatrix = App->camera->GetProjectionMatrix();
 
 	unsigned glTextureDiffuse = 0;
-	ResourceTexture* diffuse = (ResourceTexture*) App->resources->GetResource(material->diffuseMapId);
+	ResourceTexture* diffuse = App->resources->GetResource<ResourceTexture>(material->diffuseMapId);
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
 
 	if (shader->GetShaderType() == ShaderType::PHONG) {
 		// Phong-specific settings
 		unsigned glTextureSpecular = 0;
-		ResourceTexture* specular = (ResourceTexture*) App->resources->GetResource(material->specularMapId);
+		ResourceTexture* specular = App->resources->GetResource<ResourceTexture>(material->specularMapId);
 		glTextureSpecular = specular ? specular->glTexture : 0;
 
 		// Phong-specific uniform settings
@@ -565,7 +565,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	} else if (shader->GetShaderType() == ShaderType::STANDARD_SPECULAR) {
 		// Specular-specific settings
 		unsigned glTextureSpecular = 0;
-		ResourceTexture* specular = (ResourceTexture*) App->resources->GetResource(material->specularMapId);
+		ResourceTexture* specular = App->resources->GetResource<ResourceTexture>(material->specularMapId);
 		glTextureSpecular = specular ? specular->glTexture : 0;
 
 		// Specular-specific uniform settings
@@ -584,7 +584,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	} else if (shader->GetShaderType() == ShaderType::STANDARD) {
 		// Standard-specific settings
 		unsigned glTextureMetallic = 0;
-		ResourceTexture* metallic = (ResourceTexture*) App->resources->GetResource(material->metallicMapId);
+		ResourceTexture* metallic = App->resources->GetResource<ResourceTexture>(material->metallicMapId);
 		glTextureMetallic = metallic ? metallic->glTexture : 0;
 
 		// Standard-specific uniform settings

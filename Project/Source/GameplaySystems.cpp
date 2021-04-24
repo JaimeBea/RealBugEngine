@@ -1,10 +1,13 @@
 #include "GameplaySystems.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/ComponentCamera.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleEvents.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
@@ -132,7 +135,11 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 // --------- SCENE MANAGER --------- //
 void SceneManager::ChangeScene(const char* scenePath) {
 	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
-	e.changeScene.scenePath = scenePath;
+	//e.changeScene.scenePath = scenePath;
+	e.variant.emplace<ChangeSceneStruct>(scenePath);
+
+	//std::get<ChangeSceneStruct>(e.variant).scenePath = scenePath;
+
 	App->events->AddEvent(e);
 }
 

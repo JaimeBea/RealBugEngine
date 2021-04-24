@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Application.h"
+#include "ComponentTransform2D.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
@@ -82,7 +83,7 @@ void ComponentText::Load(JsonValue jComponent) {
 }
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
-	ComponentText* component = owner.CreateComponentDeferred<ComponentText>();
+	ComponentText* component = owner.CreateComponent<ComponentText>();
 	component->shaderID = shaderID;
 	component->fontID = fontID;
 	component->fontSize = fontSize;
@@ -97,12 +98,12 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	}
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) {
+void ComponentText::Draw(ComponentTransform2D* transform) const  {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	unsigned int program = 0;
-	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
 	}
