@@ -37,7 +37,6 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
-	void OnMouseMoved();
 	void OnMouseClicked();
 	void OnMouseReleased();
 

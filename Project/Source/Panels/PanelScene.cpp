@@ -272,7 +272,7 @@ bool PanelScene::IsUsing2D() const {
 	return view2D;
 }
 
-float2 PanelScene::GetMousePosOnScene() const {
+const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
 }
 

@@ -12,7 +12,7 @@
 class ModuleTime : public Module {
 public:
 	ModuleTime();
-	bool Init() override;
+	bool Start() override;
 	UpdateStatus PreUpdate() override;
 	void ReceiveEvent(TesseractEvent& e) override;
 

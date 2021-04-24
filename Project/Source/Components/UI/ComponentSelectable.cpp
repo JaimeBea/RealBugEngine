@@ -31,7 +31,9 @@
 #define JSON_TAG_SELECTABLE_TYPE "SelectableType"
 
 ComponentSelectable::~ComponentSelectable() {
-	//TODO IF SELECTED SET SELECTED TO NULL
+	if (App->userInterface->GetCurrentEventSystem()->GetCurrentSelected() == this) {
+		App->userInterface->GetCurrentEventSystem()->SetSelected(0);
+	}
 }
 
 bool ComponentSelectable::IsInteractable() const {
@@ -306,6 +308,36 @@ const float4 ComponentSelectable::GetSelectedColor() const {
 
 ComponentSelectable::TransitionType ComponentSelectable::GetTransitionType() const {
 	return transitionType;
+}
+
+void ComponentSelectable::TryToClickOn() const {
+	UID toBeClicked = 0;
+	ComponentType typeToPress = ComponentType::UNKNOWN;
+
+	std::vector<Component*>::const_iterator it = GetOwner().components.begin();
+	while (toBeClicked == 0 && it != GetOwner().components.end()) {
+		if ((*it)->GetType() == ComponentType::BUTTON || (*it)->GetType() == ComponentType::TOGGLE) {
+			toBeClicked = (*it)->GetID();
+			typeToPress = (*it)->GetType();
+		} else {
+			++it;
+		}
+	}
+
+	if (toBeClicked != 0) {
+		Component* componentToPress = nullptr;
+		switch (typeToPress) {
+		case ComponentType::BUTTON:
+			componentToPress = GetOwner().GetComponent<ComponentButton>();
+			((ComponentButton*) componentToPress)->OnClicked();
+			break;
+		case ComponentType::TOGGLE:
+			break;
+		default:
+			assert("This is not supposed to ever happen");
+			break;
+		}
+	}
 }
 
 Component* ComponentSelectable::GetSelectableComponent() {
