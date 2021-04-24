@@ -158,7 +158,7 @@ void ComponentAudioSource::OnEditorUpdate() {
 }
 
 void ComponentAudioSource::UpdateSourceParameters() const {
-	ResourceAudioClip* audioResource = (ResourceAudioClip*) App->resources->GetResource(audioClipId);
+	ResourceAudioClip* audioResource = App->resources->GetResource<ResourceAudioClip>(audioClipId);
 	if (audioResource == nullptr) return;
 
 	alSourcef(sourceId, AL_PITCH, pitch);
