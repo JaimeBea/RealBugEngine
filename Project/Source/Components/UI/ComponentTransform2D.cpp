@@ -29,15 +29,19 @@ void ComponentTransform2D::Update() {
 
 void ComponentTransform2D::OnEditorUpdate() {
 	float3 editorPos = position;
+
+	bool transformChanged = false;
 	ImGui::TextColored(App->editor->titleColor, "Position (X,Y,Z)");
 	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(editorPos);
+		transformChanged = true;
 	}
 
 	float2 editorSize = size;
 	ImGui::TextColored(App->editor->titleColor, "Size (Width,Height)");
 	if (ImGui::DragFloat2("Size", editorSize.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 		SetSize(editorSize);
+		transformChanged = true;
 	}
 
 	float2 anchX = anchorX;
@@ -45,20 +49,26 @@ void ComponentTransform2D::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Anchors");
 	if (ImGui::DragFloat2("Anchor X (Min, Max)", anchX.ptr(), App->editor->dragSpeed2f, 0, 1)) {
 		SetAnchorX(anchX);
+		transformChanged = true;
 	}
 	if (ImGui::DragFloat2("Anchor Y (Min, Max)", anchY.ptr(), App->editor->dragSpeed2f, 0, 1)) {
 		SetAnchorY(anchY);
+		transformChanged = true;
 	}
 
 	float3 scl = scale;
 	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 		SetScale(scl);
+		transformChanged = true;
 	}
 
 	float3 rot = localEulerAngles;
 	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetRotation(rot);
+		transformChanged = true;
 	}
+
+	UpdateUIElements(transformChanged);
 
 	ImGui::Separator();
 }
@@ -207,6 +217,15 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 
 		} else {
 			globalMatrix = localMatrix;
+		}
+	}
+}
+
+void ComponentTransform2D::UpdateUIElements(bool transformChanged) {
+	if (transformChanged) {
+		ComponentText* text = GetOwner().GetComponent<ComponentText>();
+		if (text != nullptr) {
+			text->RecalculcateVertices();
 		}
 	}
 }
