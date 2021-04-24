@@ -220,7 +220,10 @@ UpdateStatus ModuleRender::PostUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
 
 	SDL_GL_SwapWindow(App->window->window);
-
+	/* When resized docking, in PostUpdate
+		1 it -> Goes black the viewport
+		2 it -> In the next frame, goes new viewport resized
+	*/
 	return UpdateStatus::CONTINUE;
 }
 
