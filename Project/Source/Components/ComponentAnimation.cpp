@@ -29,7 +29,7 @@
 
 void ComponentAnimation::Update() {
 	// TODO remove, HardCoded for test transitions
-	/*
+	
 	if (App->input->GetKey(SDL_SCANCODE_1)) {
 		if (t != 1) {
 			SendTrigger("s1Ts2");
@@ -60,7 +60,7 @@ void ComponentAnimation::Update() {
 			t = 4;
 			LOG("Transition4");
 		}
-	}*/
+	}
 	OnUpdate();
 }
 

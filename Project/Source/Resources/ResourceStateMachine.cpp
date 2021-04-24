@@ -66,7 +66,7 @@ void ResourceStateMachine::Load() {
 			UID id = p[JSON_TAG_ID].GetUint64();
 			std::string name = p[JSON_TAG_NAME].GetString();
 			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
-			States state =  States(name, clipId, 0, id);
+			States state(name, clipId, 0, id);
 			states.push_back(state);
 			stateMap.insert(std::make_pair(id, state));
 
@@ -78,7 +78,7 @@ void ResourceStateMachine::Load() {
 		UID source = p[JSON_TAG_SOURCE].GetUint64();
 		UID target = p[JSON_TAG_TARGET].GetUint64();
 		float interpolationDuration = p[JSON_TAG_INTERPOLATION_DURATION].GetFloat();
-		Transition transition = Transition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration,id);
+		Transition transition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration,id);
 		transitions.insert(std::make_pair(triggerName, transition));
 	}	
 
