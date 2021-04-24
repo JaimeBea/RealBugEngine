@@ -29,6 +29,7 @@ void ComponentTransform2D::Update() {
 
 void ComponentTransform2D::OnEditorUpdate() {
 	float3 editorPos = position;
+
 	ImGui::TextColored(App->editor->titleColor, "Position (X,Y,Z)");
 	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(editorPos);
@@ -59,6 +60,8 @@ void ComponentTransform2D::OnEditorUpdate() {
 	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetRotation(rot);
 	}
+
+	UpdateUIElements();
 
 	ImGui::Separator();
 }
@@ -207,6 +210,15 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 
 		} else {
 			globalMatrix = localMatrix;
+		}
+	}
+}
+
+void ComponentTransform2D::UpdateUIElements() {
+	if (dirty) {	// Means the transform has changed
+		ComponentText* text = GetOwner().GetComponent<ComponentText>();
+		if (text != nullptr) {
+			text->RecalculcateVertices();
 		}
 	}
 }
