@@ -28,7 +28,6 @@
 #define JSON_TAG_NAME "Name"
 #define JSON_TAG_ID "Id"
 
-#define JSON_TAG_CURRENTTIME "CurrentTime"
 #define JSON_TAG_SOURCE "Source"
 #define JSON_TAG_TARGET "Target"
 #define JSON_TAG_TRIGGER_NAME "Trigger"
@@ -68,8 +67,7 @@ void ResourceStateMachine::Load() {
 			UID id = p[JSON_TAG_ID].GetUint64();
 			std::string name = p[JSON_TAG_NAME].GetString();
 			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
-			float currentTime = p[JSON_TAG_CURRENTTIME].GetFloat();
-			States state =  States(name, clipId, currentTime, id);
+			States state =  States(name, clipId, 0, id);
 			states.push_back(state);
 			stateMap.insert(std::make_pair(id, state));
 
@@ -129,7 +127,6 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 		objValue.AddMember(JSON_TAG_ID, (*itState).id, allocator);
 		objValue.AddMember(JSON_TAG_NAME, name, allocator);
 		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState).clipUid, allocator);
-		objValue.AddMember(JSON_TAG_CURRENTTIME, (*itState).currentTime, allocator);
 
 		statesArrayJson.PushBack(objValue, allocator);
 	}
