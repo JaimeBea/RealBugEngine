@@ -46,7 +46,7 @@ void ComponentText::Init() {
 }
 
 void ComponentText::OnEditorUpdate() {
-	static ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+	ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
 	if (ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags)) {
 		SetText(text);
 	}
@@ -131,12 +131,10 @@ void ComponentText::Draw(ComponentTransform2D* transform) const  {
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
 		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
-		float4x4 modelMatrix = transform->GetGlobalMatrixWithSize();
 
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4& view = App->camera->GetViewMatrix();
-		float4x4 modelMatrix = transform->GetGlobalMatrixWithSize(true);
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	}
 

@@ -63,5 +63,5 @@ private:
 	bool dirty = true;
 
 	void CalculateGlobalMatrix(); // Calculates the Global Matrix
-	void UpdateUIElements(bool transformChanged);	// If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
+	void UpdateUIElements();	// If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
 };
