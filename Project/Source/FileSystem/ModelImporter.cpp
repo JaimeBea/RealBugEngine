@@ -370,7 +370,6 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 		transform->SetPosition(position);
 		transform->SetRotation(rotation);
 		transform->SetScale(scale);
-		transform->CalculateGlobalMatrix();
 		LOG("Transform: (%f, %f, %f), (%f, %f, %f, %f), (%f, %f, %f)", position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, scale.x, scale.y, scale.z);
 
 		// Save min and max points
@@ -402,7 +401,6 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 		if (minPoint.x < maxPoint.x) {
 			ComponentBoundingBox* boundingBox = gameObject->CreateComponent<ComponentBoundingBox>();
 			boundingBox->SetLocalBoundingBox(AABB(minPoint, maxPoint));
-			boundingBox->CalculateWorldBoundingBox();
 		}
 
 		// Import children nodes
@@ -491,7 +489,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			} else {
 				LOG("Diffuse texture imported successfuly.");
 				material->diffuseMapId = textureResourceIds[0];
-				material->hasDiffuseMap = true;
 			}
 		} else {
 			LOG("Diffuse texture not found.");
@@ -527,7 +524,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			} else {
 				LOG("Specular texture imported successfuly.");
 				material->specularMapId = textureResourceIds[0];
-				material->hasSpecularMap = true;
 			}
 		} else {
 			LOG("Specular texture not found.");
@@ -755,14 +751,15 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	}
 
 	if (!bones.empty()) {
-		GameObject* rootBoneGO = root->FindDescendant(rootBone->mName.C_Str())->GetParent();
+		GameObject* rootBoneGO = root->FindDescendant(rootBone->mName.C_Str());
 		root->GetChildren()[0]->SetRootBone(rootBoneGO);
 
 		std::unordered_map<std::string, GameObject*> goBones;
 		// TODO: check if CtrlGrp is generated always
+		goBones[rootBoneGO->name] = rootBoneGO;
 		CacheBones(rootBoneGO, goBones);
 
-		for (GameObject* child : root->GetChildren()) {
+		for (GameObject* child : root->GetChildren()[0]->GetChildren()) {
 			if (child->name != rootBoneGO->name) {
 				SaveBones(child, goBones);
 			}
@@ -823,8 +820,8 @@ void ModelImporter::CacheBones(GameObject* node, std::unordered_map<std::string,
 }
 
 void ModelImporter::SaveBones(GameObject* node, std::unordered_map<std::string, GameObject*>& goBones) {
-	for (ComponentMeshRenderer* meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
-		meshRenderer->goBones = goBones;
+	for (ComponentMeshRenderer& meshRenderer : node->GetComponents<ComponentMeshRenderer>()) {
+		meshRenderer.goBones = goBones;
 	}
 
 	for (GameObject* child : node->GetChildren()) {

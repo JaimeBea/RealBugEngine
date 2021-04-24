@@ -57,7 +57,7 @@ void ResourceStateMachine::Load() {
 	assert(clipsArray.IsArray());
 	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
 		UID clipUID = itr->GetUint64();
-		ResourceClip* clip = (ResourceClip*) App->resources->GetResource(clipUID);
+		ResourceClip* clip = App->resources->GetResource<ResourceClip>(clipUID);
 		App->resources->IncreaseReferenceCount(clipUID);
 		clipsUids.push_back(clipUID);
 	}

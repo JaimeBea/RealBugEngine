@@ -2,6 +2,8 @@
 
 #include "Utils/Logging.h"
 
+#include "Math/myassert.h"
+
 #include "Utils/Leaks.h"
 
 const char* GetResourceTypeName(ResourceType type) {
@@ -18,6 +20,8 @@ const char* GetResourceTypeName(ResourceType type) {
 		return "Shader";
 	case ResourceType::TEXTURE:
 		return "Texture";
+	case ResourceType::FONT:
+		return "Font";
 	case ResourceType::SKYBOX:
 		return "Skybox";
 	case ResourceType::SCRIPT:
@@ -48,6 +52,8 @@ ResourceType GetResourceTypeFromName(const char* name) {
 		return ResourceType::SHADER;
 	} else if (strcmp(name, "Texture") == 0) {
 		return ResourceType::TEXTURE;
+	} else if (strcmp(name, "Font") == 0) {
+		return ResourceType::FONT;
 	} else if (strcmp(name, "Skybox") == 0) {
 		return ResourceType::SKYBOX;
 	} else if (strcmp(name, "Script") == 0) {

@@ -2,10 +2,13 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Utils/Logging.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
+#include "Modules/ModuleEditor.h"
+#include "Modules/ModuleEvents.h"
+#include "Modules/ModuleUserInterface.h"
+#include "Utils/Logging.h"
 
 #include "imgui_impl_sdl.h"
 #include "SDL.h"
@@ -56,6 +59,10 @@ UpdateStatus ModuleInput::PreUpdate() {
 		}
 	}
 
+	int auxMouseX;
+	int auxMouseY;
+	SDL_GetGlobalMouseState(&auxMouseX, &auxMouseY);
+
 	SDL_Event event;
 	while (SDL_PollEvent(&event) != 0) {
 		ImGui_ImplSDL2_ProcessEvent(&event);
@@ -89,10 +96,26 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_MOUSEBUTTONDOWN:
 			mouseButtons[event.button.button - 1] = KS_DOWN;
+			if (event.button.button == SDL_BUTTON_LEFT) {
+#if !GAME
+				App->editor->OnMouseClicked();
+#else
+				TesseractEvent e(TesseractEventType::MOUSE_CLICKED);
+				e.mouseClicked.mouseX = auxMouseX;
+				e.mouseClicked.mouseY = auxMouseY;
+				App->events->AddEvent(e);
+#endif
+			}
 			break;
-
 		case SDL_MOUSEBUTTONUP:
 			mouseButtons[event.button.button - 1] = KS_UP;
+			if (event.button.button == SDL_BUTTON_LEFT) {
+#if !GAME
+				App->editor->OnMouseReleased();
+#else
+				App->events->AddEvent(TesseractEventType::MOUSE_RELEASED);
+#endif
+			}
 			break;
 
 		case SDL_KEYDOWN:
@@ -101,6 +124,16 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_KEYUP:
 			keyboard[event.key.keysym.scancode] = KS_UP;
+			break;
+		case SDL_MOUSEMOTION:
+#if !GAME
+			App->editor->OnMouseMoved();
+#else
+			TesseractEvent e(TesseractEventType::MOUSE_UPDATE);
+			e.mouseUpdate.mouseX = auxMouseX;
+			e.mouseUpdate.mouseY = auxMouseY;
+			App->events->AddEvent(e);
+#endif
 			break;
 		}
 	}
@@ -177,4 +210,12 @@ const float2& ModuleInput::GetMouseMotion() const {
 
 const float2& ModuleInput::GetMousePosition() const {
 	return mouse;
+}
+
+KeyState* ModuleInput::GetMouseButtons() {
+	return mouseButtons;
+}
+
+KeyState* ModuleInput::GetKeyboard() {
+	return keyboard;
 }

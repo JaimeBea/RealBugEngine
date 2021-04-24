@@ -5,8 +5,10 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Resources/ResourceScript.h"
+#include "Modules/ModuleScene.h"
 #include "Utils/FileDialog.h"
 #include "Utils/ImGuiUtils.h"
+#include "Script.h"
 
 #include "imgui.h"
 
@@ -19,25 +21,21 @@ void ComponentScript::Init() {
 }
 
 void ComponentScript::Update() {
-	if (App->time->HasGameStarted()) {
-		OnUpdate();
-	}
-}
-
-void ComponentScript::OnStart() {
-	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
-	if (resource != nullptr) {
-		if (resource->script != nullptr) {
-			resource->script->Start();
+	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
+		ResourceScript* resource = App->resources->GetResource<ResourceScript>(scriptID);
+		if (resource != nullptr) {
+			if (resource->script != nullptr) {
+				resource->script->Update();
+			}
 		}
 	}
 }
 
-void ComponentScript::OnUpdate() {
-	ResourceScript* resource = (ResourceScript*) App->resources->GetResource(id);
+void ComponentScript::OnStart() {
+	ResourceScript* resource = App->resources->GetResource<ResourceScript>(scriptID);
 	if (resource != nullptr) {
 		if (resource->script != nullptr) {
-			resource->script->Update();
+			resource->script->Start();
 		}
 	}
 }
@@ -48,7 +46,7 @@ void ComponentScript::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
-	ImGui::ResourceSlot<ResourceScript>("Script", &id);
+	ImGui::ResourceSlot<ResourceScript>("Script", &scriptID);
 
 	static char name[1024] = "";
 	ImGui::InputText("Script name", name, 1024);
@@ -59,10 +57,14 @@ void ComponentScript::OnEditorUpdate() {
 }
 
 void ComponentScript::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_SCRIPT] = id;
+	jComponent[JSON_TAG_SCRIPT] = scriptID;
 }
 
 void ComponentScript::Load(JsonValue jComponent) {
-	id = jComponent[JSON_TAG_SCRIPT];
-	if (id != 0) App->resources->IncreaseReferenceCount(id);
+	scriptID = jComponent[JSON_TAG_SCRIPT];
+	if (scriptID != 0) App->resources->IncreaseReferenceCount(scriptID);
+}
+
+UID ComponentScript::GetScriptID() const {
+	return scriptID;
 }

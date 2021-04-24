@@ -2,12 +2,17 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/FileDialog.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleEvents.h"
+#include "TesseractEvent.h"
+#include "FileSystem/MaterialImporter.h"
 
 #include "ImGuizmo.h"
 #include "imgui.h"
@@ -143,12 +148,17 @@ bool ModuleEditor::Start() {
 	panels.push_back(&panelHierarchy);
 	panels.push_back(&panelInspector);
 	panels.push_back(&panelAbout);
+	panels.push_back(&panelControlEditor);
 
 	return true;
 }
 
 UpdateStatus ModuleEditor::PreUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PreUpdate", Profiler::Color::Azure)
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -163,6 +173,10 @@ UpdateStatus ModuleEditor::Update() {
 
 	ImGui::CaptureMouseFromApp(true);
 	ImGui::CaptureKeyboardFromApp(true);
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif
 
 	// Main menu bar
 	ImGui::BeginMainMenuBar();
@@ -181,6 +195,16 @@ UpdateStatus ModuleEditor::Update() {
 		}
 		ImGui::EndMenu();
 	}
+
+	if (ImGui::BeginMenu("Assets")) {
+		if (ImGui::BeginMenu("Create")) {
+			if (ImGui::MenuItem("Material")) {
+				modalToOpen = Modal::CREATE_MATERIAL;
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenu();
+	}
 	if (ImGui::BeginMenu("View")) {
 		ImGui::MenuItem(panelScene.name, "", &panelScene.enabled);
 		ImGui::MenuItem(panelConsole.name, "", &panelConsole.enabled);
@@ -188,6 +212,7 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panelInspector.name, "", &panelInspector.enabled);
 		ImGui::MenuItem(panelHierarchy.name, "", &panelHierarchy.enabled);
 		ImGui::MenuItem(panelConfiguration.name, "", &panelConfiguration.enabled);
+		ImGui::MenuItem(panelControlEditor.name, "", &panelControlEditor.enabled);
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu("Help")) {
@@ -203,6 +228,7 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panelAbout.name, "", &panelAbout.enabled);
 		ImGui::EndMenu();
 	}
+
 	ImGui::EndMainMenuBar();
 
 	// Modals
@@ -230,6 +256,9 @@ UpdateStatus ModuleEditor::Update() {
 		break;
 	case Modal::COMPONENT_EXISTS:
 		ImGui::OpenPopup("Already existing Component");
+		break;
+	case Modal::CREATE_MATERIAL:
+		ImGui::OpenPopup("Name the material");
 		break;
 	}
 	modalToOpen = Modal::NONE;
@@ -263,6 +292,24 @@ UpdateStatus ModuleEditor::Update() {
 		std::string filePath = std::string(SCENES_PATH "/") + FileDialog::GetFileName(selectedFile.c_str()) + SCENE_EXTENSION;
 		SceneImporter::SaveScene(filePath.c_str());
 		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Name the material", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
+		static char name[FILENAME_MAX] = "New mat";
+		ImGui::InputText("Name##matName", name, IM_ARRAYSIZE(name));
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Save", ImVec2(50, 20))) {
+			std::string path = MATERIALS_PATH "/" + std::string(name) + MATERIAL_EXTENSION;
+			MaterialImporter::CreateAndSaveMaterial(path.c_str());
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
@@ -301,6 +348,8 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::DockBuilderSetNodeSize(dockSpaceId, viewport->GetWorkSize());
 
 		dockMainId = dockSpaceId;
+		dockUpId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Up, 0.2f, nullptr, &dockMainId);
+		ImGui::DockBuilderSetNodeSize(dockUpId, ImVec2(viewport->GetWorkSize().x, 40));
 		dockRightId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, nullptr, &dockMainId);
 		dockDownId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
 		dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.25f, nullptr, &dockMainId);
@@ -333,6 +382,10 @@ UpdateStatus ModuleEditor::Update() {
 
 UpdateStatus ModuleEditor::PostUpdate() {
 	BROFILER_CATEGORY("ModuleEditor - PostUpdate", Profiler::Color::Azure)
+
+#if GAME
+	return UpdateStatus::CONTINUE;
+#endif //  GAME
 
 	// Deleting Components
 	if (panelInspector.GetComponentToDelete()) {
@@ -367,4 +420,23 @@ bool ModuleEditor::CleanUp() {
 	ImGui::DestroyContext();
 
 	return true;
+}
+
+void ModuleEditor::OnMouseMoved() {
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
+	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
+	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
+	App->events->AddEvent(mouseEvent);
+}
+
+void ModuleEditor::OnMouseClicked() {
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
+	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
+	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
+	App->events->AddEvent(mouseEvent);
+}
+
+void ModuleEditor::OnMouseReleased() {
+	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_RELEASED);
+	App->events->AddEvent(mouseEvent);
 }

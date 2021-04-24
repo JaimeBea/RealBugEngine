@@ -3,7 +3,6 @@
 #include "Component.h"
 
 #include "Math/float4x4.h"
-#include "Geometry/Sphere.h"
 #include <unordered_map>
 
 struct aiMesh;
@@ -27,6 +26,7 @@ public:
 	std::vector<float4x4> palette;
 
 	std::unordered_map<std::string, GameObject*> goBones;
+
 private:
 	bool bbActive = false;
 };

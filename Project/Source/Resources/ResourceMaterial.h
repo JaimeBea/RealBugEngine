@@ -1,8 +1,9 @@
 #pragma once
 
+#include "Utils/UID.h"
 #include "Resources/Resource.h"
 
-#include "Math/float3.h"
+#include "Math/float4.h"
 
 class ResourceMaterial : public Resource {
 public:
@@ -18,16 +19,15 @@ public:
 	UID shaderId = 0;
 
 	// Diffuse
-	bool hasDiffuseMap = false;
 	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
 	UID diffuseMapId = 0;
 
 	// Specular
-	bool hasSpecularMap = false;
-	float4 specularColor = {1.0f, 1.0f, 1.0f, 1.0f};
+	float4 specularColor = {0.0f, 0.0f, 0.0f, 0.0f};
 	UID specularMapId = 0;
 
 	// Metalness
+	float metallic = 1.f;
 	UID metallicMapId = 0;
 
 	// Normal

@@ -25,22 +25,17 @@
 #define JSON_TAG_CAMERA_SELECTED "CameraSelected"
 
 void ComponentCamera::Init() {
-	OnTransformUpdate();
+	UpdateFrustum();
+}
+
+void ComponentCamera::Update() {
+	UpdateFrustum();
 }
 
 void ComponentCamera::DrawGizmos() {
-	if (activeCamera) return;
+	if (App->camera->GetActiveFrustum() == &frustum) return; //TODO: Possible bug when adding more components (component pointer invalidates)
 
-	dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
-}
-
-void ComponentCamera::OnTransformUpdate() {
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	frustum.SetPos(transform->GetPosition());
-
-	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetRotation());
-	frustum.SetFront(rotationMatrix * float3::unitZ);
-	frustum.SetUp(rotationMatrix * float3::unitY);
+	if (IsActiveInHierarchy()) dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
 
 void ComponentCamera::OnEditorUpdate() {
@@ -111,6 +106,15 @@ void ComponentCamera::DuplicateComponent(GameObject& owner) {
 	component->frustum = this->frustum;
 }
 
+void ComponentCamera::UpdateFrustum() {
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+	frustum.SetPos(transform->GetGlobalPosition());
+
+	float3x3 rotationMatrix = float3x3::FromQuat(transform->GetGlobalRotation());
+	frustum.SetFront(rotationMatrix * float3::unitZ);
+	frustum.SetUp(rotationMatrix * float3::unitY);
+}
+
 Frustum ComponentCamera::BuildDefaultFrustum() const {
 	Frustum newFrustum;
 	newFrustum.SetKind(FrustumSpaceGL, FrustumRightHanded);
@@ -120,4 +124,8 @@ Frustum ComponentCamera::BuildDefaultFrustum() const {
 	newFrustum.SetUp(vec::unitY);
 	newFrustum.SetPos(vec::zero);
 	return newFrustum;
+}
+
+Frustum* ComponentCamera::GetFrustum() {
+	return &frustum;
 }

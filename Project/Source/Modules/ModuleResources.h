@@ -7,10 +7,10 @@
 #include "Utils/AssetFile.h"
 
 #include <vector>
+#include <memory>
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
-#include <concurrent_queue.h>
 
 class ModuleResources : public Module {
 public:
@@ -18,11 +18,11 @@ public:
 	bool Start() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
-	void ReceiveEvent(const Event& ev) override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
 	std::vector<UID> ImportAsset(const char* filePath);
 
-	Resource* GetResource(UID id) const;
+	template<typename T> T* GetResource(UID id) const;
 	AssetFolder* GetRootFolder() const;
 
 	void IncreaseReferenceCount(UID id);
@@ -42,13 +42,22 @@ private:
 	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
 	void SendAddResourceEvent(Resource* resource);
 
+public:
+	std::unordered_set<std::string> assetsToNotUpdate;
+
 private:
-	std::unordered_map<UID, Resource*> resources;
+	std::unordered_map<UID, std::unique_ptr<Resource>> resources;
 	std::unordered_map<UID, unsigned> referenceCounts;
-	AssetFolder* rootFolder = nullptr;
+	std::unique_ptr<AssetFolder> rootFolder;
 	std::thread importThread;
 	bool stopImportThread = false;
 };
+
+template<typename T>
+inline T* ModuleResources::GetResource(UID id) const {
+	auto it = resources.find(id);
+	return it != resources.end() ? static_cast<T*>(it->second.get()) : nullptr;
+}
 
 template<typename T>
 inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {

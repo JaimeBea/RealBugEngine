@@ -6,7 +6,6 @@
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
 #include "Utils/UID.h"
-#include "Utils/EngineAPI.h"
 #include "Utils/FileDialog.h"
 
 #include "Script.h"
@@ -23,25 +22,61 @@
 #define JSON_TAG_PROJECT_NAME "ProjectName"
 #define JSON_TAG_SCENES "Scenes"
 
-bool ModuleProject::Init() {
-	LoadProject("Penteract/Penteract.sln");
+static std::string GetLastErrorStdStr() {
+	DWORD error = GetLastError();
+	if (error) {
+		LPVOID lpMsgBuf;
+		DWORD bufLen = FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			error,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR) &lpMsgBuf,
+			0,
+			NULL);
+		if (bufLen) {
+			LPCSTR lpMsgStr = (LPCSTR) lpMsgBuf;
+			std::string result(lpMsgStr, lpMsgStr + bufLen);
 
+			LocalFree(lpMsgBuf);
+
+			return result;
+		}
+	}
+	return std::string();
+}
+
+bool ModuleProject::Init() {
+#if GAME
+	UnloadGameCodeDLL();
+	if (!LoadLibrary("Penteract.dll")) {
+		LOG("%s", GetLastErrorStdStr().c_str());
+	}
+#else
+	LoadProject("Penteract/Penteract.sln");
+#endif
+	return true;
+}
+
+bool ModuleProject::CleanUp() {
+	UnloadGameCodeDLL();
 	return true;
 }
 
 void ModuleProject::LoadProject(const char* path) {
 	projectPath = FileDialog::GetFileFolder(path);
 	projectName = FileDialog::GetFileNameAndExtension(path);
+	App->files->AddSearchPath(projectPath.c_str());
 
 	if (!App->files->Exists(projectName.c_str())) {
 		CreateNewProject(projectPath.c_str(), "");
-	} else {
-#ifdef _DEBUG
-		CompileProject(Configuration::DEBUG_EDITOR);
-#else
-		CompileProject(Configuration::RELEASE_EDITOR);
-#endif // _DEBUG
 	}
+
+#ifdef _DEBUG
+	CompileProject(Configuration::DEBUG_EDITOR);
+#else
+	CompileProject(Configuration::RELEASE_EDITOR);
+#endif // _DEBUG
 }
 
 void ModuleProject::CreateScript(std::string& name) {
@@ -68,8 +103,6 @@ void ModuleProject::CreateNewProject(const char* name, const char* path) {
 	std::string batchPath = fullPath + "/Batches";
 
 	App->files->CreateFolder(fullPath.c_str());
-	App->files->AddSearchPath(fullPath.c_str());
-
 	App->files->CreateFolder(batchPath.c_str());
 
 	std::string UIDProject("{");
@@ -103,9 +136,9 @@ void ModuleProject::CreateMSVCProject(const char* path, const char* name, const 
 	std::string enginePath = FileDialog::GetFileFolder(FileDialog::GetAbsolutePath("").c_str());
 
 #ifdef _DEBUG
-	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", enginePath);
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", "../../Project/Libs/rapidjson/include", enginePath);
 #else
-	std::string result = fmt::format(project, name, UIDProject, enginePath + "Engine/Source", enginePath + "Engine/Libs/MatheGeoLib", enginePath + "Engine/Libs/SDL/include", enginePath + "Engine/Lib");
+	std::string result = fmt::format(project, name, UIDProject, "../../Project/Source/", "../../Project/Libs/MathGeoLib", "../../Project/Libs/SDL/include", "../../Project/Libs/rapidjson/include", enginePath);
 #endif
 
 	App->files->Save(path, result.data(), result.size());
@@ -142,7 +175,6 @@ void ModuleProject::CreateBatches() {
 }
 
 void ModuleProject::CompileProject(Configuration config) {
-	UnloadGameCodeDLL();
 
 	std::string batchDir = projectPath + "/Batches";
 
@@ -197,5 +229,32 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 
 	buildPath += name + ".dll";
-	LoadGameCodeDLL(buildPath.c_str());
+	UnloadGameCodeDLL();
+	if (!LoadGameCodeDLL(buildPath.c_str())) {
+		LOG("DLL NOT LOADED");
+	};
+}
+
+bool ModuleProject::LoadGameCodeDLL(const char* path) {
+	if (gameCodeDLL) {
+		LOG("DLL already loaded.");
+		return false;
+	}
+
+	gameCodeDLL = LoadLibraryA(path);
+
+	return gameCodeDLL ? true : false;
+}
+
+bool ModuleProject::UnloadGameCodeDLL() {
+	if (!gameCodeDLL) {
+		LOG("No DLL to unload.");
+		return false;
+	}
+
+	FreeLibrary(gameCodeDLL);
+
+	gameCodeDLL = nullptr;
+
+	return true;
 }

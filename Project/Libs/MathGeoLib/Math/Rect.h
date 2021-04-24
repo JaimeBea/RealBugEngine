@@ -26,13 +26,8 @@
 
 MATH_BEGIN_NAMESPACE
 
-#if defined(TESSERACT_ENGINE_API)
-/* do nothing. */
-#elif defined(_MSC_VER)
-#define TESSERACT_ENGINE_API __declspec(dllexport)
-#endif
-
 /// A 2D integral (x,y),(w,h) -rectangle.
+
 class TESSERACT_ENGINE_API Rect {
 public:
 	Rect() { left = top = right = bottom = 0; }

@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Utils/Pool.h"
-#include "Utils/VectorMap.h"
+#include "Utils/PoolMap.h"
 #include "Utils/Quadtree.h"
 #include "Utils/UID.h"
 #include "Components/ComponentTransform.h"
@@ -9,11 +8,18 @@
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentCamera.h"
 #include "Components/ComponentLight.h"
+#include "Components/UI/ComponentCanvas.h"
+#include "Components/UI/ComponentCanvasRenderer.h"
+#include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentToggle.h"
+#include "Components/UI/ComponentText.h"
+#include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentSkybox.h"
 #include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
-
-#include <unordered_map>
 
 class GameObject;
 
@@ -31,32 +37,48 @@ public:
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
+	// --- Component Access (other Component-related methods in GameObject.h) --- //
+	template<class T> TESSERACT_ENGINE_API T* GetComponent(UID id);
+
+	// --- Component Management (internal, do not use) --- //
+	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
+
+	int GetTotalTriangles() const;
+
 public:
-	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
-	Pool<GameObject> gameObjects;						   // Pool of GameObjects. Stores all the memory of all existing GameObject in a contiguous memory space.
-	std::unordered_map<UID, GameObject*> gameObjectsIdMap; // Maps every UID with the corresponding GameObject pointer.
+	GameObject* root = nullptr;		 // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
+	PoolMap<UID, GameObject> gameObjects; // Pool of GameObjects. Stores all the memory of all existing GameObject in a contiguous memory space.
 
 	// ---- Components ---- //
-	VectorMap<UID, ComponentTransform> transformComponents;
-	VectorMap<UID, ComponentMeshRenderer> meshRendererComponents;
-	VectorMap<UID, ComponentBoundingBox> boundingBoxComponents;
-	VectorMap<UID, ComponentCamera> cameraComponents;
-	VectorMap<UID, ComponentLight> lightComponents;
-	VectorMap<UID, ComponentSkyBox> skyboxComponents;
-	VectorMap<UID, ComponentScript> scriptComponents;
-	VectorMap<UID, ComponentAnimation> animationComponents;
+	PoolMap<UID, ComponentTransform> transformComponents;
+	PoolMap<UID, ComponentMeshRenderer> meshRendererComponents;
+	PoolMap<UID, ComponentBoundingBox> boundingBoxComponents;
+	PoolMap<UID, ComponentCamera> cameraComponents;
+	PoolMap<UID, ComponentLight> lightComponents;
+	PoolMap<UID, ComponentCanvas> canvasComponents;
+	PoolMap<UID, ComponentCanvasRenderer> canvasRendererComponents;
+	PoolMap<UID, ComponentImage> imageComponents;
+	PoolMap<UID, ComponentTransform2D> transform2DComponents;
+	PoolMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
+	PoolMap<UID, ComponentEventSystem> eventSystemComponents;
+	PoolMap<UID, ComponentToggle> toggleComponents;
+	PoolMap<UID, ComponentText> textComponents;
+	PoolMap<UID, ComponentButton> buttonComponents;
+	PoolMap<UID, ComponentSelectable> selectableComponents;
+	PoolMap<UID, ComponentSkyBox> skyboxComponents;
+	PoolMap<UID, ComponentScript> scriptComponents;
+	PoolMap<UID, ComponentAnimation> animationComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;
 	AABB2D quadtreeBounds = {{-1000, -1000}, {1000, 1000}};
 	unsigned quadtreeMaxDepth = 4;
 	unsigned quadtreeElementsPerNode = 200;
-
-	// TODO: (Texture resource) Make skybox work
-	/*
-	// Skybox
-	unsigned skyboxVao = 0;
-	unsigned skyboxVbo = 0;
-	CubeMap* skyboxCubeMap = 0;
-	*/
 };
+
+template<class T>
+inline T* Scene::GetComponent(UID id) {
+	return (T*) GetComponentByTypeAndId(T::staticType, id);
+}

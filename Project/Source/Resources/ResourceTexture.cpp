@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
+#include "Utils/MSTimer.h"
 
 #include "Utils/Logging.h"
 #include "IL/il.h"
@@ -30,6 +31,13 @@ void ResourceTexture::Load() {
 	if (!imageLoaded) {
 		LOG("Failed to load image.");
 		return;
+	}
+
+	// Flip image if neccessary
+	ILinfo info;
+	iluGetImageInfo(&info);
+	if (info.Origin == IL_ORIGIN_UPPER_LEFT) {
+		iluFlipImage();
 	}
 
 	// Generate texture from image

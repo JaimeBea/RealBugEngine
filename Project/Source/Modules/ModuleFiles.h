@@ -39,6 +39,6 @@ public:
 
 	std::string GetFilePath(const char* file, bool absolute = false) const;
 	std::vector<std::string> GetFilesInFolder(const char* folderPath) const;
-	
+
 	long long GetLocalFileModificationTime(const char* path) const;
 };

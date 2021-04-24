@@ -89,12 +89,12 @@ unsigned ModulePrograms::CreateProgram(const char* ShaderFilePath) {
 	return programId;
 }
 
-void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
-	glDeleteProgram(IdProgram);
-}
-
 bool ModulePrograms::Start() {
 	return true;
+}
+
+void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
+	glDeleteProgram(IdProgram);
 }
 
 bool ModulePrograms::CleanUp() {

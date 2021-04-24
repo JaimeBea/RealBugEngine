@@ -22,6 +22,19 @@
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
 
+#define JSON_TAG_SHADER "Shader"
+#define JSON_TAG_HAS_DIFFUSE_MAP "HasDiffuseMap"
+#define JSON_TAG_DIFFUSE_COLOR "DiffuseColor"
+#define JSON_TAG_DIFFUSE_MAP "DiffuseMap"
+#define JSON_TAG_HAS_SPECULAR_MAP "HasSpecularMap"
+#define JSON_TAG_SPECULAR_COLOR "SpecularColor"
+#define JSON_TAG_SPECULAR_MAP "SpecularMap"
+#define JSON_TAG_METALLIC_MAP "MetallicMap"
+#define JSON_TAG_METALLIC "Metalness"
+#define JSON_TAG_NORMAL_MAP "NormalMap"
+#define JSON_TAG_SMOOTHNESS "Smoothness"
+#define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
+
 bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 	LOG("Importing material from path: \"%s\".", filePath);
 
@@ -69,5 +82,58 @@ bool MaterialImporter::ImportMaterial(const char* filePath, JsonValue jMeta) {
 
 	unsigned timeMs = timer.Stop();
 	LOG("Material imported in %ums", timeMs);
+	return true;
+}
+
+bool MaterialImporter::CreateAndSaveMaterial(const char* filePath) {
+	LOG("Saving material to path: \"%s\".", filePath);
+
+	MSTimer timer;
+	timer.Start();
+
+	// Create document
+	rapidjson::Document document;
+	JsonValue jMaterial(document, document);
+
+	// Save JSON values
+	jMaterial[JSON_TAG_SHADER] = 0;
+
+	jMaterial[JSON_TAG_HAS_DIFFUSE_MAP] = false;
+	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
+	jDiffuseColor[0] = 1.0f;
+	jDiffuseColor[1] = 1.0f;
+	jDiffuseColor[2] = 1.0f;
+	jDiffuseColor[3] = 1.0f;
+	jMaterial[JSON_TAG_DIFFUSE_MAP] = 0;
+
+	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = false;
+	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
+	jSpecularColor[0] = 0.0f;
+	jSpecularColor[1] = 0.0f;
+	jSpecularColor[2] = 0.0f;
+	jSpecularColor[3] = 0.0f;
+	jMaterial[JSON_TAG_SPECULAR_MAP] = 0;
+
+	jMaterial[JSON_TAG_METALLIC] = 1.0f;
+	jMaterial[JSON_TAG_METALLIC_MAP] = 0;
+	jMaterial[JSON_TAG_NORMAL_MAP] = 0;
+
+	jMaterial[JSON_TAG_SMOOTHNESS] = 1;
+	jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL] = false;
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Save to file
+	bool saved = App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
+	if (!saved) {
+		LOG("Failed to save material asset.");
+		return false;
+	}
+
+	unsigned timeMs = timer.Stop();
+	LOG("Material saved in %ums", timeMs);
 	return true;
 }

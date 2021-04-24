@@ -13,16 +13,12 @@
 #include "IL/ilu.h"
 #include "GL/glew.h"
 
-#include "rapidjson/error/en.h"
-#include "rapidjson/stringbuffer.h"
-#include "rapidjson/prettywriter.h"
-#include "rapidjson/document.h"
-
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
+#define JSON_TAG_SHADER_TYPE "ShaderType"
 
 bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 	LOG("Importing Shader from path: \"%s\".", filePath);
@@ -47,6 +43,7 @@ bool ShaderImporter::ImportShader(const char* filePath, JsonValue jMeta) {
 	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(shaderResource->GetType());
 	jResource[JSON_TAG_ID] = shaderResource->GetId();
+	jResource[JSON_TAG_SHADER_TYPE] = (int) shaderResource->GetShaderType();
 
 	// Save to file
 	const std::string& resourceFilePath = shaderResource->GetResourceFilePath();

@@ -2,7 +2,6 @@
 
 #include "Module.h"
 
-#include "Utils/Buffer.h"
 #include "Panels/PanelScene.h"
 #include "Panels/PanelProject.h"
 #include "Panels/PanelConsole.h"
@@ -10,11 +9,11 @@
 #include "Panels/PanelInspector.h"
 #include "Panels/PanelHierarchy.h"
 #include "Panels/PanelAbout.h"
+#include "Panels/PanelControlEditor.h"
 
 #include "imgui.h"
 #include <vector>
-
-class Panel;
+#include <string>
 
 enum class Modal {
 	NONE,
@@ -25,6 +24,7 @@ enum class Modal {
 	SAVE_PROJECT,
 	SAVE_SCENE,
 	COMPONENT_EXISTS,
+	CREATE_MATERIAL,
 	QUIT
 };
 
@@ -37,12 +37,16 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
+	void OnMouseMoved();
+	void OnMouseClicked();
+	void OnMouseReleased();
 
 public:
 	Modal modalToOpen = Modal::NONE; // Used in the MenuBar to popup a Modal Window of the specific type.
 
 	// ---------- Docking ----------
 	unsigned dockMainId = 0;
+	unsigned dockUpId = 0;
 	unsigned dockLeftId = 0;
 	unsigned dockRightId = 0;
 	unsigned dockDownId = 0;
@@ -56,6 +60,7 @@ public:
 	PanelInspector panelInspector;
 	PanelHierarchy panelHierarchy;
 	PanelAbout panelAbout;
+	PanelControlEditor panelControlEditor;
 
 	GameObject* selectedGameObject = nullptr;			   // Pointer to the GameObject that will be shown in the inspector.
 	ImVec4 titleColor = ImVec4(0.35f, 0.69f, 0.87f, 1.0f); // Color used for the titles in ImGui

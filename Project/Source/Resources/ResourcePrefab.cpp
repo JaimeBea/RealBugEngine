@@ -1,10 +1,12 @@
 #include "ResourcePrefab.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleFiles.h"
 #include "Utils/Logging.h"
+#include "Utils/MSTimer.h"
 
 #include "rapidjson/error/en.h"
 
@@ -36,13 +38,12 @@ void ResourcePrefab::BuildPrefab(GameObject* parent) {
 	// Load GameObjects
 	Scene* scene = parent->scene;
 	JsonValue jRoot = jScene[JSON_TAG_ROOT];
-	GameObject* gameObject = scene->gameObjects.Obtain();
+	UID gameObjectId = GenerateUID();
+	GameObject* gameObject = scene->gameObjects.Obtain(gameObjectId);
 	gameObject->scene = scene;
 	gameObject->LoadPrototype(jRoot);
-	gameObject->id = GenerateUID();
-	scene->gameObjectsIdMap[gameObject->GetID()] = gameObject;
+	gameObject->id = gameObjectId;
 	gameObject->SetParent(parent);
-	gameObject->InitComponents();
 
 	unsigned timeMs = timer.Stop();
 	LOG("Prefab built in %ums.", timeMs);

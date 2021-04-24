@@ -14,7 +14,7 @@ public:
 	ModuleTime();
 	bool Init() override;
 	UpdateStatus PreUpdate() override;
-	void ReceiveEvent(const Event& e) override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
 	void WaitForEndOfFrame(); // Calculates the time until the next frame if there is a framerate limitation, and introduces a Delay for that remainign time.
 
@@ -24,6 +24,8 @@ public:
 
 	TESSERACT_ENGINE_API float GetDeltaTime() const;
 	TESSERACT_ENGINE_API float GetRealTimeDeltaTime() const;
+	TESSERACT_ENGINE_API float GetFPS() const;
+	TESSERACT_ENGINE_API float GetMS() const;
 	float GetTimeSinceStartup() const;
 	float GetRealTimeSinceStartup() const;
 
@@ -38,6 +40,7 @@ public:
 	void PauseGame();
 	void ResumeGame();
 	void StepGame();
+	UpdateStatus ExitGame();
 
 public:
 	int maxFps = 60;			// Maximum FPS when the framerate is limited.

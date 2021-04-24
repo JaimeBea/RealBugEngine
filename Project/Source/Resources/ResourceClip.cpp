@@ -138,5 +138,5 @@ void ResourceClip::SetEndIndex(unsigned int index) {
 }
 
 ResourceAnimation* ResourceClip::GetResourceAnimation() const{
-	return (ResourceAnimation*) App->resources->GetResource(animationUID);
+	return App->resources->GetResource<ResourceAnimation>(animationUID);
 }

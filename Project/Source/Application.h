@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Utils/MSTimer.h"
-
 #include <vector>
 
 enum class UpdateStatus;
@@ -20,6 +18,7 @@ class ModulePrograms;
 class ModuleDebugDraw;
 class ModuleScene;
 class ModuleTime;
+class ModuleUserInterface;
 class ModuleAudio;
 class ModuleProject;
 class ModuleEvents;
@@ -52,6 +51,7 @@ public:
 	ModuleDebugDraw* debugDraw = nullptr;
 	ModuleScene* scene = nullptr;
 	ModuleTime* time = nullptr;
+	ModuleUserInterface* userInterface = nullptr;
 	ModuleAudio* audio = nullptr;
 	ModuleProject* project = nullptr;
 	ModuleEvents* events = nullptr;

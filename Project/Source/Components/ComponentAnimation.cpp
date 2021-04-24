@@ -77,7 +77,7 @@ void ComponentAnimation::Load(JsonValue jComponent) {
 
 	UID initalStateUid = jComponent[JSON_TAG_INITAL_STATE_ID];
 
-	ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
+	ResourceStateMachine* resourceStateMachine = App->resources->GetResource <ResourceStateMachine>(stateMachineResourceUID);
 	
 	for (auto& state : resourceStateMachine->states) {
 		if (initalStateUid == state.id){
@@ -101,12 +101,12 @@ void ComponentAnimation::OnUpdate() {
 
 	UpdateAnimations(rootBone);
 
-	ResourceClip* currentClip = (ResourceClip*) App->resources->GetResource(currentState.clipUid);
+	ResourceClip* currentClip = App->resources->GetResource<ResourceClip>(currentState.clipUid);
 	currentState.currentTime += App->time->GetDeltaTime() * currentClip->speed;
 }
 
 void ComponentAnimation::SendTrigger(std::string trigger) {
-	ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
+	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
 
 	Transition* transition = resourceStateMachine->FindTransitionGivenName(trigger);
 	if (transition != nullptr) {
@@ -120,7 +120,7 @@ void ComponentAnimation::SendTrigger(std::string trigger) {
 struct CheckFinishInterpolation {
 	bool operator()(AnimationInterpolation& animationInterpolation) {
 		if (animationInterpolation.fadeTime >= 0.9) {
-			ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
+			ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
 			componentAnimation->currentState = animationInterpolation.state;
 			componentAnimation->currentState.currentTime = animationInterpolation.TransistionTime;
 			LOG("CheckFinishInterpolation");
@@ -141,7 +141,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	Quat rotation, totalRotation = Quat::identity;
 
 	bool result = true;
-	ResourceStateMachine* resourceStateMachine = (ResourceStateMachine*) App->resources->GetResource(stateMachineResourceUID);
+	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
 
 	if (animationInterpolations.size() > 1) {
 		result = AnimationController::InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, *GetOwner().GetRootBone(), *gameObject, position, rotation);
@@ -153,7 +153,7 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 			animationInterpolations.clear();
 		}
 	} else {
-		ResourceClip* clip  = (ResourceClip*) App->resources->GetResource(currentState.clipUid);
+		ResourceClip* clip = App->resources->GetResource<ResourceClip>(currentState.clipUid);
 		result = AnimationController::GetTransform(*clip, currentState.currentTime, gameObject->name.c_str(), position, rotation);
 	}
 

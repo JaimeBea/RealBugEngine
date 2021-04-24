@@ -22,21 +22,19 @@
 #define JSON_TAG_INNER_ANGLE "InnerAngle"
 #define JSON_TAG_OUTER_ANGLE "OuterAngle"
 
-void ComponentLight::OnTransformUpdate() {
-	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-	pos = transform->GetPosition();
-	direction = transform->GetRotation() * float3::unitZ;
+void ComponentLight::Init() {
+	UpdateLight();
 }
 
-void ComponentLight::Init() {
-	OnTransformUpdate();
+void ComponentLight::Update() {
+	UpdateLight();
 }
 
 void ComponentLight::DrawGizmos() {
-	if (IsActiveInHierarchy() && drawGizmos) {
+	if (IsActiveInHierarchy()) {
 		if (lightType == LightType::DIRECTIONAL) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-			dd::cone(transform->GetPosition(), direction * 200, dd::colors::White, 1.0f, 1.0f);
+			dd::cone(pos, direction * 200, dd::colors::White, 1.0f, 1.0f);
 		} else {
 			float delta = kl * kl - 4 * (kc - 10) * kq;
 			float distance = Max(abs((-kl + sqrt(delta))) / (2 * kq), abs((-kl - sqrt(delta)) / (2 * kq)));
@@ -54,10 +52,6 @@ void ComponentLight::OnEditorUpdate() {
 	if (ImGui::Checkbox("Active", &active)) {
 		active ? Enable() : Disable();
 	}
-	ImGui::Separator();
-
-	ImGui::Checkbox("Draw Gizmos", &drawGizmos);
-	ImGui::Separator();
 
 	ImGui::TextColored(App->editor->titleColor, "Parameters");
 
@@ -151,7 +145,6 @@ void ComponentLight::Load(JsonValue jComponent) {
 
 void ComponentLight::DuplicateComponent(GameObject& owner) {
 	ComponentLight* component = owner.CreateComponent<ComponentLight>();
-	component->drawGizmos = this->drawGizmos;
 	component->lightType = this->lightType;
 	component->pos = this->pos;
 	component->direction = this->direction;
@@ -162,4 +155,10 @@ void ComponentLight::DuplicateComponent(GameObject& owner) {
 	component->kq = this->kq;
 	component->innerAngle = this->innerAngle;
 	component->outerAngle = this->outerAngle;
+}
+
+void ComponentLight::UpdateLight() {
+	ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+	pos = transform->GetGlobalPosition();
+	direction = transform->GetGlobalRotation() * float3::unitZ;
 }
