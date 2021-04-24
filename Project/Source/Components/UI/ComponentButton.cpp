@@ -49,9 +49,9 @@ void ComponentButton::OnClicked() {
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
-		Resource* scriptResource = App->resources->GetResource(scriptComponent.GetScriptID());
+		ResourceScript* scriptResource = App->resources->GetResource<ResourceScript>(scriptComponent.GetScriptID());
 		if (scriptResource != nullptr) {
-			Script* script = ((ResourceScript*) scriptResource)->script;
+			Script* script = scriptResource->script;
 			if (script != nullptr) {
 				script->OnButtonClick();
 			}

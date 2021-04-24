@@ -387,8 +387,7 @@ bool ModuleRender::CheckIfInsideFrustum(const AABB& aabb, const OBB& obb) {
 		obb.pos + obb.r.x * obb.axis[0] - obb.r.y * obb.axis[1] - obb.r.z * obb.axis[2],
 		obb.pos + obb.r.x * obb.axis[0] - obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2],
 		obb.pos + obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] - obb.r.z * obb.axis[2],
-		obb.pos + obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2]
-	};
+		obb.pos + obb.r.x * obb.axis[0] + obb.r.y * obb.axis[1] + obb.r.z * obb.axis[2]};
 
 	const FrustumPlanes& frustumPlanes = App->camera->GetFrustumPlanes();
 	for (const Plane& plane : frustumPlanes.planes) {
@@ -436,7 +435,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 	for (ComponentMeshRenderer& mesh : meshes) {
 		mesh.Draw(transform->GetGlobalMatrix());
 
-		ResourceMesh* resourceMesh = (ResourceMesh*) App->resources->GetResource(mesh.meshId);
+		ResourceMesh* resourceMesh = App->resources->GetResource<ResourceMesh>(mesh.meshId);
 		if (resourceMesh != nullptr) {
 			culledTriangles += resourceMesh->numIndices / 3;
 		}

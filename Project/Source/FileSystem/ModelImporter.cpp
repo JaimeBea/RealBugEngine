@@ -488,7 +488,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			} else {
 				LOG("Diffuse texture imported successfuly.");
 				material->diffuseMapId = textureResourceIds[0];
-				material->hasDiffuseMap = true;
 			}
 		} else {
 			LOG("Diffuse texture not found.");
@@ -524,7 +523,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			} else {
 				LOG("Specular texture imported successfuly.");
 				material->specularMapId = textureResourceIds[0];
-				material->hasSpecularMap = true;
 			}
 		} else {
 			LOG("Specular texture not found.");

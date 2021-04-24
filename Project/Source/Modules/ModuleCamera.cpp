@@ -197,7 +197,7 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	float distance = 0;
 	for (GameObject* gameObject : intersectingObjects) {
 		for (ComponentMeshRenderer& mesh : gameObject->GetComponents<ComponentMeshRenderer>()) {
-			ResourceMesh* meshResource = (ResourceMesh*) App->resources->GetResource(mesh.meshId);
+			ResourceMesh* meshResource = App->resources->GetResource<ResourceMesh>(mesh.meshId);
 			if (meshResource == nullptr) continue;
 
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
@@ -368,7 +368,6 @@ void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject,
 }
 
 void ModuleCamera::ViewportResized(int width, int height) {
-	
 	for (ComponentCamera& camera : App->scene->scene->cameraComponents) {
 		// TODO: Implement button to force AspectRatio from specific camera
 		camera.frustum.SetVerticalFovAndAspectRatio(camera.frustum.VerticalFov(), width / (float) height);

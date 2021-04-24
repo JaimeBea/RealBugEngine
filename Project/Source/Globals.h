@@ -31,6 +31,8 @@ enum class UpdateStatus {
 #define SCENE_EXTENSION ".scene"
 #define META_EXTENSION ".meta"
 
+#define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
+
 #define PHONG_SHADER_FILE "phong.glsl"
 
 // Configuration -----------
