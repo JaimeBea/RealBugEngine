@@ -714,7 +714,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
 		animationComponent->stateMachineResourceUID = resourceStateMachine->GetId();
-		animationComponent->SetInitialState(initialState);
+		animationComponent->SetInitialState(&initialState);
+		animationComponent->SetCurrentState(&initialState);
 
 		resourceStateMachine->SaveToFile(resourceStateMachine->GetResourceFilePath().c_str());
 		bool ok = true;

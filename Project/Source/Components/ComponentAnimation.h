@@ -28,25 +28,25 @@ public:
 	
 	void SendTrigger(std::string trigger);	// Method to trigger the change of state
 
-	States GetCurrentState() {
+	States* GetCurrentState() {
 		return currentState;
 	}
-	void SetCurrentState(const States& mCurrentState) {
+	void SetCurrentState(States* mCurrentState) {
 		currentState = mCurrentState;
 	}
 
-	States GetInitialState() {
+	States* GetInitialState() {
 		return initialState;
 	}
 
-	void SetInitialState(const States& mInitalState) {
+	void SetInitialState(States* mInitalState) {
 		initialState = mInitalState;
 	}
 
 public:
 	UID stateMachineResourceUID = 0;
-	States currentState;
-	States initialState;
+	States* currentState = nullptr;
+	States* initialState = nullptr;
 
 private:
 	void UpdateAnimations(GameObject *gameObject);
