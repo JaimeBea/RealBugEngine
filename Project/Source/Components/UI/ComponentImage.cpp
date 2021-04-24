@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
-#include "Components/UI/ComponentCanvas.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -119,7 +118,7 @@ const float4& ComponentImage::GetTintColor() const {
 	return float4::one;
 }
 
-void ComponentImage::Draw(ComponentTransform2D* transform, ComponentCanvas* canvas) {
+void ComponentImage::Draw(ComponentTransform2D* transform) {
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {

@@ -5,7 +5,6 @@
 #include "Math/float4.h"
 
 class ComponentTransform2D;
-class ComponentCanvas;
 
 // Component that renders an Image on a Quad
 class ComponentImage : public Component {
@@ -21,7 +20,7 @@ public:
 	void Load(JsonValue jComponent) override;		// Deserializes object
 	void DuplicateComponent(GameObject& owner) override;
 
-	void Draw(ComponentTransform2D* transform, ComponentCanvas* canvas); // Draws the image ortographically using the active camera, and the transform passed as model. It will apply AlphaTransparency if true, and will get Button's additional color to apply if needed
+	void Draw(ComponentTransform2D* transform); // Draws the image ortographically using the active camera, and the transform passed as model. It will apply AlphaTransparency if true, and will get Button's additional color to apply if needed
 
 private:
 	const float4& GetTintColor() const; // Gets an additional color that needs to be applied to the image. Currently gets the color of the Button
