@@ -17,10 +17,8 @@
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_SHADER "Shader"
-#define JSON_TAG_HAS_DIFFUSE_MAP "HasDiffuseMap"
 #define JSON_TAG_DIFFUSE_COLOR "DiffuseColor"
 #define JSON_TAG_DIFFUSE_MAP "DiffuseMap"
-#define JSON_TAG_HAS_SPECULAR_MAP "HasSpecularMap"
 #define JSON_TAG_SPECULAR_COLOR "SpecularColor"
 #define JSON_TAG_SPECULAR_MAP "SpecularMap"
 #define JSON_TAG_METALLIC_MAP "MetallicMap"
@@ -50,12 +48,10 @@ void ResourceMaterial::Load() {
 	shaderId = jMaterial[JSON_TAG_SHADER];
 	App->resources->IncreaseReferenceCount(shaderId);
 
-	hasDiffuseMap = jMaterial[JSON_TAG_HAS_DIFFUSE_MAP];
 	diffuseColor = float4(jMaterial[JSON_TAG_DIFFUSE_COLOR][0], jMaterial[JSON_TAG_DIFFUSE_COLOR][1], jMaterial[JSON_TAG_DIFFUSE_COLOR][2], jMaterial[JSON_TAG_DIFFUSE_COLOR][3]);
 	diffuseMapId = jMaterial[JSON_TAG_DIFFUSE_MAP];
 	App->resources->IncreaseReferenceCount(diffuseMapId);
 
-	hasSpecularMap = jMaterial[JSON_TAG_HAS_SPECULAR_MAP];
 	specularColor = float4(jMaterial[JSON_TAG_SPECULAR_COLOR][0], jMaterial[JSON_TAG_SPECULAR_COLOR][1], jMaterial[JSON_TAG_SPECULAR_COLOR][2], jMaterial[JSON_TAG_SPECULAR_COLOR][3]);
 	specularMapId = jMaterial[JSON_TAG_SPECULAR_MAP];
 	App->resources->IncreaseReferenceCount(specularMapId);
@@ -94,7 +90,6 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	// Save JSON values
 	jMaterial[JSON_TAG_SHADER] = shaderId;
 
-	jMaterial[JSON_TAG_HAS_DIFFUSE_MAP] = hasDiffuseMap;
 	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
 	jDiffuseColor[0] = diffuseColor.x;
 	jDiffuseColor[1] = diffuseColor.y;
@@ -102,7 +97,6 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	jDiffuseColor[3] = diffuseColor.w;
 	jMaterial[JSON_TAG_DIFFUSE_MAP] = diffuseMapId;
 
-	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = hasSpecularMap;
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
 	jSpecularColor[0] = specularColor.x;
 	jSpecularColor[1] = specularColor.y;
