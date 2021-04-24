@@ -163,7 +163,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		for (unsigned i = 0; i < jResources.Size(); ++i) {
 			JsonValue jResource = jResources[i];
 			UID id = jResource[JSON_TAG_ID];
-			if (GetResource(id) == nullptr) {
+			if (GetResource<Resource>(id) == nullptr) {
 				std::string typeName = jResource[JSON_TAG_TYPE];
 				ResourceType type = GetResourceTypeFromName(typeName.c_str());
 				CreateResourceByType(type, filePath, id);
@@ -215,11 +215,6 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 	return resources;
 }
 
-Resource* ModuleResources::GetResource(UID id) const {
-	auto it = resources.find(id);
-	return it != resources.end() ? it->second.get() : nullptr;
-}
-
 AssetFolder* ModuleResources::GetRootFolder() const {
 	return rootFolder.get();
 }
@@ -230,7 +225,7 @@ void ModuleResources::IncreaseReferenceCount(UID id) {
 	if (referenceCounts.find(id) != referenceCounts.end()) {
 		referenceCounts[id] = referenceCounts[id] + 1;
 	} else {
-		Resource* resource = GetResource(id);
+		Resource* resource = GetResource<Resource>(id);
 		if (resource != nullptr) {
 			resource->Load();
 		}
@@ -244,7 +239,7 @@ void ModuleResources::DecreaseReferenceCount(UID id) {
 	if (referenceCounts.find(id) != referenceCounts.end()) {
 		referenceCounts[id] = referenceCounts[id] - 1;
 		if (referenceCounts[id] <= 0) {
-			Resource* resource = GetResource(id);
+			Resource* resource = GetResource<Resource>(id);
 			if (resource != nullptr) {
 				resource->Unload();
 			}

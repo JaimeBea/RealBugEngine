@@ -102,7 +102,7 @@ void PanelProject::UpdateResourcesRecursive(const AssetFolder& folder) {
 			if (assetFile.path != selectedAsset) continue;
 
 			for (UID resourceId : assetFile.resourceIds) {
-				Resource* resource = App->resources->GetResource(resourceId);
+				Resource* resource = App->resources->GetResource<Resource>(resourceId);
 				if (resource == nullptr) continue;
 
 				std::string resourceName = std::to_string(resourceId);

@@ -99,7 +99,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 }
 
 Character ModuleUserInterface::GetCharacter(UID font, char c) {
-	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
+	ResourceFont* fontResource = App->resources->GetResource<ResourceFont>(font);
 
 	if (fontResource == nullptr) {
 		return Character();
@@ -108,7 +108,7 @@ Character ModuleUserInterface::GetCharacter(UID font, char c) {
 }
 
 void ModuleUserInterface::GetCharactersInString(UID font, const std::string& sentence, std::vector<Character>& charsInSentence) {
-	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
+	ResourceFont* fontResource = App->resources->GetResource<ResourceFont>(font);
 
 	if (fontResource == nullptr) {
 		return;
