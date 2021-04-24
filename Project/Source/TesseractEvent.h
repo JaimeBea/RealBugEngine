@@ -34,7 +34,7 @@ enum class TesseractEventType {
 	MOUSE_RELEASED,
 	CHANGE_SCENE,
 	RESOURCES_LOADED,
-	COUNT = 15
+	COUNT
 };
 
 struct AddResourceStruct {
@@ -69,13 +69,22 @@ public:
 public:
 	TesseractEventType type = TesseractEventType::UNKNOWN;
 
-	EventVariant variant;
-
 	template<typename T>
 	T& Get();
+
+	template<typename T, typename... Args>
+	void Set(Args... args);
+
+private:
+	EventVariant variant;
 };
 
 template<typename T>
 inline T& TesseractEvent::Get() {
 	return std::get<T>(variant);
+}
+
+template<typename T, typename... Args>
+inline void TesseractEvent::Set(Args... args) {
+	variant.emplace<T>(std::forward<Args>(args)...);
 }

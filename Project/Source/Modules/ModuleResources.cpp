@@ -80,13 +80,13 @@ static void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
-
+	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
+	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
 	return true;
 }
 
 bool ModuleResources::Start() {
-	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
-	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
+
 
 	stopImportThread = false;
 
@@ -125,7 +125,8 @@ void ModuleResources::ReceiveEvent(TesseractEvent& e) {
 	} else if (e.type == TesseractEventType::UPDATE_FOLDERS) {
 		AssetFolder* folder = e.Get<UpdateFoldersStruct>().folder;
 		rootFolder.reset(folder);
-		std::get<UpdateFoldersStruct>(e.variant).folder = nullptr;
+
+		e.Get<UpdateFoldersStruct>().folder = nullptr;
 	}
 }
 
@@ -358,9 +359,7 @@ void ModuleResources::UpdateAsync() {
 
 		TesseractEvent updateFoldersEv(TesseractEventType::UPDATE_FOLDERS);
 
-		updateFoldersEv.variant.emplace<UpdateFoldersStruct>(newFolder);
-
-		std::get<UpdateFoldersStruct>(updateFoldersEv.variant).folder = newFolder;
+		updateFoldersEv.Set<UpdateFoldersStruct>(newFolder);
 
 		App->events->AddEvent(updateFoldersEv);
 
@@ -434,8 +433,8 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 
 void ModuleResources::SendAddResourceEvent(Resource* resource) {
 	TesseractEvent addResourceEvent(TesseractEventType::ADD_RESOURCE);
-	//addResourceEvent.addResource.resource = resource;
-	addResourceEvent.variant.emplace<AddResourceStruct>(resource);
+
+	addResourceEvent.Set<AddResourceStruct>(resource);
 
 	App->events->AddEvent(addResourceEvent);
 }
