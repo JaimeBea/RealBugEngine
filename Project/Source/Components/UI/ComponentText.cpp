@@ -126,22 +126,21 @@ void ComponentText::Draw(ComponentTransform2D* transform) const  {
 
 	glUseProgram(program);
 
-	float4x4 modelMatrix;
-	float4x4* proj = &App->camera->GetProjectionMatrix();
+	float4x4& proj = App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
-		modelMatrix = transform->GetGlobalMatrixWithSize();
+		float4x4 modelMatrix = transform->GetGlobalMatrixWithSize();
 
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
-		float4x4* view = &App->camera->GetViewMatrix();
-		modelMatrix = transform->GetGlobalMatrixWithSize(true);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
+		float4x4& view = App->camera->GetViewMatrix();
+		float4x4 modelMatrix = transform->GetGlobalMatrixWithSize(true);
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	}
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj->ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
 	for (int i = 0; i < text.size(); ++i) {
