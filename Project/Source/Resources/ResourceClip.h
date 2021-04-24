@@ -1,9 +1,9 @@
 #pragma once
+#include "Application.h"
+
+#include "ResourceAnimation.h"
 #include "Resources/ResourceType.h"
 #include "Resources/Resource.h"
-
-#include "Application.h"
-#include "ResourceAnimation.h"
 #include "Modules/ModuleResources.h"
 
 #include "Utils/UID.h"

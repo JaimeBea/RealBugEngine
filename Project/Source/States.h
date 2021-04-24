@@ -22,9 +22,9 @@ public:
 	}
 
 public:
-	UID id;
-	std::string name = "";
+	UID id = 0;
 	UID clipUid = 0;
+	std::string name = "";
 	float currentTime = 0;
 
 };

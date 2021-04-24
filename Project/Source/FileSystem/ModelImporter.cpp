@@ -327,6 +327,8 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 	JsonValue jResource = jResources[resourceIndex];
 	UID id = jResource[JSON_TAG_ID];
 	ResourceAnimation* animation = App->resources->CreateResource<ResourceAnimation>(modelFilePath, id ? id : GenerateUID());
+	animation->keyFrames = keyFrames;
+	animation->duration = duration;
 
 	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(animation->GetType());
@@ -624,14 +626,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 	// Load animations
 	if (assimpScene->mNumAnimations > 0) {
-		/*LOG("Importing animations");
-		std::vector<ResourceAnimation*> animations;
-		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
-		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
-			animationComponent->animationController.animationID = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex)->GetId();
-		}*/
-		// TODO: Improve for multiple animations
-
 		LOG("Importing animations");
 
 		//JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
@@ -648,7 +642,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		std::string stateName = "state";
 		std::string clipName = "clip";
 			
-		ResourceAnimation* testAnim = nullptr; //TODO::Delete this
+		//ResourceAnimation* testAnim = nullptr; //TODO::Delete this
 
 		States initialState;
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
@@ -656,17 +650,17 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 			ResourceAnimation* animation = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex);
 
-			if (testAnim == nullptr) { //TODO::Delete this
+			/*if (testAnim == nullptr) { //TODO::Delete this
 				testAnim = animation;
-			}
+			}*/
 
 			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
 
 			JsonValue jResourceClip = jResources[resourceIndex];
 			UID idClip = jResourceClip[JSON_TAG_ID];
 			ResourceClip clip = *App->resources->CreateResource<ResourceClip>(filePath, idClip ? idClip : GenerateUID());
-			clip.Init(clipName + parsedI, animation->GetId(), 0, 60, true);
-			clip.SetSpeed(2.0);
+			clip.Init(clipName + parsedI, animation->GetId(), 0, animation->keyFrames.size() - 1, true);
+			//clip.SetSpeed(2.0);
 
 			jResourceClip[JSON_TAG_TYPE] = GetResourceTypeName(clip.GetType());
 			jResourceClip[JSON_TAG_ID] = clip.GetId();
@@ -677,6 +671,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			initialState = resourceStateMachine->AddState(stateName + parsedI, clip.GetId());
 		}
 
+
+		/* TODO:: Hardcoded for testing animation
 		//Setting machine state
 		//Dead animation
 		std::string sState2 = "State2";
@@ -714,7 +710,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		resourceStateMachine->AddTransition(initialState, state2, 0.3, tName1);
 		resourceStateMachine->AddTransition(state2, initialState, 0.3, tName2);
 		resourceStateMachine->AddTransition(state2, state3, 0.4, tName3);
-		resourceStateMachine->AddTransition(state3, initialState, 0.7, tName4);
+		resourceStateMachine->AddTransition(state3, initialState, 0.7, tName4);*/
 
 		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
 		animationComponent->stateMachineResourceUID = resourceStateMachine->GetId();

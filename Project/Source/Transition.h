@@ -1,7 +1,8 @@
 #pragma once
-#include <string>
-#include "Utils/UID.h"
 #include "States.h"
+#include "Utils/UID.h"
+#include <string>
+
 class Transition {
 	
 public:
@@ -14,7 +15,7 @@ public:
 	}
 
 public:
-	UID id;
+	UID id = 0;
 	States source;
 	States target;
 	float interpolationDuration = 0;

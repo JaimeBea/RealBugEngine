@@ -1,5 +1,5 @@
 #pragma once
-class States;
+#include "States.h"
 
 class AnimationInterpolation {
 public:
@@ -8,6 +8,8 @@ public:
 		, currentTime(current)
 		, fadeTime(fade)
 		, TransistionTime(transition) {}
+
+public:
 	States state;
 	float currentTime = 0;
 	float fadeTime = 0;

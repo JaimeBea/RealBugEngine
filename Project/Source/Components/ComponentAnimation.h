@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Component.h"
 #include "Application.h"
+#include "Component.h"
 #include "AnimationController.h"
+#include "AnimationInterpolation.h"
 #include "States.h"
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourceStateMachine.h"
-#include <string>
 #include "Utils/UID.h"
-#include "AnimationInterpolation.h"
+#include <string>
 
 class GameObject;
 class ResourceAnimation;
@@ -26,7 +26,7 @@ public:
 
 	void OnUpdate();	
 	
-	void SendTrigger(std::string trigger);
+	void SendTrigger(std::string trigger);	// Method to trigger the change of state
 
 	States GetCurrentState() {
 		return currentState;
@@ -51,8 +51,9 @@ public:
 private:
 	void UpdateAnimations(GameObject *gameObject);
 
-	std::list<AnimationInterpolation> animationInterpolations;
-	int t = 0;
+private:
+	std::list<AnimationInterpolation> animationInterpolations; //List of the current interpolations between states
+	//int t = 0; // TODO remove, HardCoded for test transitions
 };
 
 

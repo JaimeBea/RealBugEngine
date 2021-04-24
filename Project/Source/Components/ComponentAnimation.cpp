@@ -20,6 +20,7 @@
 #include "Utils/Leaks.h"
 #include "Utils/UID.h"
 #include <algorithm>    // std::find
+
 #define JSON_TAG_LOOP "Controller"
 #define JSON_TAG_ANIMATION_ID "AnimationId"
 #define JSON_TAG_STATE_MACHINE_ID "StateMachineId"
@@ -27,6 +28,8 @@
 #define JSON_TAG_CLIP "Clip"
 
 void ComponentAnimation::Update() {
+	// TODO remove, HardCoded for test transitions
+	/*
 	if (App->input->GetKey(SDL_SCANCODE_1)) {
 		if (t != 1) {
 			SendTrigger("s1Ts2");
@@ -57,7 +60,7 @@ void ComponentAnimation::Update() {
 			t = 4;
 			LOG("Transition4");
 		}
-	}
+	}*/
 	OnUpdate();
 }
 

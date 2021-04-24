@@ -1,12 +1,12 @@
 #pragma once
+#include "States.h"
+#include "Transition.h"
 #include "Resources/ResourceType.h"
 #include "Resources/Resource.h"
+#include "Utils/UID.h"
 
 #include <list>
 #include <unordered_map>
-#include "Utils/UID.h"
-#include "States.h"
-#include "Transition.h"
 
 class ResourceAnimation;
 class ResourceStateMachine : public Resource {

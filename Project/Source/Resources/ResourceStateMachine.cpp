@@ -1,10 +1,9 @@
 #include "ResourceStateMachine.h"
+#include "Application.h"
 #include "Transition.h"
 #include "States.h"
+
 #include "Resources/ResourceClip.h"
-
-#include "Application.h"
-
 #include "Modules/ModuleFiles.h"
 #include "FileSystem/JsonValue.h"
 #include "Modules/ModuleTime.h"
@@ -52,7 +51,7 @@ void ResourceStateMachine::Load() {
 	}
 	JsonValue jStateMachine(document, document);
 	assert(document.IsObject());
-	//document.SetObject();
+
 	const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS].GetArray();
 	assert(clipsArray.IsArray());
 	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
