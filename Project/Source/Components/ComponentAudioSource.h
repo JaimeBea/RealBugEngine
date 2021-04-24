@@ -1,9 +1,7 @@
 #pragma once
 
 #include "Component.h"
-#include "Resources/ResourceAudioClip.h"
 
-#include "AL/al.h"
 #include "Math/float3.h"
 
 class ComponentAudioSource : public Component {
@@ -29,7 +27,7 @@ public:
 private:
 	bool drawGizmos = true;
 
-	ALuint sourceId = 0;
+	unsigned sourceId = 0;
 	float pitch = 1.f;
 	float gain = 1.f;
 	bool mute = false;

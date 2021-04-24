@@ -5,9 +5,11 @@
 #include "Application.h"
 #include "Modules/ModuleAudio.h"
 #include "Modules/ModuleEditor.h"
+#include "Resources/ResourceAudioClip.h"
 #include "Utils/Logging.h"
 #include "Utils/ImGuiUtils.h"
 
+#include "AL/al.h"
 #include "debugdraw.h"
 #include "Math/float3.h"
 #include "imgui.h"
@@ -142,7 +144,6 @@ void ComponentAudioSource::OnEditorUpdate() {
 
 	ImGui::Separator();
 
-	// -- Temporally to reproduce sounds from Component. TODO: move to Resource Audio UI
 	if (ImGui::Button("Play")) {
 		Play();
 	}
@@ -154,7 +155,6 @@ void ComponentAudioSource::OnEditorUpdate() {
 	if (ImGui::Button("Stop")) {
 		Stop();
 	}
-	// --
 }
 
 void ComponentAudioSource::UpdateSourceParameters() const {

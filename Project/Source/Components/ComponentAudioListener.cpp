@@ -54,16 +54,19 @@ void ComponentAudioListener::UpdateAudioListener() {
 		alListener3f(AL_ORIENTATION, 0.0f, 0.0f, 0.0f);
 		return;
 	}
+
 	Frustum* frustum = camera->GetFrustum();
-	position = frustum->Pos();
+	float3 position = frustum->Pos();
 	float3 front = frustum->Front();
 	float3 up = frustum->Up();
-	orientation[0] = front[0];
-	orientation[1] = front[1];
-	orientation[2] = front[2];
-	orientation[3] = up[0];
-	orientation[4] = up[1];
-	orientation[5] = up[2];
+	float orientation[6] {
+		front[0],
+		front[1],
+		front[2],
+		up[0],
+		up[1],
+		up[2],
+	};
 	alListenerfv(AL_POSITION, position.ptr());
 	alListenerfv(AL_ORIENTATION, orientation);
 }

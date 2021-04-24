@@ -6,6 +6,7 @@
 #include "Utils/alcErrors.h"
 
 #include "AL/al.h"
+#include "AL/alc.h"
 
 #include "Utils/Leaks.h"
 
@@ -61,13 +62,13 @@ ALuint ModuleAudio::GetAvailableSource(bool reverse) const {
 	}
 }
 
-bool ModuleAudio::isActive(ALuint sourceId) const {
+bool ModuleAudio::isActive(unsigned sourceId) const {
 	ALint state;
 	alGetSourcei(sourceId, AL_SOURCE_STATE, &state);
 	return (state == AL_PLAYING || state == AL_PAUSED);
 }
 
-bool ModuleAudio::isAvailable(ALuint sourceId) const {
+bool ModuleAudio::isAvailable(unsigned sourceId) const {
 	ALint state;
 	alGetSourcei(sourceId, AL_SOURCE_STATE, &state);
 	return (state == AL_STOPPED || state == AL_INITIAL);

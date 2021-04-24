@@ -2,40 +2,25 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Modules/ModuleFiles.h"
-#include "Utils/Buffer.h"
-
 #include "Utils/MSTimer.h"
-#include <inttypes.h>
-#include "AL/alext.h"
-#include <sndfile.h>
 #include "Utils/Logging.h"
+
+#include "AL/alext.h"
+#include <inttypes.h>
+#include <sndfile.h>
 
 #include "rapidjson/error/en.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/document.h"
 
-#define JSON_TAG_AUDIO "Audio"
+#include "Utils/Leaks.h"
 
 void ResourceAudioClip::Load() {
 	MSTimer timer;
 	timer.Start();
 	std::string filePath = GetResourceFilePath();
-	LOG("Loading audio from path: \"%s\".", filePath);
-
-	Buffer<char> audioBuffer = App->files->Load(filePath.c_str());
-	if (audioBuffer.Size() == 0) return;
-
-	rapidjson::Document document;
-	document.ParseInsitu<rapidjson::kParseNanAndInfFlag>(audioBuffer.Data());
-	if (document.HasParseError()) {
-		LOG("Error parsing JSON: %s (offset: %u)", rapidjson::GetParseError_En(document.GetParseError()), document.GetErrorOffset());
-		return;
-	}
-
-	JsonValue jFile(document, document);
-	JsonValue jAudio = jFile[JSON_TAG_AUDIO];
+	LOG("Loading audio from path: \"%s\".", filePath.c_str());
 
 	ALenum err, format;
 	SNDFILE* sndfile;
@@ -45,10 +30,9 @@ void ResourceAudioClip::Load() {
 	ALsizei size;
 
 	// Open Audio File
-	filePath = jAudio[0];
 	sndfile = sf_open(filePath.c_str(), SFM_READ, &sfinfo);
 	if (!sndfile) {
-		LOG("Could not open audio in %s: %s", filePath, sf_strerror(sndfile));
+		LOG("Could not open audio in %s: %s", filePath.c_str(), sf_strerror(sndfile));
 		return;
 	}
 	DEFER {
@@ -86,12 +70,13 @@ void ResourceAudioClip::Load() {
 	alGenBuffers(1, &ALbuffer);
 	alBufferData(ALbuffer, format, audioData, size, sfinfo.samplerate);
 
-	/* Check if an error occured, and clean up if so. */
+	// Check if an error occured, and clean up if so.
 	err = alGetError();
 	if (err != AL_NO_ERROR) {
 		LOG("OpenAL Error: %s", alGetString(err));
-		if (ALbuffer && alIsBuffer(ALbuffer))
+		if (ALbuffer && alIsBuffer(ALbuffer)) {
 			alDeleteBuffers(1, &ALbuffer);
+		}
 		return;
 	}
 }

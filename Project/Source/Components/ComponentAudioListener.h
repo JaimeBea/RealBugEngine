@@ -2,9 +2,6 @@
 
 #include "Component.h"
 
-#include "AL/al.h"
-#include "Math/float3.h"
-
 class ComponentAudioListener : public Component {
 public:
 	REGISTER_COMPONENT(ComponentAudioListener, ComponentType::AUDIO_LISTENER, false); // Refer to ComponentType for the Constructor
@@ -21,6 +18,4 @@ public:
 
 private:
 	float gain = 1.0f;
-	float3 position = {0, 0, 0};
-	float orientation[6] = {0, 0, 0, 0, 0, 0};
 };
