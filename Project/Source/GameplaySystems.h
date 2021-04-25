@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Globals.h"
+#include "Components/ComponentCamera.h"
 
 #include "Math/float2.h"
 
@@ -14,7 +15,7 @@ class GameObject;
 
 namespace GameplaySystems {
 	TESSERACT_ENGINE_API GameObject* GetGameObject(const char* name);
-	TESSERACT_ENGINE_API void SetRenderCamera(GameObject* camera);
+	TESSERACT_ENGINE_API void SetRenderCamera(ComponentCamera* camera);
 }; // namespace GameplaySystems
 
 namespace Debug {

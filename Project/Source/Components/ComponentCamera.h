@@ -19,6 +19,7 @@ public:
 
 	void UpdateFrustum();
 	Frustum BuildDefaultFrustum() const; // Builds a frustum object, at origin, facing Z direction, with specified FOV.
+	void SetAsGameCamera();				 // Sets this camera as the active camera that will be used on Play();
 
 	// ------- Getters ------ //
 	TESSERACT_ENGINE_API Frustum* GetFrustum();

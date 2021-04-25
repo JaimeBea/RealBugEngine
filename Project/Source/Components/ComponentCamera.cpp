@@ -33,17 +33,20 @@ void ComponentCamera::Update() {
 }
 
 void ComponentCamera::DrawGizmos() {
-	if (App->camera->GetActiveFrustum() == &frustum) return; //TODO: Possible bug when adding more components (component pointer invalidates)
+	if (App->camera->GetActiveCamera() == this) return;
 
 	if (IsActiveInHierarchy()) dd::frustum(frustum.ViewProjMatrix().Inverted(), dd::colors::White);
 }
 
 void ComponentCamera::OnEditorUpdate() {
-	if (ImGui::Checkbox("Main Camera", &activeCamera)) {
-		App->camera->ChangeActiveFrustum(frustum, activeCamera);
+	bool isActive = this == App->camera->GetActiveCamera();
+	bool isCulling = this == App->camera->GetCullingCamera();
+
+	if (ImGui::Checkbox("Main Camera", &isActive)) {
+		App->camera->ChangeActiveCamera(this, isActive);
 	}
-	if (ImGui::Checkbox("Frustum Culling", &cullingCamera)) {
-		App->camera->ChangeCullingFrustum(frustum, cullingCamera);
+	if (ImGui::Checkbox("Frustum Culling", &isCulling)) {
+		App->camera->ChangeCullingCamera(this, isCulling);
 	}
 	ImGui::Separator();
 
@@ -124,6 +127,10 @@ Frustum ComponentCamera::BuildDefaultFrustum() const {
 	newFrustum.SetUp(vec::unitY);
 	newFrustum.SetPos(vec::zero);
 	return newFrustum;
+}
+
+void ComponentCamera::SetAsGameCamera() {
+	App->camera->SetGameCamera(this);
 }
 
 Frustum* ComponentCamera::GetFrustum() {
