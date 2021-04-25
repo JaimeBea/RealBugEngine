@@ -38,6 +38,9 @@ void ResourceFont::Load() {
 	//Disable byte-alignment restriction.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+	int maxBearing = 0;
+	int minHang = 0;
+
 	// TODO: read char from 32 to 128 + generate only one texture for the whole font
 	for (unsigned char c = 0; c < 128; c++) {
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER)) {
@@ -63,7 +66,21 @@ void ResourceFont::Load() {
 
 		//Store the loaded glyph in the map for later use.
 		characters.insert(std::pair<char, Character>(c, character));
+
+		FT_Glyph_Metrics metrics = face->glyph->metrics;
+
+		if (metrics.horiBearingY / 64 > maxBearing) {
+			maxBearing = metrics.horiBearingY / 64;
+		}
+
+		int glyphHang = (metrics.horiBearingY - metrics.height) / 64;
+		if (glyphHang < minHang) {
+			minHang = glyphHang;
+		}
 	}
+
+	lineHeight = maxBearing - minHang;
+	newLineHeight = maxBearing;
 
 	//Reset pixel storage mode to default
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -77,4 +94,8 @@ void ResourceFont::Load() {
 
 void ResourceFont::Unload() {
 	// TODO: release all textures generated with glDeleteTextures
+}
+
+int ResourceFont::GetLineHeight() const {
+	return lineHeight;
 }

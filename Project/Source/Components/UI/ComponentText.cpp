@@ -26,6 +26,7 @@
 #define JSON_TAG_TEXT_SHADERID "ShaderID"
 #define JSON_TAG_TEXT_FONTID "FontID"
 #define JSON_TAG_TEXT_FONTSIZE "FontSize"
+#define JSON_TAG_TEXT_LINEHEIGHT "LineHeight"
 #define JSON_TAG_TEXT_VALUE "Value"
 #define JSON_TAG_COLOR "Color"
 
@@ -47,6 +48,9 @@ void ComponentText::Init() {
 
 void ComponentText::OnEditorUpdate() {
 	ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
+
+	bool mustRecalculateVertices = false;
+
 	if (ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags)) {
 		SetText(text);
 	}
@@ -54,19 +58,27 @@ void ComponentText::OnEditorUpdate() {
 	UID oldFontID = fontID;
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
 	if (oldFontID != fontID) {
-		RecalculcateVertices();
+		mustRecalculateVertices = true;
 	}
 
-	if (ImGui::DragFloat("Font Size", &fontSize, 0.2f, 0, FLT_MAX)) {
-		RecalculcateVertices();
+	if (ImGui::DragFloat("Font Size", &fontSize, 2.0f, 0, FLT_MAX)) {
+		mustRecalculateVertices = true;
+	}
+	if (ImGui::DragFloat("Line height", &lineHeight, 2.0f, 0, FLT_MAX)) {
+		mustRecalculateVertices = true;
 	}
 	ImGui::ColorEdit4("Color##", color.ptr());
+
+	if (mustRecalculateVertices) {
+ 		RecalculcateVertices();
+	}
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_TEXT_SHADERID] = shaderID;
 	jComponent[JSON_TAG_TEXT_FONTID] = fontID;
 	jComponent[JSON_TAG_TEXT_FONTSIZE] = fontSize;
+	jComponent[JSON_TAG_TEXT_LINEHEIGHT] = lineHeight;
 	jComponent[JSON_TAG_TEXT_VALUE] = text.c_str();
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
@@ -85,10 +97,14 @@ void ComponentText::Load(JsonValue jComponent) {
 
 	fontSize = jComponent[JSON_TAG_TEXT_FONTSIZE];
 
+	lineHeight = jComponent[JSON_TAG_TEXT_LINEHEIGHT];
+
 	text = jComponent[JSON_TAG_TEXT_VALUE];
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
+
+	RecalculcateVertices();
 }
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
@@ -96,7 +112,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	component->shaderID = shaderID;
 	component->fontID = fontID;
 	component->fontSize = fontSize;
-	component->text = text;
+	component->lineHeight = lineHeight;
 	component->color = color;
 
 	if (shaderID != 0) {
@@ -105,6 +121,8 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	if (fontID != 0) {
 		App->resources->IncreaseReferenceCount(fontID);
 	}
+
+	component->SetText(text);
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) const  {
@@ -142,16 +160,18 @@ void ComponentText::Draw(ComponentTransform2D* transform) const  {
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
 	for (int i = 0; i < text.size(); ++i) {
-		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
+		if (text.at(i) != '\n') {
+			Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
-		// render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, character.textureID);
-		// update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticesText[i]), &verticesText[i].front());
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+			// render glyph texture over quad
+			glBindTexture(GL_TEXTURE_2D, character.textureID);
+			// update content of VBO memory
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticesText[i]), &verticesText[i].front());
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			// render quad
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
 	}
 
 	glBindVertexArray(0);
@@ -181,7 +201,6 @@ void ComponentText::RecalculcateVertices() {
 	if (fontID == 0) {
 		return;
 	}
-
 	verticesText.resize(text.size());
 
 	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
@@ -191,6 +210,7 @@ void ComponentText::RecalculcateVertices() {
 	float y = position.y;
 	// FontSize / size of imported font
 	float scale = fontSize / 48.0f;
+	float dy = y;
 
 	for (int i = 0; i < text.size(); ++i) {	
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
@@ -201,18 +221,25 @@ void ComponentText::RecalculcateVertices() {
 		float w = character.size.x * scale;
 		float h = character.size.y * scale;
 
-		verticesText[i] = {
-			xpos, ypos + h, 0.0f, 0.0f,
-			xpos, ypos, 0.0f, 1.0f,
-			xpos + w, ypos, 1.0f, 1.0f,
+		if (text.at(i) == '\n') {
+			//dy += fontResource->GetLineHeight();
+			dy += lineHeight;
+			x = position.x;
+		}
 
-			xpos, ypos + h, 0.0f, 0.0f,
-			xpos + w, ypos, 1.0f, 1.0f,
-			xpos + w, ypos + h, 1.0f, 0.0f
+		verticesText[i] = {
+			xpos, ypos + h - dy, 0.0f, 0.0f,
+			xpos, ypos - dy, 0.0f, 1.0f,
+			xpos + w, ypos - dy, 1.0f, 1.0f,
+
+			xpos, ypos + h - dy, 0.0f, 0.0f,
+			xpos + w, ypos - dy, 1.0f, 1.0f,
+			xpos + w, ypos + h - dy, 1.0f, 0.0f
 		};
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+		if (text.at(i) != '\n') {
+			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+		}
 	}
 }
-
