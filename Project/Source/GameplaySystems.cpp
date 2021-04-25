@@ -1,9 +1,9 @@
 #include "GameplaySystems.h"
 
-#include "Application.h"
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
 #include "Components/ComponentCamera.h"
+#include "Application.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
@@ -11,11 +11,12 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
-#include "TesseractEvent.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "FileSystem/SceneImporter.h"
+#include "Utils/Logging.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/Frustum.h"
 #include "SDL_events.h"
@@ -33,6 +34,13 @@ TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
 }
 
 // ------------- DEBUG ------------- //
+
+void Debug::Log(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	LOG(fmt, args);
+	va_end(args);
+}
 
 void Debug::ToggleDebugMode() {
 	App->renderer->ToggleDebugMode();

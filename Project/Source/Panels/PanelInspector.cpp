@@ -128,6 +128,12 @@ void PanelInspector::Update() {
 				case ComponentType::ANIMATION:
 					cName = "Animation";
 					break;
+				case ComponentType::AUDIO_SOURCE:
+					cName = "Audio Source";
+					break;
+				case ComponentType::AUDIO_LISTENER:
+					cName = "Audio Listener";
+					break;
 				default:
 					cName = "";
 					break;
@@ -217,6 +223,24 @@ void PanelInspector::Update() {
 					if (animation != nullptr) {
 						animation->Init();
 					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Audio Source")) {
+					ComponentAudioSource* audioSource = selected->CreateComponent<ComponentAudioSource>();
+					if (audioSource != nullptr) {
+						audioSource->Init();
+					}
+					else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Audio Listener")) {
+					ComponentAudioListener* audioListener = selected->CreateComponent<ComponentAudioListener>();
+					if (audioListener != nullptr) {
+						audioListener->Init();
+					}
+					else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}

@@ -37,7 +37,9 @@ enum class ComponentType {
 	SKYBOX,
 	ANIMATION,
 	TEXT,
-	SCRIPT
+	SCRIPT,
+	AUDIO_SOURCE,
+	AUDIO_LISTENER
 };
 
 const char* GetComponentTypeName(ComponentType type);
