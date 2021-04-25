@@ -119,7 +119,7 @@ const float4& ComponentImage::GetTintColor() const {
 	return float4::one;
 }
 
-void ComponentImage::Draw(ComponentTransform2D* transform) {
+void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {

@@ -213,6 +213,7 @@ void PanelScene::Update() {
 						inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
 					}
 					float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
+					localMatrix.Orthogonalize3();
 
 					float3 translation;
 					Quat rotation;
@@ -272,7 +273,7 @@ bool PanelScene::IsUsing2D() const {
 	return view2D;
 }
 
-float2 PanelScene::GetMousePosOnScene() const {
+const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
 }
 
