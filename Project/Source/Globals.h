@@ -24,6 +24,7 @@ enum class UpdateStatus {
 #define TEXTURES_PATH "Assets/Textures"
 #define SHADERS_PATH "Assets/Shaders"
 #define SCENES_PATH "Assets/Scenes"
+#define AUDIO_PATH "Assets/Audio"
 #define MATERIALS_PATH "Assets/Materials"
 #define TEXTURE_EXTENSION ".dds"
 #define MATERIAL_EXTENSION ".mat"

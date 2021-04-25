@@ -159,6 +159,7 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
 	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
+	ComponentAudioListener* audioListener = gameCamera->CreateComponent<ComponentAudioListener>();
 	gameCamera->InitComponents();
 }
 
