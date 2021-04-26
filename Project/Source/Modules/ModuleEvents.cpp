@@ -6,13 +6,14 @@
 
 #include "Utils/Leaks.h"
 
+//TODO see why these cleanups generate errors
 static void CleanUpEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::ADD_RESOURCE:
-		RELEASE(e.addResource.resource);
+		RELEASE(e.Get<AddResourceStruct>().resource);
 		break;
 	case TesseractEventType::UPDATE_FOLDERS:
-		RELEASE(e.updateFolders.folder);
+		RELEASE(e.Get<UpdateFoldersStruct>().folder);
 		break;
 	}
 }
@@ -35,7 +36,6 @@ UpdateStatus ModuleEvents::PostUpdate() {
 }
 
 bool ModuleEvents::CleanUp() {
-	observerMap.clear();
 	while (!eventQueue.empty()) {
 		TesseractEvent e(TesseractEventType::UNKNOWN);
 		eventQueue.try_pop(e);
@@ -45,13 +45,13 @@ bool ModuleEvents::CleanUp() {
 }
 
 void ModuleEvents::AddObserverToEvent(TesseractEventType type, Module* moduleToAdd) {
-	observerMap[type].push_back(moduleToAdd);
+	observerArray[(int) type].push_back(moduleToAdd);
 }
 
 void ModuleEvents::RemoveObserverFromEvent(TesseractEventType type, Module* moduleToRemove) {
-	for (std::vector<Module*>::iterator it = observerMap[type].begin(); it != observerMap[type].end(); ++it) {
+	for (std::vector<Module*>::iterator it = observerArray[(int) type].begin(); it != observerArray[(int) type].end(); ++it) {
 		if (*it == moduleToRemove) {
-			observerMap[type].erase(it);
+			observerArray[(int) type].erase(it);
 			return;
 		}
 	}
@@ -71,7 +71,7 @@ void ModuleEvents::ProcessEvents() {
 }
 
 void ModuleEvents::ProcessEvent(TesseractEvent& e) {
-	for (Module* m : observerMap[e.type]) {
+	for (Module* m : observerArray[(int) e.type]) {
 		m->ReceiveEvent(e);
 	}
 }

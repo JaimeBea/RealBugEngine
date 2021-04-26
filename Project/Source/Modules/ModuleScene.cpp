@@ -81,14 +81,14 @@ bool ModuleScene::Start() {
 	App->files->CreateFolder(TEXTURES_PATH);
 	App->files->CreateFolder(SCENES_PATH);
 
-	#if GAME
+#if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
 	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
 	App->renderer->SetVSync(false);
 	App->time->limitFramerate = false;
-	#else
+#else
 	CreateEmptyScene();
-	#endif
+#endif
 
 	return true;
 }
@@ -116,11 +116,11 @@ bool ModuleScene::CleanUp() {
 void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 	switch (e.type) {
 	case TesseractEventType::GAMEOBJECT_DESTROYED:
-		scene->DestroyGameObject(e.destroyGameObject.gameObject);
+		scene->DestroyGameObject(e.Get<DestroyGameObjectStruct>().gameObject);
 		break;
 	case TesseractEventType::CHANGE_SCENE:
 		sceneLoaded = false;
-		SceneImporter::LoadScene(e.changeScene.scenePath);
+		SceneImporter::LoadScene(e.Get<ChangeSceneStruct>().scenePath);
 		break;
 	case TesseractEventType::RESOURCES_LOADED:
 		if (App->time->IsGameRunning() && !sceneLoaded) {
@@ -159,6 +159,7 @@ void ModuleScene::CreateEmptyScene() {
 	gameCameraTransform->SetScale(float3(1, 1, 1));
 	ComponentCamera* gameCameraCamera = gameCamera->CreateComponent<ComponentCamera>();
 	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
+	ComponentAudioListener* audioListener = gameCamera->CreateComponent<ComponentAudioListener>();
 	gameCamera->InitComponents();
 }
 
@@ -170,6 +171,7 @@ void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
 		DestroyGameObjectDeferred(child);
 	}
 	TesseractEvent e(TesseractEventType::GAMEOBJECT_DESTROYED);
-	e.destroyGameObject.gameObject = gameObject;
+	e.Set<DestroyGameObjectStruct>(gameObject);
+
 	App->events->AddEvent(e);
 }

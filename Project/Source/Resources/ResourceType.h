@@ -24,7 +24,8 @@ enum class ResourceType {
 	FONT,
 	SKYBOX,
 	SCRIPT,
-	ANIMATION
+	ANIMATION,
+	AUDIO
 };
 
 const char* GetResourceTypeName(ResourceType type);

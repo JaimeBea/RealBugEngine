@@ -15,7 +15,7 @@ public:
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
 
-	//All events should be added on the Init method for security pruposes,
+	//All events should be added on the Start method for security pruposes,
 	//exceptions are those Modules that MUST handle some events on last instance,
 	//such as ModuleScene, which must handle GameObjectDestroyed the last so that
 	//there are no nullptrs
@@ -30,5 +30,5 @@ private:
 
 private:
 	concurrency::concurrent_queue<TesseractEvent> eventQueue;
-	std::unordered_map<TesseractEventType, std::vector<Module*>> observerMap;
+	std::vector<Module*> observerArray[(int) TesseractEventType::COUNT];
 };
