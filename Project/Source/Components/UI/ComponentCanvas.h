@@ -11,12 +11,15 @@ public:
 	void Init() override;
 	void DuplicateComponent(GameObject& owner) override;
 	void OnEditorUpdate() override;
-
-	void RenderGameObject(GameObject* gameObject);
-
 	void SetScreenReferenceSize(float2 screenReferenceSize_);
-	float GetScreenFactor() const;
+	void SetDirty(bool dirty_); //Dirty marks wether or not hte next time GetScreenFactor is called will be recalculated or not
+	float GetScreenFactor(); //Returns the factor by which UI elements will be scaled (both x and y so it doesn't deform elements)
+
+private:
+	void RecalculateScreenFactor();
 
 private:
 	float2 screenReferenceSize = float2(1920, 1080);
+	float screenFactor = 0.0f;
+	bool dirty = false;
 };

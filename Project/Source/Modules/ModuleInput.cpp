@@ -77,6 +77,9 @@ UpdateStatus ModuleInput::PreUpdate() {
 				switch (event.window.event) {
 				case SDL_WINDOWEVENT_CLOSE:
 					return UpdateStatus::STOP;
+				case SDL_WINDOWEVENT_RESIZED:
+					App->userInterface->ViewportResized((int) event.window.data1, (int) event.window.data2);
+					break;
 				}
 			}
 			break;

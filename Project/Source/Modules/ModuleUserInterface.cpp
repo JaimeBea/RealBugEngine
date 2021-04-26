@@ -67,7 +67,6 @@ bool ModuleUserInterface::CleanUp() {
 }
 
 void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
-
 	switch (e.type) {
 	case TesseractEventType::MOUSE_CLICKED:
 		if (!App->time->IsGameRunning()) break;
@@ -188,4 +187,10 @@ void ModuleUserInterface::SetCurrentEventSystem(ComponentEventSystem* ev) {
 
 ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
 	return currentEvSys;
+}
+
+void ModuleUserInterface::ViewportResized(int width, int height) {
+	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
+		canvas.SetDirty(true);
+	}
 }
