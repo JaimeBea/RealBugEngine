@@ -34,6 +34,7 @@ public:
 	void UpdateShadingMode(const char* shadingMode);
 
 	int GetCulledTriangles() const;
+	const float2 GetViewportSize();
 
 public:
 	void* context = nullptr; // SDL context.
@@ -42,10 +43,6 @@ public:
 	unsigned renderTexture = 0;
 	unsigned depthRenderbuffer = 0;
 	unsigned framebuffer = 0;
-
-	// ------- Viewport Size ------- //
-	unsigned viewportWidth = 0;
-	unsigned viewportHeight = 0;
 
 	// -- Debugging Tools Toggles -- //
 	bool debugMode = false; // Flag to activate DrawOptions only ingame (not use in the engine)
@@ -71,4 +68,8 @@ private:
 	void RenderUI();
 	void SetOrtographicRender();
 	void SetPerspectiveRender();
+
+private:
+	// ------- Viewport Size ------- //
+	float2 viewportSize = float2::zero;
 };

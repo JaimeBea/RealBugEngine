@@ -118,7 +118,7 @@ const float4& ComponentImage::GetTintColor() const {
 	return float4::one;
 }
 
-void ComponentImage::Draw(ComponentTransform2D* transform) const {
+void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {
@@ -139,11 +139,11 @@ void ComponentImage::Draw(ComponentTransform2D* transform) const {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	float4x4 modelMatrix = float4x4::identity;
+	float4x4 modelMatrix;
 	float4x4* proj = &App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 		modelMatrix = transform->GetGlobalMatrixWithSize();
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());

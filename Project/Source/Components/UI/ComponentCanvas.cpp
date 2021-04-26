@@ -11,10 +11,16 @@
 #include "Utils/Leaks.h"
 
 void ComponentCanvas::Init() {
-	dirty = true;
 }
 
 void ComponentCanvas::Save(JsonValue jComponent) const {
+}
+
+void ComponentCanvas::Update() {
+	if (dirty) {
+		dirty = false;
+		RecalculateScreenFactor();
+	}
 }
 
 void ComponentCanvas::Load(JsonValue jComponent) {
@@ -30,12 +36,7 @@ void ComponentCanvas::SetScreenReferenceSize(float2 screenReferenceSize_) {
 	screenReferenceSize = screenReferenceSize_;
 }
 
-float ComponentCanvas::GetScreenFactor() {
-	if (dirty) {
-		dirty = false;
-		RecalculateScreenFactor();
-	}
-
+float ComponentCanvas::GetScreenFactor() const {
 	return screenFactor;
 }
 
@@ -44,7 +45,7 @@ void ComponentCanvas::SetDirty(bool dirty_) {
 }
 
 void ComponentCanvas::RecalculateScreenFactor() {
-	float2 factor = float2(App->renderer->viewportWidth, App->renderer->viewportHeight).Div(screenReferenceSize);
+	float2 factor = App->renderer->GetViewportSize().Div(screenReferenceSize);
 	screenFactor = factor.x < factor.y ? factor.x : factor.y;
 }
 

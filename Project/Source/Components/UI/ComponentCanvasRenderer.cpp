@@ -17,7 +17,7 @@ void ComponentCanvasRenderer::Load(JsonValue jComponent) {
 
 void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 	ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
-	ComponentCanvas* parentCanvas = AnyParentHasCanvas(&GetOwner());
+	const ComponentCanvas* parentCanvas = AnyParentHasCanvas(&GetOwner());
 	if (transform2D != nullptr && parentCanvas != nullptr) { // Get the Parent in a variable if needed and add canvas customization to render
 
 		//IF OTHER COMPONENTS THAT RENDER IN UI ARE IMPLEMENTED, THEY MUST HAVE THEIR DRAW METHODS CALLED HERE
@@ -34,16 +34,14 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 }
 
 float ComponentCanvasRenderer::GetCanvasScreenFactor() const {
-	ComponentCanvas* parentCanvas = AnyParentHasCanvas(&GetOwner());
-
-	return parentCanvas->GetScreenFactor();
+	return AnyParentHasCanvas(&GetOwner())->GetScreenFactor();
 }
 
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
 	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
 }
 
-ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) const {
+const ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) const {
 	ComponentCanvas* currentCanvas = current->GetComponent<ComponentCanvas>();
 	if (currentCanvas != nullptr) {
 		return currentCanvas;

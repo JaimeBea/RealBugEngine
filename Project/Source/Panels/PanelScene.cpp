@@ -149,9 +149,9 @@ void PanelScene::Update() {
 		}
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (App->renderer->viewportWidth != size.x || App->renderer->viewportHeight != size.y) {
+		if (App->renderer->GetViewportSize().x != size.x || App->renderer->GetViewportSize().y != size.y) {
 			App->camera->ViewportResized((int) size.x, (int) size.y);
-			App->userInterface->ViewportResized((int) size.x, (int) size.y);
+			App->userInterface->ViewportResized();
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
 			framebufferSize = {
 				size.x,
@@ -276,10 +276,6 @@ bool PanelScene::IsUsing2D() const {
 
 const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
-}
-
-float2 PanelScene::GetSceneWindowSize() const {
-	return framebufferSize;
 }
 
 const char* PanelScene::GetCurrentShadingMode() const {

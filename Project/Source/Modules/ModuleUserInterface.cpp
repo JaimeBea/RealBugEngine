@@ -189,7 +189,7 @@ ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
 	return currentEvSys;
 }
 
-void ModuleUserInterface::ViewportResized(int width, int height) {
+void ModuleUserInterface::ViewportResized() {
 	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
 		canvas.SetDirty(true);
 	}
