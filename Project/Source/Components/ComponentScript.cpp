@@ -25,7 +25,7 @@ void ComponentScript::Update() {
 	}
 
 	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
-		ResourceScript* resource = static_cast<ResourceScript*>(App->resources->GetResource<ResourceScript>(scriptID));
+		ResourceScript* resource = App->resources->GetResource<ResourceScript>(scriptID);
 		if (resource != nullptr) {
 			if (resource->script != nullptr) {
 				resource->script->Update();
@@ -35,7 +35,7 @@ void ComponentScript::Update() {
 }
 
 void ComponentScript::OnStart() {
-	ResourceScript* resource =  static_cast<ResourceScript*>(App->resources->GetResource<ResourceScript>(scriptID));
+	ResourceScript* resource =  App->resources->GetResource<ResourceScript>(scriptID);
 	if (resource != nullptr) {
 		if (resource->script != nullptr) {
 			resource->script->Start();

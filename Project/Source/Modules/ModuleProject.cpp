@@ -79,7 +79,7 @@ static bool FileOffsetRelativeVirtualAdress(PIMAGE_NT_HEADERS ntHeaders, DWORD r
 
 	// Represents the image section header format.
 	IMAGE_SECTION_HEADER* sectionHeader = IMAGE_FIRST_SECTION(ntHeaders);
-	for (int i = 0; i < ntHeaders->FileHeader.NumberOfSections && !found; i++, sectionHeader++) {
+	for (int i = 0; i < ntHeaders->FileHeader.NumberOfSections && !found; ++i, ++sectionHeader) {
 		if (sectionHeader->VirtualAddress <= rva) {
 			if (sectionHeader->VirtualAddress + sectionHeader->Misc.VirtualSize > rva) {
 				found = true;
@@ -250,7 +250,7 @@ bool ModuleProject::PDBReplace(const std::string& filename, const std::string& n
 		return false;
 	}
 
-	for (int i = 1; i <= numEntries; i++, debugDir++) {
+	for (int i = 1; i <= numEntries; ++i, ++debugDir) {
 		char* pdb = PDBFind((LPBYTE) mem, debugDir);
 		if (pdb) {
 			size_t len = strlen(pdb);
@@ -290,6 +290,7 @@ namespace Tesseract {
 				return is;
 			default:
 				t += (char) c;
+				break;
 			}
 		}
 	}
