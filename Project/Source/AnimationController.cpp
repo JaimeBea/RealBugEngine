@@ -2,7 +2,7 @@
 
 #include "Application.h"
 #include "GameObject.h"
-#include "States.h"
+#include "State.h"
 #include "Resources/ResourceAnimation.h"
 #include "AnimationInterpolation.h"
 #include "Resources/ResourceClip.h"

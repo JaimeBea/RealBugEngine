@@ -1,12 +1,12 @@
 #pragma once
-#include "States.h"
+#include "State.h"
 #include "Utils/UID.h"
 #include <string>
 
 class Transition {
 	
 public:
-	Transition(const States& mSource,const States& mTarget, float mInterpolation,UID mid = 0)
+	Transition(const State& mSource,const State& mTarget, float mInterpolation,UID mid = 0)
 		: source(mSource)
 		, target(mTarget)
 		, interpolationDuration(mInterpolation)
@@ -16,7 +16,7 @@ public:
 
 public:
 	UID id = 0;
-	States source;
-	States target;
+	State source;
+	State target;
 	float interpolationDuration = 0;
 };

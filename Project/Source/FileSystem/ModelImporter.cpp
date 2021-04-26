@@ -644,7 +644,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			
 		ResourceAnimation* testAnim = nullptr; //TODO::Delete this
 
-		States initialState;
+		State initialState;
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			std::string parsedI = std::to_string(i);
 
@@ -699,8 +699,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		clip3->SaveToFile(clip3->GetResourceFilePath().c_str());
 
 		//Mocking transition
-		States state2 = resourceStateMachine->AddState(sState2, clip2->GetId());
-		States state3 = resourceStateMachine->AddState(sState3, clip3->GetId());
+		State state2 = resourceStateMachine->AddState(sState2, clip2->GetId());
+		State state3 = resourceStateMachine->AddState(sState3, clip3->GetId());
 
 		std::string tName1 = "s1Ts2";
 		std::string tName2 = "s2Ts1";

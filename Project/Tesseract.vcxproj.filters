@@ -420,11 +420,12 @@
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
     <ClInclude Include="Source\FileSystem\StateMachineImporter.h" />
     <ClInclude Include="Source\Resources\ResourceClip.h" />
-    <ClInclude Include="Source\States.h" />
     <ClInclude Include="Source\Transition.h" />
     <ClInclude Include="Source\AnimationInterpolation.h" />
     <ClInclude Include="Source\FileSystem\ClipImporter.h" />
     <ClInclude Include="Source\Utils\PoolMap.h" />
+    <ClInclude Include="Source\Utils\VectorMap.h" />
+    <ClInclude Include="Source\State.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

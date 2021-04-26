@@ -1,16 +1,16 @@
 #pragma once
-#include "States.h"
+#include "State.h"
 
 class AnimationInterpolation {
 public:
-	AnimationInterpolation(States* resourceState, float current, float fade, float transition)
+	AnimationInterpolation(State* resourceState, float current, float fade, float transition)
 		: state(resourceState)
 		, currentTime(current)
 		, fadeTime(fade)
 		, TransistionTime(transition) {}
 
 public:
-	States* state;
+	State* state;
 	float currentTime = 0;
 	float fadeTime = 0;
 	float TransistionTime = 0;

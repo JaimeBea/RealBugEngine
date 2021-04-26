@@ -1,5 +1,5 @@
 #pragma once
-#include "States.h"
+#include "State.h"
 #include "Transition.h"
 #include "Resources/ResourceType.h"
 #include "Resources/Resource.h"
@@ -18,14 +18,14 @@ public:
 	void Unload() override;
 	void SaveToFile(const char* filePath);
 
-	States AddState(const std::string &name,UID clipUid);	//Add state to list of states and add clip to list of clips if dosen't contains him
+	State AddState(const std::string &name,UID clipUid);	//Add state to list of states and add clip to list of clips if dosen't contains him
 	void AddClip(UID clipUid);
-	void AddTransition(const States& from, const States& to,const float interpolation,const std::string& name );
+	void AddTransition(const State& from, const State& to,const float interpolation,const std::string& name );
 	Transition* FindTransitionGivenName(const std::string& name);
 
 public:
 	std::unordered_map<std::string, ResourceAnimation*> resourceAnimations;
-	std::list<States> states;
+	std::list<State> states;
 
 private:
 	std::list<UID> clipsUids;	
