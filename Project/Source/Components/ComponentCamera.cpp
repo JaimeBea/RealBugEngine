@@ -41,7 +41,7 @@ void ComponentCamera::DrawGizmos() {
 void ComponentCamera::OnEditorUpdate() {
 	bool isActive = this == App->camera->GetActiveCamera();
 	bool isCulling = this == App->camera->GetCullingCamera();
-	bool isGameCamera = this == App->camera->GetGameCamera();
+	isGameCamera = this == App->camera->GetGameCamera();
 
 	if (ImGui::Checkbox("Main Game Camera", &isGameCamera)) {
 		App->camera->ChangeGameCamera(this, isGameCamera);
