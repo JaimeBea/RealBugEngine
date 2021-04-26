@@ -19,6 +19,11 @@
 #define JSON_TAG_NAME "Name"
 
 void ComponentScript::Update() {
+
+	if (dirty) {
+		ReloadScript();
+	}
+
 	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
 		ResourceScript* resource = static_cast<ResourceScript*>(App->resources->GetResource<ResourceScript>(scriptID));
 		if (resource != nullptr) {
@@ -70,4 +75,10 @@ void ComponentScript::DuplicateComponent(GameObject& owner) {
 
 UID ComponentScript::GetScriptID() const {
 	return scriptID;
+}
+
+void ComponentScript::ReloadScript() {
+	dirty = false;
+	ResourceScript* script = App->resources->GetResource<ResourceScript>(scriptID);
+	script->Load();
 }

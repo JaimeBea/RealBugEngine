@@ -1,16 +1,13 @@
 #include "ModuleProject.h"
 
 #include "Application.h"
-#include "ModuleFiles.h"
-#include "FileSystem/JsonValue.h"
+#include "Modules/ModuleFiles.h"
+#include "Modules/ModuleEvents.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
 #include "Utils/UID.h"
 #include "Utils/FileDialog.h"
 
-#include "Script.h"
-
-#include "fmt/core.h"
 #include "fmt/format.h"
 
 #include <Windows.h>
@@ -18,9 +15,6 @@
 #include <ObjIdl.h>
 
 #include "Utils/Leaks.h"
-
-#define JSON_TAG_PROJECT_NAME "ProjectName"
-#define JSON_TAG_SCENES "Scenes"
 
 template<class T>
 static T struct_cast(void* ptr, LONG offset = 0) {
@@ -510,10 +504,22 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 	LOG("----------------------------------------------------------");
 
-	buildPath += name + ".dll";
+	buildPath += name;
+	std::string newPath(name);
+	newPath[newPath.size() - 1] = '_';
+	newPath += ".dll";
+	buildPath += ".dll";
+
+	if (!CopyFileA(buildPath.c_str(), newPath.c_str(), FALSE)) {
+		LOG("Copy fails");
+	}
+
 	if (!LoadGameCodeDLL(buildPath.c_str())) {
-		LOG("DLL NOT LOADED");
-	};
+		LOG("DLL NOT LOADED: %s", GetLastErrorStdStr().c_str());
+	}
+
+	App->events->AddEvent(TesseractEventType::COMPILATION_FINISHED);
+
 }
 
 bool ModuleProject::LoadGameCodeDLL(const char* path) {

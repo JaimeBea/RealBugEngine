@@ -16,5 +16,12 @@ public:
 	UID GetScriptID() const;
 
 private:
+
+	void ReloadScript();
+
+public:
+	bool dirty = true;
+
+private:
 	UID scriptID = 0;
 };

@@ -2,8 +2,6 @@
 
 #include "Module.h"
 
-#include "Utils/UID.h"
-
 #include <string>
 
 #ifndef _WINDEF_
@@ -42,5 +40,4 @@ private:
 	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
 	void CreateBatches();
-
 };

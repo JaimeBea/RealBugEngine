@@ -20,11 +20,11 @@ void GameController::Start() {
 	Debug::Log("SCRIPT STARTED");
 
 	gameCamera = GameplaySystems::GetGameObject("Game Camera");
-	godCamera = GameplaySystems::GetGameObject("God Camera");
-	staticCamera1 = GameplaySystems::GetGameObject("staticCamera1");
-	staticCamera2 = GameplaySystems::GetGameObject("staticCamera2");
-	staticCamera3 = GameplaySystems::GetGameObject("staticCamera3");
-	staticCamera4 = GameplaySystems::GetGameObject("staticCamera4");
+	//godCamera = GameplaySystems::GetGameObject("God Camera");
+	//staticCamera1 = GameplaySystems::GetGameObject("staticCamera1");
+	//staticCamera2 = GameplaySystems::GetGameObject("staticCamera2");
+	//staticCamera3 = GameplaySystems::GetGameObject("staticCamera3");
+	//staticCamera4 = GameplaySystems::GetGameObject("staticCamera4");
 
 	player = GameplaySystems::GetGameObject("Fang");
 
