@@ -46,6 +46,7 @@ public:
 	// ------- Viewport Size ------- //
 	unsigned viewportWidth = 0;
 	unsigned viewportHeight = 0;
+	bool viewportDirty = true;
 
 	// -- Debugging Tools Toggles -- //
 	bool debugMode = false; // Flag to activate DrawOptions only ingame (not use in the engine)

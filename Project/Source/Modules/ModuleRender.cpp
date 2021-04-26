@@ -219,14 +219,31 @@ UpdateStatus ModuleRender::Update() {
 UpdateStatus ModuleRender::PostUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
 
-	// Update render viewport with the viewport updated values in PanelScene
-	App->renderer->ViewportResized(viewportWidth, viewportHeight);
+#if !GAME
+	if (viewportDirty) {
+		// Framebuffer calculations
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+		glBindTexture(GL_TEXTURE_2D, renderTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewportWidth, viewportHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
+
+		glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewportWidth, viewportHeight);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			LOG("ERROR: Framebuffer is not complete!");
+		}
+
+		viewportDirty = false;
+	}
+#endif
 
 	SDL_GL_SwapWindow(App->window->window);
-	/* When resized docking, in PostUpdate
-		1 it -> Goes black the viewport
-		2 it -> In the next frame, goes new viewport resized
-	*/
+
 	return UpdateStatus::CONTINUE;
 }
 
@@ -242,24 +259,7 @@ void ModuleRender::ViewportResized(int width, int height) {
 	viewportWidth = width;
 	viewportHeight = height;
 
-#if !GAME
-	// Framebuffer calculations
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-	glBindTexture(GL_TEXTURE_2D, renderTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
-
-	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		LOG("ERROR: Framebuffer is not complete!");
-	}
-#endif
+	viewportDirty = true;
 }
 
 void ModuleRender::SetVSync(bool vsync) {

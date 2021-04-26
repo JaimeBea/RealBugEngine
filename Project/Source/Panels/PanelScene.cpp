@@ -151,9 +151,7 @@ void PanelScene::Update() {
 		ImVec2 size = ImGui::GetContentRegionAvail();
 		if (App->renderer->viewportWidth != size.x || App->renderer->viewportHeight != size.y) {
 			App->camera->ViewportResized((int) size.x, (int) size.y);
-			// Update the render viewport values to update the viewport later in the PostUpdate in ModuleRender
-			App->renderer->viewportWidth = size.x;
-			App->renderer->viewportHeight = size.y;
+			App->renderer->ViewportResized((int) size.x, (int) size.y);
 			framebufferSize = {
 				size.x,
 				size.y,
