@@ -41,9 +41,9 @@ bool AnimationController::GetTransform(const ResourceClip& clip, float& currentT
 	return true;
 }
 
-bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator &it, std::list<AnimationInterpolation> &animationInterpolations, GameObject& rootBone, GameObject& gameObject, float3& pos, Quat& quat) {
+bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator &it, const std::list<AnimationInterpolation> &animationInterpolations, const GameObject& rootBone, const GameObject& gameObject, float3& pos, Quat& quat) {
 	ResourceClip clip = *(App->resources->GetResource<ResourceClip>((*it).state->clipUid));
-	bool ok = GetTransform(clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
+	bool result = GetTransform(clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
 	if (&(*it) != &(*std::prev(animationInterpolations.end()))) {
 		float3 position;
 		Quat rotation;
@@ -57,7 +57,7 @@ bool AnimationController::InterpolateTransitions(const std::list<AnimationInterp
 		(*it).currentTime += App->time->GetDeltaTime();
 	}
 
-	return ok;
+	return result;
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) {

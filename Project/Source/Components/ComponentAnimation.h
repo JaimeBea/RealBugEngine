@@ -24,9 +24,9 @@ public:
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	void OnUpdate();	
-	
-	void SendTrigger(std::string trigger);	// Method to trigger the change of state
+	void OnUpdate();
+
+	void SendTrigger(const std::string& trigger); // Method to trigger the change of state
 
 	States* GetCurrentState() {
 		return currentState;
@@ -49,11 +49,9 @@ public:
 	States* initialState = nullptr;
 
 private:
-	void UpdateAnimations(GameObject *gameObject);
+	void UpdateAnimations(GameObject* gameObject);
 
 private:
 	std::list<AnimationInterpolation> animationInterpolations; //List of the current interpolations between states
-	int t = 0; // TODO remove, HardCoded for test transitions
+	int t = 0;												   // TODO remove, HardCoded for test transitions
 };
-
-

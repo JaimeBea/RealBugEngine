@@ -56,7 +56,7 @@ void ResourceClip::Load() {
 	Init(name, animationUID, beginIndex, endIndex, loop,speed, 0);
 
 	unsigned timeMs = timer.Stop();
-	LOG("Material loaded in %ums", timeMs);
+	LOG("Clip loaded in %ums", timeMs);
 }
 
 

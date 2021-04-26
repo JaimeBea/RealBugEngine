@@ -628,7 +628,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	if (assimpScene->mNumAnimations > 0) {
 		LOG("Importing animations");
 
-		//JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 		JsonValue jResource = jResources[resourceIndex];
 		UID id = jResource[JSON_TAG_ID];
 		ResourceStateMachine* resourceStateMachine = App->resources->CreateResource<ResourceStateMachine>(filePath, id ? id : GenerateUID());
@@ -718,7 +717,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		animationComponent->SetCurrentState(&initialState);
 
 		resourceStateMachine->SaveToFile(resourceStateMachine->GetResourceFilePath().c_str());
-		bool ok = true;
 	}
 
 	// Cache bones for skinning

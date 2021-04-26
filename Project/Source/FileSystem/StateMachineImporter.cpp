@@ -22,10 +22,10 @@
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
 
-bool StateMachineImporter::ImportSateMachine(const char* filePath, JsonValue jMeta) {
+bool ModelImporter::ImportSateMachine(const char* filePath, JsonValue jMeta) {
 	LOG("Importing sate machine from path: \"%s\".", filePath);
 
-	// Timer to measure importing a material
+	// Timer to measure importing a Sate Machine
 	MSTimer timer;
 	timer.Start();
 

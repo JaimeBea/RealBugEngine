@@ -25,7 +25,7 @@
 bool ClipImporter::ImportClip(const char* filePath, JsonValue jMeta) {
 	LOG("Importing clip from path: \"%s\".", filePath);
 
-	// Timer to measure importing a material
+	// Timer to measure importing a Clip
 	MSTimer timer;
 	timer.Start();
 
@@ -44,7 +44,7 @@ bool ClipImporter::ImportClip(const char* filePath, JsonValue jMeta) {
 		return false;
 	}
 
-	// State mahcine resource creation
+	// Clip resource creation
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
 	UID id = jResource[JSON_TAG_ID];

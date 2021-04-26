@@ -2,8 +2,8 @@
 
 #include "Application.h"
 #include "Transition.h"
-#include "AnimationInterpolation.h"
 #include "GameObject.h"
+#include "AnimationInterpolation.h"
 #include "AnimationController.h"
 #include "Resources/ResourceAnimation.h"
 #include "Resources/ResourceClip.h"
@@ -11,15 +11,13 @@
 #include "Components/ComponentTransform.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleResources.h"
-
-#include "Application.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleInput.h"
 
+#include "Utils/UID.h"
 #include "Utils/Logging.h"
 #include "Utils/Leaks.h"
-#include "Utils/UID.h"
-#include <algorithm>    // std::find
+#include <algorithm> // std::find
 
 #define JSON_TAG_LOOP "Controller"
 #define JSON_TAG_ANIMATION_ID "AnimationId"
@@ -29,14 +27,13 @@
 
 void ComponentAnimation::Update() {
 	// TODO remove, HardCoded for test transitions
-	/*
+
 	if (App->input->GetKey(SDL_SCANCODE_1)) {
 		if (t != 1) {
 			SendTrigger("s1Ts2");
 			t = 1;
 			LOG("Transition1");
 		}
-
 	}
 	if (App->input->GetKey(SDL_SCANCODE_2)) {
 		if (t != 2) {
@@ -60,7 +57,7 @@ void ComponentAnimation::Update() {
 			t = 4;
 			LOG("Transition4");
 		}
-	}*/
+	}
 	OnUpdate();
 }
 
@@ -74,16 +71,15 @@ void ComponentAnimation::Save(JsonValue jComponent) const {
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
-
 	stateMachineResourceUID = jComponent[JSON_TAG_STATE_MACHINE_ID];
 	if (stateMachineResourceUID != 0) App->resources->IncreaseReferenceCount(stateMachineResourceUID);
 
 	UID initalStateUid = jComponent[JSON_TAG_INITAL_STATE_ID];
 
-	ResourceStateMachine* resourceStateMachine = App->resources->GetResource <ResourceStateMachine>(stateMachineResourceUID);
-	
+	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
+
 	for (auto& state : resourceStateMachine->states) {
-		if (initalStateUid == state.id){
+		if (initalStateUid == state.id) {
 			initialState = &state;
 			currentState = &state;
 			break;
@@ -108,7 +104,7 @@ void ComponentAnimation::OnUpdate() {
 	currentState->currentTime += App->time->GetDeltaTime() * currentClip->speed;
 }
 
-void ComponentAnimation::SendTrigger(std::string trigger) {
+void ComponentAnimation::SendTrigger(const std::string& trigger) {
 	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
 
 	Transition* transition = resourceStateMachine->FindTransitionGivenName(trigger);
@@ -131,7 +127,7 @@ struct CheckFinishInterpolation {
 		return animationInterpolation.fadeTime >= 0.9;
 	}
 	UID stateMachineResourceUID;
-	ComponentAnimation *componentAnimation;
+	ComponentAnimation* componentAnimation;
 };
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
@@ -140,8 +136,8 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	}
 
 	//find gameobject in hash
-	float3 position, totalPostion = float3::zero;
-	Quat rotation, totalRotation = Quat::identity;
+	float3 position = float3::zero;
+	Quat rotation = Quat::identity;
 
 	bool result = true;
 	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
@@ -170,5 +166,4 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations(child);
 	}
-
 }

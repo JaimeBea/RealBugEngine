@@ -1,5 +1,6 @@
 #pragma once
-#include "States.h"
+
+class States;
 
 class AnimationInterpolation {
 public:
