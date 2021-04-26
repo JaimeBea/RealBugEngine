@@ -1,6 +1,6 @@
 #pragma once
 #include "FileSystem/JsonValue.h"
 
-namespace ModelImporter {
-	bool ImportSateMachine(const char* filePath, JsonValue jMeta);
-} // namespace ModelImporter
+namespace StateMachineImporter{
+	bool ImportStateMachine(const char* filePath, JsonValue jMeta);
+} // namespace StateMachineImporter
