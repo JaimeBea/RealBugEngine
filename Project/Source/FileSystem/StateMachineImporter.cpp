@@ -25,7 +25,7 @@
 bool StateMachineImporter::ImportStateMachine(const char* filePath, JsonValue jMeta) {
 	LOG("Importing sate machine from path: \"%s\".", filePath);
 
-	// Timer to measure importing a Sate Machine
+	// Timer to measure importing a State Machine
 	MSTimer timer;
 	timer.Start();
 
