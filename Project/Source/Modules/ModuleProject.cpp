@@ -24,7 +24,7 @@
 
 template<class T>
 static T struct_cast(void* ptr, LONG offset = 0) {
-	return static_cast<T>(static_cast<intptr_t>(ptr) + offset);
+	return reinterpret_cast<T>(reinterpret_cast<intptr_t>(ptr) + offset);
 }
 
 struct RSDSHeader {
@@ -51,14 +51,14 @@ static std::string& GetLastErrorStdStr() {
 			std::string result(lpMsgStr, lpMsgStr + bufLen);
 
 			LocalFree(lpMsgBuf);
-
+			
 			return result;
 		}
 	}
 	return std::string();
 }
 
-static bool DebugDirVirtualAddress(PIMAGE_OPTIONAL_HEADER optionalHeader, DWORD& debugDirRva, DWORD& debugDirSize) {
+static bool DebugDirRelativeVirtualAddress(PIMAGE_OPTIONAL_HEADER optionalHeader, DWORD& debugDirRva, DWORD& debugDirSize) {
 	if (optionalHeader->Magic == IMAGE_NT_OPTIONAL_HDR64_MAGIC) {
 		// Represents the optional header format.
 		PIMAGE_OPTIONAL_HEADER64 optionalHeader64 = struct_cast<PIMAGE_OPTIONAL_HEADER64>(optionalHeader);
@@ -80,15 +80,17 @@ static bool DebugDirVirtualAddress(PIMAGE_OPTIONAL_HEADER optionalHeader, DWORD&
 	return true;
 }
 
-static bool FileOffsetVirtualAdress(PIMAGE_NT_HEADERS ntHeaders, DWORD rva, DWORD& fileOffset) {
+static bool FileOffsetRelativeVirtualAdress(PIMAGE_NT_HEADERS ntHeaders, DWORD rva, DWORD& fileOffset) {
 	bool found = false;
 
 	// Represents the image section header format.
 	IMAGE_SECTION_HEADER* sectionHeader = IMAGE_FIRST_SECTION(ntHeaders);
 	for (int i = 0; i < ntHeaders->FileHeader.NumberOfSections && !found; i++, sectionHeader++) {
-		auto sectionSize = sectionHeader->Misc.VirtualSize;
-		if ((rva >= sectionHeader->VirtualAddress) && (rva < sectionHeader->VirtualAddress + sectionSize)) {
-			found = true;
+		if (sectionHeader->VirtualAddress <= rva){
+			if (sectionHeader->VirtualAddress + sectionHeader->Misc.VirtualSize > rva) {
+				found = true;
+				fileOffset = rva - sectionHeader->VirtualAddress + sectionHeader->PointerToRawData;
+			}
 		}
 	}
 
@@ -96,24 +98,26 @@ static bool FileOffsetVirtualAdress(PIMAGE_NT_HEADERS ntHeaders, DWORD rva, DWOR
 		return false;
 	}
 
-	const int diff = static_cast<int>(sectionHeader->VirtualAddress - sectionHeader->PointerToRawData);
-	fileOffset = rva - diff;
 	return true;
 }
 
 static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 	assert(debugDir && imageBase);
-	LPBYTE debugInfo = imageBase + debugDir->PointerToRawData;
-	const auto debugInfoSize = debugDir->SizeOfData;
+	LPBYTE debugInfo = const_cast<LPBYTE>(imageBase + debugDir->PointerToRawData);
+	const DWORD debugInfoSize = debugDir->SizeOfData;
+
 	if (debugInfo == 0 || debugInfoSize == 0) {
 		return nullptr;
 	}
+
 	if (IsBadReadPtr(debugInfo, debugInfoSize)) {
 		return nullptr;
 	}
+
 	if (debugInfoSize < sizeof(DWORD)) {
 		return nullptr;
 	}
+
 	if (debugDir->Type == IMAGE_DEBUG_TYPE_CODEVIEW) {
 		auto signature = *(DWORD*) debugInfo;
 		if (signature == 'SDSR') {
@@ -127,15 +131,15 @@ static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 			return info->filename;
 		}
 	}
+
 	return nullptr;
 }
 
-static bool PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB) {
-	std::string _filename(filename);
+bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB) {
 
 	HANDLE fp = nullptr;
 	HANDLE filemap = nullptr;
-	LPVOID mem = 0;
+	LPVOID mem = nullptr;
 	bool result = false;
 
 	DEFER {
@@ -152,17 +156,17 @@ static bool PDBReplace(const std::string& filename, const std::string& namePDB, 
 		}
 	};
 
-	fp = CreateFile(_filename.c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	fp = CreateFileA(filename.c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	if ((fp == INVALID_HANDLE_VALUE) || (fp == nullptr)) {
 		return false;
 	}
-
+	
 	// Creates or opens a named or unnamed file mapping object for a specified file.
 	filemap = CreateFileMapping(fp, nullptr, PAGE_READWRITE, 0, 0, nullptr);
 	if (filemap == nullptr) {
 		return false;
 	}
-
+	
 	// Maps a view of a file mapping into the address space of a calling process.
 	mem = MapViewOfFile(filemap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (mem == nullptr) {
@@ -219,18 +223,18 @@ static bool PDBReplace(const std::string& filename, const std::string& namePDB, 
 		return false;
 	}
 
-	DWORD debugDirVirtualAddress = 0;
+	DWORD debugDirVRA = 0;
 	DWORD debugDirSize = 0;
-	if (!DebugDirVirtualAddress(&ntHeaders->OptionalHeader, debugDirVirtualAddress, debugDirSize)) {
+	if (!DebugDirRelativeVirtualAddress(&ntHeaders->OptionalHeader, debugDirVRA, debugDirSize)) {
 		return false;
 	}
 
-	if (debugDirVirtualAddress == 0 || debugDirSize == 0) {
+	if (debugDirVRA == 0 || debugDirSize == 0) {
 		return false;
 	}
 
 	DWORD offset = 0;
-	if (!FileOffsetVirtualAdress(ntHeaders, debugDirVirtualAddress, offset)) {
+	if (!FileOffsetRelativeVirtualAdress(ntHeaders, debugDirVRA, offset)) {
 		return false;
 	}
 
@@ -256,7 +260,7 @@ static bool PDBReplace(const std::string& filename, const std::string& namePDB, 
 	for (int i = 1; i <= numEntries; i++, debugDir++) {
 		char* pdb = PDBFind((LPBYTE) mem, debugDir);
 		if (pdb) {
-			auto len = strlen(pdb);
+			size_t len = strlen(pdb);
 			if (len >= strlen(namePDB.c_str())) {
 				originalPDB = pdb;
 				memcpy_s(pdb, len, namePDB.c_str(), namePDB.length());
@@ -427,6 +431,9 @@ void ModuleProject::CreateBatches() {
 }
 
 void ModuleProject::CompileProject(Configuration config) {
+
+	UnloadGameCodeDLL();
+
 	std::string batchDir = projectPath + "/Batches";
 
 	SHELLEXECUTEINFO sei = {0};
@@ -481,7 +488,11 @@ void ModuleProject::CompileProject(Configuration config) {
 
 	std::string originalPDB;
 	std::string dllPath = buildPath + name + ".dll";
-	PDBReplace(dllPath, name + ".pdb" , originalPDB);
+	std::string auxName = name;
+	auxName[auxName.size() - 1] = '_';
+	auxName += ".pdb";
+	PDBReplace(dllPath, auxName, originalPDB);
+	CopyFile(originalPDB.c_str(), auxName.c_str(), FALSE);
 	std::string logFile = buildPath + name + ".log";
 
 	Buffer<char> buffer = App->files->Load(logFile.c_str());
@@ -500,7 +511,6 @@ void ModuleProject::CompileProject(Configuration config) {
 	LOG("----------------------------------------------------------");
 
 	buildPath += name + ".dll";
-	UnloadGameCodeDLL();
 	if (!LoadGameCodeDLL(buildPath.c_str())) {
 		LOG("DLL NOT LOADED");
 	};
