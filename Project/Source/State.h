@@ -2,18 +2,18 @@
 #include "Utils/UID.h"
 #include <string>
 
-class States {
+class State {
 
 public:
-	States() {}
-	States(const States& mState)
+	State() {}
+	State(const State& mState)
 		: id(mState.id)
 		, name(mState.name)
 		, clipUid(mState.clipUid)
 		, currentTime(mState.currentTime){
 	}
 
-	States(const std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
+	State(const std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
 		: name(mName)
 		, clipUid(mClipUid)
 		, currentTime(mCurrentTime) {

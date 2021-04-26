@@ -1,7 +1,7 @@
 #include "ResourceStateMachine.h"
 #include "Application.h"
 #include "Transition.h"
-#include "States.h"
+#include "State.h"
 
 #include "Resources/ResourceClip.h"
 #include "Modules/ModuleFiles.h"
@@ -61,12 +61,12 @@ void ResourceStateMachine::Load() {
 		clipsUids.push_back(clipUID);
 	}
 
-	std::unordered_map<UID, States> stateMap;
+	std::unordered_map<UID, State> stateMap;
 	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
 			UID id = p[JSON_TAG_ID].GetUint64();
 			std::string name = p[JSON_TAG_NAME].GetString();
 			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
-			States state(name, clipId, 0, id);
+			State state(name, clipId, 0, id);
 			states.push_back(state);
 			stateMap.insert(std::make_pair(id, state));
 
@@ -119,7 +119,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 
 	// Saving States
 	rapidjson::Value statesArrayJson(rapidjson::kArrayType);
-	std::list<States>::iterator itState;
+	std::list<State>::iterator itState;
 	for (itState = states.begin(); itState != states.end(); ++itState) {		
 		rapidjson::Value objValue(rapidjson::kObjectType);
 		rapidjson::Value name((*itState).name.c_str(), allocator);
@@ -163,8 +163,8 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	LOG("Material saved in %ums", timeMs);
 }
 
-States ResourceStateMachine::AddState(const std::string &name, UID clipUID) {
-	States state = States(name, clipUID);	
+State ResourceStateMachine::AddState(const std::string &name, UID clipUID) {
+	State state(name, clipUID);	
 	states.push_back(state);
 	AddClip(clipUID);
 
@@ -177,7 +177,7 @@ void ResourceStateMachine::AddClip(UID clipUid) {
 	}
 }
 
-void ResourceStateMachine::AddTransition(const States& from, const States& to, const float interpolation, const std::string& name) {
+void ResourceStateMachine::AddTransition(const State& from, const State& to, const float interpolation, const std::string& name) {
 	//Checking for unique name
 	Transition* transition = FindTransitionGivenName(name);
 	if (transition) {

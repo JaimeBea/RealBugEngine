@@ -4,7 +4,7 @@
 #include "Component.h"
 #include "AnimationController.h"
 #include "AnimationInterpolation.h"
-#include "States.h"
+#include "State.h"
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourceStateMachine.h"
 #include "Utils/UID.h"
@@ -28,25 +28,25 @@ public:
 
 	void SendTrigger(const std::string& trigger); // Method to trigger the change of state
 
-	States* GetCurrentState() {
+	State* GetCurrentState() {
 		return currentState;
 	}
-	void SetCurrentState(States* mCurrentState) {
+	void SetCurrentState(State* mCurrentState) {
 		currentState = mCurrentState;
 	}
 
-	States* GetInitialState() {
+	State* GetInitialState() {
 		return initialState;
 	}
 
-	void SetInitialState(States* mInitalState) {
+	void SetInitialState(State* mInitalState) {
 		initialState = mInitalState;
 	}
 
 public:
 	UID stateMachineResourceUID = 0;
-	States* currentState = nullptr;
-	States* initialState = nullptr;
+	State* currentState = nullptr;
+	State* initialState = nullptr;
 
 private:
 	void UpdateAnimations(GameObject* gameObject);
