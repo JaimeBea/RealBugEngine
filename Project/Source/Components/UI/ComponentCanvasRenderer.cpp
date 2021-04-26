@@ -1,6 +1,8 @@
 #include "ComponentCanvasRenderer.h"
 
 #include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentText.h"
+#include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentTransform2D.h"
 #include "GameObject.h"
 
@@ -12,7 +14,7 @@ void ComponentCanvasRenderer::Save(JsonValue jComponent) const {
 void ComponentCanvasRenderer::Load(JsonValue jComponent) {
 }
 
-void ComponentCanvasRenderer::Render(GameObject* gameObject) {
+void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 	ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
 	if (transform2D != nullptr && AnyParentHasCanvas(&GetOwner()) != nullptr) { // Get the Parent in a variable if needed and add canvas customization to render
 
@@ -30,10 +32,10 @@ void ComponentCanvasRenderer::Render(GameObject* gameObject) {
 }
 
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
-	ComponentCanvasRenderer* component = owner.CreateComponentDeferred<ComponentCanvasRenderer>();
+	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
 }
 
-GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) {
+const GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(const GameObject* current) const {
 	ComponentCanvas* currentCanvas = current->GetComponent<ComponentCanvas>();
 	if (currentCanvas != nullptr) {
 		return current;

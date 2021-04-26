@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Utils/Pool.h"
-#include "Utils/VectorMap.h"
+#include "Utils/PoolMap.h"
 #include "Utils/Quadtree.h"
 #include "Utils/UID.h"
 #include "Components/ComponentTransform.h"
@@ -21,8 +20,8 @@
 #include "Components/ComponentSkybox.h"
 #include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
-
-#include <unordered_map>
+#include "Components/ComponentAudioListener.h"
+#include "Components/ComponentAudioSource.h"
 
 class GameObject;
 
@@ -40,40 +39,41 @@ public:
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
-	// --- Component Management --- //
-	TESSERACT_ENGINE_API Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
-	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
-	void AddComponent(const Component* component);
-	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
+	// --- Component Access (other Component-related methods in GameObject.h) --- //
+	template<class T> TESSERACT_ENGINE_API T* GetComponent(UID id);
 
-	template<class T> T* GetComponent(UID id);
+	// --- Component Management (internal, do not use) --- //
+	Component* GetComponentByTypeAndId(ComponentType type, UID componentId);
+	Component* CreateComponentByTypeAndId(GameObject* owner, ComponentType type, UID componentId);
+	void RemoveComponentByTypeAndId(ComponentType type, UID componentId);
 
 	int GetTotalTriangles() const;
 
 public:
-	GameObject* root = nullptr;							   // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
-	Pool<GameObject> gameObjects;						   // Pool of GameObjects. Stores all the memory of all existing GameObject in a contiguous memory space.
-	std::unordered_map<UID, GameObject*> gameObjectsIdMap; // Maps every UID with the corresponding GameObject pointer.
+	GameObject* root = nullptr;			  // GameObject Root. Parent of everything and god among gods (Game Object Deity) :D.
+	PoolMap<UID, GameObject> gameObjects; // Pool of GameObjects. Stores all the memory of all existing GameObject in a contiguous memory space.
 
 	// ---- Components ---- //
-	VectorMap<UID, ComponentTransform> transformComponents;
-	VectorMap<UID, ComponentMeshRenderer> meshRendererComponents;
-	VectorMap<UID, ComponentBoundingBox> boundingBoxComponents;
-	VectorMap<UID, ComponentCamera> cameraComponents;
-	VectorMap<UID, ComponentLight> lightComponents;
-	VectorMap<UID, ComponentCanvas> canvasComponents;
-	VectorMap<UID, ComponentCanvasRenderer> canvasRendererComponents;
-	VectorMap<UID, ComponentImage> imageComponents;
-	VectorMap<UID, ComponentTransform2D> transform2DComponents;
-	VectorMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
-	VectorMap<UID, ComponentEventSystem> eventSystemComponents;
-	VectorMap<UID, ComponentToggle> toggleComponents;
-	VectorMap<UID, ComponentText> textComponents;
-	VectorMap<UID, ComponentButton> buttonComponents;
-	VectorMap<UID, ComponentSelectable> selectableComponents;
-	VectorMap<UID, ComponentSkyBox> skyboxComponents;
-	VectorMap<UID, ComponentScript> scriptComponents;
-	VectorMap<UID, ComponentAnimation> animationComponents;
+	PoolMap<UID, ComponentTransform> transformComponents;
+	PoolMap<UID, ComponentMeshRenderer> meshRendererComponents;
+	PoolMap<UID, ComponentBoundingBox> boundingBoxComponents;
+	PoolMap<UID, ComponentCamera> cameraComponents;
+	PoolMap<UID, ComponentLight> lightComponents;
+	PoolMap<UID, ComponentCanvas> canvasComponents;
+	PoolMap<UID, ComponentCanvasRenderer> canvasRendererComponents;
+	PoolMap<UID, ComponentImage> imageComponents;
+	PoolMap<UID, ComponentTransform2D> transform2DComponents;
+	PoolMap<UID, ComponentBoundingBox2D> boundingBox2DComponents;
+	PoolMap<UID, ComponentEventSystem> eventSystemComponents;
+	PoolMap<UID, ComponentToggle> toggleComponents;
+	PoolMap<UID, ComponentText> textComponents;
+	PoolMap<UID, ComponentButton> buttonComponents;
+	PoolMap<UID, ComponentSelectable> selectableComponents;
+	PoolMap<UID, ComponentSkyBox> skyboxComponents;
+	PoolMap<UID, ComponentScript> scriptComponents;
+	PoolMap<UID, ComponentAnimation> animationComponents;
+	PoolMap<UID, ComponentAudioSource> audioSourceComponents;
+	PoolMap<UID, ComponentAudioListener> audioListenerComponents;
 
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;

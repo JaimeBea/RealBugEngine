@@ -14,6 +14,7 @@
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/ResourceAudioClip.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
@@ -21,6 +22,7 @@
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
+#include "FileSystem/AudioImporter.h"
 #include "UI/FontImporter.h"
 #include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
@@ -28,6 +30,7 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEvents.h"
 #include "TesseractEvent.h"
+#include "Utils/AssetFile.h"
 
 #include "IL/il.h"
 #include "IL/ilu.h"
@@ -79,14 +82,14 @@ static void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
-
 	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
 	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
-
 	return true;
 }
 
 bool ModuleResources::Start() {
+
+
 	stopImportThread = false;
 
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);
@@ -114,16 +117,18 @@ bool ModuleResources::CleanUp() {
 
 void ModuleResources::ReceiveEvent(TesseractEvent& e) {
 	if (e.type == TesseractEventType::ADD_RESOURCE) {
-		Resource* resource = e.addResource.resource;
+		Resource* resource = e.Get<AddResourceStruct>().resource;
 		UID id = resource->GetId();
 		if (GetReferenceCount(id) > 0) {
 			resource->Load();
 		}
 		resources[id].reset(resource);
-		e.addResource.resource = nullptr;
+		e.Get<AddResourceStruct>().resource = nullptr;
 	} else if (e.type == TesseractEventType::UPDATE_FOLDERS) {
-		rootFolder.reset(e.updateFolders.folder);
-		e.updateFolders.folder = nullptr;
+		AssetFolder* folder = e.Get<UpdateFoldersStruct>().folder;
+		rootFolder.reset(folder);
+
+		e.Get<UpdateFoldersStruct>().folder = nullptr;
 	}
 }
 
@@ -162,7 +167,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		for (unsigned i = 0; i < jResources.Size(); ++i) {
 			JsonValue jResource = jResources[i];
 			UID id = jResource[JSON_TAG_ID];
-			if (GetResource(id) == nullptr) {
+			if (GetResource<Resource>(id) == nullptr) {
 				std::string typeName = jResource[JSON_TAG_TYPE];
 				ResourceType type = GetResourceTypeFromName(typeName.c_str());
 				CreateResourceByType(type, filePath, id);
@@ -194,6 +199,9 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".h") {
 			// Script files
 			ScriptImporter::ImportScript(filePath, jMeta);
+		} else if (extension == ".wav" || extension == ".ogg") {
+			// Audio files
+			AudioImporter::ImportAudio(filePath, jMeta);
 		} else {
 			assetImported = false;
 		}
@@ -214,10 +222,6 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 	return resources;
 }
 
-Resource* ModuleResources::GetResource(UID id) const {
-	return resources.find(id) != resources.end() ? resources.at(id).get() : nullptr;
-}
-
 AssetFolder* ModuleResources::GetRootFolder() const {
 	return rootFolder.get();
 }
@@ -228,7 +232,7 @@ void ModuleResources::IncreaseReferenceCount(UID id) {
 	if (referenceCounts.find(id) != referenceCounts.end()) {
 		referenceCounts[id] = referenceCounts[id] + 1;
 	} else {
-		Resource* resource = GetResource(id);
+		Resource* resource = GetResource<Resource>(id);
 		if (resource != nullptr) {
 			resource->Load();
 		}
@@ -242,7 +246,7 @@ void ModuleResources::DecreaseReferenceCount(UID id) {
 	if (referenceCounts.find(id) != referenceCounts.end()) {
 		referenceCounts[id] = referenceCounts[id] - 1;
 		if (referenceCounts[id] <= 0) {
-			Resource* resource = GetResource(id);
+			Resource* resource = GetResource<Resource>(id);
 			if (resource != nullptr) {
 				resource->Unload();
 			}
@@ -252,7 +256,8 @@ void ModuleResources::DecreaseReferenceCount(UID id) {
 }
 
 unsigned ModuleResources::GetReferenceCount(UID id) const {
-	return referenceCounts.find(id) != referenceCounts.end() ? referenceCounts.at(id) : 0;
+	auto it = referenceCounts.find(id);
+	return it != referenceCounts.end() ? it->second : 0;
 }
 
 std::string ModuleResources::GenerateResourcePath(UID id) const {
@@ -315,7 +320,6 @@ void ModuleResources::UpdateAsync() {
 						assetsToNotUpdate.erase(it);
 					}
 #endif
-
 				} else {
 					resourcesToRemove.push_back(entry.first);
 					continue;
@@ -358,7 +362,9 @@ void ModuleResources::UpdateAsync() {
 		CheckForNewAssetsRecursive(ASSETS_PATH, newFolder);
 
 		TesseractEvent updateFoldersEv(TesseractEventType::UPDATE_FOLDERS);
-		updateFoldersEv.updateFolders.folder = newFolder;
+
+		updateFoldersEv.Set<UpdateFoldersStruct>(newFolder);
+
 		App->events->AddEvent(updateFoldersEv);
 
 		App->events->AddEvent(TesseractEventType::RESOURCES_LOADED);
@@ -420,6 +426,9 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
 		break;
+	case ResourceType::AUDIO:
+		resource = new ResourceAudioClip(id, assetFilePath, resourceFilePath.c_str());
+		break;
 	default:
 		LOG("Resource of type %i hasn't been registered in ModuleResources::CreateResourceByType.", (unsigned) type);
 		assert(false); // ERROR: Resource type not registered
@@ -431,6 +440,8 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 
 void ModuleResources::SendAddResourceEvent(Resource* resource) {
 	TesseractEvent addResourceEvent(TesseractEventType::ADD_RESOURCE);
-	addResourceEvent.addResource.resource = resource;
+
+	addResourceEvent.Set<AddResourceStruct>(resource);
+
 	App->events->AddEvent(addResourceEvent);
 }

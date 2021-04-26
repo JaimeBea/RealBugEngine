@@ -4,10 +4,12 @@
 #include "Modules/ModuleProject.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
-#include "Resources/ResourceScript.h"
 #include "Modules/ModuleScene.h"
+#include "Resources/ResourceScript.h"
 #include "Utils/FileDialog.h"
 #include "Utils/ImGuiUtils.h"
+#include "GameObject.h"
+#include "Script.h"
 
 #include "imgui.h"
 
@@ -18,7 +20,7 @@
 
 void ComponentScript::Update() {
 	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
-		ResourceScript* resource = static_cast<ResourceScript*>(App->resources->GetResource(scriptID));
+		ResourceScript* resource = static_cast<ResourceScript*>(App->resources->GetResource<ResourceScript>(scriptID));
 		if (resource != nullptr) {
 			if (resource->script != nullptr) {
 				resource->script->Update();
@@ -28,7 +30,7 @@ void ComponentScript::Update() {
 }
 
 void ComponentScript::OnStart() {
-	ResourceScript* resource =  static_cast<ResourceScript*>(App->resources->GetResource(scriptID));
+	ResourceScript* resource =  static_cast<ResourceScript*>(App->resources->GetResource<ResourceScript>(scriptID));
 	if (resource != nullptr) {
 		if (resource->script != nullptr) {
 			resource->script->Start();
@@ -59,6 +61,11 @@ void ComponentScript::Save(JsonValue jComponent) const {
 void ComponentScript::Load(JsonValue jComponent) {
 	scriptID = jComponent[JSON_TAG_SCRIPT];
 	if (scriptID != 0) App->resources->IncreaseReferenceCount(scriptID);
+}
+
+void ComponentScript::DuplicateComponent(GameObject& owner) {
+	ComponentScript* component = owner.CreateComponent<ComponentScript>();
+	component->scriptID = this->scriptID;
 }
 
 UID ComponentScript::GetScriptID() const {

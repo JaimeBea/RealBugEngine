@@ -1,18 +1,22 @@
 #include "GameplaySystems.h"
 
-#include "Application.h"
+#include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/ComponentCamera.h"
+#include "Application.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleEvents.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
-#include "TesseractEvent.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "FileSystem/SceneImporter.h"
+#include "Utils/Logging.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/Frustum.h"
 #include "SDL_events.h"
@@ -139,7 +143,7 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 // --------- SCENE MANAGER --------- //
 void SceneManager::ChangeScene(const char* scenePath) {
 	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
-	e.changeScene.scenePath = scenePath;
+	e.Set<ChangeSceneStruct>(scenePath);
 	App->events->AddEvent(e);
 }
 

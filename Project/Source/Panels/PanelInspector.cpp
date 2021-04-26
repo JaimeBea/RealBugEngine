@@ -3,7 +3,21 @@
 #include "GameObject.h"
 #include "Components/Component.h"
 #include "Components/ComponentType.h"
+#include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentCamera.h"
+#include "Components/ComponentLight.h"
+#include "Components/ComponentSkybox.h"
+#include "Components/ComponentAnimation.h"
+#include "Components/ComponentScript.h"
+#include "Components/ComponentBoundingBox2D.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentCanvas.h"
+#include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentCanvasRenderer.h"
+#include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentText.h"
+#include "Components/UI/ComponentTransform2D.h"
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
@@ -114,6 +128,12 @@ void PanelInspector::Update() {
 				case ComponentType::ANIMATION:
 					cName = "Animation";
 					break;
+				case ComponentType::AUDIO_SOURCE:
+					cName = "Audio Source";
+					break;
+				case ComponentType::AUDIO_LISTENER:
+					cName = "Audio Listener";
+					break;
 				default:
 					cName = "";
 					break;
@@ -203,6 +223,24 @@ void PanelInspector::Update() {
 					if (animation != nullptr) {
 						animation->Init();
 					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Audio Source")) {
+					ComponentAudioSource* audioSource = selected->CreateComponent<ComponentAudioSource>();
+					if (audioSource != nullptr) {
+						audioSource->Init();
+					}
+					else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Audio Listener")) {
+					ComponentAudioListener* audioListener = selected->CreateComponent<ComponentAudioListener>();
+					if (audioListener != nullptr) {
+						audioListener->Init();
+					}
+					else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}

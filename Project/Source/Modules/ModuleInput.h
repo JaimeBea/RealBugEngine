@@ -30,7 +30,7 @@ public:
 	KeyState GetMouseButton(int button) const;
 	float GetMouseWheelMotion() const;
 	const float2& GetMouseMotion() const;
-	const float2& GetMousePosition() const;
+	const float2& GetMousePosition(bool sceneSensitive = false) const;
 	KeyState* GetMouseButtons();
 	KeyState* GetKeyboard();
 

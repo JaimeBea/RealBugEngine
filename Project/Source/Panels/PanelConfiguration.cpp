@@ -10,6 +10,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleResources.h"
+#include "Scene.h"
 
 #include "GL/glew.h"
 #include "imgui.h"

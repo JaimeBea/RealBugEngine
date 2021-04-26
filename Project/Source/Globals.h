@@ -24,11 +24,14 @@ enum class UpdateStatus {
 #define TEXTURES_PATH "Assets/Textures"
 #define SHADERS_PATH "Assets/Shaders"
 #define SCENES_PATH "Assets/Scenes"
+#define AUDIO_PATH "Assets/Audio"
 #define MATERIALS_PATH "Assets/Materials"
 #define TEXTURE_EXTENSION ".dds"
 #define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
 #define META_EXTENSION ".meta"
+
+#define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
 
 #define PHONG_SHADER_FILE "phong.glsl"
 

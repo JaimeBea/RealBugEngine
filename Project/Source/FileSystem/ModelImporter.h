@@ -3,6 +3,7 @@
 #include "FileSystem/JsonValue.h"
 
 #include <unordered_map>
+#include <string>
 
 class GameObject;
 

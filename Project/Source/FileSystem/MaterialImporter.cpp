@@ -108,10 +108,10 @@ bool MaterialImporter::CreateAndSaveMaterial(const char* filePath) {
 
 	jMaterial[JSON_TAG_HAS_SPECULAR_MAP] = false;
 	JsonValue jSpecularColor = jMaterial[JSON_TAG_SPECULAR_COLOR];
-	jSpecularColor[0] = 1.0f;
-	jSpecularColor[1] = 1.0f;
-	jSpecularColor[2] = 1.0f;
-	jSpecularColor[3] = 1.0f;
+	jSpecularColor[0] = 0.0f;
+	jSpecularColor[1] = 0.0f;
+	jSpecularColor[2] = 0.0f;
+	jSpecularColor[3] = 0.0f;
 	jMaterial[JSON_TAG_SPECULAR_MAP] = 0;
 
 	jMaterial[JSON_TAG_METALLIC] = 1.0f;

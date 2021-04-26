@@ -3,9 +3,6 @@
 #include "Component.h"
 
 #include "Geometry/AABB2D.h"
-#include "Geometry/OBB.h"
-
-#define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
 class ComponentBoundingBox2D : public Component {
 public:

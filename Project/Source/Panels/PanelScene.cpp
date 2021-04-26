@@ -170,7 +170,7 @@ void PanelScene::Update() {
 				std::string payloadTypePrefab = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypePrefab.c_str())) {
 					UID prefabId = *(UID*) payload->Data;
-					ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+					ResourcePrefab* prefab = App->resources->GetResource<ResourcePrefab>(prefabId);
 					if (prefab != nullptr) {
 						prefab->BuildPrefab(App->scene->scene->root);
 					}
@@ -180,7 +180,7 @@ void PanelScene::Update() {
 				std::string payloadTypeScene = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::SCENE);
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypeScene.c_str())) {
 					UID sceneId = *(UID*) payload->Data;
-					ResourceScene* scene = (ResourceScene*) App->resources->GetResource(sceneId);
+					ResourceScene* scene = App->resources->GetResource<ResourceScene>(sceneId);
 					if (scene != nullptr) {
 						scene->BuildScene();
 					}
@@ -213,6 +213,7 @@ void PanelScene::Update() {
 						inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
 					}
 					float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
+					localMatrix.Orthogonalize3();
 
 					float3 translation;
 					Quat rotation;
@@ -272,7 +273,7 @@ bool PanelScene::IsUsing2D() const {
 	return view2D;
 }
 
-float2 PanelScene::GetMousePosOnScene() const {
+const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
 }
 
