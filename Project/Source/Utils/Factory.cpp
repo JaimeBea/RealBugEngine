@@ -15,7 +15,6 @@ Script* Factory::Create(const std::string& className) {
 	}
 }
 
-// TODO: Make it private
 std::map<std::string, Creator*>& Factory::GetTable() {
 	static std::map<std::string, Creator*> table;
 	return table;
