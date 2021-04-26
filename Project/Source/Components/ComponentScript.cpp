@@ -80,5 +80,5 @@ UID ComponentScript::GetScriptID() const {
 void ComponentScript::ReloadScript() {
 	dirty = false;
 	ResourceScript* script = App->resources->GetResource<ResourceScript>(scriptID);
-	script->Load();
+	if(script) script->Load();
 }

@@ -5,7 +5,7 @@
 GENERATE_BODY_IMPL(Rotate);
 
 void Rotate::Start() {
-	Debug::Log("Rotate Script");
+	Debug::Log("Rotate Scriiiiiiiiiiiiiiiiiiiiiiiipt");
 }
 
 void Rotate::Update() {

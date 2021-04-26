@@ -1,5 +1,7 @@
 #include "ModuleProject.h"
 
+#include "fmt/format.h"
+
 #include "Application.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
@@ -7,8 +9,6 @@
 #include "Utils/Buffer.h"
 #include "Utils/UID.h"
 #include "Utils/FileDialog.h"
-
-#include "fmt/format.h"
 
 #include <Windows.h>
 #include <shellapi.h>
@@ -45,7 +45,7 @@ static std::string& GetLastErrorStdStr() {
 			std::string result(lpMsgStr, lpMsgStr + bufLen);
 
 			LocalFree(lpMsgBuf);
-			
+
 			return result;
 		}
 	}
@@ -80,7 +80,7 @@ static bool FileOffsetRelativeVirtualAdress(PIMAGE_NT_HEADERS ntHeaders, DWORD r
 	// Represents the image section header format.
 	IMAGE_SECTION_HEADER* sectionHeader = IMAGE_FIRST_SECTION(ntHeaders);
 	for (int i = 0; i < ntHeaders->FileHeader.NumberOfSections && !found; i++, sectionHeader++) {
-		if (sectionHeader->VirtualAddress <= rva){
+		if (sectionHeader->VirtualAddress <= rva) {
 			if (sectionHeader->VirtualAddress + sectionHeader->Misc.VirtualSize > rva) {
 				found = true;
 				fileOffset = rva - sectionHeader->VirtualAddress + sectionHeader->PointerToRawData;
@@ -130,7 +130,6 @@ static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 }
 
 bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB) {
-
 	HANDLE fp = nullptr;
 	HANDLE filemap = nullptr;
 	LPVOID mem = nullptr;
@@ -154,13 +153,13 @@ bool ModuleProject::PDBReplace(const std::string& filename, const std::string& n
 	if ((fp == INVALID_HANDLE_VALUE) || (fp == nullptr)) {
 		return false;
 	}
-	
+
 	// Creates or opens a named or unnamed file mapping object for a specified file.
 	filemap = CreateFileMapping(fp, nullptr, PAGE_READWRITE, 0, 0, nullptr);
 	if (filemap == nullptr) {
 		return false;
 	}
-	
+
 	// Maps a view of a file mapping into the address space of a calling process.
 	mem = MapViewOfFile(filemap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (mem == nullptr) {
@@ -425,7 +424,6 @@ void ModuleProject::CreateBatches() {
 }
 
 void ModuleProject::CompileProject(Configuration config) {
-
 	UnloadGameCodeDLL();
 
 	std::string batchDir = projectPath + "/Batches";
@@ -519,7 +517,6 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 
 	App->events->AddEvent(TesseractEventType::COMPILATION_FINISHED);
-
 }
 
 bool ModuleProject::LoadGameCodeDLL(const char* path) {

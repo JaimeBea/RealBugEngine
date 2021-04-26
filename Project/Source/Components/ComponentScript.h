@@ -20,7 +20,7 @@ private:
 	void ReloadScript();
 
 public:
-	bool dirty = true;
+	bool dirty = false;
 
 private:
 	UID scriptID = 0;
