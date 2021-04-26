@@ -22,7 +22,6 @@
 #define JSON_TAG_FAR_PLANE_DISTANCE "FarPlaneDistance"
 #define JSON_TAG_HORIZONTAL_FOV "HorizontalFov"
 #define JSON_TAG_VERTICAL_FOV "VerticalFov"
-#define JSON_TAG_GAME_CAMERA "GameCamera"
 
 void ComponentCamera::Init() {
 	UpdateFrustum();
@@ -41,7 +40,7 @@ void ComponentCamera::DrawGizmos() {
 void ComponentCamera::OnEditorUpdate() {
 	bool isActive = this == App->camera->GetActiveCamera();
 	bool isCulling = this == App->camera->GetCullingCamera();
-	isGameCamera = this == App->camera->GetGameCamera();
+	bool isGameCamera = this == App->camera->GetGameCamera();
 
 	if (ImGui::Checkbox("Main Game Camera", &isGameCamera)) {
 		App->camera->ChangeGameCamera(this, isGameCamera);
@@ -92,8 +91,6 @@ void ComponentCamera::Save(JsonValue jComponent) const {
 	jFrustum[JSON_TAG_FAR_PLANE_DISTANCE] = frustum.FarPlaneDistance();
 	jFrustum[JSON_TAG_HORIZONTAL_FOV] = frustum.HorizontalFov();
 	jFrustum[JSON_TAG_VERTICAL_FOV] = frustum.VerticalFov();
-
-	jComponent[JSON_TAG_GAME_CAMERA] = isGameCamera;
 }
 
 void ComponentCamera::Load(JsonValue jComponent) {
@@ -104,11 +101,6 @@ void ComponentCamera::Load(JsonValue jComponent) {
 	frustum.SetFrame(vec(jPos[0], jPos[1], jPos[2]), vec(jFront[0], jFront[1], jFront[2]), vec(jUp[0], jUp[1], jUp[2]));
 	frustum.SetViewPlaneDistances(jFrustum[JSON_TAG_NEAR_PLANE_DISTANCE], jFrustum[JSON_TAG_FAR_PLANE_DISTANCE]);
 	frustum.SetPerspective(jFrustum[JSON_TAG_HORIZONTAL_FOV], jFrustum[JSON_TAG_VERTICAL_FOV]);
-
-	isGameCamera = jComponent[JSON_TAG_GAME_CAMERA];
-	if (isGameCamera) {
-		App->camera->ChangeGameCamera(this, true);
-	}
 }
 
 void ComponentCamera::DuplicateComponent(GameObject& owner) {

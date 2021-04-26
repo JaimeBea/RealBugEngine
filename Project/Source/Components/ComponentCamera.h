@@ -25,7 +25,4 @@ public:
 
 public:
 	Frustum frustum = BuildDefaultFrustum(); // Frustum geometry of the camera
-
-private:
-	bool isGameCamera = false;
 };

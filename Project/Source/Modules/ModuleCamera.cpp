@@ -64,6 +64,7 @@ bool ModuleCamera::Start() {
 	engineCamera = App->scene->scene->cameraComponents.Obtain(uid, nullptr, uid, true);
 	activeCamera = engineCamera;
 	cullingCamera = engineCamera;
+	gameCamera = engineCamera;
 	Frustum* activeFrustum = activeCamera->GetFrustum();
 	activeFrustum->SetKind(FrustumSpaceGL, FrustumRightHanded);
 	activeFrustum->SetViewPlaneDistances(0.1f, 2000.0f);
@@ -414,7 +415,7 @@ void ModuleCamera::ChangeGameCamera(ComponentCamera* camera, bool change) {
 	if (change) {
 		gameCamera = camera;
 	} else {
-		gameCamera = nullptr;
+		gameCamera = engineCamera;
 	}
 	
 }

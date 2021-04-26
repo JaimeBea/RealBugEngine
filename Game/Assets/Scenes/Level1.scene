@@ -7,6 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
+    "GameCamera": 9434508754513088940,
     "AmbientLight": [
         0.10765089094638825,
         0.16751180589199067,
@@ -965,10 +966,9 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.708404541015625,
+                                    "HorizontalFov": 1.9668983221054078,
                                     "VerticalFov": 1.3113912343978882
-                                },
-                                "GameCamera": true
+                                }
                             },
                             {
                                 "Type": "Skybox",
@@ -1083,10 +1083,9 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 2000.0,
-                            "HorizontalFov": 1.9941033124923707,
+                            "HorizontalFov": 1.9668983221054078,
                             "VerticalFov": 1.3113912343978882
-                        },
-                        "GameCamera": false
+                        }
                     }
                 ],
                 "Children": null
@@ -2569,10 +2568,9 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.5707963705062867,
+                                    "HorizontalFov": 1.9668983221054078,
                                     "VerticalFov": 1.3113912343978882
-                                },
-                                "GameCamera": false
+                                }
                             }
                         ],
                         "Children": null
@@ -2631,10 +2629,9 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.7160398960113526,
+                                    "HorizontalFov": 1.9668983221054078,
                                     "VerticalFov": 1.3113912343978882
-                                },
-                                "GameCamera": false
+                                }
                             }
                         ],
                         "Children": null
@@ -2693,10 +2690,9 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.7160398960113526,
+                                    "HorizontalFov": 1.9668983221054078,
                                     "VerticalFov": 1.3113912343978882
-                                },
-                                "GameCamera": false
+                                }
                             }
                         ],
                         "Children": null
@@ -2755,10 +2751,9 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.7160398960113526,
+                                    "HorizontalFov": 1.9668983221054078,
                                     "VerticalFov": 1.3113912343978882
-                                },
-                                "GameCamera": false
+                                }
                             }
                         ],
                         "Children": null
