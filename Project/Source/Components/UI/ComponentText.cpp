@@ -107,7 +107,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	}
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) const  {
+void ComponentText::Draw(ComponentTransform2D* transform) const {
 	if (fontID == 0 || shaderID == 0) {
 		return;
 	}
@@ -129,7 +129,7 @@ void ComponentText::Draw(ComponentTransform2D* transform) const  {
 	float4x4& proj = App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
@@ -177,6 +177,7 @@ float4 ComponentText::GetFontColor() const {
 	return color;
 }
 
+//TODO make this happen with a TesseractEvent or SDLevent related to OnWindowSizeChanged
 void ComponentText::RecalculcateVertices() {
 	if (fontID == 0) {
 		return;
@@ -189,10 +190,12 @@ void ComponentText::RecalculcateVertices() {
 
 	float x = position.x;
 	float y = position.y;
-	// FontSize / size of imported font
-	float scale = fontSize / 48.0f;
 
-	for (int i = 0; i < text.size(); ++i) {	
+	float2 transformScale = transform->GetScale().xy();
+
+	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
+
+	for (int i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
 		float xpos = x + character.bearing.x * scale;
@@ -202,17 +205,14 @@ void ComponentText::RecalculcateVertices() {
 		float h = character.size.y * scale;
 
 		verticesText[i] = {
-			xpos, ypos + h, 0.0f, 0.0f,
-			xpos, ypos, 0.0f, 1.0f,
+			xpos, ypos + h, 0.0f, 0.0f, 
+			xpos, ypos,	0.0f, 1.0f,	
 			xpos + w, ypos, 1.0f, 1.0f,
-
 			xpos, ypos + h, 0.0f, 0.0f,
 			xpos + w, ypos, 1.0f, 1.0f,
-			xpos + w, ypos + h, 1.0f, 0.0f
-		};
+			xpos + w, ypos + h, 1.0f, 0.0f};
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 }
-
