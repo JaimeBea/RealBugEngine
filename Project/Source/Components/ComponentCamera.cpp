@@ -22,7 +22,7 @@
 #define JSON_TAG_FAR_PLANE_DISTANCE "FarPlaneDistance"
 #define JSON_TAG_HORIZONTAL_FOV "HorizontalFov"
 #define JSON_TAG_VERTICAL_FOV "VerticalFov"
-#define JSON_TAG_CAMERA_SELECTED "CameraSelected"
+#define JSON_TAG_GAME_CAMERA "GameCamera"
 
 void ComponentCamera::Init() {
 	UpdateFrustum();
@@ -41,8 +41,12 @@ void ComponentCamera::DrawGizmos() {
 void ComponentCamera::OnEditorUpdate() {
 	bool isActive = this == App->camera->GetActiveCamera();
 	bool isCulling = this == App->camera->GetCullingCamera();
+	bool isGameCamera = this == App->camera->GetGameCamera();
 
-	if (ImGui::Checkbox("Main Camera", &isActive)) {
+	if (ImGui::Checkbox("Main Game Camera", &isGameCamera)) {
+		App->camera->ChangeGameCamera(this, isGameCamera);
+	}
+	if (ImGui::Checkbox("Active Camera", &isActive)) {
 		App->camera->ChangeActiveCamera(this, isActive);
 	}
 	if (ImGui::Checkbox("Frustum Culling", &isCulling)) {
@@ -89,7 +93,7 @@ void ComponentCamera::Save(JsonValue jComponent) const {
 	jFrustum[JSON_TAG_HORIZONTAL_FOV] = frustum.HorizontalFov();
 	jFrustum[JSON_TAG_VERTICAL_FOV] = frustum.VerticalFov();
 
-	jComponent[JSON_TAG_CAMERA_SELECTED] = activeCamera;
+	jComponent[JSON_TAG_GAME_CAMERA] = isGameCamera;
 }
 
 void ComponentCamera::Load(JsonValue jComponent) {
@@ -101,7 +105,10 @@ void ComponentCamera::Load(JsonValue jComponent) {
 	frustum.SetViewPlaneDistances(jFrustum[JSON_TAG_NEAR_PLANE_DISTANCE], jFrustum[JSON_TAG_FAR_PLANE_DISTANCE]);
 	frustum.SetPerspective(jFrustum[JSON_TAG_HORIZONTAL_FOV], jFrustum[JSON_TAG_VERTICAL_FOV]);
 
-	activeCamera = jComponent[JSON_TAG_CAMERA_SELECTED];
+	isGameCamera = jComponent[JSON_TAG_GAME_CAMERA];
+	if (isGameCamera) {
+		App->camera->ChangeGameCamera(this, true);
+	}
 }
 
 void ComponentCamera::DuplicateComponent(GameObject& owner) {
@@ -127,10 +134,6 @@ Frustum ComponentCamera::BuildDefaultFrustum() const {
 	newFrustum.SetUp(vec::unitY);
 	newFrustum.SetPos(vec::zero);
 	return newFrustum;
-}
-
-void ComponentCamera::SetAsGameCamera() {
-	App->camera->SetGameCamera(this);
 }
 
 Frustum* ComponentCamera::GetFrustum() {

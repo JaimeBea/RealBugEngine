@@ -25,10 +25,8 @@ public:
 	bool Start() override;
 	UpdateStatus Update() override;
 
-	void CalculateFrustumNearestObject(float2 pos);					// Mouse Picking function. Detects the nearest object to the camera and selects it on a mouse left click. 'pos' is the x,y coordinates of the clicked pixel on the viewport.
-	void ChangeActiveCamera(ComponentCamera* camera, bool change);	// Called from the Inspector, on a ComponentCamera. Changes the Engine camera to that Component if 'change'=true, and back to the default camera if false.
-	void ChangeCullingCamera(ComponentCamera* camera, bool change); // Called from the Inspector, on a ComponentCamera. Changes the camera that will perform the frustum culling.
-	void CalculateFrustumPlanes();									// Calculates the geometry of the 'planes' and 'points' that define the frustum, from the 'cullingFrustum' properties.
+	void CalculateFrustumNearestObject(float2 pos); // Mouse Picking function. Detects the nearest object to the camera and selects it on a mouse left click. 'pos' is the x,y coordinates of the clicked pixel on the viewport.
+	void CalculateFrustumPlanes();					// Calculates the geometry of the 'planes' and 'points' that define the frustum, from the 'cullingFrustum' properties.
 	bool IsEngineCameraActive() const;
 
 	// ------ Camera Movement ------ //
@@ -47,7 +45,9 @@ public:
 	void SetPosition(const vec& position);
 	void SetPosition(float x, float y, float z);
 	void SetOrientation(const float3x3& rotationMatrix);
-	void SetGameCamera(ComponentCamera* gameCam);
+	void ChangeActiveCamera(ComponentCamera* camera, bool change);	// Called from the Inspector, on a ComponentCamera. Changes the Engine camera to that Component if 'change'=true, and back to the default camera if false.
+	void ChangeCullingCamera(ComponentCamera* camera, bool change); // Called from the Inspector, on a ComponentCamera. Changes the camera that will perform the frustum culling.
+	void ChangeGameCamera(ComponentCamera* camera, bool change);
 
 	// ---------- Getters ---------- //
 	vec GetFront() const;
@@ -82,8 +82,8 @@ private:
 
 private:
 	float focusDistance = 0.0f;					   // Defines the distance the camera is placed on Focus(), and to what point the camera orbits on Orbit().
-	ComponentCamera* activeCamera = engineCamera;  // The camera that the scene is rendered from. Any camera in the scene can be set as active.
-	ComponentCamera* cullingCamera = engineCamera; // The camera that is performing frustum culling. Can be different from 'activeCamera'.
+	ComponentCamera* activeCamera = nullptr;	   // The camera that the scene is rendered from. Any camera in the scene can be set as active.
+	ComponentCamera* cullingCamera = nullptr;	   // The camera that is performing frustum culling. Can be different from 'activeCamera'.
 	ComponentCamera* gameCamera = nullptr;		   // The camera that will be set as active when the game starts.
 	FrustumPlanes frustumPlanes = FrustumPlanes(); // Geometry of the frustum
 };

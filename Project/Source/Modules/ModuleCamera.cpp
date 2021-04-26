@@ -226,22 +226,6 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	LOG("Ray Tracing in %ums", timer.Stop());
 }
 
-void ModuleCamera::ChangeActiveCamera(ComponentCamera* camera, bool change) {
-	if (change) {
-		activeCamera = camera;
-	} else {
-		activeCamera = engineCamera;
-	}
-}
-
-void ModuleCamera::ChangeCullingCamera(ComponentCamera* camera, bool change) {
-	if (change) {
-		cullingCamera = camera;
-	} else {
-		cullingCamera = engineCamera;
-	}
-}
-
 void ModuleCamera::CalculateFrustumPlanes() {
 	Frustum* cullingFrustum = cullingCamera->GetFrustum();
 	float3 pos = cullingFrustum->Pos();
@@ -410,8 +394,29 @@ void ModuleCamera::SetOrientation(const float3x3& rotationMatrix) {
 	activeCamera->GetFrustum()->SetUp(rotationMatrix * float3::unitY);
 }
 
-void ModuleCamera::SetGameCamera(ComponentCamera* gameCam) {
-	gameCamera = gameCam;
+void ModuleCamera::ChangeActiveCamera(ComponentCamera* camera, bool change) {
+	if (change) {
+		activeCamera = camera;
+	} else {
+		activeCamera = engineCamera;
+	}
+}
+
+void ModuleCamera::ChangeCullingCamera(ComponentCamera* camera, bool change) {
+	if (change) {
+		cullingCamera = camera;
+	} else {
+		cullingCamera = engineCamera;
+	}
+}
+
+void ModuleCamera::ChangeGameCamera(ComponentCamera* camera, bool change) {
+	if (change) {
+		gameCamera = camera;
+	} else {
+		gameCamera = nullptr;
+	}
+	
 }
 
 vec ModuleCamera::GetFront() const {
