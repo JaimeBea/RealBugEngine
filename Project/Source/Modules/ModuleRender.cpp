@@ -219,6 +219,9 @@ UpdateStatus ModuleRender::Update() {
 UpdateStatus ModuleRender::PostUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
 
+	// Update render viewport with the viewport updated values in PanelScene
+	App->renderer->ViewportResized(viewportWidth, viewportHeight);
+
 	SDL_GL_SwapWindow(App->window->window);
 	/* When resized docking, in PostUpdate
 		1 it -> Goes black the viewport
