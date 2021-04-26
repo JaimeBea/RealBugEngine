@@ -21,6 +21,7 @@
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentTransform2D.h"
 #include "Components/UI/ComponentImage.h"
+#include "Components/UI/ComponentProgressBar.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -161,6 +162,31 @@ void ModuleScene::CreateEmptyScene() {
 	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	ComponentAudioListener* audioListener = gameCamera->CreateComponent<ComponentAudioListener>();
 	gameCamera->InitComponents();
+
+	//ProgressBar
+	GameObject* canvas = scene->CreateGameObject(root, GenerateUID(), "Canvas");
+	GameObject* progress = scene->CreateGameObject(canvas, GenerateUID(), "Progress Bar");
+	GameObject* background = scene->CreateGameObject(progress, GenerateUID(), "Background");
+	GameObject* fill = scene->CreateGameObject(progress, GenerateUID(), "Fill");
+
+	ComponentTransform* canvasTransform = canvas->CreateComponent<ComponentTransform>();
+	ComponentCanvas* canvasCanvas = canvas->CreateComponent<ComponentCanvas>();
+
+	ComponentTransform* progressTransform = progress->CreateComponent<ComponentTransform>();
+	ComponentProgressBar* progressProgress = progress->CreateComponent<ComponentProgressBar>();
+
+	ComponentTransform* backgroundTransform = background->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* backgroundTransform2d = background->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* backgroundRenderer = background->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* backgroundImage = background->CreateComponent<ComponentImage>();
+	backgroundTransform2d->SetPosition(float3(-280, 250, 0));
+	backgroundTransform2d->SetSize(float2(450, 50));
+
+	ComponentTransform* fillTransform = fill->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* fillTransform2d = fill->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* filldRenderer = fill->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* fillImage = fill->CreateComponent<ComponentImage>();
+
 }
 
 void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {
