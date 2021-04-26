@@ -28,6 +28,8 @@
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/error/en.h"
 
+#include <set>
+
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
@@ -243,27 +245,22 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 
 	aiNode* rootNode = assimpScene->mRootNode;
 
+	std::set<std::string> uniqueChannels;
 	for (unsigned int i = 0; i < aiAnim->mNumChannels; ++i) {
 		aiNodeAnim* aiChannel = aiAnim->mChannels[i];
 		std::string channelName(aiChannel->mNodeName.C_Str());
 
-		aiNode* parent = rootNode->FindNode(aiChannel->mNodeName.C_Str())->mParent;
+		aiNode* selectedNode = rootNode->FindNode(channelName.c_str());
 
 		size_t pos = channelName.find("_$AssimpFbx$");
 		if (pos != std::string::npos) {
-			channelName = channelName.substr(0, pos);
-		}
-
-		float4x4 accumulatedTransform = float4x4::identity;
-		bool assimpNode = (std::string(parent->mName.C_Str()).find("$AssimpFbx$") != std::string::npos);
-
-		while (assimpNode) {
-			aiVector3D pos, scale;
-			aiQuaternion rot;
-			(parent->mTransformation).Decompose(scale, rot, pos);
-			accumulatedTransform = float4x4::FromTRS(float3(pos.x, pos.y, pos.z), Quat(rot.x, rot.y, rot.z, rot.w), float3(scale.x, scale.y, scale.z)) * accumulatedTransform;
-			parent = parent->mParent;
-			assimpNode = (std::string(parent->mName.C_Str()).find("$AssimpFbx$") != std::string::npos);
+			if (selectedNode->mNumChildren == 0) {
+				uniqueChannels.insert(channelName);
+			} else if (std::string(selectedNode->mChildren[0]->mName.C_Str()).find(channelName.substr(0, pos)) == std::string::npos) {
+				uniqueChannels.insert(channelName);
+			} else if (std::string(selectedNode->mChildren[0]->mName.C_Str()).find("_$AssimpFbx$") == std::string::npos) {
+				uniqueChannels.insert(channelName);
+			}
 		}
 
 		unsigned int frame = 0;
@@ -272,15 +269,52 @@ static ResourceAnimation* ImportAnimation(const char* modelFilePath, JsonValue j
 			aiQuaternion aiQuat = (aiChannel->mNumRotationKeys > 1) ? aiChannel->mRotationKeys[j].mValue : aiChannel->mRotationKeys[0].mValue;
 			aiVector3D aiV3D = (aiChannel->mNumPositionKeys > 1) ? aiChannel->mPositionKeys[j].mValue : aiChannel->mPositionKeys[0].mValue;
 
-			float3 accumulatedPosition, accumulatedScaling;
-			Quat accumulatedRotation;
-			accumulatedTransform.Decompose(accumulatedPosition, accumulatedRotation, accumulatedScaling);
-
 			ResourceAnimation::Channel channel = keyFrames[frame].channels[channelName];
-			channel.rotation = channel.rotation * accumulatedRotation * Quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
-			channel.tranlation = channel.tranlation + accumulatedPosition + float3(aiV3D.x, aiV3D.y, aiV3D.z);
+			channel.rotation = Quat(aiQuat.x, aiQuat.y, aiQuat.z, aiQuat.w);
+			channel.tranlation = float3(aiV3D.x, aiV3D.y, aiV3D.z);
 
 			keyFrames[frame++].channels[channelName] = channel;
+		}
+	}
+
+	// Post-processing: fuse nodes with same name
+	for (ResourceAnimation::KeyFrameChannels& keyFrame : keyFrames) {
+		for (auto itj = uniqueChannels.begin(); itj != uniqueChannels.end(); ++itj) {
+			aiNode* node = rootNode->FindNode((*itj).c_str())->mParent;
+			ResourceAnimation::Channel channel = keyFrame.channels[*itj];
+			size_t pos = (*itj).find("_$AssimpFbx$");
+			if (pos != std::string::npos) {
+				std::string channelName = (*itj).substr(0, pos);
+				while (std::string(node->mName.C_Str()).find(channelName) != std::string::npos) {
+					if (keyFrame.channels.find(node->mName.C_Str()) != keyFrame.channels.end()) {
+						channel.rotation = keyFrame.channels[node->mName.C_Str()].rotation * channel.rotation;
+						channel.tranlation = keyFrame.channels[node->mName.C_Str()].tranlation + keyFrame.channels[node->mName.C_Str()].rotation.Transform(channel.tranlation);
+						keyFrame.channels.erase(node->mName.C_Str());
+					} else {
+						aiVector3D scaling, translation;
+						aiQuaternion rotation;
+						node->mTransformation.Decompose(scaling, rotation, translation);
+						channel.rotation = Quat(rotation.x, rotation.y, rotation.z, rotation.w) * channel.rotation;
+						channel.tranlation = float3(translation.x, translation.y, translation.z) + Quat(rotation.x, rotation.y, rotation.z, rotation.w).Transform(channel.tranlation);
+					}
+					node = node->mParent;
+				}
+				keyFrame.channels.erase(*itj);
+				aiNode* channelNode = rootNode->FindNode(channelName.c_str());
+				if (keyFrame.channels.find(channelName) == keyFrame.channels.end() && channelNode) {
+					aiVector3D scaling, translation;
+					aiQuaternion rotation;
+					channelNode->mTransformation.Decompose(scaling, rotation, translation);
+
+					ResourceAnimation::Channel& c = keyFrame.channels[channelName];
+					c.rotation = channel.rotation * Quat(rotation.x, rotation.y, rotation.z, rotation.w);
+					c.tranlation = channel.tranlation + channel.rotation.Transform(float3(translation.x, translation.y, translation.z));
+				} else {
+					ResourceAnimation::Channel& c = keyFrame.channels[channelName];
+					c.rotation = channel.rotation * c.rotation;
+					c.tranlation = channel.tranlation + channel.rotation.Transform(c.tranlation);
+				}
+			}
 		}
 	}
 
@@ -407,6 +441,43 @@ static void ImportNode(const char* modelFilePath, JsonValue jMeta, const aiScene
 			ImportNode(modelFilePath, jMeta, assimpScene, node->mChildren[i], scene, gameObject, materialIds, float4x4::identity, resourceIndex, bones);
 		}
 	}
+}
+
+static bool IsInBones(aiNode* bone, const std::vector<const char*>& bones) {
+	for (const char* b : bones) {
+		if (std::strcmp(bone->mName.C_Str(), b) != 0) continue;
+
+		return true;
+	}
+	return false;
+}
+
+static aiNode* SearchRootBone(aiNode* rootBone, aiNode* rootBoneParent, const std::vector<const char*>& bones) {
+	bool foundInBones = false;
+	do {
+		// Ignore assimp middle nodes
+		std::string name = rootBoneParent->mName.C_Str();
+		while (name.find("$AssimpFbx$") != std::string::npos) {
+			rootBoneParent = rootBoneParent->mParent;
+			name = rootBoneParent->mName.C_Str();
+		}
+		// Find if node in bones
+		foundInBones = IsInBones(rootBoneParent, bones);
+		if (foundInBones) {
+			rootBone = rootBoneParent;
+			rootBoneParent = rootBone->mParent;
+		}
+	} while (foundInBones);
+	// Check whether selected root bone has siblings that are bones
+	for (int i = 0; i < rootBoneParent->mNumChildren; ++i) {
+		if (rootBoneParent->mChildren[i] == rootBone) continue;
+
+		if (IsInBones(rootBoneParent->mChildren[i], bones)) {
+			rootBone = rootBoneParent;
+			break;
+		}
+	}
+	return rootBone;
 }
 
 bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
@@ -634,30 +705,12 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		// TODO: Improve for multiple animations
 	}
 
-	// Cache bones for skinning
 	aiNode* rootBone = nullptr;
 
 	if (!bones.empty()) {
 		rootBone = assimpScene->mRootNode->FindNode(bones[0]);
 		aiNode* rootBoneParent = rootBone->mParent;
-		bool foundInBones = false;
-		do {
-			// Ignore assimp middle nodes
-			std::string name = rootBoneParent->mName.C_Str();
-			while (name.find("$AssimpFbx$") != std::string::npos) {
-				rootBoneParent = rootBoneParent->mParent;
-				name = rootBoneParent->mName.C_Str();
-			}
-			// Find if node in bones
-			foundInBones = false;
-			for (const char* bone : bones) {
-				if (std::strcmp(rootBoneParent->mName.C_Str(), bone) != 0) continue;
-
-				foundInBones = true;
-				rootBone = rootBoneParent;
-				rootBoneParent = rootBone->mParent;
-			}
-		} while (foundInBones);
+		rootBone = SearchRootBone(rootBone, rootBoneParent, bones);
 	}
 
 	if (!bones.empty()) {
@@ -665,7 +718,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		root->GetChildren()[0]->SetRootBone(rootBoneGO);
 
 		std::unordered_map<std::string, GameObject*> goBones;
-		// TODO: check if CtrlGrp is generated always
 		goBones[rootBoneGO->name] = rootBoneGO;
 		CacheBones(rootBoneGO, goBones);
 
