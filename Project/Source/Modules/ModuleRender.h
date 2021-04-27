@@ -44,6 +44,9 @@ public:
 	unsigned depthRenderbuffer = 0;
 	unsigned framebuffer = 0;
 
+	// ------- Viewport Updated ------- //
+	bool viewportUpdated = true;
+
 	// -- Debugging Tools Toggles -- //
 	bool debugMode = false; // Flag to activate DrawOptions only ingame (not use in the engine)
 	bool drawDebugDraw = true;
