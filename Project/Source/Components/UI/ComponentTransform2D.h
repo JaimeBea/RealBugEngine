@@ -54,8 +54,8 @@ private:
 	float3 localEulerAngles = float3::zero; // The rotation of the element in Euler
 	float3 scale = float3::one;				// The scale of the element
 
-	float2 anchorX = float2::zero; // The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position. Currently not used.
-	float2 anchorY = float2::zero; // The Anchor of Y axis. AnchorY.x -> Min position, AnchorY.y -> Max position. Currently not used.
+	float2 anchorX = float2(0.5, 0.5); // The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position. Currently not used.
+	float2 anchorY = float2(0.5, 0.5); // The Anchor of Y axis. AnchorY.x -> Min position, AnchorY.y -> Max position. Currently not used.
 
 	float4x4 localMatrix = float4x4::identity;	// Local matrix
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
