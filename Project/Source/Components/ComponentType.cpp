@@ -44,6 +44,8 @@ const char* GetComponentTypeName(ComponentType type) {
 		return "Text";
 	case ComponentType::SCRIPT:
 		return "Script";
+	case ComponentType::PARTICLE:
+		return "Particle";
 	default:
 		LOG("Component of type %i hasn't been registered in GetComponentTypeName.", (unsigned) type);
 		assert(false); // ERROR: Component type not registered
@@ -88,6 +90,8 @@ ComponentType GetComponentTypeFromName(const char* name) {
 		return ComponentType::TEXT;
 	} else if (strcmp(name, "Script") == 0) {
 		return ComponentType::SCRIPT;
+	} else if (strcmp(name, "Particle") == 0) {
+		return ComponentType::PARTICLE;
 	} else {
 		LOG("No component of name %s exists.", (unsigned) name);
 		assert(false); // ERROR: Invalid name

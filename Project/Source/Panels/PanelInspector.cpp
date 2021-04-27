@@ -128,6 +128,9 @@ void PanelInspector::Update() {
 				case ComponentType::ANIMATION:
 					cName = "Animation";
 					break;
+				case ComponentType::PARTICLE:
+					cName = "Particle";
+					break;
 				default:
 					cName = "";
 					break;
@@ -216,6 +219,14 @@ void PanelInspector::Update() {
 					ComponentAnimation* animation = selected->CreateComponent<ComponentAnimation>();
 					if (animation != nullptr) {
 						animation->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Particle")) {
+					ComponentParticleSystem* particle = selected->CreateComponent<ComponentParticleSystem>();
+					if (particle != nullptr) {
+						particle->Init();
 					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}

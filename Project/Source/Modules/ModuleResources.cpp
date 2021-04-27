@@ -186,7 +186,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == ".sky") {
 			// Skybox files
 			SkyboxImporter::ImportSkybox(filePath, jMeta);
-		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
+		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga" || extension == ".tif") {
 			// Texture files
 			TextureImporter::ImportTexture(filePath, jMeta);
 		} else if (extension == ".ttf") {
@@ -318,7 +318,6 @@ void ModuleResources::UpdateAsync() {
 						assetsToNotUpdate.erase(it);
 					}
 #endif
-
 				} else {
 					resourcesToRemove.push_back(entry.first);
 					continue;

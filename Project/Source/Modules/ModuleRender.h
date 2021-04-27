@@ -68,6 +68,7 @@ private:
 	void DrawGameObject(GameObject* gameObject);											// ??
 	void DrawSkyBox();																		// Draws a default skybox if 'skyboxActive' is set to true.
 	void DrawAnimation(const GameObject* gameObject, bool hasAnimation = false);
+	void RenderParticleSystem();
 	void RenderUI();
 	void SetOrtographicRender();
 	void SetPerspectiveRender();
