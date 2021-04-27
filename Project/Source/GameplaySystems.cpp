@@ -24,10 +24,10 @@
 #include "Utils/Leaks.h"
 
 // ----------- GAMEPLAY ------------ //
+
 GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
 }
-
 
 void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeActiveCamera(camera, true);
@@ -92,6 +92,7 @@ const float3 Debug::GetCameraDirection() {
 }
 
 // ------------- TIME -------------- //
+
 float Time::GetDeltaTime() {
 	return App->time->GetDeltaTime();
 }
@@ -105,6 +106,7 @@ float Time::GetMS() {
 }
 
 // ------------- INPUT ------------- //
+
 bool Input::GetMouseButtonDown(int button) {
 	return App->input->GetMouseButtons()[button] == KS_DOWN;
 }
