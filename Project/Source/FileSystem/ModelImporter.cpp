@@ -695,7 +695,7 @@ bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject
 
 	// Save GameObjects
 	JsonValue jRoot = jScene[JSON_TAG_ROOT];
-	root->SavePrototype(jRoot);
+	root->SavePrefab(jRoot);
 
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;

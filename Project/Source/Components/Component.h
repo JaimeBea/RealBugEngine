@@ -34,6 +34,11 @@ public:
 	virtual void OnEnable() {}
 	virtual void OnDisable() {}
 
+	// ---- Prefab Functions ----- //
+	bool IsEdited();	// Returs the edited variable
+	void SetEdited();	// Sets edited to true. Set this every time a component member is changed.
+	void ResetEdited(); // Sets edited to false. Only for internal use.
+
 	// ---------- Getters ---------- //
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;
@@ -47,5 +52,6 @@ protected:
 private:
 	UID id = 0;					 // Unique identifier for the component
 	bool active = true;			 // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
+	bool edited = true;			 // This boolean saves whether the component was edited in a prefab or not. It only makes sense inside prefabs.
 	GameObject* owner = nullptr; // References the GameObject this Component applies its functionality to. Its 'parent'.
 };

@@ -159,6 +159,7 @@
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
+    <ClCompile Include="Source\FileSystem\PrefabImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -414,6 +415,7 @@
     <ClInclude Include="Source\Utils\AssetFile.h" />
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
     <ClInclude Include="Source\Utils\PoolMap.h" />
+    <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
