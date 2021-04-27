@@ -41,9 +41,6 @@ public:
 	TESSERACT_ENGINE_API float2 GetSize() const; // Returns the size
 	float3 GetScale() const;					 // Returns the scale
 
-	void SetPivotMode(bool pivotMode_); // Sets the pivot mode for the Rect Tool
-	void SetCenterMode(bool centerMode_); // Sets the center mode for the Rect Tool
-
 	void InvalidateHierarchy();							 // Invalidates hierarchy
 	void Invalidate();									 // Invalidates component
 	void DuplicateComponent(GameObject& owner) override; // Duplicates component (THIS SHOULDN'T BE USED)
@@ -62,9 +59,6 @@ private:
 
 	float4x4 localMatrix = float4x4::identity;	// Local matrix
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
-
-	bool pivotMode = false; // 
-	bool centerMode = true;
 
 	bool dirty = true;
 
