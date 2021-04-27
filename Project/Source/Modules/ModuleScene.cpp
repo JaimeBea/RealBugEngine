@@ -173,6 +173,7 @@ void ModuleScene::CreateEmptyScene() {
 	ComponentCanvas* canvasCanvas = canvas->CreateComponent<ComponentCanvas>();
 
 	ComponentTransform* progressTransform = progress->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* progressdTransform2d = progress->CreateComponent<ComponentTransform2D>();
 	ComponentProgressBar* progressProgress = progress->CreateComponent<ComponentProgressBar>();
 
 	ComponentTransform* backgroundTransform = background->CreateComponent<ComponentTransform>();

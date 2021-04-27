@@ -34,5 +34,10 @@ private:
 
 	float3 backPos = float3::zero;
 	float2 backSize = float2::zero;
+
 	float fillXPos = 0.0f;
+	float min = 0.0f;
+	float max = 1.0f;
+
+	bool rightToLeft = false;
 };

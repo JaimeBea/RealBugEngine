@@ -31,12 +31,11 @@ void ComponentProgressBar::Init() {
 	
 }
 
-//Most of this code will probably get out of update (such WIP, very untested)
 void ComponentProgressBar::Update() {
 	//The progress bar GameObject must have two image gameobjects as childs (for background and fill)
-	if (background == nullptr) {
-		GameObject* owner = &GetOwner();
-		std::vector<GameObject*> childs = owner->GetChildren();
+	if (background == nullptr || fill == nullptr) {
+		GameObject owner = GetOwner();
+		std::vector<GameObject*> childs = owner.GetChildren();
 
 		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
 			if (it == childs.begin()) {
@@ -50,22 +49,27 @@ void ComponentProgressBar::Update() {
 		rectFill = fill->GetComponent<ComponentTransform2D>();
 	}
 
-	//we asume the value of the progress bar will be between 0 and 1 
 	backPos = rectBack->GetPosition();
 
 	backSize = rectBack->GetSize();
 
+	float percent = (value - min) / (max - min);
 	//we set the fill image width as the percent of the background according to the value (if 0.5 then 50% of background's width)
 	//height stays the same as the back
-	rectFill->SetSize(float2((backSize.x * value), backSize.y));
+	rectFill->SetSize(float2((backSize.x * percent), backSize.y));
 
 	//with the size of the fill setted we must position it since if we keep the background pos we will have it centered
 	//The image is aligned to the left here, we will give the option to slide from left to right in the future
-	fillXPos = ((backSize.x - (backSize.x * value)) / 2);
+	fillXPos = ((backSize.x - (backSize.x * percent)) / 2);
 
-	fillXPos = backPos.x - fillXPos;
 
-	rectFill->SetPosition(float3(fillXPos, backPos.y, backPos.z));
+	if (!rightToLeft) {
+		fillXPos = backPos.x - fillXPos;
+		rectFill->SetPosition(float3(fillXPos, backPos.y, backPos.z));
+	} else {
+		fillXPos = backPos.x + fillXPos;
+		rectFill->SetPosition(float3(fillXPos, backPos.y, backPos.z));
+	}
 
 }
 
@@ -74,9 +78,20 @@ void ComponentProgressBar::OnEditorUpdate() {
 	float* val = &value;
 
 	ImGui::TextColored(App->editor->titleColor, "Value");
-	if (ImGui::DragFloat("Value", val, App->editor->dragSpeed2f, 0, 1)) {
+	if (ImGui::DragFloat("Value", val, App->editor->dragSpeed2f, min, max)) {
 		SetValue(*val);
 	}
+	ImGui::TextColored(App->editor->titleColor, "Min");
+	if (ImGui::DragFloat("Min", &min, App->editor->dragSpeed2f, -inf, max - 1)) {
+		SetValue(*val);
+	}
+	ImGui::TextColored(App->editor->titleColor, "Max");
+	if (ImGui::DragFloat("Max", &max, App->editor->dragSpeed2f, min + 1, inf)) {
+		SetValue(*val);
+	}
+	ImGui::Checkbox("Right to Left", &rightToLeft);
+
+	ImGui::Separator();
 }
 
 void ComponentProgressBar::Save(JsonValue jComponent) const {
