@@ -488,13 +488,12 @@ void ModuleProject::CompileProject(Configuration config) {
 
 	std::string pdbPath = buildPath + name + ".pdb";
 	std::string auxName = App->files->GetFilePath(pdbPath.c_str(), true);
-	
+
 	std::size_t found = auxName.find_first_of("/");
 	while (found != std::string::npos) {
 		auxName[found] = '\\';
 		found = auxName.find_first_of("/", found + 1);
 	}
-
 
 	auxName[auxName.size() - 5] = '_';
 	PDBReplace(dllPath, auxName);
