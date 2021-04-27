@@ -7,6 +7,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTime.h"
+#include "Panels/PanelControlEditor.h"
 
 #include "debugdraw.h"
 #include "imgui.h"
@@ -161,6 +162,8 @@ void ComponentTransform2D::SetSize(float2 size_) {
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
+	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
+
 	rotation = rotation_;
 	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 
@@ -168,6 +171,8 @@ void ComponentTransform2D::SetRotation(Quat rotation_) {
 }
 
 void ComponentTransform2D::SetRotation(float3 rotation_) {
+	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
+
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
 	InvalidateHierarchy();
