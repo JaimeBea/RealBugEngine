@@ -28,7 +28,7 @@ GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
 }
 
-TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
+void GameplaySystems::SetRenderCamera(GameObject* camera) {
 	App->camera->ChangeActiveFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
 	App->camera->ChangeCullingFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Globals.h"
+#include "Utils/Logging.h"
 
 #include "Math/float2.h"
 

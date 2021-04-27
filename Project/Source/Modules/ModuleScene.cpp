@@ -76,6 +76,7 @@ bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
 	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
 	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
+	App->events->AddObserverToEvent(TesseractEventType::COMPILATION_FINISHED, this);
 
 	App->files->CreateFolder(LIBRARY_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
@@ -128,6 +129,11 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 			for (ComponentScript& script : scene->scriptComponents) {
 				script.OnStart();
 			}
+		}
+		break;
+	case TesseractEventType::COMPILATION_FINISHED:
+		for (ComponentScript& script : scene->scriptComponents) {
+			script.dirty = true;
 		}
 		break;
 	}
