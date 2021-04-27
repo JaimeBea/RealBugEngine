@@ -144,6 +144,7 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 }
 
 // --------- SCENE MANAGER --------- //
+
 void SceneManager::ChangeScene(const char* scenePath) {
 	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
 	e.Set<ChangeSceneStruct>(scenePath);
