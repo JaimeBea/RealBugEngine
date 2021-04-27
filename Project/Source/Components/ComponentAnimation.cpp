@@ -16,8 +16,8 @@
 
 #include "Utils/UID.h"
 #include "Utils/Logging.h"
-#include "Utils/Leaks.h"
 #include <algorithm> // std::find
+#include "Utils/Leaks.h"
 
 #define JSON_TAG_LOOP "Controller"
 #define JSON_TAG_ANIMATION_ID "AnimationId"
