@@ -489,12 +489,12 @@ const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
 }
 
 void ModuleCamera::EnableOrtographic() {
-	activeCamera->GetFrustum()->SetOrthographic((float) App->renderer->viewportWidth, (float) App->renderer->viewportHeight);
+	activeCamera->GetFrustum()->SetOrthographic((float) App->renderer->GetViewportSize().x, (float) App->renderer->GetViewportSize().y);
 }
 
 void ModuleCamera::EnablePerspective() {
 	activeCamera->GetFrustum()->SetPerspective(1.3f, 1.f);
-	ViewportResized(App->renderer->viewportWidth, App->renderer->viewportHeight);
+	ViewportResized(App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y);
 }
 
 void ModuleCamera::GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects) {
