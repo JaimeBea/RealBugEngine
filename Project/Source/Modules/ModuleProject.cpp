@@ -28,7 +28,7 @@ struct RSDSHeader {
 	char filename[1];
 };
 
-static std::string& GetLastErrorStdStr() {
+static std::string GetLastErrorStdStr() {
 	DWORD error = GetLastError();
 	if (error) {
 		LPVOID lpMsgBuf;
@@ -44,6 +44,10 @@ static std::string& GetLastErrorStdStr() {
 			LPCSTR lpMsgStr = (LPCSTR) lpMsgBuf;
 			std::string result(lpMsgStr, lpMsgStr + bufLen);
 
+			std::string::size_type pos = result.find("\r\n");
+			if (pos != std::string::npos) {
+				result.replace(result.begin() + pos, result.end(), "\n\0");
+			}
 			LocalFree(lpMsgBuf);
 
 			return result;
@@ -497,7 +501,6 @@ void ModuleProject::CompileProject(Configuration config) {
 	std::istringstream f(logContent);
 	std::string line;
 	LOG("---------------------GAME COMPILATION---------------------");
-	LOG("%s", logContent.c_str());
 	while (Tesseract::getline(f, line)) {
 		LOG("%s", line.c_str());
 	}
