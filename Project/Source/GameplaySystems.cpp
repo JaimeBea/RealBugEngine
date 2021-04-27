@@ -28,7 +28,8 @@ GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
 }
 
-TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
+
+void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeActiveCamera(camera, true);
 	App->camera->ChangeCullingCamera(camera, true);
 }

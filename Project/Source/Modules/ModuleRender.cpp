@@ -142,7 +142,7 @@ UpdateStatus ModuleRender::PreUpdate() {
 
 #if !GAME
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glViewport(0, 0, viewportWidth, viewportHeight);
+	glViewport(0, 0, viewportSize.x, viewportSize.y);
 #else
 	App->camera->ViewportResized(App->window->GetWidth(), App->window->GetHeight());
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
@@ -200,7 +200,7 @@ UpdateStatus ModuleRender::Update() {
 		if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 
 		// Draw debug draw
-		if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+		if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportSize.x, viewportSize.y);
 
 		// Draw Animations
 		if (drawAllBones) {
@@ -233,8 +233,8 @@ bool ModuleRender::CleanUp() {
 }
 
 void ModuleRender::ViewportResized(int width, int height) {
-	viewportWidth = width;
-	viewportHeight = height;
+	viewportSize.x = width;
+	viewportSize.y = height;
 
 #if !GAME
 	// Framebuffer calculations
@@ -461,7 +461,7 @@ void ModuleRender::RenderUI() {
 void ModuleRender::SetOrtographicRender() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+	glOrtho(0, viewportSize.x, viewportSize.y, 0, 1, -1);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -470,6 +470,10 @@ void ModuleRender::SetPerspectiveRender() {
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
+}
+
+const float2 ModuleRender::GetViewportSize() {
+	return viewportSize;
 }
 
 void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {

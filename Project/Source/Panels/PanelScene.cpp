@@ -12,6 +12,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleProject.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleScene.h"
 #include "Utils/Logging.h"
 #include "Resources/ResourcePrefab.h"
@@ -147,11 +148,11 @@ void PanelScene::Update() {
 			ImGui::PopStyleVar();
 			ImGui::EndMenuBar();
 		}
-
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (App->renderer->viewportWidth != size.x || App->renderer->viewportHeight != size.y) {
+		if (App->renderer->GetViewportSize().x != size.x || App->renderer->GetViewportSize().y != size.y) {
 			App->camera->ViewportResized((int) size.x, (int) size.y);
+			App->userInterface->ViewportResized();
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
 			framebufferSize = {
 				size.x,
@@ -276,10 +277,6 @@ bool PanelScene::IsUsing2D() const {
 
 const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
-}
-
-float2 PanelScene::GetSceneWindowSize() const {
-	return framebufferSize;
 }
 
 const char* PanelScene::GetCurrentShadingMode() const {

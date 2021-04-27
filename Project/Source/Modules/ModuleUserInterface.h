@@ -25,6 +25,7 @@ public:
 	ComponentEventSystem* GetCurrentEventSystem();
 
 	unsigned int GetQuadVBO();
+	void ViewportResized(); // To be called when the viewport panel changes size.
 
 private:
 	void CreateQuadVBO(); // Creates a vbo made by two triangles centered that form a Quad

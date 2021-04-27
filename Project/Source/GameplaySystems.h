@@ -1,7 +1,9 @@
 #pragma once
 
+
 #include "Globals.h"
 #include "Components/ComponentCamera.h"
+#include "Utils/Logging.h"
 
 #include "Math/float2.h"
 

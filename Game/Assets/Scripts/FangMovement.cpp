@@ -8,6 +8,7 @@ GENERATE_BODY_IMPL(FangMovement);
 void FangMovement::Start() {
 	gameObject = GameplaySystems::GetGameObject("Fang");
 	camera = GameplaySystems::GetGameObject("Game Camera");
+	Debug::Log("Fang movement Start Log");
 }
 
 void FangMovement::Update() {
