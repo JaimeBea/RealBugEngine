@@ -34,11 +34,6 @@ public:
 	virtual void OnEnable() {}
 	virtual void OnDisable() {}
 
-	// ---- Prefab Functions ----- //
-	bool IsEdited();	// Returs the edited variable
-	void SetEdited();	// Sets edited to true. Set this every time a component member is changed.
-	void ResetEdited(); // Sets edited to false. Only for internal use.
-
 	// ---------- Getters ---------- //
 	ComponentType GetType() const;
 	GameObject& GetOwner() const;

@@ -231,18 +231,14 @@ void GameObject::Load(JsonValue jGameObject) {
 	}
 }
 
-void GameObject::SavePrefab(JsonValue jGameObject, UID prefabId_) {
+void GameObject::SavePrefab(JsonValue jGameObject) {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_ROOT_BONE_NAME] = rootBoneHierarchy ? rootBoneHierarchy->name.c_str() : "";
 
-	prefabId = prefabId_;
-
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
 		Component* component = components[i];
-		if (component->IsEdited()) continue;
-
 		JsonValue jComponent = jComponents[i];
 
 		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
@@ -255,15 +251,13 @@ void GameObject::SavePrefab(JsonValue jGameObject, UID prefabId_) {
 		JsonValue jChild = jChildren[i];
 		GameObject* child = children[i];
 
-		child->SavePrefab(jChild, prefabId_);
+		child->SavePrefab(jChild);
 	}
 }
 
-void GameObject::LoadPrefab(JsonValue jGameObject, UID prefabId_) {
+void GameObject::LoadPrefab(JsonValue jGameObject) {
 	name = jGameObject[JSON_TAG_NAME];
 	active = jGameObject[JSON_TAG_ACTIVE];
-
-	prefabId = prefabId_;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {
@@ -287,7 +281,7 @@ void GameObject::LoadPrefab(JsonValue jGameObject, UID prefabId_) {
 		UID childId = GenerateUID();
 		GameObject* child = scene->gameObjects.Obtain(childId);
 		child->scene = scene;
-		child->LoadPrefab(jChild, prefabId_);
+		child->LoadPrefab(jChild);
 		child->id = childId;
 		child->SetParent(this);
 		child->InitComponents();

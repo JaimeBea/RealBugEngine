@@ -37,18 +37,6 @@ void Component::Disable() {
 	OnDisable();
 }
 
-bool Component::IsEdited() {
-	return edited;
-}
-
-void Component::SetEdited() {
-	edited = true;
-}
-
-void Component::ResetEdited() {
-	edited = false;
-}
-
 ComponentType Component::GetType() const {
 	return type;
 }

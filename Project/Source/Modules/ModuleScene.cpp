@@ -77,18 +77,25 @@ bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
 	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
 
+#if !GAME
+	App->files->CreateFolder(ASSETS_PATH);
 	App->files->CreateFolder(LIBRARY_PATH);
+	App->files->CreateFolder(SKYBOX_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
+	App->files->CreateFolder(SHADERS_PATH);
 	App->files->CreateFolder(SCENES_PATH);
+	App->files->CreateFolder(MATERIALS_PATH);
+	App->files->CreateFolder(PREFABS_PATH);
+#endif
 
-	#if GAME
+#if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
 	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
 	App->renderer->SetVSync(false);
 	App->time->limitFramerate = false;
-	#else
+#else
 	CreateEmptyScene();
-	#endif
+#endif
 
 	return true;
 }

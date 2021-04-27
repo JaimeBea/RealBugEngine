@@ -98,8 +98,8 @@ public:
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);
 
-	void SavePrefab(JsonValue jGameObject, UID prefabId);
-	void LoadPrefab(JsonValue jGameObject, UID prefabId);
+	void SavePrefab(JsonValue jGameObject);
+	void LoadPrefab(JsonValue jGameObject);
 
 public:
 	UID id = 0;

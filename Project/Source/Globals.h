@@ -25,9 +25,12 @@ enum class UpdateStatus {
 #define SHADERS_PATH "Assets/Shaders"
 #define SCENES_PATH "Assets/Scenes"
 #define MATERIALS_PATH "Assets/Materials"
+#define PREFABS_PATH "Assets/Prefabs"
+
 #define TEXTURE_EXTENSION ".dds"
 #define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
+#define PREFAB_EXTENSION ".prefab"
 #define META_EXTENSION ".meta"
 
 #define PHONG_SHADER_FILE "phong.glsl"

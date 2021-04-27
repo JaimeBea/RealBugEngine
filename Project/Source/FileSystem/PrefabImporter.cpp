@@ -1,6 +1,7 @@
 #include "PrefabImporter.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
 #include "Utils/FileDialog.h"
@@ -16,6 +17,7 @@
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
+#define JSON_TAG_ROOT "Root"
 
 bool PrefabImporter::ImportPrefab(const char* filePath, JsonValue jMeta) {
 	// Timer to measure importing a prefab
@@ -58,5 +60,37 @@ bool PrefabImporter::ImportPrefab(const char* filePath, JsonValue jMeta) {
 
 	unsigned timeMs = timer.Stop();
 	LOG("Prefab imported in %ums", timeMs);
+	return true;
+}
+
+bool PrefabImporter::SavePrefab(const char* filePath, GameObject* root) {
+	// Timer to measure saving a prefab
+	MSTimer timer;
+	timer.Start();
+	LOG("Saving prefab to path: \"%s\".", filePath);
+
+	// Create document
+	rapidjson::Document document;
+	document.SetObject();
+	JsonValue jScene(document, document);
+
+	// Save GameObjects
+	JsonValue jRoot = jScene[JSON_TAG_ROOT];
+	root->SavePrefab(jRoot);
+
+	// Write document to buffer
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
+	document.Accept(writer);
+
+	// Save to file
+	bool saved = App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
+	if (!saved) {
+		LOG("Failed to save prefab resource.");
+		return false;
+	}
+
+	unsigned timeMs = timer.Stop();
+	LOG("Prefab saved in %ums", timeMs);
 	return true;
 }
