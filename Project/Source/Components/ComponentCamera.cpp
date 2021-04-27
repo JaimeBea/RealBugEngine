@@ -67,9 +67,10 @@ void ComponentCamera::OnEditorUpdate() {
 	if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
 		frustum.SetViewPlaneDistances(nearPlane, farPlane);
 	}
-	float fov = frustum.VerticalFov();
-	if (ImGui::InputFloat("Field of View", &fov, 0.0F, 0.0F, "%.2f")) {
-		frustum.SetHorizontalFovAndAspectRatio(fov, frustum.AspectRatio());
+	float VFOV = frustum.VerticalFov();
+	float ar = frustum.AspectRatio();
+	if (ImGui::SliderAngle("FOV", &VFOV, 45.f, 110.f)) {
+		frustum.SetVerticalFovAndAspectRatio(VFOV, ar);
 	}
 }
 
