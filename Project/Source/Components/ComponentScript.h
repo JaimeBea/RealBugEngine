@@ -6,7 +6,6 @@ class ComponentScript : public Component {
 public:
 	REGISTER_COMPONENT(ComponentScript, ComponentType::SCRIPT, true);
 
-	void Init() override;
 	void Update() override;
 	void OnStart();
 	void OnEditorUpdate() override;
@@ -15,6 +14,13 @@ public:
 	void DuplicateComponent(GameObject& owner) override;
 
 	UID GetScriptID() const;
+
+private:
+
+	void ReloadScript();
+
+public:
+	bool dirty = false;
 
 private:
 	UID scriptID = 0;

@@ -28,9 +28,10 @@ GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
 }
 
-TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
-	App->camera->ChangeActiveFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
-	App->camera->ChangeCullingFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
+
+void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
+	App->camera->ChangeActiveCamera(camera, true);
+	App->camera->ChangeCullingCamera(camera, true);
 }
 
 // ------------- DEBUG ------------- //
@@ -87,7 +88,7 @@ int Debug::GetCulledTriangles() {
 }
 
 const float3 Debug::GetCameraDirection() {
-	return App->camera->GetActiveFrustum()->Front();
+	return App->camera->GetActiveCamera()->GetFrustum()->Front();
 }
 
 // ------------- TIME -------------- //

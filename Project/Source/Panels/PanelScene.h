@@ -14,7 +14,6 @@ public:
 
 	// Getters
 	const float2& GetMousePosOnScene() const;
-	float2 GetSceneWindowSize() const;
 	const char* GetCurrentShadingMode() const;
 
 private:
