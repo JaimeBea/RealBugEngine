@@ -2,9 +2,7 @@
 
 #include "Module.h"
 #include "Utils/UID.h"
-
-#include <vector>
-#include <string>
+#include "Math/float2.h"
 
 class GameObject;
 class ComponentEventSystem;
@@ -16,6 +14,7 @@ class ModuleUserInterface : public Module {
 public:
 	bool Init() override;
 	bool Start() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
 	void ReceiveEvent(TesseractEvent& e) override;
 
@@ -23,10 +22,10 @@ public:
 	void GetCharactersInString(UID font, const std::string& sentence, std::vector<Character>& charsInSentence); //Fills the given vector with the glyphs of the given font to form the given sentence.
 	void Render();
 	void SetCurrentEventSystem(ComponentEventSystem* ev);
-	GameObject* GetCanvas() const;
 	ComponentEventSystem* GetCurrentEventSystem();
 
 	unsigned int GetQuadVBO();
+	void ViewportResized(); // To be called when the viewport panel changes size.
 
 private:
 	void CreateQuadVBO(); // Creates a vbo made by two triangles centered that form a Quad
@@ -34,7 +33,4 @@ private:
 private:
 	ComponentEventSystem* currentEvSys = nullptr;
 	unsigned int quadVBO = 0;
-
-public:
-	GameObject* canvas = nullptr;
 };

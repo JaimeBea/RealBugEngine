@@ -1,9 +1,9 @@
 #include "GameplaySystems.h"
 
-#include "Application.h"
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
 #include "Components/ComponentCamera.h"
+#include "Application.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
@@ -11,11 +11,12 @@
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleWindow.h"
-#include "TesseractEvent.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "FileSystem/SceneImporter.h"
+#include "Utils/Logging.h"
+#include "TesseractEvent.h"
 
 #include "Geometry/Frustum.h"
 #include "SDL_events.h"
@@ -27,12 +28,20 @@ GameObject* GameplaySystems::GetGameObject(const char* name) {
 	return App->scene->scene->root->FindDescendant(name);
 }
 
-TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
-	App->camera->ChangeActiveFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
-	App->camera->ChangeCullingFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
+
+void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
+	App->camera->ChangeActiveCamera(camera, true);
+	App->camera->ChangeCullingCamera(camera, true);
 }
 
 // ------------- DEBUG ------------- //
+
+void Debug::Log(const char* fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	LOG(fmt, args);
+	va_end(args);
+}
 
 void Debug::ToggleDebugMode() {
 	App->renderer->ToggleDebugMode();
@@ -79,7 +88,7 @@ int Debug::GetCulledTriangles() {
 }
 
 const float3 Debug::GetCameraDirection() {
-	return App->camera->GetActiveFrustum()->Front();
+	return App->camera->GetActiveCamera()->GetFrustum()->Front();
 }
 
 // ------------- TIME -------------- //
@@ -135,7 +144,7 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 // --------- SCENE MANAGER --------- //
 void SceneManager::ChangeScene(const char* scenePath) {
 	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
-	e.changeScene.scenePath = scenePath;
+	e.Set<ChangeSceneStruct>(scenePath);
 	App->events->AddEvent(e);
 }
 

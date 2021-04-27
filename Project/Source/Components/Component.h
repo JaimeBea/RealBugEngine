@@ -35,7 +35,7 @@ public:
 	virtual void OnDisable() {}
 
 	// ---------- Getters ---------- //
-	ComponentType GetType() const;
+	TESSERACT_ENGINE_API ComponentType GetType() const;
 	GameObject& GetOwner() const;
 	UID GetID() const;
 	TESSERACT_ENGINE_API bool IsActive() const;

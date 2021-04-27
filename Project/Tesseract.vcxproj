@@ -15,7 +15,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Libs\imgui\imgui_stdlib.h" />
+    <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
     <ClInclude Include="Source\Components\UI\ComponentText.h" />
     <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
     <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
@@ -97,6 +99,8 @@
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
+    <ClInclude Include="Source\Components\ComponentAudioListener.h" />
+    <ClInclude Include="Source\Components\ComponentAudioSource.h" />
     <ClInclude Include="Source\TesseractEvent.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
@@ -271,7 +275,9 @@
     <ClInclude Include="Source\Utils\PoolMap.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
     <ClCompile Include="Libs\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentText.cpp" />
     <ClCompile Include="Source\FileSystem\PrefabImporter.cpp" />
@@ -291,6 +297,8 @@
     <ClCompile Include="Source\Modules\ModuleProject.cpp" />
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioListener.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioSource.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
     <ClCompile Include="Source\Scene.cpp" />

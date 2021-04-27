@@ -160,6 +160,10 @@
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
     <ClCompile Include="Source\FileSystem\PrefabImporter.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioListener.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioSource.cpp" />
+    <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
+    <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -414,6 +418,10 @@
     <ClInclude Include="Source\FileSystem\SkyboxImporter.h" />
     <ClInclude Include="Source\Utils\AssetFile.h" />
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
+    <ClInclude Include="Source\Components\ComponentAudioListener.h" />
+    <ClInclude Include="Source\Components\ComponentAudioSource.h" />
+    <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
+    <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Source\Utils\PoolMap.h" />
     <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
   </ItemGroup>
