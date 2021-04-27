@@ -189,18 +189,15 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
 		newGameObject->CreateComponent<ComponentTransform>();
 		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
-		App->userInterface->SetCurrentEventSystem(component);
+		App->userInterface->SetCurrentEventSystem(component->GetID());
 		newGameObject->InitComponents();
 		return newGameObject;
 	}
 
 	return nullptr;
-
 }
 
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
-	CreateEventSystem(gameObject);
-
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
@@ -252,6 +249,8 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
 	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
 	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
+	CreateEventSystem(App->scene->scene->root);
+
 	selectable->SetSelectableType(button->GetType());
 	newGameObject->InitComponents();
 

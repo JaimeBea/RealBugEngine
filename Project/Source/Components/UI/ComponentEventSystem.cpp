@@ -5,6 +5,8 @@
 #include "Application.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleScene.h"
+#include "Scene.h"
 
 #include "imgui.h"
 #include "Utils/Logging.h"
@@ -14,10 +16,26 @@
 #define JSON_TAG_FIRST_SELECTED_ID "FirstSelectedId"
 
 ComponentEventSystem ::~ComponentEventSystem() {
+	ComponentEventSystem* eventSystem = App->userInterface->GetCurrentEventSystem();
+	if (eventSystem != nullptr) {
+		if (eventSystem->GetID() == GetID()) {
+			App->userInterface->SetCurrentEventSystem(0);
+		}
+	}
+	else {
+		App->userInterface->SetCurrentEventSystem(0);
+	}
+	eventSystem = App->userInterface->GetCurrentEventSystem();
+	LOG("deleted %u", GetID());
+
+	if (eventSystem == nullptr) {
+		LOG("Shit");
+	}
 }
 
 void ComponentEventSystem::Init() {
-	App->userInterface->SetCurrentEventSystem(this);
+	App->userInterface->SetCurrentEventSystem(GetID());
+	LOG("established %u as CurrentEventSystem", GetID());
 	SetSelected(firstSelectedId);
 }
 
@@ -74,12 +92,12 @@ void ComponentEventSystem::Load(JsonValue jComponent) {
 }
 
 void ComponentEventSystem::OnEnable() {
-	App->userInterface->SetCurrentEventSystem(this);
+	App->userInterface->SetCurrentEventSystem(GetID());
 }
 
 void ComponentEventSystem::OnDisable() {
 	if (App->userInterface->GetCurrentEventSystem() == this) {
-		App->userInterface->SetCurrentEventSystem(nullptr);
+		App->userInterface->SetCurrentEventSystem(0);
 	}
 }
 
@@ -100,6 +118,7 @@ void ComponentEventSystem::SetSelected(UID newSelectableComponentId) {
 void ComponentEventSystem::DuplicateComponent(GameObject& owner) {
 	ComponentEventSystem* component = owner.CreateComponent<ComponentEventSystem>();
 	component->firstSelectedId = firstSelectedId;
+	LOG("%u", component->GetID());
 }
 
 void ComponentEventSystem::EnteredPointerOnSelectable(ComponentSelectable* newHoveredComponent) {

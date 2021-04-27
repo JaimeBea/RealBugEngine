@@ -79,10 +79,13 @@ GameObject* Scene::DuplicateGameObject(GameObject* gameObject, GameObject* paren
 		component->DuplicateComponent(*newGO);
 	}
 
+	newGO->InitComponents();
+
 	// Duplicate recursively its children
 	for (GameObject* child : gameObject->GetChildren()) {
 		DuplicateGameObject(child, newGO);
 	}
+
 	return newGO;
 }
 
