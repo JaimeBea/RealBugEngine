@@ -77,10 +77,15 @@ void ResourceFont::Load() {
 		if (glyphHang < minHang) {
 			minHang = glyphHang;
 		}
+
+		if (metrics.width / 64 > spaceWidth) {
+			spaceWidth = metrics.width / 64;
+		}
 	}
 
 	lineHeight = maxBearing - minHang;
 	newLineHeight = maxBearing;
+	spaceWidth /= 2.0;
 
 	//Reset pixel storage mode to default
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -98,4 +103,8 @@ void ResourceFont::Unload() {
 
 int ResourceFont::GetLineHeight() const {
 	return lineHeight;
+}
+
+int ResourceFont::GetSpaceWidth() const {
+	return spaceWidth;
 }

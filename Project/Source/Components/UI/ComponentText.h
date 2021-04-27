@@ -29,6 +29,14 @@ public:
 	void RecalculcateVertices();									// Recalculate verticesText. This is called when Text/Font/FontSize/LineHeight/Transform is modified in order to recalculate the position of vertices.
 
 private:
+	int SubstringWidth(const char* substring, float scale);
+
+private:
+	enum class TextAlignment {
+		LEFT,
+		CENTER,
+		RIGHT
+	};
 
 	std::string text = "Text";									   // Text to display
 	std::vector<std::array<std::array<float, 4>, 6>> verticesText; // Vertices per each character
@@ -36,6 +44,7 @@ private:
 	float fontSize = 12.0f;		// Font size
 	float4 color = float4::one; // Color of the font
 	float lineHeight = 16.0f;	// Line height
+	TextAlignment textAlignment = TextAlignment::LEFT;
 
 	unsigned int vbo = 0; // VBO of the text
 	unsigned int vao = 0; // VAO of the text

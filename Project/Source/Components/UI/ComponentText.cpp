@@ -67,11 +67,21 @@ void ComponentText::OnEditorUpdate() {
 	if (ImGui::DragFloat("Line height", &lineHeight, 2.0f, 0, FLT_MAX)) {
 		mustRecalculateVertices = true;
 	}
+
+	int type = static_cast<int>(textAlignment);
+	ImGui::RadioButton("Left", &type, 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("Center", &type, 1);
+	ImGui::SameLine();
+	ImGui::RadioButton("Right", &type, 2);
+	textAlignment = static_cast<TextAlignment>(type);
+
 	ImGui::ColorEdit4("Color##", color.ptr());
 
 	if (mustRecalculateVertices) {
  		RecalculcateVertices();
 	}
+
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
@@ -126,6 +136,11 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) const  {
+	glBegin(GL_LINES);
+	glVertex2f(App->renderer->viewportWidth / 2, 200 + App->renderer->viewportHeight / 2);
+	glVertex2f(App->renderer->viewportWidth / 2, -200 + App->renderer->viewportHeight / 2);
+	glEnd();
+
 	if (fontID == 0 || shaderID == 0) {
 		return;
 	}
@@ -201,6 +216,8 @@ void ComponentText::RecalculcateVertices() {
 	if (fontID == 0) {
 		return;
 	}
+	ResourceFont* font = App->resources->GetResource<ResourceFont>(fontID);
+
 	verticesText.resize(text.size());
 
 	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
@@ -225,6 +242,23 @@ void ComponentText::RecalculcateVertices() {
 			//dy += fontResource->GetLineHeight();
 			dy += lineHeight;
 			x = position.x;
+		} /*else if (text.at(i) == ' ') {
+			xpos += font->GetSpaceWidth();
+		}*/
+
+		switch (textAlignment) {
+			case TextAlignment::LEFT: {
+				xpos -= SubstringWidth(text.c_str(), scale);
+				break;
+			}
+			case TextAlignment::CENTER: {
+				xpos -= SubstringWidth(text.c_str(), scale) / 2.0f;
+				break;
+			}
+			case TextAlignment::RIGHT: {
+				//xpos -= SubstringWidth(text.c_str(), scale);
+				break;
+			}
 		}
 
 		verticesText[i] = {
@@ -239,7 +273,18 @@ void ComponentText::RecalculcateVertices() {
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		if (text.at(i) != '\n') {
-			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
 		}
 	}
+}
+
+int ComponentText::SubstringWidth(const char* substring, float scale) {
+	GLfloat subWidth = 0.f;
+
+	for (int i = 0; i < substring[i] != '\0' && substring[i] != '\n'; ++i) {
+		Character c = App->userInterface->GetCharacter(fontID, text.at(i));
+		subWidth += c.size.x * scale;
+	}
+
+	return subWidth;
 }
