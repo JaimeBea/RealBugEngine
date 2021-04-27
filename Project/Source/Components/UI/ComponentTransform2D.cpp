@@ -41,6 +41,19 @@ void ComponentTransform2D::OnEditorUpdate() {
 		SetSize(editorSize);
 	}
 
+	bool isPivotMode = pivotMode;
+	bool isCenterMode = centerMode;
+	ImGui::TextColored(App->editor->titleColor, "Rect Tool Mode");
+	if (ImGui::Checkbox("Pivot", &isPivotMode)) {
+		SetPivotMode(isPivotMode);
+		SetCenterMode(!isCenterMode);
+	}
+	ImGui::SameLine();
+	if (ImGui::Checkbox("Center", &isCenterMode)) {
+		SetCenterMode(isCenterMode);
+		SetPivotMode(!isPivotMode);
+	}
+
 	float2 anchX = anchorX;
 	float2 anchY = anchorY;
 	ImGui::TextColored(App->editor->titleColor, "Anchors");
@@ -241,6 +254,16 @@ float2 ComponentTransform2D::GetSize() const {
 
 float3 ComponentTransform2D::GetScale() const {
 	return scale;
+}
+
+void ComponentTransform2D::SetPivotMode(bool pivotMode_) {
+	pivotMode = pivotMode_;
+	InvalidateHierarchy();
+}
+
+void ComponentTransform2D::SetCenterMode(bool centerMode_) {
+	centerMode = centerMode_;
+	InvalidateHierarchy();
 }
 
 void ComponentTransform2D::InvalidateHierarchy() {
