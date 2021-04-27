@@ -51,6 +51,12 @@ void ComponentTransform2D::OnEditorUpdate() {
 		SetAnchorY(anchY);
 	}
 
+	float2 piv = pivot;
+	ImGui::TextColored(App->editor->titleColor, "Pivot (X,Y)");
+	if (ImGui::DragFloat2("Pivot", piv.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetPivot(piv);
+	}
+
 	float3 scl = scale;
 	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 		SetScale(scl);
