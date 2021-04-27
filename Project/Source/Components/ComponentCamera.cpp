@@ -68,9 +68,8 @@ void ComponentCamera::OnEditorUpdate() {
 		frustum.SetViewPlaneDistances(nearPlane, farPlane);
 	}
 	float verticalFov = frustum.VerticalFov();
-	float ar = frustum.AspectRatio();
 	if (ImGui::SliderAngle("FOV", &verticalFov, 45.f, 110.f)) {
-		frustum.SetVerticalFovAndAspectRatio(verticalFov, ar);
+		frustum.SetVerticalFovAndAspectRatio(verticalFov, frustum.AspectRatio());
 	}
 }
 
