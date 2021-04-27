@@ -160,6 +160,8 @@ void ComponentTransform2D::DrawGizmos() {
 
 void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
+	// Update the new pivot position
+	UpdatePivotPosition();
 	InvalidateHierarchy();
 }
 
@@ -171,8 +173,8 @@ void ComponentTransform2D::SetPivot(float2 pivot_) {
 }
 
 void ComponentTransform2D::UpdatePivotPosition() {
-	pivotPosition.x = size.x * pivot.x - size.x * 0.5;
-	pivotPosition.y = size.y * pivot.y - size.y * 0.5;
+	pivotPosition.x = (size.x * pivot.x - size.x * 0.5) + position.x;
+	pivotPosition.y = (size.y * pivot.y - size.y * 0.5) + position.y;
 	InvalidateHierarchy();
 }
 
