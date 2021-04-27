@@ -33,7 +33,8 @@ public:
 	void SetScale(float3 scale);									// Sets this scale to value
 	void SetAnchorX(float2 anchorX);								// Sets this anchorX to value
 	void SetAnchorY(float2 anchorY);								// Sets this anchorY to value
-	void SetPivot(float2 pivot);									// Sets this pivot to value
+	void SetPivot(float2 pivotPosition);							// Sets this pivot to value
+	void UpdatePivotPosition();										// Update this pivot position to value
 	const float4x4 GetGlobalMatrix() const;										// Returns GlobalMatrix
 	const float4x4 GetGlobalMatrixWithSize(bool view3DActive = false) const;	// Returns GlobalMatrix with the size of the item. view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
 
@@ -46,7 +47,9 @@ public:
 	void DuplicateComponent(GameObject& owner) override; // Duplicates component (THIS SHOULDN'T BE USED)
 
 private:
-	float2 pivot = float2(0.5, 0.5); // The position of the pivot
+	float2 pivot = float2(0.5, 0.5);	 // The position of the pivot in 2D
+	float3 pivotPosition = float3::zero; // The position of the pivot in the world
+
 	float2 size = float2(200, 200);	 // The size of the item
 
 	float3 position = float3::zero;			// The offset position
