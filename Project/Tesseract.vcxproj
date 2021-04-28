@@ -15,7 +15,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\ParticleSystem\Particle.h" />
     <ClInclude Include="Source\ParticleSystem\ParticleModule.h" />
     <ClInclude Include="Source\Components\ComponentParticleSystem.h" />
     <ClInclude Include="Libs\imgui\imgui_stdlib.h" />
@@ -273,7 +272,6 @@
     <ClInclude Include="Source\Utils\PoolMap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\ParticleSystem\Particle.cpp" />
     <ClCompile Include="Source\Components\ComponentParticleSystem.cpp" />
     <ClCompile Include="Libs\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />

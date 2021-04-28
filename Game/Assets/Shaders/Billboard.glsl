@@ -30,6 +30,13 @@ in vec2 uv0;
 uniform sampler2D diffuse;
 
 uniform float currentFrame; 
+uniform int Xtiles;
+uniform int Ytiles;
+
+uniform float colorFrame;
+uniform vec4 initColor;
+uniform vec4 finalColor;
+
 float X;
 float Y;
 float u;
@@ -39,15 +46,19 @@ out vec4 outColor;
 
 void main()
 {	
-	X = trunc(mod(currentFrame,6));
-	Y = trunc(currentFrame/6);
-	
-	X = mix(X,X+1, uv0.x);
-	Y = mix(Y,Y+1, uv0.y);
-	u = X/6;
-	v = Y/6;
-
-	outColor = texture2D(diffuse,  vec2(u, v) ) ;
+		X = trunc(mod(currentFrame,Xtiles));
+		Y = trunc(currentFrame/Ytiles);
+		
+		X = mix(X,X+1, uv0.x);
+		Y = mix(Y,Y+1, uv0.y);
+		u = X/Xtiles;
+		v = Y/Ytiles;
+	if(colorFrame<1){
+		float a = colorFrame - int(colorFrame);
+		outColor = mix(initColor, finalColor, a) * texture2D(diffuse,  vec2(u, v) ) ;
+	}else{
+		outColor = finalColor * texture2D(diffuse,  vec2(u, v) ) ;
+	}
 }
 
 #endif 

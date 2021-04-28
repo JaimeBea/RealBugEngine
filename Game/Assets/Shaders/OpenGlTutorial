@@ -1,0 +1,30 @@
+#ifdef VERTEX
+
+layout (location = 0) in vec2 aPos;
+layout (location = 1) in vec3 aColor;
+layout (location = 2) in vec3 aOffset;
+layout (location = 3) in vec3 instance_right;
+layout (location = 4) in vec3 instance_up;
+layout (location = 5) in vec3 instance_front;
+
+out vec3 fColor;
+
+void main()
+{
+    fColor = aColor;
+    gl_Position = vec4(aPos + aOffset, 1.0);
+}
+#endif
+
+#ifdef FRAGMENT
+
+out vec4 FragColor;
+
+in vec3 fColor;
+
+void main()
+{
+    FragColor = vec4(fColor, 1.0);
+}
+
+#endif 

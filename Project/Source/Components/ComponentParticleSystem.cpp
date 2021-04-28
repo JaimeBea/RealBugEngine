@@ -32,19 +32,6 @@
 
 #include <random>
 
-// clang-format off
-float quadVertices[] = {
-    // positions     // colors
-    -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-     0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-    -0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
-
-    -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
-     0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
-     0.05f,  0.05f,  0.0f, 1.0f, 1.0f
-};
-// clang-format on
-
 void ComponentParticleSystem::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->textColor, "Texture Settings:");
 
@@ -79,54 +66,84 @@ void ComponentParticleSystem::OnEditorUpdate() {
 		ImGui::SameLine();
 		ImGui::TextWrapped("%d x %d", width, height);
 		ImGui::Image((void*) textureResource->glTexture, ImVec2(200, 200));
-		ImGui::Separator();
-	}
-
-	if (ImGui::InputFloat("Speed: ", &velocity)) {
-		CreateParticles(maxParticles, velocity);
-	}
-
-	if (ImGui::InputFloat("MaxParticles: ", &maxParticles)) {
-		CreateParticles(maxParticles, velocity);
-	}
-
-	ImGui::Separator();
-	const char* emitterTypeCombo[] = {"Cone", "Sphere", "Hemisphere", "Donut", "Circle", "Rectangle"};
-	const char* emitterTypeComboCurrent = emitterTypeCombo[(int) emitterType];
-	ImGui::TextColored(App->editor->textColor, "Shape:");
-	if (ImGui::BeginCombo("##Shape", emitterTypeComboCurrent)) {
-		for (int n = 0; n < IM_ARRAYSIZE(emitterTypeCombo); ++n) {
-			bool isSelected = (emitterTypeComboCurrent == emitterTypeCombo[n]);
-			if (ImGui::Selectable(emitterTypeCombo[n], isSelected)) {
-				emitterType = (EmitterType) n;
-			}
-			if (isSelected) {
-				ImGui::SetItemDefaultFocus();
-			}
+		ImGui::InputInt("Xtiles: ", &Xtiles);
+		ImGui::InputInt("Ytiles: ", &Ytiles);
+		ImGui::InputFloat("Scale: ", &scale);
+		if (ImGui::InputFloat("Speed: ", &velocity)) {
+			CreateParticles(maxParticles, velocity);
 		}
-		ImGui::EndCombo();
-	}
 
-	ImGui::ColorEdit4("InitColor##", initC.ptr());
-	ImGui::ColorEdit4("FinalColor##", finalC.ptr());
+		if (ImGui::InputFloat("MaxParticles: ", &maxParticles)) {
+			CreateParticles(maxParticles, velocity);
+		}
+
+		ImGui::Separator();
+		const char* emitterTypeCombo[] = {"Cone", "Sphere", "Hemisphere", "Donut", "Circle", "Rectangle"};
+		const char* emitterTypeComboCurrent = emitterTypeCombo[(int) emitterType];
+		ImGui::TextColored(App->editor->textColor, "Shape:");
+		if (ImGui::BeginCombo("##Shape", emitterTypeComboCurrent)) {
+			for (int n = 0; n < IM_ARRAYSIZE(emitterTypeCombo); ++n) {
+				bool isSelected = (emitterTypeComboCurrent == emitterTypeCombo[n]);
+				if (ImGui::Selectable(emitterTypeCombo[n], isSelected)) {
+					emitterType = (EmitterType) n;
+				}
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		ImGui::ColorEdit4("InitColor##", initC.ptr());
+		ImGui::ColorEdit4("FinalColor##", finalC.ptr());
+	}
 }
+
+float3 ComponentParticleSystem::CreateVelocity() {
+	if (emitterType == EmitterType::CONE) {
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		float x = (transform->GetPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
+		float z = (transform->GetPosition().z) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
+		float y = (transform->GetPosition().y) + (float(rand()) / float((RAND_MAX)) * 1.0);
+		return float3(x, y, z);
+	}
+	if (emitterType == EmitterType::SPHERE) {
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		float x = (transform->GetPosition().x) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
+		float z = (transform->GetPosition().z) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
+		float y = (transform->GetPosition().y) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
+		return float3(x, y, z);
+	}
+};
 
 float3 ComponentParticleSystem::CreatePosition() {
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		float x = (float(rand()) / float((RAND_MAX)) * 1.0) - 1.0f;
-		float z = (float(rand()) / float((RAND_MAX)) * 1.0) - 1.0f;
+		float x = (transform->GetPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
+		float z = (transform->GetPosition().z) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
 		float y = (transform->GetPosition().y);
+		return float3(x, y, z);
+	}
+	if (emitterType == EmitterType::SPHERE) {
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		float x = (transform->GetPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
+		float z = (transform->GetPosition().z) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
+		float y = (transform->GetPosition().y) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
 		return float3(x, y, z);
 	}
 }
 
 void ComponentParticleSystem::CreateParticles(float nParticles, float vel) {
-	particles.clear();
-	for (int i = 0; i < nParticles; i++) {
-		particles.push_back(Particle(shaderID, textureID, true, vel, initC, finalC, CreatePosition()));
+	particles.Allocate(maxParticles);
+	for (Particle& currentParticle : particles) {
+		currentParticle.scale = float3(0.1f, 0.1f, 0.1f) * scale;
+		currentParticle.initialPosition = CreatePosition();
+		currentParticle.position = currentParticle.initialPosition;
+		currentParticle.direction = CreateVelocity();
+		currentParticle.velocity = vel;
 	}
 }
+
 void ComponentParticleSystem::Load(JsonValue jComponent) {
 	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
 
@@ -148,19 +165,37 @@ void ComponentParticleSystem::Save(JsonValue jComponent) const {
 }
 
 void ComponentParticleSystem::Update() {
-	aux = 0;
-	bool ret = true;
-	for (std::vector<Particle>::iterator it = particles.begin(); it != particles.end() && ret; ++it) {
-		if ((it)->isActivate) {
-			(it)->Uptade();
-			(it)->Draw(GetOwner().GetComponent<ComponentTransform>());
-			if (aux < 100) {
-				translations[aux].Add((it)->position);
-				aux++;
-			}
+	deadParticles.clear();
+	for (Particle& currentParticle : particles) {
+		currentParticle.life -= 0.01;
+		currentParticle.position += currentParticle.direction * velocity;
+		currentParticle.model = float4x4::FromTRS(currentParticle.position, currentParticle.rotation, currentParticle.scale);
+		if (currentParticle.life < 0) {
+			deadParticles.push_back(&currentParticle);
 		}
 	}
+	for (Particle* currentParticle : deadParticles) {
+		particles.Release(currentParticle);
+	}
 	Draw();
+}
+
+void ComponentParticleSystem::Init() {
+	CreateParticles(maxParticles, velocity);
+}
+
+void ComponentParticleSystem::SpawnParticle() {
+	Particle* currentParticle = particles.Obtain();
+	if (currentParticle) {
+		currentParticle->position = currentParticle->initialPosition;
+		currentParticle->life = 5.0;
+		currentParticle->currentFrame = 0;
+		currentParticle->colorFrame = 0;
+		currentParticle->direction = CreateVelocity();
+		currentParticle->initialPosition = CreatePosition();
+		currentParticle->position = currentParticle->initialPosition;
+		currentParticle->scale = float3(0.1f, 0.1f, 0.1f) * scale;
+	}
 }
 
 void ComponentParticleSystem::DrawGizmos() {
@@ -190,12 +225,71 @@ const float4& ComponentParticleSystem::GetTintColor() const {
 }
 
 void ComponentParticleSystem::Draw() {
-	bool ret = true;
-	for (std::vector<Particle>::iterator it = particles.begin(); it != particles.end() && ret; ++it) {
-		if (!(it)->isActivate) {
-			(it)->Spawn(CreatePosition());
-			(it)->Draw(GetOwner().GetComponent<ComponentTransform>());
+	for (Particle& currentParticle : particles) {
+		unsigned int program = 0;
+		ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+		if (shaderResouce) {
+			program = shaderResouce->GetShaderProgram();
+		} else {
 			return;
 		}
+
+		if (true) {
+			glDisable(GL_CULL_FACE);
+			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_MAX);
+			glBlendFunc(GL_ONE, GL_ONE);
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, App->userInterface->GetQuadVBO());
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
+		glUseProgram(program);
+		//TODO ADD DELTATIME
+
+		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
+		currentParticle.model = transform->GetGlobalMatrix() * currentParticle.model;
+
+		float3x3 rotatePart = currentParticle.model.RotatePart();
+		Frustum* frustum = App->camera->GetActiveFrustum();
+		float4x4* proj = &App->camera->GetProjectionMatrix();
+		float4x4* view = &App->camera->GetViewMatrix();
+
+		float4x4 newModelMatrix = currentParticle.model.LookAt(rotatePart.Col(2), -frustum->Front(), rotatePart.Col(1), float3::unitY);
+		float4x4 Final = float4x4::FromTRS(currentParticle.position, newModelMatrix.RotatePart(), currentParticle.scale);
+		//-> glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, newModelMatrix.ptr());
+
+		glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, Final.ptr());
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
+		glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
+
+		currentParticle.currentFrame += 0.1f;
+		currentParticle.colorFrame += 0.01f;
+		glActiveTexture(GL_TEXTURE0);
+		glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
+		glUniform1f(glGetUniformLocation(program, "currentFrame"), currentParticle.currentFrame);
+		glUniform1f(glGetUniformLocation(program, "colorFrame"), currentParticle.colorFrame);
+		glUniform4fv(glGetUniformLocation(program, "initColor"), 1, initC.ptr());
+		glUniform4fv(glGetUniformLocation(program, "finalColor"), 1, finalC.ptr());
+
+		glUniform1i(glGetUniformLocation(program, "Xtiles"), Xtiles);
+		glUniform1i(glGetUniformLocation(program, "Ytiles"), Ytiles);
+
+		ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+		if (textureResource != nullptr) {
+			glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
+		}
+		//glDrawArraysInstanced(GL_TRIANGLES, 0, 4, 100);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glDisable(GL_BLEND);
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
 	}
+	SpawnParticle();
 }

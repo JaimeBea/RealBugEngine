@@ -160,7 +160,6 @@
     <ClCompile Include="Source\Resources\ResourceSkybox.cpp" />
     <ClCompile Include="Source\Resources\ResourceTexture.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
-    <ClCompile Include="Source\ParticleSystem\Particle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -418,7 +417,6 @@
     <ClInclude Include="Source\Resources\ResourceSkybox.h" />
     <ClInclude Include="Source\Resources\ResourceTexture.h" />
     <ClInclude Include="Source\Resources\ResourceType.h" />
-    <ClInclude Include="Source\ParticleSystem\Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
