@@ -11,7 +11,6 @@
 
 class ResourceClip : public Resource {
 public:
-
 	REGISTER_RESOURCE(ResourceClip, ResourceType::CLIP);
 
 	void Load() override;

@@ -53,12 +53,11 @@ void ResourceClip::Load() {
 	loop = jStateMachine[JSON_TAG_LOOP];
 	speed = jStateMachine[JSON_TAG_SPEED];
 
-	Init(name, animationUID, beginIndex, endIndex, loop,speed, 0);
+	Init(name, animationUID, beginIndex, endIndex, loop, speed, 0);
 
 	unsigned timeMs = timer.Stop();
 	LOG("Clip loaded in %ums", timeMs);
 }
-
 
 void ResourceClip::Unload() {
 	App->resources->DecreaseReferenceCount(animationUID);
@@ -117,7 +116,7 @@ void ResourceClip::SetBeginIndex(unsigned int index) {
 	if (!animationResource) {
 		return;
 	}
-	if (endIndex >= index ) {
+	if (endIndex >= index) {
 		beginIndex = index;
 		keyFramesSize = endIndex - beginIndex;
 		duration = keyFramesSize * animationResource->duration / animationResource->keyFrames.size();
@@ -137,6 +136,6 @@ void ResourceClip::SetEndIndex(unsigned int index) {
 	}
 }
 
-ResourceAnimation* ResourceClip::GetResourceAnimation() const{
+ResourceAnimation* ResourceClip::GetResourceAnimation() const {
 	return App->resources->GetResource<ResourceAnimation>(animationUID);
 }

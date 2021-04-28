@@ -640,7 +640,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		std::string resourceName = "animation";
 		std::string stateName = "state";
 		std::string clipName = "clip";
-			
+
 		ResourceAnimation* testAnim = nullptr; //TODO::Delete this
 
 		State initialState;
@@ -670,7 +670,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 			initialState = resourceStateMachine->AddState(stateName + parsedI, clip->GetId());
 		}
 
-
 		// TODO:: Hardcoded for testing animation
 		//Setting machine state
 		//Dead animation
@@ -691,7 +690,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		JsonValue jResourceClip3 = jResources[resourceIndex];
 		UID idClip3 = jResourceClip3[JSON_TAG_ID];
 		ResourceClip* clip3 = App->resources->CreateResource<ResourceClip>(filePath, idClip3 ? idClip3 : GenerateUID());
-		clip3->Init(clipName3, testAnim->GetId(), 60, 120,  true );
+		clip3->Init(clipName3, testAnim->GetId(), 60, 120, true);
 		jResourceClip3[JSON_TAG_TYPE] = GetResourceTypeName(clip3->GetType());
 		jResourceClip3[JSON_TAG_ID] = clip3->GetId();
 		resourceIndex += 1;

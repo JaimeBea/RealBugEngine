@@ -4,14 +4,12 @@
 #include <string>
 
 class Transition {
-	
 public:
-	Transition(const State& mSource,const State& mTarget, float mInterpolation,UID mid = 0)
+	Transition(const State& mSource, const State& mTarget, float mInterpolation, UID mid = 0)
 		: source(mSource)
 		, target(mTarget)
-		, interpolationDuration(mInterpolation)
-	{
-		id = mid != 0 ? mid :GenerateUID();
+		, interpolationDuration(mInterpolation) {
+		id = mid != 0 ? mid : GenerateUID();
 	}
 
 public:

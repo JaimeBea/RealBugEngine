@@ -11,9 +11,9 @@
 
 #include "Utils/Leaks.h"
 
-bool AnimationController::GetTransform(const ResourceClip& clip, float& currentTime, const char* name,float3& pos,Quat& quat) {
+bool AnimationController::GetTransform(const ResourceClip& clip, float& currentTime, const char* name, float3& pos, Quat& quat) {
 	assert(clip.animationUID != 0);
-	
+
 	if (clip.loop) {
 		currentTime = currentTime > clip.duration ? 0 : currentTime;
 	} else {
@@ -41,7 +41,7 @@ bool AnimationController::GetTransform(const ResourceClip& clip, float& currentT
 	return true;
 }
 
-bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator &it, const std::list<AnimationInterpolation> &animationInterpolations, const GameObject& rootBone, const GameObject& gameObject, float3& pos, Quat& quat) {
+bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator& it, const std::list<AnimationInterpolation>& animationInterpolations, const GameObject& rootBone, const GameObject& gameObject, float3& pos, Quat& quat) {
 	ResourceClip clip = *(App->resources->GetResource<ResourceClip>((*it).state->clipUid));
 	bool result = GetTransform(clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
 
@@ -54,10 +54,9 @@ bool AnimationController::InterpolateTransitions(const std::list<AnimationInterp
 		pos = float3::Lerp(position, pos, weight);
 		quat = AnimationController::Interpolate(rotation, quat, weight);
 	}
-	
+
 	return result;
 }
-
 
 struct CheckFinishInterpolation {
 	bool operator()(AnimationInterpolation& animationInterpolation) {
@@ -66,7 +65,6 @@ struct CheckFinishInterpolation {
 };
 
 State* AnimationController::UpdateTransitions(std::list<AnimationInterpolation>& animationInterpolations, const float time) {
-	
 	State* state = nullptr;
 	bool finished = false;
 	for (auto& interpolation = animationInterpolations.rbegin(); interpolation != animationInterpolations.rend(); ++interpolation) {
@@ -92,8 +90,6 @@ State* AnimationController::UpdateTransitions(std::list<AnimationInterpolation>&
 
 	return state;
 }
-
-
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) {
 	if (first.Dot(second) >= 0.0f) // is minimum arc ?

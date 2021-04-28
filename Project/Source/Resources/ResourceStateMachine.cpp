@@ -32,7 +32,6 @@
 #define JSON_TAG_TRIGGER_NAME "Trigger"
 #define JSON_TAG_INTERPOLATION_DURATION "Interpolation"
 
-
 void ResourceStateMachine::Load() {
 	// Timer to measure loading a material
 	MSTimer timer;
@@ -54,7 +53,7 @@ void ResourceStateMachine::Load() {
 
 	const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS].GetArray();
 	assert(clipsArray.IsArray());
-	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr){
+	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr) {
 		UID clipUID = itr->GetUint64();
 		ResourceClip* clip = App->resources->GetResource<ResourceClip>(clipUID);
 		App->resources->IncreaseReferenceCount(clipUID);
@@ -63,13 +62,12 @@ void ResourceStateMachine::Load() {
 
 	std::unordered_map<UID, State> stateMap;
 	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
-			UID id = p[JSON_TAG_ID].GetUint64();
-			std::string name = p[JSON_TAG_NAME].GetString();
-			UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
-			State state(name, clipId, 0, id);
-			states.push_back(state);
-			stateMap.insert(std::make_pair(id, state));
-
+		UID id = p[JSON_TAG_ID].GetUint64();
+		std::string name = p[JSON_TAG_NAME].GetString();
+		UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
+		State state(name, clipId, 0, id);
+		states.push_back(state);
+		stateMap.insert(std::make_pair(id, state));
 	}
 
 	for (auto const& p : document[JSON_TAG_TRANSITIONS].GetArray()) {
@@ -78,9 +76,9 @@ void ResourceStateMachine::Load() {
 		UID source = p[JSON_TAG_SOURCE].GetUint64();
 		UID target = p[JSON_TAG_TARGET].GetUint64();
 		float interpolationDuration = p[JSON_TAG_INTERPOLATION_DURATION].GetFloat();
-		Transition transition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration,id);
+		Transition transition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration, id);
 		transitions.insert(std::make_pair(triggerName, transition));
-	}	
+	}
 
 	unsigned timeMs = timer.Stop();
 	LOG("Material loaded in %ums", timeMs);
@@ -98,7 +96,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 
 	MSTimer timer;
 	timer.Start();
-	
+
 	// Create document
 	rapidjson::Document document;
 	JsonValue jStateMachine(document, document);
@@ -110,7 +108,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	rapidjson::Value clipsArrayJson(rapidjson::kArrayType);
 	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 	std::list<UID>::iterator itClip;
-	for (itClip = clipsUids.begin(); itClip != clipsUids.end(); ++itClip) {		
+	for (itClip = clipsUids.begin(); itClip != clipsUids.end(); ++itClip) {
 		rapidjson::Value id;
 		id.SetUint64((*itClip));
 		clipsArrayJson.PushBack(id, allocator);
@@ -120,7 +118,7 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	// Saving States
 	rapidjson::Value statesArrayJson(rapidjson::kArrayType);
 	std::list<State>::iterator itState;
-	for (itState = states.begin(); itState != states.end(); ++itState) {		
+	for (itState = states.begin(); itState != states.end(); ++itState) {
 		rapidjson::Value objValue(rapidjson::kObjectType);
 		rapidjson::Value name((*itState).name.c_str(), allocator);
 		objValue.AddMember(JSON_TAG_ID, (*itState).id, allocator);
@@ -130,10 +128,10 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 		statesArrayJson.PushBack(objValue, allocator);
 	}
 	document.AddMember(JSON_TAG_STATES, statesArrayJson, allocator);
-	
+
 	//Saving transitions
 	rapidjson::Value transitionsArrayJson(rapidjson::kArrayType);
-	for (const auto &element : transitions) {
+	for (const auto& element : transitions) {
 		rapidjson::Value objValue(rapidjson::kObjectType);
 		rapidjson::Value triggerName(element.first.c_str(), allocator);
 		objValue.AddMember(JSON_TAG_TRIGGER_NAME, triggerName, allocator);
@@ -145,7 +143,6 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 		transitionsArrayJson.PushBack(objValue, allocator);
 	}
 	document.AddMember(JSON_TAG_TRANSITIONS, transitionsArrayJson, allocator);
-
 
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;
@@ -163,8 +160,8 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	LOG("Material saved in %ums", timeMs);
 }
 
-State ResourceStateMachine::AddState(const std::string &name, UID clipUID) {
-	State state(name, clipUID);	
+State ResourceStateMachine::AddState(const std::string& name, UID clipUID) {
+	State state(name, clipUID);
 	states.push_back(state);
 	AddClip(clipUID);
 
@@ -195,7 +192,7 @@ Transition* ResourceStateMachine::FindTransitionGivenName(const std::string& nam
 	std::unordered_map<std::string, Transition>::iterator it = transitions.find(name);
 	if (it != transitions.end()) {
 		return &(*it).second;
-	} 
+	}
 
 	return nullptr;
 }

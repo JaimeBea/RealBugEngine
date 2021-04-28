@@ -116,7 +116,6 @@ void ComponentAnimation::SendTrigger(const std::string& trigger) {
 	}
 }
 
-
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	if (gameObject == nullptr) {
 		return;
@@ -131,10 +130,10 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 	if (animationInterpolations.size() > 1) {
 		result = AnimationController::InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, *GetOwner().GetRootBone(), *gameObject, position, rotation);
-		
+
 		//Updating times
 		if (gameObject == GetOwner().GetRootBone()) { // Only udate currentTime for the rootBone
-			State *newState = AnimationController::UpdateTransitions(animationInterpolations, App->time->GetDeltaTime());
+			State* newState = AnimationController::UpdateTransitions(animationInterpolations, App->time->GetDeltaTime());
 			if (newState) {
 				currentState = newState;
 			}

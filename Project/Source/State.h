@@ -3,22 +3,20 @@
 #include <string>
 
 class State {
-
 public:
 	State() {}
 	State(const State& mState)
 		: id(mState.id)
 		, name(mState.name)
 		, clipUid(mState.clipUid)
-		, currentTime(mState.currentTime){
+		, currentTime(mState.currentTime) {
 	}
 
 	State(const std::string& mName, UID mClipUid, float mCurrentTime = 0, UID mid = 0)
 		: name(mName)
 		, clipUid(mClipUid)
 		, currentTime(mCurrentTime) {
-
-		id = mid != 0 ? mid :GenerateUID();
+		id = mid != 0 ? mid : GenerateUID();
 	}
 
 public:
@@ -26,5 +24,4 @@ public:
 	UID clipUid = 0;
 	std::string name = "";
 	float currentTime = 0;
-
 };
