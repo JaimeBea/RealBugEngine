@@ -184,8 +184,6 @@ void ComponentTransform2D::SetSize(float2 size_) {
 }
 
 void ComponentTransform2D::SetRotation(Quat rotation_) {
-	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
-
 	rotation = rotation_;
 	localEulerAngles = rotation_.ToEulerXYZ().Mul(RADTODEG);
 
@@ -193,10 +191,9 @@ void ComponentTransform2D::SetRotation(Quat rotation_) {
 }
 
 void ComponentTransform2D::SetRotation(float3 rotation_) {
-	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
-
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
+
 	InvalidateHierarchy();
 }
 
@@ -227,6 +224,8 @@ const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) 
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
+	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
+
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 	float factor = canvasRenderer->GetCanvasScreenFactor();
 	if (dirty) {
@@ -236,10 +235,15 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 		if (parent != nullptr) {
 			ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
 
+			// NOTE: Comment this and the draw for the button works well
 			if (parentTransform != nullptr) {
 				parentTransform->CalculateGlobalMatrix();
 				globalMatrix = parentTransform->globalMatrix * localMatrix;
 			} else {
+				if (isPivotMode) {
+					// Si entra por aqui, cambia el tamaño del boton y lo hace mas grande
+					localMatrix = float4x4(rotation) * float4x4::Scale(scale) * float4x4::Translate(float3(-pivotPosition));
+				}
 				globalMatrix = localMatrix;
 			}
 
