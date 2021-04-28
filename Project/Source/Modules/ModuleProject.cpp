@@ -485,25 +485,30 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 
 	std::string dllPath = buildPath + name + ".dll";
-
 	std::string pdbPath = buildPath + name + ".pdb";
+
 	std::string auxName = App->files->GetFilePath(pdbPath.c_str(), true);
 
-	std::size_t found = auxName.find_first_of("/");
-	while (found != std::string::npos) {
-		auxName[found] = '\\';
-		found = auxName.find_first_of("/", found + 1);
+	// GetFilePath returns "" if the file is not found
+
+	if (auxName != "") {
+		std::size_t found = auxName.find_first_of("/");
+		while (found != std::string::npos) {
+			auxName[found] = '\\';
+			found = auxName.find_first_of("/", found + 1);
+		}
+
+		auxName[auxName.size() - 5] = '_';
+		PDBReplace(dllPath, auxName);
+		std::string realPDB = buildPath + name + ".pdb";
+		if (!CopyFileA(realPDB.c_str(), auxName.c_str(), FALSE)) {
+			std::string error = GetLastErrorStdStr().c_str();
+			LOG("Copy fails %s", error.c_str());
+		}
 	}
 
-	auxName[auxName.size() - 5] = '_';
-	PDBReplace(dllPath, auxName);
-	std::string realPDB = buildPath + name + ".pdb";
-	if (!CopyFileA(realPDB.c_str(), auxName.c_str(), FALSE)) {
-		std::string error = GetLastErrorStdStr().c_str();
-		LOG("Copy fails %s", error.c_str());
-	}
+
 	std::string logFile = buildPath + name + ".log";
-
 	Buffer<char> buffer = App->files->Load(logFile.c_str());
 	std::string logContent = "";
 	if (buffer.Size() > 0) {
