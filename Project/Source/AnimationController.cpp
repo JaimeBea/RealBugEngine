@@ -44,21 +44,56 @@ bool AnimationController::GetTransform(const ResourceClip& clip, float& currentT
 bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator &it, const std::list<AnimationInterpolation> &animationInterpolations, const GameObject& rootBone, const GameObject& gameObject, float3& pos, Quat& quat) {
 	ResourceClip clip = *(App->resources->GetResource<ResourceClip>((*it).state->clipUid));
 	bool result = GetTransform(clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
+
 	if (&(*it) != &(*std::prev(animationInterpolations.end()))) {
 		float3 position;
 		Quat rotation;
 		AnimationController::InterpolateTransitions(std::next(it), animationInterpolations, rootBone, gameObject, position, rotation);
-
-		(*it).fadeTime = 1 - ((*it).TransistionTime - (*it).currentTime) / (*it).TransistionTime;
-		pos = float3::Lerp(position, pos, (*it).fadeTime);
-		quat = AnimationController::Interpolate(rotation, quat, (*it).fadeTime);
+		float weight = (*it).fadeTime / (*it).transitionTime;
+		//(*it).fadeTime = 1 - ((*it).transistionTime - (*it).currentTime) / (*it).transistionTime;
+		pos = float3::Lerp(position, pos, weight);
+		quat = AnimationController::Interpolate(rotation, quat, weight);
 	}
-	if (&gameObject == &rootBone) { // Only udate currentTime for the rootBone
-		(*it).currentTime += App->time->GetDeltaTime();
-	}
-
+	
 	return result;
 }
+
+
+struct CheckFinishInterpolation {
+	bool operator()(AnimationInterpolation& animationInterpolation) {
+		return animationInterpolation.fadeTime >= animationInterpolation.transitionTime;
+	}
+};
+
+State* AnimationController::UpdateTransitions(std::list<AnimationInterpolation>& animationInterpolations, const float time) {
+	
+	State* state = nullptr;
+	bool finished = false;
+	for (auto& interpolation = animationInterpolations.rbegin(); interpolation != animationInterpolations.rend(); ++interpolation) {
+		(*interpolation).currentTime += time;
+		(*interpolation).fadeTime += time;
+
+		if (finished) {
+			(*interpolation).fadeTime = (*interpolation).transitionTime;
+		}
+
+		if ((*interpolation).fadeTime >= (*interpolation).transitionTime) {
+			finished = true;
+			state = (*interpolation).state;
+			state->currentTime = (*interpolation).currentTime;
+		}
+	}
+
+	CheckFinishInterpolation checkFinishInterpolation;
+	animationInterpolations.remove_if(checkFinishInterpolation);
+	if (animationInterpolations.size() <= 1) {
+		animationInterpolations.clear();
+	}
+
+	return state;
+}
+
+
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) {
 	if (first.Dot(second) >= 0.0f) // is minimum arc ?

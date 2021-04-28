@@ -116,19 +116,6 @@ void ComponentAnimation::SendTrigger(const std::string& trigger) {
 	}
 }
 
-struct CheckFinishInterpolation {
-	bool operator()(AnimationInterpolation& animationInterpolation) {
-		if (animationInterpolation.fadeTime >= 0.9) {
-			ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
-			componentAnimation->currentState = animationInterpolation.state;
-			componentAnimation->currentState->currentTime = animationInterpolation.TransistionTime;
-			LOG("CheckFinishInterpolation");
-		}
-		return animationInterpolation.fadeTime >= 0.9;
-	}
-	UID stateMachineResourceUID;
-	ComponentAnimation* componentAnimation;
-};
 
 void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 	if (gameObject == nullptr) {
@@ -144,13 +131,15 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 	if (animationInterpolations.size() > 1) {
 		result = AnimationController::InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, *GetOwner().GetRootBone(), *gameObject, position, rotation);
-		CheckFinishInterpolation checkFinishInterpolation;
-		checkFinishInterpolation.stateMachineResourceUID = stateMachineResourceUID;
-		checkFinishInterpolation.componentAnimation = this;
-		animationInterpolations.remove_if(checkFinishInterpolation);
-		if (animationInterpolations.size() <= 1) {
-			animationInterpolations.clear();
+		
+		//Updating times
+		if (gameObject == GetOwner().GetRootBone()) { // Only udate currentTime for the rootBone
+			State *newState = AnimationController::UpdateTransitions(animationInterpolations, App->time->GetDeltaTime());
+			if (newState) {
+				currentState = newState;
+			}
 		}
+
 	} else {
 		ResourceClip clip = *(App->resources->GetResource<ResourceClip>(currentState->clipUid));
 		result = AnimationController::GetTransform(clip, currentState->currentTime, gameObject->name.c_str(), position, rotation);

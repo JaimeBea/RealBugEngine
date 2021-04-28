@@ -8,11 +8,11 @@ public:
 		: state(resourceState)
 		, currentTime(current)
 		, fadeTime(fade)
-		, TransistionTime(transition) {}
+		, transitionTime(transition) {}
 
 public:
 	State* state;
 	float currentTime = 0;
 	float fadeTime = 0;
-	float TransistionTime = 0;
+	float transitionTime = 0;
 };
