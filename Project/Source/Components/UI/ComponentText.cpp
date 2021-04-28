@@ -79,9 +79,8 @@ void ComponentText::OnEditorUpdate() {
 	ImGui::ColorEdit4("Color##", color.ptr());
 
 	if (mustRecalculateVertices) {
- 		RecalculcateVertices();
+		RecalculcateVertices();
 	}
-
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
@@ -135,7 +134,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	component->SetText(text);
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) const  {
+void ComponentText::Draw(ComponentTransform2D* transform) const {
 	glBegin(GL_LINES);
 	glVertex2f(App->renderer->viewportWidth / 2, 200 + App->renderer->viewportHeight / 2);
 	glVertex2f(App->renderer->viewportWidth / 2, -200 + App->renderer->viewportHeight / 2);
@@ -229,7 +228,7 @@ void ComponentText::RecalculcateVertices() {
 	float scale = fontSize / 48.0f;
 	float dy = y;
 	int totalWidthLine = 0;
-	for (int i = 0; i < text.size(); ++i) {	
+	for (int i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
 		float xpos = x + character.bearing.x * scale;
@@ -252,44 +251,63 @@ void ComponentText::RecalculcateVertices() {
 		}*/
 
 		switch (textAlignment) {
-			case TextAlignment::LEFT: {
-				break;
-			}
-			case TextAlignment::CENTER: {
-				xpos += (transform->GetSize().x/2.0f - SubstringWidth(&text.c_str()[i + 1], scale));
-				//xpos += (totalWidthLine + transform->GetSize().x) / 2.0f;
-				//xpos += (transform->GetSize().x - SubstringWidth(&text.c_str()[i+1], scale)) / 2.0f;
-				//xpos += (transform->GetSize().x) / 2.0f;
-				break;
-			}
-			case TextAlignment::RIGHT: {
-				//xpos -= SubstringWidth(text.c_str(), scale);
-				xpos += (transform->GetSize().x - SubstringWidth(&text.c_str()[i + 1], scale));
+		case TextAlignment::LEFT: {
+			break;
+		}
+		case TextAlignment::CENTER: {
+			int aux = SubstringWidth(&text.c_str()[0], scale);
+			int trans = transform->GetSize().x;
+			xpos += (transform->GetSize().x / 2.0f - aux / 2.0f);
+			LOG("x");
+			//xpos += (totalWidthLine + transform->GetSize().x) / 2.0f;
+			//xpos += (transform->GetSize().x - SubstringWidth(&text.c_str()[i+1], scale)) / 2.0f;
+			//xpos += (transform->GetSize().x) / 2.0f;
+			break;
+		}
+		case TextAlignment::RIGHT: {
+			//xpos -= SubstringWidth(text.c_str(), scale);
+			xpos += (transform->GetSize().x - SubstringWidth(&text.c_str()[i + 1], scale));
 
-				break;
-			}
+			break;
+		}
 		}
 
 		verticesText[i] = {
-			xpos, ypos + h - dy, 0.0f, 0.0f,
-			xpos, ypos - dy, 0.0f, 1.0f,
-			xpos + w, ypos - dy, 1.0f, 1.0f,
+			xpos,
+			ypos + h - dy,
+			0.0f,
+			0.0f,
+			xpos,
+			ypos - dy,
+			0.0f,
+			1.0f,
+			xpos + w,
+			ypos - dy,
+			1.0f,
+			1.0f,
 
-			xpos, ypos + h - dy, 0.0f, 0.0f,
-			xpos + w, ypos - dy, 1.0f, 1.0f,
-			xpos + w, ypos + h - dy, 1.0f, 0.0f
-		};
+			xpos,
+			ypos + h - dy,
+			0.0f,
+			0.0f,
+			xpos + w,
+			ypos - dy,
+			1.0f,
+			1.0f,
+			xpos + w,
+			ypos + h - dy,
+			1.0f,
+			0.0f};
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		if (text.at(i) != '\n') {
 			//if (textAlignment == TextAlignment::CENTER) {
 			//	x += (character.advance >> 6) * scale - ((character.size.x * scale) + (character.bearing.x * scale));
 			//} else {
-			//	x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
+			//	x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64
 
 			//}
-			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
-
+			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64
 		}
 	}
 }
@@ -299,7 +317,8 @@ int ComponentText::SubstringWidth(const char* substring, float scale) {
 
 	for (int i = 0; i < substring[i] != '\0' && substring[i] != '\n'; ++i) {
 		Character c = App->userInterface->GetCharacter(fontID, text.at(i));
-		subWidth += (c.size.x * scale) + (c.bearing.x * scale);
+		/*subWidth += (c.size.x * scale) + (c.bearing.x * scale);*/
+		subWidth += (c.advance >> 6) * scale;
 		//subWidth += (c.advance >> 6) * scale;
 		//subWidth += c.size.x * scale;
 		//subWidth += c.bearing.x * scale;		// Lo centra pero alineado a la izquierda
