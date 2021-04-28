@@ -50,4 +50,6 @@ private:
 	unsigned int vao = 0; // VAO of the text
 	UID shaderID = 0;	  // Shader ID of the text
 	UID fontID = 0;		  // Font ID of the text
+
+	bool wireframe = true;
 };

@@ -82,6 +82,11 @@ void ComponentText::OnEditorUpdate() {
  		RecalculcateVertices();
 	}
 
+	if (ImGui::Checkbox("Wireframe", &wireframe)) {
+	}
+	if (!wireframe) {
+	}
+
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
@@ -147,6 +152,14 @@ void ComponentText::Draw(ComponentTransform2D* transform) const  {
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	if (wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	} else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	}
 
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
@@ -256,7 +269,8 @@ void ComponentText::RecalculcateVertices() {
 				break;
 			}
 			case TextAlignment::CENTER: {
-				xpos += (transform->GetSize().x/2.0f - SubstringWidth(&text.c_str()[i + 1], scale));
+				//xpos += (transform->GetSize().x - SubstringWidth(&text.c_str()[i+1], scale)) / 2.0f;
+				xpos += transform->GetSize().x / 2.0f - SubstringWidth(&text.c_str()[i + 1], scale);
 				//xpos += (totalWidthLine + transform->GetSize().x) / 2.0f;
 				//xpos += (transform->GetSize().x - SubstringWidth(&text.c_str()[i+1], scale)) / 2.0f;
 				//xpos += (transform->GetSize().x) / 2.0f;
@@ -282,13 +296,13 @@ void ComponentText::RecalculcateVertices() {
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		if (text.at(i) != '\n') {
-			//if (textAlignment == TextAlignment::CENTER) {
-			//	x += (character.advance >> 6) * scale - ((character.size.x * scale) + (character.bearing.x * scale));
-			//} else {
-			//	x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
+			if (textAlignment == TextAlignment::CENTER) {
+				x += (character.advance >> 6) * scale - ((character.size.x * scale) + (character.bearing.x * scale));
+			} else {
+				x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
 
-			//}
-			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
+			}
+			//x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64 
 
 		}
 	}
