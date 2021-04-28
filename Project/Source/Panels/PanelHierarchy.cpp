@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "GameObject.h"
+#include "FileSystem/PrefabImporter.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/UI/ComponentTransform2D.h"
@@ -14,6 +15,7 @@
 #include "Components/UI/ComponentButton.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleFiles.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourcePrefab.h"
@@ -66,6 +68,14 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		App->editor->selectedGameObject = gameObject;
 		Scene* scene = App->scene->scene;
 		if (gameObject != scene->root) {
+			if (ImGui::Selectable("Create Prefab")) {
+				std::string path = std::string(PREFABS_PATH) + "/" + gameObject->name + PREFAB_EXTENSION;
+				for (unsigned copyIndex = 0; App->files->Exists(path.c_str()); ++copyIndex) {
+					path = std::string(PREFABS_PATH) + "/" + gameObject->name + " (" + std::to_string(copyIndex) + ")" + PREFAB_EXTENSION;
+				}
+				PrefabImporter::SavePrefab(path.c_str(), gameObject);
+			}
+
 			if (ImGui::Selectable("Delete")) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 				App->scene->DestroyGameObjectDeferred(gameObject);

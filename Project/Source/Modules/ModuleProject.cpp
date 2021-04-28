@@ -14,6 +14,8 @@
 #include <shellapi.h>
 #include <ObjIdl.h>
 
+#include <filesystem>
+
 #include "Utils/Leaks.h"
 
 template<class T>
@@ -133,7 +135,7 @@ static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 	return nullptr;
 }
 
-bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB) {
+bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB) {
 	HANDLE fp = nullptr;
 	HANDLE filemap = nullptr;
 	LPVOID mem = nullptr;
@@ -259,7 +261,6 @@ bool ModuleProject::PDBReplace(const std::string& filename, const std::string& n
 		if (pdb) {
 			size_t len = strlen(pdb);
 			if (len >= strlen(namePDB.c_str())) {
-				originalPDB = pdb;
 				memcpy_s(pdb, len, namePDB.c_str(), namePDB.length());
 				pdb[namePDB.length()] = 0;
 				result = true;
@@ -483,15 +484,31 @@ void ModuleProject::CompileProject(Configuration config) {
 		break;
 	}
 
-	std::string originalPDB;
 	std::string dllPath = buildPath + name + ".dll";
-	std::string auxName = name;
-	auxName[auxName.size() - 1] = '_';
-	auxName += ".pdb";
-	PDBReplace(dllPath, auxName, originalPDB);
-	CopyFile(originalPDB.c_str(), auxName.c_str(), FALSE);
-	std::string logFile = buildPath + name + ".log";
+	std::string pdbPath = buildPath + name + ".pdb";
 
+	std::string auxName = App->files->GetFilePath(pdbPath.c_str(), true);
+
+	// GetFilePath returns "" if the file is not found
+
+	if (auxName != "") {
+		std::size_t found = auxName.find_first_of("/");
+		while (found != std::string::npos) {
+			auxName[found] = '\\';
+			found = auxName.find_first_of("/", found + 1);
+		}
+
+		auxName[auxName.size() - 5] = '_';
+		PDBReplace(dllPath, auxName);
+		std::string realPDB = buildPath + name + ".pdb";
+		if (!CopyFileA(realPDB.c_str(), auxName.c_str(), FALSE)) {
+			std::string error = GetLastErrorStdStr().c_str();
+			LOG("Copy fails %s", error.c_str());
+		}
+	}
+
+
+	std::string logFile = buildPath + name + ".log";
 	Buffer<char> buffer = App->files->Load(logFile.c_str());
 	std::string logContent = "";
 	if (buffer.Size() > 0) {
@@ -511,10 +528,6 @@ void ModuleProject::CompileProject(Configuration config) {
 	newPath[newPath.size() - 1] = '_';
 	newPath += ".dll";
 	buildPath += ".dll";
-
-	if (!CopyFileA(buildPath.c_str(), newPath.c_str(), FALSE)) {
-		LOG("Copy fails");
-	}
 
 	if (!LoadGameCodeDLL(buildPath.c_str())) {
 		LOG("DLL NOT LOADED: %s", GetLastErrorStdStr().c_str());

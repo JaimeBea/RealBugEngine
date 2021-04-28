@@ -27,7 +27,7 @@ public:
 	void LoadProject(const char* path);
 
 	void CompileProject(Configuration config);
-	bool PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB);
+	bool PDBReplace(const std::string& filename, const std::string& namePDB);
 
 public:
 	HMODULE gameCodeDLL = nullptr;
