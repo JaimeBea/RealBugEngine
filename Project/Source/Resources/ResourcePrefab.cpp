@@ -41,7 +41,7 @@ void ResourcePrefab::BuildPrefab(GameObject* parent) {
 	UID gameObjectId = GenerateUID();
 	GameObject* gameObject = scene->gameObjects.Obtain(gameObjectId);
 	gameObject->scene = scene;
-	gameObject->LoadPrototype(jRoot);
+	gameObject->LoadPrefab(jRoot);
 	gameObject->id = gameObjectId;
 	gameObject->SetParent(parent);
 
