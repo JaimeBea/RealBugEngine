@@ -247,8 +247,8 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 				globalMatrix = parentTransform->globalMatrix * localMatrix;
 			} else {
 				if (isPivotMode) {	
-					// localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100); // With this line works but without the button 3D scale		
-					localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100) * float4x4::FromTRS(position, rotation, scale);			
+					localMatrix = float4x4::FromQuat(rotation, pivotPosition / 100); // With this line works but without the button 3D scale		
+					// localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100) * float4x4::FromTRS(position * factor, rotation, scale * factor);			
 				} else {
 				
 				}
