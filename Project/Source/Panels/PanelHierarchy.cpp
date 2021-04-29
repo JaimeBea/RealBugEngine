@@ -98,8 +98,11 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		// TODO: code duplicated in every CreateXX(gameObject). Generalisation could be done here. Also with PanelInspector->AddUIComponentsOptions()
 		if (ImGui::BeginMenu("UI")) {
 			if (ImGui::MenuItem("Event System")) {
-				// TODO
-				CreateEventSystem(gameObject);
+				if (App->scene->scene->eventSystemComponents.Count() == 0) {
+					CreateEventSystem(gameObject);
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
 			}
 
 			if (ImGui::MenuItem("Canvas")) {
