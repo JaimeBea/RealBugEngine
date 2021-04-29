@@ -128,6 +128,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	component->fontSize = fontSize;
 	component->lineHeight = lineHeight;
 	component->color = color;
+	component->textAlignment = textAlignment;
 
 	if (shaderID != 0) {
 		App->resources->IncreaseReferenceCount(shaderID);
