@@ -226,7 +226,7 @@ void ComponentText::RecalculcateVertices() {
 	float x = position.x;
 	float y = position.y;
 	
-	float dy = y;		// additional y shifting
+	float dy = 0;		// additional y shifting
 	int j = 0;			// index of row
 
 	float2 transformScale = transform->GetScale().xy();
