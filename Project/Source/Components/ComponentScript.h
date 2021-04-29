@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+class Script;
+
 class ComponentScript : public Component {
 public:
 	REGISTER_COMPONENT(ComponentScript, ComponentType::SCRIPT, true);
@@ -13,15 +15,15 @@ public:
 	void Load(JsonValue jComponent) override;
 	void DuplicateComponent(GameObject& owner) override;
 
-	UID GetScriptID() const;
+	Script* GetScriptInstance();
 
 private:
-
 	void ReloadScript();
 
 public:
-	bool dirty = false;
+	bool dirty = true;
 
 private:
-	UID scriptID = 0;
+	UID scriptId = 0;
+	Script* scriptInstance = nullptr;
 };

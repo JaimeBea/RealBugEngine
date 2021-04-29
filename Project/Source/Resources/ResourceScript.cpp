@@ -6,10 +6,9 @@
 #include "Utils/FileDialog.h"
 
 void ResourceScript::Load() {
-	std::string name = FileDialog::GetFileName(GetAssetFilePath().c_str());
-	script = Factory::Create(name);
+	name = FileDialog::GetFileName(GetAssetFilePath().c_str());
 }
 
 void ResourceScript::Unload() {
-	RELEASE(script);
+	name = "";
 }

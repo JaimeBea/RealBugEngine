@@ -19,27 +19,20 @@
 #define JSON_TAG_NAME "Name"
 
 void ComponentScript::Update() {
-
-	if (dirty) {
-		ReloadScript();
-	}
+	ReloadScript();
 
 	if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
-		ResourceScript* resource = App->resources->GetResource<ResourceScript>(scriptID);
-		if (resource != nullptr) {
-			if (resource->script != nullptr) {
-				resource->script->Update();
-			}
+		if (scriptInstance != nullptr) {
+			scriptInstance->Update();
 		}
 	}
 }
 
 void ComponentScript::OnStart() {
-	ResourceScript* resource =  App->resources->GetResource<ResourceScript>(scriptID);
-	if (resource != nullptr) {
-		if (resource->script != nullptr) {
-			resource->script->Start();
-		}
+	ReloadScript();
+
+	if (scriptInstance != nullptr) {
+		scriptInstance->Start();
 	}
 }
 
@@ -49,7 +42,11 @@ void ComponentScript::OnEditorUpdate() {
 		active ? Enable() : Disable();
 	}
 	ImGui::Separator();
-	ImGui::ResourceSlot<ResourceScript>("Script", &scriptID);
+	UID oldScriptId = scriptId;
+	ImGui::ResourceSlot<ResourceScript>("Script", &scriptId);
+	if (oldScriptId != scriptId) {
+		dirty = true;
+	}
 
 	static char name[1024] = "";
 	ImGui::InputText("Script name", name, 1024);
@@ -60,25 +57,33 @@ void ComponentScript::OnEditorUpdate() {
 }
 
 void ComponentScript::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_SCRIPT] = scriptID;
+	jComponent[JSON_TAG_SCRIPT] = scriptId;
 }
 
 void ComponentScript::Load(JsonValue jComponent) {
-	scriptID = jComponent[JSON_TAG_SCRIPT];
-	if (scriptID != 0) App->resources->IncreaseReferenceCount(scriptID);
+	scriptId = jComponent[JSON_TAG_SCRIPT];
+	if (scriptId != 0) App->resources->IncreaseReferenceCount(scriptId);
+	dirty = true;
 }
 
 void ComponentScript::DuplicateComponent(GameObject& owner) {
 	ComponentScript* component = owner.CreateComponent<ComponentScript>();
-	component->scriptID = this->scriptID;
+	component->scriptId = scriptId;
+	component->dirty = true;
 }
 
-UID ComponentScript::GetScriptID() const {
-	return scriptID;
+Script* ComponentScript::GetScriptInstance() {
+	ReloadScript();
+	return scriptInstance;
 }
 
 void ComponentScript::ReloadScript() {
-	dirty = false;
-	ResourceScript* script = App->resources->GetResource<ResourceScript>(scriptID);
-	if(script) script->Load();
+	if (dirty) {
+		RELEASE(scriptInstance);
+		ResourceScript* script = App->resources->GetResource<ResourceScript>(scriptId);
+		if (script != nullptr) {
+			scriptInstance = Factory::Create(script->name);
+			dirty = false;
+		}
+	}
 }
