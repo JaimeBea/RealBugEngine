@@ -78,9 +78,16 @@ bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
 	App->events->AddObserverToEvent(TesseractEventType::COMPILATION_FINISHED, this);
 
+#if !GAME
+	App->files->CreateFolder(ASSETS_PATH);
 	App->files->CreateFolder(LIBRARY_PATH);
+	App->files->CreateFolder(SKYBOX_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
+	App->files->CreateFolder(SHADERS_PATH);
 	App->files->CreateFolder(SCENES_PATH);
+	App->files->CreateFolder(MATERIALS_PATH);
+	App->files->CreateFolder(PREFABS_PATH);
+#endif
 
 #if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);

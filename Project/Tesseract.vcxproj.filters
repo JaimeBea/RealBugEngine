@@ -159,6 +159,7 @@
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
+    <ClCompile Include="Source\FileSystem\PrefabImporter.cpp" />
     <ClCompile Include="Source\Components\ComponentAudioListener.cpp" />
     <ClCompile Include="Source\Components\ComponentAudioSource.cpp" />
     <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
@@ -422,6 +423,7 @@
     <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
     <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Source\Utils\PoolMap.h" />
+    <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

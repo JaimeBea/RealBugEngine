@@ -48,5 +48,6 @@ protected:
 private:
 	UID id = 0;					 // Unique identifier for the component
 	bool active = true;			 // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
+	bool edited = true;			 // This boolean saves whether the component was edited in a prefab or not. It only makes sense inside prefabs.
 	GameObject* owner = nullptr; // References the GameObject this Component applies its functionality to. Its 'parent'.
 };
