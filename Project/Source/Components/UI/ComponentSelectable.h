@@ -52,6 +52,7 @@ public:
 	virtual void OnPointerEnter() override;
 	virtual void OnPointerExit() override;
 	void DuplicateComponent(GameObject& owner) override;
+	bool CanBeRemoved() const override;
 
 	Component* GetSelectableComponent();
 	void SetSelectableType(ComponentType type_); // Sets the enum that hints which other component (that would inherit from Selectable) is contained within the same GameObject

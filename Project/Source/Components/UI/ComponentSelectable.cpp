@@ -357,3 +357,7 @@ Component* ComponentSelectable::GetSelectableComponent() {
 void ComponentSelectable::SetSelectableType(ComponentType type_) {
 	selectableType = type_;
 }
+
+bool ComponentSelectable::CanBeRemoved() const {
+	return !(GetOwner().GetComponent<ComponentButton>() || GetOwner().GetComponent<ComponentToggle>());
+}

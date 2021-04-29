@@ -53,3 +53,7 @@ const ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* c
 
 	return nullptr;
 }
+
+bool ComponentCanvasRenderer::CanBeRemoved() const {
+	return GetOwner().GetComponent<ComponentImage>() && GetOwner().GetComponent<ComponentText>() && GetOwner().GetComponent<ComponentToggle>();
+}

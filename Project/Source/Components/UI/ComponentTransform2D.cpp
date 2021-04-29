@@ -139,6 +139,10 @@ void ComponentTransform2D::DrawGizmos() {
 	}
 }
 
+bool ComponentTransform2D::CanBeRemoved() const {
+	return false;
+}
+
 void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
