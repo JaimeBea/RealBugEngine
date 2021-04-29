@@ -58,6 +58,11 @@ void ComponentAnimation::Update() {
 			LOG("Transition4");
 		}
 	}*/
+
+	if ( !initialState ) { //Checking if there is no state machine
+		LoadResourceStateMachine();
+	}
+
 	OnUpdate();
 }
 
@@ -74,17 +79,9 @@ void ComponentAnimation::Load(JsonValue jComponent) {
 	stateMachineResourceUID = jComponent[JSON_TAG_STATE_MACHINE_ID];
 	if (stateMachineResourceUID != 0) App->resources->IncreaseReferenceCount(stateMachineResourceUID);
 
-	UID initalStateUid = jComponent[JSON_TAG_INITAL_STATE_ID];
-
-	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
-
-	for (auto& state : resourceStateMachine->states) {
-		if (initalStateUid == state.id) {
-			initialState = &state;
-			currentState = &state;
-			break;
-		}
-	}
+	initalStateUid = jComponent[JSON_TAG_INITAL_STATE_ID];
+	LoadResourceStateMachine();
+	
 }
 
 void ComponentAnimation::DuplicateComponent(GameObject& owner) {
@@ -127,6 +124,9 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 	bool result = true;
 	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
+	if (!resourceStateMachine) {
+		return;
+	}
 
 	if (animationInterpolations.size() > 1) {
 		result = AnimationController::InterpolateTransitions(animationInterpolations.begin(), animationInterpolations, *GetOwner().GetRootBone(), *gameObject, position, rotation);
@@ -153,5 +153,19 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 
 	for (GameObject* child : gameObject->GetChildren()) {
 		UpdateAnimations(child);
+	}
+}
+
+void ComponentAnimation::LoadResourceStateMachine() {
+	ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
+
+	if (resourceStateMachine) {
+		for (auto& state : resourceStateMachine->states) {
+			if (initalStateUid == state.id) {
+				initialState = &state;
+				currentState = &state;
+				break;
+			}
+		}
 	}
 }

@@ -50,8 +50,10 @@ public:
 
 private:
 	void UpdateAnimations(GameObject* gameObject);
+	void LoadResourceStateMachine();
+	UID initalStateUid = 0; 
 
 private:
 	std::list<AnimationInterpolation> animationInterpolations; //List of the current interpolations between states
-	int t = 0;												   // TODO remove, HardCoded for test transitions
+	//int t = 0;												   // TODO remove, HardCoded for test transitions
 };
