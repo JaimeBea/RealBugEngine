@@ -51,31 +51,32 @@ void ResourceStateMachine::Load() {
 	JsonValue jStateMachine(document, document);
 	assert(document.IsObject());
 
-	const rapidjson::Value& clipsArray = document[JSON_TAG_CLIPS].GetArray();
-	assert(clipsArray.IsArray());
-	for (rapidjson::Value::ConstValueIterator itr = clipsArray.Begin(); itr != clipsArray.End(); ++itr) {
-		UID clipUID = itr->GetUint64();
+	JsonValue clipArray = jStateMachine[JSON_TAG_CLIPS];
+	for (int i = 0; i < clipArray.Size(); ++i) {
+		UID clipUID = clipArray[i];
 		ResourceClip* clip = App->resources->GetResource<ResourceClip>(clipUID);
 		App->resources->IncreaseReferenceCount(clipUID);
 		clipsUids.push_back(clipUID);
 	}
 
 	std::unordered_map<UID, State> stateMap;
-	for (auto const& p : document[JSON_TAG_STATES].GetArray()) {
-		UID id = p[JSON_TAG_ID].GetUint64();
-		std::string name = p[JSON_TAG_NAME].GetString();
-		UID clipId = p[JSON_TAG_CLIP_ID].GetUint64();
+	JsonValue stateArray = jStateMachine[JSON_TAG_STATES];
+	for (int i = 0; i < stateArray.Size(); ++i) {
+		UID id = stateArray[i][JSON_TAG_ID];
+		std::string name = stateArray[i][JSON_TAG_NAME];
+		UID clipId = stateArray[i][JSON_TAG_CLIP_ID];
 		State state(name, clipId, 0, id);
 		states.push_back(state);
 		stateMap.insert(std::make_pair(id, state));
 	}
 
-	for (auto const& p : document[JSON_TAG_TRANSITIONS].GetArray()) {
-		std::string triggerName = p[JSON_TAG_TRIGGER_NAME].GetString();
-		UID id = p[JSON_TAG_ID].GetUint64();
-		UID source = p[JSON_TAG_SOURCE].GetUint64();
-		UID target = p[JSON_TAG_TARGET].GetUint64();
-		float interpolationDuration = p[JSON_TAG_INTERPOLATION_DURATION].GetFloat();
+	JsonValue transitionArray = jStateMachine[JSON_TAG_TRANSITIONS];
+	for (int i = 0; i < transitionArray.Size(); ++i) {
+		std::string triggerName = transitionArray[i][JSON_TAG_TRIGGER_NAME];
+		UID id = transitionArray[i][JSON_TAG_ID];
+		UID source = transitionArray[i][JSON_TAG_SOURCE];
+		UID target = transitionArray[i][JSON_TAG_TARGET];
+		float interpolationDuration = transitionArray[i][JSON_TAG_INTERPOLATION_DURATION];
 		Transition transition(stateMap.find(source)->second, stateMap.find(target)->second, interpolationDuration, id);
 		transitions.insert(std::make_pair(triggerName, transition));
 	}
@@ -105,44 +106,36 @@ void ResourceStateMachine::SaveToFile(const char* filePath) {
 	document.SetObject();
 
 	// Saving Clips UIDs
-	rapidjson::Value clipsArrayJson(rapidjson::kArrayType);
-	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+	JsonValue clipArray = jStateMachine[JSON_TAG_CLIPS];
+	int i = 0;
 	std::list<UID>::iterator itClip;
 	for (itClip = clipsUids.begin(); itClip != clipsUids.end(); ++itClip) {
-		rapidjson::Value id;
-		id.SetUint64((*itClip));
-		clipsArrayJson.PushBack(id, allocator);
+		clipArray[i] = (*itClip);
+		++i;
 	}
-	document.AddMember(JSON_TAG_CLIPS, clipsArrayJson, allocator);
 
 	// Saving States
-	rapidjson::Value statesArrayJson(rapidjson::kArrayType);
+	JsonValue stateArray = jStateMachine[JSON_TAG_STATES];
+	i = 0;
 	std::list<State>::iterator itState;
 	for (itState = states.begin(); itState != states.end(); ++itState) {
-		rapidjson::Value objValue(rapidjson::kObjectType);
-		rapidjson::Value name((*itState).name.c_str(), allocator);
-		objValue.AddMember(JSON_TAG_ID, (*itState).id, allocator);
-		objValue.AddMember(JSON_TAG_NAME, name, allocator);
-		objValue.AddMember(JSON_TAG_CLIP_ID, (*itState).clipUid, allocator);
-
-		statesArrayJson.PushBack(objValue, allocator);
+		stateArray[i][JSON_TAG_ID] = (*itState).id;
+		stateArray[i][JSON_TAG_NAME] = (*itState).name.c_str();
+		stateArray[i][JSON_TAG_CLIP_ID] = (*itState).clipUid;
+		++i;
 	}
-	document.AddMember(JSON_TAG_STATES, statesArrayJson, allocator);
 
 	//Saving transitions
-	rapidjson::Value transitionsArrayJson(rapidjson::kArrayType);
+	JsonValue transitionArray = jStateMachine[JSON_TAG_TRANSITIONS];
+	i = 0;
 	for (const auto& element : transitions) {
-		rapidjson::Value objValue(rapidjson::kObjectType);
-		rapidjson::Value triggerName(element.first.c_str(), allocator);
-		objValue.AddMember(JSON_TAG_TRIGGER_NAME, triggerName, allocator);
-		objValue.AddMember(JSON_TAG_ID, element.second.id, allocator);
-		objValue.AddMember(JSON_TAG_SOURCE, element.second.source.id, allocator);
-		objValue.AddMember(JSON_TAG_TARGET, element.second.target.id, allocator);
-		objValue.AddMember(JSON_TAG_INTERPOLATION_DURATION, element.second.interpolationDuration, allocator);
-
-		transitionsArrayJson.PushBack(objValue, allocator);
+		transitionArray[i][JSON_TAG_TRIGGER_NAME] = element.first.c_str();
+		transitionArray[i][JSON_TAG_ID] = element.second.id;
+		transitionArray[i][JSON_TAG_SOURCE] = element.second.source.id;
+		transitionArray[i][JSON_TAG_TARGET] = element.second.target.id;
+		transitionArray[i][JSON_TAG_INTERPOLATION_DURATION] = element.second.interpolationDuration;
+		++i;
 	}
-	document.AddMember(JSON_TAG_TRANSITIONS, transitionsArrayJson, allocator);
 
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;
