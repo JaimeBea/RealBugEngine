@@ -161,7 +161,7 @@ void ComponentText::Draw(ComponentTransform2D* transform) const {
 	float4x4 proj = App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
@@ -211,6 +211,7 @@ float4 ComponentText::GetFontColor() const {
 	return color;
 }
 
+//TODO make this happen with a TesseractEvent or SDLevent related to OnWindowSizeChanged
 void ComponentText::RecalculcateVertices() {
 	if (fontID == 0) {
 		return;
@@ -224,10 +225,15 @@ void ComponentText::RecalculcateVertices() {
 
 	float x = position.x;
 	float y = position.y;
-	// FontSize / size of imported font
-	float scale = fontSize / 48.0f;
-	float dy = y;
-	int j = 0;
+	
+	float dy = y;		// additional y shifting
+	int j = 0;			// index of row
+
+	float2 transformScale = transform->GetScale().xy();
+
+	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
+	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
+
 	for (int i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
@@ -238,17 +244,17 @@ void ComponentText::RecalculcateVertices() {
 		float h = character.size.y * scale;
 
 		switch (textAlignment) {
-		case TextAlignment::LEFT: {
-			break;
-		}
-		case TextAlignment::CENTER: {
-			xpos += (transform->GetSize().x / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
-			break;
-		}
-		case TextAlignment::RIGHT: {
-			xpos += transform->GetSize().x - SubstringWidth(&text.c_str()[j], scale);
-			break;
-		}
+			case TextAlignment::LEFT: {
+				break;
+			}
+			case TextAlignment::CENTER: {
+				xpos += (transform->GetSize().x * transformScale.x / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+				break;
+			}
+			case TextAlignment::RIGHT: {
+				xpos += transform->GetSize().x * transformScale.x - SubstringWidth(&text.c_str()[j], scale);
+				break;
+			}
 		}
 
 		if (text.at(i) == '\n') {

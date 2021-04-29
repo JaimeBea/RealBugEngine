@@ -25,6 +25,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include "Math/float2.h"
 
 #include "Utils/Leaks.h"
 
@@ -158,7 +159,7 @@ UpdateStatus ModuleEditor::PreUpdate() {
 
 #if GAME
 	return UpdateStatus::CONTINUE;
-#endif
+#else
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -166,6 +167,7 @@ UpdateStatus ModuleEditor::PreUpdate() {
 	ImGuizmo::BeginFrame();
 
 	return UpdateStatus::CONTINUE;
+#endif
 }
 
 UpdateStatus ModuleEditor::Update() {
@@ -422,17 +424,8 @@ bool ModuleEditor::CleanUp() {
 	return true;
 }
 
-void ModuleEditor::OnMouseMoved() {
-	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
-	App->events->AddEvent(mouseEvent);
-}
-
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 

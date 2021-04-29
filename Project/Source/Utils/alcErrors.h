@@ -30,7 +30,7 @@ bool check_alc_errors(const std::string& filename, const std::uint_fast32_t line
 		default:
 			errorText = "UNKNOWN ALC ERROR: " + error;
 		}
-		LOG(filename.c_str(), line, errorText.c_str());
+		LOG((filename.substr(filename.rfind("\\") + 1) + " (%d): " + errorText).c_str(), line);
 		return false;
 	}
 	return true;

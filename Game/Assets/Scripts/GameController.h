@@ -5,7 +5,9 @@
 #include "Geometry/Frustum.h"
 
 class GameObject;
+class ComponentCamera;
 class ComponentTransform;
+
 class GameController : public Script
 {
 	GENERATE_BODY(GameController);
@@ -20,11 +22,11 @@ public:
 public:
 	GameObject* gameCamera = nullptr;
 	GameObject* godCamera = nullptr;
-	GameObject* staticCamera1 = nullptr;
-	GameObject* staticCamera2 = nullptr;
-	GameObject* staticCamera3 = nullptr;
-	GameObject* staticCamera4 = nullptr;
-	
+	ComponentCamera* camera = nullptr;
+	ComponentCamera* staticCamera1 = nullptr;
+	ComponentCamera* staticCamera2 = nullptr;
+	ComponentCamera* staticCamera3 = nullptr;
+	ComponentCamera* staticCamera4 = nullptr;
 	GameObject* player = nullptr;
 	 
 	float speed = 0.f;

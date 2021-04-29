@@ -35,7 +35,7 @@ public:
 	virtual void OnDisable() {}
 
 	// ---------- Getters ---------- //
-	ComponentType GetType() const;
+	TESSERACT_ENGINE_API ComponentType GetType() const;
 	GameObject& GetOwner() const;
 	UID GetID() const;
 	TESSERACT_ENGINE_API bool IsActive() const;
@@ -47,5 +47,6 @@ protected:
 private:
 	UID id = 0;					 // Unique identifier for the component
 	bool active = true;			 // Visibility of the Component. If active is false the GameObject behaves as if this Component doesn't exist.
+	bool edited = true;			 // This boolean saves whether the component was edited in a prefab or not. It only makes sense inside prefabs.
 	GameObject* owner = nullptr; // References the GameObject this Component applies its functionality to. Its 'parent'.
 };

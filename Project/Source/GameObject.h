@@ -1,6 +1,6 @@
 #pragma once
 
-#pragma warning(disable: 4251)
+#pragma warning(disable : 4251)
 
 #include "Utils/UID.h"
 #include "FileSystem/JsonValue.h"
@@ -98,8 +98,8 @@ public:
 	void Save(JsonValue jGameObject) const;
 	void Load(JsonValue jGameObject);
 
-	void SavePrototype(JsonValue jGameObject) const;
-	void LoadPrototype(JsonValue jGameObject);
+	void SavePrefab(JsonValue jGameObject);
+	void LoadPrefab(JsonValue jGameObject);
 
 public:
 	UID id = 0;
@@ -114,6 +114,7 @@ public:
 
 private:
 	bool active = true;
+	UID prefabId = 0;
 	GameObject* parent = nullptr;
 	GameObject* rootBoneHierarchy = nullptr;
 	std::vector<GameObject*> children;
