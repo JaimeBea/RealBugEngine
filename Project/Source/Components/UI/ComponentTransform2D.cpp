@@ -153,8 +153,13 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 }
 
 void ComponentTransform2D::DrawGizmos() {
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	float factor = canvasRenderer->GetCanvasScreenFactor();
 	if (!App->time->IsGameRunning()) {
 		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
+		float3 pivotPosFactor = float3(GetPivotPosition().x * factor / 100, GetPivotPosition().y * factor / 100, GetPivotPosition().z * factor / 100);
+		dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1, 0.1, 0);
+
 	}
 }
 
@@ -228,25 +233,27 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 	float factor = canvasRenderer->GetCanvasScreenFactor();
+
 	if (dirty) {
 		localMatrix = float4x4::FromTRS(position * factor, rotation, scale * factor);
 
 		GameObject* parent = GetOwner().GetParent();
+
 		if (parent != nullptr) {
 			ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
 
-			// NOTE: Comment this and the draw for the button works well
 			if (parentTransform != nullptr) {
 				parentTransform->CalculateGlobalMatrix();
 				globalMatrix = parentTransform->globalMatrix * localMatrix;
 			} else {
-				if (isPivotMode) {
-					// Si entra por aqui, cambia el tamaño del boton y lo hace mas grande
-					localMatrix = float4x4(rotation) * float4x4::Scale(scale) * float4x4::Translate(float3(-pivotPosition));
+				if (isPivotMode) {	
+					// localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100); // With this line works but without the button 3D scale		
+					localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100) * float4x4::FromTRS(position, rotation, scale);			
+				} else {
+				
 				}
 				globalMatrix = localMatrix;
 			}
-
 		} else {
 			globalMatrix = localMatrix;
 		}
@@ -272,6 +279,10 @@ float2 ComponentTransform2D::GetSize() const {
 
 float3 ComponentTransform2D::GetScale() const {
 	return scale;
+}
+
+float3 ComponentTransform2D::GetPivotPosition() const {
+	return pivotPosition;
 }
 
 void ComponentTransform2D::InvalidateHierarchy() {

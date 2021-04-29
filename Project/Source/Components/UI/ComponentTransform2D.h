@@ -41,6 +41,7 @@ public:
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const; // Returns the size
 	float3 GetScale() const;					 // Returns the scale
+	float3 GetPivotPosition() const;			 // Returns the pivot position
 
 	void InvalidateHierarchy();							 // Invalidates hierarchy
 	void Invalidate();									 // Invalidates component
