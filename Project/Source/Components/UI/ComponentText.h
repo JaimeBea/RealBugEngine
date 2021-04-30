@@ -44,7 +44,8 @@ private:
 	float fontSize = 12.0f;		// Font size
 	float4 color = float4::one; // Color of the font
 	float lineHeight = 16.0f;	// Line height
-	TextAlignment textAlignment = TextAlignment::LEFT;
+	TextAlignment textAlignment = TextAlignment::LEFT;		// Horizontal Alignment
+	bool wireframe = false;		// DEBUG ONLY
 
 	unsigned int vbo = 0; // VBO of the text
 	unsigned int vao = 0; // VAO of the text

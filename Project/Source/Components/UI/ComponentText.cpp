@@ -82,6 +82,9 @@ void ComponentText::OnEditorUpdate() {
 	if (mustRecalculateVertices) {
 		RecalculcateVertices();
 	}
+
+	ImGui::Checkbox("Wireframe Mode", &wireframe);
+
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
@@ -143,6 +146,23 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 void ComponentText::Draw(ComponentTransform2D* transform) const {
 	if (fontID == 0 || shaderID == 0) {
 		return;
+	}
+
+	glBegin(GL_LINES);
+	glVertex2f(App->renderer->GetViewportSize().x / 2 - transform->GetSize().x / 2, 200 + App->renderer->GetViewportSize().y / 2);
+	glVertex2f(App->renderer->GetViewportSize().x / 2 - transform->GetSize().x / 2, -200 + App->renderer->GetViewportSize().y / 2);
+
+	glVertex2f(App->renderer->GetViewportSize().x / 2, 200 + App->renderer->GetViewportSize().y / 2);
+	glVertex2f(App->renderer->GetViewportSize().x / 2, -200 + App->renderer->GetViewportSize().y / 2);
+
+	glVertex2f(App->renderer->GetViewportSize().x / 2 + transform->GetSize().x / 2, 200 + App->renderer->GetViewportSize().y / 2);
+	glVertex2f(App->renderer->GetViewportSize().x / 2 + transform->GetSize().x / 2, -200 + App->renderer->GetViewportSize().y / 2);
+	glEnd();
+	
+	if (wireframe) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	} else {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	glEnable(GL_BLEND);
@@ -223,6 +243,10 @@ void ComponentText::RecalculcateVertices() {
 
 	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
 	float3 position = transform->GetPosition();
+	float screenFactor = GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
+
+	//float x = position.x * screenFactor;
+	//float y = position.y * screenFactor;
 
 	float x = position.x;
 	float y = position.y;
@@ -231,12 +255,13 @@ void ComponentText::RecalculcateVertices() {
 	int j = 0;			// index of row
 
 	float2 transformScale = transform->GetScale().xy();
-
 	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
-	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
+	float scale = (fontSize / 48);
+	//float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
 
 	for (int i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
+		char c = text.at(i);
 
 		float xpos = x + character.bearing.x * scale;
 		float ypos = y - (character.size.y - character.bearing.y) * scale;
@@ -249,18 +274,24 @@ void ComponentText::RecalculcateVertices() {
 				break;
 			}
 			case TextAlignment::CENTER: {
-				xpos += (transform->GetSize().x * transformScale.x / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+				//xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+				xpos += (transform->GetSize().x / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+
 				break;
 			}
 			case TextAlignment::RIGHT: {
-				xpos += transform->GetSize().x * transformScale.x - SubstringWidth(&text.c_str()[j], scale);
+				//xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
+				xpos += transform->GetSize().x - SubstringWidth(&text.c_str()[j], scale);
+
 				break;
 			}
 		}
 
 		if (text.at(i) == '\n') {
-			dy += lineHeight;
-			x = position.x;
+			dy += lineHeight;					// shifts to next line
+			//x = position.x * screenFactor;		// reset to initial position
+			x = position.x;		// reset to initial position
+
 			j = i + 1;
 		}
 
@@ -284,7 +315,7 @@ int ComponentText::SubstringWidth(const char* substring, float scale) {
 	float subWidth = 0.f;
 
 	for (int i = 0; i < substring[i] != '\0' && substring[i] != '\n'; ++i) {
-		Character c = App->userInterface->GetCharacter(fontID, text.at(i));
+		Character c = App->userInterface->GetCharacter(fontID, substring[i]);
 		subWidth += (c.advance >> 6) * scale;
 	}
 
