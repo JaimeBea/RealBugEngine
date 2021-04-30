@@ -140,7 +140,19 @@ void ComponentTransform2D::DrawGizmos() {
 }
 
 bool ComponentTransform2D::CanBeRemoved() const {
-	return false;
+	return !HasAnyUIElementsInChildren(&GetOwner());
+}
+
+bool ComponentTransform2D::HasAnyUIElementsInChildren(const GameObject* obj) const {
+	bool found = obj->GetComponent<ComponentButton>() || obj->GetComponent<ComponentImage>() || obj->GetComponent<ComponentToggle>()
+				 || obj->GetComponent<ComponentBoundingBox2D>() || obj->GetComponent<ComponentText>() || obj->GetComponent<ComponentSelectable>()
+				 || obj->GetComponent<ComponentCanvasRenderer>() || obj->GetComponent<ComponentCanvas>();
+
+	for (std::vector<GameObject*>::const_iterator it = obj->GetChildren().begin(); it != obj->GetChildren().end() && !found; ++it) {
+		found = HasAnyUIElementsInChildren(*it);
+	}
+
+	return found;
 }
 
 void ComponentTransform2D::SetPosition(float3 position_) {
@@ -199,7 +211,7 @@ const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) 
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float factor = canvasRenderer->GetCanvasScreenFactor();
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
 	if (dirty) {
 		localMatrix = float4x4::FromTRS(position * factor, rotation, scale * factor);
 
@@ -221,7 +233,7 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 }
 
 void ComponentTransform2D::UpdateUIElements() {
-	if (dirty) {	// Means the transform has changed
+	if (dirty) { // Means the transform has changed
 		ComponentText* text = GetOwner().GetComponent<ComponentText>();
 		if (text != nullptr) {
 			text->RecalculcateVertices();

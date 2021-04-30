@@ -20,7 +20,7 @@ public:
 
 private:
 	void RecalculateScreenFactor();
-	bool AnyChildHasCanvasRenderer(const GameObject*) const; //This method is only meant to be used to check if the canvas component can be destroyed
+	bool AnyChildHasCanvasRenderer(const GameObject*) const; //This method returns true if any child has a canvas renderer, it is only meant to be used to check if the canvas component can be destroyed
 
 private:
 	float2 screenReferenceSize = float2(1920, 1080);

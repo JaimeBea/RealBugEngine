@@ -12,7 +12,7 @@
 #include "Utils/Logging.h"
 
 #include "Utils/Leaks.h"
-
+	
 #define JSON_TAG_FIRST_SELECTED_ID "FirstSelectedId"
 
 ComponentEventSystem ::~ComponentEventSystem() {
@@ -21,15 +21,6 @@ ComponentEventSystem ::~ComponentEventSystem() {
 		if (eventSystem->GetID() == GetID()) {
 			App->userInterface->SetCurrentEventSystem(0);
 		}
-	}
-	else {
-		App->userInterface->SetCurrentEventSystem(0);
-	}
-	eventSystem = App->userInterface->GetCurrentEventSystem();
-	LOG("deleted %u", GetID());
-
-	if (eventSystem == nullptr) {
-		LOG("Shit");
 	}
 }
 

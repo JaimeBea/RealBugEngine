@@ -348,7 +348,7 @@ UpdateStatus ModuleEditor::Update() {
 	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Unable to remove component", nullptr, ImGuiWindowFlags_NoResize)) {
 		ImGui::PushTextWrapPos();
-		ImGui::Text("That component cannot be removed, there's some other component that requires its existance");
+		ImGui::Text("This Component cannot be removed.There are other Components in this Game Object that require its functionality.");
 		if (ImGui::Button("Cancel")) {
 			ImGui::CloseCurrentPopup();
 		}
