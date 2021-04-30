@@ -26,16 +26,16 @@ public:
 
 	void OnUpdate();
 
-	void SendTrigger(const std::string& trigger); // Method to trigger the change of state
+	TESSERACT_ENGINE_API void SendTrigger(const std::string& trigger); // Method to trigger the change of state
 
-	State* GetCurrentState() {
+	TESSERACT_ENGINE_API State* GetCurrentState() {
 		return currentState;
 	}
-	void SetCurrentState(State* mCurrentState) {
+	TESSERACT_ENGINE_API void SetCurrentState(State* mCurrentState) {
 		currentState = mCurrentState;
 	}
 
-	State* GetInitialState() {
+	TESSERACT_ENGINE_API State* GetInitialState() {
 		return initialState;
 	}
 
