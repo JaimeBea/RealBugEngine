@@ -148,23 +148,6 @@ void ComponentText::Draw(ComponentTransform2D* transform) const {
 		return;
 	}
 
-	glBegin(GL_LINES);
-	glVertex2f(App->renderer->GetViewportSize().x / 2 - transform->GetSize().x / 2, 200 + App->renderer->GetViewportSize().y / 2);
-	glVertex2f(App->renderer->GetViewportSize().x / 2 - transform->GetSize().x / 2, -200 + App->renderer->GetViewportSize().y / 2);
-
-	glVertex2f(App->renderer->GetViewportSize().x / 2, 200 + App->renderer->GetViewportSize().y / 2);
-	glVertex2f(App->renderer->GetViewportSize().x / 2, -200 + App->renderer->GetViewportSize().y / 2);
-
-	glVertex2f(App->renderer->GetViewportSize().x / 2 + transform->GetSize().x / 2, 200 + App->renderer->GetViewportSize().y / 2);
-	glVertex2f(App->renderer->GetViewportSize().x / 2 + transform->GetSize().x / 2, -200 + App->renderer->GetViewportSize().y / 2);
-	glEnd();
-	
-	if (wireframe) {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	} else {
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -247,16 +230,12 @@ void ComponentText::RecalculcateVertices() {
 
 	float x = position.x * screenFactor;
 	float y = position.y * screenFactor;
-
-	//float x = position.x;
-	//float y = position.y;
 	
 	float dy = 0;		// additional y shifting
 	int j = 0;			// index of row
 
 	float2 transformScale = transform->GetScale().xy();
 	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
-	//float scale = (fontSize / 48);
 	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
 
 	for (int i = 0; i < text.size(); ++i) {
@@ -271,28 +250,23 @@ void ComponentText::RecalculcateVertices() {
 
 		switch (textAlignment) {
 			case TextAlignment::LEFT: {
+				// Default branch, could be deleted
 				break;
 			}
 			case TextAlignment::CENTER: {
-				//xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
 				xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
-
 				break;
 			}
 			case TextAlignment::RIGHT: {
-				//xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
 				xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
-
 				break;
 			}
 		}
 
 		if (text.at(i) == '\n') {
 			dy += lineHeight;					// shifts to next line
-			//x = position.x * screenFactor;		// reset to initial position
-			x = position.x * screenFactor; // reset to initial position
-
-			j = i + 1;
+			x = position.x * screenFactor;		// reset to initial position
+			j = i + 1;							// updated j variable in order to get the substringwidth of the following line in the next iteration
 		}
 
 		verticesText[i] = {
