@@ -83,8 +83,6 @@ void ComponentText::OnEditorUpdate() {
 		RecalculcateVertices();
 	}
 
-	ImGui::Checkbox("Wireframe Mode", &wireframe);
-
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
@@ -285,7 +283,7 @@ void ComponentText::RecalculcateVertices() {
 	}
 }
 
-int ComponentText::SubstringWidth(const char* substring, float scale) {
+float ComponentText::SubstringWidth(const char* substring, float scale) {
 	float subWidth = 0.f;
 
 	for (int i = 0; i < substring[i] != '\0' && substring[i] != '\n'; ++i) {
