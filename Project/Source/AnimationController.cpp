@@ -15,12 +15,14 @@ bool AnimationController::GetTransform(const ResourceClip& clip, float& currentT
 	assert(clip.animationUID != 0);
 
 	if (clip.loop) {
-		currentTime = currentTime > clip.duration ? 0 : currentTime;
+		while (currentTime >= clip.duration) {
+			currentTime -= clip.duration;
+		}
 	} else {
-		currentTime = currentTime > clip.duration ? clip.duration : currentTime;
+		currentTime = currentTime >= clip.duration ? clip.duration : currentTime;
 	}
 
-	float currentSample = (currentTime * (clip.keyFramesSize - 1)) / clip.duration;
+	float currentSample = (currentTime * (clip.keyFramesSize)) / clip.duration;
 	currentSample += clip.beginIndex;
 	int intPart = (int) currentSample;
 	float decimal = currentSample - intPart;
@@ -28,7 +30,7 @@ bool AnimationController::GetTransform(const ResourceClip& clip, float& currentT
 	//find in hash by name
 	ResourceAnimation* resourceAnimation = clip.GetResourceAnimation();
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channel = resourceAnimation->keyFrames[intPart].channels.find(name);
-	unsigned int idNext = intPart == (clip.keyFramesSize - 1) ? 0 : intPart + 1;
+	unsigned int idNext = intPart == (clip.endIndex) ? clip.beginIndex : intPart + 1;
 	std::unordered_map<std::string, ResourceAnimation::Channel>::const_iterator channelNext = resourceAnimation->keyFrames[idNext].channels.find(name);
 
 	if (channel == resourceAnimation->keyFrames[intPart].channels.end() && channelNext == resourceAnimation->keyFrames[idNext].channels.end()) {
