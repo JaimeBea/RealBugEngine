@@ -85,6 +85,7 @@ GameObject* Scene::DuplicateGameObject(GameObject* gameObject, GameObject* paren
 	for (GameObject* child : gameObject->GetChildren()) {
 		DuplicateGameObject(child, newGO);
 	}
+
 	return newGO;
 }
 
