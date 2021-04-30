@@ -59,7 +59,7 @@ void ComponentAnimation::Update() {
 		}
 	}*/
 
-	if ( !initialState ) { //Checking if there is no state machine
+	if (!initialState) { //Checking if there is no state machine
 		LoadResourceStateMachine();
 	}
 
@@ -81,7 +81,6 @@ void ComponentAnimation::Load(JsonValue jComponent) {
 
 	initalStateUid = jComponent[JSON_TAG_INITAL_STATE_ID];
 	LoadResourceStateMachine();
-	
 }
 
 void ComponentAnimation::DuplicateComponent(GameObject& owner) {
