@@ -218,7 +218,6 @@ void ComponentText::RecalculcateVertices() {
 	if (fontID == 0) {
 		return;
 	}
-	ResourceFont* font = App->resources->GetResource<ResourceFont>(fontID);
 
 	verticesText.resize(text.size());
 

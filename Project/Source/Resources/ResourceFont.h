@@ -20,15 +20,7 @@ public:
 	void Load() override;
 	void Unload() override;
 
-	int GetLineHeight() const;
-	int GetSpaceWidth() const;
-
 public:
 	std::unordered_map<char, Character> characters; //Should character be a pointer? It's not a built-in type
 	std::string name = "";
-	
-private:
-	int lineHeight = 0;
-	int newLineHeight = 0;
-	int spaceWidth = 0;
 };
