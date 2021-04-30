@@ -2,6 +2,10 @@
 
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(HowToPlayButton) {
+
+};
+
 GENERATE_BODY_IMPL(HowToPlayButton);
 
 void HowToPlayButton::Start() {

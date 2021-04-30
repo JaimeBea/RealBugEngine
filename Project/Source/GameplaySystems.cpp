@@ -14,6 +14,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
+#include "Resources/ResourcePrefab.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/Logging.h"
 #include "TesseractEvent.h"
@@ -26,8 +27,20 @@
 // ----------- GAMEPLAY ------------ //
 
 GameObject* GameplaySystems::GetGameObject(const char* name) {
-	return App->scene->scene->root->FindDescendant(name);
+	GameObject* root = App->scene->scene->root;
+	return root->name == name ? root : root->FindDescendant(name);
 }
+
+GameObject* GameplaySystems::GetGameObject(UID id) {
+	return App->scene->scene->GetGameObject(id);
+}
+
+template<typename T>
+T* GameplaySystems::GetResource(UID id) {
+	return App->resources->GetResource<T>(id);
+}
+
+template TESSERACT_ENGINE_API ResourcePrefab* GameplaySystems::GetResource<ResourcePrefab>(UID id);
 
 void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeActiveCamera(camera, true);
@@ -41,6 +54,10 @@ void Debug::Log(const char* fmt, ...) {
 	va_start(args, fmt);
 	LOG(fmt, args);
 	va_end(args);
+}
+
+void Debug::LogTest(const char* fmt) {
+	LOG(fmt);
 }
 
 void Debug::ToggleDebugMode() {

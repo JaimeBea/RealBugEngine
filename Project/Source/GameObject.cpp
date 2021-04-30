@@ -145,12 +145,12 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-GameObject* GameObject::FindDescendant(const std::string& name) const {
+GameObject* GameObject::FindDescendant(const std::string& name_) const {
 	for (GameObject* child : children) {
-		if (child->name == name) {
+		if (child->name == name_) {
 			return child;
 		} else {
-			GameObject* gameObject = child->FindDescendant(name);
+			GameObject* gameObject = child->FindDescendant(name_);
 			if (gameObject != nullptr) return gameObject;
 		}
 	}

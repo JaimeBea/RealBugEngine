@@ -11,7 +11,7 @@
 #include "Components/UI/ComponentEventSystem.h"
 #include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
-#include "Script.h"
+#include "Scripting/Script.h"
 
 #include "Utils/Leaks.h"
 

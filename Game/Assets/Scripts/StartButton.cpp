@@ -2,6 +2,10 @@
 
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(StartButton) {
+
+};
+
 GENERATE_BODY_IMPL(StartButton);
 
 void StartButton::Start() {

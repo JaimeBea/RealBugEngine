@@ -3,6 +3,10 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(CanvasImage) {
+
+};
+
 GENERATE_BODY_IMPL(CanvasImage);
 
 void CanvasImage::Start() {

@@ -2,6 +2,10 @@
 
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(CreditsButton) {
+
+};
+
 GENERATE_BODY_IMPL(CreditsButton);
 
 void CreditsButton::Start() {

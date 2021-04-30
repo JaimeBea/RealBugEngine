@@ -4,6 +4,10 @@
 #include "Components/UI/ComponentText.h"
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(StatsDisplayer) {
+
+};
+
 GENERATE_BODY_IMPL(StatsDisplayer);
 
 void StatsDisplayer::Start() {

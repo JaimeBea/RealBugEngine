@@ -7,6 +7,10 @@
 #include "Math/float3x3.h"
 #include "Geometry/frustum.h"
 
+EXPOSE_MEMBERS(GameController) {
+
+};
+
 GENERATE_BODY_IMPL(GameController);
 
 void GameController::Start() {

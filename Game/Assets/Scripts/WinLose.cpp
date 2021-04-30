@@ -3,6 +3,10 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(WinLose) {
+
+};
+
 GENERATE_BODY_IMPL(WinLose);
 
 void WinLose::Start() {

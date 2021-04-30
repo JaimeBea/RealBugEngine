@@ -5,6 +5,10 @@
 
 #include <cmath>
 
+EXPOSE_MEMBERS(TreeFloating) {
+
+};
+
 GENERATE_BODY_IMPL(TreeFloating);
 
 void TreeFloating::Start() {

@@ -3,6 +3,10 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(ReturnMenu) {
+
+};
+
 GENERATE_BODY_IMPL(ReturnMenu);
 
 void ReturnMenu::Start() {

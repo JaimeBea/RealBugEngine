@@ -5,6 +5,10 @@
 #include "GameObject.h"
 #include "Components/ComponentCamera.h"
 
+EXPOSE_MEMBERS(StartController) {
+
+};
+
 GENERATE_BODY_IMPL(StartController);
 
 void StartController::Start() {
