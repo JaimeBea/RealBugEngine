@@ -85,10 +85,11 @@ void ComponentAnimation::Load(JsonValue jComponent) {
 }
 
 void ComponentAnimation::DuplicateComponent(GameObject& owner) {
-	ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
+	// TODO
+	/*ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
 	component->stateMachineResourceUID = stateMachineResourceUID;
 	component->currentState = currentState;
-	component->initialState = initialState;
+	component->initialState = initialState;*/
 }
 
 void ComponentAnimation::OnUpdate() {
