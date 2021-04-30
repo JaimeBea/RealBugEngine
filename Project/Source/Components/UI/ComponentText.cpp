@@ -245,19 +245,19 @@ void ComponentText::RecalculcateVertices() {
 	float3 position = transform->GetPosition();
 	float screenFactor = GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
 
-	//float x = position.x * screenFactor;
-	//float y = position.y * screenFactor;
+	float x = position.x * screenFactor;
+	float y = position.y * screenFactor;
 
-	float x = position.x;
-	float y = position.y;
+	//float x = position.x;
+	//float y = position.y;
 	
 	float dy = 0;		// additional y shifting
 	int j = 0;			// index of row
 
 	float2 transformScale = transform->GetScale().xy();
 	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
-	float scale = (fontSize / 48);
-	//float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
+	//float scale = (fontSize / 48);
+	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
 
 	for (int i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
@@ -275,13 +275,13 @@ void ComponentText::RecalculcateVertices() {
 			}
 			case TextAlignment::CENTER: {
 				//xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
-				xpos += (transform->GetSize().x / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+				xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
 
 				break;
 			}
 			case TextAlignment::RIGHT: {
 				//xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
-				xpos += transform->GetSize().x - SubstringWidth(&text.c_str()[j], scale);
+				xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
 
 				break;
 			}
@@ -290,7 +290,7 @@ void ComponentText::RecalculcateVertices() {
 		if (text.at(i) == '\n') {
 			dy += lineHeight;					// shifts to next line
 			//x = position.x * screenFactor;		// reset to initial position
-			x = position.x;		// reset to initial position
+			x = position.x * screenFactor; // reset to initial position
 
 			j = i + 1;
 		}
