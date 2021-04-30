@@ -246,13 +246,18 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 				parentTransform->CalculateGlobalMatrix();
 				globalMatrix = parentTransform->globalMatrix * localMatrix;
 			} else {
-				if (isPivotMode) {	
-					localMatrix = float4x4::FromQuat(rotation, pivotPosition / 100); // With this line works but without the button 3D scale		
-					// localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100) * float4x4::FromTRS(position * factor, rotation, scale * factor);			
+				if (isPivotMode) {
+					bool isUsing2D = App->editor->panelScene.IsUsing2D();
+					if (isUsing2D) {
+						localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor);
+						globalMatrix = localMatrix * float4x4::Translate(position * factor) * float4x4::Scale(scale * factor);
+					} else {
+						localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100);
+						globalMatrix = localMatrix * float4x4::Translate(position * factor / 100) * float4x4::Scale(scale * factor);
+					}
 				} else {
-				
+					globalMatrix = localMatrix;
 				}
-				globalMatrix = localMatrix;
 			}
 		} else {
 			globalMatrix = localMatrix;
