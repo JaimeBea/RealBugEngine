@@ -27,7 +27,6 @@ namespace GameplaySystems {
 
 namespace Debug {
 	TESSERACT_ENGINE_API void Log(const char* fmt, ...);
-	TESSERACT_ENGINE_API void LogTest(const char* fmt);
 	TESSERACT_ENGINE_API void ToggleDebugMode();
 	TESSERACT_ENGINE_API void ToggleDebugDraw();
 	TESSERACT_ENGINE_API void ToggleDrawQuadtree();

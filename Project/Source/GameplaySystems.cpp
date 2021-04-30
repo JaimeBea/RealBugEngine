@@ -56,10 +56,6 @@ void Debug::Log(const char* fmt, ...) {
 	va_end(args);
 }
 
-void Debug::LogTest(const char* fmt) {
-	LOG(fmt);
-}
-
 void Debug::ToggleDebugMode() {
 	App->renderer->ToggleDebugMode();
 }
