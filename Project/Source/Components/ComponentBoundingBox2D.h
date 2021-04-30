@@ -14,6 +14,7 @@ public:
 
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	bool CanBeRemoved() const override;
 
 	void SetLocalBoundingBox(const AABB2D& boundingBox);
 	void CalculateWorldBoundingBox(bool force = false);

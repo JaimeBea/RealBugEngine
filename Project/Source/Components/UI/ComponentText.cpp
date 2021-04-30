@@ -47,10 +47,19 @@ void ComponentText::Init() {
 
 void ComponentText::OnEditorUpdate() {
 	ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
-	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
+	if (ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags)) {
+		SetText(text);
+	}
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
+	UID oldFontID = fontID;
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
-	ImGui::DragFloat("Font Size", &fontSize, 0.2f, 0, FLT_MAX);
+	if (oldFontID != fontID) {
+		RecalculcateVertices();
+	}
+
+	if (ImGui::DragFloat("Font Size", &fontSize, 0.2f, 0, FLT_MAX)) {
+		RecalculcateVertices();
+	}
 	ImGui::ColorEdit4("Color##", color.ptr());
 }
 
@@ -98,7 +107,11 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	}
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) {
+void ComponentText::Draw(ComponentTransform2D* transform) const {
+	if (fontID == 0 || shaderID == 0) {
+		return;
+	}
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -113,59 +126,32 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 
 	glUseProgram(program);
 
-	float4x4 modelMatrix;
-	float4x4* proj = &App->camera->GetProjectionMatrix();
+	float4x4& proj = App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
-		modelMatrix = transform->GetGlobalMatrixWithSize();
 
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
-		float4x4* view = &App->camera->GetViewMatrix();
-		modelMatrix = transform->GetGlobalMatrixWithSize(true);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
+		float4x4& view = App->camera->GetViewMatrix();
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	}
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj->ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
-	float3 position = transform->GetPosition();
-
-	float x = position.x;
-	float y = position.y;
-	// FontSize / size of imported font
-	float scale = fontSize / 48.0f;
-
-	for (char c : text) {
-		Character character = App->userInterface->GetCharacter(fontID, c);
-
-		float xpos = x + character.bearing.x * scale;
-		float ypos = y - (character.size.y - character.bearing.y) * scale;
-
-		float w = character.size.x * scale;
-		float h = character.size.y * scale;
-		// update VBO for each character
-		float vertices[6][4] = {
-			{xpos, ypos + h, 0.0f, 0.0f},
-			{xpos, ypos, 0.0f, 1.0f},
-			{xpos + w, ypos, 1.0f, 1.0f},
-
-			{xpos, ypos + h, 0.0f, 0.0f},
-			{xpos + w, ypos, 1.0f, 1.0f},
-			{xpos + w, ypos + h, 1.0f, 0.0f}};
+	for (int i = 0; i < text.size(); ++i) {
+		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
 		// render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, character.textureID);
 		// update content of VBO memory
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticesText[i]), &verticesText[i].front());
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
 	glBindVertexArray(0);
@@ -176,6 +162,7 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 
 void ComponentText::SetText(const std::string& newText) {
 	text = newText;
+	RecalculcateVertices();
 }
 
 void ComponentText::SetFontSize(float newfontSize) {
@@ -188,4 +175,44 @@ void ComponentText::SetFontColor(const float4& newColor) {
 
 float4 ComponentText::GetFontColor() const {
 	return color;
+}
+
+//TODO make this happen with a TesseractEvent or SDLevent related to OnWindowSizeChanged
+void ComponentText::RecalculcateVertices() {
+	if (fontID == 0) {
+		return;
+	}
+
+	verticesText.resize(text.size());
+
+	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
+	float3 position = transform->GetPosition();
+
+	float x = position.x;
+	float y = position.y;
+
+	float2 transformScale = transform->GetScale().xy();
+
+	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
+
+	for (int i = 0; i < text.size(); ++i) {
+		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
+
+		float xpos = x + character.bearing.x * scale;
+		float ypos = y - (character.size.y - character.bearing.y) * scale;
+
+		float w = character.size.x * scale;
+		float h = character.size.y * scale;
+
+		verticesText[i] = {
+			xpos, ypos + h, 0.0f, 0.0f, 
+			xpos, ypos,	0.0f, 1.0f,	
+			xpos + w, ypos, 1.0f, 1.0f,
+			xpos, ypos + h, 0.0f, 0.0f,
+			xpos + w, ypos, 1.0f, 1.0f,
+			xpos + w, ypos + h, 1.0f, 0.0f};
+
+		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+	}
 }

@@ -29,6 +29,8 @@ Scene::Scene(unsigned numGameObjects) {
 	skyboxComponents.Allocate(numGameObjects);
 	scriptComponents.Allocate(numGameObjects);
 	animationComponents.Allocate(numGameObjects);
+	audioSourceComponents.Allocate(numGameObjects);
+	audioListenerComponents.Allocate(numGameObjects);
 }
 
 void Scene::ClearScene() {
@@ -77,10 +79,13 @@ GameObject* Scene::DuplicateGameObject(GameObject* gameObject, GameObject* paren
 		component->DuplicateComponent(*newGO);
 	}
 
+	newGO->InitComponents();
+
 	// Duplicate recursively its children
 	for (GameObject* child : gameObject->GetChildren()) {
 		DuplicateGameObject(child, newGO);
 	}
+
 	return newGO;
 }
 
@@ -144,6 +149,10 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 		return animationComponents.Find(componentId);
 	case ComponentType::SCRIPT:
 		return scriptComponents.Find(componentId);
+	case ComponentType::AUDIO_SOURCE:
+		return audioSourceComponents.Find(componentId);
+	case ComponentType::AUDIO_LISTENER:
+		return audioListenerComponents.Find(componentId);
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::GetComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -189,6 +198,10 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 		return animationComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SCRIPT:
 		return scriptComponents.Obtain(componentId, owner, componentId, owner->IsActive());
+	case ComponentType::AUDIO_SOURCE:
+		return audioSourceComponents.Obtain(componentId, owner, componentId, owner->IsActive());
+	case ComponentType::AUDIO_LISTENER:
+		return audioListenerComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::CreateComponentByTypeAndId.", (unsigned) type);
 		assert(false);
@@ -251,6 +264,12 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 		break;
 	case ComponentType::SCRIPT:
 		scriptComponents.Release(componentId);
+		break;
+	case ComponentType::AUDIO_SOURCE:
+		audioSourceComponents.Release(componentId);
+		break;
+	case ComponentType::AUDIO_LISTENER:
+		audioListenerComponents.Release(componentId);
 		break;
 	default:
 		LOG("Component of type %i hasn't been registered in Scene::RemoveComponentByTypeAndId.", (unsigned) type);

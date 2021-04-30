@@ -26,7 +26,8 @@ enum class ResourceType {
 	SCRIPT,
 	ANIMATION,
 	STATE_MACHINE,
-	CLIP
+	CLIP,
+	AUDIO
 };
 
 const char* GetResourceTypeName(ResourceType type);

@@ -163,6 +163,11 @@
     <ClCompile Include="Source\FileSystem\ClipImporter.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
+    <ClCompile Include="Source\FileSystem\PrefabImporter.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioListener.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioSource.cpp" />
+    <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
+    <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -423,9 +428,14 @@
     <ClInclude Include="Source\Transition.h" />
     <ClInclude Include="Source\AnimationInterpolation.h" />
     <ClInclude Include="Source\FileSystem\ClipImporter.h" />
-    <ClInclude Include="Source\Utils\PoolMap.h" />
     <ClInclude Include="Source\Utils\VectorMap.h" />
     <ClInclude Include="Source\State.h" />
+    <ClInclude Include="Source\Components\ComponentAudioListener.h" />
+    <ClInclude Include="Source\Components\ComponentAudioSource.h" />
+    <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
+    <ClInclude Include="Source\FileSystem\AudioImporter.h" />
+    <ClInclude Include="Source\Utils\PoolMap.h" />
+    <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

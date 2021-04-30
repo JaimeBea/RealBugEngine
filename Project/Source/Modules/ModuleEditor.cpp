@@ -25,6 +25,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include "Math/float2.h"
 
 #include "Utils/Leaks.h"
 
@@ -158,7 +159,7 @@ UpdateStatus ModuleEditor::PreUpdate() {
 
 #if GAME
 	return UpdateStatus::CONTINUE;
-#endif
+#else
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -166,6 +167,7 @@ UpdateStatus ModuleEditor::PreUpdate() {
 	ImGuizmo::BeginFrame();
 
 	return UpdateStatus::CONTINUE;
+#endif
 }
 
 UpdateStatus ModuleEditor::Update() {
@@ -257,6 +259,9 @@ UpdateStatus ModuleEditor::Update() {
 	case Modal::COMPONENT_EXISTS:
 		ImGui::OpenPopup("Already existing Component");
 		break;
+	case Modal::CANT_REMOVE_COMPONENT:
+		ImGui::OpenPopup("Unable to remove component");
+		break;
 	case Modal::CREATE_MATERIAL:
 		ImGui::OpenPopup("Name the material");
 		break;
@@ -339,6 +344,17 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndPopup();
 	}
 
+	// CANT REMOVE COMPONENT MODAL
+	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Unable to remove component", nullptr, ImGuiWindowFlags_NoResize)) {
+		ImGui::PushTextWrapPos();
+		ImGui::Text("This Component cannot be removed.There are other Components in this Game Object that require its functionality.");
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
 	// Docking
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGuiID dockSpaceId = ImGui::GetID("DockSpace");
@@ -389,7 +405,11 @@ UpdateStatus ModuleEditor::PostUpdate() {
 
 	// Deleting Components
 	if (panelInspector.GetComponentToDelete()) {
-		selectedGameObject->RemoveComponent(panelInspector.GetComponentToDelete());
+		if (panelInspector.GetComponentToDelete()->CanBeRemoved()) {
+			selectedGameObject->RemoveComponent(panelInspector.GetComponentToDelete());
+		} else {
+			App->editor->modalToOpen = Modal::CANT_REMOVE_COMPONENT;
+		}
 		panelInspector.SetComponentToDelete(nullptr);
 	}
 
@@ -422,17 +442,8 @@ bool ModuleEditor::CleanUp() {
 	return true;
 }
 
-void ModuleEditor::OnMouseMoved() {
-	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
-	App->events->AddEvent(mouseEvent);
-}
-
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 

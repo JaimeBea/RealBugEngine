@@ -2,8 +2,6 @@
 
 #include "Module.h"
 
-#include "Utils/UID.h"
-
 #include <string>
 
 #ifndef _WINDEF_
@@ -29,6 +27,7 @@ public:
 	void LoadProject(const char* path);
 
 	void CompileProject(Configuration config);
+	bool PDBReplace(const std::string& filename, const std::string& namePDB);
 
 public:
 	HMODULE gameCodeDLL = nullptr;
@@ -41,5 +40,4 @@ private:
 	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
 	void CreateBatches();
-
 };

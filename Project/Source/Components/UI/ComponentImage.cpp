@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
-#include "Components/UI/ComponentButton.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -119,7 +118,7 @@ const float4& ComponentImage::GetTintColor() const {
 	return float4::one;
 }
 
-void ComponentImage::Draw(ComponentTransform2D* transform) {
+void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	unsigned int program = 0;
 	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {
@@ -144,10 +143,9 @@ void ComponentImage::Draw(ComponentTransform2D* transform) {
 	float4x4* proj = &App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 		modelMatrix = transform->GetGlobalMatrixWithSize();
-
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4* view = &App->camera->GetViewMatrix();

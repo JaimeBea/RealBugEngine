@@ -20,7 +20,9 @@
     <ClInclude Include="Source\AnimationInterpolation.h" />
     <ClInclude Include="Source\Resources\ResourceClip.h" />
     <ClInclude Include="Source\State.h" />
+    <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Libs\imgui\imgui_stdlib.h" />
+    <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
     <ClInclude Include="Source\Components\UI\ComponentText.h" />
     <ClInclude Include="Source\Components\UI\ComponentToggle.h" />
     <ClInclude Include="Libs\freetype\include\freetype\freetype.h" />
@@ -68,6 +70,7 @@
     <ClInclude Include="Libs\freetype\include\freetype\tttables.h" />
     <ClInclude Include="Libs\freetype\include\freetype\tttags.h" />
     <ClInclude Include="Libs\freetype\include\ft2build.h" />
+    <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
     <ClInclude Include="Source\Resources\ResourceFont.h" />
     <ClInclude Include="Source\Components\ComponentBoundingBox2D.h" />
     <ClInclude Include="Source\UI\Interfaces\IMouseClickHandler.h" />
@@ -101,6 +104,8 @@
     <ClInclude Include="Source\Resources\ResourcePrefab.h" />
     <ClInclude Include="Source\Modules\ModuleEvents.h" />
     <ClInclude Include="Source\Modules\ModuleAudio.h" />
+    <ClInclude Include="Source\Components\ComponentAudioListener.h" />
+    <ClInclude Include="Source\Components\ComponentAudioSource.h" />
     <ClInclude Include="Source\TesseractEvent.h" />
     <ClInclude Include="Source\Utils\alcErrors.h" />
     <ClInclude Include="Source\Utils\alErrors.h" />
@@ -281,9 +286,12 @@
     <ClCompile Include="Source\FileSystem\ClipImporter.cpp" />
     <ClCompile Include="Source\FileSystem\StateMachineImporter.cpp" />
     <ClCompile Include="Source\Resources\ResourceClip.cpp" />
+    <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
     <ClCompile Include="Libs\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentText.cpp" />
+    <ClCompile Include="Source\FileSystem\PrefabImporter.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
@@ -300,6 +308,8 @@
     <ClCompile Include="Source\Modules\ModuleProject.cpp" />
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Modules\ModuleAudio.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioListener.cpp" />
+    <ClCompile Include="Source\Components\ComponentAudioSource.cpp" />
     <ClCompile Include="Source\Panels\PanelProject.cpp" />
     <ClCompile Include="Source\Resources\ResourceType.cpp" />
     <ClCompile Include="Source\Scene.cpp" />
