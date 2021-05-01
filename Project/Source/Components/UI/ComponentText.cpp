@@ -175,7 +175,7 @@ void ComponentText::Draw(const ComponentTransform2D* transform) const {
 	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
-	for (int i = 0; i < text.size(); ++i) {
+	for (size_t i = 0; i < text.size(); ++i) {
 		if (text.at(i) != '\n') {
 			Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
@@ -235,7 +235,7 @@ void ComponentText::RecalculcateVertices() {
 	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
 	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
 
-	for (int i = 0; i < text.size(); ++i) {
+	for (size_t i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
 		float xpos = x + character.bearing.x * scale;
