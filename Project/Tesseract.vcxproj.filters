@@ -164,6 +164,7 @@
     <ClCompile Include="Source\Components\ComponentAudioSource.cpp" />
     <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
     <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
+    <ClCompile Include="Libs\imgui\imgui_tables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
