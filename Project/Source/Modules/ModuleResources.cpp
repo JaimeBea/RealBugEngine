@@ -88,8 +88,6 @@ bool ModuleResources::Init() {
 }
 
 bool ModuleResources::Start() {
-
-
 	stopImportThread = false;
 
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);
@@ -132,7 +130,7 @@ void ModuleResources::ReceiveEvent(TesseractEvent& e) {
 	}
 }
 
-std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
+std::vector<UID> ModuleResources::ImportAsset(const char* filePath, UID assetId) {
 	std::vector<UID> resources;
 
 	if (!App->files->Exists(filePath)) return resources;
@@ -152,7 +150,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		if (validMetaFile) {
 			JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 			for (unsigned i = 0; i < jResources.Size(); ++i) {
-				UID id = jResources[i][JSON_TAG_ID];
+				UID id = assetId ? assetId : jResources[i][JSON_TAG_ID];
 				std::string resourcePath = App->resources->GenerateResourcePath(id);
 				if (!App->files->Exists(resourcePath.c_str())) {
 					validResourceFiles = false;
@@ -301,23 +299,11 @@ void ModuleResources::UpdateAsync() {
 				if (success) {
 #if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					//if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
-					//	// ASK: What happens when we update an asset?
-					//	resourcesToRemove.push_back(entry.first);
-					//	continue;
-					//}
-					// TODO: Review and delete this
-					std::unordered_set<std::string>::iterator it = assetsToNotUpdate.find(assetFilePath);
-					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp && it == assetsToNotUpdate.end()) {
-						// ASK: What happens when we update an asset?
-						// Resources to remove only if we want to regenerate the asset resources
-						//resourcesToReimport.push_back(entry.first);
-						continue;
-					} else if (it != assetsToNotUpdate.end()) {
-						// Instead of removing its resources and its meta, just update the timestamp
+					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+						resourcesToReimport.push_back(entry.first);
 						jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
 						SaveMetaFile(metaFilePath.c_str(), document);
-						assetsToNotUpdate.erase(it);
+						continue;
 					}
 #endif
 				} else {
@@ -338,6 +324,8 @@ void ModuleResources::UpdateAsync() {
 
 			if (!App->files->Exists(resourceFilePath.c_str())) {
 				ImportAsset(assetFilePath.c_str());
+			} else {
+				ImportAsset(assetFilePath.c_str(), id);
 			}
 		}
 		for (UID id : resourcesToRemove) {

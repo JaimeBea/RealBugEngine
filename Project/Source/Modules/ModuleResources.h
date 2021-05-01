@@ -20,7 +20,7 @@ public:
 	bool CleanUp() override;
 	void ReceiveEvent(TesseractEvent& e) override;
 
-	std::vector<UID> ImportAsset(const char* filePath);
+	std::vector<UID> ImportAsset(const char* filePath, UID assetId = 0);
 
 	template<typename T> T* GetResource(UID id) const;
 	AssetFolder* GetRootFolder() const;
