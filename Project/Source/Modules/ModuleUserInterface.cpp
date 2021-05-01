@@ -46,13 +46,15 @@ UpdateStatus ModuleUserInterface::Update() {
 		for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
 			ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
 
-			if (!selectable.IsHovered()) {
-				if (bb->GetWorldAABB().Contains(mousePos)) {
-					selectable.OnPointerEnter();
-				}
-			} else {
-				if (!bb->GetWorldAABB().Contains(mousePos)) {
-					selectable.OnPointerExit();
+			if (bb) {
+				if (!selectable.IsHovered()) {
+					if (bb->GetWorldAABB().Contains(mousePos)) {
+						selectable.OnPointerEnter();
+					}
+				} else {
+					if (!bb->GetWorldAABB().Contains(mousePos)) {
+						selectable.OnPointerExit();
+					}
 				}
 			}
 		}
@@ -70,7 +72,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 	ComponentEventSystem* eventSystem = GetCurrentEventSystem();
 	switch (e.type) {
 	case TesseractEventType::MOUSE_CLICKED:
-		if (!App->time->IsGameRunning()) break;
+		//if (!App->time->IsGameRunning()) break;
 		if (eventSystem != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {

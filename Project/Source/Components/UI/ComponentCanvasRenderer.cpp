@@ -23,12 +23,16 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 		//IF OTHER COMPONENTS THAT RENDER IN UI ARE IMPLEMENTED, THEY MUST HAVE THEIR DRAW METHODS CALLED HERE
 		ComponentImage* componentImage = gameObject->GetComponent<ComponentImage>();
 		if (componentImage != nullptr) {
-			componentImage->Draw(transform2D);
+			if (componentImage->IsActive()) {
+				componentImage->Draw(transform2D);
+			}
 		}
 
 		ComponentText* componentText = gameObject->GetComponent<ComponentText>();
 		if (componentText != nullptr) {
-			componentText->Draw(transform2D);
+			if (componentText->IsActive()) {
+				componentText->Draw(transform2D);
+			}
 		}
 	}
 }

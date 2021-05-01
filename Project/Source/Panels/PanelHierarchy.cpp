@@ -121,6 +121,10 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				CreateUIButton(gameObject);
 			}
 
+			if (ImGui::MenuItem("Toggle")) {
+				CreateUIToggle(gameObject);
+			}
+
 			ImGui::EndMenu();
 		}
 
@@ -267,5 +271,30 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	selectable->SetSelectableType(button->GetType());
 	newGameObject->InitComponents();
 
+	return newGameObject;
+}
+
+GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Button");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
+	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
+	ComponentToggle* toggle = newGameObject->CreateComponent<ComponentToggle>();
+	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
+	CreateEventSystem(App->scene->scene->root);
+
+	//Child Image
+	GameObject* newGameObjectChild = CreateUIImage(newGameObject);
+	newGameObjectChild->InitComponents();
+
+	toggle->SetEnabledImage(newGameObjectChild->GetComponent<ComponentImage>());
+	selectable->SetSelectableType(toggle->GetType());
+	newGameObject->InitComponents();
 	return newGameObject;
 }
