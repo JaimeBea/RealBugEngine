@@ -6,6 +6,7 @@
 #include "FileSystem/SceneImporter.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleProject.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
 #include "SDL_timer.h"
@@ -24,7 +25,7 @@ bool ModuleTime::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_RESUME, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STEP, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STOP, this);
-	
+
 	return true;
 }
 
@@ -137,7 +138,15 @@ void ModuleTime::StartGame() {
 
 #if !GAME
 	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
-#endif
+
+	if (!App->project->IsGameLoaded()) {
+#if _DEBUG
+		App->project->CompileProject(Configuration::DEBUG_EDITOR);
+#else
+		App->project->CompileProject(Configuration::RELEASE_EDITOR);
+#endif // _DEBUG
+	}
+#endif // !GAME
 
 	if (App->camera->GetGameCamera()) {
 		// Set the Game Camera as active
@@ -146,7 +155,7 @@ void ModuleTime::StartGame() {
 	} else {
 		// TODO: Modal window. Warning - camera not set.
 	}
-	
+
 	gameStarted = true;
 	gameRunning = true;
 }
