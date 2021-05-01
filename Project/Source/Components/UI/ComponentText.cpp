@@ -141,7 +141,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	component->SetText(text);
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) const {
+void ComponentText::Draw(const ComponentTransform2D* transform) const {
 	if (fontID == 0 || shaderID == 0) {
 		return;
 	}
@@ -237,7 +237,6 @@ void ComponentText::RecalculcateVertices() {
 
 	for (int i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
-		char c = text.at(i);
 
 		float xpos = x + character.bearing.x * scale;
 		float ypos = y - (character.size.y - character.bearing.y) * scale;
@@ -285,7 +284,7 @@ void ComponentText::RecalculcateVertices() {
 float ComponentText::SubstringWidth(const char* substring, float scale) {
 	float subWidth = 0.f;
 
-	for (int i = 0; i < substring[i] != '\0' && substring[i] != '\n'; ++i) {
+	for (int i = 0; substring[i] != '\0' && substring[i] != '\n'; ++i) {
 		Character c = App->userInterface->GetCharacter(fontID, substring[i]);
 		subWidth += (c.advance >> 6) * scale;
 	}
