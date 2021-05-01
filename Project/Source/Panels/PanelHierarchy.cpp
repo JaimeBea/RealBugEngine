@@ -13,6 +13,7 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentSlider.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
@@ -119,6 +120,10 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 
 			if (ImGui::MenuItem("Button")) {
 				CreateUIButton(gameObject);
+			}
+
+			if (ImGui::MenuItem("Slider")) {
+				CreateUISlider(gameObject);
 			}
 
 			ImGui::EndMenu();
@@ -266,6 +271,49 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 
 	selectable->SetSelectableType(button->GetType());
 	newGameObject->InitComponents();
+
+	return newGameObject;
+}
+
+GameObject* PanelHierarchy::CreateUISlider(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Slider");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
+	ComponentSlider* slider = newGameObject->CreateComponent<ComponentSlider>();
+	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
+
+	CreateEventSystem(App->scene->scene->root);
+
+	GameObject* backgroundGameObject = App->scene->scene->CreateGameObject(newGameObject, GenerateUID(), "Background");
+	ComponentTransform* backgroundTransform = backgroundGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* backgroundTransform2D = backgroundGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* backgroundRenderer = backgroundGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* backgorundImage = backgroundGameObject->CreateComponent<ComponentImage>();
+
+	GameObject* fillGameObject = App->scene->scene->CreateGameObject(newGameObject, GenerateUID(), "Fill");
+	ComponentTransform* fillTransform = fillGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* fillTransform2D = fillGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* fillRenderer = fillGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* fillImage = fillGameObject->CreateComponent<ComponentImage>();
+
+	GameObject* handleGameObject = App->scene->scene->CreateGameObject(newGameObject, GenerateUID(), "Handle");
+	ComponentTransform* handleTransform = handleGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* handleTransform2D = handleGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* handleRenderer = handleGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* handleImage = handleGameObject->CreateComponent<ComponentImage>();
+
+	
+	selectable->SetSelectableType(slider->GetType());
+	newGameObject->InitComponents();
+	backgroundGameObject->InitComponents();
+	fillGameObject->InitComponents();
+	handleGameObject->InitComponents();
 
 	return newGameObject;
 }
