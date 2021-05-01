@@ -4,6 +4,7 @@
 #include "Components/UI/ComponentTransform2D.h"
 
 #include "Math/float3.h"
+
 #include <array>
 #include <vector>
 
@@ -41,7 +42,7 @@ private:
 	std::string text = "Text";									   // Text to display
 	std::vector<std::array<std::array<float, 4>, 6>> verticesText; // Vertices per each character
 
-	float fontSize = 12.0f;									// Font size
+	float fontSize = 24.0f;									// Font size
 	float4 color = float4::one;								// Color of the font
 	float lineHeight = 16.0f;								// Line height
 	TextAlignment textAlignment = TextAlignment::LEFT;		// Horizontal Alignment
