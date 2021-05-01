@@ -21,16 +21,6 @@ private:                                                    \
 		return _members;                                                   \
 	}
 
-#define EXPOSE_MEMBERS(classname) \
-	using ClassType = classname;  \
-	static const std::vector<Member> _members
-
-#define MEMBER(type, member) \
-	Member(type, #member, offsetof(ClassType, member))
-
-#define GET_OFFSET_MEMBER(script, offset) \
-	(((char*) script) + offset)
-
 class Script {
 public:
 	Script(GameObject* owner_)

@@ -2,8 +2,19 @@
 
 #include <variant>
 #include <string>
+#include <vector>
 
 #define MEMBER_VARIANT std::variant<bool, char, unsigned char, short, unsigned short, int, unsigned int, long long, unsigned long long, float, double, std::string>
+
+#define EXPOSE_MEMBERS(classname) \
+	using ClassType = classname;  \
+	static const std::vector<Member> _members
+
+#define MEMBER(type, member) \
+	Member(type, #member, offsetof(ClassType, member))
+
+#define GET_OFFSET_MEMBER(script, offset) \
+	(((char*) script) + offset)
 
 /* Creating a new member type:
 *    1. Add a new MemberType for the new member
