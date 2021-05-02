@@ -5,6 +5,13 @@
 #include "GameObject.h"
 #include "Components/ComponentCamera.h"
 
+EXPOSE_MEMBERS(StartController) {
+	// Add members here to expose them to the engine. Example:
+	// MEMBER(MemberType::BOOL, exampleMember1),
+	// MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
+	// MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
+};
+
 GENERATE_BODY_IMPL(StartController);
 
 void StartController::Start() {

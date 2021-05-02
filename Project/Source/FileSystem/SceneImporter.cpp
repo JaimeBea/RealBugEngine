@@ -18,6 +18,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleRender.h"
+#include "Scripting/Script.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -127,7 +128,10 @@ void SceneImporter::LoadScene(const char* filePath) {
 
 	if (App->time->IsGameRunning()) {
 		for (ComponentScript& script : scene->scriptComponents) {
-			script.OnStart();
+			Script* scriptInstance = script.GetScriptInstance();
+			if (scriptInstance != nullptr) {
+				scriptInstance->Start();
+			}
 		}
 	}
 

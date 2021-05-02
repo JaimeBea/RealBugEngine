@@ -20,6 +20,7 @@ enum class Configuration {
 class ModuleProject : public Module {
 public:
 	bool Init() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
 
 	void CreateScript(std::string& name);

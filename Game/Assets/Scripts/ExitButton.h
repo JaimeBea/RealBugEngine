@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class ExitButton : public Script
 {

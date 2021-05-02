@@ -10,6 +10,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
 #include "TesseractEvent.h"
 #include "FileSystem/MaterialImporter.h"
@@ -203,6 +204,9 @@ UpdateStatus ModuleEditor::Update() {
 			if (ImGui::MenuItem("Material")) {
 				modalToOpen = Modal::CREATE_MATERIAL;
 			}
+			if (ImGui::MenuItem("Script")) {
+				modalToOpen = Modal::CREATE_SCRIPT;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenu();
@@ -265,6 +269,9 @@ UpdateStatus ModuleEditor::Update() {
 	case Modal::CREATE_MATERIAL:
 		ImGui::OpenPopup("Name the material");
 		break;
+	case Modal::CREATE_SCRIPT:
+		ImGui::OpenPopup("Name the script");
+		break;
 	}
 	modalToOpen = Modal::NONE;
 
@@ -308,6 +315,23 @@ UpdateStatus ModuleEditor::Update() {
 		if (ImGui::Button("Save", ImVec2(50, 20))) {
 			std::string path = MATERIALS_PATH "/" + std::string(name) + MATERIAL_EXTENSION;
 			MaterialImporter::CreateAndSaveMaterial(path.c_str());
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Name the script", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
+		static char name[FILENAME_MAX] = "New script";
+		ImGui::InputText("Name##scriptName", name, IM_ARRAYSIZE(name));
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Save", ImVec2(50, 20))) {
+			App->project->CreateScript(std::string(name));
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
