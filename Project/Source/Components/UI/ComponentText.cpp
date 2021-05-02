@@ -11,7 +11,6 @@
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleEditor.h"
 #include "Resources/ResourceTexture.h"
-#include "Resources/ResourceShader.h"
 #include "Resources/ResourceFont.h"
 #include "FileSystem/JsonValue.h"
 
@@ -23,7 +22,6 @@
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_TEXT_SHADERID "ShaderID"
 #define JSON_TAG_TEXT_FONTID "FontID"
 #define JSON_TAG_TEXT_FONTSIZE "FontSize"
 #define JSON_TAG_TEXT_VALUE "Value"
@@ -50,7 +48,6 @@ void ComponentText::OnEditorUpdate() {
 	if (ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags)) {
 		SetText(text);
 	}
-	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 	UID oldFontID = fontID;
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
 	if (oldFontID != fontID) {
@@ -64,7 +61,6 @@ void ComponentText::OnEditorUpdate() {
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_TEXT_SHADERID] = shaderID;
 	jComponent[JSON_TAG_TEXT_FONTID] = fontID;
 	jComponent[JSON_TAG_TEXT_FONTSIZE] = fontSize;
 	jComponent[JSON_TAG_TEXT_VALUE] = text.c_str();
@@ -77,9 +73,6 @@ void ComponentText::Save(JsonValue jComponent) const {
 }
 
 void ComponentText::Load(JsonValue jComponent) {
-	shaderID = jComponent[JSON_TAG_TEXT_SHADERID];
-	App->resources->IncreaseReferenceCount(shaderID);
-
 	fontID = jComponent[JSON_TAG_TEXT_FONTID];
 	App->resources->IncreaseReferenceCount(fontID);
 
@@ -93,33 +86,25 @@ void ComponentText::Load(JsonValue jComponent) {
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
 	ComponentText* component = owner.CreateComponent<ComponentText>();
-	component->shaderID = shaderID;
 	component->fontID = fontID;
 	component->fontSize = fontSize;
 	component->text = text;
 	component->color = color;
 
-	if (shaderID != 0) {
-		App->resources->IncreaseReferenceCount(shaderID);
-	}
 	if (fontID != 0) {
 		App->resources->IncreaseReferenceCount(fontID);
 	}
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) const {
-	if (fontID == 0 || shaderID == 0) {
+	if (fontID == 0) {
 		return;
 	}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	unsigned int program = 0;
-	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
-	if (shaderResouce) {
-		program = shaderResouce->GetShaderProgram();
-	}
+	unsigned int program = App->programs->textUI;
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindVertexArray(vao);
@@ -204,6 +189,7 @@ void ComponentText::RecalculcateVertices() {
 		float w = character.size.x * scale;
 		float h = character.size.y * scale;
 
+		// clang-format off
 		verticesText[i] = {
 			xpos, ypos + h, 0.0f, 0.0f, 
 			xpos, ypos,	0.0f, 1.0f,	
@@ -211,6 +197,7 @@ void ComponentText::RecalculcateVertices() {
 			xpos, ypos + h, 0.0f, 0.0f,
 			xpos + w, ypos, 1.0f, 1.0f,
 			xpos + w, ypos + h, 1.0f, 0.0f};
+		// clang-format on
 
 		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
 		x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)

@@ -33,8 +33,6 @@ enum class UpdateStatus {
 
 #define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
 
-#define PHONG_SHADER_FILE "phong.glsl"
-
 // Configuration -----------
 #define GLSL_VERSION "#version 460"
 

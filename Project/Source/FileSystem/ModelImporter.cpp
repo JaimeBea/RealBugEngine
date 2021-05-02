@@ -451,13 +451,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		aiColor4D color;
 		unsigned uvIndex;
 
-		std::vector<UID>& shaderResourceIds = App->resources->ImportAsset(SHADERS_PATH "/" PHONG_SHADER_FILE);
-		if (shaderResourceIds.empty()) {
-			LOG("Unable to find phong shader file.");
-		} else {
-			material->shaderId = shaderResourceIds[0];
-		}
-
 		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
 			// Check if the material is valid for our purposes
 			assert(mapping == aiTextureMapping_UV);

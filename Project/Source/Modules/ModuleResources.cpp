@@ -88,8 +88,6 @@ bool ModuleResources::Init() {
 }
 
 bool ModuleResources::Start() {
-
-
 	stopImportThread = false;
 
 	importThread = std::thread(&ModuleResources::UpdateAsync, this);
@@ -181,7 +179,7 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath) {
 		} else if (extension == MATERIAL_EXTENSION) {
 			// Material files
 			MaterialImporter::ImportMaterial(filePath, jMeta);
-		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
+		} else if (extension == ".glsl") {
 			// Shader files
 			ShaderImporter::ImportShader(filePath, jMeta);
 		} else if (extension == ".fbx" || extension == ".obj") {

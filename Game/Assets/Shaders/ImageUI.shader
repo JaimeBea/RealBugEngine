@@ -1,4 +1,4 @@
-#ifdef VERTEX
+--- vertImageUI
 
 layout(location = 0) in vec3 vertexPosition;
 layout(location = 1) in vec2 vertexUV0;
@@ -15,10 +15,7 @@ void main()
 	uv0 = vertexUV0;
 }
 
-
-#endif
-
-#ifdef FRAGMENT
+--- fragImageUI
 
 in vec2 uv0;
 
@@ -33,5 +30,3 @@ void main()
 {	
 	outColor = (hasDiffuse * texture2D(diffuse, uv0) + 1 - hasDiffuse) * inputColor * tintColor;
 }
-
-#endif 

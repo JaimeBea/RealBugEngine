@@ -17,10 +17,10 @@ public:
 	void Init() override;			// Generates VBO and VAO of ComponentText
 	void OnEditorUpdate() override; // Works as input of Text, FontSize, Color and ShaderID and FontID
 
-	void Save(JsonValue jComponent) const override;			// Serializes
-	void Load(JsonValue jComponent) override;				// Deserializes
-	void DuplicateComponent(GameObject& owner) override;	// Duplicates Component
-	
+	void Save(JsonValue jComponent) const override;		 // Serializes
+	void Load(JsonValue jComponent) override;			 // Deserializes
+	void DuplicateComponent(GameObject& owner) override; // Duplicates Component
+
 	void Draw(ComponentTransform2D* transform) const;				// Draws the text ortographically using the active camera and the position of the Tranform2D. It will apply the color as tint
 	TESSERACT_ENGINE_API void SetText(const std::string& newText);	// Sets text
 	TESSERACT_ENGINE_API void SetFontSize(float newfontSize);		// Sets fontSize
@@ -37,6 +37,5 @@ private:
 
 	unsigned int vbo = 0; // VBO of the text
 	unsigned int vao = 0; // VAO of the text
-	UID shaderID = 0;	  // Shader ID of the text
 	UID fontID = 0;		  // Font ID of the text
 };

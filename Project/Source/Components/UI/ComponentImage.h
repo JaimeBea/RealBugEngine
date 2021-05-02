@@ -29,5 +29,4 @@ private:
 	float4 color = float4::one;		// Color used as default tainter
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
 	UID textureID = 0;				// ID of the image
-	UID shaderID = 0;				// ID of the shader
 };
