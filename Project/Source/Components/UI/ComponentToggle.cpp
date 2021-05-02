@@ -28,7 +28,7 @@ void ComponentToggle ::SetOn(bool b) {
 }
 
 void ComponentToggle::DuplicateComponent(GameObject& owner) {
-	ComponentToggle* component = owner.CreateComponentDeferred<ComponentToggle>();
+	ComponentToggle* component = owner.CreateComponent<ComponentToggle>();
 	component->isOn = isOn;
 }
 

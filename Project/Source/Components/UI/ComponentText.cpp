@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Application.h"
+#include "ComponentTransform2D.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleRender.h"
@@ -25,7 +26,9 @@
 #define JSON_TAG_TEXT_SHADERID "ShaderID"
 #define JSON_TAG_TEXT_FONTID "FontID"
 #define JSON_TAG_TEXT_FONTSIZE "FontSize"
+#define JSON_TAG_TEXT_LINEHEIGHT "LineHeight"
 #define JSON_TAG_TEXT_VALUE "Value"
+#define JSON_TAG_TEXT_ALIGNMENT "Alignment"
 #define JSON_TAG_COLOR "Color"
 
 ComponentText::~ComponentText() {
@@ -46,17 +49,49 @@ void ComponentText::Init() {
 
 void ComponentText::OnEditorUpdate() {
 	ImGuiInputTextFlags flags = ImGuiInputTextFlags_AllowTabInput;
-	ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags);
+
+	bool mustRecalculateVertices = false;
+
+	if (ImGui::InputTextMultiline("Text input", &text, ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 8), flags)) {
+		SetText(text);
+	}
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
+	UID oldFontID = fontID;
 	ImGui::ResourceSlot<ResourceFont>("Font", &fontID);
-	ImGui::DragFloat("Font Size", &fontSize, 0.2f, 0, FLT_MAX);
+	if (oldFontID != fontID) {
+		mustRecalculateVertices = true;
+	}
+
+	if (ImGui::DragFloat("Font Size", &fontSize, 2.0f, 0, FLT_MAX)) {
+		mustRecalculateVertices = true;
+	}
+	if (ImGui::DragFloat("Line height", &lineHeight, 2.0f, 0, FLT_MAX)) {
+		mustRecalculateVertices = true;
+	}
+
+	int type = static_cast<int>(textAlignment);
+	ImGui::RadioButton("Left", &type, 0);
+	ImGui::SameLine();
+	ImGui::RadioButton("Center", &type, 1);
+	ImGui::SameLine();
+	ImGui::RadioButton("Right", &type, 2);
+	textAlignment = static_cast<TextAlignment>(type);
+
 	ImGui::ColorEdit4("Color##", color.ptr());
+
+	if (mustRecalculateVertices) {
+		RecalculcateVertices();
+	}
+
 }
 
 void ComponentText::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_TEXT_SHADERID] = shaderID;
 	jComponent[JSON_TAG_TEXT_FONTID] = fontID;
 	jComponent[JSON_TAG_TEXT_FONTSIZE] = fontSize;
+	jComponent[JSON_TAG_TEXT_LINEHEIGHT] = lineHeight;
+	jComponent[JSON_TAG_TEXT_ALIGNMENT] = static_cast<int>(textAlignment);
+
 	jComponent[JSON_TAG_TEXT_VALUE] = text.c_str();
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
@@ -75,19 +110,26 @@ void ComponentText::Load(JsonValue jComponent) {
 
 	fontSize = jComponent[JSON_TAG_TEXT_FONTSIZE];
 
+	lineHeight = jComponent[JSON_TAG_TEXT_LINEHEIGHT];
+
+	textAlignment = static_cast<TextAlignment>((int) jComponent[JSON_TAG_TEXT_ALIGNMENT]);
+
 	text = jComponent[JSON_TAG_TEXT_VALUE];
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
+
+	RecalculcateVertices();
 }
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
-	ComponentText* component = owner.CreateComponentDeferred<ComponentText>();
+	ComponentText* component = owner.CreateComponent<ComponentText>();
 	component->shaderID = shaderID;
 	component->fontID = fontID;
 	component->fontSize = fontSize;
-	component->text = text;
+	component->lineHeight = lineHeight;
 	component->color = color;
+	component->textAlignment = textAlignment;
 
 	if (shaderID != 0) {
 		App->resources->IncreaseReferenceCount(shaderID);
@@ -95,14 +137,20 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	if (fontID != 0) {
 		App->resources->IncreaseReferenceCount(fontID);
 	}
+
+	component->SetText(text);
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) {
+void ComponentText::Draw(const ComponentTransform2D* transform) const {
+	if (fontID == 0 || shaderID == 0) {
+		return;
+	}
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	unsigned int program = 0;
-	ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 	if (shaderResouce) {
 		program = shaderResouce->GetShaderProgram();
 	}
@@ -112,59 +160,34 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 
 	glUseProgram(program);
 
-	float4x4 modelMatrix;
-	float4x4* proj = &App->camera->GetProjectionMatrix();
+	float4x4 proj = App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
-		modelMatrix = transform->GetGlobalMatrixWithSize();
 
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
-		float4x4* view = &App->camera->GetViewMatrix();
-		modelMatrix = transform->GetGlobalMatrixWithSize(true);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
+		float4x4 view = App->camera->GetViewMatrix();
+		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	}
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj->ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
-	float3 position = transform->GetPosition();
+	for (size_t i = 0; i < text.size(); ++i) {
+		if (text.at(i) != '\n') {
+			Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
-	float x = position.x;
-	float y = position.y;
-	// FontSize / size of imported font
-	float scale = fontSize / 48.0f;
-
-	for (char c : text) {
-		Character character = App->userInterface->GetCharacter(fontID, c);
-
-		float xpos = x + character.bearing.x * scale;
-		float ypos = y - (character.size.y - character.bearing.y) * scale;
-
-		float w = character.size.x * scale;
-		float h = character.size.y * scale;
-		// update VBO for each character
-		float vertices[6][4] = {
-			{xpos, ypos + h, 0.0f, 0.0f},
-			{xpos, ypos, 0.0f, 1.0f},
-			{xpos + w, ypos, 1.0f, 1.0f},
-
-			{xpos, ypos + h, 0.0f, 0.0f},
-			{xpos + w, ypos, 1.0f, 1.0f},
-			{xpos + w, ypos + h, 1.0f, 0.0f}};
-
-		// render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, character.textureID);
-		// update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
+			// render glyph texture over quad
+			glBindTexture(GL_TEXTURE_2D, character.textureID);
+			// update content of VBO memory
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(verticesText[i]), &verticesText[i].front());
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			// render quad
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+		}
 	}
 
 	glBindVertexArray(0);
@@ -175,6 +198,7 @@ void ComponentText::Draw(ComponentTransform2D* transform) {
 
 void ComponentText::SetText(const std::string& newText) {
 	text = newText;
+	RecalculcateVertices();
 }
 
 void ComponentText::SetFontSize(float newfontSize) {
@@ -187,4 +211,83 @@ void ComponentText::SetFontColor(const float4& newColor) {
 
 float4 ComponentText::GetFontColor() const {
 	return color;
+}
+
+//TODO make this happen with a TesseractEvent or SDLevent related to OnWindowSizeChanged
+void ComponentText::RecalculcateVertices() {
+	if (fontID == 0) {
+		return;
+	}
+
+	verticesText.resize(text.size());
+
+	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
+	float3 position = transform->GetPosition();
+	float screenFactor = GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
+
+	float x = position.x * screenFactor;
+	float y = position.y * screenFactor;
+
+	float dy = 0;		// additional y shifting
+	int j = 0;			// index of row
+
+	float2 transformScale = transform->GetScale().xy();
+	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
+	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
+
+	for (size_t i = 0; i < text.size(); ++i) {
+		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
+
+		float xpos = x + character.bearing.x * scale;
+		float ypos = y - (character.size.y - character.bearing.y) * scale;
+
+		float w = character.size.x * scale;
+		float h = character.size.y * scale;
+
+		switch (textAlignment) {
+			case TextAlignment::LEFT: {
+				// Default branch, could be deleted
+				break;
+			}
+			case TextAlignment::CENTER: {
+				xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+				break;
+			}
+			case TextAlignment::RIGHT: {
+				xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
+				break;
+			}
+		}
+
+		if (text.at(i) == '\n') {
+			dy += lineHeight;					// shifts to next line
+			x = position.x * screenFactor;		// reset to initial position
+			j = i + 1;							// updated j variable in order to get the substringwidth of the following line in the next iteration
+		}
+
+		verticesText[i] = {
+			xpos, ypos + h - dy, 0.0f, 0.0f,
+			xpos, ypos - dy, 0.0f, 1.0f,
+			xpos + w, ypos - dy, 1.0f, 1.0f,
+			xpos, ypos + h - dy, 0.0f, 0.0f,
+			xpos + w, ypos - dy, 1.0f, 1.0f,
+			xpos + w, ypos + h - dy, 1.0f, 0.0f
+		};
+
+		// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+		if (text.at(i) != '\n') {
+			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64
+		}
+	}
+}
+
+float ComponentText::SubstringWidth(const char* substring, float scale) {
+	float subWidth = 0.f;
+
+	for (int i = 0; substring[i] != '\0' && substring[i] != '\n'; ++i) {
+		Character c = App->userInterface->GetCharacter(fontID, substring[i]);
+		subWidth += (c.advance >> 6) * scale;
+	}
+
+	return subWidth;
 }

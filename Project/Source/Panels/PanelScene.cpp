@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentCamera.h"
 #include "Application.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEditor.h"
@@ -11,6 +12,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleProject.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleScene.h"
 #include "Utils/Logging.h"
 #include "Resources/ResourcePrefab.h"
@@ -77,20 +79,20 @@ void PanelScene::Update() {
 				ImGui::OpenPopup("Camera");
 			}
 			if (ImGui::BeginPopup("Camera")) {
-				Frustum& frustum = App->camera->GetEngineFrustum();
-				vec front = frustum.Front();
-				vec up = frustum.Up();
+				Frustum* frustum = App->camera->GetEngineCamera()->GetFrustum();
+				vec front = frustum->Front();
+				vec up = frustum->Up();
 				ImGui::TextColored(App->editor->titleColor, "Frustum");
 				ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 				ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-				float nearPlane = frustum.NearPlaneDistance();
-				float farPlane = frustum.FarPlaneDistance();
+				float nearPlane = frustum->NearPlaneDistance();
+				float farPlane = frustum->FarPlaneDistance();
 				if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
-					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+					App->camera->engineCamera->GetFrustum()->SetViewPlaneDistances(nearPlane, farPlane);
 				}
 				if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
-					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+					App->camera->engineCamera->GetFrustum()->SetViewPlaneDistances(nearPlane, farPlane);
 				}
 				ImGui::EndPopup();
 			}
@@ -146,11 +148,11 @@ void PanelScene::Update() {
 			ImGui::PopStyleVar();
 			ImGui::EndMenuBar();
 		}
-
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
-		if (App->renderer->viewportWidth != size.x || App->renderer->viewportHeight != size.y) {
+		if (App->renderer->GetViewportSize().x != size.x || App->renderer->GetViewportSize().y != size.y) {
 			App->camera->ViewportResized((int) size.x, (int) size.y);
+			App->userInterface->ViewportResized();
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
 			framebufferSize = {
 				size.x,
@@ -170,7 +172,7 @@ void PanelScene::Update() {
 				std::string payloadTypePrefab = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypePrefab.c_str())) {
 					UID prefabId = *(UID*) payload->Data;
-					ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+					ResourcePrefab* prefab = App->resources->GetResource<ResourcePrefab>(prefabId);
 					if (prefab != nullptr) {
 						prefab->BuildPrefab(App->scene->scene->root);
 					}
@@ -180,7 +182,7 @@ void PanelScene::Update() {
 				std::string payloadTypeScene = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::SCENE);
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(payloadTypeScene.c_str())) {
 					UID sceneId = *(UID*) payload->Data;
-					ResourceScene* scene = (ResourceScene*) App->resources->GetResource(sceneId);
+					ResourceScene* scene = App->resources->GetResource<ResourceScene>(sceneId);
 					if (scene != nullptr) {
 						scene->BuildScene();
 					}
@@ -194,9 +196,9 @@ void PanelScene::Update() {
 			ImGuizmo::SetDrawlist();
 			ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
 
-			Frustum& engineFrustum = App->camera->GetEngineFrustum();
-			float4x4 cameraView = float4x4(engineFrustum.ViewMatrix()).Transposed();
-			float4x4 cameraProjection = engineFrustum.ProjectionMatrix().Transposed();
+			Frustum* engineFrustum = App->camera->GetEngineCamera()->GetFrustum();
+			float4x4 cameraView = float4x4(engineFrustum->ViewMatrix()).Transposed();
+			float4x4 cameraProjection = engineFrustum->ProjectionMatrix().Transposed();
 
 			GameObject* selectedGameObject = App->editor->selectedGameObject;
 			if (selectedGameObject) {
@@ -213,6 +215,7 @@ void PanelScene::Update() {
 						inverseParentMatrix = parentTransform->GetGlobalMatrix().Inverted();
 					}
 					float4x4 localMatrix = inverseParentMatrix * globalMatrix.Transposed();
+					localMatrix.Orthogonalize3();
 
 					float3 translation;
 					Quat rotation;
@@ -237,7 +240,7 @@ void PanelScene::Update() {
 			ImGuizmo::ViewManipulate(cameraView.ptr(), 4, ImVec2(viewManipulateRight - viewManipulateSize, viewManipulateTop), ImVec2(viewManipulateSize, viewManipulateSize), 0x10101010);
 			if (ImGui::IsWindowFocused()) {
 				float4x4 newCameraView = cameraView.InverseTransposed();
-				App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
+				App->camera->engineCamera->GetFrustum()->SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
 			}
 		}
 
@@ -272,12 +275,8 @@ bool PanelScene::IsUsing2D() const {
 	return view2D;
 }
 
-float2 PanelScene::GetMousePosOnScene() const {
+const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
-}
-
-float2 PanelScene::GetSceneWindowSize() const {
-	return framebufferSize;
 }
 
 const char* PanelScene::GetCurrentShadingMode() const {

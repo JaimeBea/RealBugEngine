@@ -4,9 +4,11 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
+#include "Utils/UID.h"
 #include "GameObject.h"
 #include "Components/ComponentType.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentCamera.h"
 #include "Components/ComponentMeshRenderer.h"
 #include "Components/ComponentTransform.h"
 #include "Resources/ResourceMesh.h"
@@ -14,6 +16,7 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
 #include "Modules/ModuleRender.h"
+#include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleEditor.h"
 
@@ -56,7 +59,13 @@ static void WarpMouseOnEdges() {
 	}
 }
 
-bool ModuleCamera::Init() {
+bool ModuleCamera::Start() {
+	UID uid = GenerateUID();
+	engineCamera = App->scene->scene->cameraComponents.Obtain(uid, nullptr, uid, true);
+	activeCamera = engineCamera;
+	cullingCamera = engineCamera;
+	gameCamera = engineCamera;
+	Frustum* activeFrustum = activeCamera->GetFrustum();
 	activeFrustum->SetKind(FrustumSpaceGL, FrustumRightHanded);
 	activeFrustum->SetViewPlaneDistances(0.1f, 2000.0f);
 #if GAME
@@ -77,10 +86,10 @@ bool ModuleCamera::Init() {
 UpdateStatus ModuleCamera::Update() {
 	BROFILER_CATEGORY("ModuleCamera - Update", Profiler::Color::Blue)
 
-	if (activeFrustum != &engineCameraFrustum) return UpdateStatus::CONTINUE;
+	if (activeCamera != engineCamera) return UpdateStatus::CONTINUE;
 
+	Frustum* activeFrustum = activeCamera->GetFrustum();
 	float deltaTime = App->time->GetRealTimeDeltaTime();
-
 	const float2& mouseMotion = App->input->GetMouseMotion();
 
 	// Increase zoom and movement speed with shift
@@ -140,6 +149,7 @@ UpdateStatus ModuleCamera::Update() {
 			Translate(activeFrustum->WorldRight().Normalized() * finalMovementSpeed * focusDistance * deltaTime);
 		}
 	} else {
+
 		// Focus camera around geometry with f key
 		if (App->input->GetKey(SDL_SCANCODE_F)) {
 			Focus(App->editor->selectedGameObject);
@@ -167,10 +177,10 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	MSTimer timer;
 	timer.Start();
 
-	if (activeFrustum != &engineCameraFrustum) return;
+	if (activeCamera != engineCamera) return;
 
 	std::vector<GameObject*> intersectingObjects;
-	LineSegment ray = engineCameraFrustum.UnProjectLineSegment(pos.x, pos.y);
+	LineSegment ray = engineCamera->GetFrustum()->UnProjectLineSegment(pos.x, pos.y);
 
 	// Check with AABB
 	Scene* scene = App->scene->scene;
@@ -194,9 +204,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	float minDistance = inf;
 	float distance = 0;
 	for (GameObject* gameObject : intersectingObjects) {
-		std::vector<ComponentMeshRenderer*> meshes = gameObject->GetComponents<ComponentMeshRenderer>();
-		for (ComponentMeshRenderer* mesh : meshes) {
-			ResourceMesh* meshResource = (ResourceMesh*) App->resources->GetResource(mesh->meshId);
+		for (ComponentMeshRenderer& mesh : gameObject->GetComponents<ComponentMeshRenderer>()) {
+			ResourceMesh* meshResource = App->resources->GetResource<ResourceMesh>(mesh.meshId);
 			if (meshResource == nullptr) continue;
 
 			const float4x4& model = gameObject->GetComponent<ComponentTransform>()->GetGlobalMatrix();
@@ -218,23 +227,8 @@ void ModuleCamera::CalculateFrustumNearestObject(float2 pos) {
 	LOG("Ray Tracing in %ums", timer.Stop());
 }
 
-void ModuleCamera::ChangeActiveFrustum(Frustum& frustum, bool change) {
-	if (change) {
-		activeFrustum = &frustum;
-	} else {
-		activeFrustum = &engineCameraFrustum;
-	}
-}
-
-void ModuleCamera::ChangeCullingFrustum(Frustum& frustum, bool change) {
-	if (change) {
-		cullingFrustum = &frustum;
-	} else {
-		cullingFrustum = &engineCameraFrustum;
-	}
-}
-
 void ModuleCamera::CalculateFrustumPlanes() {
+	Frustum* cullingFrustum = cullingCamera->GetFrustum();
 	float3 pos = cullingFrustum->Pos();
 	float3 up = cullingFrustum->Up().Normalized();
 	float3 front = cullingFrustum->Front();
@@ -269,18 +263,18 @@ void ModuleCamera::CalculateFrustumPlanes() {
 }
 
 bool ModuleCamera::IsEngineCameraActive() const {
-	if (activeFrustum == &engineCameraFrustum) {
+	if (activeCamera == engineCamera) {
 		return true;
 	}
 	return false;
 }
 
 void ModuleCamera::Translate(const vec& translation) {
-	activeFrustum->SetPos(activeFrustum->Pos() + translation);
+	activeCamera->GetFrustum()->SetPos(activeCamera->GetFrustum()->Pos() + translation);
 }
 
 void ModuleCamera::Zoom(float amount) {
-	Translate(activeFrustum->Front().Normalized() * amount);
+	Translate(activeCamera->GetFrustum()->Front().Normalized() * amount);
 	focusDistance -= amount;
 	if (focusDistance < 0.0f) {
 		focusDistance = 0.0f;
@@ -288,6 +282,7 @@ void ModuleCamera::Zoom(float amount) {
 }
 
 void ModuleCamera::Rotate(const float3x3& rotationMatrix) {
+	Frustum* activeFrustum = activeCamera->GetFrustum();
 	vec oldFront = activeFrustum->Front().Normalized();
 	vec oldUp = activeFrustum->Up().Normalized();
 	activeFrustum->SetFront(rotationMatrix * oldFront);
@@ -295,6 +290,7 @@ void ModuleCamera::Rotate(const float3x3& rotationMatrix) {
 }
 
 void ModuleCamera::LookAt(float x, float y, float z) {
+	Frustum* activeFrustum = activeCamera->GetFrustum();
 	vec direction = vec(x, y, z) - activeFrustum->Pos();
 	focusDistance = direction.Length();
 	direction.Normalize();
@@ -322,9 +318,9 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 			if (!worldBoundingBox.IsFinite()) return;
 
 			Sphere boundingSphere = worldBoundingBox.MinimalEnclosingSphere();
-			float minHalfAngle = Min(activeFrustum->HorizontalFov(), activeFrustum->VerticalFov()) * 0.5f;
+			float minHalfAngle = Min(activeCamera->GetFrustum()->HorizontalFov(), activeCamera->GetFrustum()->VerticalFov()) * 0.5f;
 			float relativeDistance = boundingSphere.r / Sin(minHalfAngle);
-			vec cameraDirection = -activeFrustum->Front().Normalized();
+			vec cameraDirection = -activeCamera->GetFrustum()->Front().Normalized();
 			vec cameraPosition = boundingSphere.pos + (cameraDirection * relativeDistance);
 			vec modelCenter = boundingSphere.pos;
 			SetPosition(cameraPosition);
@@ -348,7 +344,7 @@ void ModuleCamera::Focus(const GameObject* gameObject) {
 				distance = 30.f;
 			}
 			SetPosition(modelCenter - GetFront() * distance);
-			focusDistance = (modelCenter - activeFrustum->Pos()).Length();
+			focusDistance = (modelCenter - activeCamera->GetFrustum()->Pos()).Length();
 		}
 	}
 }
@@ -367,57 +363,81 @@ void ModuleCamera::CalculateExtremePointsRecursive(const GameObject* gameObject,
 }
 
 void ModuleCamera::ViewportResized(int width, int height) {
-	
 	for (ComponentCamera& camera : App->scene->scene->cameraComponents) {
 		// TODO: Implement button to force AspectRatio from specific camera
 		camera.frustum.SetVerticalFovAndAspectRatio(camera.frustum.VerticalFov(), width / (float) height);
 	}
-	engineCameraFrustum.SetVerticalFovAndAspectRatio(engineCameraFrustum.VerticalFov(), width / (float) height);
+	engineCamera->GetFrustum()->SetVerticalFovAndAspectRatio(engineCamera->GetFrustum()->VerticalFov(), width / (float) height);
 }
 
 void ModuleCamera::SetFOV(float hFov) {
-	activeFrustum->SetHorizontalFovAndAspectRatio(hFov, activeFrustum->AspectRatio());
+	activeCamera->GetFrustum()->SetHorizontalFovAndAspectRatio(hFov, activeCamera->GetFrustum()->AspectRatio());
 }
 
 void ModuleCamera::SetAspectRatio(float aspectRatio) {
-	activeFrustum->SetVerticalFovAndAspectRatio(activeFrustum->VerticalFov(), aspectRatio);
+	activeCamera->GetFrustum()->SetVerticalFovAndAspectRatio(activeCamera->GetFrustum()->VerticalFov(), aspectRatio);
 }
 
 void ModuleCamera::SetPlaneDistances(float nearPlane, float farPlane) {
-	activeFrustum->SetViewPlaneDistances(nearPlane, farPlane);
+	activeCamera->GetFrustum()->SetViewPlaneDistances(nearPlane, farPlane);
 }
 
 void ModuleCamera::SetPosition(const vec& position) {
-	activeFrustum->SetPos(position);
+	activeCamera->GetFrustum()->SetPos(position);
 }
 
 void ModuleCamera::SetPosition(float x, float y, float z) {
-	activeFrustum->SetPos(vec(x, y, z));
+	activeCamera->GetFrustum()->SetPos(vec(x, y, z));
 }
 
 void ModuleCamera::SetOrientation(const float3x3& rotationMatrix) {
-	activeFrustum->SetFront(rotationMatrix * float3::unitZ);
-	activeFrustum->SetUp(rotationMatrix * float3::unitY);
+	activeCamera->GetFrustum()->SetFront(rotationMatrix * float3::unitZ);
+	activeCamera->GetFrustum()->SetUp(rotationMatrix * float3::unitY);
+}
+
+void ModuleCamera::ChangeActiveCamera(ComponentCamera* camera, bool change) {
+	if (change) {
+		activeCamera = camera;
+	} else {
+		activeCamera = engineCamera;
+	}
+}
+
+void ModuleCamera::ChangeCullingCamera(ComponentCamera* camera, bool change) {
+	if (change) {
+		cullingCamera = camera;
+	} else {
+		cullingCamera = engineCamera;
+	}
+}
+
+void ModuleCamera::ChangeGameCamera(ComponentCamera* camera, bool change) {
+	if (change) {
+		gameCamera = camera;
+	} else {
+		gameCamera = engineCamera;
+	}
+	
 }
 
 vec ModuleCamera::GetFront() const {
-	return activeFrustum->Front();
+	return activeCamera->GetFrustum()->Front();
 }
 
 vec ModuleCamera::GetUp() const {
-	return activeFrustum->Up();
+	return activeCamera->GetFrustum()->Up();
 }
 
 vec ModuleCamera::GetWorldRight() const {
-	return activeFrustum->WorldRight();
+	return activeCamera->GetFrustum()->WorldRight();
 }
 
 vec ModuleCamera::GetPosition() const {
-	return activeFrustum->Pos();
+	return activeCamera->GetFrustum()->Pos();
 }
 
 float3 ModuleCamera::GetOrientation() const {
-	return activeFrustum->ViewMatrix().RotatePart().ToEulerXYZ();
+	return activeCamera->GetFrustum()->ViewMatrix().RotatePart().ToEulerXYZ();
 }
 
 float ModuleCamera::GetFocusDistance() const {
@@ -425,39 +445,43 @@ float ModuleCamera::GetFocusDistance() const {
 }
 
 float ModuleCamera::GetNearPlane() const {
-	return activeFrustum->NearPlaneDistance();
+	return activeCamera->GetFrustum()->NearPlaneDistance();
 }
 
 float ModuleCamera::GetFarPlane() const {
-	return activeFrustum->FarPlaneDistance();
+	return activeCamera->GetFrustum()->FarPlaneDistance();
 }
 
 float ModuleCamera::GetFOV() const {
-	return activeFrustum->VerticalFov();
+	return activeCamera->GetFrustum()->VerticalFov();
 }
 
 float ModuleCamera::GetAspectRatio() const {
-	return activeFrustum->AspectRatio();
+	return activeCamera->GetFrustum()->AspectRatio();
 }
 
 float4x4 ModuleCamera::GetProjectionMatrix() const {
-	return activeFrustum->ProjectionMatrix();
+	return activeCamera->GetFrustum()->ProjectionMatrix();
 }
 
 float4x4 ModuleCamera::GetViewMatrix() const {
-	return activeFrustum->ViewMatrix();
+	return activeCamera->GetFrustum()->ViewMatrix();
 }
 
-Frustum ModuleCamera::GetEngineFrustum() const {
-	return engineCameraFrustum;
+ComponentCamera* ModuleCamera::GetEngineCamera() const {
+	return engineCamera;
 }
 
-Frustum* ModuleCamera::GetActiveFrustum() const {
-	return activeFrustum;
+ComponentCamera* ModuleCamera::GetActiveCamera() const {
+	return activeCamera;
 }
 
-Frustum* ModuleCamera::GetCullingFrustum() const {
-	return cullingFrustum;
+ComponentCamera* ModuleCamera::GetCullingCamera() const {
+	return cullingCamera;
+}
+
+ComponentCamera* ModuleCamera::GetGameCamera() const {
+	return gameCamera;
 }
 
 const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
@@ -465,12 +489,12 @@ const FrustumPlanes& ModuleCamera::GetFrustumPlanes() const {
 }
 
 void ModuleCamera::EnableOrtographic() {
-	activeFrustum->SetOrthographic((float) App->renderer->viewportWidth, (float) App->renderer->viewportHeight);
+	activeCamera->GetFrustum()->SetOrthographic((float) App->renderer->GetViewportSize().x, (float) App->renderer->GetViewportSize().y);
 }
 
 void ModuleCamera::EnablePerspective() {
-	activeFrustum->SetPerspective(1.3f, 1.f);
-	ViewportResized(App->renderer->viewportWidth, App->renderer->viewportHeight);
+	activeCamera->GetFrustum()->SetPerspective(1.3f, 1.f);
+	ViewportResized(App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y);
 }
 
 void ModuleCamera::GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects) {

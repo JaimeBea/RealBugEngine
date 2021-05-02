@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Utils/ImGuiUtils.h"
 #include "Resources/ResourceShader.h"
+#include "Resources/ResourceSkybox.h"
 #include "Modules/ModuleCamera.h"
 #include "Modules/ModuleEditor.h"
 #include "ComponentSkyBox.h"
@@ -45,9 +46,9 @@ void ComponentSkyBox::OnEditorUpdate() {
 void ComponentSkyBox::Draw() {
 	if (!IsActive()) return;
 
-	ResourceShader* shader = (ResourceShader*) App->resources->GetResource(shaderId);
+	ResourceShader* shader = App->resources->GetResource<ResourceShader>(shaderId);
 	if (shader == nullptr) return;
-	ResourceSkybox* skybox = (ResourceSkybox*) App->resources->GetResource(skyboxId);
+	ResourceSkybox* skybox = App->resources->GetResource<ResourceSkybox>(skyboxId);
 	if (skybox == nullptr) return;
 
 	glDepthMask(GL_FALSE);

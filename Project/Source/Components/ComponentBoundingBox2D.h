@@ -3,9 +3,6 @@
 #include "Component.h"
 
 #include "Geometry/AABB2D.h"
-#include "Geometry/OBB.h"
-
-#define JSON_TAG_LOCAL_BOUNDING_BOX2D "LocalBoundingBox2D"
 
 class ComponentBoundingBox2D : public Component {
 public:
@@ -17,6 +14,7 @@ public:
 
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
+	bool CanBeRemoved() const override;
 
 	void SetLocalBoundingBox(const AABB2D& boundingBox);
 	void CalculateWorldBoundingBox(bool force = false);

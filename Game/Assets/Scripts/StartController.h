@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class StartController : public Script
 {
 	GENERATE_BODY(StartController);
-	
+
 public:
 
 	void Start() override;
 	void Update() override;
 };
-

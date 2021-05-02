@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "GameObject.h"
+#include "FileSystem/PrefabImporter.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/UI/ComponentTransform2D.h"
@@ -10,8 +11,11 @@
 #include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/UI/ComponentImage.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentButton.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleFiles.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourcePrefab.h"
@@ -64,6 +68,14 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		App->editor->selectedGameObject = gameObject;
 		Scene* scene = App->scene->scene;
 		if (gameObject != scene->root) {
+			if (ImGui::Selectable("Create Prefab")) {
+				std::string path = std::string(PREFABS_PATH) + "/" + gameObject->name + PREFAB_EXTENSION;
+				for (unsigned copyIndex = 0; App->files->Exists(path.c_str()); ++copyIndex) {
+					path = std::string(PREFABS_PATH) + "/" + gameObject->name + " (" + std::to_string(copyIndex) + ")" + PREFAB_EXTENSION;
+				}
+				PrefabImporter::SavePrefab(path.c_str(), gameObject);
+			}
+
 			if (ImGui::Selectable("Delete")) {
 				if (isSelected) App->editor->selectedGameObject = nullptr;
 				App->scene->DestroyGameObjectDeferred(gameObject);
@@ -86,8 +98,11 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		// TODO: code duplicated in every CreateXX(gameObject). Generalisation could be done here. Also with PanelInspector->AddUIComponentsOptions()
 		if (ImGui::BeginMenu("UI")) {
 			if (ImGui::MenuItem("Event System")) {
-				// TODO
-				CreateEventSystem(gameObject);
+				if (App->scene->scene->eventSystemComponents.Count() == 0) {
+					CreateEventSystem(gameObject);
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
 			}
 
 			if (ImGui::MenuItem("Canvas")) {
@@ -113,7 +128,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	}
 	ImGui::PopID();
 
-	if (ImGui::IsItemClicked()) {
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered()) {
 		App->editor->selectedGameObject = gameObject;
 	}
 
@@ -156,7 +171,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 		std::string prafabPayloadType = std::string("_RESOURCE_") + GetResourceTypeName(ResourceType::PREFAB);
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(prafabPayloadType.c_str())) {
 			UID prefabId = *(UID*) payload->Data;
-			ResourcePrefab* prefab = (ResourcePrefab*) App->resources->GetResource(prefabId);
+			ResourcePrefab* prefab = App->resources->GetResource<ResourcePrefab>(prefabId);
 			if (prefab != nullptr) {
 				prefab->BuildPrefab(gameObject);
 			}
@@ -187,15 +202,15 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 		GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Event System");
 		newGameObject->CreateComponent<ComponentTransform>();
 		ComponentEventSystem* component = newGameObject->CreateComponent<ComponentEventSystem>();
-		App->userInterface->SetCurrentEventSystem(component);
+		App->userInterface->SetCurrentEventSystem(component->GetID());
 		newGameObject->InitComponents();
 		return newGameObject;
 	}
+
+	return nullptr;
 }
 
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
-	CreateEventSystem(gameObject);
-
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
@@ -247,6 +262,8 @@ GameObject* PanelHierarchy::CreateUIButton(GameObject* gameObject) {
 	ComponentImage* image = newGameObject->CreateComponent<ComponentImage>();
 	ComponentButton* button = newGameObject->CreateComponent<ComponentButton>();
 	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
+	CreateEventSystem(App->scene->scene->root);
+
 	selectable->SetSelectableType(button->GetType());
 	newGameObject->InitComponents();
 

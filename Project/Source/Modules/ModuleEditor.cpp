@@ -2,6 +2,7 @@
 
 #include "Globals.h"
 #include "Application.h"
+#include "GameObject.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/FileDialog.h"
 #include "Modules/ModuleWindow.h"
@@ -9,6 +10,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
 #include "TesseractEvent.h"
 #include "FileSystem/MaterialImporter.h"
@@ -24,6 +26,7 @@
 #include "GL/glew.h"
 #include "SDL_video.h"
 #include "Brofiler.h"
+#include "Math/float2.h"
 
 #include "Utils/Leaks.h"
 
@@ -157,7 +160,7 @@ UpdateStatus ModuleEditor::PreUpdate() {
 
 #if GAME
 	return UpdateStatus::CONTINUE;
-#endif
+#else
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
@@ -165,6 +168,7 @@ UpdateStatus ModuleEditor::PreUpdate() {
 	ImGuizmo::BeginFrame();
 
 	return UpdateStatus::CONTINUE;
+#endif
 }
 
 UpdateStatus ModuleEditor::Update() {
@@ -199,6 +203,9 @@ UpdateStatus ModuleEditor::Update() {
 		if (ImGui::BeginMenu("Create")) {
 			if (ImGui::MenuItem("Material")) {
 				modalToOpen = Modal::CREATE_MATERIAL;
+			}
+			if (ImGui::MenuItem("Script")) {
+				modalToOpen = Modal::CREATE_SCRIPT;
 			}
 			ImGui::EndMenu();
 		}
@@ -256,8 +263,14 @@ UpdateStatus ModuleEditor::Update() {
 	case Modal::COMPONENT_EXISTS:
 		ImGui::OpenPopup("Already existing Component");
 		break;
+	case Modal::CANT_REMOVE_COMPONENT:
+		ImGui::OpenPopup("Unable to remove component");
+		break;
 	case Modal::CREATE_MATERIAL:
 		ImGui::OpenPopup("Name the material");
+		break;
+	case Modal::CREATE_SCRIPT:
+		ImGui::OpenPopup("Name the script");
 		break;
 	}
 	modalToOpen = Modal::NONE;
@@ -312,6 +325,23 @@ UpdateStatus ModuleEditor::Update() {
 	}
 
 	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Name the script", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
+		static char name[FILENAME_MAX] = "New script";
+		ImGui::InputText("Name##scriptName", name, IM_ARRAYSIZE(name));
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Save", ImVec2(50, 20))) {
+			App->project->CreateScript(std::string(name));
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
 	if (ImGui::BeginPopupModal("Quit", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
 		ImGui::Text("Do you really want to quit?");
 		ImGui::NewLine();
@@ -338,24 +368,35 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::EndPopup();
 	}
 
+	// CANT REMOVE COMPONENT MODAL
+	ImGui::SetNextWindowSize(ImVec2(400, 120), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Unable to remove component", nullptr, ImGuiWindowFlags_NoResize)) {
+		ImGui::PushTextWrapPos();
+		ImGui::Text("This Component cannot be removed.There are other Components in this Game Object that require its functionality.");
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
 	// Docking
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGuiID dockSpaceId = ImGui::GetID("DockSpace");
 
 	if (!ImGui::DockBuilderGetNode(dockSpaceId)) {
 		ImGui::DockBuilderAddNode(dockSpaceId);
-		ImGui::DockBuilderSetNodeSize(dockSpaceId, viewport->GetWorkSize());
+		ImGui::DockBuilderSetNodeSize(dockSpaceId, viewport->WorkSize);
 
 		dockMainId = dockSpaceId;
 		dockUpId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Up, 0.2f, nullptr, &dockMainId);
-		ImGui::DockBuilderSetNodeSize(dockUpId, ImVec2(viewport->GetWorkSize().x, 40));
+		ImGui::DockBuilderSetNodeSize(dockUpId, ImVec2(viewport->WorkSize.x, 40));
 		dockRightId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Right, 0.2f, nullptr, &dockMainId);
 		dockDownId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Down, 0.3f, nullptr, &dockMainId);
 		dockLeftId = ImGui::DockBuilderSplitNode(dockMainId, ImGuiDir_Left, 0.25f, nullptr, &dockMainId);
 	}
 
-	ImGui::SetNextWindowPos(viewport->GetWorkPos());
-	ImGui::SetNextWindowSize(viewport->GetWorkSize());
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
 
 	ImGuiWindowFlags dockSpaceWindowFlags = 0;
 	dockSpaceWindowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
@@ -388,7 +429,11 @@ UpdateStatus ModuleEditor::PostUpdate() {
 
 	// Deleting Components
 	if (panelInspector.GetComponentToDelete()) {
-		selectedGameObject->RemoveComponent(panelInspector.GetComponentToDelete());
+		if (panelInspector.GetComponentToDelete()->CanBeRemoved()) {
+			selectedGameObject->RemoveComponent(panelInspector.GetComponentToDelete());
+		} else {
+			App->editor->modalToOpen = Modal::CANT_REMOVE_COMPONENT;
+		}
 		panelInspector.SetComponentToDelete(nullptr);
 	}
 
@@ -421,17 +466,8 @@ bool ModuleEditor::CleanUp() {
 	return true;
 }
 
-void ModuleEditor::OnMouseMoved() {
-	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_UPDATE);
-	mouseEvent.mouseUpdate.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseUpdate.mouseY = panelScene.GetMousePosOnScene().y;
-	App->events->AddEvent(mouseEvent);
-}
-
 void ModuleEditor::OnMouseClicked() {
 	TesseractEvent mouseEvent = TesseractEvent(TesseractEventType::MOUSE_CLICKED);
-	mouseEvent.mouseClicked.mouseX = panelScene.GetMousePosOnScene().x;
-	mouseEvent.mouseClicked.mouseY = panelScene.GetMousePosOnScene().y;
 	App->events->AddEvent(mouseEvent);
 }
 

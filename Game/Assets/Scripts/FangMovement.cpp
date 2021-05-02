@@ -3,11 +3,19 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(FangMovement) {
+	// Add members here to expose them to the engine. Example:
+	// MEMBER(MemberType::BOOL, exampleMember1),
+	// MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
+	// MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
+};
+
 GENERATE_BODY_IMPL(FangMovement);
 
 void FangMovement::Start() {
 	gameObject = GameplaySystems::GetGameObject("Fang");
 	camera = GameplaySystems::GetGameObject("Game Camera");
+	Debug::Log("Fang movement Start Log");
 }
 
 void FangMovement::Update() {

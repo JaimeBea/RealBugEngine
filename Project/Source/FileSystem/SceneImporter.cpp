@@ -1,6 +1,7 @@
 #include "SceneImporter.h"
 
 #include "Application.h"
+#include "GameObject.h"
 #include "Utils/Logging.h"
 #include "Utils/MSTimer.h"
 #include "Utils/FileDialog.h"
@@ -9,12 +10,15 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
+#include "Components/ComponentScript.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleCamera.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleRender.h"
+#include "Scripting/Script.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -29,6 +33,7 @@
 #define JSON_TAG_QUADTREE_BOUNDS "QuadtreeBounds"
 #define JSON_TAG_QUADTREE_MAX_DEPTH "QuadtreeMaxDepth"
 #define JSON_TAG_QUADTREE_ELEMENTS_PER_NODE "QuadtreeElementsPerNode"
+#define JSON_TAG_GAME_CAMERA "GameCamera"
 #define JSON_TAG_AMBIENTLIGHT "AmbientLight"
 
 bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
@@ -102,11 +107,10 @@ void SceneImporter::LoadScene(const char* filePath) {
 
 	// Load GameObjects
 	JsonValue jRoot = jScene[JSON_TAG_ROOT];
-	GameObject* root = scene->gameObjects.Obtain();
+	GameObject* root = scene->gameObjects.Obtain(0);
 	scene->root = root;
 	root->scene = scene;
 	root->Load(jRoot);
-	scene->gameObjectsIdMap[root->GetID()] = root;
 	root->InitComponents();
 
 	// Quadtree generation
@@ -116,12 +120,18 @@ void SceneImporter::LoadScene(const char* filePath) {
 	scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
 	scene->RebuildQuadtree();
 
+	ComponentCamera* gameCamera = scene->GetComponent<ComponentCamera>(jScene[JSON_TAG_GAME_CAMERA]);
+	App->camera->ChangeGameCamera(gameCamera, gameCamera != nullptr);
+
 	JsonValue ambientLight = jScene[JSON_TAG_AMBIENTLIGHT];
-	App->renderer->ambientColor = {ambientLight[0], ambientLight[1] ,ambientLight[2]};
+	App->renderer->ambientColor = {ambientLight[0], ambientLight[1], ambientLight[2]};
 
 	if (App->time->IsGameRunning()) {
-		for (auto it : scene->scriptComponents) {
-			it.OnStart();
+		for (ComponentScript& script : scene->scriptComponents) {
+			Script* scriptInstance = script.GetScriptInstance();
+			if (scriptInstance != nullptr) {
+				scriptInstance->Start();
+			}
 		}
 	}
 
@@ -144,6 +154,9 @@ bool SceneImporter::SaveScene(const char* filePath) {
 	jQuadtreeBounds[3] = scene->quadtreeBounds.maxPoint.y;
 	jScene[JSON_TAG_QUADTREE_MAX_DEPTH] = scene->quadtreeMaxDepth;
 	jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = scene->quadtreeElementsPerNode;
+
+	ComponentCamera* gameCamera = App->camera->GetGameCamera();
+	jScene[JSON_TAG_GAME_CAMERA] = gameCamera ? gameCamera->GetID() : 0;
 
 	JsonValue ambientLight = jScene[JSON_TAG_AMBIENTLIGHT];
 	ambientLight[0] = App->renderer->ambientColor.x;

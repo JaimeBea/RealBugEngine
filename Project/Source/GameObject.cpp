@@ -26,16 +26,14 @@
 #define JSON_TAG_CHILDREN "Children"
 
 void GameObject::InitComponents() {
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
+	for (Component* component : components) {
 		component->Init();
 	}
 }
 
 void GameObject::Update() {
 	if (IsActiveInHierarchy()) {
-		for (const std::pair<ComponentType, UID>& pair : components) {
-			Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
+		for (Component* component : components) {
 			component->Update();
 		}
 
@@ -46,8 +44,7 @@ void GameObject::Update() {
 }
 
 void GameObject::DrawGizmos() {
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
+	for (Component* component : components) {
 		component->DrawGizmos();
 	}
 
@@ -78,20 +75,14 @@ UID GameObject::GetID() const {
 	return id;
 }
 
-std::vector<Component*> GameObject::GetComponents() const {
-	std::vector<Component*> auxComponents;
-
-	for (const std::pair<ComponentType, UID>& pair : components) {
-		auxComponents.push_back(scene->GetComponentByTypeAndId(pair.first, pair.second));
-	}
-
-	return auxComponents;
+const std::vector<Component*>& GameObject::GetComponents() const {
+	return components;
 }
 
 void GameObject::RemoveComponent(Component* component) {
 	for (auto it = components.begin(); it != components.end(); ++it) {
-		if (it->second == component->GetID()) {
-			scene->RemoveComponentByTypeAndId(it->first, it->second);
+		if (*it == component) {
+			scene->RemoveComponentByTypeAndId((*it)->GetType(), (*it)->GetID());
 			components.erase(it);
 			break;
 		}
@@ -100,8 +91,8 @@ void GameObject::RemoveComponent(Component* component) {
 
 void GameObject::RemoveAllComponents() {
 	while (!components.empty()) {
-		std::pair<ComponentType, UID> pair = components.back();
-		scene->RemoveComponentByTypeAndId(pair.first, pair.second);
+		Component* component = components.back();
+		scene->RemoveComponentByTypeAndId(component->GetType(), component->GetID());
 		components.pop_back();
 	}
 }
@@ -109,7 +100,7 @@ void GameObject::RemoveAllComponents() {
 void GameObject::SetParent(GameObject* gameObject) {
 	if (parent != nullptr) {
 		bool found = false;
-		for (std::vector<GameObject*>::iterator it = parent->children.begin(); it != parent->children.end(); ++it) {
+		for (auto it = parent->children.begin(); it != parent->children.end(); ++it) {
 			if (*it == this) {
 				found = true;
 				parent->children.erase(it);
@@ -154,12 +145,12 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-GameObject* GameObject::FindDescendant(const std::string& name) const {
+GameObject* GameObject::FindDescendant(const std::string& name_) const {
 	for (GameObject* child : children) {
-		if (child->name == name) {
+		if (child->name == name_) {
 			return child;
 		} else {
-			GameObject* gameObject = child->FindDescendant(name);
+			GameObject* gameObject = child->FindDescendant(name_);
 			if (gameObject != nullptr) return gameObject;
 		}
 	}
@@ -180,8 +171,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
 		JsonValue jComponent = jComponents[i];
-		std::pair<ComponentType, UID> pair = components[i];
-		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
+		Component* component = components[i];
 
 		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ID] = component->GetID();
@@ -198,7 +188,9 @@ void GameObject::Save(JsonValue jGameObject) const {
 }
 
 void GameObject::Load(JsonValue jGameObject) {
-	id = jGameObject[JSON_TAG_ID];
+	UID newId = jGameObject[JSON_TAG_ID];
+	scene->gameObjects.ChangeKey(id, newId);
+	id = newId;
 	name = jGameObject[JSON_TAG_NAME];
 	active = jGameObject[JSON_TAG_ACTIVE];
 
@@ -211,8 +203,8 @@ void GameObject::Load(JsonValue jGameObject) {
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
 		ComponentType type = GetComponentTypeFromName(typeName.c_str());
-		components.push_back(std::pair<ComponentType, UID>(type, componentId));
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
+		components.push_back(component);
 		component->Load(jComponent);
 	}
 
@@ -221,10 +213,9 @@ void GameObject::Load(JsonValue jGameObject) {
 		JsonValue jChild = jChildren[i];
 		std::string childName = jChild[JSON_TAG_NAME];
 
-		GameObject* child = scene->gameObjects.Obtain();
+		GameObject* child = scene->gameObjects.Obtain(0);
 		child->scene = scene;
 		child->Load(jChild);
-		scene->gameObjectsIdMap[child->id] = child;
 		child->SetParent(this);
 		child->InitComponents();
 	}
@@ -240,16 +231,15 @@ void GameObject::Load(JsonValue jGameObject) {
 	}
 }
 
-void GameObject::SavePrototype(JsonValue jGameObject) const {
+void GameObject::SavePrefab(JsonValue jGameObject) {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_ROOT_BONE_NAME] = rootBoneHierarchy ? rootBoneHierarchy->name.c_str() : "";
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
+		Component* component = components[i];
 		JsonValue jComponent = jComponents[i];
-		std::pair<ComponentType, UID> pair = components[i];
-		Component* component = scene->GetComponentByTypeAndId(pair.first, pair.second);
 
 		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
@@ -261,11 +251,11 @@ void GameObject::SavePrototype(JsonValue jGameObject) const {
 		JsonValue jChild = jChildren[i];
 		GameObject* child = children[i];
 
-		child->SavePrototype(jChild);
+		child->SavePrefab(jChild);
 	}
 }
 
-void GameObject::LoadPrototype(JsonValue jGameObject) {
+void GameObject::LoadPrefab(JsonValue jGameObject) {
 	name = jGameObject[JSON_TAG_NAME];
 	active = jGameObject[JSON_TAG_ACTIVE];
 
@@ -278,8 +268,8 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		bool active = jComponent[JSON_TAG_ACTIVE];
 
 		ComponentType type = GetComponentTypeFromName(typeName.c_str());
-		components.push_back(std::pair<ComponentType, UID>(type, componentId));
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
+		components.push_back(component);
 		component->Load(jComponent);
 	}
 
@@ -288,11 +278,11 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		JsonValue jChild = jChildren[i];
 		std::string childName = jChild[JSON_TAG_NAME];
 
-		GameObject* child = scene->gameObjects.Obtain();
+		UID childId = GenerateUID();
+		GameObject* child = scene->gameObjects.Obtain(childId);
 		child->scene = scene;
-		child->LoadPrototype(jChild);
-		child->id = GenerateUID();
-		scene->gameObjectsIdMap[child->id] = child;
+		child->LoadPrefab(jChild);
+		child->id = childId;
 		child->SetParent(this);
 		child->InitComponents();
 	}

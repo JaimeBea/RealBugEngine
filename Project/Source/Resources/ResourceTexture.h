@@ -2,8 +2,6 @@
 
 #include "Resource.h"
 
-#include <string>
-
 class ResourceTexture : public Resource {
 public:
 	REGISTER_RESOURCE(ResourceTexture, ResourceType::TEXTURE);

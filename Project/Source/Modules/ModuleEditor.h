@@ -2,7 +2,6 @@
 
 #include "Module.h"
 
-#include "Utils/Buffer.h"
 #include "Panels/PanelScene.h"
 #include "Panels/PanelProject.h"
 #include "Panels/PanelConsole.h"
@@ -14,9 +13,7 @@
 
 #include "imgui.h"
 #include <vector>
-
-class Panel;
-struct Event;
+#include <string>
 
 enum class Modal {
 	NONE,
@@ -28,6 +25,8 @@ enum class Modal {
 	SAVE_SCENE,
 	COMPONENT_EXISTS,
 	CREATE_MATERIAL,
+	CREATE_SCRIPT,
+	CANT_REMOVE_COMPONENT,
 	QUIT
 };
 
@@ -40,13 +39,11 @@ public:
 	UpdateStatus Update() override;
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
-	void OnMouseMoved();
 	void OnMouseClicked();
 	void OnMouseReleased();
 
 public:
 	Modal modalToOpen = Modal::NONE; // Used in the MenuBar to popup a Modal Window of the specific type.
-
 	// ---------- Docking ----------
 	unsigned dockMainId = 0;
 	unsigned dockUpId = 0;
