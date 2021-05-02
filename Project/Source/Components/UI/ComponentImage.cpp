@@ -63,7 +63,7 @@ void ComponentImage::OnEditorUpdate() {
 		if (oldID != textureID) {
 			ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
 			if (transform2D != nullptr) {
-				transform2D->SetSize(float2(width, height));
+				transform2D->SetSize(float2((float) width, (float) height));
 			}
 		}
 
@@ -118,7 +118,7 @@ void ComponentImage::Load(JsonValue jComponent) {
 	}
 }
 
-const float4& ComponentImage::GetTintColor() const {
+float4 ComponentImage::GetTintColor() const {
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
 		return button->GetTintColor();

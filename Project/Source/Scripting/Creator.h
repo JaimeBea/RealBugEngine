@@ -5,6 +5,7 @@
 #include <string>
 
 class Script;
+class GameObject;
 
 class TESSERACT_ENGINE_API Creator {
 public:
@@ -13,7 +14,7 @@ public:
 	}
 	virtual ~Creator() {};
 
-	virtual Script* Create() = 0;
+	virtual Script* Create(GameObject* owner) = 0;
 };
 
 template<class T>
@@ -23,7 +24,7 @@ public:
 
 	virtual ~CreatorImplementation<T>() {}
 
-	virtual Script* Create() {
-		return new T;
+	virtual Script* Create(GameObject* owner) {
+		return new T(owner);
 	}
 };

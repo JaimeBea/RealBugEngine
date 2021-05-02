@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class StartController : public Script
 {

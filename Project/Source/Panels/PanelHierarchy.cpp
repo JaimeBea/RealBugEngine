@@ -132,7 +132,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	}
 	ImGui::PopID();
 
-	if (ImGui::IsItemClicked()) {
+	if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && ImGui::IsItemHovered()) {
 		App->editor->selectedGameObject = gameObject;
 	}
 
