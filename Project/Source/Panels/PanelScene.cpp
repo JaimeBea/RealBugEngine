@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
+#include "Components/ComponentCamera.h"
 #include "Application.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleEditor.h"
@@ -78,20 +79,20 @@ void PanelScene::Update() {
 				ImGui::OpenPopup("Camera");
 			}
 			if (ImGui::BeginPopup("Camera")) {
-				Frustum& frustum = App->camera->GetEngineFrustum();
-				vec front = frustum.Front();
-				vec up = frustum.Up();
+				Frustum* frustum = App->camera->GetEngineCamera()->GetFrustum();
+				vec front = frustum->Front();
+				vec up = frustum->Up();
 				ImGui::TextColored(App->editor->titleColor, "Frustum");
 				ImGui::InputFloat3("Front", front.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 				ImGui::InputFloat3("Up", up.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-				float nearPlane = frustum.NearPlaneDistance();
-				float farPlane = frustum.FarPlaneDistance();
+				float nearPlane = frustum->NearPlaneDistance();
+				float farPlane = frustum->FarPlaneDistance();
 				if (ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.0f, farPlane, "%.2f")) {
-					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+					App->camera->engineCamera->GetFrustum()->SetViewPlaneDistances(nearPlane, farPlane);
 				}
 				if (ImGui::DragFloat("Far Plane", &farPlane, 1.0f, nearPlane, inf, "%.2f")) {
-					App->camera->engineCameraFrustum.SetViewPlaneDistances(nearPlane, farPlane);
+					App->camera->engineCamera->GetFrustum()->SetViewPlaneDistances(nearPlane, farPlane);
 				}
 				ImGui::EndPopup();
 			}
@@ -195,9 +196,9 @@ void PanelScene::Update() {
 			ImGuizmo::SetDrawlist();
 			ImGuizmo::SetRect(framebufferPosition.x, framebufferPosition.y, framebufferSize.x, framebufferSize.y);
 
-			Frustum& engineFrustum = App->camera->GetEngineFrustum();
-			float4x4 cameraView = float4x4(engineFrustum.ViewMatrix()).Transposed();
-			float4x4 cameraProjection = engineFrustum.ProjectionMatrix().Transposed();
+			Frustum* engineFrustum = App->camera->GetEngineCamera()->GetFrustum();
+			float4x4 cameraView = float4x4(engineFrustum->ViewMatrix()).Transposed();
+			float4x4 cameraProjection = engineFrustum->ProjectionMatrix().Transposed();
 
 			GameObject* selectedGameObject = App->editor->selectedGameObject;
 			if (selectedGameObject) {
@@ -239,7 +240,7 @@ void PanelScene::Update() {
 			ImGuizmo::ViewManipulate(cameraView.ptr(), 4, ImVec2(viewManipulateRight - viewManipulateSize, viewManipulateTop), ImVec2(viewManipulateSize, viewManipulateSize), 0x10101010);
 			if (ImGui::IsWindowFocused()) {
 				float4x4 newCameraView = cameraView.InverseTransposed();
-				App->camera->engineCameraFrustum.SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
+				App->camera->engineCamera->GetFrustum()->SetFrame(newCameraView.Col(3).xyz(), -newCameraView.Col(2).xyz(), newCameraView.Col(1).xyz());
 			}
 		}
 

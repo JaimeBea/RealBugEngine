@@ -7,6 +7,13 @@
 #include "Math/float3x3.h"
 #include "Geometry/frustum.h"
 
+EXPOSE_MEMBERS(GameController) {
+	// Add members here to expose them to the engine. Example:
+	// MEMBER(MemberType::BOOL, exampleMember1),
+	// MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
+	// MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
+};
+
 GENERATE_BODY_IMPL(GameController);
 
 void GameController::Start() {
@@ -21,14 +28,15 @@ void GameController::Start() {
 
 	gameCamera = GameplaySystems::GetGameObject("Game Camera");
 	godCamera = GameplaySystems::GetGameObject("God Camera");
-	staticCamera1 = GameplaySystems::GetGameObject("staticCamera1");
-	staticCamera2 = GameplaySystems::GetGameObject("staticCamera2");
-	staticCamera3 = GameplaySystems::GetGameObject("staticCamera3");
-	staticCamera4 = GameplaySystems::GetGameObject("staticCamera4");
+	staticCamera1 = GameplaySystems::GetGameObject("staticCamera1")->GetComponent<ComponentCamera>();
+	staticCamera2 = GameplaySystems::GetGameObject("staticCamera2")->GetComponent<ComponentCamera>();
+	staticCamera3 = GameplaySystems::GetGameObject("staticCamera3")->GetComponent<ComponentCamera>();
+	staticCamera4 = GameplaySystems::GetGameObject("staticCamera4")->GetComponent<ComponentCamera>();
 
 	player = GameplaySystems::GetGameObject("Fang");
 
-	GameplaySystems::SetRenderCamera(gameCamera);
+	camera = gameCamera->GetComponent<ComponentCamera>();
+	GameplaySystems::SetRenderCamera(camera);
 	godCameraActive = false;
 	if (gameCamera && godCamera) godModeAvailable = true;
 }
@@ -42,11 +50,12 @@ void GameController::Update() {
 		if (godModeAvailable) {
 			Debug::ToggleDebugMode();
 			if (godCameraActive) {
-				GameplaySystems::SetRenderCamera(gameCamera);
+				GameplaySystems::SetRenderCamera(camera);
 				godCameraActive = false;
 			}
 			else {
-				GameplaySystems::SetRenderCamera(godCamera);
+				camera = gameCamera->GetComponent<ComponentCamera>();
+				GameplaySystems::SetRenderCamera(camera);
 				godCameraActive = true;
 			}
 		}
@@ -55,7 +64,8 @@ void GameController::Update() {
 	// Static cameras
 	if (!godCameraActive) {
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_0) && gameCamera) {
-			GameplaySystems::SetRenderCamera(gameCamera);
+			camera = gameCamera->GetComponent<ComponentCamera>();
+			GameplaySystems::SetRenderCamera(camera);
 			godCameraActive = false;
 		}
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_1) && staticCamera1) {

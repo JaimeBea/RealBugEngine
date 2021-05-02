@@ -20,6 +20,7 @@ enum class Configuration {
 class ModuleProject : public Module {
 public:
 	bool Init() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
 
 	void CreateScript(std::string& name);
@@ -27,7 +28,8 @@ public:
 	void LoadProject(const char* path);
 
 	void CompileProject(Configuration config);
-	bool PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB);
+
+	bool IsGameLoaded() const;
 
 public:
 	HMODULE gameCodeDLL = nullptr;

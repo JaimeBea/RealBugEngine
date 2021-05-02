@@ -3,16 +3,22 @@
 #include "fmt/format.h"
 
 #include "Application.h"
+#include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
+#include "Modules/ModuleTime.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
 #include "Utils/UID.h"
 #include "Utils/FileDialog.h"
+#include "Scripting/Script.h"
+#include "Scene.h"
 
 #include <Windows.h>
 #include <shellapi.h>
 #include <ObjIdl.h>
+
+#include <filesystem>
 
 #include "Utils/Leaks.h"
 
@@ -28,7 +34,7 @@ struct RSDSHeader {
 	char filename[1];
 };
 
-static std::string& GetLastErrorStdStr() {
+static std::string GetLastErrorStdStr() {
 	DWORD error = GetLastError();
 	if (error) {
 		LPVOID lpMsgBuf;
@@ -44,6 +50,10 @@ static std::string& GetLastErrorStdStr() {
 			LPCSTR lpMsgStr = (LPCSTR) lpMsgBuf;
 			std::string result(lpMsgStr, lpMsgStr + bufLen);
 
+			std::string::size_type pos = result.find("\r\n");
+			if (pos != std::string::npos) {
+				result.replace(result.begin() + pos, result.end(), "\n\0");
+			}
 			LocalFree(lpMsgBuf);
 
 			return result;
@@ -129,7 +139,7 @@ static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 	return nullptr;
 }
 
-bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB, std::string& originalPDB) {
+static bool PDBReplace(const std::string& filename, const std::string& namePDB) {
 	HANDLE fp = nullptr;
 	HANDLE filemap = nullptr;
 	LPVOID mem = nullptr;
@@ -255,7 +265,6 @@ bool ModuleProject::PDBReplace(const std::string& filename, const std::string& n
 		if (pdb) {
 			size_t len = strlen(pdb);
 			if (len >= strlen(namePDB.c_str())) {
-				originalPDB = pdb;
 				memcpy_s(pdb, len, namePDB.c_str(), namePDB.length());
 				pdb[namePDB.length()] = 0;
 				result = true;
@@ -308,6 +317,19 @@ bool ModuleProject::Init() {
 	return true;
 }
 
+UpdateStatus ModuleProject::Update() {
+	for (ComponentScript& script : App->scene->scene->scriptComponents) {
+		if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
+			Script* scriptInstance = script.GetScriptInstance();
+			if (scriptInstance != nullptr) {
+				scriptInstance->Update();
+			}
+		}
+	}
+
+	return UpdateStatus::CONTINUE;
+}
+
 bool ModuleProject::CleanUp() {
 	UnloadGameCodeDLL();
 	return true;
@@ -321,12 +343,6 @@ void ModuleProject::LoadProject(const char* path) {
 	if (!App->files->Exists(projectName.c_str())) {
 		CreateNewProject(projectPath.c_str(), "");
 	}
-
-#ifdef _DEBUG
-	CompileProject(Configuration::DEBUG_EDITOR);
-#else
-	CompileProject(Configuration::RELEASE_EDITOR);
-#endif // _DEBUG
 }
 
 void ModuleProject::CreateScript(std::string& name) {
@@ -479,15 +495,31 @@ void ModuleProject::CompileProject(Configuration config) {
 		break;
 	}
 
-	std::string originalPDB;
 	std::string dllPath = buildPath + name + ".dll";
-	std::string auxName = name;
-	auxName[auxName.size() - 1] = '_';
-	auxName += ".pdb";
-	PDBReplace(dllPath, auxName, originalPDB);
-	CopyFile(originalPDB.c_str(), auxName.c_str(), FALSE);
-	std::string logFile = buildPath + name + ".log";
+	std::string pdbPath = buildPath + name + ".pdb";
 
+	std::string auxName = App->files->GetFilePath(pdbPath.c_str(), true);
+
+	// GetFilePath returns "" if the file is not found
+
+	if (auxName != "") {
+		std::size_t found = auxName.find_first_of("/");
+		while (found != std::string::npos) {
+			auxName[found] = '\\';
+			found = auxName.find_first_of("/", found + 1);
+		}
+
+		auxName[auxName.size() - 5] = '_';
+		PDBReplace(dllPath, auxName);
+		std::string realPDB = buildPath + name + ".pdb";
+		if (!CopyFileA(realPDB.c_str(), auxName.c_str(), FALSE)) {
+			std::string error = GetLastErrorStdStr().c_str();
+			LOG("Copy fails %s", error.c_str());
+		}
+	}
+
+
+	std::string logFile = buildPath + name + ".log";
 	Buffer<char> buffer = App->files->Load(logFile.c_str());
 	std::string logContent = "";
 	if (buffer.Size() > 0) {
@@ -497,7 +529,6 @@ void ModuleProject::CompileProject(Configuration config) {
 	std::istringstream f(logContent);
 	std::string line;
 	LOG("---------------------GAME COMPILATION---------------------");
-	LOG("%s", logContent.c_str());
 	while (Tesseract::getline(f, line)) {
 		LOG("%s", line.c_str());
 	}
@@ -509,15 +540,15 @@ void ModuleProject::CompileProject(Configuration config) {
 	newPath += ".dll";
 	buildPath += ".dll";
 
-	if (!CopyFileA(buildPath.c_str(), newPath.c_str(), FALSE)) {
-		LOG("Copy fails");
-	}
-
 	if (!LoadGameCodeDLL(buildPath.c_str())) {
 		LOG("DLL NOT LOADED: %s", GetLastErrorStdStr().c_str());
 	}
 
 	App->events->AddEvent(TesseractEventType::COMPILATION_FINISHED);
+}
+
+bool ModuleProject::IsGameLoaded() const {
+	return gameCodeDLL != nullptr;
 }
 
 bool ModuleProject::LoadGameCodeDLL(const char* path) {
