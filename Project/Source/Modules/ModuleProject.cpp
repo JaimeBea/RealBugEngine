@@ -139,7 +139,7 @@ static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 	return nullptr;
 }
 
-bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB) {
+static bool PDBReplace(const std::string& filename, const std::string& namePDB) {
 	HANDLE fp = nullptr;
 	HANDLE filemap = nullptr;
 	LPVOID mem = nullptr;
@@ -343,12 +343,6 @@ void ModuleProject::LoadProject(const char* path) {
 	if (!App->files->Exists(projectName.c_str())) {
 		CreateNewProject(projectPath.c_str(), "");
 	}
-
-#ifdef _DEBUG
-	CompileProject(Configuration::DEBUG_EDITOR);
-#else
-	CompileProject(Configuration::RELEASE_EDITOR);
-#endif // _DEBUG
 }
 
 void ModuleProject::CreateScript(std::string& name) {
@@ -551,6 +545,10 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 
 	App->events->AddEvent(TesseractEventType::COMPILATION_FINISHED);
+}
+
+bool ModuleProject::IsGameLoaded() const {
+	return gameCodeDLL != nullptr;
 }
 
 bool ModuleProject::LoadGameCodeDLL(const char* path) {
