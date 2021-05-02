@@ -67,11 +67,11 @@ void ComponentButton::SetClicked(bool clicked_) {
 	clicked = clicked_;
 }
 
-const float4& ComponentButton::GetClickColor() const {
+float4 ComponentButton::GetClickColor() const {
 	return colorClicked;
 }
 
-const float4 ComponentButton::GetTintColor() const {
+float4 ComponentButton::GetTintColor() const {
 	if (!IsActive()) return float4::one;
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();

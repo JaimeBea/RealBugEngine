@@ -110,7 +110,7 @@ void ComponentImage::Load(JsonValue jComponent) {
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
-const float4 ComponentImage::GetTintColor() const {
+float4 ComponentImage::GetTintColor() const {
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
 		return button->GetTintColor();
