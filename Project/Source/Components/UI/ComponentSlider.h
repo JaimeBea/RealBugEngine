@@ -17,6 +17,7 @@ public:
 	~ComponentSlider();
 
 	void Init() override;										// Component Initialization
+	void Update() override;
 	void OnEditorUpdate() override;								// Input for class variables
 
 	void Save(JsonValue jComponent) const override;				// Serializes the component
@@ -24,9 +25,14 @@ public:
 	void DuplicateComponent(GameObject& owner) override;		// Duplicates the component
 
 private:
+
+	void SetDefaultSliderSize();
+	void SetNormalizedValue();
+
+private:
 	GameObject* background = nullptr;						
-	GameObject* fillArea = nullptr;
-	GameObject* handleArea = nullptr;
+	GameObject* fill = nullptr;
+	GameObject* handle = nullptr;
 
 	float maxValue = 100.0f;
 	float minValue = 0.0f;

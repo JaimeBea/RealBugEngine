@@ -310,10 +310,11 @@ GameObject* PanelHierarchy::CreateUISlider(GameObject* gameObject) {
 
 	
 	selectable->SetSelectableType(slider->GetType());
-	newGameObject->InitComponents();
 	backgroundGameObject->InitComponents();
 	fillGameObject->InitComponents();
 	handleGameObject->InitComponents();
+
+	newGameObject->InitComponents();
 
 	return newGameObject;
 }
