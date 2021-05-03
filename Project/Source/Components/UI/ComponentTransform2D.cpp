@@ -248,8 +248,7 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
 
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	// float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
-	float factor = canvasRenderer->GetCanvasScreenFactor();
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
 
 	if (dirty) {
 		localMatrix = float4x4::FromTRS(position * factor, rotation, scale * factor);
