@@ -10,12 +10,15 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleResources.h"
 #include "Resources/ResourceScript.h"
-#include "Script.h"
+#include "Scripting/Script.h"
+#include "imgui.h"
+#include "Utils/ImGuiUtils.h"
 
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_IS_ON "IsOn"
 #define JSON_TAG_ENABLED_IMAGE_ID "EnabledImageID"
+#define JSON_TAG_CLICKED_COLOR "ClickedColor"
 
 ComponentToggle ::~ComponentToggle() {}
 
@@ -30,12 +33,9 @@ void ComponentToggle::OnClicked() {
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
-		ResourceScript* scriptResource = App->resources->GetResource<ResourceScript>(scriptComponent.GetScriptID());
-		if (scriptResource != nullptr) {
-			Script* script = scriptResource->script;
-			if (script != nullptr) {
-				script->OnButtonClick();
-			}
+		Script* script = scriptComponent.GetScriptInstance();
+		if (script != nullptr) {
+			script->OnButtonClick();
 		}
 	}
 }
@@ -61,13 +61,49 @@ void ComponentToggle ::SetOn(bool b) {
 }
 
 ComponentImage* ComponentToggle::GetEnabledImage() const {
-	return (ComponentImage*) App->scene->scene->GetComponent<ComponentImage>(enabledImageID);
+	GameObject* imageObj = App->scene->scene->GetGameObject(enabledImageID);
+	if (imageObj) {
+		return (ComponentImage*) App->scene->scene->GetGameObject(enabledImageID)->GetComponent<ComponentImage>();
+	}
+	return nullptr;
 }
 
-void ComponentToggle::SetEnabledImage(ComponentImage* enabledImage_) {
-	if (enabledImage_) {
-		enabledImageID = enabledImage_->GetID();
+void ComponentToggle::SetEnabledImageObj(UID enabledImageObjID_) {
+	enabledImageID = enabledImageObjID_;
+}
+
+bool ComponentToggle::IsClicked() const {
+	return clicked;
+}
+
+void ComponentToggle::SetClicked(bool clicked_) {
+	clicked = clicked_;
+}
+
+float4 ComponentToggle::GetTintColor() const {
+	if (!IsActive()) return float4::one;
+
+	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
+
+	if (!sel) return float4::one;
+
+	if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
+		if (!sel->IsInteractable()) {
+			return sel->GetDisabledColor();
+		} else if (IsClicked()) {
+			return colorClicked;
+		} else if (sel->IsSelected()) {
+			return sel->GetSelectedColor();
+		} else if (sel->IsHovered()) {
+			return sel->GetHoverColor();
+		}
 	}
+
+	return float4::one;
+}
+
+float4 ComponentToggle::GetClickColor() const {
+	return colorClicked;
 }
 
 void ComponentToggle::DuplicateComponent(GameObject& owner) {
@@ -78,9 +114,24 @@ void ComponentToggle::DuplicateComponent(GameObject& owner) {
 void ComponentToggle::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_IS_ON] = isOn;
 	jComponent[JSON_TAG_ENABLED_IMAGE_ID] = enabledImageID;
+
+	JsonValue jColorClick = jComponent[JSON_TAG_CLICKED_COLOR];
+	jColorClick[0] = colorClicked.x;
+	jColorClick[1] = colorClicked.y;
+	jColorClick[2] = colorClicked.z;
+	jColorClick[3] = colorClicked.w;
 }
 
 void ComponentToggle::Load(JsonValue jComponent) {
 	isOn = jComponent[JSON_TAG_IS_ON];
 	enabledImageID = jComponent[JSON_TAG_ENABLED_IMAGE_ID];
+
+	JsonValue jColorClick = jComponent[JSON_TAG_CLICKED_COLOR];
+	colorClicked.Set(jColorClick[0], jColorClick[1], jColorClick[2], jColorClick[3]);
+}
+
+void ComponentToggle::OnEditorUpdate() {
+	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
+	//ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
+	ImGui::GameObjectSlot("Enabled Image", &enabledImageID);
 }

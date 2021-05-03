@@ -123,6 +123,12 @@ float4 ComponentImage::GetTintColor() const {
 	if (button != nullptr) {
 		return button->GetTintColor();
 	}
+
+	ComponentToggle* toggle = GetOwner().GetComponent<ComponentToggle>();
+	if (toggle != nullptr) {
+		return toggle->GetTintColor();
+	}
+
 	return float4::one;
 }
 

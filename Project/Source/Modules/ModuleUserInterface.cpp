@@ -13,6 +13,8 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleEditor.h"
+#include "Panels/PanelScene.h"
 #include "ModuleScene.h"
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
@@ -72,19 +74,19 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 	ComponentEventSystem* eventSystem = GetCurrentEventSystem();
 	switch (e.type) {
 	case TesseractEventType::MOUSE_CLICKED:
-		//if (!App->time->IsGameRunning()) break;
 		if (eventSystem != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
 					lastHoveredSelectable->TryToClickOn();
 				}
+			} else {
+				eventSystem->SetSelected(0);
 			}
 		}
 		break;
 
 	case TesseractEventType::MOUSE_RELEASED:
-		if (!App->time->IsGameRunning()) break;
 		if (eventSystem != nullptr) {
 			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {

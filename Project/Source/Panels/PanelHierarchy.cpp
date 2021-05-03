@@ -279,7 +279,7 @@ GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 		gameObject = CreateUICanvas(gameObject);
 	}
 
-	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Button");
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Toggle");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
 	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
@@ -293,7 +293,7 @@ GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 	GameObject* newGameObjectChild = CreateUIImage(newGameObject);
 	newGameObjectChild->InitComponents();
 
-	toggle->SetEnabledImage(newGameObjectChild->GetComponent<ComponentImage>());
+	toggle->SetEnabledImageObj(newGameObjectChild->GetID());
 	selectable->SetSelectableType(toggle->GetType());
 	newGameObject->InitComponents();
 	return newGameObject;

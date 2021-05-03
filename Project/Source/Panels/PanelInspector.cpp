@@ -321,14 +321,33 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 			if (component != nullptr) {
 				component->Init();
 				tmpType = component->GetType();
-				//ComponentEventSystem::m_Selectables.push_back(component);
 				newUIComponentCreated = true;
 				newUISelectableCreated = true;
+				if (!selected->GetComponent<ComponentImage>()) {
+					ComponentImage* image = selected->CreateComponent<ComponentImage>();
+					image->Init();
+				}
 			} else {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
-		// MenuItem("Toggle")
+
+		if (ImGui::MenuItem("Toggle")) {
+			ComponentToggle* component = selected->CreateComponent<ComponentToggle>();
+			if (component != nullptr) {
+				component->Init();
+				tmpType = component->GetType();
+				newUIComponentCreated = true;
+				newUISelectableCreated = true;
+				if (!selected->GetComponent<ComponentImage>()) {
+					ComponentImage* image = selected->CreateComponent<ComponentImage>();
+					image->Init();
+				}
+			} else {
+				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+			}
+		}
+
 		// MenuItem("InputText")
 		// MenuItem("ScrollBar")
 		// ...
