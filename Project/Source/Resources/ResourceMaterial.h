@@ -22,7 +22,7 @@ public:
 
 public:
 	// Material shader
-	MaterialShader shaderType = MaterialShader::STANDARD_SPECULAR;
+	MaterialShader shaderType = MaterialShader::STANDARD;
 
 	// Diffuse
 	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -40,6 +40,6 @@ public:
 	UID normalMapId = 0;
 
 	// Smoothness
-	float smoothness = 300;
+	float smoothness = 1;
 	bool hasSmoothnessInAlphaChannel = false;
 };

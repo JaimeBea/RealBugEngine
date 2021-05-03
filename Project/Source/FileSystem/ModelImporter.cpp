@@ -47,6 +47,7 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	// Save to custom format buffer
 	unsigned positionSize = sizeof(float) * 3;
 	unsigned normalSize = sizeof(float) * 3;
+	unsigned tangentSize = sizeof(float) * 3;
 	unsigned uvSize = sizeof(float) * 2;
 	unsigned bonesIDSize = sizeof(unsigned) * 4;
 	unsigned weightsSize = sizeof(float) * 4;
@@ -54,7 +55,7 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	unsigned boneSize = sizeof(unsigned) + sizeof(char) * FILENAME_MAX + sizeof(float) * 10;
 
 	unsigned headerSize = sizeof(unsigned) * 3;
-	unsigned vertexSize = positionSize + normalSize + uvSize + bonesIDSize + weightsSize;
+	unsigned vertexSize = positionSize + normalSize + tangentSize + uvSize + bonesIDSize + weightsSize;
 	unsigned vertexBufferSize = vertexSize * numVertices;
 	unsigned indexBufferSize = indexSize * numIndices;
 	unsigned bonesBufferSize = boneSize * numBones;
@@ -126,6 +127,8 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
 		aiVector3D& vertex = assimpMesh->mVertices[i];
 		aiVector3D& normal = assimpMesh->mNormals[i];
+		aiVector3D* tangent = assimpMesh->mTangents;
+
 		aiVector3D* textureCoords = assimpMesh->mTextureCoords[0];
 
 		*((float*) cursor) = vertex.x;
@@ -139,6 +142,12 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 		*((float*) cursor) = normal.y;
 		cursor += sizeof(float);
 		*((float*) cursor) = normal.z;
+		cursor += sizeof(float);
+		*((float*) cursor) = tangent != nullptr ? tangent->x : 0;
+		cursor += sizeof(float);
+		*((float*) cursor) = tangent != nullptr ? tangent->x : 0;
+		cursor += sizeof(float);
+		*((float*) cursor) = tangent != nullptr ? tangent->x : 0;
 		cursor += sizeof(float);
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].x : 0;
 		cursor += sizeof(float);
