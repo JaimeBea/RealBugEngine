@@ -15,7 +15,6 @@
 #include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
 #include "Resources/ResourceAudioClip.h"
-#include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
 #include "FileSystem/TextureImporter.h"
@@ -130,36 +129,45 @@ void ModuleResources::ReceiveEvent(TesseractEvent& e) {
 	}
 }
 
-std::vector<UID> ModuleResources::ImportAsset(const char* filePath, UID assetId) {
+void ModuleResources::ValidateAssetResources(JsonValue jMeta, bool& validResourceFiles) {
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	for (unsigned i = 0; i < jResources.Size(); ++i) {
+		UID id = jResources[i][JSON_TAG_ID];
+		std::string resourcePath = App->resources->GenerateResourcePath(id);
+		if (!App->files->Exists(resourcePath.c_str())) {
+			validResourceFiles = false;
+			break;
+		}
+	}
+}
+
+std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath, UID assetId) {
 	std::vector<UID> resources;
 
+	// Return an empty list if the asset couldn't be found
 	if (!App->files->Exists(filePath)) return resources;
 
-	bool assetImported = true;
+	// Flag to check if the asset had a valid extension
+	bool validExtension = true;
 
 	std::string extension = FileDialog::GetFileExtension(filePath);
 	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
 	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
+
+	// Flag to check if the asset resources are created successfully
 	bool validResourceFiles = true;
 
 	rapidjson::Document document;
 	JsonValue jMeta(document, document);
 
+	// Check meta file resources
 	if (validMetaFile) {
 		validMetaFile = ReadMetaFile(metaFilePath.c_str(), document);
 		if (validMetaFile) {
-			JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
-			for (unsigned i = 0; i < jResources.Size(); ++i) {
-				UID id = assetId ? assetId : jResources[i][JSON_TAG_ID];
-				std::string resourcePath = App->resources->GenerateResourcePath(id);
-				if (!App->files->Exists(resourcePath.c_str())) {
-					validResourceFiles = false;
-					break;
-				}
-			}
+			ValidateAssetResources(jMeta, validResourceFiles);
 		}
 	}
-
+	// if resources exist reimport
 	if (validMetaFile && validResourceFiles) {
 		JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 		for (unsigned i = 0; i < jResources.Size(); ++i) {
@@ -201,10 +209,10 @@ std::vector<UID> ModuleResources::ImportAsset(const char* filePath, UID assetId)
 			// Audio files
 			AudioImporter::ImportAudio(filePath, jMeta);
 		} else {
-			assetImported = false;
+			validExtension = false;
 		}
 
-		if (assetImported) {
+		if (validExtension) {
 			if (!validMetaFile) {
 				jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 				SaveMetaFile(metaFilePath.c_str(), document);
@@ -273,7 +281,7 @@ void ModuleResources::UpdateAsync() {
 	while (!stopImportThread) {
 		// Check if any asset file has been modified / deleted
 		std::vector<UID> resourcesToRemove;
-		std::vector<UID> resourcesToReimport;
+		std::vector<std::string> assetToReimport;
 
 		for (std::pair<const UID, std::unique_ptr<Resource>>& entry : resources) {
 			Resource* resource = entry.second.get();
@@ -300,9 +308,16 @@ void ModuleResources::UpdateAsync() {
 #if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
 					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
-						resourcesToReimport.push_back(entry.first);
-						jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
-						SaveMetaFile(metaFilePath.c_str(), document);
+						if (jMeta[JSON_TAG_RESOURCES].Size() > 1) {
+							resourcesToRemove.push_back(entry.first);
+						} else {
+							if (std::find(assetToReimport.begin(), assetToReimport.end(), assetFilePath) == assetToReimport.end()) {
+								resourcesToRemove.push_back(entry.first);
+								assetToReimport.push_back(assetFilePath);
+								jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
+								SaveMetaFile(metaFilePath.c_str(), document);
+							}
+						}
 						continue;
 					}
 #endif
@@ -313,19 +328,9 @@ void ModuleResources::UpdateAsync() {
 			}
 			// Check for deleted resources
 			if (!App->files->Exists(resourceFilePath.c_str())) {
-				resourcesToReimport.push_back(entry.first);
-			}
-		}
-		for (UID id : resourcesToReimport) {
-			Resource* resource = resources[id].get();
-
-			const std::string& resourceFilePath = resource->GetResourceFilePath();
-			const std::string& assetFilePath = resource->GetAssetFilePath();
-
-			if (!App->files->Exists(resourceFilePath.c_str())) {
-				ImportAsset(assetFilePath.c_str());
-			} else {
-				ImportAsset(assetFilePath.c_str(), id);
+				if (std::find(assetToReimport.begin(), assetToReimport.end(), assetFilePath) == assetToReimport.end()) {
+					assetToReimport.push_back(assetFilePath);
+				}
 			}
 		}
 		for (UID id : resourcesToRemove) {
@@ -334,7 +339,7 @@ void ModuleResources::UpdateAsync() {
 			const std::string& assetFilePath = resource->GetAssetFilePath();
 			const std::string& resourceFilePath = resource->GetResourceFilePath();
 			std::string metaFilePath = assetFilePath + META_EXTENSION;
-			if (App->files->Exists(metaFilePath.c_str())) {
+			if (App->files->Exists(metaFilePath.c_str()) && std::find(assetToReimport.begin(), assetToReimport.end(), assetFilePath) == assetToReimport.end()) {
 				App->files->Erase(metaFilePath.c_str());
 			}
 			if (App->files->Exists(resourceFilePath.c_str())) {
@@ -343,6 +348,9 @@ void ModuleResources::UpdateAsync() {
 
 			resource->Unload();
 			resources.erase(id);
+		}
+		for (std::string& assetFilePath : assetToReimport) {
+			ImportAssetResources(assetFilePath.c_str());
 		}
 
 		// Check if there are any new assets and build cached folder structure
@@ -369,7 +377,7 @@ void ModuleResources::CheckForNewAssetsRecursive(const char* path, AssetFolder* 
 			assetFolder->folders.push_back(AssetFolder(filePath.c_str()));
 			CheckForNewAssetsRecursive(filePath.c_str(), &assetFolder->folders.back());
 		} else if (extension != META_EXTENSION) {
-			std::vector<UID>& resourceIds = ImportAsset(filePath.c_str());
+			std::vector<UID>& resourceIds = ImportAssetResources(filePath.c_str());
 			if (!resourceIds.empty()) {
 				AssetFile assetFile(filePath.c_str());
 				assetFile.resourceIds = std::move(resourceIds);
