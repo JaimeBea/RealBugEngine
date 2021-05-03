@@ -162,7 +162,7 @@ State ResourceStateMachine::AddState(const std::string& name, UID clipUID) {
 }
 
 void ResourceStateMachine::AddClip(UID clipUid) {
-	if (!(std::find(clipsUids.begin(), clipsUids.end(), clipUid) != clipsUids.end())) {
+	if ( std::find(clipsUids.begin(), clipsUids.end(), clipUid) == clipsUids.end()  ) {
 		clipsUids.push_back(clipUid);
 	}
 }
