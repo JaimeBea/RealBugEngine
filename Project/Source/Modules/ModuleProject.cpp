@@ -3,12 +3,16 @@
 #include "fmt/format.h"
 
 #include "Application.h"
+#include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
+#include "Modules/ModuleTime.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
 #include "Utils/UID.h"
 #include "Utils/FileDialog.h"
+#include "Scripting/Script.h"
+#include "Scene.h"
 
 #include <Windows.h>
 #include <shellapi.h>
@@ -135,7 +139,7 @@ static char* PDBFind(LPBYTE imageBase, PIMAGE_DEBUG_DIRECTORY debugDir) {
 	return nullptr;
 }
 
-bool ModuleProject::PDBReplace(const std::string& filename, const std::string& namePDB) {
+static bool PDBReplace(const std::string& filename, const std::string& namePDB) {
 	HANDLE fp = nullptr;
 	HANDLE filemap = nullptr;
 	LPVOID mem = nullptr;
@@ -313,6 +317,19 @@ bool ModuleProject::Init() {
 	return true;
 }
 
+UpdateStatus ModuleProject::Update() {
+	for (ComponentScript& script : App->scene->scene->scriptComponents) {
+		if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
+			Script* scriptInstance = script.GetScriptInstance();
+			if (scriptInstance != nullptr) {
+				scriptInstance->Update();
+			}
+		}
+	}
+
+	return UpdateStatus::CONTINUE;
+}
+
 bool ModuleProject::CleanUp() {
 	UnloadGameCodeDLL();
 	return true;
@@ -326,12 +343,6 @@ void ModuleProject::LoadProject(const char* path) {
 	if (!App->files->Exists(projectName.c_str())) {
 		CreateNewProject(projectPath.c_str(), "");
 	}
-
-#ifdef _DEBUG
-	CompileProject(Configuration::DEBUG_EDITOR);
-#else
-	CompileProject(Configuration::RELEASE_EDITOR);
-#endif // _DEBUG
 }
 
 void ModuleProject::CreateScript(std::string& name) {
@@ -534,6 +545,10 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 
 	App->events->AddEvent(TesseractEventType::COMPILATION_FINISHED);
+}
+
+bool ModuleProject::IsGameLoaded() const {
+	return gameCodeDLL != nullptr;
 }
 
 bool ModuleProject::LoadGameCodeDLL(const char* path) {
