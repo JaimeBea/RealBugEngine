@@ -25,6 +25,8 @@ enum class Modal {
 	SAVE_SCENE,
 	COMPONENT_EXISTS,
 	CREATE_MATERIAL,
+	CREATE_SCRIPT,
+	CANT_REMOVE_COMPONENT,
 	QUIT
 };
 
@@ -42,7 +44,6 @@ public:
 
 public:
 	Modal modalToOpen = Modal::NONE; // Used in the MenuBar to popup a Modal Window of the specific type.
-
 	// ---------- Docking ----------
 	unsigned dockMainId = 0;
 	unsigned dockUpId = 0;

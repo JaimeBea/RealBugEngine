@@ -2,31 +2,42 @@
 
 #include "Globals.h"
 #include "Application.h"
-#include "Utils/Logging.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleTime.h"
+#include "Utils/Logging.h"
+#include "Utils/FileDialog.h"
+#include "Utils/StringBlocksParser.h"
 
 #include "GL/glew.h"
+#include <string>
 
 #include "Utils/Leaks.h"
 
-static unsigned CreateShader(unsigned type, const char* filePath) {
+static unsigned CompileShader(unsigned type, const char* filePath, const char* snippets) {
 	LOG("Creating shader from file: \"%s\"...", filePath);
 
-	Buffer<char> sourceBuffer = App->files->Load(filePath);
-	unsigned shaderId = glCreateShader(type);
-	if (shaderId == 0) {
+	parsb_options options;
+	options.line_directives = false;
+	parsb_context* blocks = parsb_create_context(options);
+	DEFER {
+		parsb_destroy_context(blocks);
+	};
+	parsb_add_blocks_from_file(blocks, filePath);
+	// Add version
+	parsb_add_block(blocks, "prefix", "#version 460\n");
+	std::string s = snippets;
+	std::string finalSnippet = "prefix " + s;
+	// Concatenate
+	const char* shaderData = parsb_get_blocks(blocks, finalSnippet.c_str());
+	if (shaderData == nullptr) {
+		LOG("Error reading blocks %s from %s", finalSnippet.c_str(), filePath);
 		return 0;
 	}
-	std::string v = GLSL_VERSION "\n";
-	std::string defineVertexShader = "#define VERTEX  \n";
-	std::string defineFragmentShader = "#define FRAGMENT\n";
 
-	std::string shaderDefine = (type == GL_VERTEX_SHADER) ? defineVertexShader : defineFragmentShader;
+	unsigned shaderId = glCreateShader(type);
+	if (shaderId == 0) return 0;
 
-	GLchar const* shaderStrings[3] = {v.c_str(), shaderDefine.c_str(), sourceBuffer.Data()};
-	GLint shaderStringLengths[3] = {v.size(), shaderDefine.size(), sourceBuffer.Size()};
-
-	glShaderSource(shaderId, 3, shaderStrings, shaderStringLengths);
+	glShaderSource(shaderId, 1, &shaderData, 0);
 	glCompileShader(shaderId);
 
 	int res = GL_FALSE;
@@ -45,20 +56,35 @@ static unsigned CreateShader(unsigned type, const char* filePath) {
 		return 0;
 	}
 
-	LOG("Shader created successfuly.");
+	LOG("Shaders created successfully.");
 	return shaderId;
 }
 
-unsigned ModulePrograms::CreateProgram(const char* ShaderFilePath) {
+void ModulePrograms::LoadShaderBinFile() {
+	// Clean file on Start
+	Buffer<char> cleanBuffer;
+	App->files->Save(filePath, cleanBuffer);
+
+	// Save all .shader from Assets/Shaders/ into one bin file
+	std::vector<std::string> files = App->files->GetFilesInFolder("Assets/Shaders/");
+	for (std::string file : files) {
+		if (FileDialog::GetFileExtension(file.c_str()) == ".shader") {
+			Buffer<char> buffer = App->files->Load(("Assets/Shaders/" + file).c_str());
+			App->files->Save(filePath, buffer, true);
+		}
+	}
+}
+
+unsigned ModulePrograms::CreateProgram(const char* shaderFile, const char* vertexSnippets, const char* fragmentSnippets) {
 	LOG("Creating program...");
 
 	// Compile the shaders and delete them at the end
 	LOG("Compiling shaders...");
-	unsigned vertexShader = CreateShader(GL_VERTEX_SHADER, ShaderFilePath);
+	unsigned vertexShader = CompileShader(GL_VERTEX_SHADER, shaderFile, vertexSnippets);
 	DEFER {
 		glDeleteShader(vertexShader);
 	};
-	unsigned fragmentShader = CreateShader(GL_FRAGMENT_SHADER, ShaderFilePath);
+	unsigned fragmentShader = CompileShader(GL_FRAGMENT_SHADER, shaderFile, fragmentSnippets);
 	DEFER {
 		glDeleteShader(fragmentShader);
 	};
@@ -90,6 +116,29 @@ unsigned ModulePrograms::CreateProgram(const char* ShaderFilePath) {
 }
 
 bool ModulePrograms::Start() {
+	MSTimer timer;
+	timer.Start();
+
+	LoadShaderBinFile();
+
+	//SkyBox shader
+	skybox = CreateProgram(filePath, "vertSkybox", "fragSkybox");
+
+	//General shaders
+	phongNotSkinning = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarSpecular fragMainPhong");
+	phongSkinning = CreateProgram(filePath, "vertVarCommon vertVarSkinning vertMainSkinning", "fragVarStandard fragVarSpecular fragMainPhong");
+	standardNotSkinning = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarMetallic fragFunctionLight fragMainMetallic");
+	standardSkinning = CreateProgram(filePath, "vertVarCommon vertVarSkinning vertMainSkinning", "fragVarStandard fragVarMetallic fragFunctionLight fragMainMetallic");
+	specularNotSkinning = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarSpecular fragFunctionLight fragMainSpecular");
+	specularSkinning = CreateProgram(filePath, "vertVarCommon vertVarSkinning vertMainSkinning", "fragVarStandard fragVarSpecular fragFunctionLight fragMainSpecular");
+
+	//UI shaders
+	textUI = CreateProgram(filePath, "vertTextUI", "fragTextUI");
+	imageUI = CreateProgram(filePath, "vertImageUI", "fragImageUI");
+
+	unsigned timeMs = timer.Stop();
+	LOG("Shader loaded in %ums", timeMs);
+
 	return true;
 }
 
@@ -98,5 +147,15 @@ void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
 }
 
 bool ModulePrograms::CleanUp() {
+	glDeleteProgram(skybox);
+	glDeleteProgram(phongSkinning);
+	glDeleteProgram(phongNotSkinning);
+	glDeleteProgram(standardSkinning);
+	glDeleteProgram(standardNotSkinning);
+	glDeleteProgram(specularSkinning);
+	glDeleteProgram(specularNotSkinning);
+	glDeleteProgram(textUI);
+	glDeleteProgram(imageUI);
+
 	return true;
 }
