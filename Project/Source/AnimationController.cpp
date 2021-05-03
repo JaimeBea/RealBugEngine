@@ -53,7 +53,6 @@ bool AnimationController::InterpolateTransitions(const std::list<AnimationInterp
 		Quat rotation;
 		AnimationController::InterpolateTransitions(std::next(it), animationInterpolations, rootBone, gameObject, position, rotation);
 		float weight = (*it).fadeTime / (*it).transitionTime;
-		//(*it).fadeTime = 1 - ((*it).transistionTime - (*it).currentTime) / (*it).transistionTime;
 		pos = float3::Lerp(position, pos, weight);
 		quat = AnimationController::Interpolate(rotation, quat, weight);
 	}
