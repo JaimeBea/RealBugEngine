@@ -3,6 +3,7 @@
 #define PI 3.1415926538
 
 in vec3 fragNormal;
+in mat3 TBN;
 in vec3 fragPos;
 in vec2 uv;
 out vec4 outColor;
@@ -11,8 +12,10 @@ out vec4 outColor;
 uniform vec3 diffuseColor;
 uniform sampler2D diffuseMap;
 uniform int hasDiffuseMap;
+uniform sampler2D normalMap;
+uniform bool hasNormalMap;
 uniform float smoothness;
-uniform int hasSmoothnessAlpha; // else: Diffuse alpha channel
+uniform int hasSmoothnessAlpha; // Generic used for Specular and Metallic
 
 struct AmbientLight
 {
@@ -146,7 +149,7 @@ vec3 ProcessSpotLight(SpotLight spot, vec3 fragNormal, vec3 fragPos, vec3 viewDi
     float cAttenuation = 0;
     float cosInner = cos(spot.innerAngle);
     float cosOuter = cos(spot.outerAngle);
-    if( C > cosInner)
+    if ( C > cosInner)
     {
         cAttenuation = 1;
     }
@@ -178,6 +181,14 @@ vec3 ProcessSpotLight(SpotLight spot, vec3 fragNormal, vec3 fragPos, vec3 viewDi
 void main()
 {    
     vec3 viewDir = normalize(viewPos - fragPos);
+    vec3 normal = fragNormal;
+    if (hasNormalMap)
+    {
+	    normal = texture(normalMap, uv).rgb;
+	    normal = normalize(normal * 2.0 - 1.0);
+	    normal = normalize(TBN * normal);
+    }
+
     vec4 colorDiffuse = hasDiffuseMap * pow(texture(diffuseMap, uv), vec4(2.2)) * vec4(diffuseColor, 0.0) + (1 - hasDiffuseMap) * vec4(diffuseColor, 0.0);
     vec4 colorMetallic = pow(texture(metallicMap, uv), vec4(2.2));
     float metalnessMask = hasMetallicMap * colorMetallic.r + (1 - hasMetallicMap) * metalness;
@@ -193,19 +204,19 @@ void main()
     // Directional Light
     if (light.directional.isActive == 1)
     {
-    	colorAccumulative += ProcessDirectionalLight(light.directional, fragNormal, viewDir, Cd, F0, roughness);
+    	colorAccumulative += ProcessDirectionalLight(light.directional, normal, viewDir, Cd, F0, roughness);
     }
 
 	// Point Light
-	for(int i = 0; i < light.numPoints; i++)
+	for (int i = 0; i < light.numPoints; i++)
 	{
-    	colorAccumulative += ProcessPointLight(light.points[i], fragNormal, fragPos, viewDir, Cd, F0, roughness);
+    	colorAccumulative += ProcessPointLight(light.points[i], normal, fragPos, viewDir, Cd, F0, roughness);
 	}
 
     // Spot Light
-	for(int i = 0; i < light.numSpots; i++)
+	for (int i = 0; i < light.numSpots; i++)
 	{
-    	colorAccumulative += ProcessSpotLight(light.spots[i], fragNormal, fragPos, viewDir, Cd, F0, roughness);
+    	colorAccumulative += ProcessSpotLight(light.spots[i], normal, fragPos, viewDir, Cd, F0, roughness);
 	}
 
     vec3 ldr = colorAccumulative.rgb / (colorAccumulative.rgb + vec3(1.0)); // reinhard tone mapping
@@ -218,6 +229,13 @@ void main()
 void main()
 {    
     vec3 viewDir = normalize(viewPos - fragPos);
+    vec3 normal = fragNormal;
+    if (hasNormalMap)
+    {
+	    normal = texture(normalMap, uv).rgb;
+	    normal = normalize(normal * 2.0 - 1.0);
+	    normal = normalize(TBN * normal);
+    }
 	
     vec4 colorDiffuse = hasDiffuseMap * pow(texture(diffuseMap, uv), vec4(2.2)) * vec4(diffuseColor, 1.0) + (1 - hasDiffuseMap) * vec4(diffuseColor, 1.0);
     vec4 colorSpecular = hasSpecularMap * pow(texture(specularMap, uv), vec4(2.2)) + (1 - hasSpecularMap) * vec4(specularColor, 1.0);
@@ -229,19 +247,19 @@ void main()
     // Directional Light
     if (light.directional.isActive == 1)
     {
-        colorAccumulative += ProcessDirectionalLight(light.directional, fragNormal, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
+        colorAccumulative += ProcessDirectionalLight(light.directional, normal, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
     }
 
 	// Point Light
     for(int i = 0; i < light.numPoints; i++)
     {
-        colorAccumulative += ProcessPointLight(light.points[i], fragNormal, fragPos, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
+        colorAccumulative += ProcessPointLight(light.points[i], normal, fragPos, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
     }
 
     // Spot Light
     for(int i = 0; i < light.numSpots; i++)
     {
-        colorAccumulative += ProcessSpotLight(light.spots[i], fragNormal, fragPos, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
+        colorAccumulative += ProcessSpotLight(light.spots[i], normal, fragPos, viewDir, colorDiffuse.rgb, colorSpecular.rgb, roughness);
     }
 
     vec3 ldr = colorAccumulative.rgb / (colorAccumulative.rgb + vec3(1.0)); // reinhard tone mapping

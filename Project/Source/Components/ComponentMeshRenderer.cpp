@@ -56,11 +56,17 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 
 	UID oldMeshId = meshId;
 	ImGui::ResourceSlot<ResourceMesh>("Mesh", &meshId);
+	if (ImGui::Button("Remove##mesh")) {
+		if (meshId != 0) {
+			App->resources->DecreaseReferenceCount(meshId);
+			meshId = 0;
+		}
+	}
+
 	if (oldMeshId != meshId) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		transform->InvalidateHierarchy();
 	}
-	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
 
 	if (ImGui::TreeNode("Mesh")) {
 		ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshId);
@@ -83,7 +89,15 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 		}
 		ImGui::TreePop();
 	}
+	ImGui::Separator();
 
+	ImGui::ResourceSlot<ResourceMaterial>("Material", &materialId);
+	if (ImGui::Button("Remove##material")) {
+		if (materialId != 0) {
+			App->resources->DecreaseReferenceCount(materialId);
+			materialId = 0;
+		}
+	}
 	if (ImGui::TreeNode("Material")) {
 		ResourceMaterial* material = App->resources->GetResource<ResourceMaterial>(materialId);
 		if (material != nullptr) {
@@ -185,6 +199,14 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				}
 				ImGui::EndColumns();
 
+				ImGui::ResourceSlot<ResourceTexture>("Normal Texture", &material->normalMapId);
+				if (ImGui::Button("No map##normal")) {
+					if (material->normalMapId != 0) {
+						App->resources->DecreaseReferenceCount(material->normalMapId);
+						material->normalMapId = 0;
+					}
+				}
+
 			} else if (material->shaderType == MaterialShader::STANDARD_SPECULAR) {
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 				//First Column with the text names of widgets
@@ -262,7 +284,14 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::PopID();
 				}
 				ImGui::EndColumns();
-				// TODO: Normal map
+
+				ImGui::ResourceSlot<ResourceTexture>("Normal Texture", &material->normalMapId);
+				if (ImGui::Button("No map##normal")) {
+					if (material->normalMapId != 0) {
+						App->resources->DecreaseReferenceCount(material->normalMapId);
+						material->normalMapId = 0;
+					}
+				}
 
 			} else if (material->shaderType == MaterialShader::STANDARD) {
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
@@ -342,7 +371,14 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::PopID();
 				}
 				ImGui::EndColumns();
-				// TODO: Normal map
+
+				ImGui::ResourceSlot<ResourceTexture>("Normal Texture", &material->normalMapId);
+				if (ImGui::Button("No map##normal")) {
+					if (material->normalMapId != 0) {
+						App->resources->DecreaseReferenceCount(material->normalMapId);
+						material->normalMapId = 0;
+					}
+				}
 			}
 		}
 		ImGui::TreePop();
@@ -531,6 +567,11 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glTextureDiffuse = diffuse ? diffuse->glTexture : 0;
 	int hasDiffuseMap = diffuse ? 1 : 0;
 
+	unsigned glTextureNormal = 0;
+	ResourceTexture* normal = App->resources->GetResource<ResourceTexture>(material->normalMapId);
+	glTextureNormal = normal ? normal->glTexture : 0;
+	int hasNormalMap = normal ? 1 : 0;
+
 	if (material->shaderType == MaterialShader::PHONG) {
 		// Phong-specific settings
 		unsigned glTextureSpecular = 0;
@@ -539,10 +580,10 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		int hasSpecularMap = specular ? 1 : 0;
 
 		// Phong-specific uniform settings
-		if (goBones.size()) {
-			program = App->programs->phongSkinning;
+		if (hasNormalMap) {
+			program = App->programs->phongNormal;
 		} else {
-			program = App->programs->phongNotSkinning;
+			program = App->programs->phongNotNormal;
 		}
 
 		glUseProgram(program);
@@ -562,10 +603,10 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		int hasSpecularMap = specular ? 1 : 0;
 
 		// Specular-specific uniform settings
-		if (goBones.size()) {
-			program = App->programs->specularSkinning;
+		if (hasNormalMap) {
+			program = App->programs->specularNormal;
 		} else {
-			program = App->programs->specularNotSkinning;
+			program = App->programs->specularNormal;
 		}
 		glUseProgram(program);
 
@@ -584,10 +625,10 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		int hasMetallicMap = metallic ? 1 : 0;
 
 		// Standard-specific uniform settings
-		if (goBones.size()) {
-			program = App->programs->standardSkinning;
+		if (hasNormalMap) {
+			program = App->programs->standardNormal;
 		} else {
-			program = App->programs->standardNotSkinning;
+			program = App->programs->standardNotNormal;
 		}
 		glUseProgram(program);
 
@@ -611,6 +652,10 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	}
 	glUniform1i(glGetUniformLocation(program, "hasBones"), goBones.size());
 
+	glUniform1i(glGetUniformLocation(program, "light.numSpots"), spotLightsArraySize);
+	glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
+
+	// Diffuse
 	glUniform1i(glGetUniformLocation(program, "diffuseMap"), 0);
 	glUniform3fv(glGetUniformLocation(program, "diffuseColor"), 1, material->diffuseColor.ptr());
 	glUniform1i(glGetUniformLocation(program, "hasDiffuseMap"), hasDiffuseMap);
@@ -619,6 +664,12 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, glTextureDiffuse);
+
+	// Normal Map
+	glUniform1i(glGetUniformLocation(program, "normalMap"), 2);
+	glUniform1i(glGetUniformLocation(program, "hasNormalMap"), hasNormalMap);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, glTextureNormal);
 
 	// Lights uniforms settings
 	glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambientColor.ptr());
@@ -784,9 +835,6 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		glUniform1f(glGetUniformLocation(program, "light.spots[7].innerAngle"), spotLightsArray[7]->innerAngle);
 		glUniform1f(glGetUniformLocation(program, "light.spots[7].outerAngle"), spotLightsArray[7]->outerAngle);
 	}
-	glUniform1i(glGetUniformLocation(program, "light.numSpots"), spotLightsArraySize);
-
-	glUniform3fv(glGetUniformLocation(program, "viewPos"), 1, App->camera->GetPosition().ptr());
 
 	glBindVertexArray(mesh->vao);
 	glDrawElements(GL_TRIANGLES, mesh->numIndices, GL_UNSIGNED_INT, nullptr);
