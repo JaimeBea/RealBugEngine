@@ -13,10 +13,11 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleInput.h"
-
 #include "Utils/UID.h"
 #include "Utils/Logging.h"
+
 #include <algorithm> // std::find
+
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_LOOP "Controller"
