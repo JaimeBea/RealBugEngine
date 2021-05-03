@@ -3,11 +3,12 @@
 #include "Application.h"
 #include "GameObject.h"
 #include "State.h"
+#include "Modules/ModuleTime.h"
 #include "Resources/ResourceAnimation.h"
 #include "AnimationInterpolation.h"
 #include "Resources/ResourceClip.h"
+
 #include "Math/float3.h"
-#include "Modules/ModuleTime.h"
 
 #include "Utils/Leaks.h"
 
@@ -94,8 +95,9 @@ State* AnimationController::UpdateTransitions(std::list<AnimationInterpolation>&
 }
 
 Quat AnimationController::Interpolate(const Quat& first, const Quat& second, float lambda) {
-	if (first.Dot(second) >= 0.0f) // is minimum arc ?
+	if (first.Dot(second) >= 0.0f) { // is minimum arc ?
 		return Quat::Lerp(first, second, lambda).Normalized();
-	else
+	} else {
 		return Quat::Lerp(first, second.Neg(), lambda).Normalized();
+	}
 }

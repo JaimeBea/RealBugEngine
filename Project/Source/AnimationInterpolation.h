@@ -11,7 +11,7 @@ public:
 		, transitionTime(transition) {}
 
 public:
-	State* state;
+	State* state = nullptr;
 	float currentTime = 0;
 	float fadeTime = 0;
 	float transitionTime = 0;
