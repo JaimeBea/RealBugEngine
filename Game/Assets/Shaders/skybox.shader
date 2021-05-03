@@ -1,4 +1,4 @@
-#ifdef VERTEX
+--- vertSkybox
 
 layout (location = 0) in vec3 pos;
 
@@ -12,9 +12,8 @@ void main() {
 	vec4 p = proj * vec4(mat3(view) * pos, 1.0);
 	gl_Position = p.xyww;
 }
-#endif
 
-#ifdef FRAGMENT
+--- fragSkybox
 
 in vec3 texcoords;
 
@@ -25,5 +24,3 @@ out vec4 outColor;
 void main() {
 	outColor = texture(cubemap, texcoords);
 }
-
-#endif

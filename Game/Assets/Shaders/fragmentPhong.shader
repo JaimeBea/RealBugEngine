@@ -1,105 +1,4 @@
-#ifdef VERTEX
-
-#define MAX_BONES 100
-
-in layout(location=0) vec3 pos;
-in layout(location=1) vec3 norm;
-in layout(location=2) vec2 uvs;
-in layout(location=3) uvec4 boneIndices;
-in layout(location=4) vec4 boneWeitghts;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
-uniform mat4 palette[MAX_BONES];
-uniform bool hasBones;
-
-out vec3 fragNormal;
-out vec3 fragPos;
-out vec2 uv;
-
-void main() {
-    vec4 position;
-    vec4 normal;
-    if (hasBones) {
-        mat4 skinT = palette[boneIndices[0]] * boneWeitghts[0] + palette[boneIndices[1]] * boneWeitghts[1]
-        + palette[boneIndices[2]] * boneWeitghts[2] + palette[boneIndices[3]] * boneWeitghts[3];
-        position = skinT * vec4(pos, 1.0);
-        normal = skinT * vec4(norm, 0.0);
-    }
-    else {
-        position = vec4(pos, 1.0);
-        normal = vec4(norm, 0.0);
-    }
-
-    gl_Position = proj * view * model * position;
-    fragNormal = transpose(inverse(mat3(model))) * normal.xyz;
-    fragPos = vec3(model * position);
-    uv = uvs;
-}
-#endif
-
-#ifdef FRAGMENT
-
-in vec3 fragNormal;
-in vec3 fragPos;
-in vec2 uv;
-out vec4 outColor;
-
-// Material
-uniform vec3 diffuseColor;
-uniform sampler2D diffuseMap;
-uniform vec3 specularColor;
-uniform sampler2D specularMap;
-uniform float shininess;
-
-uniform int hasDiffuseMap;
-uniform int hasSpecularMap;
-uniform int hasShininessInSpecularAlpha;
-
-struct AmbientLight {
-    vec3 color;
-};
-
-struct DirLight {
-    vec3 direction;
-    vec3 color;
-    float intensity;
-    int isActive;
-};
-
-struct PointLight {
-    vec3 pos;
-    vec3 color;
-    float intensity;
-    float kc;
-    float kl;
-    float kq;
-};
-
-struct SpotLight {
-    vec3 pos;
-    vec3 direction;
-    vec3 color;
-    float intensity;
-    float kc;
-    float kl;
-    float kq;
-    float innerAngle;
-    float outerAngle;
-};
-
-struct Light {
-    AmbientLight ambient;
-    DirLight directional;
-    PointLight points[8];
-    int numPoints;
-    SpotLight spots[8];
-    int numSpots;
-};
-
-uniform Light light;
-uniform vec3 viewPos;
+--- fragMainPhong
 
 void main() {
     vec3 fragN = normalize(fragNormal);
@@ -113,7 +12,7 @@ void main() {
     vec3 Rf0 = colorSpecular.rgb;
 
     // shininess
-    float shininess = hasShininessInSpecularAlpha * exp2(colorSpecular.a * 7 + 1) + (1 - hasShininessInSpecularAlpha) * shininess;
+    float shininess = hasSmoothnessAlpha * exp2(colorSpecular.a * 7 + 1) + (1 - hasSmoothnessAlpha) * smoothness;
 
     // Ambient Color
     vec3 ambientColor = colorDiffuse.rgb * light.ambient.color;
@@ -188,4 +87,3 @@ void main() {
     ldr = pow(ldr, vec3(1/2.2)); // gamma correction
     outColor = vec4(ldr, 1.0);
 }
-#endif
