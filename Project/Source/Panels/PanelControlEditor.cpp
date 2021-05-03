@@ -123,6 +123,13 @@ void PanelControlEditor::Update() {
 				}
 			} else {
 				if (ImGui::Button(play.c_str())) {
+					if (!App->project->IsGameLoaded()) {
+#if _DEBUG
+						App->project->CompileProject(Configuration::DEBUG_EDITOR);
+#else
+						App->project->CompileProject(Configuration::RELEASE_EDITOR);
+#endif // _DEBUG
+					}
 					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PLAY));
 				}
 			}

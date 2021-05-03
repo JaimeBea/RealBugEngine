@@ -163,6 +163,22 @@ void ComponentTransform2D::DrawGizmos() {
 	}
 }
 
+bool ComponentTransform2D::CanBeRemoved() const {
+	return !HasAnyUIElementsInChildren(&GetOwner());
+}
+
+bool ComponentTransform2D::HasAnyUIElementsInChildren(const GameObject* obj) const {
+	bool found = obj->GetComponent<ComponentButton>() || obj->GetComponent<ComponentImage>() || obj->GetComponent<ComponentToggle>()
+				 || obj->GetComponent<ComponentBoundingBox2D>() || obj->GetComponent<ComponentText>() || obj->GetComponent<ComponentSelectable>()
+				 || obj->GetComponent<ComponentCanvasRenderer>() || obj->GetComponent<ComponentCanvas>();
+
+	for (std::vector<GameObject*>::const_iterator it = obj->GetChildren().begin(); it != obj->GetChildren().end() && !found; ++it) {
+		found = HasAnyUIElementsInChildren(*it);
+	}
+
+	return found;
+}
+
 void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
 	// Update the new pivot position
@@ -232,6 +248,7 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
 
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	// float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
 	float factor = canvasRenderer->GetCanvasScreenFactor();
 
 	if (dirty) {
@@ -266,7 +283,7 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 }
 
 void ComponentTransform2D::UpdateUIElements() {
-	if (dirty) {	// Means the transform has changed
+	if (dirty) { // Means the transform has changed
 		ComponentText* text = GetOwner().GetComponent<ComponentText>();
 		if (text != nullptr) {
 			text->RecalculcateVertices();

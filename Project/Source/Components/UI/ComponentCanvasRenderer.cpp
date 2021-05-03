@@ -34,7 +34,8 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 }
 
 float ComponentCanvasRenderer::GetCanvasScreenFactor() const {
-	return AnyParentHasCanvas(&GetOwner())->GetScreenFactor();
+	const ComponentCanvas* canvas = AnyParentHasCanvas(&GetOwner());
+	return canvas ? canvas->GetScreenFactor() : 1.0f;
 }
 
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
@@ -52,4 +53,8 @@ const ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* c
 	}
 
 	return nullptr;
+}
+
+bool ComponentCanvasRenderer::CanBeRemoved() const {
+	return !(GetOwner().GetComponent<ComponentImage>() || GetOwner().GetComponent<ComponentText>());
 }

@@ -25,6 +25,7 @@ public:
 	void Save(JsonValue jComponent) const override; // Serializes Component
 	void Load(JsonValue jComponent) override;		// Deserializes Component
 	void DrawGizmos() override;
+	bool CanBeRemoved() const override; //Returns false if any UI Elements are found in this GameObject or its children
 
 	TESSERACT_ENGINE_API void SetPosition(float3 position);			// Sets this position to value
 	TESSERACT_ENGINE_API void SetSize(float2 size);					// Sets this size to value
@@ -39,13 +40,18 @@ public:
 	const float4x4 GetGlobalMatrixWithSize(bool view3DActive = false) const;	// Returns GlobalMatrix with the size of the item. view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
 
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
-	TESSERACT_ENGINE_API float2 GetSize() const; // Returns the size
-	float3 GetScale() const;					 // Returns the scale
+	TESSERACT_ENGINE_API float2 GetSize() const;	 // Returns the size
+	float3 GetScale() const;						 // Returns the scale
 	float3 GetPivotPosition() const;			 // Returns the pivot position
 
 	void InvalidateHierarchy();							 // Invalidates hierarchy
 	void Invalidate();									 // Invalidates component
 	void DuplicateComponent(GameObject& owner) override; // Duplicates component (THIS SHOULDN'T BE USED)
+
+private:
+	void CalculateGlobalMatrix(); // Calculates the Global Matrix
+	void UpdateUIElements();	  // If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
+	bool HasAnyUIElementsInChildren(const GameObject* obj) const; //Returns true if any UI Elements are found in this GameObject or its children
 
 private:
 	float2 pivot = float2(0.5, 0.5);	 // The position of the pivot in 2D
@@ -65,7 +71,4 @@ private:
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
 
 	bool dirty = true;
-
-	void CalculateGlobalMatrix(); // Calculates the Global Matrix
-	void UpdateUIElements();	// If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
 };

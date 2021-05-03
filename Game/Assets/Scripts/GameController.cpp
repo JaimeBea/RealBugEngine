@@ -7,6 +7,13 @@
 #include "Math/float3x3.h"
 #include "Geometry/frustum.h"
 
+EXPOSE_MEMBERS(GameController) {
+	// Add members here to expose them to the engine. Example:
+	// MEMBER(MemberType::BOOL, exampleMember1),
+	// MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
+	// MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
+};
+
 GENERATE_BODY_IMPL(GameController);
 
 void GameController::Start() {
