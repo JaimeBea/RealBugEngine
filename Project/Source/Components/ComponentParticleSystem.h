@@ -1,12 +1,14 @@
 #pragma once
+#include "Component.h"
+
 #include "Utils/Pool.h"
 #include "Utils/UID.h"
-#include "Component.h"
 #include "Math/float4.h"
 #include "Math/float2.h"
-#include <vector>
 #include "Math/float4x4.h"
 #include "Math/Quat.h"
+
+#include <vector>
 class ComponentTransform;
 class ParticleModule;
 
@@ -61,6 +63,7 @@ private:
 	UID shaderID = 0;  // ID of the shader
 
 	bool looping;
+	bool isPlaying;
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
 
 	float4 initC;
@@ -77,6 +80,7 @@ private:
 	float kq = 0.0075f;
 	float innerAngle = pi / 12;
 	float outerAngle = pi / 6;
+	float particleLife = 5;
 
 	int maxDistance = 2;
 	int particleActivated;
@@ -86,9 +90,8 @@ private:
 private:
 	EmitterType emitterType = EmitterType::CONE;
 
-	std::vector<ParticleModule*> particlesModule;
-	//TODO Particles should be a pool not a vector
 	Pool<Particle> particles;
 	std::vector<Particle*> deadParticles;
-	float3 particlesPosition[100];
+	//TODO IMPLEMENT DRAWINSTANCE
+	/*float3 particlesPosition[100];*/
 };
