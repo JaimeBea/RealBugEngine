@@ -37,6 +37,7 @@ public:
 	void SetPivot(float2 pivot);											 // Sets this pivot to value
 	const float4x4 GetGlobalMatrix() const;									 // Returns GlobalMatrix
 	const float4x4 GetGlobalMatrixWithSize(bool view3DActive = false) const; // Returns GlobalMatrix with the size of the item. view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
+	void SetDirty(bool value);												 // Sets Dirty = value
 
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const;	 // Returns the size
