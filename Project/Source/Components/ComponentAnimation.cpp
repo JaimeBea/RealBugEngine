@@ -141,8 +141,8 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		}
 
 	} else {
-		ResourceClip clip = *(App->resources->GetResource<ResourceClip>(currentState->clipUid));
-		result = AnimationController::GetTransform(clip, currentState->currentTime, gameObject->name.c_str(), position, rotation);
+		ResourceClip* clip = App->resources->GetResource<ResourceClip>(currentState->clipUid);
+		result = AnimationController::GetTransform(*clip, currentState->currentTime, gameObject->name.c_str(), position, rotation);
 	}
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();

@@ -45,8 +45,8 @@ bool AnimationController::GetTransform(const ResourceClip& clip, float& currentT
 }
 
 bool AnimationController::InterpolateTransitions(const std::list<AnimationInterpolation>::iterator& it, const std::list<AnimationInterpolation>& animationInterpolations, const GameObject& rootBone, const GameObject& gameObject, float3& pos, Quat& quat) {
-	ResourceClip clip = *(App->resources->GetResource<ResourceClip>((*it).state->clipUid));
-	bool result = GetTransform(clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
+	ResourceClip* clip = App->resources->GetResource<ResourceClip>((*it).state->clipUid);
+	bool result = GetTransform(*clip, (*it).currentTime, gameObject.name.c_str(), pos, quat);
 
 	if (&(*it) != &(*std::prev(animationInterpolations.end()))) {
 		float3 position;
