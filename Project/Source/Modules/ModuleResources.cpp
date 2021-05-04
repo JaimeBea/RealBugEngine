@@ -24,7 +24,7 @@
 #include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
 #include "FileSystem/AudioImporter.h"
-#include "UI/FontImporter.h"
+#include "FileSystem/FontImporter.h"
 #include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleFiles.h"
@@ -83,7 +83,8 @@ static void SaveMetaFile(const char* filePath, rapidjson::Document& document) {
 bool ModuleResources::Init() {
 	ilInit();
 	iluInit();
-	App->events->AddObserverToEvent(TesseractEventType::ADD_RESOURCE, this);
+	App->events->AddObserverToEvent(TesseractEventType::CREATE_RESOURCE, this);
+	App->events->AddObserverToEvent(TesseractEventType::DESTROY_RESOURCE, this);
 	App->events->AddObserverToEvent(TesseractEventType::UPDATE_FOLDERS, this);
 	return true;
 }
@@ -115,14 +116,21 @@ bool ModuleResources::CleanUp() {
 }
 
 void ModuleResources::ReceiveEvent(TesseractEvent& e) {
-	if (e.type == TesseractEventType::ADD_RESOURCE) {
-		Resource* resource = e.Get<AddResourceStruct>().resource;
+	if (e.type == TesseractEventType::CREATE_RESOURCE) {
+		CreateResourceStruct& createResourceStruct = e.Get<CreateResourceStruct>();
+		Resource* resource = DoCreateResourceByType(createResourceStruct.type, createResourceStruct.assetFilePath.c_str(), createResourceStruct.resourceId);
 		UID id = resource->GetId();
 		if (GetReferenceCount(id) > 0) {
 			resource->Load();
 		}
 		resources[id].reset(resource);
-		e.Get<AddResourceStruct>().resource = nullptr;
+	} else if (e.type == TesseractEventType::DESTROY_RESOURCE) {
+		UID id = e.Get<DestroyResourceStruct>().resourceId;
+		auto& it = resources.find(id);
+		if (it != resources.end()) {
+			it->second->Unload();
+			resources.erase(it);
+		}
 	} else if (e.type == TesseractEventType::UPDATE_FOLDERS) {
 		AssetFolder* folder = e.Get<UpdateFoldersStruct>().folder;
 		rootFolder.reset(folder);
@@ -273,6 +281,12 @@ std::string ModuleResources::GenerateResourcePath(UID id) const {
 	return metaFolder + "/" + strId;
 }
 
+void ModuleResources::DestroyResource(UID id) {
+	TesseractEvent destroyResourceEvent(TesseractEventType::DESTROY_RESOURCE);
+	destroyResourceEvent.Set<DestroyResourceStruct>(id);
+	App->events->AddEvent(destroyResourceEvent);
+}
+
 void ModuleResources::UpdateAsync() {
 	while (!stopImportThread) {
 		// Check if any asset file has been modified / deleted
@@ -355,8 +369,7 @@ void ModuleResources::UpdateAsync() {
 				App->files->Erase(resourceFilePath.c_str());
 			}
 
-			resource->Unload();
-			resources.erase(id);
+			DestroyResource(id);
 		}
 
 		// Check if there are any new assets and build cached folder structure
@@ -393,7 +406,13 @@ void ModuleResources::CheckForNewAssetsRecursive(const char* path, AssetFolder* 
 	}
 }
 
-Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* assetFilePath, UID id) {
+void ModuleResources::CreateResourceByType(ResourceType type, const char* assetFilePath, UID id) {
+	TesseractEvent addResourceEvent(TesseractEventType::CREATE_RESOURCE);
+	addResourceEvent.Set<CreateResourceStruct>(type, id, assetFilePath);
+	App->events->AddEvent(addResourceEvent);
+}
+
+Resource* ModuleResources::DoCreateResourceByType(ResourceType type, const char* assetFilePath, UID id) {
 	std::string resourceFilePath = GenerateResourcePath(id);
 	Resource* resource = nullptr;
 	switch (type) {
@@ -436,14 +455,5 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 		assert(false); // ERROR: Resource type not registered
 		return nullptr;
 	}
-	SendAddResourceEvent(resource);
 	return resource;
-}
-
-void ModuleResources::SendAddResourceEvent(Resource* resource) {
-	TesseractEvent addResourceEvent(TesseractEventType::ADD_RESOURCE);
-
-	addResourceEvent.Set<AddResourceStruct>(resource);
-
-	App->events->AddEvent(addResourceEvent);
 }

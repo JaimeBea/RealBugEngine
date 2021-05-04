@@ -133,7 +133,7 @@
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
-    <ClCompile Include="Source\UI\FontImporter.cpp" />
+    <ClCompile Include="Source\FileSystem\FontImporter.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentImage.cpp" />
     <ClCompile Include="Source\Modules\ModuleUserInterface.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentButton.cpp" />
@@ -385,7 +385,7 @@
     <ClInclude Include="Source\UI\Interfaces\IMouseClickHandler.h" />
     <ClInclude Include="Source\UI\Interfaces\IPointerEnterHandler.h" />
     <ClInclude Include="Source\UI\Interfaces\IPointerExitHandler.h" />
-    <ClInclude Include="Source\UI\FontImporter.h" />
+    <ClInclude Include="Source\FileSystem\FontImporter.h" />
     <ClInclude Include="Source\Components\UI\ComponentImage.h" />
     <ClInclude Include="Source\Modules\ModuleUserInterface.h" />
     <ClInclude Include="Source\Components\UI\ComponentButton.h" />
@@ -443,16 +443,6 @@
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
-    <None Include="..\Game\Shaders\default_fragment.glsl" />
-    <None Include="..\Game\Shaders\default_vertex.glsl" />
-    <None Include="..\Game\Shaders\phong_fragment.glsl" />
-    <None Include="..\Game\Shaders\phong_pbr_fragment.glsl" />
-    <None Include="..\Game\Shaders\phong_pbr_vertex.glsl" />
-    <None Include="..\Game\Shaders\phong_vertex.glsl" />
-    <None Include="..\Game\Shaders\skybox_fragment.glsl" />
-    <None Include="..\Game\Shaders\skybox_vertex.glsl" />
-    <None Include="..\Game\Shaders\ui_fragment.glsl" />
-    <None Include="..\Game\Shaders\ui_vertex.glsl" />
     <None Include="Debugging.props" />
   </ItemGroup>
   <ItemGroup>

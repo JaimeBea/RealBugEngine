@@ -1,10 +1,13 @@
 #pragma once
 
+#include "Application.h"
 #include "Module.h"
+#include "ModuleEvents.h"
 #include "Utils/Pool.h"
 #include "Utils/UID.h"
 #include "Resources/Resource.h"
 #include "Utils/AssetFile.h"
+#include "TesseractEvent.h"
 
 #include <vector>
 #include <memory>
@@ -32,15 +35,16 @@ public:
 	std::string GenerateResourcePath(UID id) const;
 
 	template<typename T>
-	T* CreateResource(const char* assetFilePath, UID id);
+	void CreateResource(const char* assetFilePath, UID id);
+	void DestroyResource(UID id);
 
 private:
 	void UpdateAsync();
 
 	void CheckForNewAssetsRecursive(const char* path, AssetFolder* folder);
 
-	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
-	void SendAddResourceEvent(Resource* resource);
+	void CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
+	Resource* DoCreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
 
 public:
 	std::unordered_set<std::string> assetsToNotUpdate;
@@ -60,9 +64,8 @@ inline T* ModuleResources::GetResource(UID id) const {
 }
 
 template<typename T>
-inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {
-	std::string resourceFilePath = GenerateResourcePath(id);
-	T* resource = new T(id, assetFilePath, resourceFilePath.c_str());
-	SendAddResourceEvent(resource);
-	return resource;
+inline void ModuleResources::CreateResource(const char* assetFilePath, UID id) {
+	TesseractEvent addResourceEvent(TesseractEventType::CREATE_RESOURCE);
+	addResourceEvent.Set<CreateResourceStruct>(T::staticType, id, assetFilePath);
+	App->events->AddEvent(addResourceEvent);
 }

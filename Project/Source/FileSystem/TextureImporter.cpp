@@ -60,14 +60,14 @@ bool TextureImporter::ImportTexture(const char* filePath, JsonValue jMeta) {
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
 	UID id = jResource[JSON_TAG_ID];
-	ResourceTexture* textureResource = App->resources->CreateResource<ResourceTexture>(filePath, id ? id : GenerateUID());
+	App->resources->CreateResource<ResourceTexture>(filePath, id ? id : GenerateUID());
 
 	// Add resource to meta file
-	jResource[JSON_TAG_TYPE] = GetResourceTypeName(textureResource->GetType());
-	jResource[JSON_TAG_ID] = textureResource->GetId();
+	jResource[JSON_TAG_TYPE] = GetResourceTypeName(ResourceTexture::staticType);
+	jResource[JSON_TAG_ID] = id;
 
 	// Save to file
-	const std::string& resourceFilePath = textureResource->GetResourceFilePath();
+	const std::string& resourceFilePath = App->resources->GenerateResourcePath(id);
 	bool saved = App->files->Save(resourceFilePath.c_str(), buffer);
 	if (!saved) {
 		LOG("Failed to save texture resource.");
