@@ -43,6 +43,7 @@ void ComponentText::Init() {
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	RecalculcateVertices();
 }
 
 void ComponentText::OnEditorUpdate() {
@@ -111,8 +112,6 @@ void ComponentText::Load(JsonValue jComponent) {
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
-
-	RecalculcateVertices();
 }
 
 void ComponentText::DuplicateComponent(GameObject& owner) {
