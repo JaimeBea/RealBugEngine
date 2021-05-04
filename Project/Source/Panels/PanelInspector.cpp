@@ -21,6 +21,7 @@
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Modules/ModuleScene.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -230,8 +231,7 @@ void PanelInspector::Update() {
 					ComponentAudioSource* audioSource = selected->CreateComponent<ComponentAudioSource>();
 					if (audioSource != nullptr) {
 						audioSource->Init();
-					}
-					else {
+					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
@@ -239,8 +239,7 @@ void PanelInspector::Update() {
 					ComponentAudioListener* audioListener = selected->CreateComponent<ComponentAudioListener>();
 					if (audioListener != nullptr) {
 						audioListener->Init();
-					}
-					else {
+					} else {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
@@ -267,9 +266,13 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 	if (ImGui::BeginMenu("UI")) {
 		// ------ CREATING UI HANDLERS -------
 		if (ImGui::MenuItem("Event System")) {
-			ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
-			if (component != nullptr) {
-				component->Init();
+			if (App->scene->scene->eventSystemComponents.Count() == 0) {
+				ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
 			} else {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}

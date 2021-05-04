@@ -7,6 +7,7 @@
 #include "Utils/Buffer.h"
 #include "Utils/MSTimer.h"
 #include "Utils/FileDialog.h"
+#include "FileSystem/PrefabImporter.h"
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentBoundingBox.h"
 #include "Components/ComponentMeshRenderer.h"
@@ -451,13 +452,6 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		aiColor4D color;
 		unsigned uvIndex;
 
-		std::vector<UID>& shaderResourceIds = App->resources->ImportAssetResources(SHADERS_PATH "/" PHONG_SHADER_FILE);
-		if (shaderResourceIds.empty()) {
-			LOG("Unable to find phong shader file.");
-		} else {
-			material->shaderId = shaderResourceIds[0];
-		}
-
 		if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &materialFilePath, &mapping, &uvIndex) == AI_SUCCESS) {
 			// Check if the material is valid for our purposes
 			assert(mapping == aiTextureMapping_UV);
@@ -674,34 +668,7 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		}
 	}
 
-	// Save prefab
-	SavePrefab(filePath, jMeta, root->GetChildren()[0], resourceIndex);
-
-	// Delete temporary GameObject
-	scene.DestroyGameObject(root);
-
-	unsigned timeMs = timer.Stop();
-	LOG("Scene imported in %ums.", timeMs);
-	return true;
-}
-
-bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject* root, unsigned& resourceIndex) {
-	// Create document
-	rapidjson::Document document;
-	document.SetObject();
-	JsonValue jScene(document, document);
-
-	// Save GameObjects
-	JsonValue jRoot = jScene[JSON_TAG_ROOT];
-	root->SavePrototype(jRoot);
-
-	// Write document to buffer
-	rapidjson::StringBuffer stringBuffer;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
-	document.Accept(writer);
-
 	// Create prefab resource
-	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[resourceIndex];
 	UID id = jResource[JSON_TAG_ID];
 	ResourcePrefab* prefabResource = App->resources->CreateResource<ResourcePrefab>(filePath, id ? id : GenerateUID());
@@ -709,14 +676,14 @@ bool ModelImporter::SavePrefab(const char* filePath, JsonValue jMeta, GameObject
 	jResource[JSON_TAG_ID] = prefabResource->GetId();
 	resourceIndex += 1;
 
-	// Save to file
-	const std::string& resourceFilePath = prefabResource->GetResourceFilePath();
-	bool saved = App->files->Save(resourceFilePath.c_str(), stringBuffer.GetString(), stringBuffer.GetSize());
-	if (!saved) {
-		LOG("Failed to save prefab resource.");
-		return false;
-	}
+	// Save prefab
+	PrefabImporter::SavePrefab(prefabResource->GetResourceFilePath().c_str(), root->GetChildren()[0]);
 
+	// Delete temporary GameObject
+	scene.DestroyGameObject(root);
+
+	unsigned timeMs = timer.Stop();
+	LOG("Scene imported in %ums.", timeMs);
 	return true;
 }
 

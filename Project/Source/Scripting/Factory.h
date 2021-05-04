@@ -11,10 +11,11 @@
 
 class Script;
 class Creator;
+class GameObject;
 
 class TESSERACT_ENGINE_API Factory {
 public:
-	static Script* Create(const std::string& className);
+	static Script* Create(const std::string& className, GameObject* owner);
 	static void RegisterScript(const std::string& classname, Creator* creator);
 
 private:

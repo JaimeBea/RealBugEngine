@@ -33,8 +33,11 @@ enum class UpdateStatus {
 #define DDS_TEXTURE_EXTENSION ".dds"
 #define TGA_TEXTURE_EXTENSION ".tga"
 
+#define PREFABS_PATH "Assets/Prefabs"
+
 #define MATERIAL_EXTENSION ".mat"
 #define SCENE_EXTENSION ".scene"
+#define PREFAB_EXTENSION ".prefab"
 #define META_EXTENSION ".meta"
 
 #define FRAGMENT_SHADER_EXTENSION ".frag"
@@ -53,8 +56,6 @@ enum class UpdateStatus {
 #define OGG_AUDIO_EXTENSION ".ogg"
 
 #define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
-
-#define PHONG_SHADER_FILE "phong.glsl"
 
 // Configuration -----------
 #define GLSL_VERSION "#version 460"

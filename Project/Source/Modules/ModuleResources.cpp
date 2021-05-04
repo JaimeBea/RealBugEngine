@@ -17,6 +17,7 @@
 #include "Resources/ResourceAudioClip.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
+#include "FileSystem/PrefabImporter.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/MaterialImporter.h"
 #include "FileSystem/SkyboxImporter.h"

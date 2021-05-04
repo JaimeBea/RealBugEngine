@@ -11,7 +11,7 @@
 #include "Components/UI/ComponentEventSystem.h"
 #include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
-#include "Script.h"
+#include "Scripting/Script.h"
 
 #include "Utils/Leaks.h"
 
@@ -49,12 +49,9 @@ void ComponentButton::OnClicked() {
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
-		ResourceScript* scriptResource = App->resources->GetResource<ResourceScript>(scriptComponent.GetScriptID());
-		if (scriptResource != nullptr) {
-			Script* script = scriptResource->script;
-			if (script != nullptr) {
-				script->OnButtonClick();
-			}
+		Script* script = scriptComponent.GetScriptInstance();
+		if (script != nullptr) {
+			script->OnButtonClick();
 		}
 	}
 }
@@ -67,11 +64,11 @@ void ComponentButton::SetClicked(bool clicked_) {
 	clicked = clicked_;
 }
 
-const float4& ComponentButton::GetClickColor() const {
+float4 ComponentButton::GetClickColor() const {
 	return colorClicked;
 }
 
-const float4& ComponentButton::GetTintColor() const {
+float4 ComponentButton::GetTintColor() const {
 	if (!IsActive()) return float4::one;
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();

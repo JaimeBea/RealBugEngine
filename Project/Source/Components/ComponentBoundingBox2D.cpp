@@ -95,3 +95,7 @@ void ComponentBoundingBox2D::Invalidate() {
 const AABB2D& ComponentBoundingBox2D::GetWorldAABB() const {
 	return worldAABB;
 }
+
+bool ComponentBoundingBox2D::CanBeRemoved() const {
+	return !GetOwner().GetComponent<ComponentSelectable>();
+}
