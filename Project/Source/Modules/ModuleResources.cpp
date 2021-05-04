@@ -14,6 +14,8 @@
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/ResourceStateMachine.h"
+#include "Resources/ResourceClip.h"
 #include "Resources/ResourceAudioClip.h"
 #include "FileSystem/JsonValue.h"
 #include "FileSystem/SceneImporter.h"
@@ -430,6 +432,12 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
 		break;
+	case ResourceType::STATE_MACHINE:
+		resource = new ResourceStateMachine(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::CLIP:
+		resource = new ResourceClip(id, assetFilePath, resourceFilePath.c_str());
+		break;	
 	case ResourceType::AUDIO:
 		resource = new ResourceAudioClip(id, assetFilePath, resourceFilePath.c_str());
 		break;
