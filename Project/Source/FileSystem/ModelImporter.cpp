@@ -127,8 +127,7 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 	for (unsigned i = 0; i < assimpMesh->mNumVertices; ++i) {
 		aiVector3D& vertex = assimpMesh->mVertices[i];
 		aiVector3D& normal = assimpMesh->mNormals[i];
-		aiVector3D* tangent = assimpMesh->mTangents;
-
+		aiVector3D& tangent = assimpMesh->mTangents[i];
 		aiVector3D* textureCoords = assimpMesh->mTextureCoords[0];
 
 		*((float*) cursor) = vertex.x;
@@ -143,12 +142,23 @@ static ResourceMesh* ImportMesh(const char* modelFilePath, JsonValue jMeta, cons
 		cursor += sizeof(float);
 		*((float*) cursor) = normal.z;
 		cursor += sizeof(float);
-		*((float*) cursor) = tangent != nullptr ? tangent->x : 0;
-		cursor += sizeof(float);
-		*((float*) cursor) = tangent != nullptr ? tangent->x : 0;
-		cursor += sizeof(float);
-		*((float*) cursor) = tangent != nullptr ? tangent->x : 0;
-		cursor += sizeof(float);
+
+		// Check if Tangents exist
+		if ((aiVector3D*) assimpMesh->mTangents != nullptr) {
+			*((float*) cursor) = tangent.x;
+			cursor += sizeof(float);
+			*((float*) cursor) = tangent.y;
+			cursor += sizeof(float);
+			*((float*) cursor) = tangent.z;
+			cursor += sizeof(float);
+		} else {
+			*((float*) cursor) = 0;
+			cursor += sizeof(float);
+			*((float*) cursor) = 0;
+			cursor += sizeof(float);
+			*((float*) cursor) = 0;
+			cursor += sizeof(float);
+		}
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].x : 0;
 		cursor += sizeof(float);
 		*((float*) cursor) = textureCoords != nullptr ? textureCoords[i].y : 0;

@@ -62,7 +62,7 @@ void main()
     vec3 T = normalize(transpose(inverse(mat3(model))) * tangent.xyz);
     vec3 N = normalize(transpose(inverse(mat3(model))) * normal.xyz);
     T = normalize(T - dot(T, N) * N);  // Re-orthogonalize T with respect to N
-    vec3 B = cross(T, N);  // Cross product swapped to invert Z direction
+    vec3 B = cross(N, T);
 
     gl_Position = proj * view * model * position;
     fragPos = vec3(model * position);

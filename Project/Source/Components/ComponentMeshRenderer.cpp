@@ -121,58 +121,53 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				ImGui::Text("");
 			}
 
-			if (material->shaderType == MaterialShader::PHONG) {
-				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
-				//First Column with the text names of widgets
-				{
-					//Diffuse
-					{
-						// TODO: Hint image of texture
-						ImGui::ResourceSlot<ResourceTexture>("Diffuse Texture", &material->diffuseMapId);
-						if (ImGui::Button("No map##diffuse")) {
-							if (material->diffuseMapId != 0) {
-								App->resources->DecreaseReferenceCount(material->diffuseMapId);
-								material->diffuseMapId = 0;
-							}
-						}
+			//Diffuse
+			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
+			{
+				// TODO: Hint image of texture
+				ImGui::ResourceSlot<ResourceTexture>("Diffuse Texture", &material->diffuseMapId);
+				if (ImGui::Button("No map##diffuse")) {
+					if (material->diffuseMapId != 0) {
+						App->resources->DecreaseReferenceCount(material->diffuseMapId);
+						material->diffuseMapId = 0;
 					}
-					//Specular
-					{
-						ImGui::ResourceSlot<ResourceTexture>("Specular Texture", &material->specularMapId);
-						if (ImGui::Button("No map##specular")) {
-							if (material->specularMapId != 0) {
-								App->resources->DecreaseReferenceCount(material->specularMapId);
-								material->specularMapId = 0;
-							}
+				}
+			}
+			ImGui::NextColumn();
+			{
+				std::string id_cd("##color_d");
+				ImGui::PushID(id_cd.c_str());
+				ImGui::ColorEdit4("", material->diffuseColor.ptr(), ImGuiColorEditFlags_NoInputs);
+				ImGui::PopID();
+			}
+			ImGui::EndColumns();
+
+			if (material->shaderType == MaterialShader::PHONG) {
+				// Specular Options
+				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
+				{
+					ImGui::ResourceSlot<ResourceTexture>("Specular Texture", &material->specularMapId);
+					if (ImGui::Button("No map##specular")) {
+						if (material->specularMapId != 0) {
+							App->resources->DecreaseReferenceCount(material->specularMapId);
+							material->specularMapId = 0;
 						}
 					}
 				}
-
 				ImGui::NextColumn();
-				//Second column with the widgets
 				{
-					std::string id_cd("##color_d");
-					ImGui::PushID(id_cd.c_str());
-					ImGui::ColorEdit4("", material->diffuseColor.ptr(), ImGuiColorEditFlags_NoInputs);
-					ImGui::PopID();
-
-					ImGui::NewLine();
-					ImGui::NewLine();
-					ImGui::NewLine();
-
 					if (material->specularMapId == 0) {
 						std::string id_cs("##color_s");
 						ImGui::PushID(id_cs.c_str());
 						ImGui::ColorEdit4("", material->specularColor.ptr(), ImGuiColorEditFlags_NoInputs);
 						ImGui::PopID();
-					} else {
-						ImGui::NewLine();
 					}
 				}
 				ImGui::EndColumns();
+
+				// Shininess Options
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 				{
-					// Shininess Combo
 					const char* shininessItems[] = {"Shininess Value", "Shininess Alpha"};
 					const char* shininessItemCurrent = shininessItems[material->hasSmoothnessInAlphaChannel];
 					if (ImGui::BeginCombo("##shininess", shininessItemCurrent)) {
@@ -199,67 +194,34 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				}
 				ImGui::EndColumns();
 
-				ImGui::ResourceSlot<ResourceTexture>("Normal Texture", &material->normalMapId);
-				if (ImGui::Button("No map##normal")) {
-					if (material->normalMapId != 0) {
-						App->resources->DecreaseReferenceCount(material->normalMapId);
-						material->normalMapId = 0;
-					}
-				}
-
 			} else if (material->shaderType == MaterialShader::STANDARD_SPECULAR) {
+				// Specular Options
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
-				//First Column with the text names of widgets
 				{
-					//Diffuse
-					{
-						// TODO: Hint image of texture
-						ImGui::ResourceSlot<ResourceTexture>("Diffuse Texture", &material->diffuseMapId);
-						if (ImGui::Button("No map##diffuse")) {
-							if (material->diffuseMapId != 0) {
-								App->resources->DecreaseReferenceCount(material->diffuseMapId);
-								material->diffuseMapId = 0;
-							}
-						}
-					}
-					//Specular
-					{
-						ImGui::ResourceSlot<ResourceTexture>("Specular Texture", &material->specularMapId);
-						if (ImGui::Button("No map##specular")) {
-							if (material->specularMapId != 0) {
-								App->resources->DecreaseReferenceCount(material->specularMapId);
-								material->specularMapId = 0;
-							}
+					ImGui::ResourceSlot<ResourceTexture>("Specular Texture", &material->specularMapId);
+					if (ImGui::Button("No map##specular")) {
+						if (material->specularMapId != 0) {
+							App->resources->DecreaseReferenceCount(material->specularMapId);
+							material->specularMapId = 0;
 						}
 					}
 				}
-
 				ImGui::NextColumn();
-				//Second column with the widgets
 				{
-					std::string id_cd("##color_d");
-					ImGui::PushID(id_cd.c_str());
-					ImGui::ColorEdit4("", material->diffuseColor.ptr(), ImGuiColorEditFlags_NoInputs);
-					ImGui::PopID();
-
-					ImGui::NewLine();
-					ImGui::NewLine();
-					ImGui::NewLine();
-
 					if (material->specularMapId == 0) {
 						std::string id_cs("##color_s");
 						ImGui::PushID(id_cs.c_str());
 						ImGui::ColorEdit4("", material->specularColor.ptr(), ImGuiColorEditFlags_NoInputs);
 						ImGui::PopID();
-					} else {
-						ImGui::NewLine();
 					}
 				}
 				ImGui::EndColumns();
+
+				// Smoothness Options
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 				{
 					ImGui::Text("Smoothness");
-					// Smoothness combo
+
 					const char* smoothnessItems[] = {"Diffuse Alpha", "Specular Alpha"};
 					const char* smoothnessItemCurrent = smoothnessItems[material->hasSmoothnessInAlphaChannel];
 					if (ImGui::BeginCombo("##smoothness", smoothnessItemCurrent)) {
@@ -280,73 +242,38 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::NewLine();
 					std::string id_s("##smooth_");
 					ImGui::PushID(id_s.c_str());
-					ImGui::SliderFloat(id_s.c_str(), &material->smoothness, 0, 1);
+					ImGui::SliderFloat(id_s.c_str(), &material->smoothness, 0.0, 1.0);
 					ImGui::PopID();
 				}
 				ImGui::EndColumns();
 
-				ImGui::ResourceSlot<ResourceTexture>("Normal Texture", &material->normalMapId);
-				if (ImGui::Button("No map##normal")) {
-					if (material->normalMapId != 0) {
-						App->resources->DecreaseReferenceCount(material->normalMapId);
-						material->normalMapId = 0;
-					}
-				}
-
 			} else if (material->shaderType == MaterialShader::STANDARD) {
+				// Metallic Options
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
-				//First Column with the text names of widgets
 				{
-					//Diffuse
-					{
-						// TODO: Hint image of texture
-						ImGui::ResourceSlot<ResourceTexture>("Diffuse Texture", &material->diffuseMapId);
-						if (ImGui::Button("No map##diffuse")) {
-							if (material->diffuseMapId != 0) {
-								App->resources->DecreaseReferenceCount(material->diffuseMapId);
-								material->diffuseMapId = 0;
-							}
-						}
-					}
-					// Metallic
-					{
-						ImGui::ResourceSlot<ResourceTexture>("Metallic Texture", &material->metallicMapId);
-						if (ImGui::Button("No map##metallic")) {
-							if (material->metallicMapId != 0) {
-								App->resources->DecreaseReferenceCount(material->metallicMapId);
-								material->metallicMapId = 0;
-							}
+					ImGui::ResourceSlot<ResourceTexture>("Metallic Texture", &material->metallicMapId);
+					if (ImGui::Button("No map##metallic")) {
+						if (material->metallicMapId != 0) {
+							App->resources->DecreaseReferenceCount(material->metallicMapId);
+							material->metallicMapId = 0;
 						}
 					}
 				}
-
 				ImGui::NextColumn();
-				//Second column with the widgets
 				{
-					std::string id_cd("##color_d");
-					//id_c.append();
-					ImGui::PushID(id_cd.c_str());
-					ImGui::ColorEdit4("", material->diffuseColor.ptr(), ImGuiColorEditFlags_NoInputs);
-					ImGui::PopID();
-
-					ImGui::NewLine();
-					ImGui::NewLine();
-					ImGui::NewLine();
-
 					if (material->metallicMapId == 0) {
 						std::string id_m("##metalness");
 						ImGui::PushID(id_m.c_str());
-						ImGui::SliderFloat("", &material->metallic, 0, 1);
+						ImGui::SliderFloat("", &material->metallic, 0.0, 1.0);
 						ImGui::PopID();
-					} else {
-						ImGui::NewLine();
 					}
 				}
 				ImGui::EndColumns();
+
+				// Smoothness Options
 				ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
 				{
 					ImGui::Text("Smoothness");
-					// Smoothness combo
 					const char* smoothnessItems[] = {"Diffuse Alpha", "Metallic Alpha"};
 					const char* smoothnessItemCurrent = smoothnessItems[material->hasSmoothnessInAlphaChannel];
 					if (ImGui::BeginCombo("##smoothness", smoothnessItemCurrent)) {
@@ -367,11 +294,15 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					ImGui::NewLine();
 					std::string id_s("##smooth_");
 					ImGui::PushID(id_s.c_str());
-					ImGui::SliderFloat(id_s.c_str(), &material->smoothness, 0, 1);
+					ImGui::SliderFloat(id_s.c_str(), &material->smoothness, 0.0, 1.0);
 					ImGui::PopID();
 				}
 				ImGui::EndColumns();
+			}
 
+			// Normal Options
+			ImGui::BeginColumns("##material", 2, ImGuiColumnsFlags_NoResize | ImGuiColumnsFlags_NoBorder);
+			{
 				ImGui::ResourceSlot<ResourceTexture>("Normal Texture", &material->normalMapId);
 				if (ImGui::Button("No map##normal")) {
 					if (material->normalMapId != 0) {
@@ -380,6 +311,16 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 					}
 				}
 			}
+			ImGui::NextColumn();
+			{
+				if (material->normalMapId != 0) {
+					std::string id_m("##strength");
+					ImGui::PushID(id_m.c_str());
+					ImGui::SliderFloat("", &material->normalStrength, 0.0, 10.0);
+					ImGui::PopID();
+				}
+			}
+			ImGui::EndColumns();
 		}
 		ImGui::TreePop();
 	}
@@ -606,7 +547,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 		if (hasNormalMap) {
 			program = App->programs->specularNormal;
 		} else {
-			program = App->programs->specularNormal;
+			program = App->programs->specularNotNormal;
 		}
 		glUseProgram(program);
 
@@ -668,6 +609,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	// Normal Map
 	glUniform1i(glGetUniformLocation(program, "normalMap"), 2);
 	glUniform1i(glGetUniformLocation(program, "hasNormalMap"), hasNormalMap);
+	glUniform1f(glGetUniformLocation(program, "normalStrength"), material->normalStrength);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, glTextureNormal);
 

@@ -6,9 +6,7 @@ void main() {
     vec3 normal = fragNormal;
     if (hasNormalMap)
     {
-	    normal = texture(normalMap, uv).rgb;
-	    normal = normalize(normal * 2.0 - 1.0);
-	    normal = normalize(TBN * normal);
+	    normal = GetNormal(normalMap, uv, TBN, normalStrength);
     }
 
     // diffuse
