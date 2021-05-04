@@ -5,6 +5,12 @@
 
 #include "Math/float4.h"
 
+enum class MaterialShader {
+	PHONG,
+	STANDARD_SPECULAR,
+	STANDARD
+};
+
 class ResourceMaterial : public Resource {
 public:
 	REGISTER_RESOURCE(ResourceMaterial, ResourceType::MATERIAL);
@@ -16,7 +22,7 @@ public:
 
 public:
 	// Material shader
-	UID shaderId = 0;
+	MaterialShader shaderType = MaterialShader::STANDARD_SPECULAR;
 
 	// Diffuse
 	float4 diffuseColor = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -27,7 +33,7 @@ public:
 	UID specularMapId = 0;
 
 	// Metalness
-	float metallic = 1.f;
+	float metallic = 0.f;
 	UID metallicMapId = 0;
 
 	// Normal
