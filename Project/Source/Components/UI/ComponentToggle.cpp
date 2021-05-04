@@ -13,7 +13,6 @@
 #include "Scripting/Script.h"
 #include "imgui.h"
 #include "Utils/ImGuiUtils.h"
-
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_IS_ON "IsOn"
@@ -28,7 +27,6 @@ void ComponentToggle::Init() {
 
 void ComponentToggle::OnClicked() {
 	SetOn(!IsOn());
-	OnValueChanged();
 
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
@@ -49,7 +47,7 @@ void ComponentToggle ::OnValueChanged() {
 			childImage->Disable();
 		}
 	}
-	LOG("Toggle value changed");
+	//Callback would go here
 }
 
 bool ComponentToggle ::IsOn() const {
@@ -61,15 +59,15 @@ void ComponentToggle ::SetOn(bool b) {
 }
 
 ComponentImage* ComponentToggle::GetEnabledImage() const {
-	GameObject* imageObj = App->scene->scene->GetGameObject(enabledImageID);
+	GameObject* imageObj = App->scene->scene->GetGameObject(enabledImageObjectID);
 	if (imageObj) {
-		return (ComponentImage*) App->scene->scene->GetGameObject(enabledImageID)->GetComponent<ComponentImage>();
+		return (ComponentImage*) App->scene->scene->GetGameObject(enabledImageObjectID)->GetComponent<ComponentImage>();
 	}
 	return nullptr;
 }
 
 void ComponentToggle::SetEnabledImageObj(UID enabledImageObjID_) {
-	enabledImageID = enabledImageObjID_;
+	enabledImageObjectID = enabledImageObjID_;
 }
 
 bool ComponentToggle::IsClicked() const {
@@ -113,7 +111,7 @@ void ComponentToggle::DuplicateComponent(GameObject& owner) {
 
 void ComponentToggle::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_IS_ON] = isOn;
-	jComponent[JSON_TAG_ENABLED_IMAGE_ID] = enabledImageID;
+	jComponent[JSON_TAG_ENABLED_IMAGE_ID] = enabledImageObjectID;
 
 	JsonValue jColorClick = jComponent[JSON_TAG_CLICKED_COLOR];
 	jColorClick[0] = colorClicked.x;
@@ -124,7 +122,7 @@ void ComponentToggle::Save(JsonValue jComponent) const {
 
 void ComponentToggle::Load(JsonValue jComponent) {
 	isOn = jComponent[JSON_TAG_IS_ON];
-	enabledImageID = jComponent[JSON_TAG_ENABLED_IMAGE_ID];
+	enabledImageObjectID = jComponent[JSON_TAG_ENABLED_IMAGE_ID];
 
 	JsonValue jColorClick = jComponent[JSON_TAG_CLICKED_COLOR];
 	colorClicked.Set(jColorClick[0], jColorClick[1], jColorClick[2], jColorClick[3]);
@@ -132,6 +130,5 @@ void ComponentToggle::Load(JsonValue jComponent) {
 
 void ComponentToggle::OnEditorUpdate() {
 	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
-	//ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
-	ImGui::GameObjectSlot("Enabled Image", &enabledImageID);
+	ImGui::GameObjectSlot("Enabled Image GameObject", &enabledImageObjectID);
 }

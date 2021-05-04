@@ -34,8 +34,8 @@ public:
 
 private:
 	bool isOn = true;
-	UID enabledImageID = 0;
+	UID enabledImageObjectID = 0;
 
-	bool clicked = false;									// Clicked state
+	bool clicked = false;									//Is currently being clicked (Not saved nor stored)
 	float4 colorClicked = float4(0.64f, 0.64f, 0.64f, 1.f); // The color when the button is clicked
 };
