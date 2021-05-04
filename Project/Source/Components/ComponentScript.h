@@ -28,5 +28,4 @@ private:
 
 	UID scriptId = 0;
 	std::unique_ptr<Script> scriptInstance = nullptr;
-	bool dirty = true;
 };
