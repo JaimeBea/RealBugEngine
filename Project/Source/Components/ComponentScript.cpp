@@ -271,7 +271,6 @@ void ComponentScript::DuplicateComponent(GameObject& owner) {
 	ComponentScript* component = owner.CreateComponent<ComponentScript>();
 	component->scriptId = scriptId;
 	component->changedValues = changedValues;
-	component->dirty = true;
 }
 
 void ComponentScript::CreateScriptInstance() {
