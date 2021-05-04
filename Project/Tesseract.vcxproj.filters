@@ -147,7 +147,6 @@
     <ClCompile Include="Source\Modules\ModuleEvents.cpp" />
     <ClCompile Include="Source\Components\ComponentType.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
-    <ClCompile Include="Source\Components\ComponentParticleSystem.cpp" />
     <ClCompile Include="Source\Resources\Resource.cpp" />
     <ClCompile Include="Source\Resources\ResourceAnimation.cpp" />
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
@@ -168,6 +167,7 @@
     <ClCompile Include="Libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="Source\Utils\ImGuiUtils.cpp" />
     <ClCompile Include="Source\Scripting\Member.cpp" />
+    <ClCompile Include="Source\Components\ComponentParticleSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -415,8 +415,6 @@
     <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
     <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Source\Utils\PoolMap.h" />
-    <ClInclude Include="Source\Components\ComponentParticleSystem.h" />
-    <ClInclude Include="Source\ParticleSystem\ParticleModule.h" />
     <ClInclude Include="Source\Resources\Resource.h" />
     <ClInclude Include="Source\Resources\ResourceAnimation.h" />
     <ClInclude Include="Source\Resources\ResourceFont.h" />
@@ -432,6 +430,7 @@
     <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
     <ClInclude Include="Source\Scripting\Member.h" />
     <ClInclude Include="Source\Utils\StringBlocksParser.h" />
+    <ClInclude Include="Source\Components\ComponentParticleSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
@@ -446,16 +445,6 @@
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
-    <None Include="..\Game\Shaders\default_fragment.glsl" />
-    <None Include="..\Game\Shaders\default_vertex.glsl" />
-    <None Include="..\Game\Shaders\phong_fragment.glsl" />
-    <None Include="..\Game\Shaders\phong_pbr_fragment.glsl" />
-    <None Include="..\Game\Shaders\phong_pbr_vertex.glsl" />
-    <None Include="..\Game\Shaders\phong_vertex.glsl" />
-    <None Include="..\Game\Shaders\skybox_fragment.glsl" />
-    <None Include="..\Game\Shaders\skybox_vertex.glsl" />
-    <None Include="..\Game\Shaders\ui_fragment.glsl" />
-    <None Include="..\Game\Shaders\ui_vertex.glsl" />
     <None Include="Debugging.props" />
   </ItemGroup>
   <ItemGroup>

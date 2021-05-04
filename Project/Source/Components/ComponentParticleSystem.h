@@ -65,6 +65,7 @@ private:
 	bool looping;
 	bool isPlaying;
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
+	bool isRandomFrame = false;
 
 	float4 initC;
 	float4 finalC;

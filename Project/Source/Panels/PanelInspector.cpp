@@ -234,6 +234,8 @@ void PanelInspector::Update() {
 					ComponentParticleSystem* particle = selected->CreateComponent<ComponentParticleSystem>();
 					if (particle != nullptr) {
 						particle->Init();
+					}
+				}
 				if (ImGui::MenuItem("Audio Source")) {
 					ComponentAudioSource* audioSource = selected->CreateComponent<ComponentAudioSource>();
 					if (audioSource != nullptr) {

@@ -55,13 +55,14 @@ void ComponentParticleSystem::OnEditorUpdate() {
 		ImGui::EndCombo();
 	}
 	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
+	ImGui::Checkbox("Random Frame", &isRandomFrame);
 
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 
 	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 
-	ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+	ResourceTexture* textureResource = App->resources->GetResource<ResourceTexture>(textureID);
 
 	if (textureResource != nullptr) {
 		int width;
@@ -191,7 +192,11 @@ void ComponentParticleSystem::SpawnParticle() {
 	if (currentParticle) {
 		currentParticle->position = currentParticle->initialPosition;
 		currentParticle->life = particleLife;
-		currentParticle->currentFrame = 0;
+		if (isRandomFrame) {
+			currentParticle->currentFrame = rand() % ((Xtiles * Ytiles) + 1);
+		} else {
+			currentParticle->currentFrame = 0;
+		}
 		currentParticle->colorFrame = 0;
 		currentParticle->direction = CreateVelocity();
 		currentParticle->initialPosition = CreatePosition();
@@ -230,7 +235,7 @@ void ComponentParticleSystem::Draw() {
 	if (isPlaying) {
 		for (Particle& currentParticle : particles) {
 			unsigned int program = 0;
-			ResourceShader* shaderResouce = (ResourceShader*) App->resources->GetResource(shaderID);
+			ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
 			if (shaderResouce) {
 				program = shaderResouce->GetShaderProgram();
 			} else {
@@ -255,7 +260,7 @@ void ComponentParticleSystem::Draw() {
 			currentParticle.model = currentParticle.model;
 
 			float3x3 rotatePart = currentParticle.model.RotatePart();
-			Frustum* frustum = App->camera->GetActiveFrustum();
+			Frustum* frustum = App->camera->GetActiveCamera()->GetFrustum();
 			float4x4* proj = &App->camera->GetProjectionMatrix();
 			float4x4* view = &App->camera->GetViewMatrix();
 
@@ -267,7 +272,10 @@ void ComponentParticleSystem::Draw() {
 			glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
 			glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
 
-			currentParticle.currentFrame += 0.1f;
+			if (!isRandomFrame) {
+				currentParticle.currentFrame += 0.1f;
+			}
+
 			currentParticle.colorFrame += 0.01f;
 			glActiveTexture(GL_TEXTURE0);
 			glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
@@ -279,7 +287,7 @@ void ComponentParticleSystem::Draw() {
 			glUniform1i(glGetUniformLocation(program, "Xtiles"), Xtiles);
 			glUniform1i(glGetUniformLocation(program, "Ytiles"), Ytiles);
 
-			ResourceTexture* textureResource = (ResourceTexture*) App->resources->GetResource(textureID);
+			ResourceTexture* textureResource = App->resources->GetResource<ResourceTexture>(textureID);
 			if (textureResource != nullptr) {
 				glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
 			}
