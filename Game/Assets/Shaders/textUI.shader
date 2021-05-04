@@ -1,4 +1,4 @@
-#ifdef VERTEX
+--- vertTextUI
 
 layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
 out vec2 TexCoords;
@@ -11,10 +11,7 @@ void main()
     TexCoords = vertex.zw;
 }  
 
-
-#endif
-
-#ifdef FRAGMENT
+--- fragTextUI
 
 in vec2 TexCoords;
 out vec4 color;
@@ -27,5 +24,3 @@ void main()
     vec4 sampled = vec4(1.0, 1.0, 1.0, texture(text, TexCoords).r);
     color = textColor * sampled;
 }  
-
-#endif 
