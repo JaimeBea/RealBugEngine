@@ -4,12 +4,19 @@
 #include "Components/UI/ComponentText.h"
 #include "GameplaySystems.h"
 
+EXPOSE_MEMBERS(ChangeCharacter) {
+	// Add members here to expose them to the engine. Example:
+	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, robotUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, canvasUID)
+};
+
 GENERATE_BODY_IMPL(ChangeCharacter);
 
 void ChangeCharacter::Start() {
-	fang = GameplaySystems::GetGameObject("Fang");
-	robot = GameplaySystems::GetGameObject("Robot");
-	canvas = GameplaySystems::GetGameObject("Canvas");
+	fang = GameplaySystems::GetGameObject(fangUID);
+	robot = GameplaySystems::GetGameObject(robotUID);
+	canvas = GameplaySystems::GetGameObject(canvasUID);
 
 	/* Provisional code to see cooldown until we implement the proper UI */
 	if (canvas) {
