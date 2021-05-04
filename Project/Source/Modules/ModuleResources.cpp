@@ -193,7 +193,7 @@ bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePa
 	return validExtension;
 }
 
-std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath, UID assetId) {
+std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath) {
 	std::vector<UID> resources;
 
 	// Return an empty list if the asset couldn't be found
