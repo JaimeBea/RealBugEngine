@@ -43,20 +43,20 @@ void ComponentTransform2D::OnEditorUpdate() {
 		SetSize(editorSize);
 	}
 
-	float2 anchX = anchorX;
-	float2 anchY = anchorY;
+	float2 anchMin = anchorMin;
+	float2 anchMax = anchorMax;
 	ImGui::TextColored(App->editor->titleColor, "Anchors");
-	if (ImGui::DragFloat2("Anchor X (Min, Max)", anchX.ptr(), App->editor->dragSpeed2f, 0, 1)) {
-		SetAnchorX(anchX);
+	if (ImGui::DragFloat2("Min (X, Y)", anchMin.ptr(), App->editor->dragSpeed2f, 0, 1)) {
+		SetAnchorMin(anchMin);
 	}
-	if (ImGui::DragFloat2("Anchor Y (Min, Max)", anchY.ptr(), App->editor->dragSpeed2f, 0, 1)) {
-		SetAnchorY(anchY);
+	if (ImGui::DragFloat2("Max (X, Y)", anchMax.ptr(), App->editor->dragSpeed2f, 0, 1)) {
+		SetAnchorMax(anchMax);
 	}
 
 	float2 piv = pivot;
 	float3 pivPos = pivotPosition;
 	ImGui::TextColored(App->editor->titleColor, "Pivot (X,Y)");
-	if (ImGui::DragFloat2("Pivot", piv.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+	if (ImGui::DragFloat2("Pivot (X, Y)", piv.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPivot(piv);
 	}
 	ImGui::InputFloat3("Pivot Position (X,Y,Z)", pivPos.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
@@ -113,12 +113,12 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jSize[1] = size.y;
 
 	JsonValue jAnchorX = jComponent[JSON_TAG_ANCHOR_X];
-	jAnchorX[0] = anchorX.x;
-	jAnchorX[1] = anchorX.y;
+	jAnchorX[0] = anchorMin.x;
+	jAnchorX[1] = anchorMin.y;
 
 	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
-	jAnchorY[0] = anchorY.x;
-	jAnchorY[1] = anchorY.y;
+	jAnchorY[0] = anchorMax.x;
+	jAnchorY[1] = anchorMax.y;
 }
 
 void ComponentTransform2D::Load(JsonValue jComponent) {
@@ -144,10 +144,10 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 	size.Set(jSize[0], jSize[1]);
 
 	JsonValue jAnchorX = jComponent[JSON_TAG_ANCHOR_X];
-	anchorX.Set(jAnchorX[0], jAnchorX[1]);
+	anchorMin.Set(jAnchorX[0], jAnchorX[1]);
 
 	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
-	anchorY.Set(jAnchorY[0], jAnchorY[1]);
+	anchorMax.Set(jAnchorY[0], jAnchorY[1]);
 
 	dirty = true;
 }
@@ -223,13 +223,13 @@ void ComponentTransform2D::SetScale(float3 scale_) {
 	InvalidateHierarchy();
 }
 
-void ComponentTransform2D::SetAnchorX(float2 anchorX_) {
-	anchorX = anchorX_;
+void ComponentTransform2D::SetAnchorMin(float2 anchorMin_) {
+	anchorMin = anchorMin_;
 	InvalidateHierarchy();
 }
 
-void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
-	anchorY = anchorY_;
+void ComponentTransform2D::SetAnchorMax(float2 anchorMax_) {
+	anchorMax = anchorMax_;
 	InvalidateHierarchy();
 }
 
@@ -332,7 +332,7 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	component->SetPosition(position);
 	component->SetRotation(rotation);
 	component->SetScale(scale);
-	component->SetAnchorX(anchorX);
-	component->SetAnchorY(anchorX);
+	component->SetAnchorMin(anchorMin);
+	component->SetAnchorMax(anchorMax);
 	component->dirty = true;
 }

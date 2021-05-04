@@ -44,13 +44,13 @@ enum class AnchorPresetType {
 };
 
 struct AnchorPreset {
-	AnchorPreset(AnchorPresetType type_, float2 anchorX_, float2 anchorY_)
-		: type(type_), anchorX(anchorX_), anchorY(anchorY_) {
+	AnchorPreset(AnchorPresetType type_, float2 anchorMin_, float2 anchorMax_)
+		: type(type_), anchorMin(anchorMin_), anchorMax(anchorMax_) {
 	}
 
 	AnchorPresetType type;
-	float2 anchorX;
-	float2 anchorY;
+	float2 anchorMin;
+	float2 anchorMax;
 };
 
 
@@ -70,8 +70,8 @@ public:
 	void SetRotation(Quat rotation);								// Sets this rotation to value and calculates Euler Angles rotation
 	void SetRotation(float3 rotation);								// Sets this eulerAngles to value and calculates Quat rotation
 	void SetScale(float3 scale);									// Sets this scale to value
-	void SetAnchorX(float2 anchorX);								// Sets this anchorX to value
-	void SetAnchorY(float2 anchorY);								// Sets this anchorY to value
+	void SetAnchorMin(float2 anchorMin);								// Sets this anchorMin to value
+	void SetAnchorMax(float2 anchorMax);								// Sets this anchorMax to value
 	void SetPivot(float2 pivotPosition);							// Sets this pivot to value
 	void UpdatePivotPosition();										// Update this pivot position to value
 	const float4x4 GetGlobalMatrix() const;										// Returns GlobalMatrix
@@ -102,8 +102,8 @@ private:
 	float3 localEulerAngles = float3::zero; // The rotation of the element in Euler
 	float3 scale = float3::one;				// The scale of the element
 
-	float2 anchorX = float2(0.5, 0.5); // The Anchor of X axis. AnchorX.x -> Min position, AnchorX.y -> Max position. Currently not used.
-	float2 anchorY = float2(0.5, 0.5); // The Anchor of Y axis. AnchorY.x -> Min position, AnchorY.y -> Max position. Currently not used.
+	float2 anchorMin = float2(0.5, 0.5); // The Anchor Min. Represents the lower left handle.
+	float2 anchorMax = float2(0.5, 0.5); // The Anchor Max. Represents the upper right handle.
 
 	float4x4 localMatrix = float4x4::identity;	// Local matrix
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
