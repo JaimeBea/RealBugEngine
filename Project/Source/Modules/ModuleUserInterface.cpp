@@ -207,7 +207,7 @@ void ModuleUserInterface::ViewportResized() {
 	}
 
 	for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
-		transform.SetDirty(true);
+		transform.InvalidateHierarchy();
 	}
 
 	for (ComponentText& text : App->scene->scene->textComponents) {

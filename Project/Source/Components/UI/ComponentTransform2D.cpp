@@ -209,10 +209,6 @@ const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) 
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
 }
 
-void ComponentTransform2D::SetDirty(bool value) {
-	dirty = value;
-}
-
 void ComponentTransform2D::CalculateGlobalMatrix() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
