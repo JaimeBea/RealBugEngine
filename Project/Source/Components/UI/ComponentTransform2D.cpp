@@ -29,6 +29,7 @@ void ComponentTransform2D::Update() {
 
 void ComponentTransform2D::OnEditorUpdate() {
 	float3 editorPos = position;
+
 	ImGui::TextColored(App->editor->titleColor, "Position (X,Y,Z)");
 	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(editorPos);
@@ -59,6 +60,8 @@ void ComponentTransform2D::OnEditorUpdate() {
 	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetRotation(rot);
 	}
+
+	UpdateUIElements();
 
 	ImGui::Separator();
 }
@@ -136,6 +139,22 @@ void ComponentTransform2D::DrawGizmos() {
 	}
 }
 
+bool ComponentTransform2D::CanBeRemoved() const {
+	return !HasAnyUIElementsInChildren(&GetOwner());
+}
+
+bool ComponentTransform2D::HasAnyUIElementsInChildren(const GameObject* obj) const {
+	bool found = obj->GetComponent<ComponentButton>() || obj->GetComponent<ComponentImage>() || obj->GetComponent<ComponentToggle>()
+				 || obj->GetComponent<ComponentBoundingBox2D>() || obj->GetComponent<ComponentText>() || obj->GetComponent<ComponentSelectable>()
+				 || obj->GetComponent<ComponentCanvasRenderer>() || obj->GetComponent<ComponentCanvas>();
+
+	for (std::vector<GameObject*>::const_iterator it = obj->GetChildren().begin(); it != obj->GetChildren().end() && !found; ++it) {
+		found = HasAnyUIElementsInChildren(*it);
+	}
+
+	return found;
+}
+
 void ComponentTransform2D::SetPosition(float3 position_) {
 	position = position_;
 	InvalidateHierarchy();
@@ -179,20 +198,22 @@ void ComponentTransform2D::SetAnchorY(float2 anchorY_) {
 	InvalidateHierarchy();
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrix() {
+const float4x4 ComponentTransform2D::GetGlobalMatrix() const {
 	return globalMatrix;
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool isRunning) {
-	if (isRunning) {
+const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) const {
+	if (view3DActive) {
 		return globalMatrix * float4x4::Scale(size.x / 100.0f, size.y / 100.0f, 0);
 	}
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
 	if (dirty) {
-		localMatrix = float4x4::FromTRS(position, rotation, scale);
+		localMatrix = float4x4::FromTRS(position * factor, rotation, scale * factor);
 
 		GameObject* parent = GetOwner().GetParent();
 		if (parent != nullptr) {
@@ -207,6 +228,15 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 
 		} else {
 			globalMatrix = localMatrix;
+		}
+	}
+}
+
+void ComponentTransform2D::UpdateUIElements() {
+	if (dirty) { // Means the transform has changed
+		ComponentText* text = GetOwner().GetComponent<ComponentText>();
+		if (text != nullptr) {
+			text->RecalculcateVertices();
 		}
 	}
 }

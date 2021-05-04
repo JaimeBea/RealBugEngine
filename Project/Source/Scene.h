@@ -21,6 +21,8 @@
 #include "Components/ComponentParticleSystem.h"
 #include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
+#include "Components/ComponentAudioListener.h"
+#include "Components/ComponentAudioSource.h"
 
 class GameObject;
 
@@ -72,6 +74,9 @@ public:
 	PoolMap<UID, ComponentScript> scriptComponents;
 	PoolMap<UID, ComponentAnimation> animationComponents;
 	PoolMap<UID, ComponentParticleSystem> particleComponents;
+	PoolMap<UID, ComponentAudioSource> audioSourceComponents;
+	PoolMap<UID, ComponentAudioListener> audioListenerComponents;
+
 	// ---- Quadtree Parameters ---- //
 	Quadtree<GameObject> quadtree;
 	AABB2D quadtreeBounds = {{-1000, -1000}, {1000, 1000}};

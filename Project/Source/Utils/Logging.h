@@ -14,7 +14,7 @@
 
 class Logger {
 public:
-	void TESSERACT_ENGINE_API Log(const char file[], int line, const char* format, ...);
+	void Log(const char file[], int line, const char* format, ...);
 	void LogDeltaMS(float deltaMs);
 	void UpdateLogString();
 

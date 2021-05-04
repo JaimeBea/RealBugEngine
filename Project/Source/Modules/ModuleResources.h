@@ -5,6 +5,7 @@
 #include "Utils/UID.h"
 #include "Resources/Resource.h"
 #include "Utils/AssetFile.h"
+#include "FileSystem/JsonValue.h"
 
 #include <vector>
 #include <memory>
@@ -20,9 +21,9 @@ public:
 	bool CleanUp() override;
 	void ReceiveEvent(TesseractEvent& e) override;
 
-	std::vector<UID> ImportAsset(const char* filePath);
+	std::vector<UID> ImportAssetResources(const char* filePath);
 
-	Resource* GetResource(UID id) const;
+	template<typename T> T* GetResource(UID id) const;
 	AssetFolder* GetRootFolder() const;
 
 	void IncreaseReferenceCount(UID id);
@@ -42,6 +43,10 @@ private:
 	Resource* CreateResourceByType(ResourceType type, const char* assetFilePath, UID id);
 	void SendAddResourceEvent(Resource* resource);
 
+	void ValidateAssetResources(JsonValue jMeta, bool& validResourceFiles);
+	void ReimportResources(JsonValue jMeta, const char* filePath);
+	bool ImportAssetByExtension(JsonValue jMeta, const char* filePath);
+
 public:
 	std::unordered_set<std::string> assetsToNotUpdate;
 
@@ -52,6 +57,12 @@ private:
 	std::thread importThread;
 	bool stopImportThread = false;
 };
+
+template<typename T>
+inline T* ModuleResources::GetResource(UID id) const {
+	auto it = resources.find(id);
+	return it != resources.end() ? static_cast<T*>(it->second.get()) : nullptr;
+}
 
 template<typename T>
 inline T* ModuleResources::CreateResource(const char* assetFilePath, UID id) {
