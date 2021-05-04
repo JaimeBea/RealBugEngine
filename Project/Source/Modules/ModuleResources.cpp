@@ -141,20 +141,69 @@ void ModuleResources::ValidateAssetResources(JsonValue jMeta, bool& validResourc
 	}
 }
 
+void ModuleResources::ReimportResources(JsonValue jMeta, const char* filePath) {
+	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
+	for (unsigned i = 0; i < jResources.Size(); ++i) {
+		JsonValue jResource = jResources[i];
+		UID id = jResource[JSON_TAG_ID];
+		if (GetResource<Resource>(id) == nullptr) {
+			std::string typeName = jResource[JSON_TAG_TYPE];
+			ResourceType type = GetResourceTypeFromName(typeName.c_str());
+			CreateResourceByType(type, filePath, id);
+		}
+	}
+}
+
+bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePath) {
+	bool validExtension = true;
+	std::string extension = FileDialog::GetFileExtension(filePath);
+
+	Resource* resource = nullptr;
+	if (extension == SCENE_EXTENSION) {
+		// Scene files
+		SceneImporter::ImportScene(filePath, jMeta);
+	} else if (extension == MATERIAL_EXTENSION) {
+		// Material files
+		MaterialImporter::ImportMaterial(filePath, jMeta);
+	} else if (extension == FRAGMENT_SHADER_EXTENSION || extension == VERTEX_SHADER_EXTENSION || extension == DEFAULT_SHADER_EXTENSION) {
+		// Shader files
+		ShaderImporter::ImportShader(filePath, jMeta);
+	} else if (extension == DEFAULT_MODEL_EXTENSION || extension == OBJ_MODEL_EXTENSION) {
+		// Model files
+		ModelImporter::ImportModel(filePath, jMeta);
+	} else if (extension == SKYBOX_EXTENSION) {
+		// Skybox files
+		SkyboxImporter::ImportSkybox(filePath, jMeta);
+	} else if (extension == JPG_TEXTURE_EXTENSION || extension == PNG_TEXTURE_EXTENSION || extension == TIF_TEXTURE_EXTENSION || extension == DDS_TEXTURE_EXTENSION || extension == TGA_TEXTURE_EXTENSION) {
+		// Texture files
+		TextureImporter::ImportTexture(filePath, jMeta);
+	} else if (extension == FONT_EXTENSION) {
+		// Font files
+		FontImporter::ImportFont(filePath, jMeta);
+	} else if (extension == SCRIPT_EXTENSION) {
+		// Script files
+		ScriptImporter::ImportScript(filePath, jMeta);
+	} else if (extension == WAV_AUDIO_EXTENSION || extension == OGG_AUDIO_EXTENSION) {
+		// Audio files
+		AudioImporter::ImportAudio(filePath, jMeta);
+	} else {
+		validExtension = false;
+	}
+	return validExtension;
+}
+
 std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath, UID assetId) {
 	std::vector<UID> resources;
 
 	// Return an empty list if the asset couldn't be found
 	if (!App->files->Exists(filePath)) return resources;
 
-	// Flag to check if the asset had a valid extension
-	bool validExtension = true;
-
-	std::string extension = FileDialog::GetFileExtension(filePath);
 	std::string metaFilePath = std::string(filePath) + META_EXTENSION;
+
+	// Flag to keep track of the validity of the asset's meta file
 	bool validMetaFile = App->files->Exists(metaFilePath.c_str());
 
-	// Flag to check if the asset resources are created successfully
+	// Flag to check if the asset resources are created/imported successfully
 	bool validResourceFiles = true;
 
 	rapidjson::Document document;
@@ -167,52 +216,12 @@ std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath, UID
 			ValidateAssetResources(jMeta, validResourceFiles);
 		}
 	}
-	// if resources exist reimport
-	if (validMetaFile && validResourceFiles) {
-		JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
-		for (unsigned i = 0; i < jResources.Size(); ++i) {
-			JsonValue jResource = jResources[i];
-			UID id = jResource[JSON_TAG_ID];
-			if (GetResource<Resource>(id) == nullptr) {
-				std::string typeName = jResource[JSON_TAG_TYPE];
-				ResourceType type = GetResourceTypeFromName(typeName.c_str());
-				CreateResourceByType(type, filePath, id);
-			}
-		}
-	} else {
-		Resource* resource = nullptr;
-		if (extension == SCENE_EXTENSION) {
-			// Scene files
-			SceneImporter::ImportScene(filePath, jMeta);
-		} else if (extension == MATERIAL_EXTENSION) {
-			// Material files
-			MaterialImporter::ImportMaterial(filePath, jMeta);
-		} else if (extension == ".frag" || extension == ".vert" || extension == ".glsl") {
-			// Shader files
-			ShaderImporter::ImportShader(filePath, jMeta);
-		} else if (extension == ".fbx" || extension == ".obj") {
-			// Model files
-			ModelImporter::ImportModel(filePath, jMeta);
-		} else if (extension == ".sky") {
-			// Skybox files
-			SkyboxImporter::ImportSkybox(filePath, jMeta);
-		} else if (extension == ".jpg" || extension == ".png" || extension == ".tif" || extension == ".dds" || extension == ".tga") {
-			// Texture files
-			TextureImporter::ImportTexture(filePath, jMeta);
-		} else if (extension == ".ttf") {
-			// Font files
-			FontImporter::ImportFont(filePath, jMeta);
-		} else if (extension == ".h") {
-			// Script files
-			ScriptImporter::ImportScript(filePath, jMeta);
-		} else if (extension == ".wav" || extension == ".ogg") {
-			// Audio files
-			AudioImporter::ImportAudio(filePath, jMeta);
-		} else {
-			validExtension = false;
-		}
 
-		if (validExtension) {
+	// if resources are valid resources, reimport them or import them if needed
+	if (validMetaFile && validResourceFiles) {
+		ReimportResources(jMeta, filePath);
+	} else {
+		if (ImportAssetByExtension(jMeta, filePath)) {
 			if (!validMetaFile) {
 				jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 				SaveMetaFile(metaFilePath.c_str(), document);
@@ -220,6 +229,7 @@ std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath, UID
 		}
 	}
 
+	// Fill the temporal resource vector with the imported resources
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	for (unsigned i = 0; i < jResources.Size(); ++i) {
 		resources.push_back(jResources[i][JSON_TAG_ID]);

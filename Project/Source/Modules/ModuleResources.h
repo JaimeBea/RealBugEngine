@@ -44,6 +44,8 @@ private:
 	void SendAddResourceEvent(Resource* resource);
 
 	void ValidateAssetResources(JsonValue jMeta, bool& validResourceFiles);
+	void ReimportResources(JsonValue jMeta, const char* filePath);
+	bool ImportAssetByExtension(JsonValue jMeta, const char* filePath);
 
 public:
 	std::unordered_set<std::string> assetsToNotUpdate;
