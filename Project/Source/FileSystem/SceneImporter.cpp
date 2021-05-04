@@ -65,8 +65,8 @@ bool SceneImporter::ImportScene(const char* filePath, JsonValue jMeta) {
 	// Create scene resource
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
-	UID id = jResource[JSON_TAG_ID];
-	App->resources->CreateResource<ResourceScene>(filePath, id ? id : GenerateUID());
+	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	App->resources->CreateResource<ResourceScene>(filePath, id);
 
 	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(ResourceScene::staticType);

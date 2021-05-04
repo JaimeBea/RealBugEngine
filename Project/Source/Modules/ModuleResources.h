@@ -15,6 +15,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
+#include <mutex>
 
 class ModuleResources : public Module {
 public:
@@ -26,7 +27,7 @@ public:
 
 	std::vector<UID> ImportAssetResources(const char* filePath);
 
-	template<typename T> T* GetResource(UID id) const;
+	template<typename T> T* GetResource(UID id);
 	AssetFolder* GetRootFolder() const;
 
 	void IncreaseReferenceCount(UID id);
@@ -58,14 +59,20 @@ private:
 	std::unordered_map<UID, std::unique_ptr<Resource>> resources;
 	std::unordered_map<UID, unsigned> referenceCounts;
 	std::unique_ptr<AssetFolder> rootFolder;
+
 	std::thread importThread;
+	std::mutex resourcesMutex;
 	bool stopImportThread = false;
+	std::vector<Resource> importedResources;
 };
 
 template<typename T>
-inline T* ModuleResources::GetResource(UID id) const {
+inline T* ModuleResources::GetResource(UID id) {
+	resourcesMutex.lock();
 	auto it = resources.find(id);
-	return it != resources.end() ? static_cast<T*>(it->second.get()) : nullptr;
+	T* resource = it != resources.end() ? static_cast<T*>(it->second.get()) : nullptr;
+	resourcesMutex.unlock();
+	return resource;
 }
 
 template<typename T>

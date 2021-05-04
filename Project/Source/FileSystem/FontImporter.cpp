@@ -21,8 +21,8 @@ bool FontImporter::ImportFont(const char* filePath, JsonValue jMeta) {
 	// Create font resource
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
-	UID id = jResource[JSON_TAG_ID];
-	App->resources->CreateResource<ResourceFont>(filePath, id ? id : GenerateUID());
+	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	App->resources->CreateResource<ResourceFont>(filePath, id);
 
 	// Add resource to meta file
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(ResourceFont::staticType);
