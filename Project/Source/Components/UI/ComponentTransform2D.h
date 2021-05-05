@@ -16,34 +16,34 @@
 //TODO THIS CLASS CURRENTLY ONLY WORKS FOR OBJECTS THAT USE THE CENTER OF THE SCREEN AS THE CENTER OF COORDINATES,
 //NEITHER PIVOT NOR ANCHOR ARE TAKEN INTO ACCOUNT IN ANY WAY, NOR ARE THEY MODIFIABLE LIKE THEY WOULD IN UNITY
 
-enum class AnchorPresetType {
-
-	// Presets
-	TOP_VERTICAL_LEFT_HORIZONTAL,
-	TOP_VERTICAL_CENTER_HORIZONTAL,
-	TOP_VERTICAL_RIGHT_HORIZONTAL,
-	TOP_VERTICAL_STRETCH_HORIZONTAL,
-
-	MIDDLE_VERTICAL_LEFT_HORIZONTAL,
-	MIDDLE_VERTICAL_CENTER_HORIZONTAL,
-	MIDDLE_VERTICAL_RIGHT_HORIZONTAL,
-	MIDDLE_VERTICAL_STRETCH_HORIZONTAL,
-
-	BOTTOM_VERTICAL_LEFT_HORIZONTAL,
-	BOTTOM_VERTICAL_CENTER_HORIZONTAL,
-	BOTTOM_VERTICAL_RIGHT_HORIZONTAL,
-	BOTTOM_VERTICAL_STRETCH_HORIZONTAL,
-
-	STRETCH_VERTICAL_LEFT_HORIZONTAL,
-	STRETCH_VERTICAL_CENTER_HORIZONTAL,
-	STRETCH_VERTICAL_RIGHT_HORIZONTAL,
-	STRETCH_VERTICAL_STRETCH_HORIZONTAL,
-
-	// Custom
-	CUSTOM
-};
-
 struct AnchorPreset {
+	enum class AnchorPresetType {
+
+		// Presets
+		TOP_VERTICAL_LEFT_HORIZONTAL,
+		TOP_VERTICAL_CENTER_HORIZONTAL,
+		TOP_VERTICAL_RIGHT_HORIZONTAL,
+		TOP_VERTICAL_STRETCH_HORIZONTAL,
+
+		MIDDLE_VERTICAL_LEFT_HORIZONTAL,
+		MIDDLE_VERTICAL_CENTER_HORIZONTAL,
+		MIDDLE_VERTICAL_RIGHT_HORIZONTAL,
+		MIDDLE_VERTICAL_STRETCH_HORIZONTAL,
+
+		BOTTOM_VERTICAL_LEFT_HORIZONTAL,
+		BOTTOM_VERTICAL_CENTER_HORIZONTAL,
+		BOTTOM_VERTICAL_RIGHT_HORIZONTAL,
+		BOTTOM_VERTICAL_STRETCH_HORIZONTAL,
+
+		STRETCH_VERTICAL_LEFT_HORIZONTAL,
+		STRETCH_VERTICAL_CENTER_HORIZONTAL,
+		STRETCH_VERTICAL_RIGHT_HORIZONTAL,
+		STRETCH_VERTICAL_STRETCH_HORIZONTAL,
+
+		// Custom
+		CUSTOM
+	};
+
 	AnchorPreset(AnchorPresetType type_, float2 anchorMin_, float2 anchorMax_)
 		: type(type_), anchorMin(anchorMin_), anchorMax(anchorMax_) {
 	}
@@ -94,7 +94,6 @@ private:
 private:
 	float2 pivot = float2(0.5, 0.5);	 // The position of the pivot in 2D
 	float3 pivotPosition = float3::zero; // The position of the pivot in the world
-
 	float2 size = float2(200, 200);	 // The size of the item
 
 	float3 position = float3::zero;			// The offset position
@@ -102,6 +101,9 @@ private:
 	float3 localEulerAngles = float3::zero; // The rotation of the element in Euler
 	float3 scale = float3::one;				// The scale of the element
 
+	static std::array<AnchorPreset, 16> anchorPresets; // Listwith all the possible anchors presets 
+	AnchorPreset::AnchorPresetType anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL; // The anchor selected
+	bool isCustomAnchor = false;
 	float2 anchorMin = float2(0.5, 0.5); // The Anchor Min. Represents the lower left handle.
 	float2 anchorMax = float2(0.5, 0.5); // The Anchor Max. Represents the upper right handle.
 
