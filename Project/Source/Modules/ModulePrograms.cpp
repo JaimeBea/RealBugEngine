@@ -14,7 +14,7 @@
 #include "Utils/Leaks.h"
 
 static unsigned CompileShader(unsigned type, const char* filePath, const char* snippets) {
-	LOG("Creating shader from file: \"%s\"...", filePath);
+	LOG("Creating shader from snippets: \"%s\"...", snippets);
 
 	parsb_options options;
 	options.line_directives = false;
@@ -23,10 +23,12 @@ static unsigned CompileShader(unsigned type, const char* filePath, const char* s
 		parsb_destroy_context(blocks);
 	};
 	parsb_add_blocks_from_file(blocks, filePath);
+
 	// Add version
-	parsb_add_block(blocks, "prefix", "#version 460\n");
+	parsb_add_block(blocks, "prefix", GLSL_VERSION "\n");
 	std::string s = snippets;
 	std::string finalSnippet = "prefix " + s;
+
 	// Concatenate
 	const char* shaderData = parsb_get_blocks(blocks, finalSnippet.c_str());
 	if (shaderData == nullptr) {
@@ -56,7 +58,7 @@ static unsigned CompileShader(unsigned type, const char* filePath, const char* s
 		return 0;
 	}
 
-	LOG("Shaders created successfully.");
+	LOG("Shader created successfully.");
 	return shaderId;
 }
 
@@ -125,19 +127,19 @@ bool ModulePrograms::Start() {
 	skybox = CreateProgram(filePath, "vertSkybox", "fragSkybox");
 
 	//General shaders
-	phongNotSkinning = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarSpecular fragMainPhong");
-	phongSkinning = CreateProgram(filePath, "vertVarCommon vertVarSkinning vertMainSkinning", "fragVarStandard fragVarSpecular fragMainPhong");
-	standardNotSkinning = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarMetallic fragFunctionLight fragMainMetallic");
-	standardSkinning = CreateProgram(filePath, "vertVarCommon vertVarSkinning vertMainSkinning", "fragVarStandard fragVarMetallic fragFunctionLight fragMainMetallic");
-	specularNotSkinning = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarSpecular fragFunctionLight fragMainSpecular");
-	specularSkinning = CreateProgram(filePath, "vertVarCommon vertVarSkinning vertMainSkinning", "fragVarStandard fragVarSpecular fragFunctionLight fragMainSpecular");
+	phongNotNormal = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarSpecular fragMainPhong");
+	phongNormal = CreateProgram(filePath, "vertVarCommon vertMainNormal", "fragVarStandard fragVarSpecular fragMainPhong");
+	standardNotNormal = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarMetallic fragFunctionLight fragMainMetallic");
+	standardNormal = CreateProgram(filePath, "vertVarCommon vertMainNormal", "fragVarStandard fragVarMetallic fragFunctionLight fragMainMetallic");
+	specularNotNormal = CreateProgram(filePath, "vertVarCommon vertMainCommon", "fragVarStandard fragVarSpecular fragFunctionLight fragMainSpecular");
+	specularNormal = CreateProgram(filePath, "vertVarCommon vertMainNormal", "fragVarStandard fragVarSpecular fragFunctionLight fragMainSpecular");
 
 	//UI shaders
 	textUI = CreateProgram(filePath, "vertTextUI", "fragTextUI");
 	imageUI = CreateProgram(filePath, "vertImageUI", "fragImageUI");
 
 	unsigned timeMs = timer.Stop();
-	LOG("Shader loaded in %ums", timeMs);
+	LOG("Shaders loaded in %ums", timeMs);
 
 	return true;
 }
@@ -148,12 +150,12 @@ void ModulePrograms::DeleteProgram(unsigned int IdProgram) {
 
 bool ModulePrograms::CleanUp() {
 	glDeleteProgram(skybox);
-	glDeleteProgram(phongSkinning);
-	glDeleteProgram(phongNotSkinning);
-	glDeleteProgram(standardSkinning);
-	glDeleteProgram(standardNotSkinning);
-	glDeleteProgram(specularSkinning);
-	glDeleteProgram(specularNotSkinning);
+	glDeleteProgram(phongNormal);
+	glDeleteProgram(phongNotNormal);
+	glDeleteProgram(standardNormal);
+	glDeleteProgram(standardNotNormal);
+	glDeleteProgram(specularNormal);
+	glDeleteProgram(specularNotNormal);
 	glDeleteProgram(textUI);
 	glDeleteProgram(imageUI);
 
