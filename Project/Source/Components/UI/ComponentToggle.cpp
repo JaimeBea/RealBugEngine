@@ -26,35 +26,27 @@ void ComponentToggle::Init() {
 }
 
 void ComponentToggle::OnClicked() {
-	SetOn(!IsOn());
-
+	SetChecked(!IsChecked());
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
-
-	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
-		Script* script = scriptComponent.GetScriptInstance();
-		if (script != nullptr) {
-			script->OnButtonClick();
-		}
-	}
 }
 
 void ComponentToggle ::OnValueChanged() {
 	ComponentImage* childImage = GetEnabledImage();
 	if (childImage) {
-		if (IsOn()) {
+		if (IsChecked()) {
 			childImage->Enable();
 		} else {
 			childImage->Disable();
 		}
 	}
-	//Callback would go here
+	//TODO establish callback
 }
 
-bool ComponentToggle ::IsOn() const {
-	return isOn;
+bool ComponentToggle ::IsChecked() const {
+	return isChecked;
 }
-void ComponentToggle ::SetOn(bool b) {
-	isOn = b;
+void ComponentToggle ::SetChecked(bool b) {
+	isChecked = b;
 	OnValueChanged();
 }
 
@@ -106,11 +98,11 @@ float4 ComponentToggle::GetClickColor() const {
 
 void ComponentToggle::DuplicateComponent(GameObject& owner) {
 	ComponentToggle* component = owner.CreateComponent<ComponentToggle>();
-	component->isOn = isOn;
+	component->isChecked = isChecked;
 }
 
 void ComponentToggle::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_IS_ON] = isOn;
+	jComponent[JSON_TAG_IS_ON] = isChecked;
 	jComponent[JSON_TAG_ENABLED_IMAGE_ID] = enabledImageObjectID;
 
 	JsonValue jColorClick = jComponent[JSON_TAG_CLICKED_COLOR];
@@ -121,7 +113,7 @@ void ComponentToggle::Save(JsonValue jComponent) const {
 }
 
 void ComponentToggle::Load(JsonValue jComponent) {
-	isOn = jComponent[JSON_TAG_IS_ON];
+	isChecked = jComponent[JSON_TAG_IS_ON];
 	enabledImageObjectID = jComponent[JSON_TAG_ENABLED_IMAGE_ID];
 
 	JsonValue jColorClick = jComponent[JSON_TAG_CLICKED_COLOR];

@@ -26,7 +26,6 @@
 #define JSON_TAG_TEXTURE_TEXTUREID "TextureId"
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
-#define JSON_TAG_ENABLED "Enabled"
 
 ComponentImage::~ComponentImage() {
 	//TODO DECREASE REFERENCE COUNT OF SHADER AND TEXTURE, MAYBE IN A NEW COMPONENT::CLEANUP?
@@ -76,7 +75,6 @@ void ComponentImage::OnEditorUpdate() {
 
 void ComponentImage::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
-	jComponent[JSON_TAG_ENABLED] = IsActive();
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	jColor[0] = color.x;
 	jColor[1] = color.y;
@@ -97,13 +95,6 @@ void ComponentImage::Load(JsonValue jComponent) {
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
 
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
-
-	bool isEnabled = jComponent[JSON_TAG_ENABLED];
-	if (isEnabled) {
-		Enable();
-	} else {
-		Disable();
-	}
 }
 
 float4 ComponentImage::GetTintColor() const {

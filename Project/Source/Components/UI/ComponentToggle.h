@@ -21,8 +21,8 @@ public:
 	void OnEditorUpdate() override;
 
 	void OnValueChanged();
-	bool IsOn() const;
-	void SetOn(bool b);
+	bool IsChecked() const;
+	void SetChecked(bool b);
 	ComponentImage* GetEnabledImage() const;
 	void SetEnabledImageObj(UID enabledImageObjID_);
 
@@ -33,7 +33,7 @@ public:
 	float4 GetClickColor() const; // Returns colorClicked
 
 private:
-	bool isOn = true;
+	bool isChecked = true;
 	UID enabledImageObjectID = 0;
 
 	bool clicked = false;									//Is currently being clicked (Not saved nor stored)
