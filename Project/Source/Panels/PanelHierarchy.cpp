@@ -219,7 +219,7 @@ GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
 	newGameObject->InitComponents();
-
+	CreateEventSystem(App->scene->scene->root);
 	return newGameObject;
 }
 

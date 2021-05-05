@@ -27,7 +27,7 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 		}
 
 		ComponentText* componentText = gameObject->GetComponent<ComponentText>();
-		if (componentText != nullptr && componentImage->IsActiveInHierarchy()) {
+		if (componentText != nullptr && componentText->IsActiveInHierarchy()) {
 			componentText->Draw(transform2D);
 		}
 	}
