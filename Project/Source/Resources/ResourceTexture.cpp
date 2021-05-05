@@ -10,6 +10,7 @@
 #include "IL/il.h"
 #include "IL/ilu.h"
 #include "GL/glew.h"
+#include "imgui.h"
 
 void ResourceTexture::Load() {
 	// Timer to measure loading a texture
@@ -54,4 +55,8 @@ void ResourceTexture::Load() {
 
 void ResourceTexture::Unload() {
 	glDeleteTextures(1, &glTexture);
+}
+
+void ResourceTexture::OnEditorUpdate() {
+	ImGui::Text("Test Working");
 }
