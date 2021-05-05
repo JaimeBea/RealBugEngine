@@ -354,12 +354,13 @@ void ModuleResources::UpdateAsync() {
 				if (success) {
 #if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+					long long assetTimestamp = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
+					if (assetTimestamp > timestamp) {
 						if (jMeta[JSON_TAG_RESOURCES].Size() > 1) {
 							resourcesToRemove.push_back(resourceInfo);
 						} else {
+							resourcesToRemove.push_back(resourceInfo);
 							if (std::find(assetsToReimport.begin(), assetsToReimport.end(), assetFilePath) == assetsToReimport.end()) {
-								resourcesToRemove.push_back(resourceInfo);
 								assetsToReimport.push_back(assetFilePath);
 								jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
 								SaveMetaFile(metaFilePath.c_str(), document);
