@@ -58,5 +58,6 @@ void ResourceTexture::Unload() {
 }
 
 void ResourceTexture::OnEditorUpdate() {
+	// TODO: Implement it
 	ImGui::Text("Test Working");
 }
