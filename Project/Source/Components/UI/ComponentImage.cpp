@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 #include "Components/UI/ComponentTransform2D.h"
-#include "Components/UI/ComponentButton.h"
 #include "Application.h"
 #include "Modules/ModulePrograms.h"
 #include "Modules/ModuleCamera.h"
@@ -13,7 +12,6 @@
 #include "Modules/ModuleUserInterface.h"
 #include "Panels/PanelScene.h"
 #include "Resources/ResourceTexture.h"
-#include "Resources/ResourceShader.h"
 #include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
 
@@ -25,7 +23,6 @@
 
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_TEXTURE_SHADERID "ShaderId"
 #define JSON_TAG_TEXTURE_TEXTUREID "TextureId"
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
@@ -47,8 +44,6 @@ void ComponentImage::OnEditorUpdate() {
 
 	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 
-	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
-
 	UID oldID = textureID;
 	ImGui::ResourceSlot<ResourceTexture>("texture", &textureID);
 
@@ -63,7 +58,7 @@ void ComponentImage::OnEditorUpdate() {
 		if (oldID != textureID) {
 			ComponentTransform2D* transform2D = GetOwner().GetComponent<ComponentTransform2D>();
 			if (transform2D != nullptr) {
-				transform2D->SetSize(float2(width, height));
+				transform2D->SetSize(float2((float) width, (float) height));
 			}
 		}
 
@@ -79,7 +74,6 @@ void ComponentImage::OnEditorUpdate() {
 }
 
 void ComponentImage::Save(JsonValue jComponent) const {
-	jComponent[JSON_TAG_TEXTURE_SHADERID] = shaderID;
 	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
 
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
@@ -92,13 +86,6 @@ void ComponentImage::Save(JsonValue jComponent) const {
 }
 
 void ComponentImage::Load(JsonValue jComponent) {
-	//ID == 0 means no Resource loaded
-	shaderID = jComponent[JSON_TAG_TEXTURE_SHADERID];
-
-	if (shaderID != 0) {
-		App->resources->IncreaseReferenceCount(shaderID);
-	}
-
 	textureID = jComponent[JSON_TAG_TEXTURE_TEXTUREID];
 
 	if (textureID != 0) {
@@ -111,7 +98,7 @@ void ComponentImage::Load(JsonValue jComponent) {
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
-const float4& ComponentImage::GetTintColor() const {
+float4 ComponentImage::GetTintColor() const {
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
 		return button->GetTintColor();
@@ -120,13 +107,7 @@ const float4& ComponentImage::GetTintColor() const {
 }
 
 void ComponentImage::Draw(const ComponentTransform2D* transform) const {
-	unsigned int program = 0;
-	ResourceShader* shaderResouce = App->resources->GetResource<ResourceShader>(shaderID);
-	if (shaderResouce) {
-		program = shaderResouce->GetShaderProgram();
-	} else {
-		return;
-	}
+	unsigned int program = App->programs->imageUI;
 
 	if (alphaTransparency) {
 		glEnable(GL_BLEND);
@@ -144,10 +125,9 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	float4x4* proj = &App->camera->GetProjectionMatrix();
 
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->viewportWidth, App->renderer->viewportHeight); //near plane. far plane, screen width, screen height
+		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 		modelMatrix = transform->GetGlobalMatrixWithSize();
-
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4* view = &App->camera->GetViewMatrix();
@@ -180,12 +160,7 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();
-	component->shaderID = shaderID;
 	component->textureID = textureID;
-
-	if (shaderID != 0) {
-		App->resources->IncreaseReferenceCount(shaderID);
-	}
 	if (textureID != 0) {
 		App->resources->IncreaseReferenceCount(textureID);
 	}

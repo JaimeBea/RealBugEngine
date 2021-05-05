@@ -16,7 +16,7 @@
 #include "Utils/Buffer.h"
 #include "Utils/Leaks.h"
 
-#define JSON_TAG_SHADER "Shader"
+#define JSON_TAG_SHADER "ShaderType"
 #define JSON_TAG_DIFFUSE_COLOR "DiffuseColor"
 #define JSON_TAG_DIFFUSE_MAP "DiffuseMap"
 #define JSON_TAG_SPECULAR_COLOR "SpecularColor"
@@ -45,8 +45,7 @@ void ResourceMaterial::Load() {
 	}
 	JsonValue jMaterial(document, document);
 
-	shaderId = jMaterial[JSON_TAG_SHADER];
-	App->resources->IncreaseReferenceCount(shaderId);
+	shaderType = (MaterialShader)(int) jMaterial[JSON_TAG_SHADER];
 
 	diffuseColor = float4(jMaterial[JSON_TAG_DIFFUSE_COLOR][0], jMaterial[JSON_TAG_DIFFUSE_COLOR][1], jMaterial[JSON_TAG_DIFFUSE_COLOR][2], jMaterial[JSON_TAG_DIFFUSE_COLOR][3]);
 	diffuseMapId = jMaterial[JSON_TAG_DIFFUSE_MAP];
@@ -70,7 +69,6 @@ void ResourceMaterial::Load() {
 }
 
 void ResourceMaterial::Unload() {
-	App->resources->DecreaseReferenceCount(shaderId);
 	App->resources->DecreaseReferenceCount(diffuseMapId);
 	App->resources->DecreaseReferenceCount(specularMapId);
 	App->resources->DecreaseReferenceCount(metallicMapId);
@@ -88,7 +86,7 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 	JsonValue jMaterial(document, document);
 
 	// Save JSON values
-	jMaterial[JSON_TAG_SHADER] = shaderId;
+	jMaterial[JSON_TAG_SHADER] = (int) shaderType;
 
 	JsonValue jDiffuseColor = jMaterial[JSON_TAG_DIFFUSE_COLOR];
 	jDiffuseColor[0] = diffuseColor.x;

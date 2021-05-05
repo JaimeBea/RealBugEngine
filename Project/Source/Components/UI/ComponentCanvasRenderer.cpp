@@ -4,6 +4,7 @@
 #include "Components/UI/ComponentText.h"
 #include "Components/UI/ComponentCanvas.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentCanvas.h"
 #include "GameObject.h"
 
 #include "Utils/Leaks.h"
@@ -16,7 +17,8 @@ void ComponentCanvasRenderer::Load(JsonValue jComponent) {
 
 void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 	ComponentTransform2D* transform2D = gameObject->GetComponent<ComponentTransform2D>();
-	if (transform2D != nullptr && AnyParentHasCanvas(&GetOwner()) != nullptr) { // Get the Parent in a variable if needed and add canvas customization to render
+	const ComponentCanvas* parentCanvas = AnyParentHasCanvas(&GetOwner());
+	if (transform2D != nullptr && parentCanvas != nullptr) { // Get the Parent in a variable if needed and add canvas customization to render
 
 		//IF OTHER COMPONENTS THAT RENDER IN UI ARE IMPLEMENTED, THEY MUST HAVE THEIR DRAW METHODS CALLED HERE
 		ComponentImage* componentImage = gameObject->GetComponent<ComponentImage>();
@@ -31,14 +33,19 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 	}
 }
 
+float ComponentCanvasRenderer::GetCanvasScreenFactor() const {
+	const ComponentCanvas* canvas = AnyParentHasCanvas(&GetOwner());
+	return canvas ? canvas->GetScreenFactor() : 1.0f;
+}
+
 void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
 	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
 }
 
-const GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(const GameObject* current) const {
+const ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) const {
 	ComponentCanvas* currentCanvas = current->GetComponent<ComponentCanvas>();
 	if (currentCanvas != nullptr) {
-		return current;
+		return currentCanvas;
 	} else {
 		if (current->GetParent() != nullptr) {
 			return AnyParentHasCanvas(current->GetParent());
@@ -46,4 +53,8 @@ const GameObject* ComponentCanvasRenderer::AnyParentHasCanvas(const GameObject* 
 	}
 
 	return nullptr;
+}
+
+bool ComponentCanvasRenderer::CanBeRemoved() const {
+	return !(GetOwner().GetComponent<ComponentImage>() || GetOwner().GetComponent<ComponentText>());
 }

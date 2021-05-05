@@ -2,8 +2,6 @@
 
 #include "Module.h"
 
-#include "Utils/UID.h"
-
 #include <string>
 
 #ifndef _WINDEF_
@@ -22,6 +20,7 @@ enum class Configuration {
 class ModuleProject : public Module {
 public:
 	bool Init() override;
+	UpdateStatus Update() override;
 	bool CleanUp() override;
 
 	void CreateScript(std::string& name);
@@ -29,6 +28,8 @@ public:
 	void LoadProject(const char* path);
 
 	void CompileProject(Configuration config);
+
+	bool IsGameLoaded() const;
 
 public:
 	HMODULE gameCodeDLL = nullptr;
@@ -41,5 +42,4 @@ private:
 	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
 	void CreateBatches();
-
 };

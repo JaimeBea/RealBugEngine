@@ -145,12 +145,12 @@ bool GameObject::IsDescendantOf(GameObject* gameObject) {
 	return GetParent()->IsDescendantOf(gameObject);
 }
 
-GameObject* GameObject::FindDescendant(const std::string& name) const {
+GameObject* GameObject::FindDescendant(const std::string& name_) const {
 	for (GameObject* child : children) {
-		if (child->name == name) {
+		if (child->name == name_) {
 			return child;
 		} else {
-			GameObject* gameObject = child->FindDescendant(name);
+			GameObject* gameObject = child->FindDescendant(name_);
 			if (gameObject != nullptr) return gameObject;
 		}
 	}
@@ -231,15 +231,15 @@ void GameObject::Load(JsonValue jGameObject) {
 	}
 }
 
-void GameObject::SavePrototype(JsonValue jGameObject) const {
+void GameObject::SavePrefab(JsonValue jGameObject) {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_ROOT_BONE_NAME] = rootBoneHierarchy ? rootBoneHierarchy->name.c_str() : "";
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
-		JsonValue jComponent = jComponents[i];
 		Component* component = components[i];
+		JsonValue jComponent = jComponents[i];
 
 		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
@@ -251,11 +251,11 @@ void GameObject::SavePrototype(JsonValue jGameObject) const {
 		JsonValue jChild = jChildren[i];
 		GameObject* child = children[i];
 
-		child->SavePrototype(jChild);
+		child->SavePrefab(jChild);
 	}
 }
 
-void GameObject::LoadPrototype(JsonValue jGameObject) {
+void GameObject::LoadPrefab(JsonValue jGameObject) {
 	name = jGameObject[JSON_TAG_NAME];
 	active = jGameObject[JSON_TAG_ACTIVE];
 
@@ -281,7 +281,7 @@ void GameObject::LoadPrototype(JsonValue jGameObject) {
 		UID childId = GenerateUID();
 		GameObject* child = scene->gameObjects.Obtain(childId);
 		child->scene = scene;
-		child->LoadPrototype(jChild);
+		child->LoadPrefab(jChild);
 		child->id = childId;
 		child->SetParent(this);
 		child->InitComponents();

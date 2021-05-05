@@ -32,6 +32,7 @@
 #include "Modules/ModuleEvents.h"
 #include "Modules/ModuleTime.h"
 #include "Panels/PanelHierarchy.h"
+#include "Scripting/Script.h"
 
 #include "GL/glew.h"
 #include "Math/myassert.h"
@@ -76,10 +77,18 @@ bool ModuleScene::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::GAMEOBJECT_DESTROYED, this);
 	App->events->AddObserverToEvent(TesseractEventType::CHANGE_SCENE, this);
 	App->events->AddObserverToEvent(TesseractEventType::RESOURCES_LOADED, this);
+	App->events->AddObserverToEvent(TesseractEventType::COMPILATION_FINISHED, this);
 
+#if !GAME
+	App->files->CreateFolder(ASSETS_PATH);
 	App->files->CreateFolder(LIBRARY_PATH);
+	App->files->CreateFolder(SKYBOX_PATH);
 	App->files->CreateFolder(TEXTURES_PATH);
+	App->files->CreateFolder(SHADERS_PATH);
 	App->files->CreateFolder(SCENES_PATH);
+	App->files->CreateFolder(MATERIALS_PATH);
+	App->files->CreateFolder(PREFABS_PATH);
+#endif
 
 #if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
@@ -126,8 +135,16 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 		if (App->time->IsGameRunning() && !sceneLoaded) {
 			sceneLoaded = true;
 			for (ComponentScript& script : scene->scriptComponents) {
-				script.OnStart();
+				Script* scriptInstance = script.GetScriptInstance();
+				if (scriptInstance != nullptr) {
+					scriptInstance->Start();
+				}
 			}
+		}
+		break;
+	case TesseractEventType::COMPILATION_FINISHED:
+		for (ComponentScript& script : scene->scriptComponents) {
+			script.CreateScriptInstance();
 		}
 		break;
 	}

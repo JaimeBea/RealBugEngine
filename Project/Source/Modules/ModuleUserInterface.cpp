@@ -67,12 +67,12 @@ bool ModuleUserInterface::CleanUp() {
 }
 
 void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
-
+	ComponentEventSystem* eventSystem = GetCurrentEventSystem();
 	switch (e.type) {
 	case TesseractEventType::MOUSE_CLICKED:
 		if (!App->time->IsGameRunning()) break;
-		if (currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+		if (eventSystem != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
 					lastHoveredSelectable->TryToClickOn();
@@ -83,8 +83,8 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 
 	case TesseractEventType::MOUSE_RELEASED:
 		if (!App->time->IsGameRunning()) break;
-		if (currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+		if (eventSystem != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				lastHoveredSelectable->OnDeselect();
 			}
@@ -182,10 +182,22 @@ void ModuleUserInterface::CreateQuadVBO() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
 }
 
-void ModuleUserInterface::SetCurrentEventSystem(ComponentEventSystem* ev) {
-	currentEvSys = ev;
+void ModuleUserInterface::SetCurrentEventSystem(UID id_) {
+	currentEvSys = id_;
 }
 
 ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
-	return currentEvSys;
+	if (currentEvSys == 0) {
+		if (App->scene->scene->eventSystemComponents.Count() > 0) {
+			currentEvSys = (*App->scene->scene->eventSystemComponents.begin()).GetID();
+		}
+	}
+
+	return currentEvSys == 0 ? nullptr : (ComponentEventSystem*) App->scene->scene->GetComponentByTypeAndId(ComponentType::EVENT_SYSTEM, currentEvSys);
+}
+
+void ModuleUserInterface::ViewportResized() {
+	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
+		canvas.SetDirty(true);
+	}
 }

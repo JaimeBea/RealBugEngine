@@ -21,6 +21,7 @@
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Modules/ModuleScene.h"
 
 #include "Math/float3.h"
 #include "Math/float3x3.h"
@@ -226,7 +227,6 @@ void PanelInspector::Update() {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
-
 				// TRANSFORM is always there, cannot add a new one.
 
 				AddAudioComponentsOptions(selected);
@@ -273,9 +273,13 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 	if (ImGui::BeginMenu("UI")) {
 		// ------ CREATING UI HANDLERS -------
 		if (ImGui::MenuItem("Event System")) {
-			ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
-			if (component != nullptr) {
-				component->Init();
+			if (App->scene->scene->eventSystemComponents.Count() == 0) {
+				ComponentEventSystem* component = selected->CreateComponent<ComponentEventSystem>();
+				if (component != nullptr) {
+					component->Init();
+				} else {
+					App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+				}
 			} else {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
