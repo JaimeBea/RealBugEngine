@@ -45,8 +45,6 @@ std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
 	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.0f), float2(0.5f, 1.0f)},
 	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.0f), float2(1.0f, 1.0f)},
 	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 0.0f), float2(1.0f, 1.0f)},
-
-
 };
 
 void ComponentTransform2D::Update() {
@@ -70,58 +68,11 @@ void ComponentTransform2D::OnEditorUpdate() {
 	float2 anchMin = anchorMin;
 	float2 anchMax = anchorMax;
 	ImGui::TextColored(App->editor->titleColor, "Anchors");
-	if (ImGui::RadioButton("Custom", isCustomAnchor)) isCustomAnchor = true;
-	ImGui::SameLine();
-	if (ImGui::RadioButton("Presets", !isCustomAnchor)) isCustomAnchor = false;
-	if (isCustomAnchor) { // If we select custom
-		anchorSelected = AnchorPreset::AnchorPresetType::CUSTOM;
-		if (ImGui::DragFloat2("Min (X, Y)", anchMin.ptr(), App->editor->dragSpeed2f, 0, 1)) {
-			SetAnchorMin(anchMin);
-		}
-		if (ImGui::DragFloat2("Max (X, Y)", anchMax.ptr(), App->editor->dragSpeed2f, 0, 1)) {
-			SetAnchorMax(anchMax);
-		}
-	} else { // If we select presets
-		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL;
-		SetAnchorMin(anchorPresets[5].anchorMin);
-		SetAnchorMax(anchorPresets[5].anchorMax);
-		// Anchor Preset Type combo box
-		const char* anchorPresetTypeItems[] = {
-			"TOP_VERTICAL_LEFT_HORIZONTAL",
-			"TOP_VERTICAL_CENTER_HORIZONTAL",
-			"TOP_VERTICAL_RIGHT_HORIZONTAL",
-			"TOP_VERTICAL_STRETCH_HORIZONTAL",
-			"MIDDLE_VERTICAL_LEFT_HORIZONTAL",
-			"MIDDLE_VERTICAL_CENTER_HORIZONTAL",
-			"MIDDLE_VERTICAL_RIGHT_HORIZONTAL",
-			"MIDDLE_VERTICAL_STRETCH_HORIZONTAL",
-			"BOTTOM_VERTICAL_LEFT_HORIZONTAL",
-			"BOTTOM_VERTICAL_CENTER_HORIZONTAL",
-			"BOTTOM_VERTICAL_RIGHT_HORIZONTAL",
-			"BOTTOM_VERTICAL_STRETCH_HORIZONTAL",
-			"STRETCH_VERTICAL_LEFT_HORIZONTAL",
-			"STRETCH_VERTICAL_CENTER_HORIZONTAL",
-			"STRETCH_VERTICAL_RIGHT_HORIZONTAL",
-			"STRETCH_VERTICAL_STRETCH_HORIZONTAL",
-		};
-		const char* anchorPresetCurrent = anchorPresetTypeItems[(int) anchorSelected];
-		if (ImGui::BeginCombo("Select Preset", anchorPresetCurrent)) {
-			for (int n = 0; n < IM_ARRAYSIZE(anchorPresetTypeItems); ++n) {
-				bool isSelected = (anchorPresetCurrent == anchorPresetTypeItems[n]);
-				if (ImGui::Selectable(anchorPresetTypeItems[n], isSelected)) {
-					anchorSelected = AnchorPreset::AnchorPresetType(n);
-					// Donde tengo que setear los nuevos anchors
-					SetAnchorMin(anchorPresets[n].anchorMin);
-					SetAnchorMax(anchorPresets[n].anchorMax);
-				}
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus();
-				}
-			}
-			ImGui::EndCombo();
-		}
-		ImGui::InputFloat2("Min (X, Y)", anchMin.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-		ImGui::InputFloat2("Max (X, Y)", anchMax.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+	if (ImGui::DragFloat2("Min (X, Y)", anchMin.ptr(), App->editor->dragSpeed2f, 0, 1)) {
+		SetAnchorMin(anchMin);
+	}
+	if (ImGui::DragFloat2("Max (X, Y)", anchMax.ptr(), App->editor->dragSpeed2f, 0, 1)) {
+		SetAnchorMax(anchMax);
 	}
 
 	float2 piv = pivot;
