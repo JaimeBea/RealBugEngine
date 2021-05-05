@@ -59,7 +59,8 @@ bool TextureImporter::ImportTexture(const char* filePath, JsonValue jMeta) {
 	// Create texture resource
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
-	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	UID metaId = jResource[JSON_TAG_ID];
+	UID id = metaId ? metaId : GenerateUID();
 	App->resources->CreateResource<ResourceTexture>(filePath, id);
 
 	// Add resource to meta file

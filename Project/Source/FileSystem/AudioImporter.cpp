@@ -30,7 +30,8 @@ bool AudioImporter::ImportAudio(const char* filePath, JsonValue jMeta) {
 
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[0];
-	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	UID metaId = jResource[JSON_TAG_ID];
+	UID id = metaId ? metaId : GenerateUID();
 	App->resources->CreateResource<ResourceAudioClip>(filePath, id);
 
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(ResourceAudioClip::staticType);

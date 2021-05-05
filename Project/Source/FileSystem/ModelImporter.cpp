@@ -212,7 +212,8 @@ static UID ImportMesh(const char* modelFilePath, JsonValue jMeta, const aiMesh* 
 	// Create mesh
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[resourceIndex];
-	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	UID metaId = jResource[JSON_TAG_ID];
+	UID id = metaId ? metaId : GenerateUID();
 	App->resources->CreateResource<ResourceMesh>(modelFilePath, id);
 
 	// Add resource to meta file
@@ -344,7 +345,8 @@ static UID ImportAnimation(const char* modelFilePath, JsonValue jMeta, const aiA
 	// Create animation
 	JsonValue jResources = jMeta[JSON_TAG_RESOURCES];
 	JsonValue jResource = jResources[resourceIndex];
-	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	UID metaId = jResource[JSON_TAG_ID];
+	UID id = metaId ? metaId : GenerateUID();
 	App->resources->CreateResource<ResourceAnimation>(modelFilePath, id);
 
 	// Add resource to meta file
@@ -463,7 +465,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 		aiMaterial* assimpMaterial = assimpScene->mMaterials[i];
 
 		JsonValue jResource = jResources[resourceIndex];
-		UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+		UID metaId = jResource[JSON_TAG_ID];
+		UID id = metaId ? metaId : GenerateUID();
 		App->resources->CreateResource<ResourceMaterial>(filePath, id);
 
 		ResourceMaterial tempMaterial(id, filePath, App->resources->GenerateResourcePath(id).c_str());
@@ -690,7 +693,8 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 
 	// Create prefab resource
 	JsonValue jResource = jResources[resourceIndex];
-	UID id = jResource[JSON_TAG_ID] ? jResource[JSON_TAG_ID] : GenerateUID();
+	UID metaId = jResource[JSON_TAG_ID];
+	UID id = metaId ? metaId : GenerateUID();
 	App->resources->CreateResource<ResourcePrefab>(filePath, id);
 	jResource[JSON_TAG_TYPE] = GetResourceTypeName(ResourcePrefab::staticType);
 	jResource[JSON_TAG_ID] = id;
