@@ -1,21 +1,12 @@
 #include "ComponentProgressBar.h"
 
 #include "GameObject.h"
-#include "Components/UI/ComponentTransform2D.h"
-#include "Components/UI/ComponentButton.h"
 #include "Application.h"
-#include "Modules/ModulePrograms.h"
-#include "Modules/ModuleCamera.h"
-#include "Modules/ModuleRender.h"
+#include "Components/UI/ComponentTransform2D.h"
 #include "Modules/ModuleEditor.h"
-#include "Modules/ModuleResources.h"
-#include "Modules/ModuleTime.h"
-#include "Modules/ModuleUserInterface.h"
-#include "Panels/PanelScene.h"
-#include "Resources/ResourceTexture.h"
-#include "Resources/ResourceShader.h"
-#include "FileSystem/TextureImporter.h"
 #include "FileSystem/JsonValue.h"
+#include "Modules/ModuleDebugDraw.h"
+#include "Modules/ModuleTime.h"
 
 #include "Math/TransformOps.h"
 #include "imgui.h"
@@ -23,6 +14,12 @@
 #include "debugdraw.h"
 
 #include "Utils/Leaks.h"
+
+#define JSON_TAG_FILL_POSITION "FillPosition"
+#define JSON_TAG_MIN_VALUE "Min"
+#define JSON_TAG_MAX_VALUE "Max"
+#define JSON_TAG_FILL_DIRECTION "FillDirection"
+#define JSON_TAG_PROGRESS_VALUE "ProgressValue"
 
 ComponentProgressBar::~ComponentProgressBar() {
 }
@@ -35,6 +32,7 @@ void ComponentProgressBar::Update() {
 	//The progress bar GameObject must have two image gameobjects as childs (for background and fill)
 	if (background == nullptr || fill == nullptr) {
 		GameObject owner = GetOwner();
+
 		std::vector<GameObject*> childs = owner.GetChildren();
 
 		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
@@ -45,8 +43,12 @@ void ComponentProgressBar::Update() {
 			}
 		}
 
-		rectBack = background->GetComponent<ComponentTransform2D>();
-		rectFill = fill->GetComponent<ComponentTransform2D>();
+		if (background != nullptr && fill != nullptr) {
+			rectBack = background->GetComponent<ComponentTransform2D>();
+			rectFill = fill->GetComponent<ComponentTransform2D>();
+		} else
+			return;
+
 	}
 
 	backPos = rectBack->GetPosition();
@@ -62,7 +64,6 @@ void ComponentProgressBar::Update() {
 	//The image is aligned to the left here, we will give the option to slide from left to right in the future
 	fillXPos = ((backSize.x - (backSize.x * percent)) / 2);
 
-
 	if (!rightToLeft) {
 		fillXPos = backPos.x - fillXPos;
 		rectFill->SetPosition(float3(fillXPos, backPos.y, backPos.z));
@@ -75,19 +76,17 @@ void ComponentProgressBar::Update() {
 
 void ComponentProgressBar::OnEditorUpdate() {
 
-	float* val = &value;
-
 	ImGui::TextColored(App->editor->titleColor, "Value");
-	if (ImGui::DragFloat("Value", val, App->editor->dragSpeed2f, min, max)) {
-		SetValue(*val);
+	if (ImGui::DragFloat("Value", &value, App->editor->dragSpeed2f, min, max)) {
+		SetValue(value);
 	}
 	ImGui::TextColored(App->editor->titleColor, "Min");
 	if (ImGui::DragFloat("Min", &min, App->editor->dragSpeed2f, -inf, max - 1)) {
-		SetValue(*val);
+		SetMin(min);
 	}
 	ImGui::TextColored(App->editor->titleColor, "Max");
 	if (ImGui::DragFloat("Max", &max, App->editor->dragSpeed2f, min + 1, inf)) {
-		SetValue(*val);
+		SetMax(max);
 	}
 	ImGui::Checkbox("Right to Left", &rightToLeft);
 
@@ -95,14 +94,46 @@ void ComponentProgressBar::OnEditorUpdate() {
 }
 
 void ComponentProgressBar::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_FILL_POSITION] = fillXPos;
+	jComponent[JSON_TAG_MIN_VALUE] = min;
+	jComponent[JSON_TAG_MAX_VALUE] = max;
+	jComponent[JSON_TAG_FILL_DIRECTION] = rightToLeft;
+	jComponent[JSON_TAG_PROGRESS_VALUE] = value;
 }
 
 void ComponentProgressBar::Load(JsonValue jComponent) {
+	fillXPos = jComponent[JSON_TAG_FILL_POSITION];
+	min = jComponent[JSON_TAG_MIN_VALUE];
+	max = jComponent[JSON_TAG_MAX_VALUE];
+	rightToLeft = jComponent[JSON_TAG_FILL_DIRECTION];
+	value = jComponent[JSON_TAG_PROGRESS_VALUE];
 }
 
 void ComponentProgressBar::DuplicateComponent(GameObject& owner) {
+	ComponentProgressBar* component = owner.CreateComponent<ComponentProgressBar>();
+	component->SetValue(value);
+	component->SetFillPos(fillXPos);
+	component->SetMin(min);
+	component->SetMax(max);
+	component->SetFillDir(rightToLeft);
 }
 
 void ComponentProgressBar::SetValue(float v) {
 	value = v;
+}
+
+void ComponentProgressBar::SetFillPos(float fillPos) {
+	fillXPos = fillPos;
+}
+
+void ComponentProgressBar::SetMin(float m) {
+	min = m;
+}
+
+void ComponentProgressBar::SetMax(float n) {
+	max = n;
+}
+
+void ComponentProgressBar::SetFillDir(bool fillDir) {
+	rightToLeft = fillDir;
 }

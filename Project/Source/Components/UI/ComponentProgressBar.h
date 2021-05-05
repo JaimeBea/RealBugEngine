@@ -16,12 +16,16 @@ public:
 
 	void Init() override;							// Inits the component
 	void Update() override;							// Update
-	void OnEditorUpdate() override;					// Works as input of the AlphaTransparency, color and Texture and Shader used
+	void OnEditorUpdate() override;					// Input for parameters
 	void Save(JsonValue jComponent) const override; // Serializes object
 	void Load(JsonValue jComponent) override;		// Deserializes object
 	void DuplicateComponent(GameObject& owner) override;
 
 	void SetValue(float v);
+	void SetFillPos(float fillPos);
+	void SetMin(float m);
+	void SetMax(float n);
+	void SetFillDir(bool fillDir);
 
 	float value = .5f;
 
