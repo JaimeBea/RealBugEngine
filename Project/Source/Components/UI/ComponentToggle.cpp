@@ -9,6 +9,7 @@
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleResources.h"
+#include "Modules/ModuleInput.h"
 #include "Resources/ResourceScript.h"
 #include "Scripting/Script.h"
 #include "imgui.h"
@@ -39,7 +40,13 @@ void ComponentToggle ::OnValueChanged() {
 			childImage->Disable();
 		}
 	}
-	//TODO establish callback
+
+	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
+		Script* script = scriptComponent.GetScriptInstance();
+		if (script != nullptr) {
+			script->OnToggled(IsChecked());
+		}
+	}
 }
 
 bool ComponentToggle ::IsChecked() const {
@@ -123,4 +130,17 @@ void ComponentToggle::Load(JsonValue jComponent) {
 void ComponentToggle::OnEditorUpdate() {
 	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
 	ImGui::GameObjectSlot("Enabled Image GameObject", &enabledImageObjectID);
+
+	bool isChecked_ = IsChecked();
+	if (ImGui::Checkbox("Is Checked", &isChecked_)) {
+		SetChecked(!IsChecked());
+	}
+}
+
+void ComponentToggle::Update() {
+	if (clicked) {
+		if (!App->input->GetMouseButton(1)) {
+			clicked = false;
+		}
+	}
 }

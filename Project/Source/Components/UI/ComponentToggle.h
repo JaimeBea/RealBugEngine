@@ -19,6 +19,7 @@ public:
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void OnEditorUpdate() override;
+	void Update() override;
 
 	void OnValueChanged();
 	bool IsChecked() const;

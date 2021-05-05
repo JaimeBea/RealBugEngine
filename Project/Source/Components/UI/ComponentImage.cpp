@@ -163,6 +163,10 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	glDisable(GL_BLEND);
 }
 
+void ComponentImage::SetColor(float4 color_) {
+	color = color_;
+}
+
 void ComponentImage::DuplicateComponent(GameObject& owner) {
 	ComponentImage* component = owner.CreateComponent<ComponentImage>();
 	component->textureID = textureID;
