@@ -187,6 +187,9 @@ bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePa
 	} else if (extension == WAV_AUDIO_EXTENSION || extension == OGG_AUDIO_EXTENSION) {
 		// Audio files
 		AudioImporter::ImportAudio(filePath, jMeta);
+	} else if (extension == PREFAB_EXTENSION) {
+		// Prefab files
+		PrefabImporter::ImportPrefab(filePath, jMeta);
 	} else {
 		validExtension = false;
 	}
