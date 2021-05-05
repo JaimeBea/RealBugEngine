@@ -166,7 +166,7 @@ void ComponentScript::OnEditorUpdate() {
 				float3* memberPtr = (float3*) GET_OFFSET_MEMBER(scriptInstance, member.offset);
 				float3 old = *memberPtr;
 				ImGui::InputFloat3("Target Position", &memberPtr->x, "%.1f");
-				if (old.x != memberPtr->x || old.y != memberPtr->y || old.x != memberPtr->z) {
+				if (!old.Equals(*memberPtr)) {
 					changedValues[member.name] = std::pair<MemberType, MEMBER_VARIANT>(member.type, *memberPtr);
 				}
 				break;
@@ -219,11 +219,14 @@ void ComponentScript::Save(JsonValue jComponent) const {
 		case MemberType::PREFAB_RESOURCE_UID:
 			jValue[JSON_TAG_VALUE] = std::get<UID>(entry.second.second);
 			break;
-		case MemberType::FLOAT3:
-			jValue[JSON_TAG_VALUE][0] = std::get<float3>(entry.second.second).x;
-			jValue[JSON_TAG_VALUE][1] = std::get<float3>(entry.second.second).y;
-			jValue[JSON_TAG_VALUE][2] = std::get<float3>(entry.second.second).z;
+		case MemberType::FLOAT3: {
+			float3 aFloat3 = std::get<float3>(entry.second.second);
+			JsonValue float3JsonVal = jValue[JSON_TAG_VALUE];
+			float3JsonVal[0] = aFloat3.x;
+			float3JsonVal[1] = aFloat3.y;
+			float3JsonVal[2] = aFloat3.z;
 			break;
+		}
 		default:
 			LOG("Member of type %i hasn't been registered in ComponentScript's Save function.", (unsigned) type);
 			assert(false); // ERROR: Member type not registered
@@ -273,9 +276,11 @@ void ComponentScript::Load(JsonValue jComponent) {
 		case MemberType::PREFAB_RESOURCE_UID:
 			changedValues[valueName] = std::pair<MemberType, MEMBER_VARIANT>(type, static_cast<UID>(jValue[JSON_TAG_VALUE]));
 			break;
-		case MemberType::FLOAT3:
-			changedValues[valueName] = std::pair<MemberType, MEMBER_VARIANT>(type, static_cast<float3>(jValue[JSON_TAG_VALUE]));
+		case MemberType::FLOAT3: {
+			JsonValue jsonVal = jValue[JSON_TAG_VALUE];
+			changedValues[valueName] = std::pair<MemberType, MEMBER_VARIANT>(type, float3(jsonVal[0], jsonVal[1], jsonVal[2]));
 			break;
+		}
 		default:
 			LOG("Member of type %i hasn't been registered in ComponentScript's Load function.", (unsigned) type);
 			assert(false); // ERROR: Member type not registered
