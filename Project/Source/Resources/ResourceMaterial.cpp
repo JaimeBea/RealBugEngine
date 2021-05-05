@@ -26,6 +26,8 @@
 #define JSON_TAG_NORMAL_MAP "NormalMap"
 #define JSON_TAG_SMOOTHNESS "Smoothness"
 #define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
+#define JSON_TAG_TILING "Tiling"
+#define JSON_TAG_OFFSET "Offset"
 
 void ResourceMaterial::Load() {
 	// Timer to measure loading a material
@@ -64,6 +66,9 @@ void ResourceMaterial::Load() {
 
 	smoothness = jMaterial[JSON_TAG_SMOOTHNESS];
 	hasSmoothnessInAlphaChannel = jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL];
+
+	tiling = float2(jMaterial[JSON_TAG_TILING][0], jMaterial[JSON_TAG_TILING][1]);
+	offset = float2(jMaterial[JSON_TAG_OFFSET][0], jMaterial[JSON_TAG_OFFSET][1]);
 
 	unsigned timeMs = timer.Stop();
 	LOG("Material loaded in %ums", timeMs);
@@ -109,6 +114,13 @@ void ResourceMaterial::SaveToFile(const char* filePath) {
 
 	jMaterial[JSON_TAG_SMOOTHNESS] = smoothness;
 	jMaterial[JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL] = hasSmoothnessInAlphaChannel;
+
+	JsonValue jTiling = jMaterial[JSON_TAG_TILING];
+	jTiling[0] = tiling.x;
+	jTiling[1] = tiling.y;
+	JsonValue jOffset = jMaterial[JSON_TAG_OFFSET];
+	jOffset[0] = offset.x;
+	jOffset[1] = offset.y;
 
 	// Write document to buffer
 	rapidjson::StringBuffer stringBuffer;

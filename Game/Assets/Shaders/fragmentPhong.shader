@@ -10,7 +10,7 @@ void main() {
     }
 
     // diffuse
-    vec4 colorDiffuse = hasDiffuseMap * pow(texture(diffuseMap, uv), vec4(2.2)) * vec4(diffuseColor, 1.0) + (1 - hasDiffuseMap) * vec4(diffuseColor, 1.0);
+    vec4 colorDiffuse = GetDiffuse(diffuseMap, tiling, offset, uv, diffuseColor, hasDiffuseMap);
 
     // specular
     vec4 colorSpecular = hasSpecularMap * pow(texture(specularMap, uv), vec4(2.2)) + (1 - hasSpecularMap) * vec4(specularColor, 1.0);

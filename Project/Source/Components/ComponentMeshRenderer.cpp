@@ -31,22 +31,6 @@
 #define JSON_TAG_MESH_ID "MeshID"
 #define JSON_TAG_MATERIAL_ID "MaterialID"
 
-// TODO: Move to Material Importer class
-
-#define JSON_TAG_MATERIAL "Material"
-#define JSON_TAG_HAS_DIFFUSE_MAP "HasDiffuseMap"
-#define JSON_TAG_DIFFUSE_COLOR "DiffuseColor"
-#define JSON_TAG_DIFFUSE_MAP_FILE_NAME "DiffuseMapFileName"
-#define JSON_TAG_HAS_SPECULAR_MAP "HasSpecularMap"
-#define JSON_TAG_SPECULAR_COLOR "SpecularColor"
-#define JSON_TAG_HAS_SPECULAR_MAP_FILE_NAME "SpecularMapFileName"
-#define JSON_TAG_SHININESS "Shininess"
-#define JSON_TAG_HAS_SHININESS_IN_ALPHA_CHANNEL "HasShininessInAlphaChannel"
-#define JSON_TAG_SMOOTHNESS "Smoothness"
-#define JSON_TAG_HAS_SMOOTHNESS_IN_ALPHA_CHANNEL "HasSmoothnessInAlphaChannel"
-#define JSON_TAG_METALLIC_MAP_FILE_NAME "MetallicMapFileName"
-#define JSON_TAG_METALLIC "Metallic"
-
 void ComponentMeshRenderer::OnEditorUpdate() {
 	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
@@ -321,6 +305,11 @@ void ComponentMeshRenderer::OnEditorUpdate() {
 				}
 			}
 			ImGui::EndColumns();
+			ImGui::NewLine();
+
+			// Tiling Settings
+			ImGui::DragFloat2("Tiling", material->tiling.ptr(), App->editor->dragSpeed1f, 1, inf);
+			ImGui::DragFloat2("Offset", material->offset.ptr(), App->editor->dragSpeed1f, -inf, inf);
 		}
 		ImGui::TreePop();
 	}
@@ -612,6 +601,10 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	glUniform1f(glGetUniformLocation(program, "normalStrength"), material->normalStrength);
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, glTextureNormal);
+
+	// Tilling settings
+	glUniform3fv(glGetUniformLocation(program, "tiling"), 1, material->tiling.ptr());
+	glUniform3fv(glGetUniformLocation(program, "offset"), 1, material->offset.ptr());
 
 	// Lights uniforms settings
 	glUniform3fv(glGetUniformLocation(program, "light.ambient.color"), 1, App->renderer->ambientColor.ptr());
