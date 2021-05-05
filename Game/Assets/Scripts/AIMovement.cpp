@@ -13,22 +13,20 @@ EXPOSE_MEMBERS(AIMovement) {
 GENERATE_BODY_IMPL(AIMovement);
 
 void AIMovement::Start() {
-    owner = GetOwner();
     fang = GameplaySystems::GetGameObject("Fang");
     //onimaru = GameplaySystems::GetGameObject("Onimaru");
-    Debug::Log("AI movement for %s Start Log", owner.name);
+    Debug::Log("AI movement for %s Start Log", GetOwner().name);
 }
 
 void AIMovement::Update() {
-    if (!owner.IsActive()) return;
-    if (!fang /* && !onimaru*/) return;
-
+    if (!GetOwner().IsActive()) return;
+    
     if (CharacterInSight(fang)) {
-        Seek(fang);
+        Seek(fang->GetComponent<ComponentTransform>()->GetPosition());
     }
     
     /*else if (CharacterInSight(onimaru)) {
-        Seek(onimaru);
+        Seek(onimaru->GetComponent<ComponentTransform>()->GetPosition());
     }*/
 
     else {
@@ -43,11 +41,36 @@ void AIMovement::Update() {
 	
 }
 
-bool AIMovement::CharacterInSight(GameObject* character)
+bool AIMovement::CharacterInSight(const GameObject* character)
 {
+    ComponentTransform* target = fang->GetComponent<ComponentTransform>();
+    if (target) {
+        float3 posTarget = target->GetPosition();
+        return posTarget.Distance(GetOwner().GetComponent<ComponentTransform>()->GetPosition()) < searchRadius;
+    }
+
+    /*target = onimaru->GetComponent<ComponentTransform>();
+    if (target) {
+        float3 posTarget = target->GetPosition();
+        return posTarget.Distance(GetOwner().GetComponent<ComponentTransform>()->GetPosition()) < searchRadius;
+    }*/
+
     return false;
 }
 
-void AIMovement::Seek(GameObject* target)
+void AIMovement::Seek(const float3& newPosition)
 {
+
+    float3 position = GetOwner().GetComponent<ComponentTransform>()->GetPosition();
+    float3 direction = newPosition - position;
+
+    velocity = direction.Normalized() * maxSpeed;
+
+    position += velocity * Time::GetDeltaTime();
+
+    GetOwner().GetComponent<ComponentTransform>()->SetPosition(position);
+
+    Quat desiredRotation = Quat::LookAt(float3::unitZ, velocity.Normalized(), float3::unitY, float3::unitY);
+    Quat newRotation = Quat::Slerp(GetOwner().GetComponent<ComponentTransform>()->GetRotation(), desiredRotation, Time::GetDeltaTime() * 0.01F);
+    GetOwner().GetComponent<ComponentTransform>()->SetRotation(newRotation);
 }

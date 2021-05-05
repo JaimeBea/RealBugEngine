@@ -12,18 +12,18 @@ public:
 	void Update() override;
 
 private:
-	bool CharacterInSight(GameObject* character);
-	void Seek(GameObject* target);
+	bool CharacterInSight(const GameObject* character);
+	void Seek(const float3& newPosition);
 
 public:
 
-	GameObject owner;
 	GameObject* fang = nullptr;
 	GameObject* onimaru = nullptr;
 
 private:
 
-	int speed = 8;
+	int maxSpeed = 8;
+	float3 velocity = float3::zero;
 	const float searchRadius = 50.f;
 
 };
