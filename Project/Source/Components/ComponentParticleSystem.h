@@ -63,7 +63,7 @@ private:
 	UID shaderID = 0;  // ID of the shader
 
 	bool looping;
-	bool isPlaying;
+	bool isPlaying = true;
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
 	bool isRandomFrame = false;
 
@@ -71,7 +71,7 @@ private:
 	float4 finalC;
 	float4 color = float4::one; // Color used as default tainter
 
-	float scale = 0.1;
+	float scale = 5;
 	float duration;
 	float startLifetime;
 	float maxParticles = 100;

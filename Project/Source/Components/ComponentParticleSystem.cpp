@@ -54,7 +54,6 @@ void ComponentParticleSystem::OnEditorUpdate() {
 		}
 		ImGui::EndCombo();
 	}
-	ImGui::Checkbox("Alpha transparency", &alphaTransparency);
 	ImGui::Checkbox("Random Frame", &isRandomFrame);
 
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
@@ -160,11 +159,12 @@ void ComponentParticleSystem::Load(JsonValue jComponent) {
 		App->resources->IncreaseReferenceCount(textureID);
 	}
 
-	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 	CreateParticles(maxParticles, velocity);
 }
 
 void ComponentParticleSystem::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_TEXTURE_SHADERID] = shaderID;
+	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
 }
 
 void ComponentParticleSystem::Update() {
