@@ -136,7 +136,7 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4* view = &App->camera->GetViewMatrix();
-		modelMatrix = transform->GetGlobalScaledMatrix(true);
+		modelMatrix = transform->GetGlobalScaledMatrix(true, true);
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
 	}
 
