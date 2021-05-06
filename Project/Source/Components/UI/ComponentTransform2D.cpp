@@ -157,7 +157,7 @@ void ComponentTransform2D::DrawGizmos() {
 	float factor = canvasRenderer->GetCanvasScreenFactor();
 	if (!App->time->IsGameRunning()) {
 		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
-		float3 pivotPosFactor = float3(GetPivotPosition().x * factor / 100, GetPivotPosition().y * factor / 100, GetPivotPosition().z * factor / 100);
+		float3 pivotPosFactor = float3(GetPivotPosition().x / 100, GetPivotPosition().y / 100, GetPivotPosition().z / 100);
 		dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1, 0.1, 0);
 
 	}
@@ -275,10 +275,10 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 					bool isUsing2D = App->editor->panelScene.IsUsing2D();
 					if (isUsing2D) {
 						localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor);
-						globalMatrix = localMatrix * float4x4::Translate(position * factor) * float4x4::Scale(scale * factor);
+						globalMatrix = localMatrix * float4x4::Translate(position * factor) * float4x4::Scale(scale);
 					} else {
-						localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor / 100);
-						globalMatrix = localMatrix * float4x4::Translate(position * factor / 100) * float4x4::Scale(scale * factor);
+						localMatrix = float4x4::FromQuat(rotation, pivotPosition / 100);
+						globalMatrix = localMatrix * float4x4::Translate(position * factor / 100) * float4x4::Scale(scale);
 					}
 				} else {
 					globalMatrix = localMatrix;
