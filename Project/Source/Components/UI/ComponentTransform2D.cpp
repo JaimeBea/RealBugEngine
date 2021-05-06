@@ -202,18 +202,28 @@ const float4x4 ComponentTransform2D::GetGlobalMatrix() const {
 	return globalMatrix;
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrixWithSize(bool view3DActive) const {
+const float4x4 ComponentTransform2D::GetGlobalScaledMatrix(bool scaleFactored, bool view3DActive) const {
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+
+	float factor = 1.0f;
+
+	if (scaleFactored) {
+		if (canvasRenderer) {
+			factor = canvasRenderer->GetCanvasScreenFactor();
+		}
+	}
+
 	if (view3DActive) {
 		return globalMatrix * float4x4::Scale(size.x / 100.0f, size.y / 100.0f, 0);
 	}
-	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
+	return globalMatrix * float4x4::Scale(size.x * factor, size.y * factor, 0);
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
-	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
 	if (dirty) {
-		localMatrix = float4x4::FromTRS(position * factor, rotation, scale * factor);
+		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+		float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
+		localMatrix = float4x4::FromTRS(position * factor, rotation, scale);
 
 		GameObject* parent = GetOwner().GetParent();
 		if (parent != nullptr) {
