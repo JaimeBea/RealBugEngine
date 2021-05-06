@@ -28,39 +28,6 @@
 #define JSON_TAG_CLIP "Clip"
 
 void ComponentAnimation::Update() {
-	// TODO remove, HardCoded for test transitions
-	/*
-	if (App->input->GetKey(SDL_SCANCODE_1)) {
-		if (t != 1) {
-			SendTrigger("s1Ts2");
-			t = 1;
-			LOG("Transition1");
-		}
-	}
-	if (App->input->GetKey(SDL_SCANCODE_2)) {
-		if (t != 2) {
-			SendTrigger("s2Ts3");
-			t = 2;
-			LOG("Transition2");
-		}
-	}
-	if (App->input->GetKey(SDL_SCANCODE_3)) {
-		if (t != 3) {
-			SendTrigger("s3Ts1");
-			t = 3;
-			LOG("Transition3");
-		}
-	}
-	if (App->input->GetKey(SDL_SCANCODE_4)) {
-		if (t != 4) {
-			SendTrigger("s1Ts2");
-			SendTrigger("s2Ts3");
-			SendTrigger("s3Ts1");
-			t = 4;
-			LOG("Transition4");
-		}
-	}*/
-
 	if (!initialState) { //Checking if there is no state machine
 		LoadResourceStateMachine();
 	}
