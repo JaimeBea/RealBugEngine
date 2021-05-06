@@ -36,7 +36,6 @@ public:
 	void UpdateMagFilter(TextureMagFilter filter);
 	void UpdateWrap(TextureWrap wrap);
 	void Apply();
-	void SaveToFile(const char* filePath);
 
 public:
 	unsigned int glTexture = 0;

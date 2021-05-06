@@ -130,7 +130,6 @@ void ResourceTexture::OnEditorUpdate() {
 	if (hasChanged) {
 		if (ImGui::Button("Apply")) {
 			Apply();
-			//SaveToFile(GetResourceFilePath().c_str());
 			hasChanged = false;
 		}
 	}
@@ -202,35 +201,4 @@ void ResourceTexture::Apply() {
 	UpdateWrap(wrap);
 	UpdateMinFilter(minFilter);
 	UpdateMagFilter(magFilter);
-}
-
-void ResourceTexture::SaveToFile(const char* filePath) {
-	LOG("Saving material to path: \"%s\".", filePath);
-
-	MSTimer timer;
-	timer.Start();
-
-	// Create document
-	rapidjson::Document document;
-	JsonValue jMaterial(document, document);
-
-	// Save JSON values
-	jMaterial[JSON_TAG_MINFILTER] = (int) minFilter;
-	jMaterial[JSON_TAG_MAGFILTER] = (int) magFilter;
-	jMaterial[JSON_TAG_WRAP] = (int) wrap;
-
-	// Write document to buffer
-	rapidjson::StringBuffer stringBuffer;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer, rapidjson::UTF8<>, rapidjson::UTF8<>, rapidjson::CrtAllocator, rapidjson::kWriteNanAndInfFlag> writer(stringBuffer);
-	document.Accept(writer);
-
-	// Save to file
-	bool saved = App->files->Save(filePath, stringBuffer.GetString(), stringBuffer.GetSize());
-	if (!saved) {
-		LOG("Failed to save texture resource.");
-		return;
-	}
-
-	unsigned timeMs = timer.Stop();
-	LOG("Texture saved in %ums", timeMs);
 }
