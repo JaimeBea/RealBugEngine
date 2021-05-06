@@ -65,6 +65,11 @@ void ComponentTransform2D::OnEditorUpdate() {
 		SetSize(editorSize);
 	}
 
+	float topAnch = anchorsRect.top;
+	float bottomAnch = anchorsRect.bottom;
+	float leftAnch = anchorsRect.left;
+	float rightAnch = anchorsRect.right;
+
 	float2 anchMin = anchorMin;
 	float2 anchMax = anchorMax;
 	ImGui::TextColored(App->editor->titleColor, "Anchors");
@@ -110,7 +115,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 				bool isSelected = (anchorPresetCurrent == anchorPresetTypeItems[n]);
 				if (ImGui::Selectable(anchorPresetTypeItems[n], isSelected)) {
 					anchorSelected = AnchorPreset::AnchorPresetType(n);
-					// Donde tengo que setear los nuevos anchors
 					SetAnchorMin(anchorPresets[n].anchorMin);
 					SetAnchorMax(anchorPresets[n].anchorMax);
 				}
@@ -122,6 +126,22 @@ void ComponentTransform2D::OnEditorUpdate() {
 		}
 		ImGui::InputFloat2("Min (X, Y)", anchMin.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 		ImGui::InputFloat2("Max (X, Y)", anchMax.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
+	}
+
+	if (ImGui::TreeNode("Rect Info")) {
+		if (ImGui::DragFloat("Top", &topAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetTop(topAnch);
+		}
+		if (ImGui::DragFloat("Bottom", &bottomAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetBottom(bottomAnch);
+		}
+		if (ImGui::DragFloat("Left", &leftAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetLeft(leftAnch);
+		}
+		if (ImGui::DragFloat("Right", &rightAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetRight(rightAnch);
+		}
+		ImGui::TreePop();
 	}
 
 	float2 piv = pivot;
@@ -408,4 +428,20 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	component->SetAnchorMin(anchorMin);
 	component->SetAnchorMax(anchorMax);
 	component->dirty = true;
+}
+
+void ComponentTransform2D::SetTop(float top_) {
+	anchorsRect.top = top_;
+}
+
+void ComponentTransform2D::SetBottom(float bottom_) {
+	anchorsRect.bottom = bottom_;
+}
+
+void ComponentTransform2D::SetLeft(float left_) {
+	anchorsRect.left = left_;
+}
+
+void ComponentTransform2D::SetRight(float right_) {
+	anchorsRect.right = right_;
 }

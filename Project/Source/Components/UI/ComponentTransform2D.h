@@ -53,6 +53,13 @@ struct AnchorPreset {
 	float2 anchorMax;
 };
 
+struct Rect {
+	Rect(float top_, float bottom_, float left_, float right_)
+		: top(top_), bottom(bottom_), left(left_), right(right_) {}
+
+	float top, bottom, left, right;
+};
+
 
 // Transform in the 2D Space. Used for UI Components.
 class ComponentTransform2D : public Component {
@@ -86,6 +93,11 @@ public:
 	void Invalidate();									 // Invalidates component
 	void DuplicateComponent(GameObject& owner) override; // Duplicates component (THIS SHOULDN'T BE USED)
 
+	void SetTop(float top);		   // Sets the right anchor
+	void SetBottom(float bottom);   // Sets the right anchor
+	void SetLeft(float left);	   // Sets the right anchor
+	void SetRight(float right);	   // Sets the right anchor
+
 private:
 	void CalculateGlobalMatrix(); // Calculates the Global Matrix
 	void UpdateUIElements();	  // If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
@@ -101,11 +113,12 @@ private:
 	float3 localEulerAngles = float3::zero; // The rotation of the element in Euler
 	float3 scale = float3::one;				// The scale of the element
 
-	static std::array<AnchorPreset, 16> anchorPresets; // Listwith all the possible anchors presets 
-	AnchorPreset::AnchorPresetType anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL; // The anchor selected
-	bool isCustomAnchor = false;
-	float2 anchorMin = float2(0.5, 0.5); // The Anchor Min. Represents the lower left handle.
-	float2 anchorMax = float2(0.5, 0.5); // The Anchor Max. Represents the upper right handle.
+	Rect anchorsRect = Rect(0, 0, 0, 0);
+	static std::array<AnchorPreset, 16> anchorPresets;																	// Listwith all the possible anchors presets 
+	AnchorPreset::AnchorPresetType anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL;  // The anchor selected
+	bool isCustomAnchor = false;																						// Variable that checks if is selected Custom or Presets in the inspector
+	float2 anchorMin = float2(0.5, 0.5);																				// The Anchor Min. Represents the lower left handle.
+	float2 anchorMax = float2(0.5, 0.5);																				// The Anchor Max. Represents the upper right handle.
 
 	float4x4 localMatrix = float4x4::identity;	// Local matrix
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
