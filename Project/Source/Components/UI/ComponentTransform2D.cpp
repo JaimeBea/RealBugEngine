@@ -45,8 +45,6 @@ std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
 	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.0f), float2(0.5f, 1.0f)},
 	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.0f), float2(1.0f, 1.0f)},
 	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 0.0f), float2(1.0f, 1.0f)},
-
-
 };
 
 void ComponentTransform2D::Update() {
@@ -72,7 +70,12 @@ void ComponentTransform2D::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Anchors");
 	if (ImGui::RadioButton("Custom", isCustomAnchor)) isCustomAnchor = true;
 	ImGui::SameLine();
-	if (ImGui::RadioButton("Presets", !isCustomAnchor)) isCustomAnchor = false;
+	if (ImGui::RadioButton("Presets", !isCustomAnchor)) {
+		isCustomAnchor = false;
+		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL;
+		SetAnchorMin(anchorPresets[5].anchorMin);
+		SetAnchorMax(anchorPresets[5].anchorMax);
+	}
 	if (isCustomAnchor) { // If we select custom
 		anchorSelected = AnchorPreset::AnchorPresetType::CUSTOM;
 		if (ImGui::DragFloat2("Min (X, Y)", anchMin.ptr(), App->editor->dragSpeed2f, 0, 1)) {
@@ -82,27 +85,24 @@ void ComponentTransform2D::OnEditorUpdate() {
 			SetAnchorMax(anchMax);
 		}
 	} else { // If we select presets
-		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL;
-		SetAnchorMin(anchorPresets[5].anchorMin);
-		SetAnchorMax(anchorPresets[5].anchorMax);
 		// Anchor Preset Type combo box
 		const char* anchorPresetTypeItems[] = {
-			"TOP_VERTICAL_LEFT_HORIZONTAL",
-			"TOP_VERTICAL_CENTER_HORIZONTAL",
-			"TOP_VERTICAL_RIGHT_HORIZONTAL",
-			"TOP_VERTICAL_STRETCH_HORIZONTAL",
-			"MIDDLE_VERTICAL_LEFT_HORIZONTAL",
-			"MIDDLE_VERTICAL_CENTER_HORIZONTAL",
-			"MIDDLE_VERTICAL_RIGHT_HORIZONTAL",
-			"MIDDLE_VERTICAL_STRETCH_HORIZONTAL",
-			"BOTTOM_VERTICAL_LEFT_HORIZONTAL",
-			"BOTTOM_VERTICAL_CENTER_HORIZONTAL",
-			"BOTTOM_VERTICAL_RIGHT_HORIZONTAL",
-			"BOTTOM_VERTICAL_STRETCH_HORIZONTAL",
-			"STRETCH_VERTICAL_LEFT_HORIZONTAL",
-			"STRETCH_VERTICAL_CENTER_HORIZONTAL",
-			"STRETCH_VERTICAL_RIGHT_HORIZONTAL",
-			"STRETCH_VERTICAL_STRETCH_HORIZONTAL",
+			"Vertical: TOP - Horizontal: LEFT",
+			"Vertical: TOP - Horizontal: CENTER",
+			"Vertical: TOP - Horizontal: RIGHT",
+			"Vertical: TOP - Horizontal: STRETCH",
+			"Vertical: MIDDLE - Horizontal: LEFT",
+			"Vertical: MIDDLE - Horizontal: CENTER",
+			"Vertical: MIDDLE - Horizontal: RIGHT",
+			"Vertical: MIDDLE - Horizontal: STRETCH",
+			"Vertical: BOTTOM - Horizontal: LEFT",
+			"Vertical: BOTTOM - Horizontal: CENTER",
+			"Vertical: BOTTOM - Horizontal: RIGHT",
+			"Vertical: BOTTOM - Horizontal: STRETCH",
+			"Vertical: STRETCH - Horizontal: LEFT",
+			"Vertical: STRETCH - Horizontal: CENTER",
+			"Vertical: STRETCH - Horizontal: RIGHT",
+			"Vertical: STRETCH - Horizontal: STRETCH",
 		};
 		const char* anchorPresetCurrent = anchorPresetTypeItems[(int) anchorSelected];
 		if (ImGui::BeginCombo("Select Preset", anchorPresetCurrent)) {
