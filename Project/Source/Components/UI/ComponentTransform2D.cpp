@@ -194,13 +194,15 @@ void ComponentTransform2D::SetPivot(float2 pivot_) {
 }
 
 void ComponentTransform2D::UpdatePivotPosition() {
-	pivotPosition.x = (size.x * pivot.x - size.x * 0.5) + position.x;
-	pivotPosition.y = (size.y * pivot.y - size.y * 0.5) + position.y;
+	pivotPosition.x = (size.x * pivot.x - size.x * 0.5) * scale.x + position.x;
+	pivotPosition.y = (size.y * pivot.y - size.y * 0.5) * scale.y + position.y;
 	InvalidateHierarchy();
 }
 
 void ComponentTransform2D::SetSize(float2 size_) {
 	size = size_;
+	// Update the new pivot position
+	UpdatePivotPosition();
 	InvalidateHierarchy();
 }
 
@@ -220,6 +222,8 @@ void ComponentTransform2D::SetRotation(float3 rotation_) {
 
 void ComponentTransform2D::SetScale(float3 scale_) {
 	scale = scale_;
+	// Update the new pivot position
+	UpdatePivotPosition();
 	InvalidateHierarchy();
 }
 
