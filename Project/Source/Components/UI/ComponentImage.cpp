@@ -115,6 +115,13 @@ const float4& ComponentImage::GetTintColor() const {
 	if (button != nullptr) {
 		return button->GetTintColor();
 	}
+	GameObject* sliderParent = GetOwner().GetParent();
+	if (sliderParent != nullptr) {
+		ComponentSlider* slider = sliderParent->GetComponent<ComponentSlider>();
+		if (slider != nullptr) {
+			return slider->GetTintColor();
+		}
+	}
 	return float4::one;
 }
 
