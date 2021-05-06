@@ -76,14 +76,19 @@ float Pow2(float a)
     return a * a;
 }
 
-vec4 GetDiffuse(sampler2D diffuseMap, vec2 tilling, vec2 offset, vec2 uv, vec3 diffuseColor, int hasDiffuseMap)
+vec2 GetTiledUVs(vec2 uv, vec2 tiling, vec2 offset)
 {
-    vec2 newUV = uv * tilling + offset; 
-    return hasDiffuseMap * pow(texture(diffuseMap, newUV), vec4(2.2)) * vec4(diffuseColor, 1.0) + (1 - hasDiffuseMap) * vec4(diffuseColor, 1.0);
+    return uv * tiling + offset; 
+}
+
+vec4 GetDiffuse(sampler2D diffuseMap, vec2 uv, vec3 diffuseColor, int hasDiffuseMap)
+{
+    return hasDiffuseMap * pow(texture(diffuseMap, uv), vec4(2.2)) * vec4(diffuseColor, 1.0) + (1 - hasDiffuseMap) * vec4(diffuseColor, 1.0);
 }
 
 vec3 GetNormal(sampler2D normalMap, vec2 uv, mat3 TBN, float normalStrength)
 {
+
     vec3 normal = texture(normalMap, uv).rgb;
     normal = normal * 2.0 - 1.0;
     normal.xy *= normalStrength;
@@ -199,14 +204,16 @@ vec3 ProcessSpotLight(SpotLight spot, vec3 fragNormal, vec3 fragPos, vec3 viewDi
 void main()
 {    
     vec3 viewDir = normalize(viewPos - fragPos);
+    vec2 tiledUV = GetTiledUVs(uv, tiling, offset); 
     vec3 normal = fragNormal;
+
     if (hasNormalMap)
     {
-	    normal = GetNormal(normalMap, uv, TBN, normalStrength);
+	    normal = GetNormal(normalMap, tiledUV, TBN, normalStrength);
     }
 
-    vec4 colorDiffuse = GetDiffuse(diffuseMap, tiling, offset, uv, diffuseColor, hasDiffuseMap);
-    vec4 colorMetallic = pow(texture(metallicMap, uv), vec4(2.2));
+    vec4 colorDiffuse = GetDiffuse(diffuseMap, tiledUV, diffuseColor, hasDiffuseMap);
+    vec4 colorMetallic = pow(texture(metallicMap, tiledUV), vec4(2.2));
     float metalnessMask = hasMetallicMap * colorMetallic.r + (1 - hasMetallicMap) * metalness;
 
     float roughness = Pow2(1 - smoothness * (hasSmoothnessAlpha * colorMetallic.a + (1 - hasSmoothnessAlpha) * colorDiffuse.a)) + EPSILON;
@@ -245,14 +252,16 @@ void main()
 void main()
 {    
     vec3 viewDir = normalize(viewPos - fragPos);
+    vec2 tiledUV = GetTiledUVs(uv, tiling, offset); 
     vec3 normal = fragNormal;
+
     if (hasNormalMap)
     {
-	    normal = GetNormal(normalMap, uv, TBN, normalStrength);
+	    normal = GetNormal(normalMap, tiledUV, TBN, normalStrength);
     }
 	
-    vec4 colorDiffuse = GetDiffuse(diffuseMap, tiling, offset, uv, diffuseColor, hasDiffuseMap);
-    vec4 colorSpecular = hasSpecularMap * pow(texture(specularMap, uv), vec4(2.2)) + (1 - hasSpecularMap) * vec4(specularColor, 1.0);
+    vec4 colorDiffuse = GetDiffuse(diffuseMap, tiledUV, diffuseColor, hasDiffuseMap);
+    vec4 colorSpecular = hasSpecularMap * pow(texture(specularMap, tiledUV), vec4(2.2)) + (1 - hasSpecularMap) * vec4(specularColor, 1.0);
 
     float roughness = Pow2(1 - smoothness * (hasSmoothnessAlpha * colorSpecular.a + (1 - hasSmoothnessAlpha) * colorDiffuse.a)) + EPSILON;
 

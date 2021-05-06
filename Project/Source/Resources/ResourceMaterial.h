@@ -18,6 +18,7 @@ public:
 
 	void Load() override;
 	void Unload() override;
+	void OnEditorUpdate() override;
 
 	void SaveToFile(const char* filePath);
 
