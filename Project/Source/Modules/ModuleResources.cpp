@@ -197,6 +197,9 @@ bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePa
 	} else if (extension == ANIMATION_CLIP_EXTENSION) {
 		// Clip files
 		ClipImporter::ImportClip(filePath, jMeta);
+	} else if (extension == PREFAB_EXTENSION) {
+		// Prefab files
+		PrefabImporter::ImportPrefab(filePath, jMeta);
 	} else {
 		validExtension = false;
 	}
