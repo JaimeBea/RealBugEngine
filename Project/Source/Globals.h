@@ -47,7 +47,7 @@ enum class UpdateStatus {
 #define DEFAULT_MODEL_EXTENSION ".fbx"
 #define OBJ_MODEL_EXTENSION ".obj"
 
-#define SKYBOX_EXTENSION ".fbx"
+#define SKYBOX_EXTENSION ".sky"
 
 #define FONT_EXTENSION ".ttf"
 #define SCRIPT_EXTENSION ".h"
@@ -57,7 +57,6 @@ enum class UpdateStatus {
 
 #define STATE_MACHINE_EXTENSION ".stma"
 #define ANIMATION_CLIP_EXTENSION ".clip"
-
 
 #define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
 
