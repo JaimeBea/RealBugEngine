@@ -20,6 +20,7 @@
     <ClInclude Include="Source\AnimationInterpolation.h" />
     <ClInclude Include="Source\Resources\ResourceClip.h" />
     <ClInclude Include="Source\State.h" />
+    <ClInclude Include="Source\Panels\PanelResource.h" />
     <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Libs\imgui\imgui_stdlib.h" />
     <ClInclude Include="Source\Resources\ResourceAudioClip.h" />
@@ -289,6 +290,7 @@
     <ClCompile Include="Source\FileSystem\StateMachineImporter.cpp" />
     <ClCompile Include="Source\Resources\ResourceClip.cpp" />
     <ClCompile Include="Libs\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Source\Panels\PanelResource.cpp" />
     <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
     <ClCompile Include="Libs\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
