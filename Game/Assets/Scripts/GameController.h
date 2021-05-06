@@ -19,16 +19,16 @@ public:
 
 	void Rotate(float2 mouseMotion, Frustum* frustum, ComponentTransform* transform);
 
+
 public:
-	GameObject* gameCamera = nullptr;
-	GameObject* godCamera = nullptr;
-	ComponentCamera* camera = nullptr;
-	ComponentCamera* staticCamera1 = nullptr;
-	ComponentCamera* staticCamera2 = nullptr;
-	ComponentCamera* staticCamera3 = nullptr;
-	ComponentCamera* staticCamera4 = nullptr;
-	GameObject* player = nullptr;
-	 
+	UID gameCameraUID;
+	UID godCameraUID;
+	UID staticCamera1UID;
+	UID staticCamera2UID;
+	UID staticCamera3UID;
+	UID staticCamera4UID;
+	UID playerUID;
+
 	float speed = 0.f;
 	float rotationSpeedX = 0.f;
 	float rotationSpeedY = 0.f;
@@ -39,12 +39,20 @@ private:
 	void DoTransition();
 
 private:
+	GameObject* gameCamera = nullptr;
+	GameObject* godCamera = nullptr;
+	ComponentCamera* camera = nullptr;
+	ComponentCamera* staticCamera1 = nullptr;
+	ComponentCamera* staticCamera2 = nullptr;
+	ComponentCamera* staticCamera3 = nullptr;
+	ComponentCamera* staticCamera4 = nullptr;
+	GameObject* player = nullptr;
+
 	float yaw = 0.f;
 	float pitch = 0.f;
 	bool showWireframe = false;
 	bool godCameraActive = false;
 	bool godModeAvailable = false;
 	bool transitionFinished = false;
-
 };
 

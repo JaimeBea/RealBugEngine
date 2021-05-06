@@ -11,7 +11,19 @@ EXPOSE_MEMBERS(GameController) {
 	// Add members here to expose them to the engine. Example:
 	// MEMBER(MemberType::BOOL, exampleMember1),
 	// MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
-	// MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
+	MEMBER(MemberType::GAME_OBJECT_UID, gameCameraUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, godCameraUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera1UID),
+	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera2UID),
+	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera3UID),
+	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera4UID),
+	MEMBER(MemberType::GAME_OBJECT_UID, playerUID),
+	
+	MEMBER(MemberType::FLOAT, speed),
+	MEMBER(MemberType::FLOAT, rotationSpeedX),
+	MEMBER(MemberType::FLOAT, rotationSpeedY),
+	MEMBER(MemberType::FLOAT, focusDistance),
+	MEMBER(MemberType::FLOAT, transitionSpeed)
 };
 
 GENERATE_BODY_IMPL(GameController);
@@ -26,17 +38,19 @@ void GameController::Start() {
 	transitionFinished = false;
 	Debug::Log("SCRIPT STARTED");
 
-	gameCamera = GameplaySystems::GetGameObject("Game Camera");
-	godCamera = GameplaySystems::GetGameObject("God Camera");
-	staticCamera1 = GameplaySystems::GetGameObject("staticCamera1")->GetComponent<ComponentCamera>();
-	staticCamera2 = GameplaySystems::GetGameObject("staticCamera2")->GetComponent<ComponentCamera>();
-	staticCamera3 = GameplaySystems::GetGameObject("staticCamera3")->GetComponent<ComponentCamera>();
-	staticCamera4 = GameplaySystems::GetGameObject("staticCamera4")->GetComponent<ComponentCamera>();
+	gameCamera = GameplaySystems::GetGameObject(gameCameraUID);
+	godCamera = GameplaySystems::GetGameObject(godCameraUID);
+	staticCamera1 = GameplaySystems::GetGameObject(staticCamera1UID) ? GameplaySystems::GetGameObject(staticCamera1UID)->GetComponent<ComponentCamera>() : nullptr;
+	staticCamera2 = GameplaySystems::GetGameObject(staticCamera2UID) ? GameplaySystems::GetGameObject(staticCamera2UID)->GetComponent<ComponentCamera>() : nullptr;
+	staticCamera3 = GameplaySystems::GetGameObject(staticCamera3UID) ? GameplaySystems::GetGameObject(staticCamera3UID)->GetComponent<ComponentCamera>() : nullptr;
+	staticCamera4 = GameplaySystems::GetGameObject(staticCamera4UID) ? GameplaySystems::GetGameObject(staticCamera4UID)->GetComponent<ComponentCamera>() : nullptr;
 
-	player = GameplaySystems::GetGameObject("Fang");
+	player = GameplaySystems::GetGameObject(playerUID);
 
 	camera = gameCamera->GetComponent<ComponentCamera>();
 	GameplaySystems::SetRenderCamera(camera);
+
+
 	godCameraActive = false;
 	if (gameCamera && godCamera) godModeAvailable = true;
 }
