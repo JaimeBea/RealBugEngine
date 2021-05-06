@@ -3,6 +3,7 @@
 #include "Scripting/Script.h"
 
 class ComponentAnimation;
+class State;
 
 class MeleeGrunt_AnimationSet_testStateMachin : public Script
 {
@@ -15,5 +16,6 @@ public:
 
 private:
 	ComponentAnimation* animation = nullptr;
+	State* currentState = nullptr;
 };
 

@@ -15,6 +15,7 @@
 #include "Modules/ModuleInput.h"
 #include "Utils/UID.h"
 #include "Utils/Logging.h"
+#include "Utils/ImGuiUtils.h"
 
 #include <algorithm> // std::find
 
@@ -69,11 +70,24 @@ void ComponentAnimation::Update() {
 
 void ComponentAnimation::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Animation");
+
+	UID oldStateMachineUID = stateMachineResourceUID;
+	ImGui::ResourceSlot<ResourceStateMachine>("State Machine", &stateMachineResourceUID);
+	if (oldStateMachineUID != stateMachineResourceUID) {
+		ResourceStateMachine* resourceStateMachine = App->resources->GetResource<ResourceStateMachine>(stateMachineResourceUID);
+		if (resourceStateMachine) {
+			currentState = &resourceStateMachine->states.front();
+			initialState = &resourceStateMachine->states.front();
+		} else {
+			currentState = nullptr;
+			initialState = nullptr;
+		}
+	}
 }
 
 void ComponentAnimation::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_STATE_MACHINE_ID] = stateMachineResourceUID;
-	jComponent[JSON_TAG_INITAL_STATE_ID] = initialState->id;
+	jComponent[JSON_TAG_INITAL_STATE_ID] = initialState ? initialState->id : 0;
 }
 
 void ComponentAnimation::Load(JsonValue jComponent) {
@@ -98,8 +112,10 @@ void ComponentAnimation::OnUpdate() {
 
 	UpdateAnimations(rootBone);
 
-	ResourceClip* currentClip = App->resources->GetResource<ResourceClip>(currentState->clipUid);
-	currentState->currentTime += App->time->GetDeltaTime() * currentClip->speed;
+	if (currentState) {
+		ResourceClip* currentClip = App->resources->GetResource<ResourceClip>(currentState->clipUid);
+		currentState->currentTime += App->time->GetDeltaTime() * currentClip->speed;
+	}
 }
 
 void ComponentAnimation::SendTrigger(const std::string& trigger) {
@@ -141,8 +157,10 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		}
 
 	} else {
-		ResourceClip* clip = App->resources->GetResource<ResourceClip>(currentState->clipUid);
-		result = AnimationController::GetTransform(*clip, currentState->currentTime, gameObject->name.c_str(), position, rotation);
+		if (currentState) {
+			ResourceClip* clip = App->resources->GetResource<ResourceClip>(currentState->clipUid);
+			result = AnimationController::GetTransform(*clip, currentState->currentTime, gameObject->name.c_str(), position, rotation);
+		}
 	}
 
 	ComponentTransform* componentTransform = gameObject->GetComponent<ComponentTransform>();

@@ -712,94 +712,24 @@ bool ModelImporter::ImportModel(const char* filePath, JsonValue jMeta) {
 	if (assimpScene->mNumAnimations > 0) {
 		LOG("Importing animations");
 
-		JsonValue jResource = jResources[resourceIndex];
-		UID id = jResource[JSON_TAG_ID];
-		ResourceStateMachine* resourceStateMachine = App->resources->CreateResource<ResourceStateMachine>(filePath, id ? id : GenerateUID());
-		UID uidSM = resourceStateMachine->GetId();
-
-		jResource[JSON_TAG_TYPE] = GetResourceTypeName(resourceStateMachine->GetType());
-		jResource[JSON_TAG_ID] = resourceStateMachine->GetId();
-		resourceIndex += 1;
-
-		std::string resourceName = "animation";
-		std::string stateName = "state";
 		std::string clipName = "clip";
-
-		//ResourceAnimation* testAnim = nullptr; //TODO::Delete this
-
-		State initialState;
 		for (unsigned int i = 0; i < assimpScene->mNumAnimations; ++i) {
 			std::string parsedI = std::to_string(i);
 
 			ResourceAnimation* animation = ImportAnimation(filePath, jMeta, assimpScene->mAnimations[i], assimpScene, resourceIndex);
 
-			/*if (testAnim == nullptr) { //TODO::Delete this
-				testAnim = animation;
-			}*/
-
-			resourceStateMachine->resourceAnimations.insert(std::make_pair(resourceName + parsedI, animation));
-
 			JsonValue jResourceClip = jResources[resourceIndex];
 			UID idClip = jResourceClip[JSON_TAG_ID];
 			ResourceClip* clip = App->resources->CreateResource<ResourceClip>(filePath, idClip ? idClip : GenerateUID());
 			clip->Init(clipName + parsedI, animation->GetId(), 0, animation->keyFrames.size() - 1, true);
-			//clip.SetSpeed(2.0);
 
 			jResourceClip[JSON_TAG_TYPE] = GetResourceTypeName(clip->GetType());
 			jResourceClip[JSON_TAG_ID] = clip->GetId();
 			resourceIndex += 1;
 			clip->SaveToFile(clip->GetResourceFilePath().c_str());
-
-			//Adding initial state
-			initialState = resourceStateMachine->AddState(stateName + parsedI, clip->GetId());
 		}
-
-		// TODO:: Hardcoded for testing animation
-		//Setting machine state
-		//Dead animation
-		/*std::string sState2 = "State2";
-		std::string clipName2 = "testClip2";
-		JsonValue jResourceClip2 = jResources[resourceIndex];
-		UID idClip2 = jResourceClip2[JSON_TAG_ID];
-		ResourceClip* clip2 = App->resources->CreateResource<ResourceClip>(filePath, idClip2 ? idClip2 : GenerateUID());
-		clip2->Init(clipName2, testAnim->GetId(), 290, 360, false);
-		jResourceClip2[JSON_TAG_TYPE] = GetResourceTypeName(clip2->GetType());
-		jResourceClip2[JSON_TAG_ID] = clip2->GetId();
-		resourceIndex += 1;
-		clip2->SaveToFile(clip2->GetResourceFilePath().c_str());
-
-		//idle animation
-		std::string sState3 = "State3";
-		std::string clipName3 = "testClip3";
-		JsonValue jResourceClip3 = jResources[resourceIndex];
-		UID idClip3 = jResourceClip3[JSON_TAG_ID];
-		ResourceClip* clip3 = App->resources->CreateResource<ResourceClip>(filePath, idClip3 ? idClip3 : GenerateUID());
-		clip3->Init(clipName3, testAnim->GetId(), 60, 120, true);
-		jResourceClip3[JSON_TAG_TYPE] = GetResourceTypeName(clip3->GetType());
-		jResourceClip3[JSON_TAG_ID] = clip3->GetId();
-		resourceIndex += 1;
-		clip3->SaveToFile(clip3->GetResourceFilePath().c_str());
-
-		//Mocking transition
-		State state2 = resourceStateMachine->AddState(sState2, clip2->GetId());
-		State state3 = resourceStateMachine->AddState(sState3, clip3->GetId());
-
-		std::string tName1 = "s1Ts2";
-		std::string tName2 = "s2Ts1";
-		std::string tName3 = "s2Ts3";
-		std::string tName4 = "s3Ts1";
-
-		resourceStateMachine->AddTransition(initialState, state2, 0.3, tName1);
-		resourceStateMachine->AddTransition(state2, initialState, 0.3, tName2);
-		resourceStateMachine->AddTransition(state2, state3, 0.4, tName3);
-		resourceStateMachine->AddTransition(state3, initialState, 0.7, tName4);
-		*/
+		
 		ComponentAnimation* animationComponent = root->GetChildren()[0]->CreateComponent<ComponentAnimation>();
-		animationComponent->stateMachineResourceUID = resourceStateMachine->GetId();
-		animationComponent->SetInitialState(&initialState);
-		animationComponent->SetCurrentState(&initialState);
-
-		resourceStateMachine->SaveToFile(resourceStateMachine->GetResourceFilePath().c_str());
 	}
 
 	aiNode* rootBone = nullptr;

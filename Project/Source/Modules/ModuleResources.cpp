@@ -25,6 +25,8 @@
 #include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
 #include "FileSystem/AudioImporter.h"
+#include "FileSystem/StateMachineImporter.h"
+#include "FileSystem/ClipImporter.h"
 #include "UI/FontImporter.h"
 #include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
@@ -189,6 +191,12 @@ bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePa
 	} else if (extension == WAV_AUDIO_EXTENSION || extension == OGG_AUDIO_EXTENSION) {
 		// Audio files
 		AudioImporter::ImportAudio(filePath, jMeta);
+	} else if (extension == STATE_MACHINE_EXTENSION) {
+		// State Machin files
+		StateMachineImporter::ImportStateMachine(filePath, jMeta);
+	} else if (extension == ANIMATION_CLIP_EXTENSION) {
+		// Clip files
+		ClipImporter::ImportClip(filePath, jMeta);
 	} else {
 		validExtension = false;
 	}
