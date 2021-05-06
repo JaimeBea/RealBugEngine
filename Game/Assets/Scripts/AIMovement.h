@@ -23,7 +23,7 @@ public:
 private:
 
 	int maxSpeed = 8;
-	float3 velocity = float3::zero;
+	float3 velocity = float3(0, 0, 0);
 	const float searchRadius = 50.f;
 
 };
