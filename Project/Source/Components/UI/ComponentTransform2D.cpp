@@ -25,28 +25,6 @@
 #define JSON_TAG_ANCHOR_X "AnchorX"
 #define JSON_TAG_ANCHOR_Y "AnchorY"
 
-std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 1.0f), float2(0.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 1.0f), float2(0.5f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 1.0f), float2(1.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 1.0f), float2(1.0f, 1.0f)},
-
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 0.5f), float2(0.0f, 0.5f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.5f), float2(0.5f, 0.5f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.5f), float2(1.0f, 0.5f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 0.5f), float2(1.0f, 0.5f)},
-
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 0.0f), float2(0.0f, 0.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.0f), float2(0.5f, 0.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.0f), float2(1.0f, 0.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_STRETCH_HORIZONTAL, float2(1.0f, 0.0f), float2(0.0f, 0.0f)},
-
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 0.0f), float2(0.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.0f), float2(0.5f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.0f), float2(1.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 0.0f), float2(1.0f, 1.0f)},
-};
-
 void ComponentTransform2D::Update() {
 	CalculateGlobalMatrix();
 }
@@ -77,7 +55,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 
 	float2 piv = pivot;
 	float3 pivPos = pivotPosition;
-	ImGui::TextColored(App->editor->titleColor, "Pivot (X,Y)");
+	ImGui::TextColored(App->editor->titleColor, "Pivot");
 	if (ImGui::DragFloat2("Pivot (X, Y)", piv.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPivot(piv);
 	}
