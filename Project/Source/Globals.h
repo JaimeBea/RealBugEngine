@@ -55,6 +55,10 @@ enum class UpdateStatus {
 #define WAV_AUDIO_EXTENSION ".wav"
 #define OGG_AUDIO_EXTENSION ".ogg"
 
+#define STATE_MACHINE_EXTENSION ".stma"
+#define ANIMATION_CLIP_EXTENSION ".clip"
+
+
 #define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
 
 // Configuration -----------

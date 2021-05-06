@@ -116,8 +116,8 @@ void ComponentMeshRenderer::Update() {
 	const GameObject* parent = GetOwner().GetParent();
 	const GameObject* rootBone = parent->GetRootBone();
 	if (rootBone != nullptr) {
-		const GameObject* rootBoneParent = parent->GetRootBone()->GetParent();
-		const float4x4& invertedRootBoneTransform = (rootBoneParent != nullptr) ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
+		const GameObject* rootBoneParent = rootBone->GetParent();
+		const float4x4& invertedRootBoneTransform = rootBoneParent ? rootBoneParent->GetComponent<ComponentTransform>()->GetGlobalMatrix().Inverted() : float4x4::identity;
 
 		for (unsigned i = 0; i < mesh->numBones; ++i) {
 			const GameObject* bone = goBones.at(mesh->bones[i].boneName);
