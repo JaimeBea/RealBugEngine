@@ -26,6 +26,8 @@ public:
 
 	void OnClicked() override;
 
+	void OnValueChanged();
+
 	void Save(JsonValue jComponent) const override;				// Serializes the component
 	void Load(JsonValue jComponent) override;					// Deserializes the component
 	void DuplicateComponent(GameObject& owner) override;		// Duplicates the component
@@ -51,6 +53,8 @@ private:
 
 	float currentValue = 50.0f;									// Current value between maxValue and minValue
 	float normalizedValue = 0.5f;								// Normalized current value between 0 and 1
+
+	float2 newPosition = float2(0, 0);
 
 	bool clicked = false;										// Clicked state
 	float4 colorClicked = float4(0.64f, 0.64f, 0.64f, 1.f);		// The color when the button is clicked

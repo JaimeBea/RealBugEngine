@@ -52,10 +52,10 @@ void ComponentSlider::Update() {
 	float fillPosition = backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f + (backgroundTransform->GetSize().x * normalizedValue) / 2.0f;
 	fillTransform->SetPosition(float3(fillPosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z));
 
-	// Calculate handle position
+	// Calculate handle position. WIP
 
-	float handlePosition = fillTransform->GetPosition().x + (fillTransform->GetSize().x / 2.0f);
-	handleTransform->SetPosition(float3(handlePosition, handleTransform->GetPosition().y, handleTransform->GetPosition().z));
+	/*float handlePosition = fillTransform->GetPosition().x + (fillTransform->GetSize().x / 2.0f);
+	handleTransform->SetPosition(float3(handlePosition, handleTransform->GetPosition().y, handleTransform->GetPosition().z));*/
 
 
 }
@@ -102,12 +102,19 @@ void ComponentSlider::SetValue(float value) {
 }
 
 void ComponentSlider::OnClicked() {
-	LOG("HEY. SLIDER CLICKED!");
 	SetClicked(true);
 	float2 mousePos = App->input->GetMousePosition(true);
-	LOG("Mouse position: %.f, %.f", mousePos.x, mousePos.y);
-	ComponentBoundingBox2D* bb = GetOwner().GetComponent<ComponentBoundingBox2D>();
-	LOG("Min x: %.f, Max x: %.f", bb->GetWorldAABB().minPoint.x, bb->GetWorldAABB().maxPoint.x);
+	newPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y);
+	LOG("New position: %.f", newPosition.x);
+	OnValueChanged();
+}
+
+// WIP
+void ComponentSlider::OnValueChanged() {
+	ComponentTransform2D* handleTransform = handle->GetComponent<ComponentTransform2D>();
+
+	// Calculate handle position
+	handleTransform->SetPosition(float3(newPosition.x, handleTransform->GetPosition().y, handleTransform->GetPosition().z));
 }
 
 void ComponentSlider::Save(JsonValue jComponent) const {
