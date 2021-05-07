@@ -32,9 +32,22 @@ void ComponentTransform2D::Update() {
 void ComponentTransform2D::OnEditorUpdate() {
 	float3 editorPos = position;
 
-	ImGui::TextColored(App->editor->titleColor, "Position (X,Y,Z)");
+	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
 	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPosition(editorPos);
+	}
+
+	float3 scl = scale;
+	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
+		SetScale(scl);
+	}
+
+	float3 rot = localEulerAngles;
+	/*if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetRotation(rot);
+	}*/
+	if (ImGui::DragFloat("Rotation (Z)", &rot.z, App->editor->dragSpeed2f, -inf, inf)) {
+		SetRotation(rot);
 	}
 
 	float2 editorSize = size;
@@ -59,17 +72,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 	if (ImGui::DragFloat2("Pivot (X, Y)", piv.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
 		SetPivot(piv);
 	}
-	ImGui::InputFloat3("Pivot Position (X,Y,Z)", pivPos.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
-
-	float3 scl = scale;
-	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
-		SetScale(scl);
-	}
-
-	float3 rot = localEulerAngles;
-	if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-		SetRotation(rot);
-	}
+	ImGui::InputFloat3("Pivot World Position (X,Y,Z)", pivPos.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
 	UpdateUIElements();
 
