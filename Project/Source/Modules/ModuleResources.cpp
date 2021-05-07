@@ -191,8 +191,11 @@ bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePa
 	} else if (extension == WAV_AUDIO_EXTENSION || extension == OGG_AUDIO_EXTENSION) {
 		// Audio files
 		AudioImporter::ImportAudio(filePath, jMeta);
+	} else if (extension == PREFAB_EXTENSION) {
+		// Prefab files
+		PrefabImporter::ImportPrefab(filePath, jMeta);
 	} else if (extension == STATE_MACHINE_EXTENSION) {
-		// State Machin files
+		// State Machine files
 		StateMachineImporter::ImportStateMachine(filePath, jMeta);
 	} else if (extension == ANIMATION_CLIP_EXTENSION) {
 		// Clip files
