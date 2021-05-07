@@ -53,11 +53,33 @@ void ComponentTransform2D::Update() {
 
 void ComponentTransform2D::OnEditorUpdate() {
 	float3 editorPos = position;
+	float topAnch = anchorsRect.top;
+	float bottomAnch = anchorsRect.bottom;
+	float leftAnch = anchorsRect.left;
+	float rightAnch = anchorsRect.right;
 
-	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
-	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-		SetPosition(editorPos);
+	if (anchorSelected != AnchorPreset::AnchorPresetType::CUSTOM) {
+		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+		if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+			SetPosition(editorPos);
+		}
+	} else {
+		ImGui::TextColored(App->editor->titleColor, "Transformation (Rect)");
+		if (ImGui::DragFloat("Top", &topAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetTop(topAnch);
+		}
+		if (ImGui::DragFloat("Bottom", &bottomAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetBottom(bottomAnch);
+		}
+		if (ImGui::DragFloat("Left", &leftAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetLeft(leftAnch);
+		}
+		if (ImGui::DragFloat("Right", &rightAnch, App->editor->dragSpeed2f, -inf, inf)) {
+			SetRight(rightAnch);
+		}
 	}
+
+
 
 	float3 scl = scale;
 	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
@@ -74,11 +96,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 	if (ImGui::DragFloat2("Size", editorSize.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 		SetSize(editorSize);
 	}
-
-	float topAnch = anchorsRect.top;
-	float bottomAnch = anchorsRect.bottom;
-	float leftAnch = anchorsRect.left;
-	float rightAnch = anchorsRect.right;
 
 	float2 anchMin = anchorMin;
 	float2 anchMax = anchorMax;
@@ -141,21 +158,24 @@ void ComponentTransform2D::OnEditorUpdate() {
 		ImGui::InputFloat2("Max (X, Y)", anchMax.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 	}
 
-	if (ImGui::TreeNode("Rect Info")) {
-		if (ImGui::DragFloat("Top", &topAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetTop(topAnch);
+	if (anchorSelected == AnchorPreset::AnchorPresetType::CUSTOM) {
+		if (ImGui::TreeNode("Rect Info")) {
+			if (ImGui::DragFloat("Top", &topAnch, App->editor->dragSpeed2f, -inf, inf)) {
+				SetTop(topAnch);
+			}
+			if (ImGui::DragFloat("Bottom", &bottomAnch, App->editor->dragSpeed2f, -inf, inf)) {
+				SetBottom(bottomAnch);
+			}
+			if (ImGui::DragFloat("Left", &leftAnch, App->editor->dragSpeed2f, -inf, inf)) {
+				SetLeft(leftAnch);
+			}
+			if (ImGui::DragFloat("Right", &rightAnch, App->editor->dragSpeed2f, -inf, inf)) {
+				SetRight(rightAnch);
+			}
+			ImGui::TreePop();
 		}
-		if (ImGui::DragFloat("Bottom", &bottomAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetBottom(bottomAnch);
-		}
-		if (ImGui::DragFloat("Left", &leftAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetLeft(leftAnch);
-		}
-		if (ImGui::DragFloat("Right", &rightAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetRight(rightAnch);
-		}
-		ImGui::TreePop();
 	}
+
 
 	float2 piv = pivot;
 	float3 pivPos = pivotPosition;
