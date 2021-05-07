@@ -14,12 +14,18 @@
 #define SLIDER_WIDTH 200.0f
 #define HANDLE_WIDTH 20.0f
 
+#define JSON_TAG_COLOR_CLICK "ColorClick"
+#define JSON_TAG_MAX_VALUE "MaxValue"
+#define JSON_TAG_MIN_VALUE "MinValue"
+#define JSON_TAG_CURRENT_VALUE "CurrentValue"
+#define JSON_TAG_DIRECTION "Direction"
+
 ComponentSlider::~ComponentSlider() {
 
 }
 
 void ComponentSlider::Init() {
-	// TODO: Refactor this. It's not good right now but it let's me check the functionality
+	// TODO: Refactor this. It's not good right now but it let's me check the functionality + Initialization currently broken
 	std::vector<GameObject*> children = GetOwner().GetChildren();
 	for (std::vector<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
 		if ((*it)->name == "Background") {
@@ -31,7 +37,7 @@ void ComponentSlider::Init() {
 			handle = *it;
 		}
 	}
-	SetDefaultSliderSize();
+	SetNormalizedValue();
 }
 
 void ComponentSlider::Update() {
@@ -131,12 +137,26 @@ void ComponentSlider::OnValueChanged() {
 }
 
 void ComponentSlider::Save(JsonValue jComponent) const {
+	jComponent[JSON_TAG_MIN_VALUE] = minValue;
+	jComponent[JSON_TAG_MAX_VALUE] = maxValue;
+	jComponent[JSON_TAG_CURRENT_VALUE] = currentValue;
+	jComponent[JSON_TAG_DIRECTION] = (int) direction;
 
+	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
+	jColorClick[0] = colorClicked.x;
+	jColorClick[1] = colorClicked.y;
+	jColorClick[2] = colorClicked.z;
+	jColorClick[3] = colorClicked.w;
 
 }
 
 void ComponentSlider::Load(JsonValue jComponent) {
-
+	maxValue = jComponent[JSON_TAG_MAX_VALUE];
+	minValue = jComponent[JSON_TAG_MIN_VALUE];
+	currentValue = jComponent[JSON_TAG_CURRENT_VALUE];
+	int dir =  jComponent[JSON_TAG_DIRECTION];
+	direction = (DirectionType) dir;
+	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
 }
 
 void ComponentSlider::DuplicateComponent(GameObject& owner) {
