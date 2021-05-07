@@ -21,16 +21,16 @@ ComponentSlider::~ComponentSlider() {
 }
 
 void ComponentSlider::Init() {
-	// TODO: Refactor this. It's not good right now but it let's me check the functionality + Initialization currently broken
+	// TODO: Refactor this. It's not good right now but it lets me check the functionality
 	std::vector<GameObject*> children = GetOwner().GetChildren();
 	for (std::vector<GameObject*>::iterator it = children.begin(); it != children.end(); ++it) {
-		if ((*it)->name == "Background") {
+		if (it == children.begin()) {
 			background = *it;
-		} else if ((*it)->name == "Fill") {
-			fill = *it;
-		}
-		else if ((*it)->name == "Handle") {
+		} else if (it == children.end() - 1) {
 			handle = *it;
+		}
+		else {
+			fill = *it;
 		}
 	}
 	SetNormalizedValue();
@@ -83,14 +83,15 @@ void ComponentSlider::Update() {
 }
 
 void ComponentSlider::OnEditorUpdate() {
-	float* value = &currentValue;
 
-	if (ImGui::DragFloat("Max. Value", &maxValue, App->editor->dragSpeed1f, minValue + 1, inf)) {
-		SetValue(*value);
+
+	if (ImGui::DragFloat("Max. Value", &maxValue, App->editor->dragSpeed1f, minValue, inf)) {
+		currentValue = currentValue > maxValue ? maxValue : currentValue;
 		SetNormalizedValue();
+		
 	}
-	if (ImGui::DragFloat("Min. Value", &minValue, App->editor->dragSpeed1f, -inf, maxValue - 1)) {
-		SetValue(*value);
+	if (ImGui::DragFloat("Min. Value", &minValue, App->editor->dragSpeed1f, -inf, maxValue)) {
+		currentValue = currentValue < minValue ? minValue : currentValue;
 		SetNormalizedValue();
 	}
 
@@ -110,8 +111,7 @@ void ComponentSlider::OnEditorUpdate() {
 		ImGui::EndCombo();
 	}
 
-	if (ImGui::SliderFloat("Value", value, minValue, maxValue)) {
-		SetValue(*value);
+	if (ImGui::SliderFloat("Value", &currentValue, minValue, maxValue)) {
 		SetNormalizedValue();
 	}
 }
@@ -209,5 +209,6 @@ float4 ComponentSlider::GetTintColor() const {
 }
 
 void ComponentSlider::SetNormalizedValue() {
-	normalizedValue = (currentValue - minValue) / (maxValue - minValue);
+	if (maxValue - minValue == 0) normalizedValue = 0;
+	else normalizedValue = (currentValue - minValue) / (maxValue - minValue);
 }
