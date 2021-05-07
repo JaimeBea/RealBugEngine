@@ -132,7 +132,9 @@ bool ModuleRender::Init() {
 	glGenRenderbuffers(1, &depthRenderbuffer);
 	glGenTextures(1, &renderTexture);
 
+
 	ViewportResized(200, 200);
+	UpdateFramebuffer();
 
 	return true;
 }
@@ -142,7 +144,7 @@ UpdateStatus ModuleRender::PreUpdate() {
 
 #if !GAME
 	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	glViewport(0, 0, viewportWidth, viewportHeight);
+	glViewport(0, 0, viewportSize.x, viewportSize.y);
 #else
 	App->camera->ViewportResized(App->window->GetWidth(), App->window->GetHeight());
 	glViewport(0, 0, App->window->GetWidth(), App->window->GetHeight());
@@ -200,7 +202,7 @@ UpdateStatus ModuleRender::Update() {
 		if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 
 		// Draw debug draw
-		if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportWidth, viewportHeight);
+		if (drawDebugDraw) App->debugDraw->Draw(App->camera->GetViewMatrix(), App->camera->GetProjectionMatrix(), viewportSize.x, viewportSize.y);
 
 		// Draw Animations
 		if (drawAllBones) {
@@ -219,6 +221,13 @@ UpdateStatus ModuleRender::Update() {
 UpdateStatus ModuleRender::PostUpdate() {
 	BROFILER_CATEGORY("ModuleRender - PostUpdate", Profiler::Color::Green)
 
+#if !GAME
+	if (viewportUpdated) {
+		UpdateFramebuffer();
+		viewportUpdated = false;
+	}
+#endif
+
 	SDL_GL_SwapWindow(App->window->window);
 
 	return UpdateStatus::CONTINUE;
@@ -233,27 +242,32 @@ bool ModuleRender::CleanUp() {
 }
 
 void ModuleRender::ViewportResized(int width, int height) {
-	viewportWidth = width;
-	viewportHeight = height;
+	viewportSize.x = width;
+	viewportSize.y = height;
 
-#if !GAME
-	// Framebuffer calculations
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	viewportUpdated = true;
+}
+
+void ModuleRender::UpdateFramebuffer() {
+	#if GAME
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	#else
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	#endif
 
 	glBindTexture(GL_TEXTURE_2D, renderTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, viewportSize.x, viewportSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
 
 	glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, viewportSize.x, viewportSize.y);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 		LOG("ERROR: Framebuffer is not complete!");
 	}
-#endif
 }
 
 void ModuleRender::SetVSync(bool vsync) {
@@ -461,7 +475,7 @@ void ModuleRender::RenderUI() {
 void ModuleRender::SetOrtographicRender() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, viewportWidth, viewportHeight, 0, 1, -1);
+	glOrtho(0, viewportSize.x, viewportSize.y, 0, 1, -1);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -470,6 +484,10 @@ void ModuleRender::SetPerspectiveRender() {
 	glLoadIdentity();
 	glOrtho(-1, 1, -1, 1, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
+}
+
+const float2 ModuleRender::GetViewportSize() {
+	return viewportSize;
 }
 
 void ModuleRender::DrawAnimation(const GameObject* gameObject, bool hasAnimation) {

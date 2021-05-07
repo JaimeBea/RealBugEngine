@@ -8,6 +8,7 @@
 #include "Modules/ModuleEvents.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
+#include "Modules/ModuleProject.h"
 
 #include "imgui_internal.h"
 #include "IconsFontAwesome5.h"
@@ -41,6 +42,8 @@ void PanelControlEditor::Update() {
 		std::string scale = std::string(ICON_FA_EXTERNAL_LINK_ALT);
 		std::string local = std::string(ICON_FA_BOX);
 		std::string global = std::string(ICON_FA_GLOBE);
+		std::string pivot = std::string(ICON_FA_SIGN);
+		std::string center = std::string(ICON_FA_PLUS_SQUARE);
 		if (ImGui::BeginMenuBar()) {
 			if (ImGui::RadioButton(translate.c_str(), currentGuizmoOperation == ImGuizmo::TRANSLATE)) currentGuizmoOperation = ImGuizmo::TRANSLATE;
 			ImGui::SameLine();
@@ -58,6 +61,14 @@ void PanelControlEditor::Update() {
 			} else {
 				currentGuizmoMode = ImGuizmo::LOCAL;
 			}
+
+			ImGui::SameLine();
+			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+			ImGui::SameLine();
+
+			if (ImGui::RadioButton(pivot.c_str(), pivotMode)) pivotMode = true;
+			ImGui::SameLine();
+			if (ImGui::RadioButton(center.c_str(), !pivotMode)) pivotMode = false;
 
 			ImGui::SameLine();
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
@@ -94,7 +105,7 @@ void PanelControlEditor::Update() {
 			std::string pause = std::string(ICON_FA_PAUSE);
 			std::string stop = std::string(ICON_FA_STOP);
 			std::string step = std::string(ICON_FA_STEP_FORWARD);
-
+			std::string compile = std::string("Compile");
 			// Play / Pause / Step buttons
 			if (App->time->HasGameStarted()) {
 				if (ImGui::Button(stop.c_str())) {
@@ -112,13 +123,27 @@ void PanelControlEditor::Update() {
 				}
 			} else {
 				if (ImGui::Button(play.c_str())) {
+					if (!App->project->IsGameLoaded()) {
+#if _DEBUG
+						App->project->CompileProject(Configuration::DEBUG_EDITOR);
+#else
+						App->project->CompileProject(Configuration::RELEASE_EDITOR);
+#endif // _DEBUG
+					}
 					App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_PLAY));
-					
 				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button(step.c_str())) {
 				App->events->AddEvent(TesseractEvent(TesseractEventType::PRESSED_STEP));
+			}
+			ImGui::SameLine();
+			if (ImGui::Button(compile.c_str())) {
+#if _DEBUG
+				App->project->CompileProject(Configuration::DEBUG_EDITOR);
+#else
+				App->project->CompileProject(Configuration::RELEASE_EDITOR);
+#endif
 			}
 
 			ImGui::PopItemWidth();
@@ -145,4 +170,8 @@ void PanelControlEditor::GetImguizmoSnap(float* newSnap) const {
 	newSnap[0] = snap[0];
 	newSnap[1] = snap[1];
 	newSnap[2] = snap[2];
+}
+
+bool PanelControlEditor::GetRectTool() const {
+	return pivotMode;
 }

@@ -17,7 +17,8 @@ public:
 	UpdateStatus PostUpdate() override;
 	bool CleanUp() override;
 
-	void ViewportResized(int width, int height);
+	void ViewportResized(int width, int height); // Updates the viewport aspect ratio with the new one given by parameters. It will set 'viewportUpdated' to true, to regenerate the framebuffer to its new size using UpdateFramebuffer().
+	void UpdateFramebuffer();					 // Generates the rendering framebuffer on Init(). If 'viewportUpdated' was set to true, it will be also called at PostUpdate().
 
 	void SetVSync(bool vsync);
 
@@ -34,6 +35,7 @@ public:
 	void UpdateShadingMode(const char* shadingMode);
 
 	int GetCulledTriangles() const;
+	const float2 GetViewportSize();
 
 public:
 	void* context = nullptr; // SDL context.
@@ -43,9 +45,8 @@ public:
 	unsigned depthRenderbuffer = 0;
 	unsigned framebuffer = 0;
 
-	// ------- Viewport Size ------- //
-	unsigned viewportWidth = 0;
-	unsigned viewportHeight = 0;
+	// ------- Viewport Updated ------- //
+	bool viewportUpdated = true;
 
 	// -- Debugging Tools Toggles -- //
 	bool debugMode = false; // Flag to activate DrawOptions only ingame (not use in the engine)
@@ -58,7 +59,7 @@ public:
 	bool drawLightGizmos = false;
 	int culledTriangles = 0;
 
-	float3 ambientColor = {0.0f, 0.0f, 0.0f}; // Color of ambient Light
+	float3 ambientColor = {0.25f, 0.25f, 0.25f}; // Color of ambient Light
 	float3 clearColor = {0.1f, 0.1f, 0.1f};	  // Color of the viewport between frames
 
 private:
@@ -71,4 +72,8 @@ private:
 	void RenderUI();
 	void SetOrtographicRender();
 	void SetPerspectiveRender();
+
+private:
+	// ------- Viewport Size ------- //
+	float2 viewportSize = float2::zero;
 };

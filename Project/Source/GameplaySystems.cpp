@@ -14,6 +14,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
+#include "Resources/ResourcePrefab.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/Logging.h"
 #include "TesseractEvent.h"
@@ -24,13 +25,26 @@
 #include "Utils/Leaks.h"
 
 // ----------- GAMEPLAY ------------ //
+
 GameObject* GameplaySystems::GetGameObject(const char* name) {
-	return App->scene->scene->root->FindDescendant(name);
+	GameObject* root = App->scene->scene->root;
+	return root->name == name ? root : root->FindDescendant(name);
 }
 
-TESSERACT_ENGINE_API void GameplaySystems::SetRenderCamera(GameObject* camera) {
-	App->camera->ChangeActiveFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
-	App->camera->ChangeCullingFrustum(camera->GetComponent<ComponentCamera>()->frustum, true);
+GameObject* GameplaySystems::GetGameObject(UID id) {
+	return App->scene->scene->GetGameObject(id);
+}
+
+template<typename T>
+T* GameplaySystems::GetResource(UID id) {
+	return App->resources->GetResource<T>(id);
+}
+
+template TESSERACT_ENGINE_API ResourcePrefab* GameplaySystems::GetResource<ResourcePrefab>(UID id);
+
+void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
+	App->camera->ChangeActiveCamera(camera, true);
+	App->camera->ChangeCullingCamera(camera, true);
 }
 
 // ------------- DEBUG ------------- //
@@ -87,10 +101,11 @@ int Debug::GetCulledTriangles() {
 }
 
 const float3 Debug::GetCameraDirection() {
-	return App->camera->GetActiveFrustum()->Front();
+	return App->camera->GetActiveCamera()->GetFrustum()->Front();
 }
 
 // ------------- TIME -------------- //
+
 float Time::GetDeltaTime() {
 	return App->time->GetDeltaTime();
 }
@@ -104,6 +119,7 @@ float Time::GetMS() {
 }
 
 // ------------- INPUT ------------- //
+
 bool Input::GetMouseButtonDown(int button) {
 	return App->input->GetMouseButtons()[button] == KS_DOWN;
 }
@@ -124,6 +140,10 @@ const float2& Input::GetMouseMotion() {
 	return App->input->GetMouseMotion();
 }
 
+float2 Input::GetMousePosition() {
+	return App->input->GetMousePosition(true);
+}
+
 bool Input::GetKeyCodeDown(KEYCODE keycode) {
 	return App->input->GetKeyboard()[keycode] == KS_DOWN;
 }
@@ -141,6 +161,7 @@ bool Input::GetKeyCode(KEYCODE keycode) {
 }
 
 // --------- SCENE MANAGER --------- //
+
 void SceneManager::ChangeScene(const char* scenePath) {
 	TesseractEvent e(TesseractEventType::CHANGE_SCENE);
 	e.Set<ChangeSceneStruct>(scenePath);

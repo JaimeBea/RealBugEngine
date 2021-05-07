@@ -31,8 +31,11 @@
 #define JSON_TAG_SELECTABLE_TYPE "SelectableType"
 
 ComponentSelectable::~ComponentSelectable() {
-	if (App->userInterface->GetCurrentEventSystem()->GetCurrentSelected() == this) {
-		App->userInterface->GetCurrentEventSystem()->SetSelected(0);
+	ComponentEventSystem* eventSystem = App->userInterface->GetCurrentEventSystem();
+	if (eventSystem) {
+		if (eventSystem->GetCurrentSelected() == this) {
+			App->userInterface->GetCurrentEventSystem()->SetSelected(0);
+		}
 	}
 }
 
@@ -332,6 +335,8 @@ void ComponentSelectable::TryToClickOn() const {
 			((ComponentButton*) componentToPress)->OnClicked();
 			break;
 		case ComponentType::TOGGLE:
+			componentToPress = GetOwner().GetComponent<ComponentToggle>();
+			((ComponentToggle*) componentToPress)->OnClicked();
 			break;
 		default:
 			assert("This is not supposed to ever happen");
@@ -353,4 +358,8 @@ Component* ComponentSelectable::GetSelectableComponent() {
 
 void ComponentSelectable::SetSelectableType(ComponentType type_) {
 	selectableType = type_;
+}
+
+bool ComponentSelectable::CanBeRemoved() const {
+	return !(GetOwner().GetComponent<ComponentButton>() || GetOwner().GetComponent<ComponentToggle>());
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class GameObject;
 
@@ -12,13 +12,14 @@ public:
 
 	void Start() override;
 	void Update() override;
+
 public:
-
-	GameObject* gameObject = nullptr;
-	GameObject* camera = nullptr;
-
-private:
-
+	UID cameraUID;
+	UID fangUID;
 	int speed = 10;
 	float cameraXPosition = -163;
+
+private:
+	GameObject* camera = nullptr;
+	GameObject* fang = nullptr;
 };

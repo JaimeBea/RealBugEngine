@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class GameObject;
 class ReturnMenu : public Script
@@ -13,7 +13,7 @@ public:
 	void OnButtonClick() override;
 
 public:
-	GameObject* button = nullptr;
-	float padding = 20;
+	UID buttonUID;
+	float padding = 20.f;
 };
 
