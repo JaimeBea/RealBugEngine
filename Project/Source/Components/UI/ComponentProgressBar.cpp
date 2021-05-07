@@ -19,20 +19,21 @@
 #define JSON_TAG_MIN_VALUE "Min"
 #define JSON_TAG_MAX_VALUE "Max"
 #define JSON_TAG_FILL_DIRECTION "FillDirection"
+#define JSON_TAG_FILL_DIRECTION_BOTTOM "FillDirectionBottom"
+#define JSON_TAG_FILL_DIRECTION_TOP "FillDirectionTop"
 #define JSON_TAG_PROGRESS_VALUE "ProgressValue"
 
 ComponentProgressBar::~ComponentProgressBar() {
 }
 
 void ComponentProgressBar::Init() {
-	
 }
 
 void ComponentProgressBar::Update() {
 	//The progress bar GameObject must have two image gameobjects as childs (for background and fill)
 	if (background == nullptr || fill == nullptr) {
-		GameObject owner = GetOwner();
 
+		GameObject owner = GetOwner();
 		std::vector<GameObject*> childs = owner.GetChildren();
 
 		//IMPORTANT: Baackground goes first then fill
@@ -49,11 +50,8 @@ void ComponentProgressBar::Update() {
 			rectFill = fill->GetComponent<ComponentTransform2D>();
 		} else
 			return;
-
 	}
-
 	backPos = rectBack->GetPosition();
-
 	backSize = rectBack->GetSize();
 
 	float percent = (value - min) / (max - min);
@@ -122,6 +120,8 @@ void ComponentProgressBar::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_MIN_VALUE] = min;
 	jComponent[JSON_TAG_MAX_VALUE] = max;
 	jComponent[JSON_TAG_FILL_DIRECTION] = rightToLeft;
+	jComponent[JSON_TAG_FILL_DIRECTION_BOTTOM] = bottomToTop;
+	jComponent[JSON_TAG_FILL_DIRECTION_TOP] = topToBottom;
 	jComponent[JSON_TAG_PROGRESS_VALUE] = value;
 }
 
@@ -130,6 +130,8 @@ void ComponentProgressBar::Load(JsonValue jComponent) {
 	min = jComponent[JSON_TAG_MIN_VALUE];
 	max = jComponent[JSON_TAG_MAX_VALUE];
 	rightToLeft = jComponent[JSON_TAG_FILL_DIRECTION];
+	bottomToTop = jComponent[JSON_TAG_FILL_DIRECTION_BOTTOM];
+	topToBottom = jComponent[JSON_TAG_FILL_DIRECTION_TOP];
 	value = jComponent[JSON_TAG_PROGRESS_VALUE];
 }
 
@@ -140,6 +142,8 @@ void ComponentProgressBar::DuplicateComponent(GameObject& owner) {
 	component->SetMin(min);
 	component->SetMax(max);
 	component->SetFillDir(rightToLeft);
+	component->SetFillDirBottom(bottomToTop);
+	component->SetFillDirTop(topToBottom);
 }
 
 void ComponentProgressBar::SetValue(float v) {
@@ -160,4 +164,12 @@ void ComponentProgressBar::SetMax(float n) {
 
 void ComponentProgressBar::SetFillDir(bool fillDir) {
 	rightToLeft = fillDir;
+}
+
+void ComponentProgressBar::SetFillDirBottom(bool fillDir) {
+	bottomToTop = fillDir;
+}
+
+void ComponentProgressBar::SetFillDirTop(bool fillDir) {
+	topToBottom = fillDir;
 }

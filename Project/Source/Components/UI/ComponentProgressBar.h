@@ -26,6 +26,8 @@ public:
 	void SetMin(float m);
 	void SetMax(float n);
 	void SetFillDir(bool fillDir);
+	void SetFillDirBottom(bool fillDir);
+	void SetFillDirTop(bool fillDir);
 
 public:
 	float value = .5f;
