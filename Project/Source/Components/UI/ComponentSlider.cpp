@@ -39,6 +39,13 @@ void ComponentSlider::Update() {
 	if (clicked) {
 		if (!App->input->GetMouseButton(1)) {
 			clicked = false;
+		} else {
+			float2 mousePos = App->input->GetMousePosition(true);
+			float2 auxNewPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y);
+			if (newPosition.x != auxNewPosition.x) {
+				newPosition = auxNewPosition;
+				OnValueChanged();
+			}
 		}
 	}
 
@@ -54,8 +61,8 @@ void ComponentSlider::Update() {
 
 	// Calculate handle position. WIP
 
-	/*float handlePosition = fillTransform->GetPosition().x + (fillTransform->GetSize().x / 2.0f);
-	handleTransform->SetPosition(float3(handlePosition, handleTransform->GetPosition().y, handleTransform->GetPosition().z));*/
+	float handlePosition = fillTransform->GetPosition().x + (fillTransform->GetSize().x / 2.0f);
+	handleTransform->SetPosition(float3(handlePosition, handleTransform->GetPosition().y, handleTransform->GetPosition().z));
 
 
 }
@@ -111,10 +118,16 @@ void ComponentSlider::OnClicked() {
 
 // WIP
 void ComponentSlider::OnValueChanged() {
-	ComponentTransform2D* handleTransform = handle->GetComponent<ComponentTransform2D>();
-
-	// Calculate handle position
-	handleTransform->SetPosition(float3(newPosition.x, handleTransform->GetPosition().y, handleTransform->GetPosition().z));
+	ComponentTransform2D* backgroundTransform = background->GetComponent<ComponentTransform2D>();
+	float size = (backgroundTransform->GetPosition().x + newPosition.x) - (backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f);
+	if (size > backgroundTransform->GetSize().x) {
+		size = backgroundTransform->GetSize().x;
+	}
+	if (size < 0) {
+		size = 0;
+	}
+	normalizedValue = size / backgroundTransform->GetSize().x;
+	LOG("Normalized value: %.f", normalizedValue);
 }
 
 void ComponentSlider::Save(JsonValue jComponent) const {
