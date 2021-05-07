@@ -106,7 +106,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL;
 		SetAnchorMin(anchorPresets[5].anchorMin);
 		SetAnchorMax(anchorPresets[5].anchorMax);
-		UpdateAnchor2DPosition();
+		CalculateAnchor2DPosition();
 	}
 	if (isCustomAnchor) { // If we select custom
 		anchorSelected = AnchorPreset::AnchorPresetType::CUSTOM;
@@ -116,7 +116,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 		if (ImGui::DragFloat2("Max (X, Y)", anchMax.ptr(), App->editor->dragSpeed2f, 0, 1)) {
 			SetAnchorMax(anchMax);
 		}
-		UpdateAnchor2DPosition();
+		CalculateAnchor2DPosition();
 	} else { // If we select presets
 		// Anchor Preset Type combo box
 		const char* anchorPresetTypeItems[] = {
@@ -145,7 +145,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 					anchorSelected = AnchorPreset::AnchorPresetType(n);
 					SetAnchorMin(anchorPresets[n].anchorMin);
 					SetAnchorMax(anchorPresets[n].anchorMax);
-					UpdateAnchor2DPosition();
+					CalculateAnchor2DPosition();
 				}
 				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
@@ -463,14 +463,21 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	component->dirty = true;
 }
 
-void ComponentTransform2D::UpdateAnchor2DPosition() {
+
+
+void ComponentTransform2D::CalculateAnchor2DPosition() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 	float2 actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
-	//float2 actualScreenCanvasReferenceSize = float2(App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y);
-	float posMinX = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f) - ((size.x) * (anchorMin.x - 0.5));
-	float posMinY = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f) - ((size.y) * (anchorMin.y - 0.5));
-	float3 newPosition = float3(posMinX, posMinY, 0);
-	SetPosition(newPosition);
+	float posXAnchored = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f);
+	float posYAnchored = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f);
+	float2 anchored2DPosition = float2(posXAnchored, posYAnchored);
+	SetAnchor2DPosition(anchored2DPosition);
+	UpdateObjectPosition();
+
+}
+
+void ComponentTransform2D::SetAnchor2DPosition(float2 anchor2DPosition_) {
+	anchored2Dposition = anchor2DPosition_;
 }
 
 void ComponentTransform2D::SetTop(float top_) {
@@ -487,4 +494,12 @@ void ComponentTransform2D::SetLeft(float left_) {
 
 void ComponentTransform2D::SetRight(float right_) {
 	anchorsRect.right = right_;
+}
+
+void ComponentTransform2D::UpdateObjectPosition() {
+	// Calculate with the offset
+	float posMinX = anchored2Dposition.x - ((size.x) * (anchorMin.x - 0.5));
+	float posMinY = anchored2Dposition.y - ((size.y) * (anchorMin.y - 0.5));
+	float3 newPosition = float3(posMinX, posMinY, 0);
+	SetPosition(newPosition);
 }

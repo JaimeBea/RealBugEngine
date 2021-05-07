@@ -93,11 +93,13 @@ public:
 	void Invalidate();									 // Invalidates component
 	void DuplicateComponent(GameObject& owner) override; // Duplicates component (THIS SHOULDN'T BE USED)
 
-	void UpdateAnchor2DPosition(); // Sets new anchor 2D position to value
+	void CalculateAnchor2DPosition();
+	void SetAnchor2DPosition(float2 anchor2DPosition);
 	void SetTop(float top);		   // Sets the right anchor
 	void SetBottom(float bottom);   // Sets the right anchor
 	void SetLeft(float left);	   // Sets the right anchor
 	void SetRight(float right);	   // Sets the right anchor
+	void UpdateObjectPosition(); // Update position object related to the anchor 2D position
 
 private:
 	void CalculateGlobalMatrix();								  // Calculates the Global Matrix
