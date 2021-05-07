@@ -170,7 +170,7 @@ void GameController::Update() {
 		}
 		// --- Show/Hide Bounding Boxes
 		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_V)) {
-			//Debug::ToggleDrawBBoxes(); //TODO: Disabled until better level building
+			Debug::ToggleDrawBBoxes(); //TODO: Disabled until better level building
 		}
 		// --- Show/Hide Animation Bones
 		if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_B)) {
