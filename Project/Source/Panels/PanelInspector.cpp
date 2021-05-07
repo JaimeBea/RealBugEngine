@@ -234,6 +234,8 @@ void PanelInspector::Update() {
 					ComponentParticleSystem* particle = selected->CreateComponent<ComponentParticleSystem>();
 					if (particle != nullptr) {
 						particle->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
 				if (ImGui::MenuItem("Audio Source")) {
@@ -350,7 +352,7 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
-		
+
 		if (ImGui::MenuItem("Toggle")) {
 			ComponentToggle* component = selected->GetComponent<ComponentToggle>();
 			if (component == nullptr) {

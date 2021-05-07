@@ -24,19 +24,19 @@ enum class EmitterType {
 class ComponentParticleSystem : public Component {
 public:
 	struct Particle {
-		float4x4 model;
+		float4x4 model = float4x4::identity;
 
-		float3 initialPosition;
-		float3 position;
-		float3 direction;
-		float3 scale;
+		float3 initialPosition = float3(0.0f, 0.0f, 0.0f);
+		float3 position = float3(0.0f, 0.0f, 0.0f);
+		float3 direction = float3(0.0f, 0.0f, 0.0f);
+		float3 scale = float3(0.1f, 0.1f, 0.1f);
 
-		Quat rotation;
+		Quat rotation = Quat(0.0f, 0.0f, 0.0f, 0.0f);
 
-		float velocity;
+		float velocity = 0.0f;
 		float life = 0.0F;
-		float currentFrame;
-		float colorFrame;
+		float currentFrame = 0.0f;
+		float colorFrame = 0.0f;
 	};
 
 	REGISTER_COMPONENT(ComponentParticleSystem, ComponentType::PARTICLE, false);
@@ -62,18 +62,16 @@ private:
 	UID textureID = 0; // ID of the image
 	UID shaderID = 0;  // ID of the shader
 
-	bool looping;
+	bool looping = false;
 	bool isPlaying = true;
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
 	bool isRandomFrame = false;
 
-	float4 initC;
-	float4 finalC;
+	float4 initC = float4::one;
+	float4 finalC = float4::one;
 	float4 color = float4::one; // Color used as default tainter
 
 	float scale = 5;
-	float duration;
-	float startLifetime;
 	float maxParticles = 100;
 	float velocity = 0.1;
 	float kc = 1.0f; //Keep in one to avoid having denominator less than 1
@@ -84,7 +82,7 @@ private:
 	float particleLife = 5;
 
 	int maxDistance = 2;
-	int particleActivated;
+	int particleActivated = false;
 	int Xtiles = 1;
 	int Ytiles = 1;
 
