@@ -308,13 +308,17 @@ GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 }
 
 GameObject* PanelHierarchy::CreateUISlider(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Slider");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
 	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
 	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
-	ComponentSlider* slider = newGameObject->CreateComponent<ComponentSlider>();
 	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
+	ComponentSlider* slider = newGameObject->CreateComponent<ComponentSlider>();
 
 	CreateEventSystem(App->scene->scene->root);
 

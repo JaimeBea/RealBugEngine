@@ -11,7 +11,7 @@
 #include "Utils/Leaks.h"
 
 #define SLIDER_HEIGHT 100.0f
-#define SLIDER_WIDTH 200.0f
+#define SLIDER_WIDTH 400.0f
 #define HANDLE_WIDTH 20.0f
 
 #define JSON_TAG_COLOR_CLICK "ColorClick"
@@ -37,7 +37,8 @@ void ComponentSlider::Init() {
 			handle = *it;
 		}
 	}
-	SetNormalizedValue();
+	SetDefaultSliderSize();
+	//SetNormalizedValue();
 }
 
 void ComponentSlider::Update() {
@@ -171,11 +172,11 @@ void ComponentSlider::SetClicked(bool clicked_) {
 	clicked = clicked_;
 }
 
-const float4& ComponentSlider::GetClickColor() const {
+float4 ComponentSlider::GetClickColor() const {
 	return colorClicked;
 }
 
-const float4& ComponentSlider::GetTintColor() const {
+float4 ComponentSlider::GetTintColor() const {
 	if (!IsActive()) return float4::one;
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
