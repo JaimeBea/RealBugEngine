@@ -30,10 +30,6 @@ GENERATE_BODY_IMPL(GameController);
 
 void GameController::Start() {
 
-	speed = 50.f;
-	rotationSpeedX = 10.f;
-	rotationSpeedY = 10.f;
-	focusDistance = 100.f;
 	showWireframe = false;
 	transitionFinished = false;
 	Debug::Log("SCRIPT STARTED");
@@ -47,8 +43,10 @@ void GameController::Start() {
 
 	player = GameplaySystems::GetGameObject(playerUID);
 
-	camera = gameCamera->GetComponent<ComponentCamera>();
-	GameplaySystems::SetRenderCamera(camera);
+	if (gameCamera) {
+		camera = gameCamera->GetComponent<ComponentCamera>();
+		GameplaySystems::SetRenderCamera(camera);
+	}
 
 
 	godCameraActive = false;
@@ -64,11 +62,12 @@ void GameController::Update() {
 		if (godModeAvailable) {
 			Debug::ToggleDebugMode();
 			if (godCameraActive) {
+				camera = gameCamera->GetComponent<ComponentCamera>();
 				GameplaySystems::SetRenderCamera(camera);
 				godCameraActive = false;
 			}
 			else {
-				camera = gameCamera->GetComponent<ComponentCamera>();
+				camera = godCamera->GetComponent<ComponentCamera>();
 				GameplaySystems::SetRenderCamera(camera);
 				godCameraActive = true;
 			}
@@ -101,52 +100,52 @@ void GameController::Update() {
 	}
 
 	// Godmode Controls
-	ComponentCamera* camera = nullptr;
+	ComponentCamera* cameraGodMode = nullptr;
 	ComponentTransform* transform = nullptr;
 	if (godCamera) {
 		transform = godCamera->GetComponent<ComponentTransform>();
-		camera = godCamera->GetComponent<ComponentCamera>();
+		cameraGodMode = godCamera->GetComponent<ComponentCamera>();
 	}
 	if (!transform) return;
-	if (!camera) return;
+	if (!cameraGodMode) return;
 
 	if (godCameraActive) {
 		// Movement
 		// --- Forward
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_UP)) {
-			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Front().Normalized() * speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + cameraGodMode->GetFrustum()->Front().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// --- Left
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_LEFT)) {
-			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->WorldRight().Normalized() * -speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + cameraGodMode->GetFrustum()->WorldRight().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		// --- Backward
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_DOWN)) {
-			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Front().Normalized() * -speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + cameraGodMode->GetFrustum()->Front().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		// --- Right
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_RIGHT)) {
-			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->WorldRight().Normalized() * speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + cameraGodMode->GetFrustum()->WorldRight().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// --- Down
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_COMMA)) {
-			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Up().Normalized() * -speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + cameraGodMode->GetFrustum()->Up().Normalized() * -speed * Time::GetDeltaTime());
 		}
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_PERIOD)) {
-			transform->SetPosition(transform->GetPosition() + camera->GetFrustum()->Up().Normalized() * speed * Time::GetDeltaTime());
+			transform->SetPosition(transform->GetPosition() + cameraGodMode->GetFrustum()->Up().Normalized() * speed * Time::GetDeltaTime());
 		}
 		// Rotation
 		if (Input::GetMouseButton(2)) { // TODO: Why a 2?! It should be a 3!
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_LALT)) {
 				// --- Orbiting
 				vec oldFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
-				Rotate(Input::GetMouseMotion(), camera->GetFrustum(), transform);
+				Rotate(Input::GetMouseMotion(), cameraGodMode->GetFrustum(), transform);
 				vec newFocus = transform->GetPosition() + transform->GetLocalMatrix().Col3(2) * focusDistance;
 				transform->SetPosition(transform->GetPosition() + (oldFocus - newFocus));
 			}
 			else {
 				// --- Panning
-				Rotate(Input::GetMouseMotion(), camera->GetFrustum(), transform);
+				Rotate(Input::GetMouseMotion(), cameraGodMode->GetFrustum(), transform);
 			}
 		}
 

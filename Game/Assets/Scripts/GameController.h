@@ -29,10 +29,10 @@ public:
 	UID staticCamera4UID;
 	UID playerUID;
 
-	float speed = 0.f;
-	float rotationSpeedX = 0.f;
-	float rotationSpeedY = 0.f;
-	float focusDistance = 0.f;
+	float speed = 50.f;
+	float rotationSpeedX = 10.f;
+	float rotationSpeedY = 10.f;
+	float focusDistance = 100.f;
 	float transitionSpeed = 1000.f;
 
 private:
