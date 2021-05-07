@@ -43,9 +43,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 	}
 
 	float3 rot = localEulerAngles;
-	/*if (ImGui::DragFloat3("Rotation", rot.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-		SetRotation(rot);
-	}*/
 	if (ImGui::DragFloat("Rotation (Z)", &rot.z, App->editor->dragSpeed2f, -inf, inf)) {
 		SetRotation(rot);
 	}
