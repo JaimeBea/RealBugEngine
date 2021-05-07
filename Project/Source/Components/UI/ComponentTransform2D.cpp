@@ -23,8 +23,11 @@
 #define JSON_TAG_PIVOT "Pivot"
 #define JSON_TAG_PIVOT_POSITION "PivotPosition"
 #define JSON_TAG_SIZE "Size"
-#define JSON_TAG_ANCHOR_X "AnchorX"
-#define JSON_TAG_ANCHOR_Y "AnchorY"
+#define JSON_TAG_ANCHOR_MIN "AnchorMin"
+#define JSON_TAG_ANCHOR_MAX "AnchorMax"
+#define JSON_TAG_ANCHORED_2D_POSITION "Anchored2DPosition"
+#define JSON_TAG_ANCHOR_SELECTED "AnchorSelected"
+#define JSON_TAG_IS_CUSTOM_ANCHOR "IsCustomAnchor"
 
 std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
 	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_HORIZONTAL_LEFT_VERTICAL, float2(0.0f, 1.0f), float2(0.0f, 1.0f)},
@@ -219,18 +222,27 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jPosition[1] = pivotPosition.y;
 	jPosition[2] = pivotPosition.z;
 
-
 	JsonValue jSize = jComponent[JSON_TAG_SIZE];
 	jSize[0] = size.x;
 	jSize[1] = size.y;
 
-	JsonValue jAnchorX = jComponent[JSON_TAG_ANCHOR_X];
-	jAnchorX[0] = anchorMin.x;
-	jAnchorX[1] = anchorMin.y;
+	JsonValue jAnchorMin = jComponent[JSON_TAG_ANCHOR_MIN];
+	jAnchorMin[0] = anchorMin.x;
+	jAnchorMin[1] = anchorMin.y;
 
-	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
-	jAnchorY[0] = anchorMax.x;
-	jAnchorY[1] = anchorMax.y;
+	JsonValue jAnchorMax = jComponent[JSON_TAG_ANCHOR_MAX];
+	jAnchorMax[0] = anchorMax.x;
+	jAnchorMax[1] = anchorMax.y;
+
+	JsonValue jAnchored2DPosition = jComponent[JSON_TAG_ANCHORED_2D_POSITION];
+	jAnchored2DPosition[0] = anchored2Dposition.x;
+	jAnchored2DPosition[1] = anchored2Dposition.y;
+
+	//jComponent[JSON_TAG_ANCHOR_SELECTED] = anchorSelected;
+
+	jComponent[JSON_TAG_IS_CUSTOM_ANCHOR] = isCustomAnchor;
+
+
 }
 
 void ComponentTransform2D::Load(JsonValue jComponent) {
@@ -255,11 +267,18 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 	JsonValue jSize = jComponent[JSON_TAG_SIZE];
 	size.Set(jSize[0], jSize[1]);
 
-	JsonValue jAnchorX = jComponent[JSON_TAG_ANCHOR_X];
-	anchorMin.Set(jAnchorX[0], jAnchorX[1]);
+	JsonValue jAnchorMin = jComponent[JSON_TAG_ANCHOR_MIN];
+	anchorMin.Set(jAnchorMin[0], jAnchorMin[1]);
 
-	JsonValue jAnchorY = jComponent[JSON_TAG_ANCHOR_Y];
-	anchorMax.Set(jAnchorY[0], jAnchorY[1]);
+	JsonValue jAnchorMax = jComponent[JSON_TAG_ANCHOR_MAX];
+	anchorMax.Set(jAnchorMax[0], jAnchorMax[1]);
+
+	JsonValue jAnchored2Dposition = jComponent[JSON_TAG_ANCHORED_2D_POSITION];
+	anchored2Dposition.Set(jAnchored2Dposition[0], jAnchored2Dposition[1]);
+
+	//anchorSelected = jComponent[JSON_TAG_ANCHOR_SELECTED];
+
+	isCustomAnchor = jComponent[JSON_TAG_IS_CUSTOM_ANCHOR];
 
 	dirty = true;
 }

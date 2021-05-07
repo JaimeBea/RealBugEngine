@@ -107,23 +107,23 @@ private:
 	bool HasAnyUIElementsInChildren(const GameObject* obj) const; //Returns true if any UI Elements are found in this GameObject or its children
 
 private:
-	float2 pivot = float2(0.5, 0.5);	 // The position of the pivot in 2D
-	float3 pivotPosition = float3::zero; // The position of the pivot in the world
-	float2 size = float2(200, 200);	 // The size of the item
-
 	float3 position = float3::zero;			// The offset position
 	Quat rotation = Quat::identity;			// The rotation of the element in Quaternion
 	float3 localEulerAngles = float3::zero; // The rotation of the element in Euler
 	float3 scale = float3::one;				// The scale of the element
 
+	float2 pivot = float2(0.5, 0.5);	 // The position of the pivot in 2D
+	float3 pivotPosition = float3::zero; // The position of the pivot in the world
+	float2 size = float2(200, 200);		 // The size of the item
+
 	Rect anchorsRect = Rect(0, 0, 0, 0);																				// Positions of the rectangle’s edges relative to their anchors.
+	float2 anchorMin = float2(0.5, 0.5);																				// The Anchor Min. Represents the lower left handle.
+	float2 anchorMax = float2(0.5, 0.5);																				// The Anchor Max. Represents the upper right handle.
 	float2 anchored2Dposition = float2(0, 0);																			// Position of the anchor in 2D
 	static std::array<AnchorPreset, 16> anchorPresets;																	// Listwith all the possible anchors presets 
 	AnchorPreset::AnchorPresetType anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL;	// The anchor selected
 	bool isCustomAnchor = false;																						// Variable that checks if is selected Custom or Presets in the inspector
-	float2 anchorMin = float2(0.5, 0.5);																				// The Anchor Min. Represents the lower left handle.
-	float2 anchorMax = float2(0.5, 0.5);																				// The Anchor Max. Represents the upper right handle.
-
+	
 	float4x4 localMatrix = float4x4::identity;	// Local matrix
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
 
