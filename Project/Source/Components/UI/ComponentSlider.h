@@ -35,12 +35,11 @@ public:
 	bool IsClicked() const;										// Returns true if the button is clicked
 	void SetClicked(bool clicked_);								// Sets clicked to the value
 
-	float4 GetTintColor() const;							// Returns the correspondant color of the current state
-	float4 GetClickColor() const;						// Returns colorClicked
+	float4 GetTintColor() const;								// Returns the correspondant color of the current state
+	float4 GetClickColor() const;								// Returns colorClicked
 
 private:
 
-	void SetDefaultSliderSize();
 	void SetNormalizedValue();
 
 private:
