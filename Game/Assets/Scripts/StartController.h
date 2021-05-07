@@ -5,7 +5,7 @@
 class StartController : public Script
 {
 	GENERATE_BODY(StartController);
-	
+
 public:
 
 	void Start() override;
@@ -17,4 +17,3 @@ public:
 private:
 	GameObject* gameCamera = nullptr;
 };
-

@@ -60,6 +60,7 @@ private:
 	const std::vector<Component*>& components;
 };
 
+
 class TESSERACT_ENGINE_API GameObject {
 public:
 	void InitComponents();
