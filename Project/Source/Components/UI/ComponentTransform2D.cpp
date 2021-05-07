@@ -7,6 +7,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleRender.h"
 #include "Panels/PanelControlEditor.h"
 
 #include "debugdraw.h"
@@ -374,6 +375,7 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 	if (dirty) {
 		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 		float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
+		factor = 1;
 		localMatrix = float4x4::FromTRS(position * factor, rotation, scale);
 
 		GameObject* parent = GetOwner().GetParent();
@@ -464,9 +466,10 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 
 void ComponentTransform2D::UpdateAnchor2DPosition() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float2 actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
-	float posMinX = (actualScreenCanvasReferenceSize.x * anchorMin.x) - actualScreenCanvasReferenceSize.x * 0.5f;
-	float posMinY = (actualScreenCanvasReferenceSize.y * anchorMin.y) - actualScreenCanvasReferenceSize.y * 0.5f;
+	//float2 actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
+	float2 actualScreenCanvasReferenceSize = float2(App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y);
+	float posMinX = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f) + (size.x * 0.5f);
+	float posMinY = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f) - (size.y * 0.5f);
 	float3 newPosition = float3(posMinX, posMinY, 0);
 	SetPosition(newPosition);
 }
