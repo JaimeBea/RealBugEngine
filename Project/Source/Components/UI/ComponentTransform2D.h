@@ -72,17 +72,17 @@ public:
 	void DrawGizmos() override;
 	bool CanBeRemoved() const override; //Returns false if any UI Elements are found in this GameObject or its children
 
-	TESSERACT_ENGINE_API void SetPosition(float3 position);			// Sets this position to value
-	TESSERACT_ENGINE_API void SetSize(float2 size);					// Sets this size to value
-	void SetRotation(Quat rotation);								// Sets this rotation to value and calculates Euler Angles rotation
-	void SetRotation(float3 rotation);								// Sets this eulerAngles to value and calculates Quat rotation
-	void SetScale(float3 scale);									// Sets this scale to value
-	void SetAnchorMin(float2 anchorMin);								// Sets this anchorMin to value
-	void SetAnchorMax(float2 anchorMax);								// Sets this anchorMax to value
-	void SetPivot(float2 pivotPosition);							// Sets this pivot to value
-	void UpdatePivotPosition();										// Update this pivot position to value
-	const float4x4 GetGlobalMatrix() const;										// Returns GlobalMatrix
-	const float4x4 GetGlobalMatrixWithSize(bool view3DActive = false) const;	// Returns GlobalMatrix with the size of the item. view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
+	TESSERACT_ENGINE_API void SetPosition(float3 position);											  // Sets this position to value
+	TESSERACT_ENGINE_API void SetSize(float2 size);													  // Sets this size to value
+	void SetRotation(Quat rotation);																  // Sets this rotation to value and calculates Euler Angles rotation
+	void SetRotation(float3 rotation);																  // Sets this eulerAngles to value and calculates Quat rotation
+	void SetScale(float3 scale);																	  // Sets this scale to value
+	void SetAnchorMin(float2 anchorMin);															  // Sets this anchorMin to value
+	void SetAnchorMax(float2 anchorMax);															  // Sets this anchorMax to value
+	void SetPivot(float2 pivotPosition);															  // Sets this pivot to value
+	void UpdatePivotPosition();																		  // Update this pivot position to value
+	const float4x4 GetGlobalMatrix() const;															  // Returns GlobalMatrix
+	const float4x4 GetGlobalScaledMatrix(bool scaleFactored = true, bool view3DActive = false) const; // Returns GlobalMatrix with the size of the item. scaleFactored being true means that the canvas size reference will be used to scale (factor). view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
 
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const;	 // Returns the size
@@ -100,8 +100,8 @@ public:
 	void SetRight(float right);	   // Sets the right anchor
 
 private:
-	void CalculateGlobalMatrix(); // Calculates the Global Matrix
-	void UpdateUIElements();	  // If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
+	void CalculateGlobalMatrix();								  // Calculates the Global Matrix
+	void UpdateUIElements();									  // If the transform changes, is gonna update UI Elements that need to recalculate vertices (p.e: ComponentText RecalculateVertices)
 	bool HasAnyUIElementsInChildren(const GameObject* obj) const; //Returns true if any UI Elements are found in this GameObject or its children
 
 private:

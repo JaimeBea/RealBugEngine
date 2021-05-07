@@ -14,6 +14,8 @@
 #include "Resources/ResourceSkybox.h"
 #include "Resources/ResourceScript.h"
 #include "Resources/ResourceAnimation.h"
+#include "Resources/ResourceStateMachine.h"
+#include "Resources/ResourceClip.h"
 #include "Resources/ResourceAudioClip.h"
 #include "FileSystem/SceneImporter.h"
 #include "FileSystem/ModelImporter.h"
@@ -23,6 +25,8 @@
 #include "FileSystem/SkyboxImporter.h"
 #include "FileSystem/ShaderImporter.h"
 #include "FileSystem/AudioImporter.h"
+#include "FileSystem/StateMachineImporter.h"
+#include "FileSystem/ClipImporter.h"
 #include "UI/FontImporter.h"
 #include "FileSystem/ScriptImporter.h"
 #include "Modules/ModuleTime.h"
@@ -187,6 +191,15 @@ bool ModuleResources::ImportAssetByExtension(JsonValue jMeta, const char* filePa
 	} else if (extension == WAV_AUDIO_EXTENSION || extension == OGG_AUDIO_EXTENSION) {
 		// Audio files
 		AudioImporter::ImportAudio(filePath, jMeta);
+	} else if (extension == PREFAB_EXTENSION) {
+		// Prefab files
+		PrefabImporter::ImportPrefab(filePath, jMeta);
+	} else if (extension == STATE_MACHINE_EXTENSION) {
+		// State Machine files
+		StateMachineImporter::ImportStateMachine(filePath, jMeta);
+	} else if (extension == ANIMATION_CLIP_EXTENSION) {
+		// Clip files
+		ClipImporter::ImportClip(filePath, jMeta);
 	} else {
 		validExtension = false;
 	}
@@ -318,14 +331,15 @@ void ModuleResources::UpdateAsync() {
 				if (success) {
 #if !GAME
 					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
-					if (App->files->GetLocalFileModificationTime(assetFilePath.c_str()) > timestamp) {
+					long long assetTimestamp = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
+					if (assetTimestamp > timestamp) {
 						if (jMeta[JSON_TAG_RESOURCES].Size() > 1) {
 							resourcesToRemove.push_back(entry.first);
 						} else {
+							resourcesToRemove.push_back(entry.first);
 							if (std::find(assetToReimport.begin(), assetToReimport.end(), assetFilePath) == assetToReimport.end()) {
-								resourcesToRemove.push_back(entry.first);
 								assetToReimport.push_back(assetFilePath);
-								jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
+								jMeta[JSON_TAG_TIMESTAMP] = assetTimestamp;
 								SaveMetaFile(metaFilePath.c_str(), document);
 							}
 						}
@@ -433,6 +447,12 @@ Resource* ModuleResources::CreateResourceByType(ResourceType type, const char* a
 	case ResourceType::ANIMATION:
 		resource = new ResourceAnimation(id, assetFilePath, resourceFilePath.c_str());
 		break;
+	case ResourceType::STATE_MACHINE:
+		resource = new ResourceStateMachine(id, assetFilePath, resourceFilePath.c_str());
+		break;
+	case ResourceType::CLIP:
+		resource = new ResourceClip(id, assetFilePath, resourceFilePath.c_str());
+		break;	
 	case ResourceType::AUDIO:
 		resource = new ResourceAudioClip(id, assetFilePath, resourceFilePath.c_str());
 		break;
