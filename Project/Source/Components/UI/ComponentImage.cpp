@@ -132,7 +132,7 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
 		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
-		modelMatrix = transform->GetGlobalScaledMatrix(false);
+		modelMatrix = transform->GetGlobalScaledMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4* view = &App->camera->GetViewMatrix();
