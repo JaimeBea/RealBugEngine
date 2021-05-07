@@ -10,4 +10,10 @@ public:
 
 	void Start() override;
 	void Update() override;
+
+public:
+	UID gameCameraUID;
+
+private:
+	GameObject* gameCamera = nullptr;
 };
