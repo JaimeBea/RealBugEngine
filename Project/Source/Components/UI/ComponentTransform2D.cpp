@@ -26,25 +26,25 @@
 #define JSON_TAG_ANCHOR_Y "AnchorY"
 
 std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 1.0f), float2(0.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 1.0f), float2(0.5f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 1.0f), float2(1.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 1.0f), float2(1.0f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_HORIZONTAL_LEFT_VERTICAL, float2(0.0f, 1.0f), float2(0.0f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_HORIZONTAL_CENTER_VERTICAL, float2(0.5f, 1.0f), float2(0.5f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_HORIZONTAL_RIGHT_VERTICAL, float2(1.0f, 1.0f), float2(1.0f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::TOP_HORIZONTAL_STRETCH_VERTICAL, float2(0.0f, 1.0f), float2(1.0f, 1.0f)},
 
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 0.5f), float2(0.0f, 0.5f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.5f), float2(0.5f, 0.5f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.5f), float2(1.0f, 0.5f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 0.5f), float2(1.0f, 0.5f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_LEFT_VERTICAL, float2(0.0f, 0.5f), float2(0.0f, 0.5f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL, float2(0.5f, 0.5f), float2(0.5f, 0.5f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_RIGHT_VERTICAL, float2(1.0f, 0.5f), float2(1.0f, 0.5f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_STRETCH_VERTICAL, float2(0.0f, 0.5f), float2(1.0f, 0.5f)},
 
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 0.0f), float2(0.0f, 0.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.0f), float2(0.5f, 0.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.0f), float2(1.0f, 0.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_VERTICAL_STRETCH_HORIZONTAL, float2(1.0f, 0.0f), float2(0.0f, 0.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_HORIZONTAL_LEFT_VERTICAL, float2(0.0f, 0.0f), float2(0.0f, 0.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_HORIZONTAL_CENTER_VERTICAL, float2(0.5f, 0.0f), float2(0.5f, 0.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_HORIZONTAL_RIGHT_VERTICAL, float2(1.0f, 0.0f), float2(1.0f, 0.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::BOTTOM_HORIZONTAL_STRETCH_VERTICAL, float2(1.0f, 0.0f), float2(0.0f, 0.0f)},
 
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_LEFT_HORIZONTAL, float2(0.0f, 0.0f), float2(0.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_CENTER_HORIZONTAL, float2(0.5f, 0.0f), float2(0.5f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_RIGHT_HORIZONTAL, float2(1.0f, 0.0f), float2(1.0f, 1.0f)},
-	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_VERTICAL_STRETCH_HORIZONTAL, float2(0.0f, 0.0f), float2(1.0f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_HORIZONTAL_LEFT_VERTICAL, float2(0.0f, 0.0f), float2(0.0f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_HORIZONTAL_CENTER_VERTICAL, float2(0.5f, 0.0f), float2(0.5f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_HORIZONTAL_RIGHT_VERTICAL, float2(1.0f, 0.0f), float2(1.0f, 1.0f)},
+	AnchorPreset {AnchorPreset::AnchorPresetType::STRETCH_HORIZONTAL_STRETCH_VERTICAL, float2(0.0f, 0.0f), float2(1.0f, 1.0f)},
 };
 
 void ComponentTransform2D::Update() {
@@ -77,9 +77,10 @@ void ComponentTransform2D::OnEditorUpdate() {
 	ImGui::SameLine();
 	if (ImGui::RadioButton("Presets", !isCustomAnchor)) {
 		isCustomAnchor = false;
-		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_VERTICAL_CENTER_HORIZONTAL;
+		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL;
 		SetAnchorMin(anchorPresets[5].anchorMin);
 		SetAnchorMax(anchorPresets[5].anchorMax);
+		UpdateAnchor2DPosition();
 	}
 	if (isCustomAnchor) { // If we select custom
 		anchorSelected = AnchorPreset::AnchorPresetType::CUSTOM;
@@ -89,25 +90,26 @@ void ComponentTransform2D::OnEditorUpdate() {
 		if (ImGui::DragFloat2("Max (X, Y)", anchMax.ptr(), App->editor->dragSpeed2f, 0, 1)) {
 			SetAnchorMax(anchMax);
 		}
+		UpdateAnchor2DPosition();
 	} else { // If we select presets
 		// Anchor Preset Type combo box
 		const char* anchorPresetTypeItems[] = {
-			"Vertical: TOP - Horizontal: LEFT",
-			"Vertical: TOP - Horizontal: CENTER",
-			"Vertical: TOP - Horizontal: RIGHT",
-			"Vertical: TOP - Horizontal: STRETCH",
-			"Vertical: MIDDLE - Horizontal: LEFT",
-			"Vertical: MIDDLE - Horizontal: CENTER",
-			"Vertical: MIDDLE - Horizontal: RIGHT",
-			"Vertical: MIDDLE - Horizontal: STRETCH",
-			"Vertical: BOTTOM - Horizontal: LEFT",
-			"Vertical: BOTTOM - Horizontal: CENTER",
-			"Vertical: BOTTOM - Horizontal: RIGHT",
-			"Vertical: BOTTOM - Horizontal: STRETCH",
-			"Vertical: STRETCH - Horizontal: LEFT",
-			"Vertical: STRETCH - Horizontal: CENTER",
-			"Vertical: STRETCH - Horizontal: RIGHT",
-			"Vertical: STRETCH - Horizontal: STRETCH",
+			"Horizontal: TOP - Vertical: LEFT",
+			"Horizontal: TOP - Vertical: CENTER",
+			"Horizontal: TOP - Vertical: RIGHT",
+			"Horizontal: TOP - Vertical: STRETCH",
+			"Horizontal: MIDDLE - Vertical: LEFT",
+			"Horizontal: MIDDLE - Vertical: CENTER",
+			"Horizontal: MIDDLE - Vertical: RIGHT",
+			"Horizontal: MIDDLE - Vertical: STRETCH",
+			"Horizontal: BOTTOM - Vertical: LEFT",
+			"Horizontal: BOTTOM - Vertical: CENTER",
+			"Horizontal: BOTTOM - Vertical: RIGHT",
+			"Horizontal: BOTTOM - Vertical: STRETCH",
+			"Horizontal: STRETCH - Vertical: LEFT",
+			"Horizontal: STRETCH - Vertical: CENTER",
+			"Horizontal: STRETCH - Vertical: RIGHT",
+			"Horizontal: STRETCH - Vertical: STRETCH",
 		};
 		const char* anchorPresetCurrent = anchorPresetTypeItems[(int) anchorSelected];
 		if (ImGui::BeginCombo("Select Preset", anchorPresetCurrent)) {
@@ -117,6 +119,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 					anchorSelected = AnchorPreset::AnchorPresetType(n);
 					SetAnchorMin(anchorPresets[n].anchorMin);
 					SetAnchorMax(anchorPresets[n].anchorMax);
+					UpdateAnchor2DPosition();
 				}
 				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
@@ -428,6 +431,15 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	component->SetAnchorMin(anchorMin);
 	component->SetAnchorMax(anchorMax);
 	component->dirty = true;
+}
+
+void ComponentTransform2D::UpdateAnchor2DPosition() {
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	float2 actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
+	float positionX = actualScreenCanvasReferenceSize.x * (anchorMax.x + anchorMin.x) * 0.5f - actualScreenCanvasReferenceSize.x * 0.5f;
+	float positionY = actualScreenCanvasReferenceSize.y * (anchorMax.y + anchorMin.y) * 0.5f - actualScreenCanvasReferenceSize.y * 0.5f;
+	float3 newPosition = float3(positionX, positionY, 0);
+	SetPosition(newPosition);
 }
 
 void ComponentTransform2D::SetTop(float top_) {

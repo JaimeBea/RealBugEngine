@@ -33,6 +33,11 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 	}
 }
 
+float2 ComponentCanvasRenderer::GetScreenReferenceSize() const {
+	const ComponentCanvas* canvas = AnyParentHasCanvas(&GetOwner());
+	return canvas ? canvas->GetScreenReferenceSize() : float2(1920, 1080);
+}
+
 float ComponentCanvasRenderer::GetCanvasScreenFactor() const {
 	const ComponentCanvas* canvas = AnyParentHasCanvas(&GetOwner());
 	return canvas ? canvas->GetScreenFactor() : 1.0f;

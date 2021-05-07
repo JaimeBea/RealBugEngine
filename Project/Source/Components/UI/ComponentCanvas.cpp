@@ -35,6 +35,10 @@ void ComponentCanvas::DuplicateComponent(GameObject& owner) {
 	dirty = true;
 }
 
+float2 ComponentCanvas::GetScreenReferenceSize() const {
+	return screenReferenceSize;
+}
+
 void ComponentCanvas::SetScreenReferenceSize(float2 screenReferenceSize_) {
 	screenReferenceSize = screenReferenceSize_;
 }
