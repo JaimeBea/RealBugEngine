@@ -10,6 +10,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleUserInterface.h"
 #include "Modules/ModuleFiles.h"
+#include "Modules/ModuleProject.h"
 #include "Modules/ModuleEvents.h"
 #include "TesseractEvent.h"
 #include "FileSystem/MaterialImporter.h"
@@ -31,7 +32,7 @@
 
 static const ImWchar iconsRangesFa[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
 static const ImWchar iconsRangesFk[] = {ICON_MIN_FK, ICON_MAX_FK, 0};
-static std::string gamePath;
+
 static void ApplyCustomStyle() {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
@@ -111,6 +112,7 @@ static void ApplyCustomStyle() {
 
 bool ModuleEditor::Init() {
 	ImGui::CreateContext();
+	FileDialog::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
@@ -124,10 +126,6 @@ bool ModuleEditor::Init() {
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		io.ConfigDockingTransparentPayload = true;
 	}
-
-	TCHAR NPath[MAX_PATH];
-	GetCurrentDirectory(MAX_PATH, NPath);
-	gamePath = NPath;
 
 	ApplyCustomStyle();
 
@@ -150,6 +148,7 @@ bool ModuleEditor::Start() {
 	panels.push_back(&panelInspector);
 	panels.push_back(&panelAbout);
 	panels.push_back(&panelControlEditor);
+	panels.push_back(&panelResource);
 
 	return true;
 }
@@ -203,6 +202,9 @@ UpdateStatus ModuleEditor::Update() {
 			if (ImGui::MenuItem("Material")) {
 				modalToOpen = Modal::CREATE_MATERIAL;
 			}
+			if (ImGui::MenuItem("Script")) {
+				modalToOpen = Modal::CREATE_SCRIPT;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenu();
@@ -215,6 +217,7 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::MenuItem(panelHierarchy.name, "", &panelHierarchy.enabled);
 		ImGui::MenuItem(panelConfiguration.name, "", &panelConfiguration.enabled);
 		ImGui::MenuItem(panelControlEditor.name, "", &panelControlEditor.enabled);
+		ImGui::MenuItem(panelResource.name, "", &panelResource.enabled);
 		ImGui::EndMenu();
 	}
 	if (ImGui::BeginMenu("Help")) {
@@ -242,16 +245,16 @@ UpdateStatus ModuleEditor::Update() {
 		ImGui::OpenPopup("New scene");
 		break;
 	case Modal::LOAD_PROJECT:
-		FileDialog::Init("Load project", false, (AllowedExtensionsFlag::PROJECT), gamePath);
+		FileDialog::Init("Load project", false, (AllowedExtensionsFlag::PROJECT));
 		break;
 	case Modal::LOAD_SCENE:
-		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE), gamePath);
+		FileDialog::Init("Load scene", false, (AllowedExtensionsFlag::SCENE));
 		break;
 	case Modal::SAVE_PROJECT:
-		FileDialog::Init("Save project", true, (AllowedExtensionsFlag::PROJECT), gamePath);
+		FileDialog::Init("Save project", true, (AllowedExtensionsFlag::PROJECT));
 		break;
 	case Modal::SAVE_SCENE:
-		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE), gamePath);
+		FileDialog::Init("Save scene", true, (AllowedExtensionsFlag::SCENE));
 		break;
 	case Modal::QUIT:
 		ImGui::OpenPopup("Quit");
@@ -264,6 +267,9 @@ UpdateStatus ModuleEditor::Update() {
 		break;
 	case Modal::CREATE_MATERIAL:
 		ImGui::OpenPopup("Name the material");
+		break;
+	case Modal::CREATE_SCRIPT:
+		ImGui::OpenPopup("Name the script");
 		break;
 	}
 	modalToOpen = Modal::NONE;
@@ -308,6 +314,23 @@ UpdateStatus ModuleEditor::Update() {
 		if (ImGui::Button("Save", ImVec2(50, 20))) {
 			std::string path = MATERIALS_PATH "/" + std::string(name) + MATERIAL_EXTENSION;
 			MaterialImporter::CreateAndSaveMaterial(path.c_str());
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
+		if (ImGui::Button("Cancel")) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(260, 100), ImGuiCond_FirstUseEver);
+	if (ImGui::BeginPopupModal("Name the script", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar)) {
+		static char name[FILENAME_MAX] = "New script";
+		ImGui::InputText("Name##scriptName", name, IM_ARRAYSIZE(name));
+		ImGui::NewLine();
+		ImGui::SameLine(ImGui::GetWindowWidth() - 120);
+		if (ImGui::Button("Save", ImVec2(50, 20))) {
+			App->project->CreateScript(std::string(name));
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine(ImGui::GetWindowWidth() - 60);
@@ -437,6 +460,7 @@ bool ModuleEditor::CleanUp() {
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
+	FileDialog::DestroyContext();
 	ImGui::DestroyContext();
 
 	return true;

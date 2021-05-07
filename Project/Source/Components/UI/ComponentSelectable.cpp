@@ -335,6 +335,8 @@ void ComponentSelectable::TryToClickOn() const {
 			((ComponentButton*) componentToPress)->OnClicked();
 			break;
 		case ComponentType::TOGGLE:
+			componentToPress = GetOwner().GetComponent<ComponentToggle>();
+			((ComponentToggle*) componentToPress)->OnClicked();
 			break;
 		case ComponentType::SLIDER:
 			componentToPress = GetOwner().GetComponent<ComponentSlider>();
