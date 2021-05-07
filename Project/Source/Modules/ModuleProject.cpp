@@ -310,10 +310,11 @@ bool ModuleProject::Init() {
 
 #if GAME
 	UnloadGameCodeDLL();
-	if (!LoadLibrary("Penteract.dll")) {
+	if (!LoadGameCodeDLL("Penteract.dll")) {
 		LOG("%s", GetLastErrorStdStr().c_str());
 	}
 #else
+
 	LoadProject("Penteract/Penteract.sln");
 #endif
 	return true;
@@ -561,7 +562,7 @@ bool ModuleProject::LoadGameCodeDLL(const char* path) {
 		return false;
 	}
 
-	gameCodeDLL = LoadLibraryA(path);
+	gameCodeDLL = LoadLibrary(path);
 
 	return gameCodeDLL ? true : false;
 }
