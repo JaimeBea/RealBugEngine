@@ -45,4 +45,6 @@ private:
 	float max = 1.0f;
 
 	bool rightToLeft = false;
+	bool bottomToTop = false;
+	bool topToBottom = false;
 };

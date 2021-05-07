@@ -125,6 +125,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				CreateUIToggle(gameObject);
 			}
 
+			if (ImGui::MenuItem("Progress Bar")) {
+				CreateUIProgressBar(gameObject);
+			}
 			ImGui::EndMenu();
 		}
 
@@ -302,4 +305,28 @@ GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 	newGameObject->InitComponents();
 
 	return newGameObject;
+}
+
+GameObject* PanelHierarchy::CreateUIProgressBar(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* progressBar = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Progress Bar");
+	ComponentTransform* progressTransform = progressBar->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* progressTransform2D = progressBar->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* progressRenderer = progressBar->CreateComponent<ComponentCanvasRenderer>();
+	ComponentProgressBar* progress = progressBar->CreateComponent<ComponentProgressBar>();
+
+	GameObject* background = CreateUIImage(progressBar);
+	background->GetComponent<ComponentTransform2D>()->SetSize(float2(700, 80));
+	background->name = "Background";
+
+	GameObject* fill = CreateUIImage(progressBar);
+	fill->GetComponent<ComponentImage>()->SetColor(float4(255.0f, 0, 0, 255.0f));
+	fill->name = "Fill";
+
+	progressBar->InitComponents();
+
+	return progressBar;
 }

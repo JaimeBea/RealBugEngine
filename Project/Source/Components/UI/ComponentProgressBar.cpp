@@ -35,6 +35,7 @@ void ComponentProgressBar::Update() {
 
 		std::vector<GameObject*> childs = owner.GetChildren();
 
+		//IMPORTANT: Baackground goes first then fill
 		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
 			if (it == childs.begin()) {
 				background = *it;
@@ -64,7 +65,19 @@ void ComponentProgressBar::Update() {
 	//The image is aligned to the left here, we will give the option to slide from left to right in the future
 	fillXPos = ((backSize.x - (backSize.x * percent)) / 2);
 
-	if (!rightToLeft) {
+	if (bottomToTop) {
+		rectFill->SetSize(float2(backSize.x, backSize.y * percent));
+		fillXPos = ((backSize.y - (backSize.y * percent)) / 2);
+		fillXPos = backPos.y - fillXPos;
+		rectFill->SetPosition(float3(backPos.x, fillXPos, backPos.z));
+	} 
+	else if (topToBottom) {
+		rectFill->SetSize(float2(backSize.x, backSize.y * percent));
+		fillXPos = ((backSize.y - (backSize.y * percent)) / 2);
+		fillXPos = backPos.y + fillXPos;
+		rectFill->SetPosition(float3(backPos.x, fillXPos, backPos.z));
+	}
+	else if (!rightToLeft) {
 		fillXPos = backPos.x - fillXPos;
 		rectFill->SetPosition(float3(fillXPos, backPos.y, backPos.z));
 	} else {
@@ -88,7 +101,18 @@ void ComponentProgressBar::OnEditorUpdate() {
 	if (ImGui::DragFloat("Max", &max, App->editor->dragSpeed2f, min + 1, inf)) {
 		SetMax(max);
 	}
-	ImGui::Checkbox("Right to Left", &rightToLeft);
+	if (ImGui::Checkbox("Right to Left", &rightToLeft)) {
+		bottomToTop = false;
+		topToBottom = false;
+	}
+	if (ImGui::Checkbox("Bottom to Top", &bottomToTop)) {
+		rightToLeft = false;
+		topToBottom = false;
+	}
+	if (ImGui::Checkbox("Top to Bottom", &topToBottom)) {
+		rightToLeft = false;
+		bottomToTop = false;
+	}
 
 	ImGui::Separator();
 }
