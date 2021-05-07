@@ -36,7 +36,6 @@
     <ClCompile Include="Source\Panels\PanelInspector.cpp" />
     <ClCompile Include="Source\Panels\PanelScene.cpp" />
     <ClCompile Include="Source\Panels\PanelControlEditor.cpp" />
-    <ClCompile Include="Source\Panels\PanelResource.cpp" />
     <ClCompile Include="Libs\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="Libs\ImGuizmo\ImGradient.cpp" />
     <ClCompile Include="Libs\ImGuizmo\ImGuizmo.cpp" />
@@ -169,6 +168,7 @@
     <ClCompile Include="Source\Utils\ImGuiUtils.cpp" />
     <ClCompile Include="Source\Scripting\Member.cpp" />
     <ClCompile Include="Source\Components\ComponentParticleSystem.cpp" />
+    <ClCompile Include="Source\Panels\PanelResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -214,7 +214,6 @@
     <ClInclude Include="Source\Panels\PanelInspector.h" />
     <ClInclude Include="Source\Panels\PanelScene.h" />
     <ClInclude Include="Source\Panels\PanelControlEditor.h" />
-    <ClCompile Include="Source\Panels\PanelResource.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
     <ClInclude Include="Libs\ImGuizmo\ImCurveEdit.h" />
@@ -433,6 +432,7 @@
     <ClInclude Include="Source\Scripting\Member.h" />
     <ClInclude Include="Source\Utils\StringBlocksParser.h" />
     <ClInclude Include="Source\Components\ComponentParticleSystem.h" />
+    <ClInclude Include="Source\Panels\PanelResource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />

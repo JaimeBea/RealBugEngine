@@ -284,6 +284,8 @@ GameObject* PanelHierarchy::CreatePartycleSystemObject(GameObject* gameObject) {
 	transform->SetRotation(Quat::identity);
 	transform->SetScale(float3(1, 1, 1));
 	newGameObject->InitComponents();
+
+	return newGameObject;
 }
 GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {

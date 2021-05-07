@@ -101,6 +101,7 @@ void ComponentParticleSystem::OnEditorUpdate() {
 	}
 }
 
+//TODO DINAMIC PARTICLE NOT HARCODEC
 float3 ComponentParticleSystem::CreateVelocity() {
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
@@ -170,7 +171,7 @@ void ComponentParticleSystem::Save(JsonValue jComponent) const {
 void ComponentParticleSystem::Update() {
 	deadParticles.clear();
 	for (Particle& currentParticle : particles) {
-		currentParticle.life -= 0.01;
+		currentParticle.life -= App->time->GetDeltaTime();
 		currentParticle.position += currentParticle.direction * velocity;
 		currentParticle.model = float4x4::FromTRS(currentParticle.position, currentParticle.rotation, currentParticle.scale);
 		if (currentParticle.life < 0) {
@@ -201,6 +202,7 @@ void ComponentParticleSystem::SpawnParticle() {
 		currentParticle->direction = CreateVelocity();
 		currentParticle->initialPosition = CreatePosition();
 		currentParticle->position = currentParticle->initialPosition;
+		//TODO not hardcoded
 		currentParticle->scale = float3(0.1f, 0.1f, 0.1f) * scale;
 	}
 }
