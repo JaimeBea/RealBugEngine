@@ -79,8 +79,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 		}
 	}
 
-
-
 	float3 scl = scale;
 	if (ImGui::DragFloat3("Scale", scl.ptr(), App->editor->dragSpeed2f, 0, inf)) {
 		SetScale(scl);
@@ -175,7 +173,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 			ImGui::TreePop();
 		}
 	}
-
 
 	float2 piv = pivot;
 	float3 pivPos = pivotPosition;
@@ -273,7 +270,6 @@ void ComponentTransform2D::DrawGizmos() {
 		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
 		float3 pivotPosFactor = float3(GetPivotPosition().x / 100, GetPivotPosition().y / 100, GetPivotPosition().z / 100);
 		dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1, 0.1, 0);
-
 	}
 }
 
@@ -469,9 +465,9 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 void ComponentTransform2D::UpdateAnchor2DPosition() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 	float2 actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
-	float positionX = actualScreenCanvasReferenceSize.x * (anchorMax.x + anchorMin.x) * 0.5f - actualScreenCanvasReferenceSize.x * 0.5f;
-	float positionY = actualScreenCanvasReferenceSize.y * (anchorMax.y + anchorMin.y) * 0.5f - actualScreenCanvasReferenceSize.y * 0.5f;
-	float3 newPosition = float3(positionX, positionY, 0);
+	float posMinX = (actualScreenCanvasReferenceSize.x * anchorMin.x) - actualScreenCanvasReferenceSize.x * 0.5f;
+	float posMinY = (actualScreenCanvasReferenceSize.y * anchorMin.y) - actualScreenCanvasReferenceSize.y * 0.5f;
+	float3 newPosition = float3(posMinX, posMinY, 0);
 	SetPosition(newPosition);
 }
 
