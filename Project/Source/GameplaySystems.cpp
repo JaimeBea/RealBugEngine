@@ -127,6 +127,19 @@ const float2& Input::GetMouseMotion() {
 	return App->input->GetMouseMotion();
 }
 
+const float3& Input::GetMouseWorldPosition() {
+	float2 MouseMotion = App->input->GetMouseMotion();
+	LOG(("mouse x: " + std::to_string(MouseMotion.x) + " y: " + std::to_string(MouseMotion.y)).c_str());
+	float4x4 Projection = App->camera->GetProjectionMatrix();
+	float4x4 View = App->camera->GetViewMatrix();
+	float4x4 ProjView = Projection * View;
+	ProjView.Inverse();
+	//float4 zFar = App->camera->GetActiveCamera()->GetFrustum()->NearPlaneDistance();
+	float4 vIn = float4(MouseMotion.x, MouseMotion.y, 1.0f, 1.0f);
+	float4 worldPos = vIn * ProjView;
+	return worldPos.xyz();
+}
+
 bool Input::GetKeyCodeDown(KEYCODE keycode) {
 	return App->input->GetKeyboard()[keycode] == KS_DOWN;
 }
@@ -164,3 +177,4 @@ float Screen::GetScreenWitdh() {
 float Screen::GetScreenHeight() {
 	return App->window->GetHeight();
 }
+

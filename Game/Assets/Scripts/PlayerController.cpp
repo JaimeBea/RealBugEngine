@@ -3,6 +3,7 @@
 #include "GameplaySystems.h"
 #include "Math/Quat.h"
 #include "Math/float3x3.h"
+#include "Math/float2.h"
 #include <string>
 
 GENERATE_BODY_IMPL(PlayerController);
@@ -42,6 +43,14 @@ void PlayerController::MoveTo(MovementDirection md){
 		dashMovementDirection = md;
 		transform->SetPosition(newPosition);
 	}
+}
+
+void PlayerController::LookAtMouse(){
+	float3 mouseWorld = Input::GetMouseWorldPosition();
+	float3 forward = mouseWorld - transform->GetPosition();
+	float angle = Atan2(forward.y, forward.z);
+	Quat q = transform->GetRotation();
+	transform->SetRotation(q.RotateAxisAngle(float3(0, 1, 0), angle));
 }
 
 void PlayerController::InitDash(){
@@ -116,6 +125,12 @@ void PlayerController::Update() {
 		}		
 		if (CanDash() && Input::GetKeyCode(Input::KEYCODE::KEY_SPACE)) {
 			InitDash();
+		}
+		if(Input::GetKeyCode(Input::KEYCODE::KEY_P)){
+			LookAtMouse();
+			float3 mousePos = Input::GetMouseWorldPosition();
+			std::string mousePosStr = "x: " + std::to_string(mousePos.x) + " y: " + std::to_string(mousePos.y) + " z: " + std::to_string(mousePos.z);
+			Debug::Log(mousePosStr.c_str());
 		}
 		Dash();
 	}

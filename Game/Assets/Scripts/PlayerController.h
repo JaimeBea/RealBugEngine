@@ -44,6 +44,7 @@ private:
 
 private:
 	void MoveTo(MovementDirection md);
+	void LookAtMouse();
 	void InitDash();
 	void Dash();
 	bool const CanDash() const;
