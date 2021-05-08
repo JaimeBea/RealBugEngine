@@ -376,6 +376,11 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 			break;
 		}
 		case ComponentType::CANVAS: {
+			ComponentTransform2D* transform = selected->GetComponent<ComponentTransform2D>();
+			if (transform == nullptr) {
+				transform = selected->CreateComponent<ComponentTransform2D>();
+				transform->Init();
+			}
 			ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
 			if (component != nullptr) {
 				component->Init();
