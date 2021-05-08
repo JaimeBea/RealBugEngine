@@ -53,7 +53,6 @@
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
-#define JSON_TAG_TIMESTAMP "Timestamp"
 
 struct ResourceInfo {
 	ResourceInfo(Resource* resource)
@@ -260,7 +259,6 @@ std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath) {
 	} else {
 		if (ImportAssetByExtension(jMeta, filePath)) {
 			if (!validMetaFile) {
-				jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 				SaveMetaFile(metaFilePath.c_str(), document);
 			}
 		}
@@ -366,16 +364,15 @@ void ModuleResources::UpdateAsync() {
 
 				if (success) {
 #if !GAME
-					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
+					long long metaTimestamp = App->files->GetLocalFileModificationTime(metaFilePath.c_str());
 					long long assetTimestamp = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
-					if (assetTimestamp > timestamp) {
+					if (assetTimestamp > metaTimestamp) {
 						if (jMeta[JSON_TAG_RESOURCES].Size() > 1) {
 							resourcesToRemove.push_back(resourceInfo);
 						} else {
 							resourcesToRemove.push_back(resourceInfo);
 							if (std::find(assetsToReimport.begin(), assetsToReimport.end(), assetFilePath) == assetsToReimport.end()) {
 								assetsToReimport.push_back(assetFilePath);
-								jMeta[JSON_TAG_TIMESTAMP] = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
 								SaveMetaFile(metaFilePath.c_str(), document);
 							}
 						}
