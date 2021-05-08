@@ -14,7 +14,5 @@ public:
 	bool CanBeRemoved() const override;				 //This override returns false if the GameObject holds a ComponentImage/ComponentText
 	void Render(const GameObject* gameObject) const; //Calls Draw on all images if one of its parents is a canvas
 	float GetCanvasScreenFactor() const;
-
-private:
 	const ComponentCanvas* AnyParentHasCanvas(GameObject* current) const; //Recursively iterates through parents to check if one of them contains a Canvas Component
 };
