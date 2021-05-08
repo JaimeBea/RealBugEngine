@@ -57,10 +57,6 @@ void ComponentTransform2D::Update() {
 
 void ComponentTransform2D::OnEditorUpdate() {
 	float3 editorPos = position;
-	float topAnch = anchorsRect.top;
-	float bottomAnch = anchorsRect.bottom;
-	float leftAnch = anchorsRect.left;
-	float rightAnch = anchorsRect.right;
 
 	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
 	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
@@ -250,7 +246,7 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 
 void ComponentTransform2D::DrawGizmos() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float factor = canvasRenderer->GetCanvasScreenFactor();
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1.0f;
 	if (!App->time->IsGameRunning()) {
 		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
 		float3 pivotPosFactor = float3(GetPivotPosition().x / 100, GetPivotPosition().y / 100, GetPivotPosition().z / 100);

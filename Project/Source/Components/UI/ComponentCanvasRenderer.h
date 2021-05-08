@@ -18,7 +18,5 @@ public:
 
 	float2 GetScreenReferenceSize() const;
 	float GetCanvasScreenFactor() const;
-
-private:
 	const ComponentCanvas* AnyParentHasCanvas(GameObject* current) const; //Recursively iterates through parents to check if one of them contains a Canvas Component
 };
