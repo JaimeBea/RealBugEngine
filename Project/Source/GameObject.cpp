@@ -54,6 +54,10 @@ void GameObject::DrawGizmos() {
 }
 
 void GameObject::Enable() {
+	if (parent != nullptr && !parent->IsActive()) {
+		return;
+	}
+
 	active = true;
 	for (GameObject* child : children) {
 		child->Enable();
@@ -66,7 +70,10 @@ void GameObject::Enable() {
 }
 
 void GameObject::Disable() {
-	active = false;
+	if (parent != nullptr && !parent->IsActive()) {
+		return;
+	}
+
 	for (Component* component : components) {
 		if (component->IsActive()) {
 			component->OnDisable();
@@ -75,6 +82,7 @@ void GameObject::Disable() {
 	for (GameObject* child : children) {
 		child->Disable();
 	}
+	active = false;
 }
 
 bool GameObject::IsActive() const {
