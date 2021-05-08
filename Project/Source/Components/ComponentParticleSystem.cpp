@@ -121,6 +121,7 @@ float3 ComponentParticleSystem::CreateVelocity() {
 };
 
 float3 ComponentParticleSystem::CreatePosition() {
+	//TODO DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
@@ -128,6 +129,7 @@ float3 ComponentParticleSystem::CreatePosition() {
 		float y = (transform->GetGlobalPosition().y);
 		return float3(x, y, z);
 	}
+	//TODO DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
@@ -172,7 +174,11 @@ void ComponentParticleSystem::Save(JsonValue jComponent) const {
 void ComponentParticleSystem::Update() {
 	deadParticles.clear();
 	for (Particle& currentParticle : particles) {
+#if GAME
 		currentParticle.life -= App->time->GetDeltaTime();
+#else
+		currentParticle.life -= App->time->GetRealTimeDeltaTime();
+#endif
 		currentParticle.position += currentParticle.direction * velocity;
 		currentParticle.model = float4x4::FromTRS(currentParticle.position, currentParticle.rotation, currentParticle.scale);
 		if (currentParticle.life < 0) {

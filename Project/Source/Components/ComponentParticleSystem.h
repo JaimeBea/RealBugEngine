@@ -80,7 +80,6 @@ private:
 	float innerAngle = pi / 12;
 	float outerAngle = pi / 6;
 	float particleLife = 5;
-
 	int maxDistance = 2;
 	int particleActivated = false;
 	int Xtiles = 1;
