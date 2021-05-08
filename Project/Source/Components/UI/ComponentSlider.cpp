@@ -17,9 +17,9 @@
 #define JSON_TAG_MIN_VALUE "MinValue"
 #define JSON_TAG_CURRENT_VALUE "CurrentValue"
 #define JSON_TAG_DIRECTION "Direction"
+#define JSON_TAG_STOP_EDGES "StopOnEdges"
 
 ComponentSlider::~ComponentSlider() {
-
 }
 
 void ComponentSlider::Init() {
@@ -30,8 +30,7 @@ void ComponentSlider::Init() {
 			background = *it;
 		} else if (it == children.end() - 1) {
 			handle = *it;
-		}
-		else {
+		} else {
 			fill = *it;
 		}
 	}
@@ -39,7 +38,6 @@ void ComponentSlider::Init() {
 }
 
 void ComponentSlider::Update() {
-
 	if (clicked) {
 		if (!App->input->GetMouseButton(1)) {
 			clicked = false;
@@ -65,23 +63,23 @@ void ComponentSlider::Update() {
 	handleTransform->SetSize(float2(backgroundTransform->GetSize().x / 8.0f, backgroundTransform->GetSize().y));
 
 	switch (direction) {
-		case DirectionType::LEFT_TO_RIGHT:
-			fillTransform->SetSize(float2(backgroundTransform->GetSize().x * normalizedValue, backgroundTransform->GetSize().y));
-			fillPosition = backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f + (backgroundTransform->GetSize().x * normalizedValue) / 2.0f;
-			handlePosition = fillTransform->GetPosition().x + (fillTransform->GetSize().x / 2.0f);
-			break;
-		case DirectionType::RIGHT_TO_LEFT:
-			fillTransform->SetSize(float2(backgroundTransform->GetSize().x * (1 - normalizedValue), backgroundTransform->GetSize().y));
-			fillPosition = backgroundTransform->GetPosition().x + backgroundTransform->GetSize().x / 2.0f - (backgroundTransform->GetSize().x * (1 - normalizedValue)) / 2.0f;
-			handlePosition = fillTransform->GetPosition().x - (fillTransform->GetSize().x / 2.0f);
-			break;
-		// TODO
-		/*case DirectionType::BOTTOM_TO_TOP:
+	case DirectionType::LEFT_TO_RIGHT:
+		fillTransform->SetSize(float2(backgroundTransform->GetSize().x * normalizedValue, backgroundTransform->GetSize().y));
+		fillPosition = backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f + (backgroundTransform->GetSize().x * normalizedValue) / 2.0f;
+		handlePosition = fillTransform->GetPosition().x + (fillTransform->GetSize().x / 2.0f);
+		break;
+	case DirectionType::RIGHT_TO_LEFT:
+		fillTransform->SetSize(float2(backgroundTransform->GetSize().x * (1 - normalizedValue), backgroundTransform->GetSize().y));
+		fillPosition = backgroundTransform->GetPosition().x + backgroundTransform->GetSize().x / 2.0f - (backgroundTransform->GetSize().x * (1 - normalizedValue)) / 2.0f;
+		handlePosition = fillTransform->GetPosition().x - (fillTransform->GetSize().x / 2.0f);
+		break;
+	// TODO
+	/*case DirectionType::BOTTOM_TO_TOP:
 			break;
 		case DirectionType::TOP_TO_BOTTOM:
 			break;*/
-		default:
-			break;
+	default:
+		break;
 	}
 
 	if (handleStopsOnEdge) {
@@ -92,18 +90,16 @@ void ComponentSlider::Update() {
 		}
 	}
 
-	fillTransform->SetPosition(float3(fillPosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z)); 
+	fillTransform->SetPosition(float3(fillPosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z));
 	handleTransform->SetPosition(float3(handlePosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z));
 }
 
 void ComponentSlider::OnEditorUpdate() {
-
 	ImGui::Checkbox("Handle Stops On Edges ", &handleStopsOnEdge);
 
 	if (ImGui::DragFloat("Max. Value", &maxValue, App->editor->dragSpeed1f, minValue, inf)) {
 		currentValue = currentValue > maxValue ? maxValue : currentValue;
 		SetNormalizedValue();
-		
 	}
 	if (ImGui::DragFloat("Min. Value", &minValue, App->editor->dragSpeed1f, -inf, maxValue)) {
 		currentValue = currentValue < minValue ? minValue : currentValue;
@@ -137,7 +133,7 @@ void ComponentSlider::OnClicked() {
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 	float2 mousePos = App->input->GetMousePosition(true);
 	newPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y) * canvas->GetScreenFactor();
-	
+
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
 		Script* script = scriptComponent.GetScriptInstance();
 		if (script != nullptr) {
@@ -148,17 +144,15 @@ void ComponentSlider::OnClicked() {
 	OnValueChanged();
 }
 
-
 void ComponentSlider::OnValueChanged() {
 	// TODO: support for vertical sliders
 	ComponentTransform2D* backgroundTransform = background->GetComponent<ComponentTransform2D>();
 
 	float size = (backgroundTransform->GetPosition().x + newPosition.x) - (backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f);
-	
+
 	if (size > backgroundTransform->GetSize().x) {
 		size = backgroundTransform->GetSize().x;
-	}
-	else if (size < 0) {
+	} else if (size < 0) {
 		size = 0;
 	}
 
@@ -171,26 +165,27 @@ void ComponentSlider::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_MAX_VALUE] = maxValue;
 	jComponent[JSON_TAG_CURRENT_VALUE] = currentValue;
 	jComponent[JSON_TAG_DIRECTION] = (int) direction;
+	jComponent[JSON_TAG_STOP_EDGES] = handleStopsOnEdge;
 
 	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
 	jColorClick[0] = colorClicked.x;
 	jColorClick[1] = colorClicked.y;
 	jColorClick[2] = colorClicked.z;
 	jColorClick[3] = colorClicked.w;
-
 }
 
 void ComponentSlider::Load(JsonValue jComponent) {
 	maxValue = jComponent[JSON_TAG_MAX_VALUE];
 	minValue = jComponent[JSON_TAG_MIN_VALUE];
 	currentValue = jComponent[JSON_TAG_CURRENT_VALUE];
-	int dir =  jComponent[JSON_TAG_DIRECTION];
+	int dir = jComponent[JSON_TAG_DIRECTION];
 	direction = (DirectionType) dir;
+	handleStopsOnEdge = jComponent[JSON_TAG_STOP_EDGES];
+
 	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
 }
 
 void ComponentSlider::DuplicateComponent(GameObject& owner) {
-
 }
 
 bool ComponentSlider::IsClicked() const {
@@ -232,6 +227,8 @@ float4 ComponentSlider::GetTintColor() const {
 }
 
 void ComponentSlider::SetNormalizedValue() {
-	if (maxValue - minValue == 0) normalizedValue = 0;
-	else normalizedValue = (currentValue - minValue) / (maxValue - minValue);
+	if (maxValue - minValue == 0)
+		normalizedValue = 0;
+	else
+		normalizedValue = (currentValue - minValue) / (maxValue - minValue);
 }
