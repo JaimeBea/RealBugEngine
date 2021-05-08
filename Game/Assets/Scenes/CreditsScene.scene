@@ -7,6 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
+    "GameCamera": 16468476288255265382,
     "AmbientLight": [
         0.0,
         0.0,
@@ -151,10 +152,9 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.4299180507659913,
+                            "HorizontalFov": 1.5395102500915528,
                             "VerticalFov": 1.0
-                        },
-                        "CameraSelected": true
+                        }
                     },
                     {
                         "Type": "Skybox",
@@ -167,7 +167,8 @@
                         "Type": "Script",
                         "Id": 5936340896126486701,
                         "Active": true,
-                        "Script": 8205703692535477266
+                        "Script": 8205703692535477266,
+                        "Values": null
                     }
                 ],
                 "Children": null
@@ -313,18 +314,29 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
                                 "Size": [
-                                    2560.0,
-                                    1377.0
+                                    1920.0,
+                                    1080.0
                                 ],
-                                "AnchorX": [
+                                "AnchorMin": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "AnchorMax": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "Anchored2DPosition": [
                                     0.0,
                                     0.0
                                 ],
-                                "AnchorY": [
-                                    0.0,
-                                    0.0
-                                ]
+                                "AnchorSelected": 5,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -335,7 +347,6 @@
                                 "Type": "Image",
                                 "Id": 809586708866870379,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 9142036629051058095,
                                 "Color": [
                                     1.0,
@@ -349,52 +360,12 @@
                                 "Type": "Script",
                                 "Id": 3205209751197079614,
                                 "Active": true,
-                                "Script": 14708543293375634621
+                                "Script": 14708543293375634621,
+                                "Values": null
                             }
                         ],
                         "Children": null
-                    }
-                ]
-            },
-            {
-                "Id": 4510505588429022372,
-                "Name": "Canvas",
-                "Active": true,
-                "RootBoneId": 0,
-                "Components": [
-                    {
-                        "Type": "Transform",
-                        "Id": 14136934851709092567,
-                        "Active": true,
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "Rotation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "LocalEulerAngles": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
                     },
-                    {
-                        "Type": "Canvas",
-                        "Id": 9184508996973972487,
-                        "Active": true
-                    }
-                ],
-                "Children": [
                     {
                         "Id": 10902282239435439488,
                         "Name": "ExitButton",
@@ -422,9 +393,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -432,8 +403,8 @@
                                 "Id": 14380665267834354334,
                                 "Active": true,
                                 "Position": [
-                                    0.0,
-                                    350.0,
+                                    757.7999877929688,
+                                    459.0,
                                     0.0
                                 ],
                                 "Rotation": [
@@ -456,18 +427,29 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": [
+                                    757.7999877929688,
+                                    459.0,
+                                    0.0
+                                ],
                                 "Size": [
                                     236.0,
                                     60.0
                                 ],
-                                "AnchorX": [
-                                    0.0,
-                                    0.0
+                                "AnchorMin": [
+                                    0.949999988079071,
+                                    0.949999988079071
                                 ],
-                                "AnchorY": [
-                                    0.0,
-                                    0.0
-                                ]
+                                "AnchorMax": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "Anchored2DPosition": [
+                                    864.0,
+                                    486.0
+                                ],
+                                "AnchorSelected": 16,
+                                "IsCustomAnchor": true
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -489,7 +471,6 @@
                                 "Type": "Image",
                                 "Id": 6846536896861287187,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 943873689796820877,
                                 "Color": [
                                     1.0,
@@ -540,7 +521,8 @@
                                 "Type": "Script",
                                 "Id": 2870357543824899390,
                                 "Active": true,
-                                "Script": 6876061672568714869
+                                "Script": 6876061672568714869,
+                                "Values": null
                             }
                         ],
                         "Children": null
