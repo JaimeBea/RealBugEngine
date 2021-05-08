@@ -12,6 +12,15 @@
 
 #include "Utils/Leaks.h"
 
+int AnimationController::GetCurrentSample(const ResourceClip& clip, float& currentTime) {
+	float currentSample = (currentTime * (clip.keyFramesSize)) / clip.duration;
+	currentSample += clip.beginIndex;
+	int intPart = (int) currentSample;
+
+	return intPart;
+}
+
+
 bool AnimationController::GetTransform(const ResourceClip& clip, float& currentTime, const char* name, float3& pos, Quat& quat) {
 	assert(clip.animationUID != 0);
 

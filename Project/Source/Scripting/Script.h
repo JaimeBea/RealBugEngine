@@ -3,6 +3,7 @@
 #include "Utils/UID.h"
 #include "Creator.h"
 #include "Member.h"
+#include "TesseractEvent.h"
 
 #include <vector>
 
@@ -33,6 +34,8 @@ public:
 	GameObject& GetOwner() const {
 		return *owner;
 	}
+
+	virtual void ReceiveEvent(TesseractEvent& e) {}
 
 	virtual void Update() = 0;
 	virtual void Start() = 0;
