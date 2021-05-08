@@ -86,12 +86,18 @@ bool ModuleCamera::Start() {
 UpdateStatus ModuleCamera::Update() {
 	BROFILER_CATEGORY("ModuleCamera - Update", Profiler::Color::Blue)
 
+	//Camera updates happen here to prevent rendering problems, the logic followed is:
+	//1. ModuleProject updates first, modifying camera values
+	//2. Module camera updates camera frustums, updating view and projection matrixes
+	//3. Module renderer uses updated view and projection matrixes to correctly draw geometry and skyboxes
+
+	for (ComponentCamera& camera : App->scene->scene->cameraComponents) {
+		if (&camera != engineCamera) {
+			camera.UpdateFrustum();
+		}
+	}
+
 	if (activeCamera != engineCamera) {
-		//Active camera update happens here to prevent rendering problems:
-		//1. ModuleProject updates first, modifying camera values
-		//2. Module camera updates active camera frustum, updating view and projection matrixes
-		//3. Module renderer uses updated view and projection matrixes to correctly draw
-		activeCamera->UpdateFrustum();
 		return UpdateStatus::CONTINUE;
 	}
 
