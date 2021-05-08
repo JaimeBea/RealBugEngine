@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class GameObject;
 
@@ -12,7 +12,13 @@ public:
 	void Start() override;
 	void Update() override;
 
+public:
+	UID prefabId = 0;
+	int amountOfEnemies = 0;
+
 private:
 	GameObject* gameObject = nullptr;
 	int speed = 0;
+	int iterator = 0;
+	int offset = 1;
 };

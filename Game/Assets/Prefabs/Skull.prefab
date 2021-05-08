@@ -1,0 +1,87 @@
+{
+    "Root": {
+        "Name": "Skull",
+        "Active": true,
+        "RootBoneName": "",
+        "Components": [
+            {
+                "Type": "Transform",
+                "Active": true,
+                "Position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "Rotation": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "Scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "LocalEulerAngles": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ]
+            }
+        ],
+        "Children": [
+            {
+                "Name": "SkullLP",
+                "Active": true,
+                "RootBoneName": "",
+                "Components": [
+                    {
+                        "Type": "Transform",
+                        "Active": true,
+                        "Position": [
+                            -0.7942379117012024,
+                            3.2532591819763185,
+                            7.834242820739746
+                        ],
+                        "Rotation": [
+                            -0.7518212795257568,
+                            0.0,
+                            0.0,
+                            0.6593670845031738
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -97.49678802490235,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    {
+                        "Type": "MeshRenderer",
+                        "Active": true,
+                        "MeshID": 2307073124890355625,
+                        "MaterialID": 12678079092344032131
+                    },
+                    {
+                        "Type": "BoundingBox",
+                        "Active": true,
+                        "LocalBoundingBox": [
+                            -0.7795436978340149,
+                            -1.4580485820770264,
+                            -1.113397240638733,
+                            0.7797661423683167,
+                            1.4008691310882569,
+                            1.536783218383789
+                        ]
+                    }
+                ],
+                "Children": null
+            }
+        ]
+    }
+}
