@@ -18,7 +18,6 @@
 
 struct AnchorPreset {
 	enum class AnchorPresetType {
-
 		// Presets
 		TOP_HORIZONTAL_LEFT_VERTICAL,
 		TOP_HORIZONTAL_CENTER_VERTICAL,

@@ -62,25 +62,9 @@ void ComponentTransform2D::OnEditorUpdate() {
 	float leftAnch = anchorsRect.left;
 	float rightAnch = anchorsRect.right;
 
-	if (anchorSelected != AnchorPreset::AnchorPresetType::CUSTOM) {
-		ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
-		if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
-			SetPosition(editorPos);
-		}
-	} else {
-		ImGui::TextColored(App->editor->titleColor, "Transformation (Rect)");
-		if (ImGui::DragFloat("Top", &topAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetTop(topAnch);
-		}
-		if (ImGui::DragFloat("Bottom", &bottomAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetBottom(bottomAnch);
-		}
-		if (ImGui::DragFloat("Left", &leftAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetLeft(leftAnch);
-		}
-		if (ImGui::DragFloat("Right", &rightAnch, App->editor->dragSpeed2f, -inf, inf)) {
-			SetRight(rightAnch);
-		}
+	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");
+	if (ImGui::DragFloat3("Position", editorPos.ptr(), App->editor->dragSpeed2f, -inf, inf)) {
+		SetPosition(editorPos);
 	}
 
 	float3 scl = scale;
@@ -160,24 +144,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 		ImGui::InputFloat2("Max (X, Y)", anchMax.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 	}
 
-	if (anchorSelected == AnchorPreset::AnchorPresetType::CUSTOM) {
-		if (ImGui::TreeNode("Rect Info")) {
-			if (ImGui::DragFloat("Top", &topAnch, App->editor->dragSpeed2f, -inf, inf)) {
-				SetTop(topAnch);
-			}
-			if (ImGui::DragFloat("Bottom", &bottomAnch, App->editor->dragSpeed2f, -inf, inf)) {
-				SetBottom(bottomAnch);
-			}
-			if (ImGui::DragFloat("Left", &leftAnch, App->editor->dragSpeed2f, -inf, inf)) {
-				SetLeft(leftAnch);
-			}
-			if (ImGui::DragFloat("Right", &rightAnch, App->editor->dragSpeed2f, -inf, inf)) {
-				SetRight(rightAnch);
-			}
-			ImGui::TreePop();
-		}
-	}
-
 	float2 piv = pivot;
 	float3 pivPos = pivotPosition;
 	ImGui::TextColored(App->editor->titleColor, "Pivot");
@@ -218,9 +184,9 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jPivot[1] = pivot.y;
 
 	JsonValue jPivotPosition = jComponent[JSON_TAG_PIVOT_POSITION];
-	jPosition[0] = pivotPosition.x;
-	jPosition[1] = pivotPosition.y;
-	jPosition[2] = pivotPosition.z;
+	jPivotPosition[0] = pivotPosition.x;
+	jPivotPosition[1] = pivotPosition.y;
+	jPivotPosition[2] = pivotPosition.z;
 
 	JsonValue jSize = jComponent[JSON_TAG_SIZE];
 	jSize[0] = size.x;
@@ -238,11 +204,9 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jAnchored2DPosition[0] = anchored2Dposition.x;
 	jAnchored2DPosition[1] = anchored2Dposition.y;
 
-	//jComponent[JSON_TAG_ANCHOR_SELECTED] = anchorSelected;
+	jComponent[JSON_TAG_ANCHOR_SELECTED] = (int)anchorSelected;
 
 	jComponent[JSON_TAG_IS_CUSTOM_ANCHOR] = isCustomAnchor;
-
-
 }
 
 void ComponentTransform2D::Load(JsonValue jComponent) {
@@ -276,8 +240,9 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 	JsonValue jAnchored2Dposition = jComponent[JSON_TAG_ANCHORED_2D_POSITION];
 	anchored2Dposition.Set(jAnchored2Dposition[0], jAnchored2Dposition[1]);
 
-	//anchorSelected = jComponent[JSON_TAG_ANCHOR_SELECTED];
-
+	int posAnchorPresetType = jComponent[JSON_TAG_ANCHOR_SELECTED];
+	anchorSelected = (AnchorPreset::AnchorPresetType)posAnchorPresetType;
+	
 	isCustomAnchor = jComponent[JSON_TAG_IS_CUSTOM_ANCHOR];
 
 	dirty = true;
