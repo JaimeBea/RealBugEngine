@@ -91,13 +91,8 @@ UpdateStatus ModuleCamera::Update() {
 	//2. Module camera updates camera frustums, updating view and projection matrixes
 	//3. Module renderer uses updated view and projection matrixes to correctly draw geometry and skyboxes
 
-	for (ComponentCamera& camera : App->scene->scene->cameraComponents) {
-		if (&camera != engineCamera) {
-			camera.UpdateFrustum();
-		}
-	}
-
 	if (activeCamera != engineCamera) {
+		activeCamera->UpdateFrustum();
 		return UpdateStatus::CONTINUE;
 	}
 

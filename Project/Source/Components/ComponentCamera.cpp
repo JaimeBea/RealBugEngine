@@ -28,7 +28,7 @@ void ComponentCamera::Init() {
 }
 
 void ComponentCamera::Update() {
-	//Camera frustums are updated through the ModuleCamera
+	UpdateFrustum();
 }
 
 void ComponentCamera::DrawGizmos() {
