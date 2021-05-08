@@ -13,9 +13,13 @@
             "Type": "Animation"
         },
         {
+            "Id": 492162912391904467,
+            "Type": "Clip"
+        },
+        {
             "Id": 11392621189044721974,
             "Type": "Prefab"
         }
     ],
-    "Timestamp": 1619299880
+    "Timestamp": 1620464830
 }
