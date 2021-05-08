@@ -31,7 +31,7 @@ void ComponentLight::Update() {
 }
 
 void ComponentLight::DrawGizmos() {
-	if (IsActiveInHierarchy()) {
+	if (IsActive()) {
 		if (lightType == LightType::DIRECTIONAL) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 			dd::cone(pos, direction * 200, dd::colors::White, 1.0f, 1.0f);

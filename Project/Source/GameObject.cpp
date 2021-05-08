@@ -32,7 +32,7 @@ void GameObject::InitComponents() {
 }
 
 void GameObject::Update() {
-	if (IsActiveInHierarchy()) {
+	if (IsActive()) {
 		for (Component* component : components) {
 			component->Update();
 		}
@@ -55,19 +55,29 @@ void GameObject::DrawGizmos() {
 
 void GameObject::Enable() {
 	active = true;
+	for (GameObject* child : children) {
+		child->Enable();
+	}
+	for (Component* component : components) {
+		if (component->IsActive()) {
+			component->OnEnable();
+		}
+	}
 }
 
 void GameObject::Disable() {
 	active = false;
+	for (Component* component : components) {
+		if (component->IsActive()) {
+			component->OnDisable();
+		}
+	}
+	for (GameObject* child : children) {
+		child->Disable();
+	}
 }
 
 bool GameObject::IsActive() const {
-	return active;
-}
-
-bool GameObject::IsActiveInHierarchy() const {
-	if (parent) return parent->IsActiveInHierarchy() && active;
-
 	return active;
 }
 

@@ -17,7 +17,8 @@ public:
 	class Iterator {
 	public:
 		Iterator(const ComponentView<T>& view__, std::vector<Component*>::const_iterator it__)
-			: view(view__), it(it__) {}
+			: view(view__)
+			, it(it__) {}
 
 		const Iterator& operator++() {
 			++it;
@@ -60,7 +61,6 @@ private:
 	const std::vector<Component*>& components;
 };
 
-
 class TESSERACT_ENGINE_API GameObject {
 public:
 	void InitComponents();
@@ -70,7 +70,6 @@ public:
 	void Enable();
 	void Disable();
 	bool IsActive() const;
-	bool IsActiveInHierarchy() const;
 
 	UID GetID() const;
 

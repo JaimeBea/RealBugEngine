@@ -54,9 +54,5 @@ UID Component::GetID() const {
 }
 
 bool Component::IsActive() const {
-	return active;
-}
-
-bool Component::IsActiveInHierarchy() const {
-	return active && owner->IsActiveInHierarchy();
+	return active && GetOwner().IsActive();
 }

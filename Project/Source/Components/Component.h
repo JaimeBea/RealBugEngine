@@ -40,7 +40,6 @@ public:
 	GameObject& GetOwner() const;
 	UID GetID() const;
 	TESSERACT_ENGINE_API bool IsActive() const;
-	bool IsActiveInHierarchy() const;
 
 protected:
 	ComponentType type = ComponentType::UNKNOWN; // See ComponentType.h for a list of all available types.

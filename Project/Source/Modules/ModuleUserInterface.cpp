@@ -130,7 +130,7 @@ void ModuleUserInterface::Render() {
 	Scene* scene = App->scene->scene;
 	if (scene != nullptr) {
 		for (ComponentCanvasRenderer& canvasRenderer : scene->canvasRendererComponents) {
-			if (canvasRenderer.GetOwner().IsActiveInHierarchy()) {
+			if (canvasRenderer.GetOwner().IsActive()) {
 				canvasRenderer.Render(&canvasRenderer.GetOwner());
 			}
 		}
