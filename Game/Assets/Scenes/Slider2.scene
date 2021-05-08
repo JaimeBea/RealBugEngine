@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 17644363465083280963,
+    "GameCamera": 16403710556549816082,
     "AmbientLight": [
         0.25,
         0.25,
@@ -152,7 +152,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.9592386484146119,
+                            "HorizontalFov": 2.0090270042419435,
                             "VerticalFov": 1.3113912343978882
                         }
                     },
@@ -274,8 +274,8 @@
                                 ],
                                 "PivotPosition": null,
                                 "Size": [
-                                    1600.0,
-                                    400.0
+                                    100.0,
+                                    25.0
                                 ],
                                 "AnchorX": [
                                     0.5,
@@ -333,9 +333,9 @@
                                 "Active": true,
                                 "MinValue": 0.0,
                                 "MaxValue": 100.0,
-                                "CurrentValue": 31.368776321411134,
+                                "CurrentValue": 27.3125,
                                 "Direction": 0,
-                                "StopOnEdges": true,
+                                "StopOnEdges": false,
                                 "ColorClick": [
                                     0.6399999856948853,
                                     0.6399999856948853,
@@ -408,8 +408,8 @@
                                         ],
                                         "PivotPosition": null,
                                         "Size": [
-                                            1600.0,
-                                            400.0
+                                            100.0,
+                                            25.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -478,7 +478,7 @@
                                         "Id": 7626452595787669405,
                                         "Active": true,
                                         "Position": [
-                                            -549.0498046875,
+                                            -36.34375,
                                             0.0,
                                             0.0
                                         ],
@@ -504,8 +504,8 @@
                                         ],
                                         "PivotPosition": null,
                                         "Size": [
-                                            501.9004211425781,
-                                            400.0
+                                            27.3125,
+                                            25.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -574,7 +574,7 @@
                                         "Id": 1207772813038248196,
                                         "Active": true,
                                         "Position": [
-                                            -298.099609375,
+                                            -22.6875,
                                             0.0,
                                             0.0
                                         ],
@@ -600,8 +600,8 @@
                                         ],
                                         "PivotPosition": null,
                                         "Size": [
-                                            200.0,
-                                            400.0
+                                            12.5,
+                                            25.0
                                         ],
                                         "AnchorX": [
                                             0.5,

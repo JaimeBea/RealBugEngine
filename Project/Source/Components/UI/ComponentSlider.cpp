@@ -43,7 +43,8 @@ void ComponentSlider::Update() {
 			clicked = false;
 		} else {
 			float2 mousePos = App->input->GetMousePosition(true);
-			float2 auxNewPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y);
+			const ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
+			float2 auxNewPosition = float2((mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor(), 0);
 			if (newPosition.x != auxNewPosition.x) {
 				newPosition = auxNewPosition;
 				OnValueChanged();
@@ -132,7 +133,7 @@ void ComponentSlider::OnClicked() {
 	const ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 	float2 mousePos = App->input->GetMousePosition(true);
-	newPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y) * canvas->GetScreenFactor();
+	newPosition.x = (mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor();
 
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
 		Script* script = scriptComponent.GetScriptInstance();
@@ -148,12 +149,12 @@ void ComponentSlider::OnValueChanged() {
 	// TODO: support for vertical sliders
 	ComponentTransform2D* backgroundTransform = background->GetComponent<ComponentTransform2D>();
 
-	float size = (backgroundTransform->GetPosition().x + newPosition.x) - (backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f);
-
-	if (size > backgroundTransform->GetSize().x) {
-		size = backgroundTransform->GetSize().x;
-	} else if (size < 0) {
-		size = 0;
+	float size = 0.f;
+	if (newPosition.x > backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f) {
+		size = newPosition.x - (backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f);
+		if (size > backgroundTransform->GetSize().x) {
+			size = backgroundTransform->GetSize().x;
+		}
 	}
 
 	normalizedValue = size / backgroundTransform->GetSize().x;
