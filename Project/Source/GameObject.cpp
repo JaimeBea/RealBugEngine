@@ -177,7 +177,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 
 		jComponent[JSON_TAG_TYPE] = GetComponentTypeName(component->GetType());
 		jComponent[JSON_TAG_ID] = component->GetID();
-		jComponent[JSON_TAG_ACTIVE] = component->IsActive();
+		jComponent[JSON_TAG_ACTIVE] = component->IsActiveInternal();
 		component->Save(jComponent);
 	}
 
@@ -207,6 +207,11 @@ void GameObject::Load(JsonValue jGameObject) {
 
 		ComponentType type = GetComponentTypeFromName(typeName.c_str());
 		Component* component = scene->CreateComponentByTypeAndId(this, type, componentId);
+		if (active) {
+			component->Enable();
+		} else {
+			component->Disable();
+		}
 		components.push_back(component);
 		component->Load(jComponent);
 	}

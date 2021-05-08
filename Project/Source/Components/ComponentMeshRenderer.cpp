@@ -31,9 +31,14 @@
 #define JSON_TAG_MATERIAL_ID "MaterialID"
 
 void ComponentMeshRenderer::OnEditorUpdate() {
-	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
-		active ? Enable() : Disable();
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
 	}
 	ImGui::Separator();
 
