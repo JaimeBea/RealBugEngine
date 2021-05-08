@@ -174,11 +174,11 @@ void ComponentParticleSystem::Save(JsonValue jComponent) const {
 void ComponentParticleSystem::Update() {
 	deadParticles.clear();
 	for (Particle& currentParticle : particles) {
-#if GAME
-		currentParticle.life -= App->time->GetDeltaTime();
-#else
-		currentParticle.life -= App->time->GetRealTimeDeltaTime();
-#endif
+		if (App->time->IsGameRunning()) {
+			currentParticle.life -= App->time->GetDeltaTime();
+		} else {
+			currentParticle.life -= App->time->GetRealTimeDeltaTime();
+		}
 		currentParticle.position += currentParticle.direction * velocity;
 		currentParticle.model = float4x4::FromTRS(currentParticle.position, currentParticle.rotation, currentParticle.scale);
 		if (currentParticle.life < 0) {
