@@ -38,6 +38,8 @@ public:
 	float4 GetClickColor() const;								// Returns colorClicked
 	float2 GetClickedPosition() const;							// Returns mouse click position inside the slider
 
+	bool handleStopsOnEdge = true;								// The handle does not go past its edges
+
 private:
 
 	void SetNormalizedValue();

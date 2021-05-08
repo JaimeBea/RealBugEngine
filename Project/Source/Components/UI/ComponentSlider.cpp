@@ -83,12 +83,22 @@ void ComponentSlider::Update() {
 		default:
 			break;
 	}
+
+	if (handleStopsOnEdge) {
+		if (handlePosition + handleTransform->GetSize().x / 2.0f > backgroundTransform->GetPosition().x + backgroundTransform->GetSize().x / 2.0f) {
+			handlePosition = backgroundTransform->GetPosition().x + backgroundTransform->GetSize().x / 2.0f - handleTransform->GetSize().x / 2.0f;
+		} else if (handlePosition - handleTransform->GetSize().x / 2.0f < backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f) {
+			handlePosition = backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f + handleTransform->GetSize().x / 2.0f;
+		}
+	}
+
 	fillTransform->SetPosition(float3(fillPosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z)); 
 	handleTransform->SetPosition(float3(handlePosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z));
 }
 
 void ComponentSlider::OnEditorUpdate() {
 
+	ImGui::Checkbox("Handle Stops On Edges ", &handleStopsOnEdge);
 
 	if (ImGui::DragFloat("Max. Value", &maxValue, App->editor->dragSpeed1f, minValue, inf)) {
 		currentValue = currentValue > maxValue ? maxValue : currentValue;
