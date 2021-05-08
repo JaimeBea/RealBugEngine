@@ -6,9 +6,10 @@
 
 enum class DirectionType {
 	LEFT_TO_RIGHT,
-	RIGHT_TO_LEFT,
-	UP_TO_DOWN,
-	DOWN_TO_UP
+	RIGHT_TO_LEFT
+	// TODO
+	// BOTTOM_TO_TOP,
+	// TOP_TO_BOTTOM
 };
 
 class ComponentSlider : public Component
@@ -21,8 +22,6 @@ public:
 	void Init() override;										// Component Initialization
 	void Update() override;
 	void OnEditorUpdate() override;								// Input for class variables
-
-	void SetValue(float value);
 
 	void OnClicked() override;
 
@@ -37,6 +36,7 @@ public:
 
 	float4 GetTintColor() const;								// Returns the correspondant color of the current state
 	float4 GetClickColor() const;								// Returns colorClicked
+	float2 GetClickedPosition() const;							// Returns mouse click position inside the slider
 
 private:
 
@@ -53,7 +53,7 @@ private:
 	float currentValue = 50.0f;									// Current value between maxValue and minValue
 	float normalizedValue = 0.5f;								// Normalized current value between 0 and 1
 
-	float2 newPosition = float2(0, 0);
+	float2 newPosition = float2(0, 0);							// Click position inside the slider
 
 	bool clicked = false;										// Clicked state
 	float4 colorClicked = float4(0.64f, 0.64f, 0.64f, 1.f);		// The color when the button is clicked

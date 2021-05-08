@@ -5,8 +5,10 @@
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleEditor.h"
+#include "Modules/ModuleUserInterface.h"
 #include "imgui.h"
 #include "Utils/Logging.h"
+#include "Scripting/Script.h"
 
 #include "Utils/Leaks.h"
 
@@ -71,10 +73,11 @@ void ComponentSlider::Update() {
 			fillPosition = backgroundTransform->GetPosition().x + backgroundTransform->GetSize().x / 2.0f - (backgroundTransform->GetSize().x * (1 - normalizedValue)) / 2.0f;
 			handlePosition = fillTransform->GetPosition().x - (fillTransform->GetSize().x / 2.0f);
 			break;
-		case DirectionType::DOWN_TO_UP:
+		// TODO
+		/*case DirectionType::BOTTOM_TO_TOP:
 			break;
-		case DirectionType::UP_TO_DOWN:
-			break;
+		case DirectionType::TOP_TO_BOTTOM:
+			break;*/
 		default:
 			break;
 	}
@@ -116,22 +119,25 @@ void ComponentSlider::OnEditorUpdate() {
 	}
 }
 
-void ComponentSlider::SetValue(float value) {
-	if (value > maxValue)
-		currentValue = value;
-	else if (value < minValue)
-		currentValue = minValue;
-}
-
 void ComponentSlider::OnClicked() {
 	SetClicked(true);
+	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 	float2 mousePos = App->input->GetMousePosition(true);
 	newPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y);
+	
+	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
+		Script* script = scriptComponent.GetScriptInstance();
+		if (script != nullptr) {
+			script->OnValueChanged();
+		}
+	}
+
 	OnValueChanged();
 }
 
-// WIP
+
 void ComponentSlider::OnValueChanged() {
+	// TODO: support for vertical sliders
 	ComponentTransform2D* backgroundTransform = background->GetComponent<ComponentTransform2D>();
 
 	float size = (backgroundTransform->GetPosition().x + newPosition.x) - (backgroundTransform->GetPosition().x - backgroundTransform->GetSize().x / 2.0f);
@@ -184,6 +190,10 @@ void ComponentSlider::SetClicked(bool clicked_) {
 
 float4 ComponentSlider::GetClickColor() const {
 	return colorClicked;
+}
+
+float2 ComponentSlider::GetClickedPosition() const {
+	return newPosition;
 }
 
 float4 ComponentSlider::GetTintColor() const {
