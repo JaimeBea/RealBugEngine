@@ -13,6 +13,7 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentSlider.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
@@ -123,6 +124,9 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				CreateUIButton(gameObject);
 			}
 
+			if (ImGui::MenuItem("Slider")) {
+				CreateUISlider(gameObject);
+			}
 			if (ImGui::MenuItem("Toggle")) {
 				CreateUIToggle(gameObject);
 			}
@@ -219,6 +223,7 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
 	newGameObject->InitComponents();
 	CreateEventSystem(App->scene->scene->root);
@@ -291,7 +296,6 @@ GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
 		gameObject = CreateUICanvas(gameObject);
 	}
-
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Toggle");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
 	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
@@ -312,6 +316,50 @@ GameObject* PanelHierarchy::CreateUIToggle(GameObject* gameObject) {
 
 	toggle->SetEnabledImageObj(newGameObjectChild->GetID());
 	selectable->SetSelectableType(toggle->GetType());
+	newGameObject->InitComponents();
+
+	return newGameObject;
+}
+
+GameObject* PanelHierarchy::CreateUISlider(GameObject* gameObject) {
+	if (gameObject->HasComponentInAnyParent<ComponentCanvas>(gameObject) == nullptr) {
+		gameObject = CreateUICanvas(gameObject);
+	}
+
+	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Slider");
+	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* canvasRenderer = newGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentBoundingBox2D* boundingBox = newGameObject->CreateComponent<ComponentBoundingBox2D>();
+	ComponentSelectable* selectable = newGameObject->CreateComponent<ComponentSelectable>();
+	ComponentSlider* slider = newGameObject->CreateComponent<ComponentSlider>();
+
+	CreateEventSystem(App->scene->scene->root);
+
+	GameObject* backgroundGameObject = App->scene->scene->CreateGameObject(newGameObject, GenerateUID(), "Background");
+	ComponentTransform* backgroundTransform = backgroundGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* backgroundTransform2D = backgroundGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* backgroundRenderer = backgroundGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* backgorundImage = backgroundGameObject->CreateComponent<ComponentImage>();
+
+	GameObject* fillGameObject = App->scene->scene->CreateGameObject(newGameObject, GenerateUID(), "Fill");
+	ComponentTransform* fillTransform = fillGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* fillTransform2D = fillGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* fillRenderer = fillGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* fillImage = fillGameObject->CreateComponent<ComponentImage>();
+
+	GameObject* handleGameObject = App->scene->scene->CreateGameObject(newGameObject, GenerateUID(), "Handle");
+	ComponentTransform* handleTransform = handleGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* handleTransform2D = handleGameObject->CreateComponent<ComponentTransform2D>();
+	ComponentCanvasRenderer* handleRenderer = handleGameObject->CreateComponent<ComponentCanvasRenderer>();
+	ComponentImage* handleImage = handleGameObject->CreateComponent<ComponentImage>();
+
+	
+	selectable->SetSelectableType(slider->GetType());
+	backgroundGameObject->InitComponents();
+	fillGameObject->InitComponents();
+	handleGameObject->InitComponents();
+
 	newGameObject->InitComponents();
 
 	return newGameObject;
