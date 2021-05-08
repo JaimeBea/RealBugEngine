@@ -7,6 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
+    "GameCamera": 8714473313920391581,
     "AmbientLight": [
         0.0,
         0.0,
@@ -16,6 +17,7 @@
         "Id": 12361491663351238,
         "Name": "Scene",
         "Active": true,
+        "ActiveHierarchy": true,
         "RootBoneId": 0,
         "Components": [
             {
@@ -50,6 +52,7 @@
                 "Id": 9451327248805977367,
                 "Name": "Directional Light",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -101,6 +104,7 @@
                 "Id": 14643701464132181138,
                 "Name": "Game Camera",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -153,8 +157,7 @@
                             "FarPlaneDistance": 200.0,
                             "HorizontalFov": 1.4299180507659913,
                             "VerticalFov": 1.0
-                        },
-                        "CameraSelected": true
+                        }
                     },
                     {
                         "Type": "Skybox",
@@ -167,7 +170,8 @@
                         "Type": "Script",
                         "Id": 5936340896126486701,
                         "Active": true,
-                        "Script": 8205703692535477266
+                        "Script": 8205703692535477266,
+                        "Values": null
                     }
                 ],
                 "Children": null
@@ -176,6 +180,7 @@
                 "Id": 6509322293386695666,
                 "Name": "Event System",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -217,6 +222,7 @@
                 "Id": 4794696842628488676,
                 "Name": "Canvas",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -256,6 +262,7 @@
                         "Id": 7775269086565454283,
                         "Name": "Background",
                         "Active": true,
+                        "ActiveHierarchy": true,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -313,6 +320,7 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": null,
                                 "Size": [
                                     2560.0,
                                     1377.0
@@ -335,7 +343,6 @@
                                 "Type": "Image",
                                 "Id": 809586708866870379,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 9142036629051058095,
                                 "Color": [
                                     1.0,
@@ -349,7 +356,8 @@
                                 "Type": "Script",
                                 "Id": 3205209751197079614,
                                 "Active": true,
-                                "Script": 14708543293375634621
+                                "Script": 14708543293375634621,
+                                "Values": null
                             }
                         ],
                         "Children": null
@@ -360,6 +368,7 @@
                 "Id": 4510505588429022372,
                 "Name": "Canvas",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -399,6 +408,7 @@
                         "Id": 10902282239435439488,
                         "Name": "ExitButton",
                         "Active": true,
+                        "ActiveHierarchy": true,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -433,7 +443,7 @@
                                 "Active": true,
                                 "Position": [
                                     0.0,
-                                    350.0,
+                                    0.0,
                                     0.0
                                 ],
                                 "Rotation": [
@@ -456,6 +466,7 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": null,
                                 "Size": [
                                     236.0,
                                     60.0
@@ -489,7 +500,6 @@
                                 "Type": "Image",
                                 "Id": 6846536896861287187,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 943873689796820877,
                                 "Color": [
                                     1.0,
@@ -540,7 +550,8 @@
                                 "Type": "Script",
                                 "Id": 2870357543824899390,
                                 "Active": true,
-                                "Script": 6876061672568714869
+                                "Script": 6876061672568714869,
+                                "Values": null
                             }
                         ],
                         "Children": null
