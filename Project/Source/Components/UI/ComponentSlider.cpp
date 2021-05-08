@@ -107,7 +107,7 @@ void ComponentSlider::OnEditorUpdate() {
 		SetNormalizedValue();
 	}
 
-	const char* availableDirections[] = {"Left to right", "Right to left", "Up to down", "Down to up"};
+	const char* availableDirections[] = {"Left to right", "Right to left"};
 	const char* currentDirection = availableDirections[(int) direction];
 	if (ImGui::BeginCombo("Direction", currentDirection)) {
 		for (int n = 0; n < IM_ARRAYSIZE(availableDirections); ++n) {
