@@ -70,6 +70,7 @@ public:
 	void Enable();
 	void Disable();
 	bool IsActive() const;
+	bool IsActiveInternal() const;
 
 	UID GetID() const;
 
@@ -113,7 +114,12 @@ public:
 	std::vector<Component*> components;
 
 private:
+	void EnableInHierarchy();
+	void DisableInHierarchy();
+
+private:
 	bool active = true;
+	bool activeInHierarchy = true;
 	UID prefabId = 0;
 	GameObject* parent = nullptr;
 	GameObject* rootBoneHierarchy = nullptr;
