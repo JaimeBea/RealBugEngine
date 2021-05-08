@@ -32,7 +32,7 @@ void GameObject::InitComponents() {
 }
 
 void GameObject::Update() {
-	if (IsActiveInHierarchy()) {
+	if (IsActive()) {
 		for (Component* component : components) {
 			component->Update();
 		}
@@ -55,19 +55,19 @@ void GameObject::DrawGizmos() {
 
 void GameObject::Enable() {
 	active = true;
+	EnableInHierarchy();
 }
 
 void GameObject::Disable() {
+	DisableInHierarchy();
 	active = false;
 }
 
 bool GameObject::IsActive() const {
-	return active;
+	return active && activeInHierarchy;
 }
 
-bool GameObject::IsActiveInHierarchy() const {
-	if (parent) return parent->IsActiveInHierarchy() && active;
-
+bool GameObject::IsActiveInternal() const {
 	return active;
 }
 
@@ -296,4 +296,36 @@ void GameObject::LoadPrefab(JsonValue jGameObject) {
 		ModelImporter::CacheBones(rootBoneHierarchy, temporalBonesMap);
 		ModelImporter::SaveBones(this, temporalBonesMap);
 	}
+}
+
+void GameObject::EnableInHierarchy() {
+	if (parent != nullptr && !parent->IsActive()) {
+		return;
+	}
+
+	activeInHierarchy = true;
+	for (GameObject* child : children) {
+		child->EnableInHierarchy();
+	}
+	for (Component* component : components) {
+		if (component->IsActive()) {
+			component->OnEnable();
+		}
+	}
+}
+
+void GameObject::DisableInHierarchy() {
+	if (parent != nullptr && !parent->IsActive()) {
+		return;
+	}
+
+	for (Component* component : components) {
+		if (component->IsActive()) {
+			component->OnDisable();
+		}
+	}
+	for (GameObject* child : children) {
+		child->DisableInHierarchy();
+	}
+	activeInHierarchy = false;
 }

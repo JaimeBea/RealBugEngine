@@ -18,10 +18,7 @@ void ComponentCanvas::Save(JsonValue jComponent) const {
 }
 
 void ComponentCanvas::Update() {
-	if (dirty) {
-		dirty = false;
-		RecalculateScreenFactor();
-	}
+	RecalculateScreenFactor();
 }
 
 void ComponentCanvas::Load(JsonValue jComponent) {

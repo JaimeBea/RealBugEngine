@@ -145,7 +145,7 @@ void ComponentMeshRenderer::DuplicateComponent(GameObject& owner) {
 }
 
 void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
-	if (!IsActiveInHierarchy()) return;
+	if (!IsActive()) return;
 
 	ResourceMesh* mesh = App->resources->GetResource<ResourceMesh>(meshId);
 	if (mesh == nullptr) return;
@@ -170,12 +170,12 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 	for (ComponentLight& light : GetOwner().scene->lightComponents) {
 		if (light.lightType == LightType::DIRECTIONAL) {
 			// It takes the first actived Directional Light inside the Pool
-			if (light.IsActiveInHierarchy() && directionalLight == nullptr) {
+			if (light.IsActive() && directionalLight == nullptr) {
 				directionalLight = &light;
 				continue;
 			}
 		} else if (light.lightType == LightType::POINT) {
-			if (light.IsActiveInHierarchy()) {
+			if (light.IsActive()) {
 				float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition();
 				float3 lightPosition = light.GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition();
 				float distance = Distance(meshPosition, lightPosition);
@@ -217,7 +217,7 @@ void ComponentMeshRenderer::Draw(const float4x4& modelMatrix) const {
 				}
 			}
 		} else if (light.lightType == LightType::SPOT) {
-			if (light.IsActiveInHierarchy()) {
+			if (light.IsActive()) {
 				float3 meshPosition = GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition();
 				float3 lightPosition = light.GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition();
 				float distance = Distance(meshPosition, lightPosition);

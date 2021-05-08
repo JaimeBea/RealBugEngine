@@ -36,7 +36,7 @@ void ComponentAudioSource::Update() {
 }
 
 void ComponentAudioSource::DrawGizmos() {
-	if (IsActiveInHierarchy() && drawGizmos) {
+	if (IsActive() && drawGizmos) {
 		if (spatialBlend && sourceType) {
 			dd::cone(position, direction, dd::colors::White, 1.0f, 0.0f);
 		} else {

@@ -107,7 +107,6 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jPosition[1] = pivotPosition.y;
 	jPosition[2] = pivotPosition.z;
 
-
 	JsonValue jSize = jComponent[JSON_TAG_SIZE];
 	jSize[0] = size.x;
 	jSize[1] = size.y;
@@ -154,13 +153,11 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 
 void ComponentTransform2D::DrawGizmos() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	if (canvasRenderer != nullptr) {
-		float factor = canvasRenderer->GetCanvasScreenFactor();
-		if (!App->time->IsGameRunning()) {
-			dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
-			float3 pivotPosFactor = float3(GetPivotPosition().x / 100, GetPivotPosition().y / 100, GetPivotPosition().z / 100);
-			dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1, 0.1, 0);
-		}
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1.0f;
+	if (!App->time->IsGameRunning()) {
+		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
+		float3 pivotPosFactor = float3(GetPivotPosition().x / 100, GetPivotPosition().y / 100, GetPivotPosition().z / 100);
+		dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1, 0.1, 0);
 	}
 }
 

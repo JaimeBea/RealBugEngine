@@ -323,7 +323,7 @@ bool ModuleProject::Init() {
 UpdateStatus ModuleProject::Update() {
 	for (ComponentScript& script : App->scene->scene->scriptComponents) {
 		if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
-			if (script.IsActiveInHierarchy()) {
+			if (script.IsActive()) {
 				Script* scriptInstance = script.GetScriptInstance();
 				if (scriptInstance != nullptr) {
 					scriptInstance->Update();
