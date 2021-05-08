@@ -18,6 +18,7 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentText.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentSlider.h"
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
@@ -119,6 +120,9 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::SELECTABLE:
 					cName = "Selectable";
+					break;
+				case ComponentType::SLIDER:
+					cName = "Slider";
 					break;
 				case ComponentType::SKYBOX:
 					cName = "Skybox";

@@ -81,6 +81,7 @@
     <ClInclude Include="Source\Components\UI\ComponentCanvas.h" />
     <ClInclude Include="Source\Components\UI\ComponentCanvasRenderer.h" />
     <ClInclude Include="Source\FileSystem\FontImporter.h" />
+    <ClInclude Include="Source\Components\UI\ComponentSlider.h" />
     <ClInclude Include="Source\Components\UI\ComponentImage.h" />
     <ClInclude Include="Source\Components\UI\ComponentTransform2D.h" />
     <ClInclude Include="Source\GameplaySystems.h" />
@@ -300,6 +301,7 @@
     <ClCompile Include="Source\Scripting\Member.cpp" />
     <ClCompile Include="Source\TesseractEvent.cpp" />
     <ClCompile Include="Source\Resources\ResourceFont.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentSlider.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentToggle.cpp" />
     <ClCompile Include="Source\Components\ComponentBoundingBox2D.cpp" />
     <ClCompile Include="Source\Components\UI\ComponentCanvas.cpp" />

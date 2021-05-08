@@ -170,6 +170,7 @@
     <ClCompile Include="Source\Resources\ResourceAudioClip.cpp" />
     <ClCompile Include="Source\FileSystem\AudioImporter.cpp" />
     <ClCompile Include="Libs\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Source\Components\UI\ComponentSlider.cpp" />
     <ClCompile Include="Source\Utils\ImGuiUtils.cpp" />
     <ClCompile Include="Source\Scripting\Member.cpp" />
   </ItemGroup>
@@ -441,6 +442,7 @@
     <ClInclude Include="Source\FileSystem\AudioImporter.h" />
     <ClInclude Include="Source\Utils\PoolMap.h" />
     <ClInclude Include="Source\FileSystem\PrefabImporter.h" />
+    <ClInclude Include="Source\Components\UI\ComponentSlider.h" />
     <ClInclude Include="Source\Scripting\Member.h" />
     <ClInclude Include="Source\Utils\StringBlocksParser.h" />
   </ItemGroup>
