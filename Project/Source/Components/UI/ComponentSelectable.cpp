@@ -367,5 +367,5 @@ void ComponentSelectable::SetSelectableType(ComponentType type_) {
 }
 
 bool ComponentSelectable::CanBeRemoved() const {
-	return !(GetOwner().GetComponent<ComponentButton>() || GetOwner().GetComponent<ComponentToggle>());
+	return !(GetOwner().GetComponent<ComponentButton>() || GetOwner().GetComponent<ComponentToggle>() || GetOwner().GetComponent<ComponentSlider>());
 }
