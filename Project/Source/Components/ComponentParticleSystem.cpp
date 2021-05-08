@@ -101,7 +101,7 @@ void ComponentParticleSystem::OnEditorUpdate() {
 	}
 }
 
-//TODO DINAMIC PARTICLE NOT HARCODEC
+//TODO DINAMIC PARTICLE NOT HARCODED
 float3 ComponentParticleSystem::CreateVelocity() {
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
@@ -110,6 +110,7 @@ float3 ComponentParticleSystem::CreateVelocity() {
 		float y = (float(rand()) / float((RAND_MAX)) * 1.0);
 		return float3(x, y, z);
 	}
+	//TODO DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
