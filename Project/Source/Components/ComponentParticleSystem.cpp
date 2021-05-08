@@ -208,6 +208,7 @@ void ComponentParticleSystem::SpawnParticle() {
 }
 
 void ComponentParticleSystem::DrawGizmos() {
+	//TODO IMPROVE DRAWS
 	if (IsActiveInHierarchy()) {
 		if (emitterType == EmitterType::CONE) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
@@ -293,6 +294,7 @@ void ComponentParticleSystem::Draw() {
 			if (textureResource != nullptr) {
 				glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
 			}
+			//TODO implement drawarrays
 			//glDrawArraysInstanced(GL_TRIANGLES, 0, 4, 100);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindTexture(GL_TEXTURE_2D, 0);
