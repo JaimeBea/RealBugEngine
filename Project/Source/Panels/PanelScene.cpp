@@ -151,6 +151,7 @@ void PanelScene::Update() {
 		// Update viewport size
 		ImVec2 size = ImGui::GetContentRegionAvail();
 		if (App->renderer->GetViewportSize().x != size.x || App->renderer->GetViewportSize().y != size.y) {
+			// TODO, These should use the EVENT SCREEN_RESIZED
 			App->camera->ViewportResized((int) size.x, (int) size.y);
 			App->userInterface->ViewportResized();
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
@@ -258,10 +259,10 @@ void PanelScene::Update() {
 			mousePosOnScene.x = io.MousePos.x - framebufferPosition.x;
 			mousePosOnScene.y = io.MousePos.y - framebufferPosition.y;
 
+			mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
+			mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
+
 			if (ImGui::IsMouseClicked(0) && ImGui::IsItemHovered() && !ImGuizmo::IsOver()) {
-				float2 mousePosNormalized;
-				mousePosNormalized.x = -1 + 2 * std::max(-1.0f, std::min((io.MousePos.x - framebufferPosition.x) / (size.x), 1.0f));
-				mousePosNormalized.y = 1 - 2 * std::max(-1.0f, std::min((io.MousePos.y - framebufferPosition.y) / (size.y), 1.0f));
 				App->camera->CalculateFrustumNearestObject(mousePosNormalized);
 			}
 			ImGui::CaptureMouseFromApp(false);
@@ -277,6 +278,9 @@ bool PanelScene::IsUsing2D() const {
 
 const float2& PanelScene::GetMousePosOnScene() const {
 	return mousePosOnScene;
+}
+const float2& PanelScene::GetMousePosOnSceneNormalized() const {
+	return mousePosNormalized;
 }
 
 const char* PanelScene::GetCurrentShadingMode() const {

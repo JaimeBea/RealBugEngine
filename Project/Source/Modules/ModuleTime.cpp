@@ -24,7 +24,7 @@ bool ModuleTime::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_RESUME, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STEP, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STOP, this);
-	
+
 	return true;
 }
 
@@ -137,7 +137,8 @@ void ModuleTime::StartGame() {
 
 #if !GAME
 	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
-#endif
+	App->scene->sceneLoaded = false;
+#endif // !GAME
 
 	if (App->camera->GetGameCamera()) {
 		// Set the Game Camera as active
@@ -146,7 +147,7 @@ void ModuleTime::StartGame() {
 	} else {
 		// TODO: Modal window. Warning - camera not set.
 	}
-	
+
 	gameStarted = true;
 	gameRunning = true;
 }

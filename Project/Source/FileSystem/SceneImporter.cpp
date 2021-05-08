@@ -18,6 +18,7 @@
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleRender.h"
+#include "Scripting/Script.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
@@ -119,15 +120,18 @@ void SceneImporter::LoadScene(const char* filePath) {
 	scene->quadtreeElementsPerNode = jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE];
 	scene->RebuildQuadtree();
 
-	UID gameCameraID = jScene[JSON_TAG_GAME_CAMERA];
-	App->camera->ChangeGameCamera(App->scene->scene->GetComponent<ComponentCamera>(gameCameraID), true);
+	ComponentCamera* gameCamera = scene->GetComponent<ComponentCamera>(jScene[JSON_TAG_GAME_CAMERA]);
+	App->camera->ChangeGameCamera(gameCamera, gameCamera != nullptr);
 
 	JsonValue ambientLight = jScene[JSON_TAG_AMBIENTLIGHT];
-	App->renderer->ambientColor = {ambientLight[0], ambientLight[1] ,ambientLight[2]};
+	App->renderer->ambientColor = {ambientLight[0], ambientLight[1], ambientLight[2]};
 
 	if (App->time->IsGameRunning()) {
 		for (ComponentScript& script : scene->scriptComponents) {
-			script.OnStart();
+			Script* scriptInstance = script.GetScriptInstance();
+			if (scriptInstance != nullptr) {
+				scriptInstance->Start();
+			}
 		}
 	}
 
@@ -151,7 +155,8 @@ bool SceneImporter::SaveScene(const char* filePath) {
 	jScene[JSON_TAG_QUADTREE_MAX_DEPTH] = scene->quadtreeMaxDepth;
 	jScene[JSON_TAG_QUADTREE_ELEMENTS_PER_NODE] = scene->quadtreeElementsPerNode;
 
-	jScene[JSON_TAG_GAME_CAMERA] = App->camera->GetGameCamera()->GetID();
+	ComponentCamera* gameCamera = App->camera->GetGameCamera();
+	jScene[JSON_TAG_GAME_CAMERA] = gameCamera ? gameCamera->GetID() : 0;
 
 	JsonValue ambientLight = jScene[JSON_TAG_AMBIENTLIGHT];
 	ambientLight[0] = App->renderer->ambientColor.x;

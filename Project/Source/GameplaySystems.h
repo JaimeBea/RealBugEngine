@@ -1,9 +1,11 @@
 #pragma once
 
-
 #include "Globals.h"
+#include "Application.h"
+#include "Modules/ModuleResources.h"
 #include "Components/ComponentCamera.h"
 #include "Utils/Logging.h"
+#include "Utils/UID.h"
 
 #include "Math/float2.h"
 
@@ -14,9 +16,12 @@
 #endif
 
 class GameObject;
+class ResourcePrefab;
 
 namespace GameplaySystems {
 	TESSERACT_ENGINE_API GameObject* GetGameObject(const char* name);
+	TESSERACT_ENGINE_API GameObject* GetGameObject(UID id);
+	template<typename T> TESSERACT_ENGINE_API T* GetResource(UID id);
 	TESSERACT_ENGINE_API void SetRenderCamera(ComponentCamera* camera);
 }; // namespace GameplaySystems
 
@@ -369,6 +374,7 @@ namespace Input {
 	TESSERACT_ENGINE_API bool GetMouseButton(int button);
 	TESSERACT_ENGINE_API const float2& GetMouseMotion();
 	TESSERACT_ENGINE_API const float3& GetMouseWorldPosition();
+	TESSERACT_ENGINE_API float2 GetMousePosition();
 	TESSERACT_ENGINE_API bool GetKeyCodeDown(KEYCODE keycode);
 	TESSERACT_ENGINE_API bool GetKeyCodeUp(KEYCODE keycode);
 	TESSERACT_ENGINE_API bool GetKeyCodeRepeat(KEYCODE keycode);

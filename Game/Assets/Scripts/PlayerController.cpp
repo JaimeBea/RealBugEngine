@@ -6,6 +6,11 @@
 #include "Math/float2.h"
 #include <string>
 
+EXPOSE_MEMBERS(PlayerController) {
+	// Add members here to expose them to the engine. Example:
+	//MEMBER(MemberType::GAME_OBJECT_UID, backgroundUID)
+};
+
 GENERATE_BODY_IMPL(PlayerController);
 
 void PlayerController::Start() {
@@ -47,9 +52,10 @@ void PlayerController::MoveTo(MovementDirection md){
 
 void PlayerController::LookAtMouse(){
 	float3 mouseWorld = Input::GetMouseWorldPosition();
-	float3 forward = mouseWorld - transform->GetPosition();
-	float angle = Atan2(forward.y, forward.z);
-	Quat q = transform->GetRotation();
+	Debug::Log(("mouse world x: " + std::to_string(mouseWorld.x) + " world y: " + std::to_string(mouseWorld.y)).c_str());
+	float3 forward = mouseWorld - transform->GetGlobalPosition();
+	float angle = Atan2(forward.x, forward.z);
+	Quat q = transform->GetGlobalPosition();
 	transform->SetRotation(q.RotateAxisAngle(float3(0, 1, 0), angle));
 }
 

@@ -27,6 +27,10 @@ void Component::Load(JsonValue jComponent) {}
 
 void Component::DuplicateComponent(GameObject& owner) {}
 
+bool Component::CanBeRemoved() const {
+	return true;
+}
+
 void Component::Enable() {
 	active = true;
 	OnEnable();

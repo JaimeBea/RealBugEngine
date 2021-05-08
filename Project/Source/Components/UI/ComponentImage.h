@@ -21,13 +21,13 @@ public:
 	void DuplicateComponent(GameObject& owner) override;
 
 	void Draw(const ComponentTransform2D* transform) const; // Draws the image ortographically using the active camera, and the transform passed as model. It will apply AlphaTransparency if true, and will get Button's additional color to apply if needed
+	void SetColor(float4 color_);
 
 private:
-	const float4& GetTintColor() const; // Gets an additional color that needs to be applied to the image. Currently gets the color of the Button
+	float4 GetTintColor() const; // Gets an additional color that needs to be applied to the image. Currently gets the color of the Button
 
 private:
 	float4 color = float4::one;		// Color used as default tainter
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
 	UID textureID = 0;				// ID of the image
-	UID shaderID = 0;				// ID of the shader
 };

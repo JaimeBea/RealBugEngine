@@ -32,6 +32,7 @@
 #include "Modules/ModuleEvents.h"
 #include "Modules/ModuleTime.h"
 #include "Panels/PanelHierarchy.h"
+#include "Scripting/Script.h"
 
 #include "GL/glew.h"
 #include "Math/myassert.h"
@@ -135,18 +136,17 @@ void ModuleScene::ReceiveEvent(TesseractEvent& e) {
 		if (App->time->IsGameRunning() && !sceneLoaded) {
 			sceneLoaded = true;
 			for (ComponentScript& script : scene->scriptComponents) {
-				script.OnStart();
+				script.CreateScriptInstance();
+				Script* scriptInstance = script.GetScriptInstance();
+				if (scriptInstance != nullptr) {
+					scriptInstance->Start();
+				}
 			}
 		}
 		break;
 	case TesseractEventType::COMPILATION_FINISHED:
 		for (ComponentScript& script : scene->scriptComponents) {
-			script.dirty = true;
-		}
-		break;
-	case TesseractEventType::PRESSED_PLAY:
-		for (ComponentScript& script : scene->scriptComponents) {
-			script.OnStart();
+			script.CreateScriptInstance();
 		}
 		break;
 	}

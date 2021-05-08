@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class GameObject;
 class ComponentText;
@@ -13,6 +13,10 @@ public:
 
 	void Start() override;
 	void Update() override;
+
+public:
+	UID fangUID;
+	UID canvasUID;
 
 private:
 	GameObject* canvas = nullptr;

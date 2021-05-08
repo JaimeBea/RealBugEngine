@@ -4,6 +4,7 @@
 #include "Components/UI/ComponentTransform2D.h"
 #include "Components/ComponentCamera.h"
 #include "Application.h"
+#include "Panels/PanelScene.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleInput.h"
@@ -14,6 +15,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
+#include "Resources/ResourcePrefab.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/Logging.h"
 #include "TesseractEvent.h"
@@ -26,8 +28,20 @@
 // ----------- GAMEPLAY ------------ //
 
 GameObject* GameplaySystems::GetGameObject(const char* name) {
-	return App->scene->scene->root->FindDescendant(name);
+	GameObject* root = App->scene->scene->root;
+	return root->name == name ? root : root->FindDescendant(name);
 }
+
+GameObject* GameplaySystems::GetGameObject(UID id) {
+	return App->scene->scene->GetGameObject(id);
+}
+
+template<typename T>
+T* GameplaySystems::GetResource(UID id) {
+	return App->resources->GetResource<T>(id);
+}
+
+template TESSERACT_ENGINE_API ResourcePrefab* GameplaySystems::GetResource<ResourcePrefab>(UID id);
 
 void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeActiveCamera(camera, true);
@@ -128,7 +142,7 @@ const float2& Input::GetMouseMotion() {
 }
 
 const float3& Input::GetMouseWorldPosition() {
-	float2 MouseMotion = App->input->GetMouseMotion();
+	float2 MouseMotion = App->editor->panelScene.GetMousePosOnSceneNormalized();
 	LOG(("mouse x: " + std::to_string(MouseMotion.x) + " y: " + std::to_string(MouseMotion.y)).c_str());
 	float4x4 Projection = App->camera->GetProjectionMatrix();
 	float4x4 View = App->camera->GetViewMatrix();
@@ -138,6 +152,10 @@ const float3& Input::GetMouseWorldPosition() {
 	float4 vIn = float4(MouseMotion.x, MouseMotion.y, 1.0f, 1.0f);
 	float4 worldPos = vIn * ProjView;
 	return worldPos.xyz();
+}
+
+float2 Input::GetMousePosition() {
+	return App->input->GetMousePosition(true);
 }
 
 bool Input::GetKeyCodeDown(KEYCODE keycode) {
