@@ -21,7 +21,7 @@
 // from https://msdn.microsoft.com/en-us/library/yf86a8ts.aspx
 #pragma warning(disable : 4278)
 #pragma warning(disable : 4146)
-#import "libid:80cc9f66-e7d8-4ddd-85b6-d9e6cd0e93e2" version("8.0") lcid("0") raw_interfaces_only named_guids //The following #import imports EnvDTE based on its LIBID.
+#include "Utils/dte80a.tlh"
 #pragma warning(default : 4146)
 #pragma warning(default : 4278)
 
