@@ -62,6 +62,8 @@ void ComponentSlider::Update() {
 	float fillPosition = 0;
 	float handlePosition = 0;
 
+	handleTransform->SetSize(float2(backgroundTransform->GetSize().x / 8.0f, backgroundTransform->GetSize().y));
+
 	switch (direction) {
 		case DirectionType::LEFT_TO_RIGHT:
 			fillTransform->SetSize(float2(backgroundTransform->GetSize().x * normalizedValue, backgroundTransform->GetSize().y));
@@ -82,7 +84,7 @@ void ComponentSlider::Update() {
 			break;
 	}
 	fillTransform->SetPosition(float3(fillPosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z)); 
-	handleTransform->SetPosition(float3(handlePosition, handleTransform->GetPosition().y, handleTransform->GetPosition().z));
+	handleTransform->SetPosition(float3(handlePosition, backgroundTransform->GetPosition().y, backgroundTransform->GetPosition().z));
 }
 
 void ComponentSlider::OnEditorUpdate() {
@@ -121,9 +123,10 @@ void ComponentSlider::OnEditorUpdate() {
 
 void ComponentSlider::OnClicked() {
 	SetClicked(true);
+	const ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 	float2 mousePos = App->input->GetMousePosition(true);
-	newPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y);
+	newPosition = float2(mousePos.x * 2 - App->renderer->GetViewportSize().x, mousePos.y * 2 - App->renderer->GetViewportSize().y) * canvas->GetScreenFactor();
 	
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
 		Script* script = scriptComponent.GetScriptInstance();
