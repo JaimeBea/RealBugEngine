@@ -28,7 +28,8 @@ void ComponentCamera::Init() {
 }
 
 void ComponentCamera::Update() {
-	UpdateFrustum();
+	//Active camera is the only one that updates frustum, if additional cameras were to require an update before, a different system would be required
+	//This update is handled in ModuleCamera.cpp
 }
 
 void ComponentCamera::DrawGizmos() {

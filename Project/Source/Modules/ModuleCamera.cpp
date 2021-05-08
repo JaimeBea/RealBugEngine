@@ -86,7 +86,14 @@ bool ModuleCamera::Start() {
 UpdateStatus ModuleCamera::Update() {
 	BROFILER_CATEGORY("ModuleCamera - Update", Profiler::Color::Blue)
 
-	if (activeCamera != engineCamera) return UpdateStatus::CONTINUE;
+	if (activeCamera != engineCamera) {
+		//Active camera update happens here to prevent rendering problems:
+		//1. ModuleProject updates first, modifying camera values
+		//2. Module camera updates active camera frustum, updating view and projection matrixes
+		//3. Module renderer uses updated view and projection matrixes to correctly draw
+		activeCamera->UpdateFrustum();
+		return UpdateStatus::CONTINUE;
+	}
 
 	Frustum* activeFrustum = activeCamera->GetFrustum();
 	float deltaTime = App->time->GetRealTimeDeltaTime();
@@ -149,7 +156,6 @@ UpdateStatus ModuleCamera::Update() {
 			Translate(activeFrustum->WorldRight().Normalized() * finalMovementSpeed * focusDistance * deltaTime);
 		}
 	} else {
-
 		// Focus camera around geometry with f key
 		if (App->input->GetKey(SDL_SCANCODE_F)) {
 			Focus(App->editor->selectedGameObject);
@@ -417,7 +423,6 @@ void ModuleCamera::ChangeGameCamera(ComponentCamera* camera, bool change) {
 	} else {
 		gameCamera = engineCamera;
 	}
-	
 }
 
 vec ModuleCamera::GetFront() const {
