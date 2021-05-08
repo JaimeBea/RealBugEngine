@@ -217,6 +217,7 @@ GameObject* PanelHierarchy::CreateEventSystem(GameObject* gameObject) {
 GameObject* PanelHierarchy::CreateUICanvas(GameObject* gameObject) {
 	GameObject* newGameObject = App->scene->scene->CreateGameObject(gameObject, GenerateUID(), "Canvas");
 	ComponentTransform* transform = newGameObject->CreateComponent<ComponentTransform>();
+	ComponentTransform2D* transform2D = newGameObject->CreateComponent<ComponentTransform2D>();
 	ComponentCanvas* canvas = newGameObject->CreateComponent<ComponentCanvas>();
 	newGameObject->InitComponents();
 	CreateEventSystem(App->scene->scene->root);

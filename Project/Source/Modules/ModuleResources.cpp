@@ -53,7 +53,6 @@
 #define JSON_TAG_RESOURCES "Resources"
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_ID "Id"
-#define JSON_TAG_TIMESTAMP "Timestamp"
 
 static bool ReadMetaFile(const char* filePath, rapidjson::Document& document) {
 	// Read from file
@@ -237,7 +236,6 @@ std::vector<UID> ModuleResources::ImportAssetResources(const char* filePath) {
 	} else {
 		if (ImportAssetByExtension(jMeta, filePath)) {
 			if (!validMetaFile) {
-				jMeta[JSON_TAG_TIMESTAMP] = App->time->GetCurrentTimestamp();
 				SaveMetaFile(metaFilePath.c_str(), document);
 			}
 		}
@@ -330,16 +328,15 @@ void ModuleResources::UpdateAsync() {
 
 				if (success) {
 #if !GAME
-					long long timestamp = jMeta[JSON_TAG_TIMESTAMP];
+					long long metaTimestamp = App->files->GetLocalFileModificationTime(metaFilePath.c_str());
 					long long assetTimestamp = App->files->GetLocalFileModificationTime(assetFilePath.c_str());
-					if (assetTimestamp > timestamp) {
+					if (assetTimestamp > metaTimestamp) {
 						if (jMeta[JSON_TAG_RESOURCES].Size() > 1) {
 							resourcesToRemove.push_back(entry.first);
 						} else {
 							resourcesToRemove.push_back(entry.first);
 							if (std::find(assetToReimport.begin(), assetToReimport.end(), assetFilePath) == assetToReimport.end()) {
 								assetToReimport.push_back(assetFilePath);
-								jMeta[JSON_TAG_TIMESTAMP] = assetTimestamp;
 								SaveMetaFile(metaFilePath.c_str(), document);
 							}
 						}
