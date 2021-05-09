@@ -18,7 +18,6 @@ public:
 
 private:
 	GameObject* gameObject = nullptr;
-	int speed = 0;
 	int iterator = 0;
 	int offset = 1;
 };

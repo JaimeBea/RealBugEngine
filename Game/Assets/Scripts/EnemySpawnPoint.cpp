@@ -3,11 +3,10 @@
 #include "Resources/ResourcePrefab.h"
 #include "GameplaySystems.h"
 #include "GameObject.h"
-#include <string>
 
 EXPOSE_MEMBERS(EnemySpawnPoint) {
 	MEMBER(MemberType::INT, amountOfEnemies),
-		MEMBER(MemberType::PREFAB_RESOURCE_UID, prefabId)
+		MEMBER(MemberType::PREFAB_RESOURCE_UID, prefabId),
 };
 
 GENERATE_BODY_IMPL(EnemySpawnPoint);
@@ -32,9 +31,9 @@ void EnemySpawnPoint::Update() {
 			}
 			if (goTransform && goBounds) {
 				float3 newPosition = goTransform->GetPosition();
-				int val = (goBounds->GetLocalMaxPointAABB() - goBounds->GetLocalMinPointAABB()).x;
-				newPosition.x += iterator * offset * val;
-				Debug::Log(std::to_string(val).c_str());
+				float newXval = goBounds->GetLocalMaxPointAABB().x - abs(goBounds->GetLocalMinPointAABB().x);
+				newXval = newXval < 1.f ? 1.f : newXval;
+				newPosition.x += iterator * offset * newXval;
 				goTransform->SetPosition(newPosition);
 			}
 		}
