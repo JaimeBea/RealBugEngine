@@ -8,7 +8,6 @@ class EnemySpawnPoint : public Script {
 	GENERATE_BODY(EnemySpawnPoint);
 
 public:
-
 	void Start() override;
 	void Update() override;
 
