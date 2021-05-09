@@ -4,11 +4,12 @@
 #include "Math/Quat.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
+#include <algorithm>
 #include <string>
 
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
-	//MEMBER(MemberType::GAME_OBJECT_UID, backgroundUID)
+	MEMBER(MemberType::INT, speed)
 };
 
 GENERATE_BODY_IMPL(PlayerController);
@@ -18,6 +19,7 @@ void PlayerController::Start() {
 	camera = GameplaySystems::GetGameObject("Game Camera");
     if (gameObject) transform = gameObject->GetComponent<ComponentTransform>();
     if (transform) initialPosition = transform->GetPosition();
+	
 }
 
 void PlayerController::MoveTo(MovementDirection md){
@@ -52,11 +54,19 @@ void PlayerController::MoveTo(MovementDirection md){
 
 void PlayerController::LookAtMouse(){
 	float3 mouseWorld = Input::GetMouseWorldPosition();
-	Debug::Log(("mouse world x: " + std::to_string(mouseWorld.x) + " world y: " + std::to_string(mouseWorld.y)).c_str());
-	float3 forward = mouseWorld - transform->GetGlobalPosition();
-	float angle = Atan2(forward.x, forward.z);
-	Quat q = transform->GetGlobalPosition();
-	transform->SetRotation(q.RotateAxisAngle(float3(0, 1, 0), angle));
+	float3 target = float3(mouseWorld.x, 0, mouseWorld.z);
+	Quat q = transform->GetGlobalRotation();
+	//float3 di = mouseWorld - transform->GetGlobalPosition();
+	float3 localForward = transform->GetRotation().Normalized() * float3(0, 0, 1);
+	Quat finalRotation = q.LookAt(localForward, target.Normalized(), float3(0,1,0), float3(0, 1, 0));
+	transform->SetRotation(finalRotation);
+	// float3 mouseWorld = Input::GetMouseWorldPosition();
+	// Debug::Log(("mouse world x: " + std::to_string(mouseWorld.x) + " world y: " + std::to_string(mouseWorld.y) + " world z: " + std::to_string(mouseWorld.z)).c_str());
+	// float3 forward = mouseWorld - transform->GetGlobalPosition();
+	// forward.Normalize();
+	// Debug::Log(("forward x: " + std::to_string(forward.x) + " forward y: " + std::to_string(forward.y) + " forward z: " + std::to_string(forward.z)).c_str());
+	// Quat q = transform->GetGlobalRotation();
+	// transform->SetRotation(q.RotateAxisAngle(float3(0, 1, 0), Atan2(forward.y, forward.x)));
 }
 
 void PlayerController::InitDash(){
@@ -134,9 +144,9 @@ void PlayerController::Update() {
 		}
 		if(Input::GetKeyCode(Input::KEYCODE::KEY_P)){
 			LookAtMouse();
-			float3 mousePos = Input::GetMouseWorldPosition();
-			std::string mousePosStr = "x: " + std::to_string(mousePos.x) + " y: " + std::to_string(mousePos.y) + " z: " + std::to_string(mousePos.z);
-			Debug::Log(mousePosStr.c_str());
+			//float3 mousePos = Input::GetMouseWorldPosition();
+			//std::string mousePosStr = "x: " + std::to_string(mousePos.x) + " y: " + std::to_string(mousePos.y) + " z: " + std::to_string(mousePos.z);
+			//Debug::Log(mousePosStr.c_str());
 		}
 		Dash();
 	}

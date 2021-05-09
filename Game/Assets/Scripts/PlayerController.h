@@ -41,7 +41,8 @@ private:
 	float3 dashDirection = float3(0,0,0);
 	ComponentTransform* transform = nullptr;
 	MovementDirection dashMovementDirection = MovementDirection::NONE;
-
+	float angle = 0;
+	int speed = 10;
 private:
 	void MoveTo(MovementDirection md);
 	void LookAtMouse();

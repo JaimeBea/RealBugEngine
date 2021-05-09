@@ -142,15 +142,15 @@ const float2& Input::GetMouseMotion() {
 }
 
 const float3& Input::GetMouseWorldPosition() {
-	float2 MouseMotion = App->editor->panelScene.GetMousePosOnSceneNormalized();
-	LOG(("mouse x: " + std::to_string(MouseMotion.x) + " y: " + std::to_string(MouseMotion.y)).c_str());
+	float2 MousePositionNormalized = App->editor->panelScene.GetMousePosOnSceneNormalized();
+	//LOG(("mouse x: " + std::to_string(MouseMotion.x) + " y: " + std::to_string(MouseMotion.y)).c_str());
 	float4x4 Projection = App->camera->GetProjectionMatrix();
 	float4x4 View = App->camera->GetViewMatrix();
+	//float4 zFar = App->camera->GetActiveCamera()->GetFrustum()->NearPlaneDistance();
+	float4 ScreenPos = float4(MousePositionNormalized.x, MousePositionNormalized.y, -1.0f, 1.0f);
 	float4x4 ProjView = Projection * View;
 	ProjView.Inverse();
-	//float4 zFar = App->camera->GetActiveCamera()->GetFrustum()->NearPlaneDistance();
-	float4 vIn = float4(MouseMotion.x, MouseMotion.y, 1.0f, 1.0f);
-	float4 worldPos = vIn * ProjView;
+	float4 worldPos = ProjView * ScreenPos;
 	return worldPos.xyz();
 }
 
