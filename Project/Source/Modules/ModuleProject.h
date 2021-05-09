@@ -33,7 +33,6 @@ public:
 	bool IsGameLoaded() const;
 
 public:
-	HMODULE gameCodeDLL = nullptr;
 	std::string projectName = "";
 	std::string projectPath = "";
 
@@ -43,4 +42,8 @@ private:
 	void CreateMSVCSolution(const char* path, const char* name, const char* UIDProject);
 	void CreateMSVCProject(const char* path, const char* name, const char* UIDProject);
 	void CreateBatches();
+
+private:
+	HMODULE gameCodeDLL = nullptr;
+	bool startedWithDebugger = false;
 };

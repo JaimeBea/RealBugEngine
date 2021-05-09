@@ -41,6 +41,7 @@ public:
 	virtual void Start() = 0;
 	virtual void OnButtonClick() {}
 	virtual void OnToggled(bool val) {}
+	virtual void OnValueChanged() {}
 
 private:
 	GameObject* owner = nullptr;
