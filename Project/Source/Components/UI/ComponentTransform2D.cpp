@@ -103,9 +103,9 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jPivot[1] = pivot.y;
 
 	JsonValue jPivotPosition = jComponent[JSON_TAG_PIVOT_POSITION];
-	jPosition[0] = pivotPosition.x;
-	jPosition[1] = pivotPosition.y;
-	jPosition[2] = pivotPosition.z;
+	jPivotPosition[0] = pivotPosition.x;
+	jPivotPosition[1] = pivotPosition.y;
+	jPivotPosition[2] = pivotPosition.z;
 
 	JsonValue jSize = jComponent[JSON_TAG_SIZE];
 	jSize[0] = size.x;
