@@ -18,9 +18,95 @@
 #include <shellapi.h>
 #include <ObjIdl.h>
 
-#include <filesystem>
+// from https://msdn.microsoft.com/en-us/library/yf86a8ts.aspx
+#pragma warning(disable : 4278)
+#pragma warning(disable : 4146)
+#include "Utils/dte80a.tlh"
+#pragma warning(default : 4146)
+#pragma warning(default : 4278)
 
 #include "Utils/Leaks.h"
+
+EnvDTE::Process* FindVSProcess(DWORD targetPID) {
+	CoInitialize(0);
+
+	HRESULT hr;
+
+	static const wchar_t* progID = L"VisualStudio.DTE";
+
+	CLSID clsID;
+	CLSIDFromProgID(progID, &clsID);
+
+	IUnknown* unknown;
+	hr = GetActiveObject(clsID, 0, &unknown);
+	if (FAILED(hr)) {
+		return nullptr;
+	}
+
+	EnvDTE::_DTE* interface_;
+
+	hr = unknown->QueryInterface(&interface_);
+	if (FAILED(hr)) {
+		return nullptr;
+	}
+
+	EnvDTE::Debugger* debugger;
+	hr = interface_->get_Debugger(&debugger);
+	if (FAILED(hr)) {
+		return nullptr;
+	}
+
+	EnvDTE::Processes* processes;
+	hr = debugger->get_LocalProcesses(&processes);
+	if (FAILED(hr)) {
+		return nullptr;
+	}
+
+	long Count = 0;
+	hr = processes->get_Count(&Count);
+	if (FAILED(hr)) {
+		return nullptr;
+	}
+
+	EnvDTE::Process* result = nullptr;
+
+	for (int i = 0; i < Count; ++i) {
+		EnvDTE::Process* process;
+
+		hr = processes->Item(_variant_t(i), &process);
+		if (FAILED(hr)) continue;
+
+		long processID;
+		hr = process->get_ProcessID(&processID);
+		if (FAILED(hr)) {
+			return nullptr;
+		}
+
+		if (processID == targetPID) {
+			result = process;
+		}
+	}
+
+	return result;
+}
+
+void AttachVS() {
+	DWORD targetPID = GetCurrentProcessId();
+	EnvDTE::Process* process = FindVSProcess(targetPID);
+	if (process) {
+		process->Attach();
+	}
+	CoUninitialize();
+}
+
+void DetachVS(bool waitForBreakOrEnd) {
+	DWORD targetPID = GetCurrentProcessId();
+	EnvDTE::Process* process = FindVSProcess(targetPID);
+	if (process) {
+		process->Detach(variant_t(waitForBreakOrEnd));
+	}
+	CoUninitialize();
+}
 
 template<class T>
 static T struct_cast(void* ptr, LONG offset = 0) {
@@ -314,6 +400,12 @@ bool ModuleProject::Init() {
 		LOG("%s", GetLastErrorStdStr().c_str());
 	}
 #else
+	startedWithDebugger = IsDebuggerPresent();
+
+	if (startedWithDebugger) {
+		DetachVS(true);
+		AttachVS();
+	}
 
 	LoadProject("Penteract/Penteract.sln");
 #endif
@@ -323,7 +415,7 @@ bool ModuleProject::Init() {
 UpdateStatus ModuleProject::Update() {
 	for (ComponentScript& script : App->scene->scene->scriptComponents) {
 		if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
-			if (script.IsActiveInHierarchy()) {
+			if (script.IsActive()) {
 				Script* scriptInstance = script.GetScriptInstance();
 				if (scriptInstance != nullptr) {
 					scriptInstance->Update();
@@ -336,6 +428,11 @@ UpdateStatus ModuleProject::Update() {
 }
 
 bool ModuleProject::CleanUp() {
+
+	if (IsDebuggerPresent()) {
+		DetachVS(true);
+	}
+
 	UnloadGameCodeDLL();
 	Factory::DestroyContext();
 	return true;
@@ -447,6 +544,11 @@ void ModuleProject::CreateBatches() {
 }
 
 void ModuleProject::CompileProject(Configuration config) {
+
+	if (IsDebuggerPresent()) {
+		DetachVS(true);
+	}
+
 	UnloadGameCodeDLL();
 
 	std::string batchDir = projectPath + "/Batches";
@@ -547,6 +649,10 @@ void ModuleProject::CompileProject(Configuration config) {
 
 	if (!LoadGameCodeDLL(buildPath.c_str())) {
 		LOG("DLL NOT LOADED: %s", GetLastErrorStdStr().c_str());
+	}
+
+	if (startedWithDebugger) {
+		AttachVS();
 	}
 
 	App->events->AddEvent(TesseractEventType::COMPILATION_FINISHED);

@@ -58,7 +58,7 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 	if (isSelected) flags |= ImGuiTreeNodeFlags_Selected;
 
 	//White for active gameobjects, gray for disabled objects, if a parent is not active, children are inherently not active
-	ImGui::PushStyleColor(0, gameObject->IsActiveInHierarchy() ? white : grey);
+	ImGui::PushStyleColor(0, gameObject->IsActive() ? white : grey);
 
 	bool open = ImGui::TreeNodeEx(label, flags);
 

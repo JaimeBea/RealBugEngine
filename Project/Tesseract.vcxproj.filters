@@ -462,6 +462,7 @@
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
     <None Include="Debugging.props" />
+    <None Include="Source\Utils\dte80a.tlh" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libs\freetype\lib\freetype.lib" />
