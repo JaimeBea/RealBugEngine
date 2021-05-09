@@ -477,6 +477,7 @@
     <None Include="Libs\MathGeoLib\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
+    <None Include="Source\Utils\dte80a.tlh" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libs\freetype\lib\freetype.lib" />

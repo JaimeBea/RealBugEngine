@@ -48,7 +48,7 @@ void PanelInspector::Update() {
 			ImGui::SameLine();
 			ImGui::TextColored(App->editor->textColor, "%llu", selected->GetID());
 
-			bool active = selected->IsActive();
+			bool active = selected->IsActiveInternal();
 			if (ImGui::Checkbox("##game_object", &active)) {
 				// TODO: EventSystem would generate an event here
 				if (active) {
