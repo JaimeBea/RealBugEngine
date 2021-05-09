@@ -353,9 +353,6 @@ const float4x4 ComponentTransform2D::GetGlobalScaledMatrix(bool scaleFactored, b
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
 	if (dirty) {
-		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-		float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
-
 		localMatrix = float4x4::FromTRS(position, rotation, scale);		
 		
 		GameObject* parent = GetOwner().GetParent();
@@ -379,20 +376,23 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 
 void ComponentTransform2D::UpdateTransformChanges() {
 	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
+
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
+
+	bool isUsing2D = App->editor->panelScene.IsUsing2D();
+	float4x4 aux = float4x4::identity;
+	float3 newPosition = float3(0, 0, 0);
+
+	UpdatePivotPosition();
+
 	if (isPivotMode) {
-		UpdatePivotPosition();
-		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-		float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
-		bool isUsing2D = App->editor->panelScene.IsUsing2D();
-		float4x4 aux = float4x4::identity;
-		float3 newPosition = float3(0, 0, 0);
 		if (isUsing2D) {
-			//aux = float4x4::FromQuat(rotation, pivotPosition * factor) * float4x4::Translate(position * factor);
-			//position = aux.TranslatePart() * factor / 100;
+			aux = float4x4::FromQuat(rotation, pivotPosition * factor) * float4x4::Translate(position * factor);
+			position = aux.TranslatePart() * factor / 100;
 		} else {
 			aux = float4x4::FromQuat(rotation, pivotPosition / 100) * float4x4::Translate(position / 100);
 			position = aux.TranslatePart();
-			//SetPosition(newPosition);
 		}
 	}
 }
@@ -457,7 +457,13 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 
 void ComponentTransform2D::CalculateAnchor2DPosition() {
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float2 actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
+	float2 actualScreenCanvasReferenceSize = float2(0, 0);
+	bool isUsing2D = App->editor->panelScene.IsUsing2D();
+	if (isUsing2D) {
+		actualScreenCanvasReferenceSize = App->renderer->GetViewportSize();
+	} else {
+		actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
+	}
 	float posXAnchored = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f);
 	float posYAnchored = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f);
 	float2 anchored2DPosition = float2(posXAnchored, posYAnchored);
