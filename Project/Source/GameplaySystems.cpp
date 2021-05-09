@@ -15,6 +15,7 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "Resources/ResourcePrefab.h"
+#include "Resources/ResourceMaterial.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/Logging.h"
 #include "TesseractEvent.h"
@@ -43,6 +44,7 @@ T* GameplaySystems::GetResource(UID id) {
 }
 
 template TESSERACT_ENGINE_API ResourcePrefab* GameplaySystems::GetResource<ResourcePrefab>(UID id);
+template TESSERACT_ENGINE_API ResourceMaterial* GameplaySystems::GetResource<ResourceMaterial>(UID id);
 
 void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeActiveCamera(camera, true);
@@ -185,7 +187,6 @@ float Screen::GetScreenHeight() {
 }
 
 GameObject* Physics::Raycast(const float3& start, const float3& end) {
-	
 	LineSegment ray = LineSegment(start, end);
 
 	Scene* scene = App->scene->scene;
@@ -210,10 +211,28 @@ GameObject* Physics::Raycast(const float3& start, const float3& end) {
 					closestGo = &go;
 				}
 			}
-
 		}
 	}
 
 	return closestGo;
+}
 
+float3 Colors::Red() {
+	return dd::colors::Red;
+}
+
+float3 Colors::White() {
+	return dd::colors::White;
+}
+
+float3 Colors::Blue() {
+	return dd::colors::Blue;
+}
+
+float3 Colors::Orange() {
+	return dd::colors::Orange;
+}
+
+float3 Colors::Green() {
+	return dd::colors::Green;
 }
