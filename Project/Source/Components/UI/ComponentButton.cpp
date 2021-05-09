@@ -73,7 +73,7 @@ float4 ComponentButton::GetTintColor() const {
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
 
-	if (!sel) App->userInterface->GetErrorColor();
+	if (!sel) return App->userInterface->GetErrorColor();
 
 	if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
 		if (!sel->IsInteractable()) {
