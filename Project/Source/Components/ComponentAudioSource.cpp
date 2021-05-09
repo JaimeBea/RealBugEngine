@@ -65,9 +65,14 @@ void ComponentAudioSource::UpdateAudioSource() {
 }
 
 void ComponentAudioSource::OnEditorUpdate() {
-	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
-		active ? Enable() : Disable();
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
 	}
 	ImGui::Separator();
 	ImGui::Checkbox("Draw Gizmos", &drawGizmos);

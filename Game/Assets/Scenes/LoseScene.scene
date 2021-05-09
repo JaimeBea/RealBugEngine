@@ -7,6 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
+    "GameCamera": 4867882331419426358,
     "AmbientLight": [
         0.0,
         0.0,
@@ -16,6 +17,7 @@
         "Id": 15386627610009304279,
         "Name": "Scene",
         "Active": true,
+        "ActiveHierarchy": true,
         "RootBoneId": 0,
         "Components": [
             {
@@ -50,6 +52,7 @@
                 "Id": 2777955615451769807,
                 "Name": "Directional Light",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -101,6 +104,7 @@
                 "Id": 2161515125610565667,
                 "Name": "Game Camera",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -153,8 +157,7 @@
                             "FarPlaneDistance": 200.0,
                             "HorizontalFov": 1.753051519393921,
                             "VerticalFov": 1.0
-                        },
-                        "CameraSelected": false
+                        }
                     },
                     {
                         "Type": "Skybox",
@@ -167,7 +170,8 @@
                         "Type": "Script",
                         "Id": 3928515286536800321,
                         "Active": true,
-                        "Script": 8205703692535477266
+                        "Script": 8205703692535477266,
+                        "Values": null
                     }
                 ],
                 "Children": null
@@ -176,6 +180,7 @@
                 "Id": 16518341280117000822,
                 "Name": "Event System",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -217,6 +222,7 @@
                 "Id": 970374872082651482,
                 "Name": "Canvas",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -256,6 +262,7 @@
                         "Id": 4922552144984103269,
                         "Name": "Background",
                         "Active": true,
+                        "ActiveHierarchy": true,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -313,6 +320,7 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": null,
                                 "Size": [
                                     2200.0,
                                     1238.0
@@ -335,7 +343,6 @@
                                 "Type": "Image",
                                 "Id": 5494725855711796091,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 6942929480755552844,
                                 "Color": [
                                     1.0,
@@ -349,7 +356,8 @@
                                 "Type": "Script",
                                 "Id": 7446872428317093426,
                                 "Active": true,
-                                "Script": 14708543293375634621
+                                "Script": 14708543293375634621,
+                                "Values": null
                             }
                         ],
                         "Children": null
@@ -360,6 +368,7 @@
                 "Id": 18095672743356305134,
                 "Name": "Canvas",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -399,6 +408,7 @@
                         "Id": 8518242787381405817,
                         "Name": "RetryButton",
                         "Active": true,
+                        "ActiveHierarchy": true,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -456,6 +466,7 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": null,
                                 "Size": [
                                     711.0,
                                     180.0
@@ -489,7 +500,6 @@
                                 "Type": "Image",
                                 "Id": 2339619138975874497,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 9446298709316817845,
                                 "Color": [
                                     1.0,
@@ -540,7 +550,8 @@
                                 "Type": "Script",
                                 "Id": 8339893195270860184,
                                 "Active": true,
-                                "Script": 15139721463718087939
+                                "Script": 15139721463718087939,
+                                "Values": null
                             }
                         ],
                         "Children": null
@@ -551,6 +562,7 @@
                 "Id": 14737886719263861153,
                 "Name": "Canvas",
                 "Active": true,
+                "ActiveHierarchy": true,
                 "RootBoneId": 0,
                 "Components": [
                     {
@@ -590,6 +602,7 @@
                         "Id": 656647871624026947,
                         "Name": "Exit",
                         "Active": true,
+                        "ActiveHierarchy": true,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -624,7 +637,7 @@
                                 "Active": true,
                                 "Position": [
                                     0.0,
-                                    -200.0,
+                                    0.0,
                                     0.0
                                 ],
                                 "Rotation": [
@@ -647,6 +660,7 @@
                                     0.5,
                                     0.5
                                 ],
+                                "PivotPosition": null,
                                 "Size": [
                                     711.0,
                                     180.0
@@ -680,7 +694,6 @@
                                 "Type": "Image",
                                 "Id": 3177153763005474015,
                                 "Active": true,
-                                "ShaderId": 4385028194795985875,
                                 "TextureId": 943873689796820877,
                                 "Color": [
                                     1.0,
@@ -731,7 +744,8 @@
                                 "Type": "Script",
                                 "Id": 14822243745977685801,
                                 "Active": true,
-                                "Script": 11787012945619397912
+                                "Script": 11787012945619397912,
+                                "Values": null
                             }
                         ],
                         "Children": null

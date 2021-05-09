@@ -48,9 +48,14 @@ void ComponentLight::DrawGizmos() {
 }
 
 void ComponentLight::OnEditorUpdate() {
-	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
-		active ? Enable() : Disable();
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
 	}
 
 	ImGui::TextColored(App->editor->titleColor, "Parameters");
