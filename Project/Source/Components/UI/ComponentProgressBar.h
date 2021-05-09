@@ -5,6 +5,13 @@
 #include "Math/float4.h"
 #include "Math/float2.h"
 
+enum class FillDirection {
+	LEFT_TO_RIGHT,
+	RIGHT_TO_LEFT,
+	BOTTOM_TO_TOP,
+	TOP_TO_BOTTOM
+};
+
 class ComponentTransform2D;
 
 // Component that renders an Image on a Quad
@@ -25,9 +32,6 @@ public:
 	void SetFillPos(float fillPos);
 	void SetMin(float m);
 	void SetMax(float n);
-	void SetFillDir(bool fillDir);
-	void SetFillDirBottom(bool fillDir);
-	void SetFillDirTop(bool fillDir);
 
 public:
 	float value = .5f;
@@ -39,6 +43,11 @@ private:
 	ComponentTransform2D* rectBack = nullptr;
 	ComponentTransform2D* rectFill = nullptr;
 
+	UID fillID = 0;							
+	UID backgroundID = 0;	
+
+	FillDirection dir = FillDirection::LEFT_TO_RIGHT;
+
 	float3 backPos = float3::zero;
 	float2 backSize = float2::zero;
 
@@ -46,7 +55,7 @@ private:
 	float min = 0.0f;
 	float max = 1.0f;
 
-	bool rightToLeft = false;
-	bool bottomToTop = false;
-	bool topToBottom = false;
+	int i = 0;
+
+	inline static const char* fillDirections[] {"Left to right", "Right to Left", "Bottom to top", "Top to bottom"};
 };
