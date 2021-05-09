@@ -207,11 +207,11 @@ float2 ComponentSlider::GetClickedPosition() const {
 }
 
 float4 ComponentSlider::GetTintColor() const {
-	if (!IsActive()) return float4::one;
+	if (!IsActive()) return App->userInterface->GetErrorColor();
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
 
-	if (!sel) return float4::one;
+	if (!sel) return App->userInterface->GetErrorColor();
 
 	if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
 		if (!sel->IsInteractable()) {
@@ -225,7 +225,7 @@ float4 ComponentSlider::GetTintColor() const {
 		}
 	}
 
-	return float4::one;
+	return App->userInterface->GetErrorColor();
 }
 
 void ComponentSlider::SetNormalizedValue() {

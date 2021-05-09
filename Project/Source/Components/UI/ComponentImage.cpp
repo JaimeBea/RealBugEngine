@@ -97,25 +97,26 @@ void ComponentImage::Load(JsonValue jComponent) {
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
-float4 ComponentImage::GetTintColor() const {
+float4 ComponentImage::GetMainColor() const {
+
+	float4 componentColor = App->userInterface->GetErrorColor();
+
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
-		return button->GetTintColor();
+		componentColor = button->GetTintColor();
 	}
-	GameObject* sliderParent = GetOwner().GetParent();
-	if (sliderParent != nullptr) {
-		ComponentSlider* slider = sliderParent->GetComponent<ComponentSlider>();
-		if (slider != nullptr) {
-			return slider->GetTintColor();
-		}
+
+	ComponentSlider* slider = GetOwner().GetComponent<ComponentSlider>();
+	if (slider != nullptr) {
+		componentColor = slider->GetTintColor();
 	}
 
 	ComponentToggle* toggle = GetOwner().GetComponent<ComponentToggle>();
 	if (toggle != nullptr) {
-		return toggle->GetTintColor();
+		componentColor = toggle->GetTintColor();
 	}
-
-	return float4::one;
+	
+	return componentColor.Equals(App->userInterface->GetErrorColor()) ? color : componentColor;
 }
 
 void ComponentImage::Draw(const ComponentTransform2D* transform) const {
@@ -152,8 +153,7 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
-	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
+	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, GetMainColor().ptr());
 
 	ResourceTexture* textureResource = App->resources->GetResource<ResourceTexture>(textureID);
 	if (textureResource != nullptr) {
