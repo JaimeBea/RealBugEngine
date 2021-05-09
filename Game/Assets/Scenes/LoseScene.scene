@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 4867882331419426358,
+    "GameCamera": 7282935821569311443,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.753051519393921,
+                            "HorizontalFov": 1.3608986139297486,
                             "VerticalFov": 1.0
                         }
                     },
@@ -171,7 +171,13 @@
                         "Id": 3928515286536800321,
                         "Active": true,
                         "Script": 8205703692535477266,
-                        "Values": null
+                        "Values": [
+                            {
+                                "Name": "gameCameraUID",
+                                "Type": "GameObjectUID",
+                                "Value": 2161515125610565667
+                            }
+                        ]
                     }
                 ],
                 "Children": null
@@ -320,7 +326,11 @@
                                     0.5,
                                     0.5
                                 ],
-                                "PivotPosition": null,
+                                "PivotPosition": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
                                 "Size": [
                                     2200.0,
                                     1238.0
@@ -466,7 +476,11 @@
                                     0.5,
                                     0.5
                                 ],
-                                "PivotPosition": null,
+                                "PivotPosition": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
                                 "Size": [
                                     711.0,
                                     180.0
@@ -660,7 +674,11 @@
                                     0.5,
                                     0.5
                                 ],
-                                "PivotPosition": null,
+                                "PivotPosition": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
                                 "Size": [
                                     711.0,
                                     180.0

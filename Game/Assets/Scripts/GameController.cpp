@@ -18,6 +18,7 @@ EXPOSE_MEMBERS(GameController) {
 	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera3UID),
 	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera4UID),
 	MEMBER(MemberType::GAME_OBJECT_UID, playerUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, pauseUID),
 	
 	MEMBER(MemberType::FLOAT, speed),
 	MEMBER(MemberType::FLOAT, rotationSpeedX),
@@ -43,6 +44,8 @@ void GameController::Start() {
 
 	player = GameplaySystems::GetGameObject(playerUID);
 
+	pauseCanvas = GameplaySystems::GetGameObject(pauseUID);
+
 	if (gameCamera) {
 		camera = gameCamera->GetComponent<ComponentCamera>();
 		GameplaySystems::SetRenderCamera(camera);
@@ -58,7 +61,7 @@ void GameController::Update() {
 		DoTransition();
 	}
 
-	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_G)) {
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_G) && !isPaused) {
 		if (godModeAvailable) {
 			Debug::ToggleDebugMode();
 			if (godCameraActive) {
@@ -74,8 +77,23 @@ void GameController::Update() {
 		}
 	}
 
+	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_ESCAPE)) {
+		if (pauseCanvas) {
+			if (!isPaused) {
+				isPaused = true;
+				Time::PauseGame();
+				pauseCanvas->Enable();
+			}
+			else {
+				isPaused = false;
+				Time::ResumeGame();
+				pauseCanvas->Disable();
+			}
+		}
+	}
+
 	// Static cameras
-	if (!godCameraActive) {
+	if (!godCameraActive && !isPaused) {
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_0) && gameCamera) {
 			camera = gameCamera->GetComponent<ComponentCamera>();
 			GameplaySystems::SetRenderCamera(camera);
