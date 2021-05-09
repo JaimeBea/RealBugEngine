@@ -500,7 +500,7 @@ void ModuleCamera::EnableOrtographic() {
 
 void ModuleCamera::EnablePerspective() {
 	activeCamera->GetFrustum()->SetPerspective(1.3f, 1.f);
-	ViewportResized(App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y);
+	ViewportResized(static_cast<int>(App->renderer->GetViewportSize().x), static_cast<int>(App->renderer->GetViewportSize().y));
 }
 
 void ModuleCamera::GetIntersectingAABBRecursive(const Quadtree<GameObject>::Node& node, const AABB2D& nodeAABB, const LineSegment& ray, std::vector<GameObject*>& intersectingObjects) {

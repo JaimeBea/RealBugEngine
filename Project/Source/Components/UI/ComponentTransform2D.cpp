@@ -250,7 +250,7 @@ void ComponentTransform2D::DrawGizmos() {
 	if (!App->time->IsGameRunning()) {
 		dd::box(GetPosition(), dd::colors::Yellow, size.x * scale.x / 100, size.y * scale.y / 100, 0);
 		float3 pivotPosFactor = float3(GetPivotPosition().x / 100, GetPivotPosition().y / 100, GetPivotPosition().z / 100);
-		dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1, 0.1, 0);
+		dd::box(pivotPosFactor, dd::colors::OrangeRed, 0.1f, 0.1f, 0.f);
 	}
 }
 
@@ -285,8 +285,8 @@ void ComponentTransform2D::SetPivot(float2 pivot_) {
 }
 
 void ComponentTransform2D::UpdatePivotPosition() {
-	pivotPosition.x = (size.x * pivot.x - size.x * 0.5) * scale.x + position.x;
-	pivotPosition.y = (size.y * pivot.y - size.y * 0.5) * scale.y + position.y;
+	pivotPosition.x = (size.x * pivot.x - size.x * 0.5f) * scale.x + position.x;
+	pivotPosition.y = (size.y * pivot.y - size.y * 0.5f) * scale.y + position.y;
 	InvalidateHierarchy();
 }
 
