@@ -308,6 +308,8 @@ void ComponentTransform2D::SetRotation(float3 rotation_) {
 	rotation = Quat::FromEulerXYZ(rotation_.x * DEGTORAD, rotation_.y * DEGTORAD, rotation_.z * DEGTORAD);
 	localEulerAngles = rotation_;
 
+	UpdateTransformChanges();
+
 	InvalidateHierarchy();
 }
 
@@ -350,13 +352,12 @@ const float4x4 ComponentTransform2D::GetGlobalScaledMatrix(bool scaleFactored, b
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
-	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
-
 	if (dirty) {
 		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 		float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
-		localMatrix = float4x4::FromTRS(position * factor, rotation, scale);
 
+		localMatrix = float4x4::FromTRS(position, rotation, scale);		
+		
 		GameObject* parent = GetOwner().GetParent();
 
 		if (parent != nullptr) {
@@ -366,24 +367,33 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 				parentTransform->CalculateGlobalMatrix();
 				globalMatrix = parentTransform->globalMatrix * localMatrix;
 			} else {
-				if (isPivotMode) {
-					bool isUsing2D = App->editor->panelScene.IsUsing2D();
-					if (isUsing2D) {
-						localMatrix = float4x4::FromQuat(rotation, pivotPosition * factor);
-						globalMatrix = localMatrix * float4x4::Translate(position * factor) * float4x4::Scale(scale);
-					} else {
-						localMatrix = float4x4::FromQuat(rotation, pivotPosition / 100);
-						globalMatrix = localMatrix * float4x4::Translate(position * factor / 100) * float4x4::Scale(scale);
-					}
-				} else {
-					globalMatrix = localMatrix;
-				}
+				globalMatrix = localMatrix;
 			}
 		} else {
 			globalMatrix = localMatrix;
 		}
 
 		dirty = false;
+	}
+}
+
+void ComponentTransform2D::UpdateTransformChanges() {
+	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
+	if (isPivotMode) {
+		UpdatePivotPosition();
+		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+		float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
+		bool isUsing2D = App->editor->panelScene.IsUsing2D();
+		float4x4 aux = float4x4::identity;
+		float3 newPosition = float3(0, 0, 0);
+		if (isUsing2D) {
+			//aux = float4x4::FromQuat(rotation, pivotPosition * factor) * float4x4::Translate(position * factor);
+			//position = aux.TranslatePart() * factor / 100;
+		} else {
+			aux = float4x4::FromQuat(rotation, pivotPosition / 100) * float4x4::Translate(position / 100);
+			position = aux.TranslatePart();
+			//SetPosition(newPosition);
+		}
 	}
 }
 
@@ -483,3 +493,5 @@ void ComponentTransform2D::UpdateObjectPosition() {
 	float3 newPosition = float3(posMinX, posMinY, 0);
 	SetPosition(newPosition);
 }
+
+

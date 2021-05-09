@@ -82,6 +82,7 @@ public:
 	void UpdatePivotPosition();																		  // Update this pivot position to value
 	const float4x4 GetGlobalMatrix() const;															  // Returns GlobalMatrix
 	const float4x4 GetGlobalScaledMatrix(bool scaleFactored = true, bool view3DActive = false) const; // Returns GlobalMatrix with the size of the item. scaleFactored being true means that the canvas size reference will be used to scale (factor). view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
+	void UpdateTransformChanges();																	  // Update the tranform matrix
 
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const;	 // Returns the size
@@ -94,11 +95,11 @@ public:
 
 	void CalculateAnchor2DPosition();
 	void SetAnchor2DPosition(float2 anchor2DPosition);
-	void SetTop(float top);		   // Sets the right anchor
+	void SetTop(float top);			// Sets the right anchor
 	void SetBottom(float bottom);   // Sets the right anchor
-	void SetLeft(float left);	   // Sets the right anchor
-	void SetRight(float right);	   // Sets the right anchor
-	void UpdateObjectPosition(); // Update position object related to the anchor 2D position
+	void SetLeft(float left);		// Sets the right anchor
+	void SetRight(float right);		// Sets the right anchor
+	void UpdateObjectPosition();	// Update position object related to the anchor 2D position
 
 private:
 	void CalculateGlobalMatrix();								  // Calculates the Global Matrix

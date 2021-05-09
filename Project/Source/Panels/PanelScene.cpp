@@ -71,7 +71,11 @@ void PanelScene::Update() {
 			}
 
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			ImGui::Checkbox("2D", &view2D);
+			if (ImGui::Checkbox("2D", &view2D)) {
+				for (ComponentTransform2D& transform2D : App->scene->scene->transform2DComponents) {
+					transform2D.Invalidate();
+				};
+			};
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
 
 			std::string camera = std::string(ICON_FA_VIDEO);
