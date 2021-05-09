@@ -28,11 +28,9 @@
 #include "Utils/Leaks.h"
 
 EnvDTE::Process* FindVSProcess(DWORD targetPID) {
-	CoInitialize(0);
-
 	HRESULT hr;
 
-	static const wchar_t* progID = L"VisualStudio.DTE";
+	static const wchar_t* progID = L"VisualStudio.DTE.16.0";
 
 	CLSID clsID;
 	CLSIDFromProgID(progID, &clsID);
@@ -96,16 +94,14 @@ void AttachVS() {
 	if (process) {
 		process->Attach();
 	}
-	CoUninitialize();
 }
 
 void DetachVS(bool waitForBreakOrEnd) {
 	DWORD targetPID = GetCurrentProcessId();
 	EnvDTE::Process* process = FindVSProcess(targetPID);
 	if (process) {
-		process->Detach(variant_t(waitForBreakOrEnd));
+		process->Detach(variant_t(false));
 	}
-	CoUninitialize();
 }
 
 template<class T>
@@ -400,13 +396,6 @@ bool ModuleProject::Init() {
 		LOG("%s", GetLastErrorStdStr().c_str());
 	}
 #else
-	startedWithDebugger = IsDebuggerPresent();
-
-	if (startedWithDebugger) {
-		DetachVS(true);
-		AttachVS();
-	}
-
 	LoadProject("Penteract/Penteract.sln");
 #endif
 	return true;
@@ -428,11 +417,6 @@ UpdateStatus ModuleProject::Update() {
 }
 
 bool ModuleProject::CleanUp() {
-
-	if (IsDebuggerPresent()) {
-		DetachVS(true);
-	}
-
 	UnloadGameCodeDLL();
 	Factory::DestroyContext();
 	return true;
@@ -544,7 +528,6 @@ void ModuleProject::CreateBatches() {
 }
 
 void ModuleProject::CompileProject(Configuration config) {
-
 	if (IsDebuggerPresent()) {
 		DetachVS(true);
 	}
@@ -605,30 +588,39 @@ void ModuleProject::CompileProject(Configuration config) {
 
 	std::string dllPath = buildPath + name + ".dll";
 	std::string pdbPath = buildPath + name + ".pdb";
+	std::string dllPathAux = "";
 
 	std::string auxName = App->files->GetFilePath(pdbPath.c_str(), true);
 
 	// GetFilePath returns "" if the file is not found
-
 	if (auxName != "") {
 		std::size_t found = auxName.find_first_of("/");
 		while (found != std::string::npos) {
 			auxName[found] = '\\';
 			found = auxName.find_first_of("/", found + 1);
 		}
-
 		auxName[auxName.size() - 5] = '_';
-		PDBReplace(dllPath, auxName);
+
+		dllPathAux = buildPath + FileDialog::GetFileName(auxName.c_str()) + ".dll";
+
+		if (!CopyFileA(dllPath.c_str(), dllPathAux.c_str(), FALSE)) {
+			std::string error = GetLastErrorStdStr().c_str();
+			LOG("Move fails dll %s", error.c_str());
+		}
+		PDBReplace(dllPathAux, auxName);
+
 		std::string realPDB = buildPath + name + ".pdb";
+
 		if (!CopyFileA(realPDB.c_str(), auxName.c_str(), FALSE)) {
 			std::string error = GetLastErrorStdStr().c_str();
-			LOG("Copy fails %s", error.c_str());
+			LOG("Move fails pdb %s", error.c_str());
 		}
 	}
 
 	std::string logFile = buildPath + name + ".log";
 	Buffer<char> buffer = App->files->Load(logFile.c_str());
 	std::string logContent = "";
+
 	if (buffer.Size() > 0) {
 		logContent = buffer.Data();
 	}
@@ -641,17 +633,11 @@ void ModuleProject::CompileProject(Configuration config) {
 	}
 	LOG("----------------------------------------------------------");
 
-	buildPath += name;
-	std::string newPath(name);
-	newPath[newPath.size() - 1] = '_';
-	newPath += ".dll";
-	buildPath += ".dll";
-
-	if (!LoadGameCodeDLL(buildPath.c_str())) {
+	if (!LoadGameCodeDLL(dllPathAux.c_str())) {
 		LOG("DLL NOT LOADED: %s", GetLastErrorStdStr().c_str());
 	}
 
-	if (startedWithDebugger) {
+	if (!IsDebuggerPresent()) {
 		AttachVS();
 	}
 

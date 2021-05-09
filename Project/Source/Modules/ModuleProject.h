@@ -44,5 +44,6 @@ private:
 
 private:
 	HMODULE gameCodeDLL = nullptr;
-	bool startedWithDebugger = false;
+	unsigned int version = 0;
+	unsigned int digits = 1;
 };
