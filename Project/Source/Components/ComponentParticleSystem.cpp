@@ -55,7 +55,7 @@ void ComponentParticleSystem::OnEditorUpdate() {
 		ImGui::EndCombo();
 	}
 	ImGui::Checkbox("Random Frame", &isRandomFrame);
-
+	ImGui::Checkbox("Random Direction: ", &randomDirection);
 	ImGui::ResourceSlot<ResourceShader>("shader", &shaderID);
 
 	UID oldID = textureID;
@@ -103,38 +103,42 @@ void ComponentParticleSystem::OnEditorUpdate() {
 
 //TODO: DINAMIC PARTICLE NOT HARCODED
 float3 ComponentParticleSystem::CreateVelocity() {
+	float x, y, z;
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		float x = (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
-		float z = (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
-		float y = (float(rand()) / float((RAND_MAX)) * 1.0);
-		return float3(0, velocity, 0);
+		x = (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
+		y = (float(rand()) / float((RAND_MAX)) * 0.5) - 0.0;
+		z = (float(rand()) / float((RAND_MAX)) * 0.5) - 0.2;
+		if (!randomDirection) return float3(0, velocity, 0);
+		return float3(x, y, z);
 	}
 	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
-		float z = (transform->GetGlobalPosition().z) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
-		float y = (transform->GetGlobalPosition().y) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
+		x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
+		y = (transform->GetGlobalPosition().y) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
+		z = (transform->GetGlobalPosition().z) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
 		return float3(x, y, z);
 	}
 };
 
 float3 ComponentParticleSystem::CreatePosition() {
 	//TODO: DINAMIC PARTICLE NOT HARCODED
+	float x, y, z;
+
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		float x = (transform->GetGlobalPosition().x);
-		float z = (transform->GetGlobalPosition().z);
-		float y = (transform->GetGlobalPosition().y);
+		x = (transform->GetGlobalPosition().x);
+		z = (transform->GetGlobalPosition().z);
+		y = (transform->GetGlobalPosition().y);
 		return float3(x, y, z);
 	}
 	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
-		float z = (transform->GetGlobalPosition().z) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
-		float y = (transform->GetGlobalPosition().y) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
+		x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
+		z = (transform->GetGlobalPosition().z) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
+		y = (transform->GetGlobalPosition().y) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
 		return float3(transform->GetGlobalPosition());
 	}
 }
@@ -211,6 +215,12 @@ void ComponentParticleSystem::SpawnParticle() {
 		currentParticle->position = currentParticle->initialPosition;
 		//TODO: not hardcoded
 		currentParticle->scale = float3(0.1f, 0.1f, 0.1f) * scale;
+	}
+}
+
+void ComponentParticleSystem::killParticles() {
+	for (Particle& currentParticle : particles) {
+		particles.Release(&currentParticle);
 	}
 }
 

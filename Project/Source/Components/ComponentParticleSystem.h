@@ -50,7 +50,7 @@ public:
 	void Draw();
 	void DuplicateComponent(GameObject& owner) override;
 	void SpawnParticle();
-
+	void killParticles();
 	float3 CreatePosition();
 	float3 CreateVelocity();
 
@@ -66,6 +66,7 @@ private:
 	bool isPlaying = true;
 	bool alphaTransparency = false; // Enables Alpha Transparency of the image and the color
 	bool isRandomFrame = false;
+	bool randomDirection = false;
 
 	float4 initC = float4::one;
 	float4 finalC = float4::one;
