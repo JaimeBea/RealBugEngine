@@ -173,6 +173,7 @@
     <ClCompile Include="Source\Components\UI\ComponentSlider.cpp" />
     <ClCompile Include="Source\Utils\ImGuiUtils.cpp" />
     <ClCompile Include="Source\Scripting\Member.cpp" />
+    <ClCompile Include="Source\MaskType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Libs\imgui\IconsFontAwesome5.h" />
@@ -218,7 +219,6 @@
     <ClInclude Include="Source\Panels\PanelInspector.h" />
     <ClInclude Include="Source\Panels\PanelScene.h" />
     <ClInclude Include="Source\Panels\PanelControlEditor.h" />
-    <ClCompile Include="Source\Panels\PanelResource.h" />
     <ClInclude Include="Libs\DebugDraw\debugdraw.h" />
     <ClInclude Include="Libs\DebugDraw\debug_draw.hpp" />
     <ClInclude Include="Libs\ImGuizmo\ImCurveEdit.h" />
@@ -445,6 +445,8 @@
     <ClInclude Include="Source\Components\UI\ComponentSlider.h" />
     <ClInclude Include="Source\Scripting\Member.h" />
     <ClInclude Include="Source\Utils\StringBlocksParser.h" />
+    <ClInclude Include="Source\Panels\PanelResource.h" />
+    <ClInclude Include="Source\MaskType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\LICENSE" />
@@ -460,6 +462,7 @@
     <None Include="Libs\MathGeoLib\Math\float2.inl" />
     <None Include="Libs\MathGeoLib\Math\Matrix.inl" />
     <None Include="Debugging.props" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Libs\freetype\lib\freetype.lib" />

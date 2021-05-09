@@ -10,6 +10,7 @@
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentSelectable.h"
 #include "FileSystem/ModelImporter.h"
+#include "Utils/Logging.h"
 
 #include "Math/myassert.h"
 #include "rapidjson/document.h"
@@ -24,6 +25,7 @@
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_COMPONENTS "Components"
 #define JSON_TAG_CHILDREN "Children"
+#define JSON_TAG_MASK "Mask"
 
 void GameObject::InitComponents() {
 	for (Component* component : components) {
@@ -127,6 +129,33 @@ GameObject* GameObject::GetRootBone() const {
 	return rootBoneHierarchy;
 }
 
+void GameObject::AddMask(MaskType mask_) {
+
+	switch (mask_) {
+	case MaskType::ENEMY:
+		mask.bitMask |= static_cast<int>(mask_);
+		break;
+	default:
+		LOG("The solicitated mask doesn't exist");
+		break;
+	}
+}
+
+void GameObject::DeleteMask(MaskType mask_) {
+	switch (mask_) {
+	case MaskType::ENEMY:
+		mask.bitMask ^= static_cast<int>(mask_);
+		break;
+	default:
+		LOG("The solicitated mask doesn't exist");
+		break;
+	}
+}
+
+Mask& GameObject::GetMask() {
+	return mask;
+}
+
 void GameObject::AddChild(GameObject* gameObject) {
 	gameObject->SetParent(this);
 }
@@ -167,6 +196,7 @@ void GameObject::Save(JsonValue jGameObject) const {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_ROOT_BONE_ID] = rootBoneHierarchy != nullptr ? rootBoneHierarchy->id : 0;
+	jGameObject[JSON_TAG_MASK] = mask.bitMask;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
@@ -193,6 +223,14 @@ void GameObject::Load(JsonValue jGameObject) {
 	id = newId;
 	name = jGameObject[JSON_TAG_NAME];
 	active = jGameObject[JSON_TAG_ACTIVE];
+	mask.bitMask = jGameObject[JSON_TAG_MASK];
+
+	for (unsigned i = 0; i < ARRAY_LENGTH(mask.maskNames); ++i) {
+		MaskType type = GetMaskTypeFromName(mask.maskNames[i]);
+		if ((mask.bitMask & static_cast<int>(type)) != 0) {
+			mask.maskValues[i] = true;
+		}
+	}
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {

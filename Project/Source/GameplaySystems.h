@@ -389,3 +389,7 @@ namespace SceneManager {
 	TESSERACT_ENGINE_API void ChangeScene(const char* scenePath);
 	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager
+
+namespace Physics {
+	TESSERACT_ENGINE_API GameObject* Raycast(const float3& start, const float3& end);
+}

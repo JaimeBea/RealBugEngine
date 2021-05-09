@@ -19,7 +19,9 @@
 #include "Utils/Logging.h"
 #include "TesseractEvent.h"
 
+#include "debugdraw.h"
 #include "Geometry/Frustum.h"
+#include "Geometry/LineSegment.h"
 #include "SDL_events.h"
 
 #include "Utils/Leaks.h"
@@ -180,4 +182,38 @@ float Screen::GetScreenWitdh() {
 
 float Screen::GetScreenHeight() {
 	return App->window->GetHeight();
+}
+
+GameObject* Physics::Raycast(const float3& start, const float3& end) {
+	
+	LineSegment ray = LineSegment(start, end);
+
+	Scene* scene = App->scene->scene;
+
+	GameObject* closestGo = nullptr;
+	float closestNear = FLT_MAX;
+	float closestFar = FLT_MIN;
+
+	for (GameObject& go : scene->gameObjects) {
+		if ((go.GetMask().bitMask & static_cast<int>(MaskType::ENEMY)) == 0) continue;
+		ComponentBoundingBox* componentBBox = go.GetComponent<ComponentBoundingBox>();
+		if (componentBBox == nullptr) continue;
+		const AABB& bbox = componentBBox->GetWorldAABB();
+
+		float dNear, dFar;
+
+		if (ray.Intersects(bbox, dNear, dFar)) {
+			if (closestGo == nullptr) {
+				closestGo = &go;
+			} else {
+				if (dNear < closestFar) {
+					closestGo = &go;
+				}
+			}
+
+		}
+	}
+
+	return closestGo;
+
 }

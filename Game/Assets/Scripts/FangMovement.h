@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scripting/Script.h"
+#include "Character.h"
 
 class GameObject;
 
@@ -16,10 +17,14 @@ public:
 public:
 	UID cameraUID;
 	UID fangUID;
+	UID hitGOUID;
 	int speed = 10;
+	int distanceRayCast = 20;
 	float cameraXPosition = -163;
 
 private:
 	GameObject* camera = nullptr;
 	GameObject* fang = nullptr;
+	GameObject* hitGo = nullptr;
+	Character* character;
 };
