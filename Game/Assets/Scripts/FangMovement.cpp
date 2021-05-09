@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "GameplaySystems.h"
+#include "Resources/ResourceMaterial.h"
 
 EXPOSE_MEMBERS(FangMovement) {
 	// Add members here to expose them to the engine. Example:
@@ -16,8 +17,8 @@ EXPOSE_MEMBERS(FangMovement) {
 GENERATE_BODY_IMPL(FangMovement);
 
 void FangMovement::Start() {
-	character = new Character();
-	character->lifeSlots = 10;
+	character = Character();
+	character.lifeSlots = 10;
 
 	fang = GameplaySystems::GetGameObject(fangUID);
 	camera = GameplaySystems::GetGameObject(cameraUID);
@@ -36,9 +37,15 @@ void FangMovement::Update() {
 			float3 end = transform->GetGlobalRotation() * float3(0,0,1);
 			end.Normalize();
 			end *= distanceRayCast;
-			hitGo = Physics::Raycast(start, start + end);
+			int mask = static_cast<int>(MaskType::ENEMY);
+			hitGo = Physics::Raycast(start, start + end, mask);
 			if (hitGo) {
 				hitGOUID = hitGo->GetID();
+				ComponentMeshRenderer* meshRenderer = hitGo->GetComponent<ComponentMeshRenderer>();
+				if (meshRenderer != nullptr) {
+					ResourceMaterial* material = GameplaySystems::GetResource<ResourceMaterial>(meshRenderer->materialId);
+					material->diffuseColor = float4(Colors::Red(), 1.0);
+				}
 			}
 			else {
 				hitGOUID = 0;
