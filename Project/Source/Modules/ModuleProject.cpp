@@ -408,6 +408,8 @@ bool ModuleProject::Init() {
 	}
 
 	LoadProject("Penteract/Penteract.sln");
+
+	App->events->AddObserverToEvent(TesseractEventType::ANIMATION_FINISHED, this);
 #endif
 	return true;
 }
@@ -436,6 +438,19 @@ bool ModuleProject::CleanUp() {
 	UnloadGameCodeDLL();
 	Factory::DestroyContext();
 	return true;
+}
+
+void ModuleProject::ReceiveEvent(TesseractEvent& e) {
+	for (ComponentScript& script : App->scene->scene->scriptComponents) {
+		if (App->time->HasGameStarted() && App->scene->sceneLoaded) {
+			if (script.IsActive()) {
+				Script* scriptInstance = script.GetScriptInstance();
+				if (scriptInstance != nullptr) {
+					scriptInstance->ReceiveEvent(e);
+				}
+			}
+		}
+	}
 }
 
 void ModuleProject::LoadProject(const char* path) {
