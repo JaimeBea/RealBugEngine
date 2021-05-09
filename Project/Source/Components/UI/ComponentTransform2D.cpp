@@ -71,7 +71,7 @@ void ComponentTransform2D::OnEditorUpdate() {
 	}
 	ImGui::InputFloat3("Pivot World Position (X,Y,Z)", pivPos.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	UpdateUIElements();
+	//UpdateUIElements();
 
 	ImGui::Separator();
 }
@@ -291,15 +291,14 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 		}
 
 		dirty = false;
+		UpdateUIElements();
 	}
 }
 
 void ComponentTransform2D::UpdateUIElements() {
-	if (dirty) { // Means the transform has changed
-		ComponentText* text = GetOwner().GetComponent<ComponentText>();
-		if (text != nullptr) {
-			text->RecalculcateVertices();
-		}
+	ComponentText* text = GetOwner().GetComponent<ComponentText>();
+	if (text != nullptr) {
+		text->RecalculcateVertices();
 	}
 }
 
@@ -319,13 +318,18 @@ float3 ComponentTransform2D::GetPivotPosition() const {
 	return pivotPosition;
 }
 
+float3 ComponentTransform2D::GetGlobalPosition() {
+	CalculateGlobalMatrix();
+	return globalMatrix.TranslatePart();
+}
+
 void ComponentTransform2D::InvalidateHierarchy() {
 	Invalidate();
 
 	for (GameObject* child : GetOwner().GetChildren()) {
 		ComponentTransform2D* childTransform = child->GetComponent<ComponentTransform2D>();
 		if (childTransform != nullptr) {
-			childTransform->Invalidate();
+			childTransform->InvalidateHierarchy();
 		}
 	}
 }

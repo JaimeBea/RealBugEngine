@@ -203,7 +203,7 @@ void ComponentText::RecalculcateVertices() {
 	verticesText.resize(text.size());
 
 	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
-	float3 position = transform->GetPosition();
+	float3 position = transform->GetGlobalPosition();
 	float screenFactor = GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
 
 	float x = position.x * screenFactor;
