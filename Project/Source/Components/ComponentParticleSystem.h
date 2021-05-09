@@ -68,8 +68,8 @@ private:
 	bool isRandomFrame = false;
 	bool randomDirection = false;
 
-	float4 initC = float4::one;
-	float4 finalC = float4::one;
+	float3 initC = float3::one;
+	float3 finalC = float3::one;
 	float4 color = float4::one; // Color used as default tainter
 
 	float scale = 5;

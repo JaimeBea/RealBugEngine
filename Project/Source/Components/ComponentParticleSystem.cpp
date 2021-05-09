@@ -30,6 +30,19 @@
 #define JSON_TAG_COLOR "Color"
 #define JSON_TAG_ALPHATRANSPARENCY "AlphaTransparency"
 
+#define JSON_TAG_ISPLAYING "IsPlaying"
+#define JSON_TAG_LOOPING "IsLooping"
+#define JSON_TAG_ISRANDOMFRAME "IsRandomFrame"
+#define JSON_TAG_ISRANDOMDIRECTION "IsRandomDirection"
+#define JSON_TAG_SCALEPARTICLE "ParticleScale"
+#define JSON_TAG_MAXPARTICLE "MaxParticle"
+#define JSON_TAG_VELOCITY "Velocity"
+#define JSON_TAG_LIFE "LifeParticle"
+#define JSON_TAG_YTILES "Ytiles"
+#define JSON_TAG_XTILES "Xtiles"
+#define JSON_TAG_INITCOLOR "InitColor"
+#define JSON_TAG_FINALCOLOR "FinalColor"
+
 #include <random>
 
 void ComponentParticleSystem::OnEditorUpdate() {
@@ -96,8 +109,8 @@ void ComponentParticleSystem::OnEditorUpdate() {
 			CreateParticles(maxParticles, velocity);
 		}
 
-		ImGui::ColorEdit4("InitColor##", initC.ptr());
-		ImGui::ColorEdit4("FinalColor##", finalC.ptr());
+		ImGui::ColorEdit3("InitColor##", initC.ptr());
+		ImGui::ColorEdit3("FinalColor##", finalC.ptr());
 	}
 }
 
@@ -167,12 +180,47 @@ void ComponentParticleSystem::Load(JsonValue jComponent) {
 		App->resources->IncreaseReferenceCount(textureID);
 	}
 
+	isPlaying = jComponent[JSON_TAG_ISPLAYING];
+	looping = jComponent[JSON_TAG_LOOPING];
+	isRandomFrame = jComponent[JSON_TAG_ISRANDOMFRAME];
+	randomDirection = jComponent[JSON_TAG_ISRANDOMDIRECTION];
+	scale = jComponent[JSON_TAG_SCALEPARTICLE];
+	maxParticles = jComponent[JSON_TAG_MAXPARTICLE];
+	velocity = jComponent[JSON_TAG_VELOCITY];
+	particleLife = jComponent[JSON_TAG_LIFE];
+	Ytiles = jComponent[JSON_TAG_YTILES];
+	Xtiles = jComponent[JSON_TAG_XTILES];
+	JsonValue jColor = jComponent[JSON_TAG_INITCOLOR];
+	initC.Set(jColor[0], jColor[1], jColor[2]);
+
+	JsonValue jColor2 = jComponent[JSON_TAG_FINALCOLOR];
+	finalC.Set(jColor2[0], jColor2[1], jColor2[2]);
+
 	CreateParticles(maxParticles, velocity);
 }
 
 void ComponentParticleSystem::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_TEXTURE_SHADERID] = shaderID;
 	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
+
+	jComponent[JSON_TAG_ISPLAYING] = isPlaying;
+	jComponent[JSON_TAG_LOOPING] = looping;
+	jComponent[JSON_TAG_ISRANDOMFRAME] = isRandomFrame;
+	jComponent[JSON_TAG_ISRANDOMDIRECTION] = randomDirection;
+	jComponent[JSON_TAG_SCALEPARTICLE] = scale;
+	jComponent[JSON_TAG_MAXPARTICLE] = maxParticles;
+	jComponent[JSON_TAG_VELOCITY] = velocity;
+	jComponent[JSON_TAG_LIFE] = particleLife;
+	jComponent[JSON_TAG_YTILES] = Ytiles;
+	jComponent[JSON_TAG_XTILES] = Xtiles;
+	JsonValue jColor = jComponent[JSON_TAG_INITCOLOR];
+	jColor[0] = initC.x;
+	jColor[1] = initC.y;
+	jColor[2] = initC.z;
+	JsonValue jColor2 = jComponent[JSON_TAG_FINALCOLOR];
+	jColor2[0] = finalC.x;
+	jColor2[1] = finalC.y;
+	jColor2[2] = finalC.z;
 }
 
 void ComponentParticleSystem::Update() {
