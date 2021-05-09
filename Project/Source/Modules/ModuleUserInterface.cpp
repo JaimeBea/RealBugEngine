@@ -218,3 +218,7 @@ void ModuleUserInterface::ViewportResized() {
 		text.RecalculcateVertices();
 	}
 }
+
+float4 ModuleUserInterface::GetErrorColor() {
+	return errorColor;
+}
