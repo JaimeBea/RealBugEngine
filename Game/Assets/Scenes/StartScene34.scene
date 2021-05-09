@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 11059908171225069798,
+    "GameCamera": 258401714787680834,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.4796422719955445,
+                            "HorizontalFov": 1.7652496099472047,
                             "VerticalFov": 1.0
                         }
                     },
@@ -349,8 +349,8 @@
                                 "Active": true,
                                 "TextureId": 10125293473612058736,
                                 "Color": [
+                                    0.9999921321868897,
                                     1.0,
-                                    0.9999899864196777,
                                     0.9999899864196777,
                                     1.0
                                 ],
@@ -4751,7 +4751,7 @@
                                         "Active": true,
                                         "Position": [
                                             0.0,
-                                            -83.19999694824219,
+                                            0.0,
                                             0.0
                                         ],
                                         "Rotation": [
@@ -4776,7 +4776,7 @@
                                         ],
                                         "PivotPosition": [
                                             0.0,
-                                            -83.19999694824219,
+                                            0.0,
                                             0.0
                                         ],
                                         "Size": [
@@ -4941,8 +4941,8 @@
                                                 "Id": 11252082416653293477,
                                                 "Active": true,
                                                 "Position": [
-                                                    96.0,
-                                                    -326.0,
+                                                    105.0,
+                                                    -458.0,
                                                     0.0
                                                 ],
                                                 "Rotation": [
@@ -4966,8 +4966,8 @@
                                                     0.5
                                                 ],
                                                 "PivotPosition": [
-                                                    96.0,
-                                                    -326.0,
+                                                    105.0,
+                                                    -458.0,
                                                     0.0
                                                 ],
                                                 "Size": [

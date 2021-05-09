@@ -1003,7 +1003,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.701187252998352,
+                                    "HorizontalFov": 2.035660743713379,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             },
@@ -1181,7 +1181,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 2000.0,
-                            "HorizontalFov": 1.701187252998352,
+                            "HorizontalFov": 2.035660743713379,
                             "VerticalFov": 1.3113912343978882
                         }
                     }
@@ -2706,7 +2706,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.701187252998352,
+                                    "HorizontalFov": 2.035660743713379,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -2768,7 +2768,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.701187252998352,
+                                    "HorizontalFov": 2.035660743713379,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -2830,7 +2830,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.701187252998352,
+                                    "HorizontalFov": 2.035660743713379,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -2892,7 +2892,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.701187252998352,
+                                    "HorizontalFov": 2.035660743713379,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -3633,7 +3633,7 @@
                                         "Active": true,
                                         "Position": [
                                             0.0,
-                                            300.0,
+                                            240.0,
                                             0.0
                                         ],
                                         "Rotation": [
@@ -3658,12 +3658,12 @@
                                         ],
                                         "PivotPosition": [
                                             0.0,
-                                            300.0,
+                                            240.0,
                                             0.0
                                         ],
                                         "Size": [
-                                            711.0,
-                                            180.0
+                                            500.0,
+                                            130.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -3782,7 +3782,7 @@
                                         "Active": true,
                                         "Position": [
                                             0.0,
-                                            100.0,
+                                            80.0,
                                             0.0
                                         ],
                                         "Rotation": [
@@ -3807,12 +3807,12 @@
                                         ],
                                         "PivotPosition": [
                                             0.0,
-                                            100.0,
+                                            80.0,
                                             0.0
                                         ],
                                         "Size": [
-                                            711.0,
-                                            180.0
+                                            500.0,
+                                            130.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -3888,6 +3888,13 @@
                                             1.0
                                         ],
                                         "AlphaTransparency": false
+                                    },
+                                    {
+                                        "Type": "Script",
+                                        "Id": 10426172145574698610,
+                                        "Active": true,
+                                        "Script": 15371343306187404070,
+                                        "Values": null
                                     }
                                 ],
                                 "Children": null
@@ -3931,7 +3938,7 @@
                                         "Active": true,
                                         "Position": [
                                             0.0,
-                                            -100.0,
+                                            -80.0,
                                             0.0
                                         ],
                                         "Rotation": [
@@ -3956,12 +3963,12 @@
                                         ],
                                         "PivotPosition": [
                                             0.0,
-                                            -100.0,
+                                            -80.0,
                                             0.0
                                         ],
                                         "Size": [
-                                            711.0,
-                                            180.0
+                                            500.0,
+                                            130.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -4087,7 +4094,7 @@
                                         "Active": true,
                                         "Position": [
                                             0.0,
-                                            -300.0,
+                                            -240.0,
                                             0.0
                                         ],
                                         "Rotation": [
@@ -4112,12 +4119,12 @@
                                         ],
                                         "PivotPosition": [
                                             0.0,
-                                            -300.0,
+                                            -240.0,
                                             0.0
                                         ],
                                         "Size": [
-                                            711.0,
-                                            180.0
+                                            500.0,
+                                            130.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -4272,8 +4279,8 @@
                                             0.0
                                         ],
                                         "Size": [
-                                            200.0,
-                                            180.0
+                                            400.0,
+                                            100.0
                                         ],
                                         "AnchorX": [
                                             0.5,
@@ -4355,7 +4362,13 @@
                                         "Id": 4860261034540782566,
                                         "Active": true,
                                         "Script": 5235757102852723343,
-                                        "Values": null
+                                        "Values": [
+                                            {
+                                                "Name": "pauseUID",
+                                                "Type": "GameObjectUID",
+                                                "Value": 504404671385079168
+                                            }
+                                        ]
                                     }
                                 ],
                                 "Children": null
@@ -4398,8 +4411,8 @@
                                         "Id": 2904365689197651848,
                                         "Active": true,
                                         "Position": [
-                                            -230.0,
-                                            450.0,
+                                            -100.0,
+                                            400.0,
                                             0.0
                                         ],
                                         "Rotation": [
@@ -4423,8 +4436,8 @@
                                             0.5
                                         ],
                                         "PivotPosition": [
-                                            -230.0,
-                                            450.0,
+                                            -100.0,
+                                            400.0,
                                             0.0
                                         ],
                                         "Size": [
@@ -4450,9 +4463,9 @@
                                         "Id": 1707782070018094776,
                                         "Active": true,
                                         "FontID": 4141231996896904961,
-                                        "FontSize": 160.0,
+                                        "FontSize": 96.0,
                                         "LineHeight": 16.0,
-                                        "Alignment": 0,
+                                        "Alignment": 1,
                                         "Value": "Pause",
                                         "Color": [
                                             1.0,

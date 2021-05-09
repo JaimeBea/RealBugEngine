@@ -19,7 +19,7 @@ EXPOSE_MEMBERS(GameController) {
 	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera4UID),
 	MEMBER(MemberType::GAME_OBJECT_UID, playerUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, pauseUID),
-	
+
 	MEMBER(MemberType::FLOAT, speed),
 	MEMBER(MemberType::FLOAT, rotationSpeedX),
 	MEMBER(MemberType::FLOAT, rotationSpeedY),
@@ -77,15 +77,22 @@ void GameController::Update() {
 		}
 	}
 
+	if (pauseCanvas) {
+		if (pauseCanvas->IsActive()) {
+			isPaused = true;
+		}
+		else {
+			isPaused = false;
+		}
+	}
+
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_ESCAPE)) {
 		if (pauseCanvas) {
 			if (!isPaused) {
-				isPaused = true;
 				Time::PauseGame();
 				pauseCanvas->Enable();
 			}
 			else {
-				isPaused = false;
 				Time::ResumeGame();
 				pauseCanvas->Disable();
 			}

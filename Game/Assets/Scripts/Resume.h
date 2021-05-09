@@ -12,5 +12,10 @@ public:
 	void Update() override;
 	void OnButtonClick() override;
 
+public:
+	UID pauseUID;
+
+private:
+	GameObject* pauseCanvas = nullptr;
 };
 
