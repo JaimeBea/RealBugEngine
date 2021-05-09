@@ -273,6 +273,7 @@ void GameObject::SavePrefab(JsonValue jGameObject) {
 	jGameObject[JSON_TAG_NAME] = name.c_str();
 	jGameObject[JSON_TAG_ACTIVE] = active;
 	jGameObject[JSON_TAG_ROOT_BONE_NAME] = rootBoneHierarchy ? rootBoneHierarchy->name.c_str() : "";
+	jGameObject[JSON_TAG_MASK] = mask.bitMask;
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < components.size(); ++i) {
@@ -296,6 +297,14 @@ void GameObject::SavePrefab(JsonValue jGameObject) {
 void GameObject::LoadPrefab(JsonValue jGameObject) {
 	name = jGameObject[JSON_TAG_NAME];
 	active = jGameObject[JSON_TAG_ACTIVE];
+	mask.bitMask = jGameObject[JSON_TAG_MASK];
+
+	for (unsigned i = 0; i < ARRAY_LENGTH(mask.maskNames); ++i) {
+		MaskType type = GetMaskTypeFromName(mask.maskNames[i]);
+		if ((mask.bitMask & static_cast<int>(type)) != 0) {
+			mask.maskValues[i] = true;
+		}
+	}
 
 	JsonValue jComponents = jGameObject[JSON_TAG_COMPONENTS];
 	for (unsigned i = 0; i < jComponents.Size(); ++i) {

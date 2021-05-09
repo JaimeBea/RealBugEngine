@@ -75,6 +75,9 @@ GameObject* Scene::CreateGameObject(GameObject* parent, UID id, const char* name
 GameObject* Scene::DuplicateGameObject(GameObject* gameObject, GameObject* parent) {
 	GameObject* newGO = CreateGameObject(parent, GenerateUID(), (gameObject->name + " (copy)").c_str());
 
+	Mask& mask = newGO->GetMask();
+	mask = gameObject->GetMask();
+
 	// Copy the components
 	for (Component* component : gameObject->GetComponents()) {
 		component->DuplicateComponent(*newGO);
