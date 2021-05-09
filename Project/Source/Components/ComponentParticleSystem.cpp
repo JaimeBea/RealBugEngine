@@ -216,7 +216,7 @@ void ComponentParticleSystem::SpawnParticle() {
 
 void ComponentParticleSystem::DrawGizmos() {
 	//TODO: IMPROVE DRAWS
-	if (IsActiveInHierarchy()) {
+	if (IsActive()) {
 		if (emitterType == EmitterType::CONE) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 			dd::cone(transform->GetGlobalPosition(), transform->GetGlobalRotation() * float3::unitY * 1, dd::colors::White, 1.0f, 0.3f);
