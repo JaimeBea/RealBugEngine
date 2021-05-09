@@ -186,7 +186,7 @@ float Screen::GetScreenHeight() {
 	return static_cast<float>(App->window->GetHeight());
 }
 
-GameObject* Physics::Raycast(const float3& start, const float3& end) {
+GameObject* Physics::Raycast(const float3& start, const float3& end, const int mask) {
 	LineSegment ray = LineSegment(start, end);
 
 	Scene* scene = App->scene->scene;
@@ -196,7 +196,7 @@ GameObject* Physics::Raycast(const float3& start, const float3& end) {
 	float closestFar = FLT_MIN;
 
 	for (GameObject& go : scene->gameObjects) {
-		if ((go.GetMask().bitMask & static_cast<int>(MaskType::ENEMY)) == 0) continue;
+		if ((go.GetMask().bitMask & mask) == 0) continue;
 		ComponentBoundingBox* componentBBox = go.GetComponent<ComponentBoundingBox>();
 		if (componentBBox == nullptr) continue;
 		const AABB& bbox = componentBBox->GetWorldAABB();

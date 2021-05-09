@@ -391,7 +391,7 @@ namespace SceneManager {
 }; // namespace SceneManager
 
 namespace Physics {
-	TESSERACT_ENGINE_API GameObject* Raycast(const float3& start, const float3& end);
+	TESSERACT_ENGINE_API GameObject* Raycast(const float3& start, const float3& end,const int mask);
 }
 
 namespace Colors {

@@ -46,8 +46,7 @@ void FangMovement::Update() {
 					ResourceMaterial* material = GameplaySystems::GetResource<ResourceMaterial>(meshRenderer->materialId);
 					material->diffuseColor = float4(Colors::Red(), 1.0);
 				}
-			}
-			else {
+			} else {
 				hitGOUID = 0;
 			}
 		}
