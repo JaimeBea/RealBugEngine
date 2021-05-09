@@ -12,17 +12,31 @@ class PlayerController : public Script
 
 public:
 
+	enum class MovementDirection {
+		NONE = 0, UP = 1, LEFT = 2, DOWN = 3, RIGHT = 4
+	};
+
 	void Start() override;
 	void Update() override;
 
 public:
 	GameObject* gameObject = nullptr;
 	GameObject* camera = nullptr;
-	enum MovementDirection {
-		NONE = 0,	UP = 1, LEFT = 2, DOWN = 3, RIGHT = 4
-	};
 
-private:	
+	UID gameObjectUID = 0;
+	UID cameraUID = 0;
+
+	int speed = 10;
+
+private:
+	void MoveTo(MovementDirection md);
+	void LookAtMouse();
+	void InitDash();
+	void Dash();
+	bool const CanDash() const;
+	void CheckCoolDowns();
+
+private:
 	float dashSpeed = 100.f;
 	float dashDistance = 20.f;
 	float dashError = 2.f;
@@ -36,19 +50,10 @@ private:
 	float rotationSpeed = 2.f;
 	bool dashing = false;
 	//float cameraXPosition = -163.f;
-	float3 initialPosition = float3(0,0,0);
-	float3 dashDestination = float3(0,0,0);
-	float3 dashDirection = float3(0,0,0);
+	float3 initialPosition = float3(0, 0, 0);
+	float3 dashDestination = float3(0, 0, 0);
+	float3 dashDirection = float3(0, 0, 0);
 	ComponentTransform* transform = nullptr;
 	MovementDirection dashMovementDirection = MovementDirection::NONE;
-	float angle = 0;
-	int speed = 10;
-private:
-	void MoveTo(MovementDirection md);
-	void LookAtMouse();
-	void InitDash();
-	void Dash();
-	bool const CanDash() const;
-	void CheckCoolDowns();
 };
 
