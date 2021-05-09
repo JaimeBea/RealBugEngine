@@ -14,6 +14,9 @@ public:
 	void Update() override;
 	void OnButtonClick() override;
 
+public:
+	int checkpointNum;
+
 private:
 	GameObject* player = nullptr;
 };

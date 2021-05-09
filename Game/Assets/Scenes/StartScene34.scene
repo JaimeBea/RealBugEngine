@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 258401714787680834,
+    "GameCamera": 17784035291926106898,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.7652496099472047,
+                            "HorizontalFov": 1.6399089097976685,
                             "VerticalFov": 1.0
                         }
                     },
@@ -4080,7 +4080,7 @@
                                                 "Type": "Script",
                                                 "Id": 14893793483631067479,
                                                 "Active": true,
-                                                "Script": 0,
+                                                "Script": 15139721463718087939,
                                                 "Values": null
                                             }
                                         ],

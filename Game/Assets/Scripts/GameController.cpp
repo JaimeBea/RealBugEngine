@@ -51,9 +51,20 @@ void GameController::Start() {
 		GameplaySystems::SetRenderCamera(camera);
 	}
 
-
 	godCameraActive = false;
 	if (gameCamera && godCamera) godModeAvailable = true;
+
+	// TODO: The following is a provisional solution
+	// Setting player starting position
+	if (player) {
+		switch (checkpoint) {
+		case 1:
+			player->GetComponent<ComponentTransform>()->SetPosition(float3(37.f, 0.f, 41.f));
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void GameController::Update() {
