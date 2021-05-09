@@ -519,7 +519,7 @@ static aiNode* SearchRootBone(aiNode* rootBone, aiNode* rootBoneParent, const st
 		}
 	} while (foundInBones);
 	// Check whether selected root bone has siblings that are bones
-	for (int i = 0; i < rootBoneParent->mNumChildren; ++i) {
+	for (unsigned i = 0; i < rootBoneParent->mNumChildren; ++i) {
 		if (rootBoneParent->mChildren[i] == rootBone) continue;
 
 		if (IsInBones(rootBoneParent->mChildren[i], bones)) {
