@@ -101,16 +101,16 @@ void ComponentParticleSystem::OnEditorUpdate() {
 	}
 }
 
-//TODO DINAMIC PARTICLE NOT HARCODED
+//TODO: DINAMIC PARTICLE NOT HARCODED
 float3 ComponentParticleSystem::CreateVelocity() {
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		float x = (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
 		float z = (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
 		float y = (float(rand()) / float((RAND_MAX)) * 1.0);
-		return float3(x, y, z);
+		return float3(0, velocity, 0);
 	}
-	//TODO DINAMIC PARTICLE NOT HARCODED
+	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 2.0) - 1.0f;
@@ -121,15 +121,15 @@ float3 ComponentParticleSystem::CreateVelocity() {
 };
 
 float3 ComponentParticleSystem::CreatePosition() {
-	//TODO DINAMIC PARTICLE NOT HARCODED
+	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::CONE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
-		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
-		float z = (transform->GetGlobalPosition().z) + (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
+		float x = (transform->GetGlobalPosition().x);
+		float z = (transform->GetGlobalPosition().z);
 		float y = (transform->GetGlobalPosition().y);
 		return float3(x, y, z);
 	}
-	//TODO DINAMIC PARTICLE NOT HARCODED
+	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
 		ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 		float x = (transform->GetGlobalPosition().x) + (float(rand()) / float((RAND_MAX)) * 0.5) - 0.5;
@@ -209,13 +209,13 @@ void ComponentParticleSystem::SpawnParticle() {
 		currentParticle->direction = CreateVelocity();
 		currentParticle->initialPosition = CreatePosition();
 		currentParticle->position = currentParticle->initialPosition;
-		//TODO not hardcoded
+		//TODO: not hardcoded
 		currentParticle->scale = float3(0.1f, 0.1f, 0.1f) * scale;
 	}
 }
 
 void ComponentParticleSystem::DrawGizmos() {
-	//TODO IMPROVE DRAWS
+	//TODO: IMPROVE DRAWS
 	if (IsActiveInHierarchy()) {
 		if (emitterType == EmitterType::CONE) {
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
@@ -264,7 +264,6 @@ void ComponentParticleSystem::Draw() {
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*) 0);
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 			glUseProgram(program);
-			//TODO ADD DELTATIME
 
 			ComponentTransform* transform = GetOwner().GetComponent<ComponentTransform>();
 			currentParticle.model = currentParticle.model;
@@ -281,7 +280,7 @@ void ComponentParticleSystem::Draw() {
 			glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, Final.ptr());
 			glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
 			glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
-
+			//TODO: ADD delta Time
 			if (!isRandomFrame) {
 				currentParticle.currentFrame += 0.1f;
 			}
@@ -301,7 +300,7 @@ void ComponentParticleSystem::Draw() {
 			if (textureResource != nullptr) {
 				glBindTexture(GL_TEXTURE_2D, textureResource->glTexture);
 			}
-			//TODO implement drawarrays
+			//TODO: implement drawarrays
 			//glDrawArraysInstanced(GL_TRIANGLES, 0, 4, 100);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 			glBindTexture(GL_TEXTURE_2D, 0);
