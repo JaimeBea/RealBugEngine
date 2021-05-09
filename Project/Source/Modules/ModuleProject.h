@@ -45,6 +45,4 @@ private:
 
 private:
 	HMODULE gameCodeDLL = nullptr;
-	unsigned int version = 0;
-	unsigned int digits = 1;
 };
