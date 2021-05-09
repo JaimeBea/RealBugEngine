@@ -38,8 +38,8 @@ float2 ComponentCanvasRenderer::GetScreenReferenceSize() const {
 	return canvas ? canvas->GetScreenReferenceSize() : float2(1920, 1080);
 }
 
-float ComponentCanvasRenderer::GetCanvasScreenFactor() const {
-	const ComponentCanvas* canvas = AnyParentHasCanvas(&GetOwner());
+float ComponentCanvasRenderer::GetCanvasScreenFactor() {
+	ComponentCanvas* canvas = AnyParentHasCanvas(&GetOwner());
 	return canvas ? canvas->GetScreenFactor() : 1.0f;
 }
 
@@ -47,7 +47,7 @@ void ComponentCanvasRenderer::DuplicateComponent(GameObject& owner) {
 	ComponentCanvasRenderer* component = owner.CreateComponent<ComponentCanvasRenderer>();
 }
 
-const ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) const {
+ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* current) const {
 	ComponentCanvas* currentCanvas = current->GetComponent<ComponentCanvas>();
 	if (currentCanvas != nullptr) {
 		return currentCanvas;

@@ -17,8 +17,7 @@ public:
 	float2 GetScreenReferenceSize() const;
 	void SetScreenReferenceSize(float2 screenReferenceSize_);
 	void SetDirty(bool dirty_);	   //Dirty marks wether or not hte next time GetScreenFactor is called will be recalculated or not
-	float GetScreenFactor() const; //Returns the factor by which UI elements will be scaled (both x and y so it doesn't deform elements)
-
+	float GetScreenFactor(); //Returns the factor by which UI elements will be scaled (both x and y so it doesn't deform elements)
 
 private:
 	void RecalculateScreenFactor();

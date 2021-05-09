@@ -17,6 +17,6 @@ public:
 	void Render(const GameObject* gameObject) const; //Calls Draw on all images if one of its parents is a canvas
 
 	float2 GetScreenReferenceSize() const;
-	float GetCanvasScreenFactor() const;
-	const ComponentCanvas* AnyParentHasCanvas(GameObject* current) const; //Recursively iterates through parents to check if one of them contains a Canvas Component
+	float GetCanvasScreenFactor();
+	ComponentCanvas* AnyParentHasCanvas(GameObject* current) const; //Recursively iterates through parents to check if one of them contains a Canvas Component
 };

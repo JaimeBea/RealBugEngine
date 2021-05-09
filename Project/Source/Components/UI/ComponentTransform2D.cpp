@@ -52,7 +52,7 @@ std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
 };
 
 void ComponentTransform2D::Update() {
-	CalculateGlobalMatrix();
+	
 }
 
 void ComponentTransform2D::OnEditorUpdate() {
@@ -330,7 +330,8 @@ void ComponentTransform2D::SetAnchorMax(float2 anchorMax_) {
 	InvalidateHierarchy();
 }
 
-const float4x4 ComponentTransform2D::GetGlobalMatrix() const {
+const float4x4 ComponentTransform2D::GetGlobalMatrix() {
+	CalculateGlobalMatrix();
 	return globalMatrix;
 }
 
@@ -453,23 +454,24 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	component->dirty = true;
 }
 
-
-
 void ComponentTransform2D::CalculateAnchor2DPosition() {
-	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float2 actualScreenCanvasReferenceSize = float2(0, 0);
-	bool isUsing2D = App->editor->panelScene.IsUsing2D();
-	if (isUsing2D) {
-		actualScreenCanvasReferenceSize = App->renderer->GetViewportSize();
-	} else {
-		actualScreenCanvasReferenceSize = canvasRenderer->GetScreenReferenceSize();
-	}
-	float posXAnchored = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f);
-	float posYAnchored = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f);
-	float2 anchored2DPosition = float2(posXAnchored, posYAnchored);
-	SetAnchor2DPosition(anchored2DPosition);
-	UpdateObjectPosition();
+	if (dirty) {
+		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 
+		float2 actualScreenCanvasReferenceSize = float2(0, 0);
+
+		bool isUsing2D = App->editor->panelScene.IsUsing2D();
+
+		actualScreenCanvasReferenceSize = App->renderer->GetViewportSize();
+
+		float posXAnchored = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f);
+		float posYAnchored = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f);
+		float2 anchored2DPosition = float2(posXAnchored, posYAnchored);
+
+		SetAnchor2DPosition(anchored2DPosition);
+
+		UpdateObjectPosition();
+	}
 }
 
 void ComponentTransform2D::SetAnchor2DPosition(float2 anchor2DPosition_) {
@@ -493,9 +495,16 @@ void ComponentTransform2D::SetRight(float right_) {
 }
 
 void ComponentTransform2D::UpdateObjectPosition() {
-	// Calculate with the offset
-	float posMinX = anchored2Dposition.x - ((size.x) * (anchorMin.x - 0.5));
-	float posMinY = anchored2Dposition.y - ((size.y) * (anchorMin.y - 0.5));
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
+
+	bool isUsing2D = App->editor->panelScene.IsUsing2D();
+
+	float posMinX, posMinY;
+	
+	posMinX = anchored2Dposition.x - ((size.x * factor) * (anchorMin.x - 0.5));
+	posMinY = anchored2Dposition.y - ((size.y * factor) * (anchorMin.y - 0.5));
+
 	float3 newPosition = float3(posMinX, posMinY, 0);
 	SetPosition(newPosition);
 }

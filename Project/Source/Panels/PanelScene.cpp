@@ -157,8 +157,8 @@ void PanelScene::Update() {
 		if (App->renderer->GetViewportSize().x != size.x || App->renderer->GetViewportSize().y != size.y) {
 			// TODO, These should use the EVENT SCREEN_RESIZED
 			App->camera->ViewportResized((int) size.x, (int) size.y);
-			App->userInterface->ViewportResized();
 			App->renderer->ViewportResized((int) size.x, (int) size.y);
+			App->userInterface->ViewportResized();
 			framebufferSize = {
 				size.x,
 				size.y,

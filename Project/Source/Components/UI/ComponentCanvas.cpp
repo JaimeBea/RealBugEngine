@@ -18,7 +18,7 @@ void ComponentCanvas::Save(JsonValue jComponent) const {
 }
 
 void ComponentCanvas::Update() {
-	RecalculateScreenFactor();
+
 }
 
 void ComponentCanvas::Load(JsonValue jComponent) {
@@ -40,7 +40,8 @@ void ComponentCanvas::SetScreenReferenceSize(float2 screenReferenceSize_) {
 	screenReferenceSize = screenReferenceSize_;
 }
 
-float ComponentCanvas::GetScreenFactor() const {
+float ComponentCanvas::GetScreenFactor() {
+	RecalculateScreenFactor();
 	return screenFactor;
 }
 
@@ -49,8 +50,10 @@ void ComponentCanvas::SetDirty(bool dirty_) {
 }
 
 void ComponentCanvas::RecalculateScreenFactor() {
-	float2 factor = App->renderer->GetViewportSize().Div(screenReferenceSize);
-	screenFactor = factor.x < factor.y ? factor.x : factor.y;
+	if (dirty) {
+		float2 factor = App->renderer->GetViewportSize().Div(screenReferenceSize);
+		screenFactor = factor.x < factor.y ? factor.x : factor.y;
+	}
 }
 
 bool ComponentCanvas::AnyChildHasCanvasRenderer(const GameObject* obj) const {
