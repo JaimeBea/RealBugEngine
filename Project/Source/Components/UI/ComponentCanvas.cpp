@@ -17,10 +17,6 @@ void ComponentCanvas::Init() {
 void ComponentCanvas::Save(JsonValue jComponent) const {
 }
 
-void ComponentCanvas::Update() {
-
-}
-
 void ComponentCanvas::Load(JsonValue jComponent) {
 	dirty = true;
 }

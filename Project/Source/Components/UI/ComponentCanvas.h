@@ -9,7 +9,6 @@ public:
 	void Save(JsonValue jComponent) const override;
 	void Load(JsonValue jComponent) override;
 	void Init() override;
-	void Update() override;
 	void DuplicateComponent(GameObject& owner) override;
 	void OnEditorUpdate() override;
 	bool CanBeRemoved() const override;
