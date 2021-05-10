@@ -22,6 +22,7 @@ public:
 	bool Init() override;
 	UpdateStatus Update() override;
 	bool CleanUp() override;
+	void ReceiveEvent(TesseractEvent& e) override; // Treats the events that is listening to.
 
 	void CreateScript(std::string& name);
 	void CreateNewProject(const char* name, const char* path);
@@ -44,5 +45,4 @@ private:
 
 private:
 	HMODULE gameCodeDLL = nullptr;
-	bool startedWithDebugger = false;
 };
