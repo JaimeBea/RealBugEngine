@@ -18,9 +18,15 @@
 void ComponentBoundingBox::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->titleColor, "Bounding Box");
 
-	bool active = IsActive();
-
-	if (ImGui::Checkbox("Draw", &active)) active ? Enable() : Disable();
+	if (ImGui::Checkbox("Active", &active)) {
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
+	}
 
 	if (IsActive()) DrawBoundingBox();
 }
