@@ -126,7 +126,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 	component->SetText(text);
 }
 
-void ComponentText::Draw(const ComponentTransform2D* transform) const {
+void ComponentText::Draw(ComponentTransform2D* transform) const {
 	if (fontID == 0) {
 		return;
 	}
@@ -149,12 +149,13 @@ void ComponentText::Draw(const ComponentTransform2D* transform) const {
 		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		view = float4x4::identity;
 		model = float4x4::FromTRS(float3::zero, transform->GetGlobalRotation(), float3::one);
-	}
-
-	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	if (canvasRenderer != nullptr) {
-		float factor = canvasRenderer->GetCanvasScreenFactor();
-		view = view * float4x4::Scale(factor, factor, factor);
+	} else {
+		model = transform->GetGlobalScaledMatrix();
+		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+		if (canvasRenderer != nullptr) {
+			float factor = canvasRenderer->GetCanvasScreenFactor();
+			view = view * float4x4::Scale(factor, factor, factor);
+		}
 	}
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
