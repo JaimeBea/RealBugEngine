@@ -24,7 +24,7 @@ public:
 	void SetColor(float4 color_);
 
 private:
-	float4 GetTintColor() const; // Gets an additional color that needs to be applied to the image. Currently gets the color of the Button
+	float4 GetMainColor() const;	// Gets an additional color that needs to be applied to the image. Currently gets the color of the Button, Slider and Checkbox
 
 private:
 	float4 color = float4::one;		// Color used as default tainter

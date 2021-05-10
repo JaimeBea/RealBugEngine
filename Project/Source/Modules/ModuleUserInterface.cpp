@@ -226,3 +226,7 @@ void ModuleUserInterface::ViewportResized() {
 bool ModuleUserInterface::IsUsing2D() const {
 	return view2DInternal || App->time->HasGameStarted();
 }
+
+float4 ModuleUserInterface::GetErrorColor() {
+	return errorColor;
+}
