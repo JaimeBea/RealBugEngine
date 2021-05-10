@@ -156,22 +156,8 @@ void PanelHierarchy::UpdateHierarchyNode(GameObject* gameObject) {
 				payloadGameObject->SetParent(gameObject);
 
 				ComponentTransform* transform = payloadGameObject->GetComponent<ComponentTransform>();
-				ComponentTransform* parentTransform = gameObject->GetComponent<ComponentTransform>();
-				// Recompute local matrix to maintain global position
-				// 1. Get current matrix
 				float4x4 childGlobalMatrix = transform->GetGlobalMatrix();
-				float4x4 parentGlobalMatrix = parentTransform->GetGlobalMatrix();
-				float3 parentScale = float3(parentGlobalMatrix.Col3(0).Length(), parentGlobalMatrix.Col3(1).Length(), parentGlobalMatrix.Col3(2).Length());
-				// 2. Invert the new parent global matrix with the fastest possible method
-				if (parentScale.Equals(float3::one)) { // No scaling
-					parentGlobalMatrix.InverseOrthonormal();
-				} else if (parentScale.xxx().Equals(parentScale)) { // Uniform scaling
-					parentGlobalMatrix.InverseOrthogonalUniformScale();
-				} else { // Non-uniform scaling
-					parentGlobalMatrix.InverseColOrthogonal();
-				}
-				// 3. New local matrix
-				transform->SetTRS(parentGlobalMatrix * childGlobalMatrix);
+				transform->SetGlobalTRS(childGlobalMatrix);
 			}
 		}
 
@@ -341,7 +327,7 @@ GameObject* PanelHierarchy::CreateUISlider(GameObject* gameObject) {
 	ComponentCanvasRenderer* handleRenderer = handleGameObject->CreateComponent<ComponentCanvasRenderer>();
 	ComponentImage* handleImage = handleGameObject->CreateComponent<ComponentImage>();
 
-	
+
 	selectable->SetSelectableType(slider->GetType());
 	backgroundGameObject->InitComponents();
 	fillGameObject->InitComponents();
