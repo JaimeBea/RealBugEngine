@@ -38,12 +38,9 @@ void ComponentProgressBar::Update() {
 	//The progress bar GameObject must have two image gameobjects as childs (for background and fill)
 	if (background == nullptr || fill == nullptr) {
 
-		GameObject& owner = GetOwner();
-		std::vector<GameObject*> childs = owner.GetChildren();
-
 		//IMPORTANT: Background goes first then fill
-		for (std::vector<GameObject*>::iterator it = childs.begin(); it != childs.end(); ++it) {
-			if (it == childs.begin()) {
+		for (std::vector<GameObject*>::const_iterator it = GetOwner().GetChildren().begin(); it != GetOwner().GetChildren().end(); ++it) {
+			if (it == GetOwner().GetChildren().begin()) {
 				background = *it;
 			} else if (fill == nullptr) {
 				fill = *it;
