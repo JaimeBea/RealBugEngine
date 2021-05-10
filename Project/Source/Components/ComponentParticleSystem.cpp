@@ -48,9 +48,10 @@
 void ComponentParticleSystem::OnEditorUpdate() {
 	ImGui::TextColored(App->editor->textColor, "Texture Settings:");
 
-	ImGui::Checkbox("Play: ", &isPlaying);
+	ImGui::Checkbox("isPlaying: ", &isPlaying);
 	ImGui::Checkbox("Loop: ", &looping);
-
+	if (ImGui::Button("Play")) Play();
+	if (ImGui::Button("Stop")) Stop();
 	ImGui::Separator();
 	const char* emitterTypeCombo[] = {"Cone", "Sphere", "Hemisphere", "Donut", "Circle", "Rectangle"};
 	const char* emitterTypeComboCurrent = emitterTypeCombo[(int) emitterType];
@@ -213,6 +214,7 @@ void ComponentParticleSystem::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_LIFE] = particleLife;
 	jComponent[JSON_TAG_YTILES] = Ytiles;
 	jComponent[JSON_TAG_XTILES] = Xtiles;
+
 	JsonValue jColor = jComponent[JSON_TAG_INITCOLOR];
 	jColor[0] = initC.x;
 	jColor[1] = initC.y;
@@ -251,8 +253,6 @@ void ComponentParticleSystem::SpawnParticle() {
 	Particle* currentParticle = particles.Obtain();
 	if (!looping) {
 		particleSpawned++;
-	} else {
-		particleSpawned = 0;
 	}
 	if (currentParticle) {
 		currentParticle->position = currentParticle->initialPosition;
@@ -394,4 +394,15 @@ void ComponentParticleSystem::Draw() {
 			SpawnParticle();
 		}
 	}
+}
+
+void ComponentParticleSystem::Play() {
+	particleSpawned = 0;
+	isPlaying = true;
+}
+
+void ComponentParticleSystem::Stop() {
+	particleSpawned = maxParticles;
+	killParticles();
+	isPlaying = false;
 }
