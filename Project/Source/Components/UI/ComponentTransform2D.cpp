@@ -145,8 +145,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 	}
 	ImGui::InputFloat3("Pivot World Position (X,Y,Z)", pivPos.ptr(), "%.3f", ImGuiInputTextFlags_ReadOnly);
 
-	//UpdateUIElements();
-
 	ImGui::Separator();
 }
 
@@ -330,16 +328,9 @@ const float4x4 ComponentTransform2D::GetGlobalScaledMatrix() {
 	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
 }
 
-Quat ComponentTransform2D::GetGlobalRotation() const {
-	Quat parentRotation = Quat::FromEulerXYZ(0, 0, 0);
-	GameObject* parent = GetOwner().GetParent();
-	if (parent != nullptr) {
-		ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
-		if (parentTransform != nullptr) {
-			parentRotation = parentTransform->GetGlobalRotation();
-		}
-	}
-	return parentRotation * rotation;
+float3x3 ComponentTransform2D::GetGlobalRotation() {
+	CalculateGlobalMatrix();
+	return globalMatrix.RotatePart();
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {

@@ -5,6 +5,7 @@
 #include "Math/float2.h"
 #include "Math/float3.h"
 #include "Math/float4x4.h"
+#include "Math/float3x3.h"
 #include "Math/Quat.h"
 
 #if defined(TESSERACT_ENGINE_API)
@@ -87,7 +88,7 @@ public:
 	const float4x4 GetGlobalMatrix();						// Returns GlobalMatrix
 	const float4x4 GetGlobalScaledMatrix();					// Returns GlobalMatrix with the size of the item
 	void UpdateTransformChanges();							// Update the tranform matrix
-	Quat GetGlobalRotation() const;							// Returns the accumulated rotation of the parents and the current component
+	float3x3 GetGlobalRotation();							// Returns the accumulated rotation of the parents and the current component
 
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const;	 // Returns the size
