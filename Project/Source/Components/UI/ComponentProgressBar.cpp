@@ -99,8 +99,8 @@ void ComponentProgressBar::OnEditorUpdate() {
 	ImGui::DragFloat("Min", &min, App->editor->dragSpeed2f, -inf, max - 1);
 	ImGui::DragFloat("Max", &max, App->editor->dragSpeed2f, min + 1, inf);
 
-	ImGui::Combo("Fill Direction", &i, fillDirections, IM_ARRAYSIZE(fillDirections));
-	dir = static_cast<FillDirection>(i);
+	ImGui::Combo("Fill Direction", &dirIndex, fillDirections, IM_ARRAYSIZE(fillDirections));
+	dir = static_cast<FillDirection>(dirIndex);
 
 	ImGui::Separator();
 }
@@ -110,7 +110,7 @@ void ComponentProgressBar::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_MIN_VALUE] = min;
 	jComponent[JSON_TAG_MAX_VALUE] = max;
 	jComponent[JSON_TAG_PROGRESS_VALUE] = value;
-	jComponent[JSON_TAG_FILL_DIRECTION] = i;
+	jComponent[JSON_TAG_FILL_DIRECTION] = dirIndex;
 	JsonValue jFillDir = jComponent[JSON_TAG_FILL_DIRECTION];
 	jFillDir = (int) dir;
 	jComponent[JSON_TAG_FILL_IMAGE] = fill->GetID();
@@ -131,7 +131,7 @@ void ComponentProgressBar::Load(JsonValue jComponent) {
 	value = jComponent[JSON_TAG_PROGRESS_VALUE];
 	JsonValue jFillDir = jComponent[JSON_TAG_FILL_DIRECTION];
 	dir = (FillDirection)(int) jFillDir;
-	i = (int) dir;
+	dirIndex = (int) dir;
 	fillID = jComponent[JSON_TAG_FILL_IMAGE];
 	fill = App->scene->scene->GetGameObject(fillID);
 	backgroundID = jComponent[JSON_TAG_BACKGROUND_IMAGE];
@@ -148,6 +148,8 @@ void ComponentProgressBar::DuplicateComponent(GameObject& owner) {
 	component->SetFillPos(fillXPos);
 	component->SetMin(min);
 	component->SetMax(max);
+	component->dirIndex = dirIndex;
+	component->dir = dir;
 }
 
 void ComponentProgressBar::SetValue(float v) {

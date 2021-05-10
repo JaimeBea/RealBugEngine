@@ -55,7 +55,7 @@ private:
 	float min = 0.0f;
 	float max = 1.0f;
 
-	int i = 0;
+	int dirIndex = 0;
 
 	inline static const char* fillDirections[] {"Left to right", "Right to Left", "Bottom to top", "Top to bottom"};
 };
