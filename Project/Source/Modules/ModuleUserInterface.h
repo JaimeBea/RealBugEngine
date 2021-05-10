@@ -5,6 +5,8 @@
 #include "Math/float2.h"
 #include "Math/float4.h"
 
+#define SCENE_SCREEN_FACTOR 0.01f
+
 class GameObject;
 class ComponentEventSystem;
 class ResourceFont;
@@ -27,6 +29,10 @@ public:
 
 	unsigned int GetQuadVBO();			// Returns the generic VBO that is used in ComponentImages
 	void ViewportResized();				// Calls ComponentCanvas, ComponentTransform2D, ComponentText components to be updated
+	bool IsUsing2D() const;
+
+public:
+	bool view2DInternal = false;
 
 	float4 GetErrorColor();				// Gets the representation of the color
 

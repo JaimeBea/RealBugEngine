@@ -132,8 +132,7 @@ bool ModuleRender::Init() {
 	glGenRenderbuffers(1, &depthRenderbuffer);
 	glGenTextures(1, &renderTexture);
 
-
-	ViewportResized(200, 200);
+	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
 	UpdateFramebuffer();
 
 	return true;
@@ -159,9 +158,6 @@ UpdateStatus ModuleRender::PreUpdate() {
 UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
-#if GAME
-	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
-#endif
 	culledTriangles = 0;
 
 	// Draw the scene
@@ -458,7 +454,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::RenderUI() {
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+	if (App->userInterface->IsUsing2D()) {
 		SetOrtographicRender();
 		App->camera->EnableOrtographic();
 	}
@@ -467,7 +463,7 @@ void ModuleRender::RenderUI() {
 	App->userInterface->Render();
 	glEnable(GL_DEPTH_TEST);
 
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+	if (App->userInterface->IsUsing2D()) {
 		App->camera->EnablePerspective();
 		SetPerspectiveRender();
 	}

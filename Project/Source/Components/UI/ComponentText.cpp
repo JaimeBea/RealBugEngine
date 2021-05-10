@@ -16,7 +16,6 @@
 
 #include "GL/glew.h"
 #include "Math/TransformOps.h"
-#include "Math/float3x3.h"
 #include "Utils/Logging.h"
 #include "Utils/ImGuiUtils.h"
 #include "imgui_stdlib.h"
@@ -143,20 +142,22 @@ void ComponentText::Draw(const ComponentTransform2D* transform) const {
 	glUseProgram(program);
 
 	float4x4 proj = App->camera->GetProjectionMatrix();
+	float4x4 view = App->camera->GetViewMatrix();
 	float4x4 model;
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+
+	if (App->userInterface->IsUsing2D()) {
 		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
-		float4x4 view = float4x4::identity;
-
+		view = float4x4::identity;
 		model = float4x4::FromTRS(float3::zero, transform->GetGlobalRotation(), float3::one);
-
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
-	} else {
-		float4x4 view = App->camera->GetViewMatrix();
-		model = transform->GetGlobalScaledMatrix(true, true);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	}
 
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	if (canvasRenderer != nullptr) {
+		float factor = canvasRenderer->GetCanvasScreenFactor();
+		view = view * float4x4::Scale(factor, factor, factor);
+	}
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
@@ -199,7 +200,6 @@ float4 ComponentText::GetFontColor() const {
 	return color;
 }
 
-//TODO make this happen with a TesseractEvent or SDLevent related to OnWindowSizeChanged
 void ComponentText::RecalculcateVertices() {
 	if (fontID == 0) {
 		return;
@@ -214,8 +214,8 @@ void ComponentText::RecalculcateVertices() {
 	float x = position.x * screenFactor;
 	float y = position.y * screenFactor;
 
-	float dy = 0;		// additional y shifting
-	int j = 0;			// index of row
+	float dy = 0; // additional y shifting
+	int j = 0;	  // index of row
 
 	float2 transformScale = transform->GetScale().xy();
 	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
@@ -231,24 +231,24 @@ void ComponentText::RecalculcateVertices() {
 		float h = character.size.y * scale;
 
 		switch (textAlignment) {
-			case TextAlignment::LEFT: {
-				// Default branch, could be deleted
-				break;
-			}
-			case TextAlignment::CENTER: {
-				xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
-				break;
-			}
-			case TextAlignment::RIGHT: {
-				xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
-				break;
-			}
+		case TextAlignment::LEFT: {
+			// Default branch, could be deleted
+			break;
+		}
+		case TextAlignment::CENTER: {
+			xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+			break;
+		}
+		case TextAlignment::RIGHT: {
+			xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
+			break;
+		}
 		}
 
 		if (text.at(i) == '\n') {
-			dy += lineHeight;					// shifts to next line
-			x = position.x * screenFactor;		// reset to initial position
-			j = i + 1;							// updated j variable in order to get the substringwidth of the following line in the next iteration
+			dy += lineHeight;			   // shifts to next line
+			x = position.x * screenFactor; // reset to initial position
+			j = i + 1;					   // updated j variable in order to get the substringwidth of the following line in the next iteration
 		}
 
 		// clang-format off

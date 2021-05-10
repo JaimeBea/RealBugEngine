@@ -119,7 +119,7 @@ float4 ComponentImage::GetMainColor() const {
 	return componentColor.Equals(App->userInterface->GetErrorColor()) ? color : componentColor;
 }
 
-void ComponentImage::Draw(const ComponentTransform2D* transform) const {
+void ComponentImage::Draw(ComponentTransform2D* transform) const {
 	unsigned int program = App->programs->imageUI;
 
 	if (alphaTransparency) {
@@ -134,21 +134,23 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*) (sizeof(float) * 6 * 3));
 	glUseProgram(program);
 
-	float4x4 modelMatrix;
-	float4x4* proj = &App->camera->GetProjectionMatrix();
+	float4x4 modelMatrix = transform->GetGlobalScaledMatrix();
+	float4x4& proj = App->camera->GetProjectionMatrix();
+	float4x4& view = App->camera->GetViewMatrix();
 
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
-		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
-		float4x4 view = float4x4::identity;
-		modelMatrix = transform->GetGlobalScaledMatrix();
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
-	} else {
-		float4x4* view = &App->camera->GetViewMatrix();
-		modelMatrix = transform->GetGlobalScaledMatrix(true, true);
-		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
+	if (App->userInterface->IsUsing2D()) {
+		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
+		view = float4x4::identity;
 	}
 
-	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj->ptr());
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	if (canvasRenderer != nullptr) {
+		float factor = canvasRenderer->GetCanvasScreenFactor();
+		view = view * float4x4::Scale(factor, factor, factor);
+	}
+
+	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "proj"), 1, GL_TRUE, proj.ptr());
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, modelMatrix.ptr());
 
 	glActiveTexture(GL_TEXTURE0);

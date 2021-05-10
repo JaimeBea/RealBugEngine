@@ -43,8 +43,8 @@ void ComponentSlider::Update() {
 			clicked = false;
 		} else {
 			float2 mousePos = App->input->GetMousePosition(true);
-			const ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
-			float2 auxNewPosition = float2(((mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor()) - GetOwner().GetComponent<ComponentTransform2D>()->GetPosition().x, 0);
+			ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
+			float2 auxNewPosition = float2(((mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor()) - GetOwner().GetComponent<ComponentTransform2D>()->GetScreenPosition().x, 0);
 			if (newPosition.x != auxNewPosition.x) {
 				newPosition = auxNewPosition;
 				OnValueChanged();
@@ -130,10 +130,10 @@ void ComponentSlider::OnEditorUpdate() {
 
 void ComponentSlider::OnClicked() {
 	SetClicked(true);
-	const ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
+	ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 	float2 mousePos = App->input->GetMousePosition(true);
-	newPosition.x = ((mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor()) - GetOwner().GetComponent<ComponentTransform2D>()->GetPosition().x;
+	newPosition.x = ((mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor()) - GetOwner().GetComponent<ComponentTransform2D>()->GetScreenPosition().x;
 
 	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
 		Script* script = scriptComponent.GetScriptInstance();
