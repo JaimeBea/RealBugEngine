@@ -26,9 +26,11 @@ Scene::Scene(unsigned numGameObjects) {
 	textComponents.Allocate(numGameObjects);
 	buttonComponents.Allocate(numGameObjects);
 	selectableComponents.Allocate(numGameObjects);
+	sliderComponents.Allocate(numGameObjects);
 	skyboxComponents.Allocate(numGameObjects);
 	scriptComponents.Allocate(numGameObjects);
 	animationComponents.Allocate(numGameObjects);
+	particleComponents.Allocate(numGameObjects);
 	audioSourceComponents.Allocate(numGameObjects);
 	audioListenerComponents.Allocate(numGameObjects);
 	progressbarsComponents.Allocate(numGameObjects);
@@ -144,12 +146,16 @@ Component* Scene::GetComponentByTypeAndId(ComponentType type, UID componentId) {
 		return textComponents.Find(componentId);
 	case ComponentType::SELECTABLE:
 		return selectableComponents.Find(componentId);
+	case ComponentType::SLIDER:
+		return sliderComponents.Find(componentId);
 	case ComponentType::SKYBOX:
 		return skyboxComponents.Find(componentId);
 	case ComponentType::ANIMATION:
 		return animationComponents.Find(componentId);
 	case ComponentType::SCRIPT:
 		return scriptComponents.Find(componentId);
+	case ComponentType::PARTICLE:
+		return particleComponents.Find(componentId);
 	case ComponentType::AUDIO_SOURCE:
 		return audioSourceComponents.Find(componentId);
 	case ComponentType::AUDIO_LISTENER:
@@ -195,12 +201,16 @@ Component* Scene::CreateComponentByTypeAndId(GameObject* owner, ComponentType ty
 		return textComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SELECTABLE:
 		return selectableComponents.Obtain(componentId, owner, componentId, owner->IsActive());
+	case ComponentType::SLIDER:
+		return sliderComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SKYBOX:
 		return skyboxComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::ANIMATION:
 		return animationComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::SCRIPT:
 		return scriptComponents.Obtain(componentId, owner, componentId, owner->IsActive());
+	case ComponentType::PARTICLE:
+		return particleComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::AUDIO_SOURCE:
 		return audioSourceComponents.Obtain(componentId, owner, componentId, owner->IsActive());
 	case ComponentType::AUDIO_LISTENER:
@@ -261,6 +271,9 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 	case ComponentType::SELECTABLE:
 		selectableComponents.Release(componentId);
 		break;
+	case ComponentType::SLIDER:
+		sliderComponents.Release(componentId);
+		break;
 	case ComponentType::SKYBOX:
 		skyboxComponents.Release(componentId);
 		break;
@@ -269,6 +282,9 @@ void Scene::RemoveComponentByTypeAndId(ComponentType type, UID componentId) {
 		break;
 	case ComponentType::SCRIPT:
 		scriptComponents.Release(componentId);
+		break;
+	case ComponentType::PARTICLE:
+		particleComponents.Release(componentId);
 		break;
 	case ComponentType::AUDIO_SOURCE:
 		audioSourceComponents.Release(componentId);

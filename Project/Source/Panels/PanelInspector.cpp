@@ -18,6 +18,7 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentText.h"
 #include "Components/UI/ComponentTransform2D.h"
+#include "Components/UI/ComponentSlider.h"
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleUserInterface.h"
@@ -47,7 +48,7 @@ void PanelInspector::Update() {
 			ImGui::SameLine();
 			ImGui::TextColored(App->editor->textColor, "%llu", selected->GetID());
 
-			bool active = selected->IsActive();
+			bool active = selected->IsActiveInternal();
 			if (ImGui::Checkbox("##game_object", &active)) {
 				// TODO: EventSystem would generate an event here
 				if (active) {
@@ -120,6 +121,9 @@ void PanelInspector::Update() {
 				case ComponentType::SELECTABLE:
 					cName = "Selectable";
 					break;
+				case ComponentType::SLIDER:
+					cName = "Slider";
+					break;
 				case ComponentType::SKYBOX:
 					cName = "Skybox";
 					break;
@@ -128,6 +132,9 @@ void PanelInspector::Update() {
 					break;
 				case ComponentType::ANIMATION:
 					cName = "Animation";
+					break;
+				case ComponentType::PARTICLE:
+					cName = "Particle";
 					break;
 				case ComponentType::AUDIO_SOURCE:
 					cName = "Audio Source";
@@ -230,6 +237,30 @@ void PanelInspector::Update() {
 						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 					}
 				}
+				if (ImGui::MenuItem("Particle")) {
+					ComponentParticleSystem* particle = selected->CreateComponent<ComponentParticleSystem>();
+					if (particle != nullptr) {
+						particle->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Audio Source")) {
+					ComponentAudioSource* audioSource = selected->CreateComponent<ComponentAudioSource>();
+					if (audioSource != nullptr) {
+						audioSource->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
+				if (ImGui::MenuItem("Audio Listener")) {
+					ComponentAudioListener* audioListener = selected->CreateComponent<ComponentAudioListener>();
+					if (audioListener != nullptr) {
+						audioListener->Init();
+					} else {
+						App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
+					}
+				}
 				// TRANSFORM is always there, cannot add a new one.
 
 				AddAudioComponentsOptions(selected);
@@ -328,7 +359,7 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 				App->editor->modalToOpen = Modal::COMPONENT_EXISTS;
 			}
 		}
-		
+
 		if (ImGui::MenuItem("Toggle")) {
 			ComponentToggle* component = selected->GetComponent<ComponentToggle>();
 			if (component == nullptr) {
@@ -375,6 +406,11 @@ void PanelInspector::AddUIComponentsOptions(GameObject* selected) {
 			break;
 		}
 		case ComponentType::CANVAS: {
+			ComponentTransform2D* transform = selected->GetComponent<ComponentTransform2D>();
+			if (transform == nullptr) {
+				transform = selected->CreateComponent<ComponentTransform2D>();
+				transform->Init();
+			}
 			ComponentCanvas* component = selected->CreateComponent<ComponentCanvas>();
 			if (component != nullptr) {
 				component->Init();

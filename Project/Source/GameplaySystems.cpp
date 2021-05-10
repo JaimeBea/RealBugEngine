@@ -87,6 +87,9 @@ void Debug::ToggleDrawCameraFrustums() {
 void Debug::ToggleDrawLightGizmos() {
 	App->renderer->ToggleDrawLightGizmos();
 }
+void Debug::ToggleDrawParticleGizmos() {
+	App->renderer->ToggleDrawParticleGizmos();
+}
 
 void Debug::UpdateShadingMode(const char* shadingMode) {
 	App->renderer->UpdateShadingMode(shadingMode);
@@ -175,9 +178,9 @@ void SceneManager::ExitGame() {
 }
 
 float Screen::GetScreenWitdh() {
-	return App->window->GetWidth();
+	return static_cast<float>(App->window->GetWidth());
 }
 
 float Screen::GetScreenHeight() {
-	return App->window->GetHeight();
+	return static_cast<float>(App->window->GetHeight());
 }
