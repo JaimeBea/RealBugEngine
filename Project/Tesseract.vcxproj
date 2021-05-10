@@ -466,7 +466,6 @@
     <None Include="..\PackageEngine.ps1" />
     <None Include="..\README.md" />
     <None Include=".clang-format" />
-    <None Include="cpp.hint" />
     <None Include="Debugging.props" />
     <None Include="Libs\MathGeoLib\Geometry\KDTree.inl" />
     <None Include="Libs\MathGeoLib\Geometry\QuadTree.inl" />
