@@ -256,6 +256,18 @@ const float4x4 ComponentTransform2D::GetGlobalScaledMatrix(bool scaleFactored, b
 	return globalMatrix * float4x4::Scale(size.x * factor, size.y * factor, 0);
 }
 
+Quat ComponentTransform2D::GetGlobalRotation() const {
+	Quat parentRotation = Quat::FromEulerXYZ(0, 0, 0);
+	GameObject* parent = GetOwner().GetParent();
+	if (parent != nullptr) {
+		ComponentTransform2D* parentTransform = parent->GetComponent<ComponentTransform2D>();
+		if (parentTransform != nullptr) {
+			parentRotation = parentTransform->GetGlobalRotation();
+		}
+	}
+	return parentRotation * rotation;
+}
+
 void ComponentTransform2D::CalculateGlobalMatrix() {
 	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
 

@@ -16,6 +16,7 @@
 
 #include "GL/glew.h"
 #include "Math/TransformOps.h"
+#include "Math/float3x3.h"
 #include "Utils/Logging.h"
 #include "Utils/ImGuiUtils.h"
 #include "imgui_stdlib.h"
@@ -142,18 +143,22 @@ void ComponentText::Draw(const ComponentTransform2D* transform) const {
 	glUseProgram(program);
 
 	float4x4 proj = App->camera->GetProjectionMatrix();
-
+	float4x4 model;
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
 		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
 
+		model = float4x4::FromTRS(float3::zero, transform->GetGlobalRotation(), float3::one);
+
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4 view = App->camera->GetViewMatrix();
+		model = transform->GetGlobalScaledMatrix(true, true);
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	}
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "projection"), 1, GL_TRUE, proj.ptr());
+	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
 	for (size_t i = 0; i < text.size(); ++i) {
