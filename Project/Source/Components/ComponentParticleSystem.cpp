@@ -123,8 +123,9 @@ float3 ComponentParticleSystem::CreateVelocity() {
 		x = (float(rand()) / float((RAND_MAX)) * 0.2) - 0.2;
 		y = (float(rand()) / float((RAND_MAX)) * 0.5) - 0.0;
 		z = (float(rand()) / float((RAND_MAX)) * 0.5) - 0.2;
-		if (!randomDirection) return float3(0, velocity, 0);
-		return float3(x, y, z);
+		float3 forward = transform->GetGlobalRotation() * float3::unitY;
+		if (!randomDirection) return forward;
+		return float3(forward.x + x, forward.y + y, forward.z + z);
 	}
 	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
@@ -145,7 +146,7 @@ float3 ComponentParticleSystem::CreatePosition() {
 		x = (transform->GetGlobalPosition().x);
 		z = (transform->GetGlobalPosition().z);
 		y = (transform->GetGlobalPosition().y);
-		return float3(x, y, z);
+		return (float3(x, y, z));
 	}
 	//TODO: DINAMIC PARTICLE NOT HARCODED
 	if (emitterType == EmitterType::SPHERE) {
