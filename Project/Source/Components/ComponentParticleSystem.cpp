@@ -195,7 +195,7 @@ void ComponentParticleSystem::Load(JsonValue jComponent) {
 
 	JsonValue jColor2 = jComponent[JSON_TAG_FINALCOLOR];
 	finalC.Set(jColor2[0], jColor2[1], jColor2[2]);
-
+	particleSpawned = 0;
 	CreateParticles(maxParticles, velocity);
 }
 
@@ -249,6 +249,11 @@ void ComponentParticleSystem::Init() {
 
 void ComponentParticleSystem::SpawnParticle() {
 	Particle* currentParticle = particles.Obtain();
+	if (!looping) {
+		particleSpawned++;
+	} else {
+		particleSpawned = 0;
+	}
 	if (currentParticle) {
 		currentParticle->position = currentParticle->initialPosition;
 		currentParticle->life = particleLife;
@@ -305,6 +310,7 @@ void ComponentParticleSystem::DuplicateComponent(GameObject& owner) {
 	component->Xtiles = this->Xtiles;
 	component->Ytiles = this->Ytiles;
 	component->emitterType = this->emitterType;
+	component->particleSpawned = this->particleSpawned;
 }
 
 const float4& ComponentParticleSystem::GetTintColor() const {
@@ -384,6 +390,8 @@ void ComponentParticleSystem::Draw() {
 			glEnable(GL_CULL_FACE);
 			glEnable(GL_DEPTH_TEST);
 		}
-		SpawnParticle();
+		if (looping || (particleSpawned <= maxParticles)) {
+			SpawnParticle();
+		}
 	}
 }
