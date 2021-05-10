@@ -44,7 +44,9 @@ struct AnchorPreset {
 	};
 
 	AnchorPreset(AnchorPresetType type_, float2 anchorMin_, float2 anchorMax_)
-		: type(type_), anchorMin(anchorMin_), anchorMax(anchorMax_) {
+		: type(type_)
+		, anchorMin(anchorMin_)
+		, anchorMax(anchorMax_) {
 	}
 
 	AnchorPresetType type;
@@ -54,11 +56,13 @@ struct AnchorPreset {
 
 struct Rect {
 	Rect(float top_, float bottom_, float left_, float right_)
-		: top(top_), bottom(bottom_), left(left_), right(right_) {}
+		: top(top_)
+		, bottom(bottom_)
+		, left(left_)
+		, right(right_) {}
 
 	float top, bottom, left, right;
 };
-
 
 // Transform in the 2D Space. Used for UI Components.
 class ComponentTransform2D : public Component {
@@ -71,35 +75,34 @@ public:
 	void DrawGizmos() override;
 	bool CanBeRemoved() const override; //Returns false if any UI Elements are found in this GameObject or its children
 
-	TESSERACT_ENGINE_API void SetPosition(float3 position);											  // Sets this position to value
-	TESSERACT_ENGINE_API void SetSize(float2 size);													  // Sets this size to value
-	void SetRotation(Quat rotation);																  // Sets this rotation to value and calculates Euler Angles rotation
-	void SetRotation(float3 rotation);																  // Sets this eulerAngles to value and calculates Quat rotation
-	void SetScale(float3 scale);																	  // Sets this scale to value
-	void SetAnchorMin(float2 anchorMin);															  // Sets this anchorMin to value
-	void SetAnchorMax(float2 anchorMax);															  // Sets this anchorMax to value
-	void SetPivot(float2 pivotPosition);															  // Sets this pivot to value
-	void UpdatePivotPosition();																		  // Update this pivot position to value
-	const float4x4 GetGlobalMatrix();															  // Returns GlobalMatrix
-	const float4x4 GetGlobalScaledMatrix(bool scaleFactored = true, bool view3DActive = false) const; // Returns GlobalMatrix with the size of the item. scaleFactored being true means that the canvas size reference will be used to scale (factor). view3DActive is true when the Editor is on 3D Mode and will return the global downscaled to have a proper 3D View.
-	void UpdateTransformChanges();																	  // Update the tranform matrix
+	TESSERACT_ENGINE_API void SetPosition(float3 position); // Sets this position to value
+	TESSERACT_ENGINE_API void SetSize(float2 size);			// Sets this size to value
+	void SetRotation(Quat rotation);						// Sets this rotation to value and calculates Euler Angles rotation
+	void SetRotation(float3 rotation);						// Sets this eulerAngles to value and calculates Quat rotation
+	void SetScale(float3 scale);							// Sets this scale to value
+	void SetAnchorMin(float2 anchorMin);					// Sets this anchorMin to value
+	void SetAnchorMax(float2 anchorMax);					// Sets this anchorMax to value
+	void SetPivot(float2 pivotPosition);					// Sets this pivot to value
+	void UpdatePivotPosition();								// Update this pivot position to value
+	const float4x4 GetGlobalMatrix();						// Returns GlobalMatrix
+	const float4x4 GetGlobalScaledMatrix();					// Returns GlobalMatrix with the size of the item
+	void UpdateTransformChanges();							// Update the tranform matrix
 
 	TESSERACT_ENGINE_API float3 GetPosition() const; // Returns the position
 	TESSERACT_ENGINE_API float2 GetSize() const;	 // Returns the size
 	float3 GetScale() const;						 // Returns the scale
-	float3 GetPivotPosition() const;			 // Returns the pivot position
+	float3 GetPivotPosition() const;				 // Returns the pivot position
+	float3 GetPositionRelativeToParent() const;
+	float3 GetScreenPosition() const;
 
 	void InvalidateHierarchy();							 // Invalidates hierarchy
 	void Invalidate();									 // Invalidates component
 	void DuplicateComponent(GameObject& owner) override; // Duplicates component (THIS SHOULDN'T BE USED)
 
-	void CalculateAnchor2DPosition();
-	void SetAnchor2DPosition(float2 anchor2DPosition);
-	void SetTop(float top);			// Sets the right anchor
-	void SetBottom(float bottom);   // Sets the right anchor
-	void SetLeft(float left);		// Sets the right anchor
-	void SetRight(float right);		// Sets the right anchor
-	void UpdateObjectPosition();	// Update position object related to the anchor 2D position
+	void SetTop(float top);		  // Sets the right anchor
+	void SetBottom(float bottom); // Sets the right anchor
+	void SetLeft(float left);	  // Sets the right anchor
+	void SetRight(float right);	  // Sets the right anchor
 
 private:
 	void CalculateGlobalMatrix();								  // Calculates the Global Matrix
@@ -116,14 +119,13 @@ private:
 	float3 pivotPosition = float3::zero; // The position of the pivot in the world
 	float2 size = float2(200, 200);		 // The size of the item
 
-	Rect anchorsRect = Rect(0, 0, 0, 0);																				// Positions of the rectangle’s edges relative to their anchors.
-	float2 anchorMin = float2(0.5, 0.5);																				// The Anchor Min. Represents the lower left handle.
-	float2 anchorMax = float2(0.5, 0.5);																				// The Anchor Max. Represents the upper right handle.
-	float2 anchored2Dposition = float2(0, 0);																			// Position of the anchor in 2D
-	static std::array<AnchorPreset, 16> anchorPresets;																	// Listwith all the possible anchors presets 
-	AnchorPreset::AnchorPresetType anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL;	// The anchor selected
-	bool isCustomAnchor = false;																						// Variable that checks if is selected Custom or Presets in the inspector
-	
+	Rect anchorsRect = Rect(0, 0, 0, 0);																			   // Positions of the rectangle’s edges relative to their anchors.
+	float2 anchorMin = float2(0.5, 0.5);																			   // The Anchor Min. Represents the lower left handle.
+	float2 anchorMax = float2(0.5, 0.5);																			   // The Anchor Max. Represents the upper right handle.
+	static std::array<AnchorPreset, 16> anchorPresets;																   // Listwith all the possible anchors presets
+	AnchorPreset::AnchorPresetType anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL; // The anchor selected
+	bool isCustomAnchor = false;																					   // Variable that checks if is selected Custom or Presets in the inspector
+
 	float4x4 localMatrix = float4x4::identity;	// Local matrix
 	float4x4 globalMatrix = float4x4::identity; // Global Matrix
 

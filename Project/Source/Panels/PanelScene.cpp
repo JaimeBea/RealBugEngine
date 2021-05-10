@@ -71,7 +71,7 @@ void PanelScene::Update() {
 			}
 
 			ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
-			if (ImGui::Checkbox("2D", &view2D)) {
+			if (ImGui::Checkbox("2D", &App->userInterface->view2DInternal)) {
 				for (ComponentTransform2D& transform2D : App->scene->scene->transform2DComponents) {
 					transform2D.Invalidate();
 				};
@@ -274,10 +274,6 @@ void PanelScene::Update() {
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}
-}
-
-bool PanelScene::IsUsing2D() const {
-	return view2D;
 }
 
 const float2& PanelScene::GetMousePosOnScene() const {

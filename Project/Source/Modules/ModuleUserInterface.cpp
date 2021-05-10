@@ -31,6 +31,9 @@
 #include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
+#if GAME
+	view2DInternal = true;
+#endif
 	return true;
 }
 
@@ -208,14 +211,18 @@ ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
 
 void ModuleUserInterface::ViewportResized() {
 	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
-		canvas.SetDirty(true);
+		canvas.Invalidate();
 	}
 
 	for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
-		transform.InvalidateHierarchy();
+		transform.Invalidate();
 	}
 
 	for (ComponentText& text : App->scene->scene->textComponents) {
 		text.RecalculcateVertices();
 	}
+}
+
+bool ModuleUserInterface::IsUsing2D() const {
+	return view2DInternal || App->time->HasGameStarted();
 }

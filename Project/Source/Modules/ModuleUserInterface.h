@@ -4,6 +4,8 @@
 #include "Utils/UID.h"
 #include "Math/float2.h"
 
+#define SCENE_SCREEN_FACTOR 0.01f
+
 class GameObject;
 class ComponentEventSystem;
 class ResourceFont;
@@ -26,6 +28,10 @@ public:
 
 	unsigned int GetQuadVBO();			// Returns the generic VBO that is used in ComponentImages
 	void ViewportResized();				// Calls ComponentCanvas, ComponentTransform2D, ComponentText components to be updated
+	bool IsUsing2D() const;
+
+public:
+	bool view2DInternal = false;
 
 private:
 	void CreateQuadVBO();				// Creates a vbo made by two triangles centered that form a Quad

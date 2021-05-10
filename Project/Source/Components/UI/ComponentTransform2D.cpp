@@ -8,6 +8,7 @@
 #include "Modules/ModuleDebugDraw.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleRender.h"
+#include "Modules/ModuleUserInterface.h"
 #include "Panels/PanelControlEditor.h"
 
 #include "debugdraw.h"
@@ -52,7 +53,6 @@ std::array<AnchorPreset, 16> ComponentTransform2D::anchorPresets = {
 };
 
 void ComponentTransform2D::Update() {
-	
 }
 
 void ComponentTransform2D::OnEditorUpdate() {
@@ -89,7 +89,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 		anchorSelected = AnchorPreset::AnchorPresetType::MIDDLE_HORIZONTAL_CENTER_VERTICAL;
 		SetAnchorMin(anchorPresets[5].anchorMin);
 		SetAnchorMax(anchorPresets[5].anchorMax);
-		CalculateAnchor2DPosition();
 	}
 	if (isCustomAnchor) { // If we select custom
 		anchorSelected = AnchorPreset::AnchorPresetType::CUSTOM;
@@ -99,7 +98,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 		if (ImGui::DragFloat2("Max (X, Y)", anchMax.ptr(), App->editor->dragSpeed2f, 0, 1)) {
 			SetAnchorMax(anchMax);
 		}
-		CalculateAnchor2DPosition();
 	} else { // If we select presets
 		// Anchor Preset Type combo box
 		const char* anchorPresetTypeItems[] = {
@@ -128,7 +126,6 @@ void ComponentTransform2D::OnEditorUpdate() {
 					anchorSelected = AnchorPreset::AnchorPresetType(n);
 					SetAnchorMin(anchorPresets[n].anchorMin);
 					SetAnchorMax(anchorPresets[n].anchorMax);
-					CalculateAnchor2DPosition();
 				}
 				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
@@ -196,11 +193,7 @@ void ComponentTransform2D::Save(JsonValue jComponent) const {
 	jAnchorMax[0] = anchorMax.x;
 	jAnchorMax[1] = anchorMax.y;
 
-	JsonValue jAnchored2DPosition = jComponent[JSON_TAG_ANCHORED_2D_POSITION];
-	jAnchored2DPosition[0] = anchored2Dposition.x;
-	jAnchored2DPosition[1] = anchored2Dposition.y;
-
-	jComponent[JSON_TAG_ANCHOR_SELECTED] = (int)anchorSelected;
+	jComponent[JSON_TAG_ANCHOR_SELECTED] = (int) anchorSelected;
 
 	jComponent[JSON_TAG_IS_CUSTOM_ANCHOR] = isCustomAnchor;
 }
@@ -233,12 +226,9 @@ void ComponentTransform2D::Load(JsonValue jComponent) {
 	JsonValue jAnchorMax = jComponent[JSON_TAG_ANCHOR_MAX];
 	anchorMax.Set(jAnchorMax[0], jAnchorMax[1]);
 
-	JsonValue jAnchored2Dposition = jComponent[JSON_TAG_ANCHORED_2D_POSITION];
-	anchored2Dposition.Set(jAnchored2Dposition[0], jAnchored2Dposition[1]);
-
 	int posAnchorPresetType = jComponent[JSON_TAG_ANCHOR_SELECTED];
-	anchorSelected = (AnchorPreset::AnchorPresetType)posAnchorPresetType;
-	
+	anchorSelected = (AnchorPreset::AnchorPresetType) posAnchorPresetType;
+
 	isCustomAnchor = jComponent[JSON_TAG_IS_CUSTOM_ANCHOR];
 
 	dirty = true;
@@ -335,27 +325,15 @@ const float4x4 ComponentTransform2D::GetGlobalMatrix() {
 	return globalMatrix;
 }
 
-const float4x4 ComponentTransform2D::GetGlobalScaledMatrix(bool scaleFactored, bool view3DActive) const {
-	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-
-	float factor = 1.0f;
-
-	if (scaleFactored) {
-		if (canvasRenderer) {
-			factor = canvasRenderer->GetCanvasScreenFactor();
-		}
-	}
-
-	if (view3DActive) {
-		return globalMatrix * float4x4::Scale(size.x / 100.0f, size.y / 100.0f, 0);
-	}
-	return globalMatrix * float4x4::Scale(size.x * factor, size.y * factor, 0);
+const float4x4 ComponentTransform2D::GetGlobalScaledMatrix() {
+	CalculateGlobalMatrix();
+	return globalMatrix * float4x4::Scale(size.x, size.y, 0);
 }
 
 void ComponentTransform2D::CalculateGlobalMatrix() {
 	if (dirty) {
-		localMatrix = float4x4::FromTRS(position, rotation, scale);		
-		
+		localMatrix = float4x4::FromTRS(GetPositionRelativeToParent(), rotation, scale);
+
 		GameObject* parent = GetOwner().GetParent();
 
 		if (parent != nullptr) {
@@ -376,12 +354,13 @@ void ComponentTransform2D::CalculateGlobalMatrix() {
 }
 
 void ComponentTransform2D::UpdateTransformChanges() {
+	/* TODO: Fix pivots
 	bool isPivotMode = App->editor->panelControlEditor.GetRectTool();
 
 	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
 	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
 
-	bool isUsing2D = App->editor->panelScene.IsUsing2D();
+	bool isUsing2D = App->userInterface->IsUsing2D();
 	float4x4 aux = float4x4::identity;
 	float3 newPosition = float3(0, 0, 0);
 
@@ -396,6 +375,7 @@ void ComponentTransform2D::UpdateTransformChanges() {
 			position = aux.TranslatePart();
 		}
 	}
+	*/
 }
 
 void ComponentTransform2D::UpdateUIElements() {
@@ -423,13 +403,49 @@ float3 ComponentTransform2D::GetPivotPosition() const {
 	return pivotPosition;
 }
 
+float3 ComponentTransform2D::GetPositionRelativeToParent() const {
+	float2 parentSize(0, 0);
+
+	GameObject* parent = GetOwner().GetParent();
+	if (parent != nullptr) {
+		ComponentCanvas* parentCanvas = parent->GetComponent<ComponentCanvas>();
+		ComponentTransform2D* parentTransform2D = parent->GetComponent<ComponentTransform2D>();
+		if (parentTransform2D != nullptr) {
+			if (parentCanvas != nullptr) {
+				parentSize = parentCanvas->GetSize() / parentCanvas->GetScreenFactor();
+			} else {
+				parentSize = parentTransform2D->GetSize();
+			}
+		}
+	}
+
+	float3 positionRelativeToParent;
+	positionRelativeToParent.x = position.x + (parentSize.x * (anchorMin.x - 0.5f));
+	positionRelativeToParent.y = position.y + (parentSize.y * (anchorMin.y - 0.5f));
+	positionRelativeToParent.z = position.z;
+	return positionRelativeToParent;
+}
+
+float3 ComponentTransform2D::GetScreenPosition() const {
+	float3 screenPosition = GetPositionRelativeToParent();
+	GameObject* parent = GetOwner().GetParent();
+	while (parent != nullptr) {
+		ComponentTransform2D* parentTransform2D = parent->GetComponent<ComponentTransform2D>();
+		if (parentTransform2D == nullptr) break;
+
+		screenPosition += parentTransform2D->GetPositionRelativeToParent();
+		parent = parent->GetParent();
+	}
+	return screenPosition;
+}
+
 void ComponentTransform2D::InvalidateHierarchy() {
 	Invalidate();
 
 	for (GameObject* child : GetOwner().GetChildren()) {
 		ComponentTransform2D* childTransform = child->GetComponent<ComponentTransform2D>();
 		if (childTransform != nullptr) {
-			childTransform->Invalidate();
+			childTransform->InvalidateHierarchy();
 		}
 	}
 }
@@ -454,30 +470,6 @@ void ComponentTransform2D::DuplicateComponent(GameObject& owner) {
 	component->dirty = true;
 }
 
-void ComponentTransform2D::CalculateAnchor2DPosition() {
-	if (dirty) {
-		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-
-		float2 actualScreenCanvasReferenceSize = float2(0, 0);
-
-		bool isUsing2D = App->editor->panelScene.IsUsing2D();
-
-		actualScreenCanvasReferenceSize = App->renderer->GetViewportSize();
-
-		float posXAnchored = (actualScreenCanvasReferenceSize.x * anchorMin.x) - (actualScreenCanvasReferenceSize.x * 0.5f);
-		float posYAnchored = (actualScreenCanvasReferenceSize.y * anchorMin.y) - (actualScreenCanvasReferenceSize.y * 0.5f);
-		float2 anchored2DPosition = float2(posXAnchored, posYAnchored);
-
-		SetAnchor2DPosition(anchored2DPosition);
-
-		UpdateObjectPosition();
-	}
-}
-
-void ComponentTransform2D::SetAnchor2DPosition(float2 anchor2DPosition_) {
-	anchored2Dposition = anchor2DPosition_;
-}
-
 void ComponentTransform2D::SetTop(float top_) {
 	anchorsRect.top = top_;
 }
@@ -493,20 +485,3 @@ void ComponentTransform2D::SetLeft(float left_) {
 void ComponentTransform2D::SetRight(float right_) {
 	anchorsRect.right = right_;
 }
-
-void ComponentTransform2D::UpdateObjectPosition() {
-	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-	float factor = canvasRenderer ? canvasRenderer->GetCanvasScreenFactor() : 1;
-
-	bool isUsing2D = App->editor->panelScene.IsUsing2D();
-
-	float posMinX, posMinY;
-	
-	posMinX = anchored2Dposition.x - ((size.x * factor) * (anchorMin.x - 0.5));
-	posMinY = anchored2Dposition.y - ((size.y * factor) * (anchorMin.y - 0.5));
-
-	float3 newPosition = float3(posMinX, posMinY, 0);
-	SetPosition(newPosition);
-}
-
-

@@ -22,8 +22,7 @@ void ComponentCanvas::Update() {
 }
 
 void ComponentCanvas::Load(JsonValue jComponent) {
-	// Needs to be called before Init, otherwise other components that use the screen factor, won't have it
-	RecalculateScreenFactor();
+	dirty = true;
 }
 
 void ComponentCanvas::DuplicateComponent(GameObject& owner) {
@@ -32,26 +31,48 @@ void ComponentCanvas::DuplicateComponent(GameObject& owner) {
 	dirty = true;
 }
 
-float2 ComponentCanvas::GetScreenReferenceSize() const {
-	return screenReferenceSize;
+bool ComponentCanvas::CanBeRemoved() const {
+	return !AnyChildHasCanvasRenderer(&GetOwner());
+}
+
+void ComponentCanvas::OnEditorUpdate() {
+	float2 refSize = screenReferenceSize;
+
+	if (ImGui::InputFloat2("Reference Screen Size", refSize.ptr(), "%.0f")) {
+		SetScreenReferenceSize(refSize);
+	}
+}
+
+void ComponentCanvas::Invalidate() {
+	dirty = true;
 }
 
 void ComponentCanvas::SetScreenReferenceSize(float2 screenReferenceSize_) {
 	screenReferenceSize = screenReferenceSize_;
 }
 
+float2 ComponentCanvas::GetScreenReferenceSize() const {
+	return screenReferenceSize;
+}
+
+float2 ComponentCanvas::GetSize() {
+	RecalculateSizeAndScreenFactor();
+	return size;
+}
+
 float ComponentCanvas::GetScreenFactor() {
-	RecalculateScreenFactor();
+	RecalculateSizeAndScreenFactor();
 	return screenFactor;
 }
 
-void ComponentCanvas::SetDirty(bool dirty_) {
-	dirty = dirty_;
-}
-
-void ComponentCanvas::RecalculateScreenFactor() {
+void ComponentCanvas::RecalculateSizeAndScreenFactor() {
 	if (dirty) {
-		float2 factor = App->renderer->GetViewportSize().Div(screenReferenceSize);
+		if (App->userInterface->IsUsing2D()) {
+			size = App->renderer->GetViewportSize();
+		} else {
+			size = GetScreenReferenceSize() * SCENE_SCREEN_FACTOR;
+		}
+		float2 factor = size.Div(screenReferenceSize);
 		screenFactor = factor.x < factor.y ? factor.x : factor.y;
 	}
 }
@@ -63,16 +84,4 @@ bool ComponentCanvas::AnyChildHasCanvasRenderer(const GameObject* obj) const {
 		found = AnyChildHasCanvasRenderer(*it);
 	}
 	return found;
-}
-
-void ComponentCanvas::OnEditorUpdate() {
-	float2 refSize = screenReferenceSize;
-
-	if (ImGui::InputFloat2("Reference Screen Size", refSize.ptr(), "%.0f")) {
-		SetScreenReferenceSize(refSize);
-	}
-}
-
-bool ComponentCanvas::CanBeRemoved() const {
-	return !AnyChildHasCanvasRenderer(&GetOwner());
 }

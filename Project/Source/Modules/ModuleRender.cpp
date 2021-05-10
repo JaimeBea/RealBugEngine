@@ -453,7 +453,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::RenderUI() {
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+	if (App->userInterface->IsUsing2D()) {
 		SetOrtographicRender();
 		App->camera->EnableOrtographic();
 	}
@@ -462,7 +462,7 @@ void ModuleRender::RenderUI() {
 	App->userInterface->Render();
 	glEnable(GL_DEPTH_TEST);
 
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+	if (App->userInterface->IsUsing2D()) {
 		App->camera->EnablePerspective();
 		SetPerspectiveRender();
 	}

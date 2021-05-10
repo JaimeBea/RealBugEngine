@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 16996184239603834558,
+    "GameCamera": 13710553100051561410,
     "AmbientLight": [
         0.25,
         0.25,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.8243848085403443,
+                            "HorizontalFov": 1.7257943153381348,
                             "VerticalFov": 1.3113912343978882
                         }
                     },
@@ -214,7 +214,6 @@
                         "Active": true,
                         "Position": [
                             0.0,
-                            0.0,
                             0.0
                         ],
                         "Rotation": [
@@ -224,7 +223,6 @@
                             1.0
                         ],
                         "Scale": [
-                            1.0,
                             1.0,
                             1.0
                         ],
@@ -239,7 +237,6 @@
                         ],
                         "PivotPosition": [
                             0.0,
-                            0.0,
                             0.0
                         ],
                         "Size": [
@@ -253,10 +250,6 @@
                         "AnchorMax": [
                             0.5,
                             0.5
-                        ],
-                        "Anchored2DPosition": [
-                            0.0,
-                            0.0
                         ],
                         "AnchorSelected": 5,
                         "IsCustomAnchor": false
@@ -307,7 +300,6 @@
                                 "Active": true,
                                 "Position": [
                                     0.0,
-                                    0.0,
                                     0.0
                                 ],
                                 "Rotation": [
@@ -317,7 +309,6 @@
                                     1.0
                                 ],
                                 "Scale": [
-                                    1.0,
                                     1.0,
                                     1.0
                                 ],
@@ -332,7 +323,6 @@
                                 ],
                                 "PivotPosition": [
                                     0.0,
-                                    0.0,
                                     0.0
                                 ],
                                 "Size": [
@@ -346,10 +336,6 @@
                                 "AnchorMax": [
                                     0.5,
                                     0.5
-                                ],
-                                "Anchored2DPosition": [
-                                    0.0,
-                                    0.0
                                 ],
                                 "AnchorSelected": 5,
                                 "IsCustomAnchor": false
@@ -413,9 +399,8 @@
                                 "Id": 4427098415524681784,
                                 "Active": true,
                                 "Position": [
-                                    -320.51092529296877,
-                                    -255.28125,
-                                    0.0
+                                    -355.5,
+                                    -90.0
                                 ],
                                 "Rotation": [
                                     0.0,
@@ -424,7 +409,6 @@
                                     1.0
                                 ],
                                 "Scale": [
-                                    1.0,
                                     1.0,
                                     1.0
                                 ],
@@ -438,28 +422,23 @@
                                     0.5
                                 ],
                                 "PivotPosition": [
-                                    -320.51092529296877,
-                                    -255.28125,
-                                    0.0
+                                    -355.5,
+                                    -90.0
                                 ],
                                 "Size": [
                                     711.0,
                                     180.0
                                 ],
                                 "AnchorMin": [
-                                    0.0,
-                                    0.0
+                                    1.0,
+                                    1.0
                                 ],
                                 "AnchorMax": [
-                                    0.0,
-                                    0.0
+                                    1.0,
+                                    1.0
                                 ],
-                                "Anchored2DPosition": [
-                                    -509.0,
-                                    -303.0
-                                ],
-                                "AnchorSelected": 16,
-                                "IsCustomAnchor": true
+                                "AnchorSelected": 2,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -565,9 +544,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -575,9 +554,8 @@
                                 "Id": 4831372908656134256,
                                 "Active": true,
                                 "Position": [
-                                    320.51092529296877,
-                                    255.28125,
-                                    0.0
+                                    355.5,
+                                    90.0
                                 ],
                                 "Rotation": [
                                     0.0,
@@ -586,7 +564,6 @@
                                     1.0
                                 ],
                                 "Scale": [
-                                    1.0,
                                     1.0,
                                     1.0
                                 ],
@@ -600,27 +577,22 @@
                                     0.5
                                 ],
                                 "PivotPosition": [
-                                    -34.98907470703125,
-                                    255.28125,
-                                    0.0
+                                    0.0,
+                                    90.0
                                 ],
                                 "Size": [
                                     711.0,
                                     180.0
                                 ],
                                 "AnchorMin": [
-                                    1.0,
-                                    1.0
+                                    0.0,
+                                    0.0
                                 ],
                                 "AnchorMax": [
-                                    1.0,
-                                    1.0
+                                    0.0,
+                                    0.0
                                 ],
-                                "Anchored2DPosition": [
-                                    509.0,
-                                    303.0
-                                ],
-                                "AnchorSelected": 2,
+                                "AnchorSelected": 8,
                                 "IsCustomAnchor": false
                             },
                             {
