@@ -9,6 +9,7 @@
 #include "Components/ComponentTransform.h"
 #include "Components/ComponentAnimation.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentParticleSystem.h"
 #include "Components/ComponentLight.h"
 #include "Modules/ModuleInput.h"
 #include "Modules/ModuleWindow.h"
@@ -132,8 +133,7 @@ bool ModuleRender::Init() {
 	glGenRenderbuffers(1, &depthRenderbuffer);
 	glGenTextures(1, &renderTexture);
 
-
-	ViewportResized(200, 200);
+	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
 	UpdateFramebuffer();
 
 	return true;
@@ -159,9 +159,6 @@ UpdateStatus ModuleRender::PreUpdate() {
 UpdateStatus ModuleRender::Update() {
 	BROFILER_CATEGORY("ModuleRender - Update", Profiler::Color::Green)
 
-#if GAME
-	ViewportResized(App->window->GetWidth(), App->window->GetHeight());
-#endif
 	culledTriangles = 0;
 
 	// Draw the scene
@@ -198,6 +195,12 @@ UpdateStatus ModuleRender::Update() {
 				light.DrawGizmos();
 			}
 		}
+		if (drawParticleGizmos) {
+			for (ComponentParticleSystem& particle : scene->particleComponents) {
+				particle.DrawGizmos();
+			}
+		}
+
 		// Draw quadtree
 		if (drawQuadtree) DrawQuadtreeRecursive(App->scene->scene->quadtree.root, App->scene->scene->quadtree.bounds);
 
@@ -207,7 +210,8 @@ UpdateStatus ModuleRender::Update() {
 		// Draw Animations
 		if (drawAllBones) {
 			for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
-				DrawAnimation(animationComponent.GetOwner().GetRootBone());
+				GameObject* rootBone = animationComponent.GetOwner().GetRootBone();
+				if (rootBone) DrawAnimation(rootBone);
 			}
 		}
 	}
@@ -249,11 +253,11 @@ void ModuleRender::ViewportResized(int width, int height) {
 }
 
 void ModuleRender::UpdateFramebuffer() {
-	#if GAME
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	#else
-		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	#endif
+#if GAME
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+#else
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+#endif
 
 	glBindTexture(GL_TEXTURE_2D, renderTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<int>(viewportSize.x), static_cast<int>(viewportSize.y), 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -303,6 +307,9 @@ void ModuleRender::ToggleDrawCameraFrustums() {
 
 void ModuleRender::ToggleDrawLightGizmos() {
 	drawLightGizmos = !drawLightGizmos;
+}
+void ModuleRender::ToggleDrawParticleGizmos() {
+	drawParticleGizmos = !drawParticleGizmos;
 }
 
 void ModuleRender::UpdateShadingMode(const char* shadingMode) {
@@ -457,7 +464,7 @@ void ModuleRender::DrawGameObject(GameObject* gameObject) {
 }
 
 void ModuleRender::RenderUI() {
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+	if (App->userInterface->IsUsing2D()) {
 		SetOrtographicRender();
 		App->camera->EnableOrtographic();
 	}
@@ -466,7 +473,7 @@ void ModuleRender::RenderUI() {
 	App->userInterface->Render();
 	glEnable(GL_DEPTH_TEST);
 
-	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
+	if (App->userInterface->IsUsing2D()) {
 		App->camera->EnablePerspective();
 		SetPerspectiveRender();
 	}
