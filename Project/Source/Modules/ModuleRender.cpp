@@ -203,7 +203,8 @@ UpdateStatus ModuleRender::Update() {
 		// Draw Animations
 		if (drawAllBones) {
 			for (ComponentAnimation& animationComponent : App->scene->scene->animationComponents) {
-				DrawAnimation(animationComponent.GetOwner().GetRootBone());
+				GameObject* rootBone = animationComponent.GetOwner().GetRootBone();
+				if (rootBone) DrawAnimation(rootBone);
 			}
 		}
 	}
