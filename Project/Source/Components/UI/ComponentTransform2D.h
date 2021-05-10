@@ -120,7 +120,7 @@ private:
 	float3 pivotPosition = float3::zero; // The position of the pivot in the world
 	float2 size = float2(200, 200);		 // The size of the item
 
-	Rect anchorsRect = Rect(0, 0, 0, 0);																			   // Positions of the rectangle�s edges relative to their anchors.
+	Rect anchorsRect = Rect(0, 0, 0, 0);																			   // Positions of the rectangles edges relative to their anchors.
 	float2 anchorMin = float2(0.5, 0.5);																			   // The Anchor Min. Represents the lower left handle.
 	float2 anchorMax = float2(0.5, 0.5);																			   // The Anchor Max. Represents the upper right handle.
 	static std::array<AnchorPreset, 16> anchorPresets;																   // Listwith all the possible anchors presets
