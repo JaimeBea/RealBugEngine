@@ -74,6 +74,7 @@ void ComponentAudioListener::UpdateAudioListener() {
 }
 
 void ComponentAudioListener::SetAudioVolume(float volume) {
+	gain = volume;
 	alListenerf(AL_GAIN, (ALfloat) volume);
 	UpdateAudioListener();
 }
