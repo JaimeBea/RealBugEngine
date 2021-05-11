@@ -13,9 +13,9 @@
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
 	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
-	MEMBER(MemberType::GAME_OBJECT_UID, robotUID),
-	MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
-	MEMBER(MemberType::GAME_OBJECT_UID, cameraUID)
+		MEMBER(MemberType::GAME_OBJECT_UID, robotUID),
+		MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
+		MEMBER(MemberType::GAME_OBJECT_UID, cameraUID)
 };
 
 GENERATE_BODY_IMPL(PlayerController);
@@ -26,50 +26,50 @@ void PlayerController::Start() {
 	robot = GameplaySystems::GetGameObject(robotUID);
 	camera = GameplaySystems::GetGameObject(cameraUID);
 
-	if (gameObject) { 
-		transform = gameObject->GetComponent<ComponentTransform>(); 
+	if (gameObject) {
+		transform = gameObject->GetComponent<ComponentTransform>();
 	}
 	if (camera) {
 		compCamera = camera->GetComponent<ComponentCamera>();
 		if (compCamera) GameplaySystems::SetRenderCamera(compCamera);
 	}
-	if (transform) { 
-		initialPosition = transform->GetPosition(); 
+	if (transform) {
+		initialPosition = transform->GetPosition();
 	}
 	if (fang) {
-		fang->Enable();	
+		fang->Enable();
 	}
 	if (robot) {
 		robot->Disable();
 	}
 }
 
-void PlayerController::MoveTo(MovementDirection md){
+void PlayerController::MoveTo(MovementDirection md) {
 	if (transform) {
 		float modifier = 1.0f;
 		float3 newPosition = transform->GetPosition();
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_LSHIFT)) {
-				modifier = 2.0f;
-	    }
+			modifier = 2.0f;
+		}
 		newPosition += GetDirection(md) * movementSpeed * Time::GetDeltaTime() * modifier;
 		transform->SetPosition(newPosition);
 	}
 }
 
-void PlayerController::LookAtMouse(){
+void PlayerController::LookAtMouse() {
 	float2 mousePos = Input::GetMousePositionNormalized();
 	LineSegment ray = compCamera->frustum.UnProjectLineSegment(mousePos.x, mousePos.y);
 	float3 cameraGlobalPos = camera->GetComponent<ComponentTransform>()->GetGlobalPosition();
 	Plane p = Plane(transform->GetGlobalPosition(), float3(0, 1, 0));
 	float dist;
-	float3 facePoint = float3(0,0,0);
-	if (p.Intersects(ray, &dist)) {
-		facePoint = ray.GetPoint(dist) - (transform->GetGlobalPosition() - cameraGlobalPos);
-		Quat quat = transform->GetRotation();
-		float angle = Atan2(facePoint.x, facePoint.z);
-		Quat rotation = quat.RotateAxisAngle(float3(0, 1, 0), angle);
-		transform->SetRotation(rotation);
-	}
+	float3 facePoint = float3(0, 0, 0);
+	cameraGlobalPos.z = 0;
+	facePoint = p.ClosestPoint(ray) - (transform->GetGlobalPosition());
+	Debug::Log((" x: " + std::to_string(facePoint.x) + " y: " + std::to_string(facePoint.y) + " z: " + std::to_string(facePoint.z)).c_str());
+	Quat quat = transform->GetRotation();
+	float angle = Atan2(facePoint.x, facePoint.z);
+	Quat rotation = quat.RotateAxisAngle(float3(0, 1, 0), angle);
+	transform->SetRotation(rotation);
 }
 
 float3 PlayerController::GetDirection(MovementDirection md) const {
@@ -77,22 +77,22 @@ float3 PlayerController::GetDirection(MovementDirection md) const {
 	switch (md)
 	{
 	case MovementDirection::UP:
-		direction = float3(0, 0, 1);
-		break;
-	case MovementDirection::UP_LEFT:
-		direction = float3(-1, 0, 1);
-		break;
-	case MovementDirection::UP_RIGHT:
-		direction = float3(1, 0, 1);
-		break;
-	case MovementDirection::DOWN:
 		direction = float3(0, 0, -1);
 		break;
-	case MovementDirection::DOWN_LEFT:
+	case MovementDirection::UP_LEFT:
 		direction = float3(-1, 0, -1);
 		break;
-	case MovementDirection::DOWN_RIGHT:
+	case MovementDirection::UP_RIGHT:
 		direction = float3(1, 0, -1);
+		break;
+	case MovementDirection::DOWN:
+		direction = float3(0, 0, 1);
+		break;
+	case MovementDirection::DOWN_LEFT:
+		direction = float3(-1, 0, 1);
+		break;
+	case MovementDirection::DOWN_RIGHT:
+		direction = float3(1, 0, 1);
 		break;
 	case MovementDirection::RIGHT:
 		direction = float3(1, 0, 0);
@@ -106,7 +106,7 @@ float3 PlayerController::GetDirection(MovementDirection md) const {
 	return direction;
 }
 
-void PlayerController::InitDash(MovementDirection md){
+void PlayerController::InitDash(MovementDirection md) {
 	dashDirection = GetDirection(md);
 	dashDestination = transform->GetPosition();
 	dashDestination += dashDistance * dashDirection;
@@ -115,27 +115,27 @@ void PlayerController::InitDash(MovementDirection md){
 	dashing = true;
 }
 
-void PlayerController::Dash(){
-	if(dashing){
+void PlayerController::Dash() {
+	if (dashing) {
 		float3 newPosition = transform->GetPosition();
 		newPosition += dashSpeed * Time::GetDeltaTime() * dashDirection;
 		transform->SetPosition(newPosition);
-		if(	std::abs(std::abs(newPosition.x) - std::abs(dashDestination.x)) < dashError &&
-		   	std::abs(std::abs(newPosition.z) - std::abs(dashDestination.z)) < dashError ){ 
-		   	dashing = false;
+		if (std::abs(std::abs(newPosition.x) - std::abs(dashDestination.x)) < dashError &&
+			std::abs(std::abs(newPosition.z) - std::abs(dashDestination.z)) < dashError) {
+			dashing = false;
 		}
 	}
 }
 
-bool const PlayerController::CanDash() const{
+bool const PlayerController::CanDash() const {
 	return !dashing && !dashInCooldown;
 }
 
-void PlayerController::CheckCoolDowns(){
+void PlayerController::CheckCoolDowns() {
 	dashCooldownRemaing -= Time::GetDeltaTime();
 	switchCooldownRemaing -= Time::GetDeltaTime();
 
-	if(dashCooldownRemaing <= 0.f){
+	if (dashCooldownRemaing <= 0.f) {
 		dashCooldownRemaing = 0.f;
 		dashInCooldown = false;
 	}
@@ -152,18 +152,18 @@ bool const PlayerController::CanSwitch() const {
 
 void PlayerController::SwitchCharacter() {
 	if (CanSwitch()) {
-			switchInCooldown = true;
-			if (fang->IsActive()) {
-				Debug::Log("Swaping to robot...");
-				fang->Disable();
-				robot->Enable();
-			}
-			else {
-				Debug::Log("Swaping to fang...");
-				robot->Disable();
-				fang->Enable();
-			}
-			switchCooldownRemaing = switchCooldown;
+		switchInCooldown = true;
+		if (fang->IsActive()) {
+			Debug::Log("Swaping to robot...");
+			fang->Disable();
+			robot->Enable();
+		}
+		else {
+			Debug::Log("Swaping to fang...");
+			robot->Disable();
+			fang->Enable();
+		}
+		switchCooldownRemaing = switchCooldown;
 	}
 }
 
@@ -173,6 +173,8 @@ void PlayerController::Update() {
 	if (!transform) return;
 	CheckCoolDowns();
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
+	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
+	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, cameraTransform->GetGlobalPosition().y, (transform->GetGlobalPosition().z + 20.0f)));
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		if (!dashing) {
@@ -184,7 +186,7 @@ void PlayerController::Update() {
 			}
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
 				if (md == MovementDirection::UP) md = MovementDirection::UP_LEFT;
-				else if(md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
+				else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
 				else md = MovementDirection::LEFT;
 			}
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
