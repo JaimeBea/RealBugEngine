@@ -8,10 +8,8 @@ class GameObject;
 class ComponentCamera;
 class ComponentTransform;
 
-extern int checkpoint;
 
-class GameController : public Script
-{
+class GameController : public Script {
 	GENERATE_BODY(GameController);
 
 public:
@@ -20,7 +18,6 @@ public:
 	void Update() override;
 
 	void Rotate(float2 mouseMotion, Frustum* frustum, ComponentTransform* transform);
-
 
 public:
 	UID gameCameraUID;
@@ -55,7 +52,6 @@ private:
 	float yaw = 0.f;
 	float pitch = 0.f;
 	bool showWireframe = false;
-	bool godCameraActive = false;
 	bool godModeAvailable = false;
 	bool transitionFinished = false;
 	bool isPaused = false;
