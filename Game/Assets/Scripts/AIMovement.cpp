@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "GameplaySystems.h"
+#include "TesseractEvent.h"
 
 EXPOSE_MEMBERS(AIMovement) {
     // Add members here to expose them to the engine. Example:
@@ -85,6 +86,16 @@ void AIMovement::Update() {
         break;
     }
     	
+}
+
+void AIMovement::ReceiveEvent(TesseractEvent& e)
+{
+    switch (e.type)
+    {
+    case TesseractEventType::ANIMATION_FINISHED:
+
+        break;
+    }
 }
 
 bool AIMovement::CharacterInSight(const GameObject* character)

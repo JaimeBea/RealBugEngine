@@ -3,6 +3,7 @@
 #include "Scripting/Script.h"
 
 class ComponentAnimation;
+struct TesseractEvent;
 
 enum class AIState {
 	SPAWN,
@@ -21,12 +22,14 @@ public:
 
 	void Start() override;
 	void Update() override;
+	void ReceiveEvent(TesseractEvent& e) override;
 
 private:
 	bool CharacterInSight(const GameObject* character);
 	bool CharacterInMeleeRange(const GameObject* character);
 	void Seek(const float3& newPosition);
 	bool HitDetected();
+	
 
 public:
 
