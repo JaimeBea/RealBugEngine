@@ -55,6 +55,17 @@ void ComponentTransform2D::Update() {
 }
 
 void ComponentTransform2D::OnEditorUpdate() {
+	if (ImGui::Checkbox("Active", &active)) {
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
+	}
+	ImGui::Separator();
+
 	float3 editorPos = position;
 
 	ImGui::TextColored(App->editor->titleColor, "Transformation (X,Y,Z)");

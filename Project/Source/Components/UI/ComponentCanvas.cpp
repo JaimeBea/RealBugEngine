@@ -26,6 +26,17 @@ bool ComponentCanvas::CanBeRemoved() const {
 }
 
 void ComponentCanvas::OnEditorUpdate() {
+	if (ImGui::Checkbox("Active", &active)) {
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
+	}
+	ImGui::Separator();
+
 	float2 refSize = screenReferenceSize;
 
 	if (ImGui::InputFloat2("Reference Screen Size", refSize.ptr(), "%.0f")) {
