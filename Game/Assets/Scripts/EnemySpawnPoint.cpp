@@ -6,7 +6,7 @@
 
 EXPOSE_MEMBERS(EnemySpawnPoint) {
 	MEMBER(MemberType::INT, amountOfEnemies),
-	MEMBER(MemberType::FLOAT, offset),
+	MEMBER(MemberType::INT, offset),
 	MEMBER(MemberType::PREFAB_RESOURCE_UID, prefabId),
 };
 
