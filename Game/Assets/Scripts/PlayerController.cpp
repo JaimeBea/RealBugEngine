@@ -12,22 +12,36 @@
 
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
-	MEMBER(MemberType::GAME_OBJECT_UID, gameObjectUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, robotUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, cameraUID)
 };
 
 GENERATE_BODY_IMPL(PlayerController);
 
 void PlayerController::Start() {
-	gameObject = GameplaySystems::GetGameObject(gameObjectUID);
+	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
+	fang = GameplaySystems::GetGameObject(fangUID);
+	robot = GameplaySystems::GetGameObject(robotUID);
 	camera = GameplaySystems::GetGameObject(cameraUID);
-    if (gameObject) transform = gameObject->GetComponent<ComponentTransform>();
+
+	if (gameObject) { 
+		transform = gameObject->GetComponent<ComponentTransform>(); 
+	}
 	if (camera) {
 		compCamera = camera->GetComponent<ComponentCamera>();
 		if (compCamera) GameplaySystems::SetRenderCamera(compCamera);
 	}
-    if (transform) initialPosition = transform->GetPosition();
-	
+	if (transform) { 
+		initialPosition = transform->GetPosition(); 
+	}
+	if (fang) {
+		fang->Enable();	
+	}
+	if (robot) {
+		robot->Disable();
+	}
 }
 
 void PlayerController::MoveTo(MovementDirection md){
@@ -58,7 +72,7 @@ void PlayerController::LookAtMouse(){
 	}
 }
 
-float3 PlayerController::GetDirection(MovementDirection md) {
+float3 PlayerController::GetDirection(MovementDirection md) const {
 	float3 direction = float3(0, 0, 0);
 	switch (md)
 	{
@@ -91,6 +105,7 @@ float3 PlayerController::GetDirection(MovementDirection md) {
 	}
 	return direction;
 }
+
 void PlayerController::InitDash(MovementDirection md){
 	dashDirection = GetDirection(md);
 	dashDestination = transform->GetPosition();
@@ -118,9 +133,37 @@ bool const PlayerController::CanDash() const{
 
 void PlayerController::CheckCoolDowns(){
 	dashCooldownRemaing -= Time::GetDeltaTime();
+	switchCooldownRemaing -= Time::GetDeltaTime();
+
 	if(dashCooldownRemaing <= 0.f){
 		dashCooldownRemaing = 0.f;
 		dashInCooldown = false;
+	}
+
+	if (switchCooldownRemaing <= 0.f) {
+		switchCooldownRemaing = 0.f;
+		switchInCooldown = false;
+	}
+}
+
+bool const PlayerController::CanSwitch() const {
+	return !switchInCooldown;
+}
+
+void PlayerController::SwitchCharacter() {
+	if (CanSwitch()) {
+			switchInCooldown = true;
+			if (fang->IsActive()) {
+				Debug::Log("Swaping to robot...");
+				fang->Disable();
+				robot->Enable();
+			}
+			else {
+				Debug::Log("Swaping to fang...");
+				robot->Disable();
+				fang->Enable();
+			}
+			switchCooldownRemaing = switchCooldown;
 	}
 }
 
@@ -132,30 +175,34 @@ void PlayerController::Update() {
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
-		
-		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
-			md = MovementDirection::UP;
-		}
-		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
-			md = MovementDirection::DOWN;
-		}
-		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
-			if (md == MovementDirection::UP) md = MovementDirection::UP_LEFT;
-			else if(md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
-			else md = MovementDirection::LEFT;
-		}
-		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
-			if (md == MovementDirection::UP) md = MovementDirection::UP_RIGHT;
-			else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_RIGHT;
-			else md = MovementDirection::RIGHT;
-		}
-		if (md != MovementDirection::NONE) {
-			MoveTo(md);
+		if (!dashing) {
+			if (Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
+				md = MovementDirection::UP;
+			}
+			if (Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
+				md = MovementDirection::DOWN;
+			}
+			if (Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
+				if (md == MovementDirection::UP) md = MovementDirection::UP_LEFT;
+				else if(md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
+				else md = MovementDirection::LEFT;
+			}
+			if (Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
+				if (md == MovementDirection::UP) md = MovementDirection::UP_RIGHT;
+				else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_RIGHT;
+				else md = MovementDirection::RIGHT;
+			}
+			LookAtMouse();
+			if (md != MovementDirection::NONE) {
+				MoveTo(md);
+			}
+			if (CanSwitch() && Input::GetKeyCode(Input::KEYCODE::KEY_T)) {
+				SwitchCharacter();
+			}
 		}
 		if (CanDash() && Input::GetKeyCode(Input::KEYCODE::KEY_SPACE)) {
 			InitDash(md);
 		}
-		LookAtMouse();
 		Dash();
 	}
 }

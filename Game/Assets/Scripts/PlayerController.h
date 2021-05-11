@@ -23,19 +23,23 @@ public:
 public:
 	GameObject* gameObject = nullptr;
 	GameObject* camera = nullptr;
+	GameObject* fang = nullptr;
+	GameObject* robot = nullptr;
 
-	UID gameObjectUID = 0;
+	UID fangUID = 0;
+	UID robotUID = 0;
+	UID mainNodeUID = 0;
 	UID cameraUID = 0;
-
 private:
 	void MoveTo(MovementDirection md);
 	void InitDash(MovementDirection md);
 	void Dash();
 	void LookAtMouse();
 	bool const CanDash() const;
+	bool const CanSwitch() const;
 	void CheckCoolDowns();
 	float3 GetDirection(MovementDirection md) const;
-
+	void SwitchCharacter();
 private:
 	float dashSpeed = 100.f;
 	float dashDistance = 10.f;
@@ -43,12 +47,17 @@ private:
 
 	float dashCooldown = 5.f; //seconds
 	float dashCooldownRemaing = 0.f;
-	bool  dashInCooldown = true;
+	bool  dashInCooldown = false;
 
 	float offset = 0.f;
 	float movementSpeed = 5.f;
 	float rotationSpeed = 2.f;
 	bool dashing = false;
+
+	bool switchInCooldown = false;
+	float switchCooldown = 5.f;
+	float switchCooldownRemaing = 0.f;
+
 
 	float3 initialPosition = float3(0, 0, 0);
 	float3 dashDestination = float3(0, 0, 0);
