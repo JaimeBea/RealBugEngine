@@ -390,3 +390,7 @@ namespace SceneManager {
 	TESSERACT_ENGINE_API void ChangeScene(const char* scenePath);
 	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager
+
+namespace Camera {
+	TESSERACT_ENGINE_API bool CheckObjectInsideFrustum(GameObject* gameObject);
+}; // namespace Camera
