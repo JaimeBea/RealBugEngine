@@ -36,7 +36,7 @@ void ComponentAudioSource::Update() {
 }
 
 void ComponentAudioSource::DrawGizmos() {
-	if (IsActiveInHierarchy() && drawGizmos) {
+	if (IsActive() && drawGizmos) {
 		if (spatialBlend && sourceType) {
 			dd::cone(position, direction, dd::colors::White, 1.0f, 0.0f);
 		} else {
@@ -65,9 +65,14 @@ void ComponentAudioSource::UpdateAudioSource() {
 }
 
 void ComponentAudioSource::OnEditorUpdate() {
-	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
-		active ? Enable() : Disable();
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
 	}
 	ImGui::Separator();
 	ImGui::Checkbox("Draw Gizmos", &drawGizmos);
@@ -244,18 +249,4 @@ void ComponentAudioSource::Load(JsonValue jComponent) {
 	innerAngle = jComponent[JSON_TAG_INNER_ANGLE];
 	outerAngle = jComponent[JSON_TAG_OUTER_ANGLE];
 	outerGain = jComponent[JSON_TAG_OUTER_GAIN];
-}
-
-void ComponentAudioSource::DuplicateComponent(GameObject& owner) {
-	ComponentAudioSource* component = owner.CreateComponent<ComponentAudioSource>();
-	component->pitch = this->pitch;
-	component->gain = this->gain;
-	component->mute = this->mute;
-	component->loopSound = this->loopSound;
-	component->audioClipId = this->audioClipId;
-	component->spatialBlend = this->spatialBlend;
-	component->sourceType = this->sourceType;
-	component->innerAngle = this->innerAngle;
-	component->outerAngle = this->outerAngle;
-	component->outerGain = this->outerGain;
 }

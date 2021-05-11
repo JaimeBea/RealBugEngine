@@ -10,8 +10,6 @@ public:
 
 	void Update() override;
 
-	bool IsUsing2D() const;
-
 	// Getters
 	const float2& GetMousePosOnScene() const;
 	const float2& GetMousePosOnSceneNormalized() const;
@@ -22,6 +20,4 @@ private:
 	float2 mousePosOnScene = {0.0f, 0.0f};
 	float2 mousePosNormalized = {0.0f, 0.0f};
 	const char* currentShadingMode = "Shaded";
-
-	bool view2D = false;
 };

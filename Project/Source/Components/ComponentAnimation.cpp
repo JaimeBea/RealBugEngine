@@ -13,6 +13,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleEvents.h"
 #include "Utils/UID.h"
 #include "Utils/Logging.h"
 #include "Utils/ImGuiUtils.h"
@@ -63,14 +64,6 @@ void ComponentAnimation::Load(JsonValue jComponent) {
 
 	initalStateUid = jComponent[JSON_TAG_INITAL_STATE_ID];
 	LoadResourceStateMachine();
-}
-
-void ComponentAnimation::DuplicateComponent(GameObject& owner) {
-	// TODO
-	/*ComponentAnimation* component = owner.CreateComponent<ComponentAnimation>();
-	component->stateMachineResourceUID = stateMachineResourceUID;
-	component->currentState = currentState;
-	component->initialState = initialState;*/
 }
 
 void ComponentAnimation::OnUpdate() {
@@ -127,6 +120,16 @@ void ComponentAnimation::UpdateAnimations(GameObject* gameObject) {
 		if (currentState) {
 			ResourceClip* clip = App->resources->GetResource<ResourceClip>(currentState->clipUid);
 			result = AnimationController::GetTransform(*clip, currentState->currentTime, gameObject->name.c_str(), position, rotation);
+			
+			if (gameObject == GetOwner().GetRootBone()) {
+				if (!clip->loop) {
+					int currentSample = AnimationController::GetCurrentSample(*clip, currentState->currentTime);
+					if (currentSample == clip->endIndex) {
+						TesseractEvent animationFinishedEvent = TesseractEvent(TesseractEventType::ANIMATION_FINISHED);
+						App->events->AddEvent(animationFinishedEvent);
+					}
+				}
+			}
 		}
 	}
 

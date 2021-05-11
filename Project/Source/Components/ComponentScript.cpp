@@ -27,9 +27,14 @@
 #define JSON_TAG_VALUE "Value"
 
 void ComponentScript::OnEditorUpdate() {
-	bool active = IsActive();
 	if (ImGui::Checkbox("Active", &active)) {
-		active ? Enable() : Disable();
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
 	}
 	ImGui::Separator();
 	UID oldScriptId = scriptId;
@@ -287,12 +292,6 @@ void ComponentScript::Load(JsonValue jComponent) {
 	if (App->project->IsGameLoaded()) {
 		CreateScriptInstance();
 	}
-}
-
-void ComponentScript::DuplicateComponent(GameObject& owner) {
-	ComponentScript* component = owner.CreateComponent<ComponentScript>();
-	component->scriptId = scriptId;
-	component->changedValues = changedValues;
 }
 
 void ComponentScript::CreateScriptInstance() {

@@ -16,8 +16,10 @@
 #include "Components/UI/ComponentButton.h"
 #include "Components/UI/ComponentToggle.h"
 #include "Components/UI/ComponentText.h"
+#include "Components/UI/ComponentSlider.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Components/ComponentSkybox.h"
+#include "Components/ComponentParticleSystem.h"
 #include "Components/ComponentScript.h"
 #include "Components/ComponentAnimation.h"
 #include "Components/ComponentAudioListener.h"
@@ -35,7 +37,6 @@ public:
 
 	// --- GameObject Management --- //
 	GameObject* CreateGameObject(GameObject* parent, UID id, const char* name);
-	GameObject* DuplicateGameObject(GameObject* gameObject, GameObject* parent);
 	void DestroyGameObject(GameObject* gameObject);
 	GameObject* GetGameObject(UID id) const;
 
@@ -69,9 +70,11 @@ public:
 	PoolMap<UID, ComponentText> textComponents;
 	PoolMap<UID, ComponentButton> buttonComponents;
 	PoolMap<UID, ComponentSelectable> selectableComponents;
+	PoolMap<UID, ComponentSlider> sliderComponents;
 	PoolMap<UID, ComponentSkyBox> skyboxComponents;
 	PoolMap<UID, ComponentScript> scriptComponents;
 	PoolMap<UID, ComponentAnimation> animationComponents;
+	PoolMap<UID, ComponentParticleSystem> particleComponents;
 	PoolMap<UID, ComponentAudioSource> audioSourceComponents;
 	PoolMap<UID, ComponentAudioListener> audioListenerComponents;
 

@@ -69,11 +69,11 @@ float4 ComponentButton::GetClickColor() const {
 }
 
 float4 ComponentButton::GetTintColor() const {
-	if (!IsActive()) return float4::one;
+	if (!IsActive()) return App->userInterface->GetErrorColor();
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
 
-	if (!sel) return float4::one;
+	if (!sel) return App->userInterface->GetErrorColor();
 
 	if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
 		if (!sel->IsInteractable()) {
@@ -87,12 +87,7 @@ float4 ComponentButton::GetTintColor() const {
 		}
 	}
 
-	return float4::one;
-}
-
-void ComponentButton::DuplicateComponent(GameObject& owner) {
-	ComponentButton* component = owner.CreateComponent<ComponentButton>();
-	component->colorClicked = colorClicked;
+	return App->userInterface->GetErrorColor();
 }
 
 void ComponentButton::Update() {
