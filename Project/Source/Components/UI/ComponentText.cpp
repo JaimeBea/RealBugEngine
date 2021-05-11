@@ -43,7 +43,7 @@ void ComponentText::Init() {
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-	RecalculcateVertices();
+	Invalidate();
 }
 
 void ComponentText::OnEditorUpdate() {
@@ -76,7 +76,7 @@ void ComponentText::OnEditorUpdate() {
 	ImGui::ColorEdit4("Color##", color.ptr());
 
 	if (mustRecalculateVertices) {
-		RecalculcateVertices();
+		Invalidate();
 	}
 }
 
@@ -111,7 +111,7 @@ void ComponentText::Load(JsonValue jComponent) {
 	color.Set(jColor[0], jColor[1], jColor[2], jColor[3]);
 }
 
-void ComponentText::Draw(ComponentTransform2D* transform) const {
+void ComponentText::Draw(ComponentTransform2D* transform) {
 	if (fontID == 0) {
 		return;
 	}
@@ -146,6 +146,8 @@ void ComponentText::Draw(ComponentTransform2D* transform) const {
 	glUniformMatrix4fv(glGetUniformLocation(program, "model"), 1, GL_TRUE, model.ptr());
 	glUniform4fv(glGetUniformLocation(program, "textColor"), 1, color.ptr());
 
+	RecalculateVertices();
+
 	for (size_t i = 0; i < text.size(); ++i) {
 		if (text.at(i) != '\n') {
 			Character character = App->userInterface->GetCharacter(fontID, text.at(i));
@@ -169,11 +171,12 @@ void ComponentText::Draw(ComponentTransform2D* transform) const {
 
 void ComponentText::SetText(const std::string& newText) {
 	text = newText;
-	RecalculcateVertices();
+	Invalidate();
 }
 
 void ComponentText::SetFontSize(float newfontSize) {
 	fontSize = newfontSize;
+	Invalidate();
 }
 
 void ComponentText::SetFontColor(const float4& newColor) {
@@ -184,7 +187,11 @@ float4 ComponentText::GetFontColor() const {
 	return color;
 }
 
-void ComponentText::RecalculcateVertices() {
+void ComponentText::RecalculateVertices() {
+	if (!dirty) {
+		return;
+	}
+
 	if (fontID == 0) {
 		return;
 	}
@@ -248,6 +255,12 @@ void ComponentText::RecalculcateVertices() {
 			x += (character.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64). Divides / 64
 		}
 	}
+
+	dirty = false;
+}
+
+void ComponentText::Invalidate() {
+	dirty = true;
 }
 
 float ComponentText::SubstringWidth(const char* substring, float scale) {
