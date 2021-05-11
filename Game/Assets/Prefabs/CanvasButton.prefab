@@ -24,9 +24,9 @@
                     1.0
                 ],
                 "LocalEulerAngles": [
+                    -0.0,
                     0.0,
-                    0.0,
-                    0.0
+                    -0.0
                 ]
             },
             {
@@ -66,14 +66,16 @@
                     200.0,
                     200.0
                 ],
-                "AnchorX": [
+                "AnchorMin": [
                     0.5,
                     0.5
                 ],
-                "AnchorY": [
+                "AnchorMax": [
                     0.5,
                     0.5
-                ]
+                ],
+                "AnchorSelected": 5,
+                "IsCustomAnchor": false
             },
             {
                 "Type": "Canvas",
@@ -82,7 +84,7 @@
         ],
         "Children": [
             {
-                "Name": "ButtonPlay",
+                "Name": "Button",
                 "Active": true,
                 "RootBoneName": "",
                 "Components": [
@@ -148,14 +150,16 @@
                             262.0,
                             62.0
                         ],
-                        "AnchorX": [
+                        "AnchorMin": [
                             0.5,
                             0.5
                         ],
-                        "AnchorY": [
+                        "AnchorMax": [
                             0.5,
                             0.5
-                        ]
+                        ],
+                        "AnchorSelected": 5,
+                        "IsCustomAnchor": false
                     },
                     {
                         "Type": "CanvasRenderer",
@@ -178,7 +182,7 @@
                             0.0,
                             0.686274528503418,
                             0.7568627595901489,
-                            1.0
+                            0.9019607901573181
                         ],
                         "ColorDisable": [
                             0.5,
@@ -214,26 +218,15 @@
                             0.0,
                             0.3450980484485626,
                             0.4588235318660736,
-                            1.0
+                            0.7019608020782471
                         ],
                         "AlphaTransparency": true
                     },
                     {
                         "Type": "Script",
                         "Active": true,
-                        "Script": 15371343306187404070,
-                        "Values": [
-                            {
-                                "Name": "currentUID",
-                                "Type": "GameObjectUID",
-                                "Value": 5330883967110963743
-                            },
-                            {
-                                "Name": "targetUID",
-                                "Type": "GameObjectUID",
-                                "Value": 5686730414818711396
-                            }
-                        ]
+                        "Script": 0,
+                        "Values": null
                     }
                 ],
                 "Children": [
@@ -304,14 +297,16 @@
                                     262.0,
                                     62.0
                                 ],
-                                "AnchorX": [
+                                "AnchorMin": [
                                     0.5,
                                     0.5
                                 ],
-                                "AnchorY": [
+                                "AnchorMax": [
                                     0.5,
                                     0.5
-                                ]
+                                ],
+                                "AnchorSelected": 5,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -399,14 +394,16 @@
                                     262.0,
                                     200.0
                                 ],
-                                "AnchorX": [
+                                "AnchorMin": [
                                     0.5,
                                     0.5
                                 ],
-                                "AnchorY": [
+                                "AnchorMax": [
                                     0.5,
                                     0.5
-                                ]
+                                ],
+                                "AnchorSelected": 5,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -415,7 +412,7 @@
                             {
                                 "Type": "Text",
                                 "Active": true,
-                                "FontID": 9222847930561963557,
+                                "FontID": 9939030777484332345,
                                 "FontSize": 24.0,
                                 "LineHeight": 16.0,
                                 "Alignment": 1,
