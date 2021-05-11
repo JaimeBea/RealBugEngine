@@ -26,7 +26,6 @@
 #define JSON_TAG_SIZE "Size"
 #define JSON_TAG_ANCHOR_MIN "AnchorMin"
 #define JSON_TAG_ANCHOR_MAX "AnchorMax"
-#define JSON_TAG_ANCHORED_2D_POSITION "Anchored2DPosition"
 #define JSON_TAG_ANCHOR_SELECTED "AnchorSelected"
 #define JSON_TAG_IS_CUSTOM_ANCHOR "IsCustomAnchor"
 
@@ -383,9 +382,11 @@ void ComponentTransform2D::UpdateTransformChanges() {
 }
 
 void ComponentTransform2D::UpdateUIElements() {
-	ComponentText* text = GetOwner().GetComponent<ComponentText>();
-	if (text != nullptr) {
-		text->RecalculcateVertices();
+	if (dirty) { // Means the transform has changed
+		ComponentText* text = GetOwner().GetComponent<ComponentText>();
+		if (text != nullptr) {
+			text->Invalidate();
+		}
 	}
 }
 
