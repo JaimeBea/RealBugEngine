@@ -47,6 +47,10 @@ void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeCullingCamera(camera, true);
 }
 
+void GameplaySystems::DestroyGameObject(GameObject* gameObject) {
+	App->scene->DestroyGameObjectDeferred(gameObject);
+}
+
 // ------------- DEBUG ------------- //
 
 void Debug::Log(const char* fmt, ...) {
