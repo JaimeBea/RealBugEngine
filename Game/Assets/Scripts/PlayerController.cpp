@@ -2,6 +2,9 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 #include "Math/Quat.h"
+#include "Geometry/Plane.h"
+#include "Geometry/Frustum.h"
+#include "Geometry/LineSegment.h"
 #include "Math/float3x3.h"
 #include "Math/float2.h"
 #include <algorithm>
@@ -9,7 +12,6 @@
 
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
-	MEMBER(MemberType::INT, speed),
 	MEMBER(MemberType::GAME_OBJECT_UID, gameObjectUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, cameraUID)
 };
@@ -21,7 +23,7 @@ void PlayerController::Start() {
 	camera = GameplaySystems::GetGameObject(cameraUID);
     if (gameObject) transform = gameObject->GetComponent<ComponentTransform>();
 	if (camera) {
-		ComponentCamera* compCamera = camera->GetComponent<ComponentCamera>();
+		compCamera = camera->GetComponent<ComponentCamera>();
 		if (compCamera) GameplaySystems::SetRenderCamera(compCamera);
 	}
     if (transform) initialPosition = transform->GetPosition();
@@ -34,63 +36,65 @@ void PlayerController::MoveTo(MovementDirection md){
 		float3 newPosition = transform->GetPosition();
 		if (Input::GetKeyCode(Input::KEYCODE::KEY_LSHIFT)) {
 				modifier = 2.0f;
-	    }					
-		switch (md)
-		{
-			case MovementDirection::UP:
-				newPosition.x -= movementSpeed * Time::GetDeltaTime() * modifier;
-				break;
-			case MovementDirection::LEFT:
-				newPosition.z += movementSpeed * Time::GetDeltaTime() * modifier;
-				break;
-			case MovementDirection::DOWN:
-				newPosition.x += movementSpeed * Time::GetDeltaTime() * modifier;
-				break;
-			case MovementDirection::RIGHT:
-				newPosition.z -= movementSpeed * Time::GetDeltaTime() * modifier;
-				break;
-			default:
-				return;
-				break;
-		}
-		dashMovementDirection = md;
+	    }
+		newPosition += GetDirection(md) * movementSpeed * Time::GetDeltaTime() * modifier;
 		transform->SetPosition(newPosition);
 	}
 }
 
 void PlayerController::LookAtMouse(){
-	float3 mouseWorldPosition = Input::GetMouseWorldPosition();
-	float3 mousePosition = float3(mouseWorldPosition.x, 0, mouseWorldPosition.z);
-
-	float angle = Atan2(mouseWorldPosition.x, mouseWorldPosition.z);
-	
-	Quat quat = transform->GetGlobalRotation();
-	Quat rotation = quat.RotateAxisAngle(float3(0, 1, 0), angle * Time::GetDeltaTime() * speed);
-	transform->SetRotation(rotation);
+	float2 mousePos = Input::GetMousePositionNormalized();
+	LineSegment ray = compCamera->frustum.UnProjectLineSegment(mousePos.x, mousePos.y);
+	float3 cameraGlobalPos = camera->GetComponent<ComponentTransform>()->GetGlobalPosition();
+	Plane p = Plane(transform->GetGlobalPosition(), float3(0, 1, 0));
+	float dist;
+	float3 facePoint = float3(0,0,0);
+	if (p.Intersects(ray, &dist)) {
+		facePoint = ray.GetPoint(dist) - (transform->GetGlobalPosition() - cameraGlobalPos);
+		Quat quat = transform->GetRotation();
+		float angle = Atan2(facePoint.x, facePoint.z);
+		Quat rotation = quat.RotateAxisAngle(float3(0, 1, 0), angle);
+		transform->SetRotation(rotation);
+	}
 }
 
-void PlayerController::InitDash(){
-	switch (dashMovementDirection)
+float3 PlayerController::GetDirection(MovementDirection md) {
+	float3 direction = float3(0, 0, 0);
+	switch (md)
 	{
-		case MovementDirection::UP:
-			dashDirection = float3(1,0,0);
-			break;
-		case MovementDirection::LEFT:
-			dashDirection = float3(0,0,-1);
-			break;
-		case MovementDirection::DOWN:
-			dashDirection = float3(-1,0,0);
-			break;
-		case MovementDirection::RIGHT:
-			dashDirection = float3(0,0,1);
-			break;
-		default:
-			return;
-			break;
+	case MovementDirection::UP:
+		direction = float3(0, 0, 1);
+		break;
+	case MovementDirection::UP_LEFT:
+		direction = float3(-1, 0, 1);
+		break;
+	case MovementDirection::UP_RIGHT:
+		direction = float3(1, 0, 1);
+		break;
+	case MovementDirection::DOWN:
+		direction = float3(0, 0, -1);
+		break;
+	case MovementDirection::DOWN_LEFT:
+		direction = float3(-1, 0, -1);
+		break;
+	case MovementDirection::DOWN_RIGHT:
+		direction = float3(1, 0, -1);
+		break;
+	case MovementDirection::RIGHT:
+		direction = float3(1, 0, 0);
+		break;
+	case MovementDirection::LEFT:
+		direction = float3(-1, 0, 0);
+		break;
+	default:
+		break;
 	}
-
+	return direction;
+}
+void PlayerController::InitDash(MovementDirection md){
+	dashDirection = GetDirection(md);
 	dashDestination = transform->GetPosition();
-	dashDestination -= dashDistance * dashDirection;
+	dashDestination += dashDistance * dashDirection;
 	dashCooldownRemaing = dashCooldown;
 	dashInCooldown = true;
 	dashing = true;
@@ -99,7 +103,7 @@ void PlayerController::InitDash(){
 void PlayerController::Dash(){
 	if(dashing){
 		float3 newPosition = transform->GetPosition();
-		newPosition -= dashSpeed * Time::GetDeltaTime() * dashDirection;
+		newPosition += dashSpeed * Time::GetDeltaTime() * dashDirection;
 		transform->SetPosition(newPosition);
 		if(	std::abs(std::abs(newPosition.x) - std::abs(dashDestination.x)) < dashError &&
 		   	std::abs(std::abs(newPosition.z) - std::abs(dashDestination.z)) < dashError ){ 
@@ -127,27 +131,31 @@ void PlayerController::Update() {
 	CheckCoolDowns();
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	if (cameraTransform) {
+		MovementDirection md = MovementDirection::NONE;
+		
 		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
-			MoveTo(MovementDirection::UP);
-		}
-		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
-			MoveTo(MovementDirection::LEFT);
+			md = MovementDirection::UP;
 		}
 		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
-			MoveTo(MovementDirection::DOWN);
+			md = MovementDirection::DOWN;
+		}
+		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
+			if (md == MovementDirection::UP) md = MovementDirection::UP_LEFT;
+			else if(md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
+			else md = MovementDirection::LEFT;
 		}
 		if (!dashing && Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
-			MoveTo(MovementDirection::RIGHT);
-		}		
+			if (md == MovementDirection::UP) md = MovementDirection::UP_RIGHT;
+			else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_RIGHT;
+			else md = MovementDirection::RIGHT;
+		}
+		if (md != MovementDirection::NONE) {
+			MoveTo(md);
+		}
 		if (CanDash() && Input::GetKeyCode(Input::KEYCODE::KEY_SPACE)) {
-			InitDash();
+			InitDash(md);
 		}
-		if(Input::GetKeyCode(Input::KEYCODE::KEY_P)){
-			LookAtMouse();
-			//float3 mousePos = Input::GetMouseWorldPosition();
-			//std::string mousePosStr = "x: " + std::to_string(mousePos.x) + " y: " + std::to_string(mousePos.y) + " z: " + std::to_string(mousePos.z);
-			//Debug::Log(mousePosStr.c_str());
-		}
+		LookAtMouse();
 		Dash();
 	}
 }
