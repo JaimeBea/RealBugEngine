@@ -130,17 +130,6 @@ void ComponentSelectable::Update() {
 }
 
 void ComponentSelectable::OnEditorUpdate() {
-	if (ImGui::Checkbox("Active", &active)) {
-		if (GetOwner().IsActive()) {
-			if (active) {
-				Enable();
-			} else {
-				Disable();
-			}
-		}
-	}
-	ImGui::Separator();
-
 	bool isInteractable = interactable;
 	if (ImGui::Checkbox("Interactable", &isInteractable)) {
 		SetInteractable(isInteractable);

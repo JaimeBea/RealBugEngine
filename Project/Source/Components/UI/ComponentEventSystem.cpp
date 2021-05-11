@@ -64,17 +64,6 @@ void ComponentEventSystem::Update() {
 }
 
 void ComponentEventSystem::OnEditorUpdate() {
-	if (ImGui::Checkbox("Active", &active)) {
-		if (GetOwner().IsActive()) {
-			if (active) {
-				Enable();
-			} else {
-				Disable();
-			}
-		}
-	}
-	ImGui::Separator();
-
 	ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "Current Selected:");
 
 	if (selectedId != 0) {
