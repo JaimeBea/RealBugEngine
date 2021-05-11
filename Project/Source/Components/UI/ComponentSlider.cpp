@@ -184,6 +184,7 @@ void ComponentSlider::Load(JsonValue jComponent) {
 	handleStopsOnEdge = jComponent[JSON_TAG_STOP_EDGES];
 
 	JsonValue jColorClick = jComponent[JSON_TAG_COLOR_CLICK];
+	colorClicked = float4(jColorClick[0], jColorClick[1], jColorClick[2], jColorClick[3]);
 }
 
 bool ComponentSlider::IsClicked() const {
