@@ -21,7 +21,7 @@ public:
 	void Save(JsonValue jComponent) const override;			// Serializes
 	void Load(JsonValue jComponent) override;				// Deserializes
 	
-	void Draw(const ComponentTransform2D* transform) const;				// Draws the text ortographically using the active camera and the position of the Tranform2D. It will apply the color as tint
+	void Draw(ComponentTransform2D* transform) const;				// Draws the text ortographically using the active camera and the position of the Tranform2D. It will apply the color as tint
 	TESSERACT_ENGINE_API void SetText(const std::string& newText);	// Sets text
 	TESSERACT_ENGINE_API void SetFontSize(float newfontSize);		// Sets fontSize
 	TESSERACT_ENGINE_API void SetFontColor(const float4& newColor); // Sets color
