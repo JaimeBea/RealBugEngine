@@ -23,6 +23,7 @@ namespace GameplaySystems {
 	TESSERACT_ENGINE_API GameObject* GetGameObject(UID id);
 	template<typename T> TESSERACT_ENGINE_API T* GetResource(UID id);
 	TESSERACT_ENGINE_API void SetRenderCamera(ComponentCamera* camera);
+	TESSERACT_ENGINE_API void DestroyGameObject(GameObject* gameObject);
 }; // namespace GameplaySystems
 
 namespace Debug {
@@ -35,6 +36,7 @@ namespace Debug {
 	TESSERACT_ENGINE_API void ToggleDrawAnimationBones();
 	TESSERACT_ENGINE_API void ToggleDrawCameraFrustums();
 	TESSERACT_ENGINE_API void ToggleDrawLightGizmos();
+	TESSERACT_ENGINE_API void ToggleDrawParticleGizmos();
 	TESSERACT_ENGINE_API void UpdateShadingMode(const char* shadingMode);
 	TESSERACT_ENGINE_API int GetTotalTriangles();
 	TESSERACT_ENGINE_API int GetCulledTriangles();
@@ -389,3 +391,7 @@ namespace SceneManager {
 	TESSERACT_ENGINE_API void ChangeScene(const char* scenePath);
 	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager
+
+namespace Camera {
+	TESSERACT_ENGINE_API bool CheckObjectInsideFrustum(GameObject* gameObject);
+}; // namespace Camera

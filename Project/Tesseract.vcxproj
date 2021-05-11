@@ -15,6 +15,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Components\UI\ComponentProgressBar.h" />
+    <ClInclude Include="Source\Components\ComponentParticleSystem.h" />
     <ClInclude Include="Source\FileSystem\ClipImporter.h" />
     <ClInclude Include="Source\FileSystem\StateMachineImporter.h" />
     <ClInclude Include="Source\AnimationInterpolation.h" />
@@ -287,6 +289,8 @@
     <ClInclude Include="Source\Utils\StringBlocksParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Components\UI\ComponentProgressBar.cpp" />
+    <ClCompile Include="Source\Components\ComponentParticleSystem.cpp" />
     <ClCompile Include="Source\FileSystem\ClipImporter.cpp" />
     <ClCompile Include="Source\FileSystem\StateMachineImporter.cpp" />
     <ClCompile Include="Source\Resources\ResourceClip.cpp" />
