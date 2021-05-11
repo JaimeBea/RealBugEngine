@@ -26,7 +26,6 @@ public:
 	void OnEditorUpdate() override;					// Input for parameters
 	void Save(JsonValue jComponent) const override; // Serializes object
 	void Load(JsonValue jComponent) override;		// Deserializes object
-	void DuplicateComponent(GameObject& owner) override;
 
 	void SetValue(float v);
 	void SetFillPos(float fillPos);

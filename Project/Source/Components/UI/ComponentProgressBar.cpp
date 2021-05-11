@@ -139,15 +139,15 @@ void ComponentProgressBar::Load(JsonValue jComponent) {
 	backSize.Set(jSize[0], jSize[1]);
 }
 
-void ComponentProgressBar::DuplicateComponent(GameObject& owner) {
-	ComponentProgressBar* component = owner.CreateComponent<ComponentProgressBar>();
-	component->SetValue(value);
-	component->SetFillPos(fillXPos);
-	component->SetMin(min);
-	component->SetMax(max);
-	component->dirIndex = dirIndex;
-	component->dir = dir;
-}
+//void ComponentProgressBar::DuplicateComponent(GameObject& owner) {
+//	ComponentProgressBar* component = owner.CreateComponent<ComponentProgressBar>();
+//	component->SetValue(value);
+//	component->SetFillPos(fillXPos);
+//	component->SetMin(min);
+//	component->SetMax(max);
+//	component->dirIndex = dirIndex;
+//	component->dir = dir;
+//}
 
 void ComponentProgressBar::SetValue(float v) {
 	value = v;

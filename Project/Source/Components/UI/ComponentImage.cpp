@@ -251,16 +251,3 @@ void ComponentImage::RebuildFillQuadVBO() {
 	glBindBuffer(GL_ARRAY_BUFFER, fillQuadVBO); // set vbo active
 	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
 }
-
-void ComponentImage::DuplicateComponent(GameObject& owner) {
-	ComponentImage* component = owner.CreateComponent<ComponentImage>();
-	component->textureID = textureID;
-	if (textureID != 0) {
-		App->resources->IncreaseReferenceCount(textureID);
-	}
-
-	component->color = color;
-	component->alphaTransparency = alphaTransparency;
-	component->isFill = isFill;
-	component->fillVal = fillVal;
-}
