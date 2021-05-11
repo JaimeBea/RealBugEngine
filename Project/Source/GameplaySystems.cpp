@@ -184,3 +184,9 @@ float Screen::GetScreenWitdh() {
 float Screen::GetScreenHeight() {
 	return static_cast<float>(App->window->GetHeight());
 }
+
+// --------- Camera --------- //
+
+bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
+	return App->renderer->ObjectInsideFrustum(gameObject);
+}
