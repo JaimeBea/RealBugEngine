@@ -8,7 +8,6 @@ class GameObject;
 class ComponentCamera;
 class ComponentTransform;
 
-extern int checkpoint;
 
 class GameController : public Script
 {
