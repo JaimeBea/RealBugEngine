@@ -393,7 +393,7 @@ void ComponentTransform2D::UpdateUIElements() {
 	if (dirty) { // Means the transform has changed
 		ComponentText* text = GetOwner().GetComponent<ComponentText>();
 		if (text != nullptr) {
-			text->RecalculcateVertices();
+			text->Invalidate();
 		}
 	}
 }

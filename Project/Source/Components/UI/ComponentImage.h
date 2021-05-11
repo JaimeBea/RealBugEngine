@@ -26,7 +26,7 @@ public:
 
 private:
 	float4 GetMainColor() const;	// Gets an additional color that needs to be applied to the image. Currently gets the color of the Button, Slider and Checkbox
-  void RebuildFillQuadVBO();	
+	void RebuildFillQuadVBO();	
 
 private:
 	float4 color = float4::one;		// Color used as default tainter
