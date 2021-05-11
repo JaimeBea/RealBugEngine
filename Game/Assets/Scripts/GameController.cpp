@@ -196,7 +196,7 @@ void GameController::Update() {
 			}
 		}
 		// --- Spawn Enemies
-		if(Input::GetKeyCodeDown(Input::KEYCODE::KEY_S)) {
+		if(Input::GetKeyCodeDown(Input::KEYCODE::KEY_L)) {
 			SpawnEnemies();
 		}
 	}
