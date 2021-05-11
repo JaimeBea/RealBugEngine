@@ -418,8 +418,6 @@
       "Target": 6232389412078677704,
       "Interpolation": 0.30000001192092898
     },
-
-dsadasdgfhjkll
 		{
       "Trigger": "RunRightIdle",
       "Id": 8820282321899285101,
@@ -504,7 +502,6 @@ dsadasdgfhjkll
       "Target": 6232389412078677704,
       "Interpolation": 0.30000001192092898
     },
-
 		{
       "Trigger": "RunRightIdle",
       "Id": 8820282321899285101,
@@ -1100,6 +1097,5 @@ dsadasdgfhjkll
       "Target": 6232389412078677707,
       "Interpolation": 0.30000001192092898
     }
-
   ]
 }
