@@ -127,6 +127,7 @@ void ComponentText::DuplicateComponent(GameObject& owner) {
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) const {
+
 	if (fontID == 0) {
 		return;
 	}
