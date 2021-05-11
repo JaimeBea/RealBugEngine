@@ -1,6 +1,6 @@
 {
     "Root": {
-        "Name": "Slider",
+        "Name": "CanvasBackground",
         "Active": true,
         "RootBoneName": "",
         "Components": [
@@ -63,8 +63,8 @@
                     0.0
                 ],
                 "Size": [
-                    320.0,
-                    30.0
+                    200.0,
+                    200.0
                 ],
                 "AnchorMin": [
                     0.5,
@@ -78,57 +78,8 @@
                 "IsCustomAnchor": false
             },
             {
-                "Type": "CanvasRenderer",
+                "Type": "Canvas",
                 "Active": true
-            },
-            {
-                "Type": "BoundingBox2D",
-                "Active": true,
-                "LocalBoundingBox2D": [
-                    -0.5,
-                    -0.5,
-                    0.5,
-                    0.5
-                ]
-            },
-            {
-                "Type": "Selectable",
-                "Active": true,
-                "ColorHover": [
-                    0.8399999737739563,
-                    0.8399999737739563,
-                    0.8399999737739563,
-                    1.0
-                ],
-                "ColorDisable": [
-                    0.5,
-                    0.5,
-                    0.5,
-                    1.0
-                ],
-                "Interactable": true,
-                "NavigationType": 1,
-                "TransitionType": 1,
-                "SelectableType": 15,
-                "OnAxisDown": 0,
-                "OnAxisUp": 0,
-                "OnAxisRight": 0,
-                "OnAxisLeft": 0
-            },
-            {
-                "Type": "Slider",
-                "Active": true,
-                "MinValue": 0.0,
-                "MaxValue": 100.0,
-                "CurrentValue": 50.0,
-                "Direction": 0,
-                "StopOnEdges": true,
-                "ColorClick": [
-                    0.6399999856948853,
-                    0.6399999856948853,
-                    0.6399999856948853,
-                    1.0
-                ]
             }
         ],
         "Children": [
@@ -157,9 +108,9 @@
                             1.0
                         ],
                         "LocalEulerAngles": [
+                            -0.0,
                             0.0,
-                            0.0,
-                            0.0
+                            -0.0
                         ]
                     },
                     {
@@ -196,8 +147,8 @@
                             0.0
                         ],
                         "Size": [
-                            320.0,
-                            30.0
+                            1920.0,
+                            1080.0
                         ],
                         "AnchorMin": [
                             0.5,
@@ -217,7 +168,7 @@
                     {
                         "Type": "Image",
                         "Active": true,
-                        "TextureId": 0,
+                        "TextureId": 8828451403569804850,
                         "Color": [
                             1.0,
                             1.0,
@@ -230,7 +181,104 @@
                 "Children": null
             },
             {
-                "Name": "Fill",
+                "Name": "BackgroundMask",
+                "Active": true,
+                "RootBoneName": "",
+                "Components": [
+                    {
+                        "Type": "Transform",
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": "Transform2D",
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "PivotPosition": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Size": [
+                            1920.0,
+                            1080.0
+                        ],
+                        "AnchorMin": [
+                            0.5,
+                            0.5
+                        ],
+                        "AnchorMax": [
+                            0.5,
+                            0.5
+                        ],
+                        "AnchorSelected": 5,
+                        "IsCustomAnchor": false
+                    },
+                    {
+                        "Type": "CanvasRenderer",
+                        "Active": true
+                    },
+                    {
+                        "Type": "Image",
+                        "Active": true,
+                        "TextureId": 6143913281048317285,
+                        "Color": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.800000011920929
+                        ],
+                        "AlphaTransparency": true
+                    }
+                ],
+                "Children": null
+            },
+            {
+                "Name": "BackgroundLeft",
                 "Active": true,
                 "RootBoneName": "",
                 "Components": [
@@ -263,7 +311,7 @@
                         "Type": "Transform2D",
                         "Active": true,
                         "Position": [
-                            -80.0,
+                            0.0,
                             0.0,
                             0.0
                         ],
@@ -288,23 +336,23 @@
                             0.5
                         ],
                         "PivotPosition": [
-                            -80.0,
+                            0.0,
                             0.0,
                             0.0
                         ],
                         "Size": [
-                            160.0,
-                            30.0
+                            350.0,
+                            1080.0
                         ],
                         "AnchorMin": [
-                            0.5,
+                            0.0,
                             0.5
                         ],
                         "AnchorMax": [
-                            0.5,
+                            0.0,
                             0.5
                         ],
-                        "AnchorSelected": 5,
+                        "AnchorSelected": 4,
                         "IsCustomAnchor": false
                     },
                     {
@@ -314,20 +362,20 @@
                     {
                         "Type": "Image",
                         "Active": true,
-                        "TextureId": 0,
+                        "TextureId": 13309499599055045694,
                         "Color": [
                             0.0,
                             0.686274528503418,
                             0.7568627595901489,
                             1.0
                         ],
-                        "AlphaTransparency": false
+                        "AlphaTransparency": true
                     }
                 ],
                 "Children": null
             },
             {
-                "Name": "Handle",
+                "Name": "BackgroundRight",
                 "Active": true,
                 "RootBoneName": "",
                 "Components": [
@@ -390,18 +438,18 @@
                             0.0
                         ],
                         "Size": [
-                            40.0,
-                            30.0
+                            350.0,
+                            1080.0
                         ],
                         "AnchorMin": [
-                            0.5,
+                            1.0,
                             0.5
                         ],
                         "AnchorMax": [
-                            0.5,
+                            1.0,
                             0.5
                         ],
-                        "AnchorSelected": 5,
+                        "AnchorSelected": 6,
                         "IsCustomAnchor": false
                     },
                     {
@@ -411,14 +459,14 @@
                     {
                         "Type": "Image",
                         "Active": true,
-                        "TextureId": 0,
+                        "TextureId": 13858584743250670710,
                         "Color": [
                             0.0,
-                            0.3450980484485626,
-                            0.4588235318660736,
+                            0.686274528503418,
+                            0.7568627595901489,
                             1.0
                         ],
-                        "AlphaTransparency": false
+                        "AlphaTransparency": true
                     }
                 ],
                 "Children": null
