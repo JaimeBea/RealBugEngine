@@ -30,6 +30,8 @@ private:
 
 public:
 
+	UID fangUID;
+	UID onimaruUID;
 	GameObject* fang = nullptr;
 	GameObject* onimaru = nullptr;
 	GameObject* currentTarget = nullptr;

@@ -8,13 +8,15 @@ EXPOSE_MEMBERS(AIMovement) {
     // MEMBER(MemberType::BOOL, exampleMember1),
     // MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
     // MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
+    MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
+    MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID)
 };
 
 GENERATE_BODY_IMPL(AIMovement);
 
 void AIMovement::Start() {
-    fang = GameplaySystems::GetGameObject("Fang");
-    //onimaru = GameplaySystems::GetGameObject("Onimaru");
+    fang = GameplaySystems::GetGameObject(fangUID);
+    onimaru = GameplaySystems::GetGameObject(onimaruUID);
     animation = GetOwner().GetComponent<ComponentAnimation>();    
 }
 
@@ -40,7 +42,7 @@ void AIMovement::Update() {
     switch (state)
     {
     case AIState::SPAWN:
-        if (/*owner pos inside game camera frustum*/true) {
+        if (Camera::CheckObjectInsideFrustum(GetOwner())) {
             animation->SendTrigger("SpawnIdle");
             state = AIState::IDLE;
         }
@@ -51,36 +53,35 @@ void AIMovement::Update() {
             animation->SendTrigger("IdleRun");
             state = AIState::RUN;
         }
-        /*else if (CharacterInSight(onimaru)) {
+        else if (CharacterInSight(onimaru)) {
             currentTarget = onimaru;
             animation->SendTrigger("IdleRun");
             state = AIState::RUN;
-        }*/
+        }
         break;
     case AIState::RUN:
         Seek(currentTarget->GetComponent<ComponentTransform>()->GetGlobalPosition());
         if (CharacterInMeleeRange(currentTarget)) {
+            animation->SendTrigger("RunAttack");
             state = AIState::ATTACK;
         }
         break;
     case AIState::HURT:
-        //play hurt animation       
         lifePoints--;
         if (lifePoints <= 0) {
+            animation->SendTrigger("HurtDeath");
             state = AIState::DEATH;
         }
+        animation->SendTrigger("HurtIdle");
         state = AIState::IDLE;        
         break;
     case AIState::ATTACK:
-        //play attack animation
         //throws event for protagonist to listen?
+        animation->SendTrigger("AttackIdle");
         state = AIState::IDLE;
         break;
     case AIState::DEATH:
-        //play death animation
         GetOwner().Disable(); //better delete
-        break;
-    default:
         break;
     }
     	
