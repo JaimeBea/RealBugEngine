@@ -61,7 +61,6 @@ static void WarpMouseOnEdges() {
 
 bool ModuleCamera::Start() {
 	UID uid = GenerateUID();
-	//engineCamera = App->scene->scene->cameraComponents.Obtain(uid, nullptr, uid, true);
 	activeCamera = &engineCamera;
 	cullingCamera = &engineCamera;
 	gameCamera = &engineCamera;
