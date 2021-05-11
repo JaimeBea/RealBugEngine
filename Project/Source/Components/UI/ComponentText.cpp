@@ -112,7 +112,6 @@ void ComponentText::Load(JsonValue jComponent) {
 }
 
 void ComponentText::Draw(ComponentTransform2D* transform) const {
-
 	if (fontID == 0) {
 		return;
 	}
@@ -127,21 +126,19 @@ void ComponentText::Draw(ComponentTransform2D* transform) const {
 
 	glUseProgram(program);
 
-	float4x4 proj = App->camera->GetProjectionMatrix();
-	float4x4 view = App->camera->GetViewMatrix();
-	float4x4 model;
+	float4x4 model = transform->GetGlobalMatrix();
+	float4x4& proj = App->camera->GetProjectionMatrix();
+	float4x4& view = App->camera->GetViewMatrix();
 
 	if (App->userInterface->IsUsing2D()) {
 		proj = float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		view = float4x4::identity;
-		model = float4x4::FromTRS(float3::zero, transform->GetGlobalRotation(), float3::one);
-	} else {
-		model = transform->GetGlobalScaledMatrix();
-		ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
-		if (canvasRenderer != nullptr) {
-			float factor = canvasRenderer->GetCanvasScreenFactor();
-			view = view * float4x4::Scale(factor, factor, factor);
-		}
+	}
+
+	ComponentCanvasRenderer* canvasRenderer = GetOwner().GetComponent<ComponentCanvasRenderer>();
+	if (canvasRenderer != nullptr) {
+		float factor = canvasRenderer->GetCanvasScreenFactor();
+		view = view * float4x4::Scale(factor, factor, factor);
 	}
 
 	glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
@@ -195,24 +192,21 @@ void ComponentText::RecalculcateVertices() {
 	verticesText.resize(text.size());
 
 	ComponentTransform2D* transform = GetOwner().GetComponent<ComponentTransform2D>();
-	float3 position = transform->GetPosition();
-	float screenFactor = GetOwner().GetComponent<ComponentCanvasRenderer>()->GetCanvasScreenFactor();
 
-	float x = position.x * screenFactor;
-	float y = position.y * screenFactor;
+	float x = -transform->GetSize().x / 2.0f;
+	float y = 0;
 
 	float dy = 0; // additional y shifting
 	int j = 0;	  // index of row
 
-	float2 transformScale = transform->GetScale().xy();
 	// FontSize / size of imported font. 48 is due to FontImporter default PixelSize
-	float scale = (fontSize / 48) * (transformScale.x > transformScale.y ? transformScale.x : transformScale.y) * screenFactor;
+	float scale = (fontSize / 48);
 
 	for (size_t i = 0; i < text.size(); ++i) {
 		Character character = App->userInterface->GetCharacter(fontID, text.at(i));
 
-		float xpos = x + character.bearing.x * scale;
-		float ypos = y - (character.size.y - character.bearing.y) * scale;
+		float xpos = x + character.bearing.x;
+		float ypos = y - (character.size.y - character.bearing.y);
 
 		float w = character.size.x * scale;
 		float h = character.size.y * scale;
@@ -223,19 +217,19 @@ void ComponentText::RecalculcateVertices() {
 			break;
 		}
 		case TextAlignment::CENTER: {
-			xpos += (transform->GetSize().x * screenFactor / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
+			xpos += (transform->GetSize().x / 2.0f - SubstringWidth(&text.c_str()[j], scale) / 2.0f);
 			break;
 		}
 		case TextAlignment::RIGHT: {
-			xpos += transform->GetSize().x * screenFactor - SubstringWidth(&text.c_str()[j], scale);
+			xpos += transform->GetSize().x - SubstringWidth(&text.c_str()[j], scale);
 			break;
 		}
 		}
 
 		if (text.at(i) == '\n') {
-			dy += lineHeight;			   // shifts to next line
-			x = position.x * screenFactor; // reset to initial position
-			j = i + 1;					   // updated j variable in order to get the substringwidth of the following line in the next iteration
+			dy += lineHeight;					// shifts to next line
+			x = -transform->GetSize().x / 2.0f; // reset to initial position
+			j = i + 1;							// updated j variable in order to get the substringwidth of the following line in the next iteration
 		}
 
 		// clang-format off
