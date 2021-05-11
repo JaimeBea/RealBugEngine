@@ -22,12 +22,12 @@ void ComponentCanvasRenderer::Render(const GameObject* gameObject) const {
 
 		//IF OTHER COMPONENTS THAT RENDER IN UI ARE IMPLEMENTED, THEY MUST HAVE THEIR DRAW METHODS CALLED HERE
 		ComponentImage* componentImage = gameObject->GetComponent<ComponentImage>();
-		if (componentImage != nullptr) {
+		if (componentImage != nullptr && componentImage->IsActive()) {
 			componentImage->Draw(transform2D);
 		}
 
 		ComponentText* componentText = gameObject->GetComponent<ComponentText>();
-		if (componentText != nullptr) {
+		if (componentText != nullptr && componentText->IsActive()) {
 			componentText->Draw(transform2D);
 		}
 	}
@@ -56,5 +56,5 @@ const ComponentCanvas* ComponentCanvasRenderer::AnyParentHasCanvas(GameObject* c
 }
 
 bool ComponentCanvasRenderer::CanBeRemoved() const {
-	return !(GetOwner().GetComponent<ComponentImage>() || GetOwner().GetComponent<ComponentText>());
+	return !(GetOwner().GetComponent<ComponentImage>() || GetOwner().GetComponent<ComponentText>() || GetOwner().GetComponent<ComponentBoundingBox2D>());
 }

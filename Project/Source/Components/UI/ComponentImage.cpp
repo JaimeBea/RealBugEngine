@@ -75,7 +75,6 @@ void ComponentImage::OnEditorUpdate() {
 
 void ComponentImage::Save(JsonValue jComponent) const {
 	jComponent[JSON_TAG_TEXTURE_TEXTUREID] = textureID;
-
 	JsonValue jColor = jComponent[JSON_TAG_COLOR];
 	jColor[0] = color.x;
 	jColor[1] = color.y;
@@ -98,12 +97,26 @@ void ComponentImage::Load(JsonValue jComponent) {
 	alphaTransparency = jComponent[JSON_TAG_ALPHATRANSPARENCY];
 }
 
-float4 ComponentImage::GetTintColor() const {
+float4 ComponentImage::GetMainColor() const {
+
+	float4 componentColor = App->userInterface->GetErrorColor();
+
 	ComponentButton* button = GetOwner().GetComponent<ComponentButton>();
 	if (button != nullptr) {
-		return button->GetTintColor();
+		componentColor = button->GetTintColor();
 	}
-	return float4::one;
+
+	ComponentSlider* slider = GetOwner().GetComponent<ComponentSlider>();
+	if (slider != nullptr) {
+		componentColor = slider->GetTintColor();
+	}
+
+	ComponentToggle* toggle = GetOwner().GetComponent<ComponentToggle>();
+	if (toggle != nullptr) {
+		componentColor = toggle->GetTintColor();
+	}
+	
+	return componentColor.Equals(App->userInterface->GetErrorColor()) ? color : componentColor;
 }
 
 void ComponentImage::Draw(const ComponentTransform2D* transform) const {
@@ -127,11 +140,11 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	if (App->time->IsGameRunning() || App->editor->panelScene.IsUsing2D()) {
 		proj = &float4x4::D3DOrthoProjLH(-1, 1, App->renderer->GetViewportSize().x, App->renderer->GetViewportSize().y); //near plane. far plane, screen width, screen height
 		float4x4 view = float4x4::identity;
-		modelMatrix = transform->GetGlobalMatrixWithSize();
+		modelMatrix = transform->GetGlobalScaledMatrix();
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view.ptr());
 	} else {
 		float4x4* view = &App->camera->GetViewMatrix();
-		modelMatrix = transform->GetGlobalMatrixWithSize(true);
+		modelMatrix = transform->GetGlobalScaledMatrix(true, true);
 		glUniformMatrix4fv(glGetUniformLocation(program, "view"), 1, GL_TRUE, view->ptr());
 	}
 
@@ -140,8 +153,7 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 
 	glActiveTexture(GL_TEXTURE0);
 	glUniform1i(glGetUniformLocation(program, "diffuse"), 0);
-	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, color.ptr());
-	glUniform4fv(glGetUniformLocation(program, "tintColor"), 1, GetTintColor().ptr());
+	glUniform4fv(glGetUniformLocation(program, "inputColor"), 1, GetMainColor().ptr());
 
 	ResourceTexture* textureResource = App->resources->GetResource<ResourceTexture>(textureID);
 	if (textureResource != nullptr) {
@@ -156,6 +168,10 @@ void ComponentImage::Draw(const ComponentTransform2D* transform) const {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glDisable(GL_BLEND);
+}
+
+void ComponentImage::SetColor(float4 color_) {
+	color = color_;
 }
 
 void ComponentImage::DuplicateComponent(GameObject& owner) {
