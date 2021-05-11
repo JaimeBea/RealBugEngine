@@ -40,6 +40,8 @@ namespace Debug {
 	TESSERACT_ENGINE_API int GetTotalTriangles();
 	TESSERACT_ENGINE_API int GetCulledTriangles();
 	TESSERACT_ENGINE_API const float3 GetCameraDirection();
+	TESSERACT_ENGINE_API bool IsGodModeOn();
+	TESSERACT_ENGINE_API void SetGodModeOn(bool godModeOn_);
 } // namespace Debug
 
 namespace Time {

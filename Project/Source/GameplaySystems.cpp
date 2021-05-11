@@ -107,6 +107,14 @@ const float3 Debug::GetCameraDirection() {
 	return App->camera->GetActiveCamera()->GetFrustum()->Front();
 }
 
+bool Debug::IsGodModeOn() {
+	return App->scene->godModeOn;
+}
+
+void Debug::SetGodModeOn(bool godModeOn_) {
+	App->scene->godModeOn = godModeOn_;
+}
+
 // ------------- TIME -------------- //
 
 float Time::GetDeltaTime() {
@@ -128,7 +136,6 @@ void Time::PauseGame() {
 void Time::ResumeGame() {
 	App->time->ResumeGame();
 }
-
 
 // ------------- INPUT ------------- //
 

@@ -24,4 +24,5 @@ public:
 	std::string fileName = ""; // REVIEW. This can be removed? Is it even used for anything?
 	Scene* scene = nullptr;
 	bool sceneLoaded = false;
+	bool godModeOn = false;
 };

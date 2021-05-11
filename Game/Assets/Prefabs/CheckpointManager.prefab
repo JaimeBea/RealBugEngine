@@ -80,6 +80,15 @@
                         "Name": "checkpointPosition4",
                         "Type": "Float3",
                         "Value": [
+                            20.0,
+                            3.200000047683716,
+                            0.0
+                        ]
+                    },
+                    {
+                        "Name": "checkpointPosition5",
+                        "Type": "Float3",
+                        "Value": [
                             140.0,
                             3.200000047683716,
                             -0.20000000298023225
