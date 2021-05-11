@@ -6,6 +6,7 @@ class ComponentAnimation;
 struct TesseractEvent;
 
 enum class AIState {
+	START,
 	SPAWN,
 	IDLE,
 	RUN,
@@ -38,15 +39,16 @@ public:
 	GameObject* fang = nullptr;
 	GameObject* onimaru = nullptr;
 	GameObject* currentTarget = nullptr;
+	int maxSpeed = 8;
+	float searchRadius = 50.f;
+	float meleeRange = 5.f;
+	int lifePoints = 3;
+
 
 private:
 
-	int maxSpeed = 8;
-	float3 velocity = float3(0, 0, 0);
-	const float searchRadius = 50.f;
-	const float meleeRange = 5.f;
+	float3 velocity = float3(0, 0, 0);	
 	AIState state = AIState::SPAWN;
-	int lifePoints = 3;
 	bool hitTaken = false;
 	ComponentAnimation* animation = nullptr;
 

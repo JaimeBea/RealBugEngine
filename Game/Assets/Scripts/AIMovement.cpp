@@ -10,7 +10,12 @@ EXPOSE_MEMBERS(AIMovement) {
     // MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
     // MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
     MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
-    MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID)
+    MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID),
+    MEMBER(MemberType::INT, maxSpeed),
+    MEMBER(MemberType::INT, lifePoints),
+    MEMBER(MemberType::FLOAT, searchRadius),
+    MEMBER(MemberType::FLOAT, meleeRange)
+
 };
 
 GENERATE_BODY_IMPL(AIMovement);
@@ -26,7 +31,7 @@ void AIMovement::Update() {
 
     hitTaken = HitDetected();
 
-    if (hitTaken) {
+    if (hitTaken && lifePoints > 0) {
         if (state == AIState::IDLE) {
             animation->SendTrigger("IdleHurt");
         }
@@ -36,17 +41,23 @@ void AIMovement::Update() {
         else if (state == AIState::ATTACK) {
             animation->SendTrigger("AttackHurt");
         }
+        lifePoints--;
         state = AIState::HURT;
         hitTaken = false;
     }
 
     switch (state)
     {
-    case AIState::SPAWN:
-        if (Camera::CheckObjectInsideFrustum(GetOwner())) {
-            animation->SendTrigger("SpawnIdle");
-            state = AIState::IDLE;
+    case AIState::START:
+        if (Camera::CheckObjectInsideFrustum(&GetOwner())) {
+            Seek(float3(GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().x, 0, GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().x));
+            if (GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().y == 0) {
+                animation->SendTrigger("StartSpawn");
+                state = AIState::SPAWN;
+            }
         }
+        break;
+    case AIState::SPAWN:                
         break;
     case AIState::IDLE:
         if (CharacterInSight(fang)) {
@@ -67,22 +78,12 @@ void AIMovement::Update() {
             state = AIState::ATTACK;
         }
         break;
-    case AIState::HURT:
-        lifePoints--;
-        if (lifePoints <= 0) {
-            animation->SendTrigger("HurtDeath");
-            state = AIState::DEATH;
-        }
-        animation->SendTrigger("HurtIdle");
-        state = AIState::IDLE;        
+    case AIState::HURT:                
         break;
     case AIState::ATTACK:
-        //throws event for protagonist to listen?
-        animation->SendTrigger("AttackIdle");
-        state = AIState::IDLE;
+        //throws event for protagonist to listen?        
         break;
     case AIState::DEATH:
-        GetOwner().Disable(); //better delete
         break;
     }
     	
@@ -93,6 +94,30 @@ void AIMovement::ReceiveEvent(TesseractEvent& e)
     switch (e.type)
     {
     case TesseractEventType::ANIMATION_FINISHED:
+
+        if (state == AIState::SPAWN) {
+            animation->SendTrigger("SpawnIdle");
+            state = AIState::IDLE;
+        }
+
+        else if(state == AIState::ATTACK)
+        {
+            animation->SendTrigger("AttackIdle");
+            state = AIState::IDLE;
+        }
+        else if (state == AIState::HURT && lifePoints > 0) {
+            animation->SendTrigger("HurtIdle");
+            state = AIState::IDLE;
+        }
+
+        else if (state == AIState::HURT && lifePoints <= 0) {
+            animation->SendTrigger("HurtDeath");
+            state = AIState::DEATH;
+        }
+        else if (state == AIState::DEATH) {
+            //delete this object
+        }
+
 
         break;
     }
