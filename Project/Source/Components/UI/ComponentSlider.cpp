@@ -44,7 +44,9 @@ void ComponentSlider::Update() {
 			clicked = false;
 		} else {
 			float2 mousePos = App->input->GetMousePosition(true);
+			#if GAME
 			mousePos -= float2(App->window->GetPositionX(), App->window->GetPositionY());
+			#endif
 			ComponentCanvas* canvas = GetOwner().GetComponent<ComponentCanvasRenderer>()->AnyParentHasCanvas(&GetOwner());
 			float2 auxNewPosition = float2(((mousePos.x - (App->renderer->GetViewportSize().x / 2.0f)) / canvas->GetScreenFactor()) - GetOwner().GetComponent<ComponentTransform2D>()->GetScreenPosition().x, 0);
 			if (newPosition.x != auxNewPosition.x) {
