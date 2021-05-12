@@ -59,9 +59,11 @@ void AIMovement::Update() {
     case AIState::SPAWN:                
         break;
     case AIState::IDLE:
-        if (CharacterInSight(player)) {
-            animation->SendTrigger("IdleRun");
-            state = AIState::RUN;
+        if (player) {
+            if (CharacterInSight(player)) {
+                animation->SendTrigger("IdleRun");
+                state = AIState::RUN;
+            }
         }
         break;
     case AIState::RUN:

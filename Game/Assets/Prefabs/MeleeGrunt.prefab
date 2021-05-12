@@ -20,9 +20,9 @@
                     1.0
                 ],
                 "Scale": [
-                    1.0,
-                    1.0,
-                    1.0
+                    0.05000000074505806,
+                    0.05000000074505806,
+                    0.05000000074505806
                 ],
                 "LocalEulerAngles": [
                     -0.0,
@@ -42,7 +42,7 @@
                 "Name": "Melee_Grunt_lowpoly:Basic_Enemy_Robot",
                 "Active": true,
                 "RootBoneName": "",
-                "Mask": 0,
+                "Mask": 2,
                 "Components": [
                     {
                         "Type": "Transform",

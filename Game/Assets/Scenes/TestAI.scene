@@ -7,14 +7,14 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 73437931147117860,
+    "GameCamera": 8301898755904613618,
     "AmbientLight": [
         0.25,
         0.25,
         0.25
     ],
     "Root": {
-        "Id": 6344196049003816154,
+        "Id": 13076722210240652740,
         "Name": "Scene",
         "Active": true,
         "ActiveHierarchy": true,
@@ -23,7 +23,7 @@
         "Components": [
             {
                 "Type": "Transform",
-                "Id": 9538780389368324664,
+                "Id": 6057480828661929158,
                 "Active": true,
                 "Position": [
                     0.0,
@@ -50,7 +50,7 @@
         ],
         "Children": [
             {
-                "Id": 9977462347822506185,
+                "Id": 7300693789904698071,
                 "Name": "Directional Light",
                 "Active": true,
                 "ActiveHierarchy": true,
@@ -59,7 +59,7 @@
                 "Components": [
                     {
                         "Type": "Transform",
-                        "Id": 7717231074980884708,
+                        "Id": 11813867967032370708,
                         "Active": true,
                         "Position": [
                             0.0,
@@ -85,7 +85,7 @@
                     },
                     {
                         "Type": "Light",
-                        "Id": 12290097053992249774,
+                        "Id": 6339038492777775343,
                         "Active": true,
                         "LightType": 0,
                         "Color": [
@@ -103,7 +103,7 @@
                 "Children": null
             },
             {
-                "Id": 13239380994236774138,
+                "Id": 16630342665374910159,
                 "Name": "Game Camera",
                 "Active": true,
                 "ActiveHierarchy": true,
@@ -112,12 +112,12 @@
                 "Components": [
                     {
                         "Type": "Transform",
-                        "Id": 17392584267019825389,
+                        "Id": 18134021136369302519,
                         "Active": true,
                         "Position": [
                             2.0,
                             3.0,
-                            -27.137157440185548
+                            -5.0
                         ],
                         "Rotation": [
                             0.0,
@@ -138,13 +138,13 @@
                     },
                     {
                         "Type": "Camera",
-                        "Id": 7514433127932052520,
+                        "Id": 16719893263153426782,
                         "Active": true,
                         "Frustum": {
                             "Pos": [
                                 2.0,
                                 3.0,
-                                -27.137157440185548
+                                -5.0
                             ],
                             "Up": [
                                 0.0,
@@ -164,14 +164,14 @@
                     },
                     {
                         "Type": "Skybox",
-                        "Id": 875843356130084874,
+                        "Id": 1210983975405388898,
                         "Active": true,
                         "Shader": 0,
                         "Skybox": 0
                     },
                     {
                         "Type": "AudioListener",
-                        "Id": 8381746214341904974,
+                        "Id": 3174434878752826717,
                         "Active": true,
                         "Gain": 1.0
                     }
@@ -179,21 +179,21 @@
                 "Children": null
             },
             {
-                "Id": 7403666794286068830,
-                "Name": "RootNode",
+                "Id": 1310622817604526827,
+                "Name": "MeleeGrunt",
                 "Active": true,
                 "ActiveHierarchy": true,
-                "RootBoneId": 4311612257837703062,
-                "Mask": 0,
+                "RootBoneId": 5419141730787277205,
+                "Mask": 2,
                 "Components": [
                     {
                         "Type": "Transform",
-                        "Id": 3299635291934307433,
+                        "Id": 7139633342897799768,
                         "Active": true,
                         "Position": [
-                            -12.488141059875489,
-                            7.460041522979736,
-                            0.0
+                            0.0,
+                            5.33808708190918,
+                            -22.335216522216798
                         ],
                         "Rotation": [
                             0.0,
@@ -214,7 +214,7 @@
                     },
                     {
                         "Type": "Animation",
-                        "Id": 1602623048272353584,
+                        "Id": 2423147702020016838,
                         "Active": true,
                         "StateMachineId": 4566963390717869434,
                         "InitalState": 6232389412078675400
@@ -222,7 +222,7 @@
                 ],
                 "Children": [
                     {
-                        "Id": 16559514546842425973,
+                        "Id": 9046573478165355143,
                         "Name": "Melee_Grunt_lowpoly:Basic_Enemy_Robot",
                         "Active": true,
                         "ActiveHierarchy": true,
@@ -231,7 +231,7 @@
                         "Components": [
                             {
                                 "Type": "Transform",
-                                "Id": 11641807934906734865,
+                                "Id": 6043101047302625827,
                                 "Active": true,
                                 "Position": [
                                     0.0,
@@ -257,14 +257,14 @@
                             },
                             {
                                 "Type": "MeshRenderer",
-                                "Id": 8742807593466972163,
+                                "Id": 3872052151247993747,
                                 "Active": true,
                                 "MeshID": 14124455750304648648,
                                 "MaterialID": 15397072817269370751
                             },
                             {
                                 "Type": "BoundingBox",
-                                "Id": 2109091509681400997,
+                                "Id": 18281612484253271811,
                                 "Active": true,
                                 "LocalBoundingBox": [
                                     -28.645483016967775,
@@ -277,14 +277,14 @@
                             },
                             {
                                 "Type": "Script",
-                                "Id": 12170785522959435296,
+                                "Id": 15810061905955079685,
                                 "Active": true,
                                 "Script": 6803541990823883369,
                                 "Values": [
                                     {
                                         "Name": "playerUID",
                                         "Type": "GameObjectUID",
-                                        "Value": 4023464245362792029
+                                        "Value": 818097451093908237
                                     }
                                 ]
                             }
@@ -292,7 +292,7 @@
                         "Children": null
                     },
                     {
-                        "Id": 17769499062092271925,
+                        "Id": 918865380630835020,
                         "Name": "Character_Reference",
                         "Active": true,
                         "ActiveHierarchy": true,
@@ -301,7 +301,7 @@
                         "Components": [
                             {
                                 "Type": "Transform",
-                                "Id": 17167861911748876064,
+                                "Id": 6962200381879562727,
                                 "Active": true,
                                 "Position": [
                                     0.00007152557373046875,
@@ -328,7 +328,7 @@
                         ],
                         "Children": [
                             {
-                                "Id": 4311612257837703062,
+                                "Id": 5419141730787277205,
                                 "Name": "CenterHip",
                                 "Active": true,
                                 "ActiveHierarchy": true,
@@ -337,7 +337,7 @@
                                 "Components": [
                                     {
                                         "Type": "Transform",
-                                        "Id": 2322869264716148681,
+                                        "Id": 4675939724815263443,
                                         "Active": true,
                                         "Position": [
                                             0.0,
@@ -364,7 +364,7 @@
                                 ],
                                 "Children": [
                                     {
-                                        "Id": 2493887653699504998,
+                                        "Id": 9132672896403347133,
                                         "Name": "RightHip",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -373,7 +373,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 14696107806531229937,
+                                                "Id": 12876263060246801965,
                                                 "Active": true,
                                                 "Position": [
                                                     -6.692901611328125,
@@ -400,7 +400,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 9216489601564274327,
+                                                "Id": 5266153323108377820,
                                                 "Name": "RightKnee",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -409,7 +409,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 8182396910716465887,
+                                                        "Id": 4607762905387121665,
                                                         "Active": true,
                                                         "Position": [
                                                             -26.484024047851564,
@@ -436,7 +436,7 @@
                                                 ],
                                                 "Children": [
                                                     {
-                                                        "Id": 5758847720186956236,
+                                                        "Id": 2279719787492019945,
                                                         "Name": "RightFoot",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -445,7 +445,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 17691569930740929366,
+                                                                "Id": 5866851447607891415,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     -35.96839904785156,
@@ -472,7 +472,7 @@
                                                         ],
                                                         "Children": [
                                                             {
-                                                                "Id": 11966643867639566162,
+                                                                "Id": 13976485172598682318,
                                                                 "Name": "RightToe",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -481,7 +481,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 2991548357629835973,
+                                                                        "Id": 115254762468896220,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             -13.960976600646973,
@@ -511,7 +511,7 @@
                                                         ]
                                                     },
                                                     {
-                                                        "Id": 13203135976794828489,
+                                                        "Id": 10429508384993051844,
                                                         "Name": "RigthLegPiece",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -520,7 +520,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 15648428795052207537,
+                                                                "Id": 1838779388760956567,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     -19.09111785888672,
@@ -550,7 +550,7 @@
                                                 ]
                                             },
                                             {
-                                                "Id": 6746156660494992957,
+                                                "Id": 15498689103166705583,
                                                 "Name": "RightThighPiece",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -559,7 +559,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 15005637906215383741,
+                                                        "Id": 4542957062809088310,
                                                         "Active": true,
                                                         "Position": [
                                                             -12.11072826385498,
@@ -589,7 +589,7 @@
                                         ]
                                     },
                                     {
-                                        "Id": 3110908869313274474,
+                                        "Id": 4113765341243720989,
                                         "Name": "CenterSpine1",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -598,7 +598,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 17209187395108760971,
+                                                "Id": 11052753579883822615,
                                                 "Active": true,
                                                 "Position": [
                                                     10.787094116210938,
@@ -625,7 +625,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 9958492972216493561,
+                                                "Id": 11330314179231610955,
                                                 "Name": "CenterSpine2",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -634,7 +634,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 6806618117037025164,
+                                                        "Id": 10452381560992782386,
                                                         "Active": true,
                                                         "Position": [
                                                             6.948516845703125,
@@ -661,7 +661,7 @@
                                                 ],
                                                 "Children": [
                                                     {
-                                                        "Id": 8132101956530948166,
+                                                        "Id": 172161919505469071,
                                                         "Name": "CenterSpine3",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -670,7 +670,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 150337754766243812,
+                                                                "Id": 6551065364910050606,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     6.948524475097656,
@@ -697,7 +697,7 @@
                                                         ],
                                                         "Children": [
                                                             {
-                                                                "Id": 3880447711592257355,
+                                                                "Id": 13351453547714714929,
                                                                 "Name": "RightCollar",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -706,7 +706,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 5414560353975410303,
+                                                                        "Id": 6454458109895100908,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             3.2416508197784426,
@@ -733,7 +733,7 @@
                                                                 ],
                                                                 "Children": [
                                                                     {
-                                                                        "Id": 3544151310511029329,
+                                                                        "Id": 3689907212463213026,
                                                                         "Name": "RightShoulder",
                                                                         "Active": true,
                                                                         "ActiveHierarchy": true,
@@ -742,7 +742,7 @@
                                                                         "Components": [
                                                                             {
                                                                                 "Type": "Transform",
-                                                                                "Id": 8613562669734705543,
+                                                                                "Id": 9057774614180372575,
                                                                                 "Active": true,
                                                                                 "Position": [
                                                                                     -3.0889501571655275,
@@ -769,7 +769,7 @@
                                                                         ],
                                                                         "Children": [
                                                                             {
-                                                                                "Id": 3652784201308133205,
+                                                                                "Id": 1613962010807469575,
                                                                                 "Name": "RightElbow",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -778,7 +778,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 12533104941829548329,
+                                                                                        "Id": 15626396546287858887,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             -27.13739585876465,
@@ -805,7 +805,7 @@
                                                                                 ],
                                                                                 "Children": [
                                                                                     {
-                                                                                        "Id": 16574295138097900962,
+                                                                                        "Id": 2593844416403858479,
                                                                                         "Name": "RightHand",
                                                                                         "Active": true,
                                                                                         "ActiveHierarchy": true,
@@ -814,7 +814,7 @@
                                                                                         "Components": [
                                                                                             {
                                                                                                 "Type": "Transform",
-                                                                                                "Id": 11565346210245096780,
+                                                                                                "Id": 4545763842716734037,
                                                                                                 "Active": true,
                                                                                                 "Position": [
                                                                                                     -23.656604766845704,
@@ -841,7 +841,7 @@
                                                                                         ],
                                                                                         "Children": [
                                                                                             {
-                                                                                                "Id": 10817050055588552955,
+                                                                                                "Id": 17323356855475955088,
                                                                                                 "Name": "RightForearmPiece",
                                                                                                 "Active": true,
                                                                                                 "ActiveHierarchy": true,
@@ -850,7 +850,7 @@
                                                                                                 "Components": [
                                                                                                     {
                                                                                                         "Type": "Transform",
-                                                                                                        "Id": 9198706509919364266,
+                                                                                                        "Id": 13311675720503406285,
                                                                                                         "Active": true,
                                                                                                         "Position": [
                                                                                                             17.86556053161621,
@@ -882,7 +882,7 @@
                                                                                 ]
                                                                             },
                                                                             {
-                                                                                "Id": 12621928727682450213,
+                                                                                "Id": 10147960144383793954,
                                                                                 "Name": "RightShoulderPiece",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -891,7 +891,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 13470638768793771964,
+                                                                                        "Id": 10766455503519822662,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             -1.6420011520385743,
@@ -919,7 +919,7 @@
                                                                                 "Children": null
                                                                             },
                                                                             {
-                                                                                "Id": 15587913363899704307,
+                                                                                "Id": 9722240712455810430,
                                                                                 "Name": "RightBicepPiece",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -928,7 +928,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 12718163542547395665,
+                                                                                        "Id": 1123423604389430434,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             -15.064254760742188,
@@ -960,7 +960,7 @@
                                                                 ]
                                                             },
                                                             {
-                                                                "Id": 11002324527572656617,
+                                                                "Id": 12071376022389287393,
                                                                 "Name": "CenterNeck",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -969,7 +969,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 3847547424883454074,
+                                                                        "Id": 16950955976426413236,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             16.719985961914064,
@@ -996,7 +996,7 @@
                                                                 ],
                                                                 "Children": [
                                                                     {
-                                                                        "Id": 7016213206203043362,
+                                                                        "Id": 17465852532289985043,
                                                                         "Name": "CenterHead",
                                                                         "Active": true,
                                                                         "ActiveHierarchy": true,
@@ -1005,7 +1005,7 @@
                                                                         "Components": [
                                                                             {
                                                                                 "Type": "Transform",
-                                                                                "Id": 7707403487293233126,
+                                                                                "Id": 2787735457813151431,
                                                                                 "Active": true,
                                                                                 "Position": [
                                                                                     2.9992728233337404,
@@ -1032,7 +1032,7 @@
                                                                         ],
                                                                         "Children": [
                                                                             {
-                                                                                "Id": 12757111986349459013,
+                                                                                "Id": 7949917781568458806,
                                                                                 "Name": "CenterEyeDir",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -1041,7 +1041,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 8452972400157859227,
+                                                                                        "Id": 1958977450793997449,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             -0.12347245216369629,
@@ -1068,7 +1068,7 @@
                                                                                 ],
                                                                                 "Children": [
                                                                                     {
-                                                                                        "Id": 4644994015072795840,
+                                                                                        "Id": 14533471589544207444,
                                                                                         "Name": "Eye",
                                                                                         "Active": true,
                                                                                         "ActiveHierarchy": true,
@@ -1077,7 +1077,7 @@
                                                                                         "Components": [
                                                                                             {
                                                                                                 "Type": "Transform",
-                                                                                                "Id": 13268353022964681979,
+                                                                                                "Id": 10971251985531145235,
                                                                                                 "Active": true,
                                                                                                 "Position": [
                                                                                                     -0.7363627552986145,
@@ -1111,7 +1111,7 @@
                                                                 ]
                                                             },
                                                             {
-                                                                "Id": 14343565768666647162,
+                                                                "Id": 12363285365112403567,
                                                                 "Name": "CenterBackPiece",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -1120,7 +1120,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 8196807170291567280,
+                                                                        "Id": 15300226241682001057,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             5.18890380859375,
@@ -1148,7 +1148,7 @@
                                                                 "Children": null
                                                             },
                                                             {
-                                                                "Id": 7244580999575900909,
+                                                                "Id": 11225828336975847953,
                                                                 "Name": "CenterChestPiece",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -1157,7 +1157,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 18438640491424296579,
+                                                                        "Id": 4557663968741305213,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             -0.04024629667401314,
@@ -1185,7 +1185,7 @@
                                                                 "Children": null
                                                             },
                                                             {
-                                                                "Id": 673104977976430371,
+                                                                "Id": 3797140396360294236,
                                                                 "Name": "InnerCore",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -1194,7 +1194,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 16785322040415979352,
+                                                                        "Id": 11151688873758000228,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             2.955657720565796,
@@ -1222,7 +1222,7 @@
                                                                 "Children": null
                                                             },
                                                             {
-                                                                "Id": 12353718393984137482,
+                                                                "Id": 9078895496716195036,
                                                                 "Name": "OuterCore",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -1231,7 +1231,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 13247265738711367488,
+                                                                        "Id": 4369084553673776527,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             2.9556634426116945,
@@ -1259,7 +1259,7 @@
                                                                 "Children": null
                                                             },
                                                             {
-                                                                "Id": 14650781208003691443,
+                                                                "Id": 9012179989893456470,
                                                                 "Name": "LeftCollar",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -1268,7 +1268,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 17183807297167384496,
+                                                                        "Id": 1853260226459068904,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             3.2422921657562258,
@@ -1295,7 +1295,7 @@
                                                                 ],
                                                                 "Children": [
                                                                     {
-                                                                        "Id": 10465441304332484912,
+                                                                        "Id": 17342289771686444370,
                                                                         "Name": "LeftShoulder",
                                                                         "Active": true,
                                                                         "ActiveHierarchy": true,
@@ -1304,7 +1304,7 @@
                                                                         "Components": [
                                                                             {
                                                                                 "Type": "Transform",
-                                                                                "Id": 15587210840150719342,
+                                                                                "Id": 5258549681343111115,
                                                                                 "Active": true,
                                                                                 "Position": [
                                                                                     4.232741832733154,
@@ -1331,7 +1331,7 @@
                                                                         ],
                                                                         "Children": [
                                                                             {
-                                                                                "Id": 10083405197412771190,
+                                                                                "Id": 5735422849311061797,
                                                                                 "Name": "LeftElbow",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -1340,7 +1340,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 17345451214805726902,
+                                                                                        "Id": 335225688739538365,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             28.21879005432129,
@@ -1367,7 +1367,7 @@
                                                                                 ],
                                                                                 "Children": [
                                                                                     {
-                                                                                        "Id": 14083043718945138455,
+                                                                                        "Id": 14126918931763906801,
                                                                                         "Name": "LeftHand",
                                                                                         "Active": true,
                                                                                         "ActiveHierarchy": true,
@@ -1376,7 +1376,7 @@
                                                                                         "Components": [
                                                                                             {
                                                                                                 "Type": "Transform",
-                                                                                                "Id": 2687111546637241526,
+                                                                                                "Id": 17240494906785846832,
                                                                                                 "Active": true,
                                                                                                 "Position": [
                                                                                                     23.646160125732423,
@@ -1403,7 +1403,7 @@
                                                                                         ],
                                                                                         "Children": [
                                                                                             {
-                                                                                                "Id": 4636957384227326090,
+                                                                                                "Id": 6626462123234423198,
                                                                                                 "Name": "LeftForearmPiece",
                                                                                                 "Active": true,
                                                                                                 "ActiveHierarchy": true,
@@ -1412,7 +1412,7 @@
                                                                                                 "Components": [
                                                                                                     {
                                                                                                         "Type": "Transform",
-                                                                                                        "Id": 3791277692048363056,
+                                                                                                        "Id": 12137515090180055944,
                                                                                                         "Active": true,
                                                                                                         "Position": [
                                                                                                             -19.943567276000978,
@@ -1444,7 +1444,7 @@
                                                                                 ]
                                                                             },
                                                                             {
-                                                                                "Id": 9211165834732069489,
+                                                                                "Id": 11275090271887019140,
                                                                                 "Name": "LeftShoulderPiece",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -1453,7 +1453,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 4068991705984727078,
+                                                                                        "Id": 247328276310241521,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             1.4126477241516114,
@@ -1481,7 +1481,7 @@
                                                                                 "Children": null
                                                                             },
                                                                             {
-                                                                                "Id": 14369784406537089220,
+                                                                                "Id": 11583659644438810176,
                                                                                 "Name": "LeftBicepPiece",
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
@@ -1490,7 +1490,7 @@
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
-                                                                                        "Id": 16205233014314569151,
+                                                                                        "Id": 15943044735698352,
                                                                                         "Active": true,
                                                                                         "Position": [
                                                                                             15.441492080688477,
@@ -1528,7 +1528,7 @@
                                         ]
                                     },
                                     {
-                                        "Id": 6380583439096711884,
+                                        "Id": 2139951866961185587,
                                         "Name": "LeftHip",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -1537,7 +1537,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 3814600043886050190,
+                                                "Id": 4672496476970544232,
                                                 "Active": true,
                                                 "Position": [
                                                     -6.692946434020996,
@@ -1564,7 +1564,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 14803443644108801655,
+                                                "Id": 5285354780485161020,
                                                 "Name": "LeftKnee",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -1573,7 +1573,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 17428085478104509293,
+                                                        "Id": 3761562179039004906,
                                                         "Active": true,
                                                         "Position": [
                                                             26.250154495239259,
@@ -1600,7 +1600,7 @@
                                                 ],
                                                 "Children": [
                                                     {
-                                                        "Id": 712872891495989193,
+                                                        "Id": 11397783450327473494,
                                                         "Name": "LeftFoot",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -1609,7 +1609,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 976722736839165612,
+                                                                "Id": 8732481657796058900,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     35.833309173583987,
@@ -1636,7 +1636,7 @@
                                                         ],
                                                         "Children": [
                                                             {
-                                                                "Id": 1666204875205853253,
+                                                                "Id": 14886274662697030239,
                                                                 "Name": "LeftToe",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -1645,7 +1645,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 18162101510065395584,
+                                                                        "Id": 10950676236006007676,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             13.960983276367188,
@@ -1675,7 +1675,7 @@
                                                         ]
                                                     },
                                                     {
-                                                        "Id": 10795544912734209144,
+                                                        "Id": 14460648921438193198,
                                                         "Name": "LeftLegPiece",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -1684,7 +1684,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 16692543458222745773,
+                                                                "Id": 8645459770593108061,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     18.48931121826172,
@@ -1714,7 +1714,7 @@
                                                 ]
                                             },
                                             {
-                                                "Id": 12475558497990837055,
+                                                "Id": 17135258102944464319,
                                                 "Name": "LeftThigh",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -1723,7 +1723,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 12573614319334118494,
+                                                        "Id": 490097227159951487,
                                                         "Active": true,
                                                         "Position": [
                                                             12.184798240661621,
@@ -1753,7 +1753,7 @@
                                         ]
                                     },
                                     {
-                                        "Id": 2156533913907088661,
+                                        "Id": 12112649672966920249,
                                         "Name": "CenterHipPiece",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -1762,7 +1762,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 15455550810942958959,
+                                                "Id": 190820663028542461,
                                                 "Active": true,
                                                 "Position": [
                                                     7.105427357601002e-15,
@@ -1796,21 +1796,21 @@
                 ]
             },
             {
-                "Id": 4023464245362792029,
+                "Id": 818097451093908237,
                 "Name": "RootNode",
                 "Active": true,
                 "ActiveHierarchy": true,
-                "RootBoneId": 13371854499377706005,
+                "RootBoneId": 8832007842092718415,
                 "Mask": 0,
                 "Components": [
                     {
                         "Type": "Transform",
-                        "Id": 5484860146043234561,
+                        "Id": 17366872566399492187,
                         "Active": true,
                         "Position": [
-                            47.49803161621094,
                             0.0,
-                            0.0
+                            0.0,
+                            18.38294219970703
                         ],
                         "Rotation": [
                             0.0,
@@ -1831,26 +1831,26 @@
                     },
                     {
                         "Type": "Script",
-                        "Id": 7991476247608669545,
+                        "Id": 2297876397063033313,
                         "Active": true,
                         "Script": 11409832638087102569,
                         "Values": [
                             {
                                 "Name": "fangUID",
                                 "Type": "GameObjectUID",
-                                "Value": 4023464245362792029
+                                "Value": 818097451093908237
                             },
                             {
                                 "Name": "cameraUID",
                                 "Type": "GameObjectUID",
-                                "Value": 13239380994236774138
+                                "Value": 16630342665374910159
                             }
                         ]
                     }
                 ],
                 "Children": [
                     {
-                        "Id": 18015458936085182305,
+                        "Id": 14294897257850893608,
                         "Name": "PapaBones",
                         "Active": true,
                         "ActiveHierarchy": true,
@@ -1859,7 +1859,7 @@
                         "Components": [
                             {
                                 "Type": "Transform",
-                                "Id": 8334157196052359064,
+                                "Id": 12968280829926920463,
                                 "Active": true,
                                 "Position": [
                                     0.0,
@@ -1887,7 +1887,7 @@
                         "Children": null
                     },
                     {
-                        "Id": 9228752597096847094,
+                        "Id": 11245168529800557699,
                         "Name": "Adamito2Obj:AdamRig",
                         "Active": true,
                         "ActiveHierarchy": true,
@@ -1896,7 +1896,7 @@
                         "Components": [
                             {
                                 "Type": "Transform",
-                                "Id": 10004985372175344976,
+                                "Id": 17314298894906542789,
                                 "Active": true,
                                 "Position": [
                                     0.0,
@@ -1922,14 +1922,14 @@
                             },
                             {
                                 "Type": "MeshRenderer",
-                                "Id": 8314334750475074785,
+                                "Id": 9216451410484837217,
                                 "Active": true,
                                 "MeshID": 10141510311928753299,
                                 "MaterialID": 17564419156017004516
                             },
                             {
                                 "Type": "BoundingBox",
-                                "Id": 2833145912668743441,
+                                "Id": 18161690882205471417,
                                 "Active": true,
                                 "LocalBoundingBox": [
                                     -16.945560455322267,
@@ -1944,7 +1944,7 @@
                         "Children": null
                     },
                     {
-                        "Id": 13371854499377706005,
+                        "Id": 8832007842092718415,
                         "Name": "Center",
                         "Active": true,
                         "ActiveHierarchy": true,
@@ -1953,7 +1953,7 @@
                         "Components": [
                             {
                                 "Type": "Transform",
-                                "Id": 5824436815728031469,
+                                "Id": 6386779990750484064,
                                 "Active": true,
                                 "Position": [
                                     0.9401249885559082,
@@ -1980,7 +1980,7 @@
                         ],
                         "Children": [
                             {
-                                "Id": 15192119164208575392,
+                                "Id": 12834663427953173900,
                                 "Name": "Torso",
                                 "Active": true,
                                 "ActiveHierarchy": true,
@@ -1989,7 +1989,7 @@
                                 "Components": [
                                     {
                                         "Type": "Transform",
-                                        "Id": 6588980538044202933,
+                                        "Id": 238623742431169350,
                                         "Active": true,
                                         "Position": [
                                             15.988956451416016,
@@ -2016,7 +2016,7 @@
                                 ],
                                 "Children": [
                                     {
-                                        "Id": 4740529709172051713,
+                                        "Id": 9300101858481503635,
                                         "Name": "Neck",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -2025,7 +2025,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 15650826574371604218,
+                                                "Id": 8613793295309271071,
                                                 "Active": true,
                                                 "Position": [
                                                     19.324901580810548,
@@ -2052,7 +2052,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 16990194442486628181,
+                                                "Id": 13275099526385396877,
                                                 "Name": "Head",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -2061,7 +2061,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 6212366377307545002,
+                                                        "Id": 14587670006320878661,
                                                         "Active": true,
                                                         "Position": [
                                                             12.185995101928711,
@@ -2091,7 +2091,7 @@
                                         ]
                                     },
                                     {
-                                        "Id": 1040108494974067639,
+                                        "Id": 17607135974948988543,
                                         "Name": "LeftCollar",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -2100,7 +2100,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 2865306970977407262,
+                                                "Id": 2910418547069745733,
                                                 "Active": true,
                                                 "Position": [
                                                     18.16399574279785,
@@ -2127,7 +2127,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 14166877205120214207,
+                                                "Id": 8885053685573675692,
                                                 "Name": "LeftShoulder",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -2136,7 +2136,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 18386611363679356657,
+                                                        "Id": 13765537938253865794,
                                                         "Active": true,
                                                         "Position": [
                                                             7.027432918548584,
@@ -2163,7 +2163,7 @@
                                                 ],
                                                 "Children": [
                                                     {
-                                                        "Id": 1523207569161609203,
+                                                        "Id": 15500060286757108523,
                                                         "Name": "LeftElbow",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -2172,7 +2172,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 4594414816280870295,
+                                                                "Id": 4023960158914624084,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     18.339275360107423,
@@ -2199,7 +2199,7 @@
                                                         ],
                                                         "Children": [
                                                             {
-                                                                "Id": 12769026999731186247,
+                                                                "Id": 16384391828754959424,
                                                                 "Name": "LeftHand",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -2208,7 +2208,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 17336805146086402521,
+                                                                        "Id": 3230249066038133675,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             22.236881256103517,
@@ -2242,7 +2242,7 @@
                                         ]
                                     },
                                     {
-                                        "Id": 481566620233553974,
+                                        "Id": 15761817564344848139,
                                         "Name": "RightCollar",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -2251,7 +2251,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 3727464200082255704,
+                                                "Id": 9259882945908189763,
                                                 "Active": true,
                                                 "Position": [
                                                     18.43319320678711,
@@ -2278,7 +2278,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 1425279339188322760,
+                                                "Id": 3866192699193704795,
                                                 "Name": "RightShoulder",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -2287,7 +2287,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 6396602040865064012,
+                                                        "Id": 14131539453280553679,
                                                         "Active": true,
                                                         "Position": [
                                                             -7.027480125427246,
@@ -2314,7 +2314,7 @@
                                                 ],
                                                 "Children": [
                                                     {
-                                                        "Id": 15304258511353105591,
+                                                        "Id": 11980118735776997353,
                                                         "Name": "RightElbow",
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
@@ -2323,7 +2323,7 @@
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
-                                                                "Id": 10993392473309190135,
+                                                                "Id": 15883321434750091318,
                                                                 "Active": true,
                                                                 "Position": [
                                                                     -18.27899169921875,
@@ -2350,7 +2350,7 @@
                                                         ],
                                                         "Children": [
                                                             {
-                                                                "Id": 12870168345796635853,
+                                                                "Id": 15577086056410529444,
                                                                 "Name": "RightHand",
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
@@ -2359,7 +2359,7 @@
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
-                                                                        "Id": 12583867690300692902,
+                                                                        "Id": 2974604526630470355,
                                                                         "Active": true,
                                                                         "Position": [
                                                                             -22.23688316345215,
@@ -2395,7 +2395,7 @@
                                 ]
                             },
                             {
-                                "Id": 16415178077221943217,
+                                "Id": 15170994086198343702,
                                 "Name": "LeftHip",
                                 "Active": true,
                                 "ActiveHierarchy": true,
@@ -2404,7 +2404,7 @@
                                 "Components": [
                                     {
                                         "Type": "Transform",
-                                        "Id": 6170280955195847016,
+                                        "Id": 6875019422894021908,
                                         "Active": true,
                                         "Position": [
                                             -2.12174129486084,
@@ -2431,7 +2431,7 @@
                                 ],
                                 "Children": [
                                     {
-                                        "Id": 8026435454623583655,
+                                        "Id": 7437206606230350590,
                                         "Name": "LeftKnee",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -2440,7 +2440,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 17708566741214432193,
+                                                "Id": 15882048759112451308,
                                                 "Active": true,
                                                 "Position": [
                                                     22.30704689025879,
@@ -2467,7 +2467,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 17837614759337481348,
+                                                "Id": 2426451118361380372,
                                                 "Name": "LeftFoot",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -2476,7 +2476,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 4120246370666767716,
+                                                        "Id": 14371668675548585752,
                                                         "Active": true,
                                                         "Position": [
                                                             21.87582778930664,
@@ -2508,7 +2508,7 @@
                                 ]
                             },
                             {
-                                "Id": 5678343097604032983,
+                                "Id": 15744155931061283289,
                                 "Name": "RightHip",
                                 "Active": true,
                                 "ActiveHierarchy": true,
@@ -2517,7 +2517,7 @@
                                 "Components": [
                                     {
                                         "Type": "Transform",
-                                        "Id": 7779600606321456436,
+                                        "Id": 10352054509165778144,
                                         "Active": true,
                                         "Position": [
                                             -1.9406675100326539,
@@ -2544,7 +2544,7 @@
                                 ],
                                 "Children": [
                                     {
-                                        "Id": 5607088767710479287,
+                                        "Id": 6262512123676094087,
                                         "Name": "RightKnee",
                                         "Active": true,
                                         "ActiveHierarchy": true,
@@ -2553,7 +2553,7 @@
                                         "Components": [
                                             {
                                                 "Type": "Transform",
-                                                "Id": 7595689796277233006,
+                                                "Id": 15478092815718074401,
                                                 "Active": true,
                                                 "Position": [
                                                     -22.307125091552736,
@@ -2580,7 +2580,7 @@
                                         ],
                                         "Children": [
                                             {
-                                                "Id": 9425492363638242843,
+                                                "Id": 1395223055156867539,
                                                 "Name": "RightFoot",
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
@@ -2589,7 +2589,7 @@
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
-                                                        "Id": 15356631286008734300,
+                                                        "Id": 9306866298090177418,
                                                         "Active": true,
                                                         "Position": [
                                                             -21.87579345703125,
