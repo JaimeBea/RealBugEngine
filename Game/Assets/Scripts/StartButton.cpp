@@ -1,6 +1,6 @@
 #include "StartButton.h"
 
-#include "GameController.h"
+#include "CheckpointManager.h"
 
 #include "GameplaySystems.h"
 #include "GameObject.h"
@@ -8,10 +8,7 @@
 int checkpoint;
 
 EXPOSE_MEMBERS(StartButton) {
-	// Add members here to expose them to the engine. Example:
 	MEMBER(MemberType::INT, checkpointNum),
-	// MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
-	// MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
 };
 
 

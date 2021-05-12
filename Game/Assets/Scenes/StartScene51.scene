@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 5650449088193362448,
+    "GameCamera": 3509700806280173135,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.6815065145492554,
+                            "HorizontalFov": 1.44072425365448,
                             "VerticalFov": 1.0
                         }
                     },
@@ -9368,7 +9368,7 @@
                                                         "FontSize": 24.0,
                                                         "LineHeight": 16.0,
                                                         "Alignment": 1,
-                                                        "Value": "DEVELOPMENT",
+                                                        "Value": "CONTROLS",
                                                         "Color": [
                                                             1.0,
                                                             1.0,

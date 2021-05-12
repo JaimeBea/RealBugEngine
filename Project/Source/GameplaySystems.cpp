@@ -47,6 +47,10 @@ void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeCullingCamera(camera, true);
 }
 
+void GameplaySystems::DestroyGameObject(GameObject* gameObject) {
+	App->scene->DestroyGameObjectDeferred(gameObject);
+}
+
 // ------------- DEBUG ------------- //
 
 void Debug::Log(const char* fmt, ...) {
@@ -105,6 +109,16 @@ int Debug::GetCulledTriangles() {
 
 const float3 Debug::GetCameraDirection() {
 	return App->camera->GetActiveCamera()->GetFrustum()->Front();
+}
+
+//Temporary hardcoded solution
+bool Debug::IsGodModeOn() {
+	return App->scene->godModeOn;
+}
+
+//Temporary hardcoded solution
+void Debug::SetGodModeOn(bool godModeOn_) {
+	App->scene->godModeOn = godModeOn_;
 }
 
 // ------------- TIME -------------- //
@@ -198,4 +212,8 @@ bool Screen::IsFullScreenOn() {
 }
 void Screen::SetFullScreen(bool fullscreen_) {
 	App->window->SetWindowMode(fullscreen_ ? WindowMode::FULLSCREEN : WindowMode::WINDOWED);
+// --------- Camera --------- //
+
+bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
+	return App->renderer->ObjectInsideFrustum(gameObject);
 }
