@@ -27,7 +27,6 @@ bool ModuleWindow::Init() {
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
 #if GAME
-	//flags |= SDL_WINDOW_MAXIMIZED;
 	flags |= SDL_WINDOW_BORDERLESS;
 #else
 	flags |= SDL_WINDOW_RESIZABLE;
