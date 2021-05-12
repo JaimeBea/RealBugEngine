@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 2229784667101816431,
+    "GameCamera": 5127289664999684557,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.5780153274536133,
+                            "HorizontalFov": 1.6243733167648316,
                             "VerticalFov": 1.0
                         }
                     },
@@ -6837,7 +6837,7 @@
                                                         "FontSize": 42.0,
                                                         "LineHeight": 16.0,
                                                         "Alignment": 0,
-                                                        "Value": "Fullscreen",
+                                                        "Value": "Borderless",
                                                         "Color": [
                                                             1.0,
                                                             1.0,
@@ -6975,7 +6975,7 @@
                                                         "Type": "Toggle",
                                                         "Id": 15093266413720136250,
                                                         "Active": true,
-                                                        "IsOn": false,
+                                                        "IsOn": true,
                                                         "EnabledImageID": 9371020534559817943,
                                                         "ClickedColor": [
                                                             0.6399999856948853,
@@ -7098,7 +7098,7 @@
                                                             {
                                                                 "Type": "Image",
                                                                 "Id": 8581382523985226562,
-                                                                "Active": false,
+                                                                "Active": true,
                                                                 "TextureId": 0,
                                                                 "Color": [
                                                                     0.9254902005195618,

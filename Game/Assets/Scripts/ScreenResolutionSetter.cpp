@@ -26,7 +26,7 @@ void ScreenResolutionSetter::Start() {
 
 	UpdateText();
 	screenResolutionChangeConfirmationWasRequested = false;
-	preSelectedScreenResolutionPreset = 1;
+	preSelectedScreenResolutionPreset = 2;
 }
 
 void ScreenResolutionSetter::Update() {
@@ -69,8 +69,8 @@ int ScreenResolutionSetter::GetPreSelectedWidth() {
 		return 1920;
 	case Screen::RESOLUTION_PRESET::m_1280x720:
 		return 1280;
-	case Screen::RESOLUTION_PRESET::m_720x480:
-		return 720;
+	case Screen::RESOLUTION_PRESET::m_1024x576:
+		return 1024;
 	}
 	return 0;
 }
@@ -81,8 +81,8 @@ int ScreenResolutionSetter::GetPreSelectedHeight() {
 		return 1080;
 	case Screen::RESOLUTION_PRESET::m_1280x720:
 		return 720;
-	case Screen::RESOLUTION_PRESET::m_720x480:
-		return 480;
+	case Screen::RESOLUTION_PRESET::m_1024x576:
+		return 576;
 	}
 	return 0;
 }

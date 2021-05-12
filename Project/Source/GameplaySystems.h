@@ -395,7 +395,7 @@ namespace Screen {
 	TESSERACT_ENGINE_API float2 GetResolution();
 
 	enum RESOLUTION_PRESET {
-		m_720x480,
+		m_1024x576,
 		m_1280x720,
 		m_1920x1080,
 		MAX
@@ -406,6 +406,9 @@ namespace Screen {
 
 	TESSERACT_ENGINE_API bool IsFullScreenOn();
 	TESSERACT_ENGINE_API void SetFullScreen(bool fullscreen_);
+
+	TESSERACT_ENGINE_API bool IsBorderless();
+	TESSERACT_ENGINE_API void SetBorderless(bool borderless_);
 }; // namespace Screen
 
 namespace SceneManager {
