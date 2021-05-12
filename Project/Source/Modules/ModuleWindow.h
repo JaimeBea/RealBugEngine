@@ -15,7 +15,7 @@ enum class WindowMode {
 };
 
 enum class RESOLUTION_PRESET {
-	m_720x480 = 0,
+	m_720x480,
 	m_1280x720,
 	m_1920x1080,
 	MAX
@@ -56,7 +56,7 @@ public:
 	std::vector<SDL_DisplayMode> displayModes;
 
 private:
-	int currentResolutionPreset = 2;
+	int currentResolutionPreset = (int) RESOLUTION_PRESET::m_1920x1080;
 
 	WindowMode windowMode = WindowMode::WINDOWED;
 	int currentDisplayMode = 0;

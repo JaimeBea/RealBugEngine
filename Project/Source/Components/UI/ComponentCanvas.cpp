@@ -8,8 +8,6 @@
 #include "Modules/ModuleEditor.h"
 #include "imgui.h"
 
-#include "Utils/Logging.h"
-
 #include "Utils/Leaks.h"
 
 void ComponentCanvas::Init() {
@@ -58,7 +56,6 @@ float ComponentCanvas::GetScreenFactor() {
 
 void ComponentCanvas::RecalculateSizeAndScreenFactor() {
 	if (dirty) {
-		LOG("RECALCULATED");
 		if (App->userInterface->IsUsing2D()) {
 			size = App->renderer->GetViewportSize();
 		} else {

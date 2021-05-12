@@ -395,7 +395,7 @@ namespace Screen {
 	TESSERACT_ENGINE_API float2 GetResolution();
 
 	enum RESOLUTION_PRESET {
-		m_720x480 = 0,
+		m_720x480,
 		m_1280x720,
 		m_1920x1080,
 		MAX
