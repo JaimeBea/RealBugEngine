@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 4990264984456764582,
+    "GameCamera": 2229784667101816431,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.8045159578323365,
+                            "HorizontalFov": 1.5780153274536133,
                             "VerticalFov": 1.0
                         }
                     },
@@ -5892,6 +5892,19 @@
                                                                 "AlphaTransparency": true,
                                                                 "IsFill": false,
                                                                 "FillValue": 0.0
+                                                            },
+                                                            {
+                                                                "Type": "Script",
+                                                                "Id": 175685159597941308,
+                                                                "Active": true,
+                                                                "Script": 8904931518213825893,
+                                                                "Values": [
+                                                                    {
+                                                                        "Name": "textObjectID",
+                                                                        "Type": "GameObjectUID",
+                                                                        "Value": 3081938161124571601
+                                                                    }
+                                                                ]
                                                             }
                                                         ],
                                                         "Children": null
@@ -6151,6 +6164,24 @@
                                                                 "AlphaTransparency": true,
                                                                 "IsFill": false,
                                                                 "FillValue": 0.0
+                                                            },
+                                                            {
+                                                                "Type": "Script",
+                                                                "Id": 16195036826931821285,
+                                                                "Active": true,
+                                                                "Script": 8904931518213825893,
+                                                                "Values": [
+                                                                    {
+                                                                        "Name": "textObjectID",
+                                                                        "Type": "GameObjectUID",
+                                                                        "Value": 3081938161124571601
+                                                                    },
+                                                                    {
+                                                                        "Name": "increasing",
+                                                                        "Type": "Bool",
+                                                                        "Value": true
+                                                                    }
+                                                                ]
                                                             }
                                                         ],
                                                         "Children": null
@@ -6400,7 +6431,7 @@
                                                                 "Type": "Script",
                                                                 "Id": 18043691330398927814,
                                                                 "Active": true,
-                                                                "Script": 0,
+                                                                "Script": 13941812136895811843,
                                                                 "Values": null
                                                             }
                                                         ],
