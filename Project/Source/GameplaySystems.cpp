@@ -48,8 +48,6 @@ void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 }
 
 void GameplaySystems::DestroyGameObject(GameObject* gameObject) {
-	bool selected = App->editor->selectedGameObject != nullptr;
-	if (selected) App->editor->selectedGameObject = nullptr;
 	App->scene->DestroyGameObjectDeferred(gameObject);
 }
 
