@@ -18,6 +18,14 @@ GENERATE_BODY_IMPL(VolumeControl);
 void VolumeControl::Start() {
 	sliderGO = GameplaySystems::GetGameObject(sliderUID);
 	gameCamera = GameplaySystems::GetGameObject(gameCameraUID);
+	if (sliderGO && gameCamera) {
+		ComponentSlider* comSlider = sliderGO->GetComponent<ComponentSlider>();
+		ComponentAudioListener* comAudioLis = gameCamera->GetComponent<ComponentAudioListener>();
+		if (comSlider && comAudioLis) {
+			float volume = comSlider->GetNormalizedValue();
+			comAudioLis->SetAudioVolume(volume);
+		}
+	}
 }
 
 void VolumeControl::Update() {

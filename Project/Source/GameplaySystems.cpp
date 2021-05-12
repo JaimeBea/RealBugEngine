@@ -14,6 +14,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
+#include "Modules/ModuleAudio.h"
 #include "Resources/ResourcePrefab.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/Logging.h"
@@ -234,4 +235,10 @@ void Screen::SetFullScreen(bool fullscreen_) {
 
 bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
 	return App->renderer->ObjectInsideFrustum(gameObject);
+}
+
+// --------- Audio --------- //
+
+void Audio::StopAllSources() {
+	App->audio->StopAllSources();
 }

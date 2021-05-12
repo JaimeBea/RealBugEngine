@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 7616248138163313100,
+    "GameCamera": 4990264984456764582,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.7805677652359009,
+                            "HorizontalFov": 1.8045159578323365,
                             "VerticalFov": 1.0
                         }
                     },
@@ -172,6 +172,12 @@
                         "Active": true,
                         "Script": 8205703692535477266,
                         "Values": null
+                    },
+                    {
+                        "Type": "AudioListener",
+                        "Id": 13146572848985661355,
+                        "Active": true,
+                        "Gain": 1.0
                     }
                 ],
                 "Children": null
@@ -4252,7 +4258,7 @@
                                                         "Active": true,
                                                         "MinValue": 0.0,
                                                         "MaxValue": 100.0,
-                                                        "CurrentValue": 58.46778869628906,
+                                                        "CurrentValue": 50.83300018310547,
                                                         "Direction": 0,
                                                         "StopOnEdges": true,
                                                         "ColorClick": [
@@ -4425,7 +4431,7 @@
                                                                 "Id": 10973370975399044004,
                                                                 "Active": true,
                                                                 "Position": [
-                                                                    -66.4515380859375,
+                                                                    -78.66720581054688,
                                                                     0.0,
                                                                     0.0
                                                                 ],
@@ -4450,12 +4456,12 @@
                                                                     0.5
                                                                 ],
                                                                 "PivotPosition": [
-                                                                    -66.4515380859375,
+                                                                    -78.66720581054688,
                                                                     0.0,
                                                                     0.0
                                                                 ],
                                                                 "Size": [
-                                                                    187.096923828125,
+                                                                    162.66558837890626,
                                                                     30.0
                                                                 ],
                                                                 "AnchorMin": [
@@ -4530,7 +4536,7 @@
                                                                 "Id": 15865194854429167531,
                                                                 "Active": true,
                                                                 "Position": [
-                                                                    27.096923828125,
+                                                                    2.66558837890625,
                                                                     0.0,
                                                                     0.0
                                                                 ],
@@ -4555,7 +4561,7 @@
                                                                     0.5
                                                                 ],
                                                                 "PivotPosition": [
-                                                                    27.096923828125,
+                                                                    2.66558837890625,
                                                                     0.0,
                                                                     0.0
                                                                 ],
@@ -21443,6 +21449,70 @@
                         ]
                     }
                 ]
+            },
+            {
+                "Id": 13025999119372003325,
+                "Name": "AudioController",
+                "Active": true,
+                "ActiveHierarchy": true,
+                "RootBoneId": 0,
+                "Components": [
+                    {
+                        "Type": "Transform",
+                        "Id": 11341155666513997532,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ]
+                    },
+                    {
+                        "Type": "AudioSource",
+                        "Id": 15762849361944929010,
+                        "Active": true,
+                        "Pitch": 1.0,
+                        "Gain": 1.0,
+                        "Mute": false,
+                        "Looping": false,
+                        "AudioClipId": 12622888090304038422,
+                        "SpatialBlend": 0,
+                        "SourceType": 0,
+                        "InnerAngle": 90.0,
+                        "OuterAngle": 180.0,
+                        "OuterGain": 0.0
+                    },
+                    {
+                        "Type": "Script",
+                        "Id": 11040302854968678752,
+                        "Active": true,
+                        "Script": 7262376774633688575,
+                        "Values": [
+                            {
+                                "Name": "audioSourceUID",
+                                "Type": "GameObjectUID",
+                                "Value": 13025999119372003325
+                            }
+                        ]
+                    }
+                ],
+                "Children": null
             }
         ]
     }
