@@ -70,6 +70,24 @@ UpdateStatus ModuleUserInterface::Update() {
 	return UpdateStatus::CONTINUE;
 }
 
+UpdateStatus ModuleUserInterface::PostUpdate() {
+	if (viewportWasResized) {
+		viewportWasResized = false;
+		for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
+			canvas.Invalidate();
+		}
+
+		for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
+			transform.Invalidate();
+		}
+
+		for (ComponentText& text : App->scene->scene->textComponents) {
+			text.RecalculcateVertices();
+		}
+	}
+	return UpdateStatus::CONTINUE;
+}
+
 bool ModuleUserInterface::CleanUp() {
 	glDeleteBuffers(1, &quadVBO);
 	return true;
@@ -220,17 +238,7 @@ ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
 }
 
 void ModuleUserInterface::ViewportResized() {
-	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
-		canvas.Invalidate();
-	}
-
-	for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
-		transform.Invalidate();
-	}
-
-	for (ComponentText& text : App->scene->scene->textComponents) {
-		text.RecalculcateVertices();
-	}
+	viewportWasResized = true;
 }
 
 bool ModuleUserInterface::IsUsing2D() const {

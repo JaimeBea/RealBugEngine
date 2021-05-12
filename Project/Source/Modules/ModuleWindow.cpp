@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
+#include "Modules/ModuleEvents.h"
 
 #include "SDL.h"
 
@@ -106,6 +107,7 @@ void ModuleWindow::SetSize(int width, int height) {
 	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_SetWindowSize(window, width, height);
 	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex));
+	App->events->AddEvent(TesseractEvent(TesseractEventType::SCREEN_RESIZED));
 }
 
 void ModuleWindow::SetBrightness(float brightness) {

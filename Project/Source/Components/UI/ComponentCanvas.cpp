@@ -8,10 +8,11 @@
 #include "Modules/ModuleEditor.h"
 #include "imgui.h"
 
+#include "Utils/Logging.h"
+
 #include "Utils/Leaks.h"
 
 void ComponentCanvas::Init() {
-	
 }
 
 void ComponentCanvas::Save(JsonValue jComponent) const {
@@ -57,6 +58,7 @@ float ComponentCanvas::GetScreenFactor() {
 
 void ComponentCanvas::RecalculateSizeAndScreenFactor() {
 	if (dirty) {
+		LOG("RECALCULATED");
 		if (App->userInterface->IsUsing2D()) {
 			size = App->renderer->GetViewportSize();
 		} else {
@@ -64,6 +66,7 @@ void ComponentCanvas::RecalculateSizeAndScreenFactor() {
 		}
 		float2 factor = size.Div(screenReferenceSize);
 		screenFactor = factor.x < factor.y ? factor.x : factor.y;
+		dirty = false;
 	}
 }
 

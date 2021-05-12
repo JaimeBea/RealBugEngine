@@ -202,3 +202,11 @@ float Screen::GetScreenWitdh() {
 float Screen::GetScreenHeight() {
 	return static_cast<float>(App->window->GetHeight());
 }
+
+void Screen::SetResolution(int width_, int height_) {
+	App->window->SetSize(width_, height_);
+}
+
+float2 Screen::GetResolution() {
+	return float2(App->window->GetWidth(), App->window->GetHeight());
+}

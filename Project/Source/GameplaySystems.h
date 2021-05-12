@@ -390,6 +390,8 @@ namespace Input {
 namespace Screen {
 	TESSERACT_ENGINE_API float GetScreenWitdh();
 	TESSERACT_ENGINE_API float GetScreenHeight();
+	TESSERACT_ENGINE_API void SetResolution(int width_, int height_);
+	TESSERACT_ENGINE_API float2 GetResolution();
 }; // namespace Screen
 
 namespace SceneManager {
