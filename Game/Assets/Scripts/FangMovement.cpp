@@ -47,7 +47,7 @@ void FangMovement::Update() {
 					ResourceMaterial* material = GameplaySystems::GetResource<ResourceMaterial>(meshRenderer->materialId);
 					material->diffuseColor = float4(Colors::Red(), 1.0);
 				}
-				AIMovement* enemyScript = static_cast<AIMovement*>hitGo->GetComponent<ComponentScript>()->GetScriptInstance();
+				AIMovement* enemyScript = static_cast<AIMovement*>(hitGo->GetComponent<ComponentScript>()->GetScriptInstance());
 				enemyScript->HitDetected();
 
 			} else {
