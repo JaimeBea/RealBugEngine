@@ -133,7 +133,7 @@ void PlayerController::Dash() {
 	}
 }
 
-bool const PlayerController::CanDash() const {
+bool PlayerController::CanDash() {
 	return !dashing && !dashInCooldown;
 }
 
@@ -152,7 +152,7 @@ void PlayerController::CheckCoolDowns() {
 	}
 }
 
-bool const PlayerController::CanSwitch() const {
+bool PlayerController::CanSwitch() {
 	return !switchInCooldown;
 }
 
