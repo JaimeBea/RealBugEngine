@@ -26,6 +26,10 @@
 #define JSON_TAG_TYPE "Type"
 #define JSON_TAG_VALUE "Value"
 
+void ComponentScript::Init() {
+	if (scriptInstance) scriptInstance->Start();
+}
+
 void ComponentScript::OnEditorUpdate() {
 	if (ImGui::Checkbox("Active", &active)) {
 		if (GetOwner().IsActive()) {
