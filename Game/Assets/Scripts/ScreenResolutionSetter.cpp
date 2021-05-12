@@ -2,12 +2,12 @@
 
 #include "GameplaySystems.h"
 #include "Components/UI/ComponentText.h"
+#include "Modules/ModuleWindow.h"
 #include "GameObject.h"
+#include "ScreenResolutionConfirmer.h"
 
-
-int ScreenResolutionSetter::currentResolution = 2;
-int ScreenResolutionSetter::preSelectedResolution = 2;
-bool ScreenResolutionSetter::confirmationWasRequested = 2;
+bool screenResolutionChangeConfirmationWasRequested;
+int preSelectedScreenResolutionPreset;
 
 EXPOSE_MEMBERS(ScreenResolutionSetter) {
 
@@ -25,28 +25,18 @@ void ScreenResolutionSetter::Start() {
 	}
 
 	UpdateText();
-	preSelectedResolution = currentResolution = 2;
+	screenResolutionChangeConfirmationWasRequested = false;
+	preSelectedScreenResolutionPreset = 2;
 }
 
 void ScreenResolutionSetter::Update() {
-	if (confirmationWasRequested) {
-		if (currentResolution != preSelectedResolution) {
-			currentResolution = preSelectedResolution;
+	if (screenResolutionChangeConfirmationWasRequested) {
+		if (Screen::GetResolutionPreset() != preSelectedScreenResolutionPreset) {
 
-			switch (currentResolution) {
-			case RESOLUTION::m_1920x1080:
-				Screen::SetResolution(1920, 1080);
-				break;
-			case RESOLUTION::m_1080x720:
-				Screen::SetResolution(1080, 720);
-				break;
-			case RESOLUTION::m_720x480:
-				Screen::SetResolution(720, 480);
-				break;
-			}
+			Screen::SetResolutionPreset(preSelectedScreenResolutionPreset);
 
 		}
-		confirmationWasRequested = false;
+		screenResolutionChangeConfirmationWasRequested = false;
 	}
 }
 
@@ -55,19 +45,13 @@ void ScreenResolutionSetter::OnButtonClick() {
 }
 
 void ScreenResolutionSetter::IncreaseResolution(int multiplier) {
+	preSelectedScreenResolutionPreset = preSelectedScreenResolutionPreset + multiplier;
 
-	std::string message = "Multiplier was " + std::to_string(multiplier) + ", current res was " + std::to_string((currentResolution));
-	Debug::Log(message.c_str());
-
-	preSelectedResolution = preSelectedResolution + multiplier;
-
-
-	if (preSelectedResolution < 0) {
-		preSelectedResolution = RESOLUTION::m_720x480;
-	} else if (preSelectedResolution >= RESOLUTION::MAX) {
-		preSelectedResolution = RESOLUTION::MAX - 1;
+	if (preSelectedScreenResolutionPreset < 0) {
+		preSelectedScreenResolutionPreset = Screen::RESOLUTION_PRESET::m_720x480;
+	} else if (preSelectedScreenResolutionPreset >= Screen::RESOLUTION_PRESET::MAX) {
+		preSelectedScreenResolutionPreset = Screen::RESOLUTION_PRESET::MAX - 1;
 	}
-
 
 	UpdateText();
 }
@@ -79,24 +63,24 @@ void ScreenResolutionSetter::UpdateText() {
 }
 
 int ScreenResolutionSetter::GetPreSelectedWidth() {
-	switch (preSelectedResolution) {
-	case RESOLUTION::m_1920x1080:
+	switch (preSelectedScreenResolutionPreset) {
+	case Screen::RESOLUTION_PRESET::m_1920x1080:
 		return 1920;
-	case RESOLUTION::m_1080x720:
+	case Screen::RESOLUTION_PRESET::m_1080x720:
 		return 1080;
-	case RESOLUTION::m_720x480:
+	case Screen::RESOLUTION_PRESET::m_720x480:
 		return 720;
 	}
 	return 0;
 }
 
 int ScreenResolutionSetter::GetPreSelectedHeight() {
-	switch (preSelectedResolution) {
-	case RESOLUTION::m_1920x1080:
+	switch (preSelectedScreenResolutionPreset) {
+	case Screen::RESOLUTION_PRESET::m_1920x1080:
 		return 1080;
-	case RESOLUTION::m_1080x720:
+	case Screen::RESOLUTION_PRESET::m_1080x720:
 		return 720;
-	case RESOLUTION::m_720x480:
+	case Screen::RESOLUTION_PRESET::m_720x480:
 		return 480;
 	}
 	return 0;

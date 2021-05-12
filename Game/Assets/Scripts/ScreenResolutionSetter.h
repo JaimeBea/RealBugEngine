@@ -5,6 +5,7 @@
 class ComponentText;
 
 
+
 class ScreenResolutionSetter : public Script {
 	GENERATE_BODY(ScreenResolutionSetter);
 
@@ -15,11 +16,8 @@ public:
 	void OnButtonClick() override;
 
 public:
-	bool increasing;
-	UID textObjectID;
-	static int currentResolution;
-	static int preSelectedResolution;
-	static bool confirmationWasRequested;
+	bool increasing = false;
+	UID textObjectID = 0;
 
 private:
 	void IncreaseResolution(int multiplier);
@@ -27,12 +25,7 @@ private:
 	int GetPreSelectedWidth();
 	int GetPreSelectedHeight();
 private:
-	enum RESOLUTION {
-		m_720x480 = 0,
-		m_1080x720,
-		m_1920x1080,
-		MAX
-	};
-	ComponentText* text;
+
+	ComponentText* text = nullptr;
 };
 

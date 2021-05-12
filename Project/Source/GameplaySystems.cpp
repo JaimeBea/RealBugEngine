@@ -210,3 +210,11 @@ void Screen::SetResolution(int width_, int height_) {
 float2 Screen::GetResolution() {
 	return float2(App->window->GetWidth(), App->window->GetHeight());
 }
+
+int Screen::GetResolutionPreset() {
+	return App->window->GetResolutionPreset();
+}
+
+void Screen::SetResolutionPreset(int resolutionPreset_) {
+	App->window->SetResolutionPreset(resolutionPreset_);
+}
