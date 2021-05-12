@@ -3,6 +3,7 @@
 #include "Scripting/Script.h"
 
 class ComponentAnimation;
+class ComponentTransform;
 struct TesseractEvent;
 
 enum class AIState {
@@ -51,9 +52,10 @@ public:
 private:
 
 	float3 velocity = float3(0, 0, 0);	
-	AIState state = AIState::SPAWN;
+	AIState state = AIState::START;
 	bool hitTaken = false;
 	ComponentAnimation* animation = nullptr;
+	ComponentTransform* parentTransform = nullptr;
 
 };
 

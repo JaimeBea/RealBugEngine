@@ -26,7 +26,7 @@ void FangMovement::Update() {
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	if (cameraTransform) {
 		float modifier = 1.0f;
-		if (cameraTransform->GetPosition().x < cameraXPosition) {
+		/*if (cameraTransform->GetPosition().x < cameraXPosition) {*/
 			if (Input::GetKeyCode(Input::KEYCODE::KEY_LSHIFT)) {
 				modifier = 2.0f;
 			}
@@ -62,6 +62,6 @@ void FangMovement::Update() {
 					transform->SetPosition(newPosition);
 				}
 			}
-		}
+		/*}*/
 	}
 }
