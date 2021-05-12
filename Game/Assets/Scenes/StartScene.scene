@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 5650449088193362448,
+    "GameCamera": 7616248138163313100,
     "AmbientLight": [
         0.0,
         0.0,
@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.6815065145492554,
+                            "HorizontalFov": 1.7805677652359009,
                             "VerticalFov": 1.0
                         }
                     },
@@ -4252,7 +4252,7 @@
                                                         "Active": true,
                                                         "MinValue": 0.0,
                                                         "MaxValue": 100.0,
-                                                        "CurrentValue": 50.130165100097659,
+                                                        "CurrentValue": 58.46778869628906,
                                                         "Direction": 0,
                                                         "StopOnEdges": true,
                                                         "ColorClick": [
@@ -4260,6 +4260,24 @@
                                                             0.6399999856948853,
                                                             0.6399999856948853,
                                                             1.0
+                                                        ]
+                                                    },
+                                                    {
+                                                        "Type": "Script",
+                                                        "Id": 7361625394535316490,
+                                                        "Active": true,
+                                                        "Script": 2686017189653035029,
+                                                        "Values": [
+                                                            {
+                                                                "Name": "sliderUID",
+                                                                "Type": "GameObjectUID",
+                                                                "Value": 6774734302080035705
+                                                            },
+                                                            {
+                                                                "Name": "gameCameraUID",
+                                                                "Type": "GameObjectUID",
+                                                                "Value": 2161515125610565667
+                                                            }
                                                         ]
                                                     }
                                                 ],
@@ -4407,7 +4425,7 @@
                                                                 "Id": 10973370975399044004,
                                                                 "Active": true,
                                                                 "Position": [
-                                                                    -79.79173278808594,
+                                                                    -66.4515380859375,
                                                                     0.0,
                                                                     0.0
                                                                 ],
@@ -4432,12 +4450,12 @@
                                                                     0.5
                                                                 ],
                                                                 "PivotPosition": [
-                                                                    -79.79173278808594,
+                                                                    -66.4515380859375,
                                                                     0.0,
                                                                     0.0
                                                                 ],
                                                                 "Size": [
-                                                                    160.41653442382813,
+                                                                    187.096923828125,
                                                                     30.0
                                                                 ],
                                                                 "AnchorMin": [
@@ -4512,7 +4530,7 @@
                                                                 "Id": 15865194854429167531,
                                                                 "Active": true,
                                                                 "Position": [
-                                                                    0.416534423828125,
+                                                                    27.096923828125,
                                                                     0.0,
                                                                     0.0
                                                                 ],
@@ -4537,7 +4555,7 @@
                                                                     0.5
                                                                 ],
                                                                 "PivotPosition": [
-                                                                    0.416534423828125,
+                                                                    27.096923828125,
                                                                     0.0,
                                                                     0.0
                                                                 ],
@@ -4586,7 +4604,7 @@
                                     {
                                         "Id": 14451826682266367770,
                                         "Name": "PanelSFX",
-                                        "Active": true,
+                                        "Active": false,
                                         "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
@@ -6920,7 +6938,7 @@
                                                         "Type": "Toggle",
                                                         "Id": 15093266413720136250,
                                                         "Active": true,
-                                                        "IsOn": true,
+                                                        "IsOn": false,
                                                         "EnabledImageID": 9371020534559817943,
                                                         "ClickedColor": [
                                                             0.6399999856948853,
@@ -6943,6 +6961,13 @@
                                                         "AlphaTransparency": false,
                                                         "IsFill": false,
                                                         "FillValue": 0.0
+                                                    },
+                                                    {
+                                                        "Type": "Script",
+                                                        "Id": 2707396259803188265,
+                                                        "Active": true,
+                                                        "Script": 3773765605203017198,
+                                                        "Values": null
                                                     }
                                                 ],
                                                 "Children": [
@@ -7036,7 +7061,7 @@
                                                             {
                                                                 "Type": "Image",
                                                                 "Id": 8581382523985226562,
-                                                                "Active": true,
+                                                                "Active": false,
                                                                 "TextureId": 0,
                                                                 "Color": [
                                                                     0.9254902005195618,
@@ -19564,8 +19589,19 @@
                                                         "Type": "Script",
                                                         "Id": 2743780981792462634,
                                                         "Active": true,
-                                                        "Script": 0,
-                                                        "Values": null
+                                                        "Script": 12157201923923967241,
+                                                        "Values": [
+                                                            {
+                                                                "Name": "offUID",
+                                                                "Type": "GameObjectUID",
+                                                                "Value": 12806387837658790206
+                                                            },
+                                                            {
+                                                                "Name": "onUID",
+                                                                "Type": "GameObjectUID",
+                                                                "Value": 9568255146534380835
+                                                            }
+                                                        ]
                                                     }
                                                 ],
                                                 "Children": [
@@ -20027,8 +20063,19 @@
                                                         "Type": "Script",
                                                         "Id": 4848554463590176733,
                                                         "Active": true,
-                                                        "Script": 0,
-                                                        "Values": null
+                                                        "Script": 12157201923923967241,
+                                                        "Values": [
+                                                            {
+                                                                "Name": "offUID",
+                                                                "Type": "GameObjectUID",
+                                                                "Value": 12806387837658790206
+                                                            },
+                                                            {
+                                                                "Name": "onUID",
+                                                                "Type": "GameObjectUID",
+                                                                "Value": 9568255146534380835
+                                                            }
+                                                        ]
                                                     }
                                                 ],
                                                 "Children": [

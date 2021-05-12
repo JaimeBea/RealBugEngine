@@ -26,7 +26,7 @@ void ScreenResolutionSetter::Start() {
 
 	UpdateText();
 	screenResolutionChangeConfirmationWasRequested = false;
-	preSelectedScreenResolutionPreset = 2;
+	preSelectedScreenResolutionPreset = 1;
 }
 
 void ScreenResolutionSetter::Update() {

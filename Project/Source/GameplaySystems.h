@@ -404,6 +404,8 @@ namespace Screen {
 	TESSERACT_ENGINE_API int GetResolutionPreset();
 	TESSERACT_ENGINE_API void SetResolutionPreset(int resolutionPreset_);
 
+	TESSERACT_ENGINE_API bool IsFullScreenOn();
+	TESSERACT_ENGINE_API void SetFullScreen(bool fullscreen_);
 }; // namespace Screen
 
 namespace SceneManager {

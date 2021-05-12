@@ -53,7 +53,9 @@ bool ModuleWindow::Init() {
 
 	// Set the current display mode to the first one
 	SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
-
+#if GAME
+	SetResolutionPreset(1);
+#endif
 	return true;
 }
 
@@ -80,7 +82,8 @@ void ModuleWindow::SetWindowMode(WindowMode mode) {
 		break;
 	case WindowMode::FULLSCREEN:
 		SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowBordered(window, SDL_FALSE);
+		SDL_SetWindowFullscreen(window, SDL_TRUE);
 		break;
 	case WindowMode::FULLSCREEN_DESKTOP:
 		SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);

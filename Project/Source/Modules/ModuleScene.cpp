@@ -93,7 +93,7 @@ bool ModuleScene::Start() {
 
 #if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
-	SceneImporter::LoadScene("Assets/Scenes/Level1-34.scene");
+	SceneImporter::LoadScene("Assets/Scenes/StartScene.scene");
 	App->renderer->SetVSync(false);
 	App->time->limitFramerate = false;
 #else
@@ -180,7 +180,6 @@ void ModuleScene::CreateEmptyScene() {
 	ComponentSkyBox* gameCameraSkybox = gameCamera->CreateComponent<ComponentSkyBox>();
 	ComponentAudioListener* audioListener = gameCamera->CreateComponent<ComponentAudioListener>();
 	gameCamera->InitComponents();
-
 }
 
 void ModuleScene::DestroyGameObjectDeferred(GameObject* gameObject) {

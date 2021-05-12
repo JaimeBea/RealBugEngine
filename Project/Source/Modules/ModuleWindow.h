@@ -56,7 +56,7 @@ public:
 	std::vector<SDL_DisplayMode> displayModes;
 
 private:
-	int currentResolutionPreset = (int) RESOLUTION_PRESET::m_1920x1080;
+	int currentResolutionPreset = (int) RESOLUTION_PRESET::m_1280x720;
 
 	WindowMode windowMode = WindowMode::WINDOWED;
 	int currentDisplayMode = 0;
