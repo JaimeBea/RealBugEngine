@@ -48,6 +48,10 @@ void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeCullingCamera(camera, true);
 }
 
+void GameplaySystems::DestroyGameObject(GameObject* gameObject) {
+	App->scene->DestroyGameObjectDeferred(gameObject);
+}
+
 // ------------- DEBUG ------------- //
 
 void Debug::Log(const char* fmt, ...) {
@@ -201,3 +205,12 @@ float Screen::GetScreenHeight() {
 
 	return static_cast<float>(App->window->GetHeight());
 }
+<<<<<<< HEAD
+=======
+
+// --------- Camera --------- //
+
+bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
+	return App->renderer->ObjectInsideFrustum(gameObject);
+}
+>>>>>>> feature/CU-hk6hva-AIMovementScript
