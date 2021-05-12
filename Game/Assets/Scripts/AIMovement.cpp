@@ -50,7 +50,7 @@ void AIMovement::Update() {
     {
     case AIState::START:
         if (Camera::CheckObjectInsideFrustum(&GetOwner())) {
-            Seek(float3(GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().x, 0, GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().x));
+            Seek(float3(GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().x, 0, GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().z), fallingSpeed);
             if (GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition().y == 0) {
                 animation->SendTrigger("StartSpawn");
                 state = AIState::SPAWN;
@@ -72,7 +72,7 @@ void AIMovement::Update() {
         }
         break;
     case AIState::RUN:
-        Seek(currentTarget->GetComponent<ComponentTransform>()->GetGlobalPosition());
+        Seek(currentTarget->GetComponent<ComponentTransform>()->GetGlobalPosition(), maxSpeed);
         if (CharacterInMeleeRange(currentTarget)) {
             animation->SendTrigger("RunAttack");
             state = AIState::ATTACK;
@@ -115,10 +115,8 @@ void AIMovement::ReceiveEvent(TesseractEvent& e)
             state = AIState::DEATH;
         }
         else if (state == AIState::DEATH) {
-            //delete this object
+            GameplaySystems::DestroyGameObject(&GetOwner());
         }
-
-
         break;
     }
 }
@@ -145,17 +143,20 @@ bool AIMovement::CharacterInMeleeRange(const GameObject* character)
     return false;
 }
 
-void AIMovement::Seek(const float3& newPosition)
+void AIMovement::Seek(const float3& newPosition, int speed)
 {
 
     float3 position = GetOwner().GetComponent<ComponentTransform>()->GetGlobalPosition();
     float3 direction = newPosition - position;
 
-    velocity = direction.Normalized() * maxSpeed;
+    velocity = direction.Normalized() * speed;
 
     position += velocity * Time::GetDeltaTime();
 
-    GetOwner().GetComponent<ComponentTransform>()->SetGlobalPosition(position);    
+    GetOwner().GetComponent<ComponentTransform>()->SetGlobalPosition(position);
+
+    Quat newRotation = Quat::LookAt(float3(0, 0, 1), direction.Normalized(), float3(0, 1, 0), float3(0, 1, 0));
+    GetOwner().GetComponent<ComponentTransform>()->SetGlobalRotation(newRotation);
 }
 
 bool AIMovement::HitDetected()

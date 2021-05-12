@@ -28,7 +28,7 @@ public:
 private:
 	bool CharacterInSight(const GameObject* character);
 	bool CharacterInMeleeRange(const GameObject* character);
-	void Seek(const float3& newPosition);
+	void Seek(const float3& newPosition, int speed);
 	bool HitDetected();
 	
 
@@ -40,6 +40,7 @@ public:
 	GameObject* onimaru = nullptr;
 	GameObject* currentTarget = nullptr;
 	int maxSpeed = 8;
+	int fallingSpeed = 15;
 	float searchRadius = 50.f;
 	float meleeRange = 5.f;
 	int lifePoints = 3;
