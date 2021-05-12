@@ -64,8 +64,10 @@ private:
 	bool CanSwitch();
 	float3 GetDirection(MovementDirection md) const;
 	MovementDirection GetInputMovementDirection() const;
-
+	int GetMouseDirectionState(MovementDirection input);
 private:
+	
+	float3 facePointDir = float3(0,0,0);
 
 	float dashError = 2.f;
 	float dashCooldownRemaing = 0.f;
@@ -78,7 +80,7 @@ private:
 	float3 initialPosition = float3(0, 0, 0);
 	float3 dashDestination = float3(0, 0, 0);
 	float3 dashDirection = float3(0, 0, 0);
-
+	MovementDirection dashMovementDirection = MovementDirection::NONE;
 	ComponentTransform* transform = nullptr;
 	ComponentCamera* compCamera = nullptr;
 	

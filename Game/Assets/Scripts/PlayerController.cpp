@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <string>
 
+#define PI 3.14159
+
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
 	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
@@ -79,12 +81,11 @@ void PlayerController::LookAtMouse() {
 	LineSegment ray = compCamera->frustum.UnProjectLineSegment(mousePos.x, mousePos.y);
 	float3 cameraGlobalPos = camera->GetComponent<ComponentTransform>()->GetGlobalPosition();
 	Plane p = Plane(transform->GetGlobalPosition(), float3(0, 1, 0));
-	float3 facePoint = float3(0, 0, 0);
+	facePointDir = float3(0, 0, 0);
 	cameraGlobalPos.z = 0;
-	facePoint = p.ClosestPoint(ray) - (transform->GetGlobalPosition());
-	//Debug::Log((" x: " + std::to_string(facePoint.x) + " y: " + std::to_string(facePoint.y) + " z: " + std::to_string(facePoint.z)).c_str());
+	facePointDir = p.ClosestPoint(ray) - (transform->GetGlobalPosition());
 	Quat quat = transform->GetRotation();
-	float angle = Atan2(facePoint.x, facePoint.z);
+	float angle = Atan2(facePointDir.x, facePointDir.z);
 	Quat rotation = quat.RotateAxisAngle(float3(0, 1, 0), angle);
 	transform->SetRotation(rotation);
 }
@@ -125,6 +126,7 @@ float3 PlayerController::GetDirection(MovementDirection md) const {
 
 void PlayerController::InitDash(MovementDirection md) {
 	dashDirection = GetDirection(md);
+	dashMovementDirection = md;
 	dashDestination = transform->GetPosition();
 	dashDestination += dashDistance * dashDirection;
 	dashCooldownRemaing = dashCooldown;
@@ -155,6 +157,7 @@ void PlayerController::CheckCoolDowns() {
 	if (dashCooldownRemaing <= 0.f) {
 		dashCooldownRemaing = 0.f;
 		dashInCooldown = false;
+		dashMovementDirection = MovementDirection::NONE;
 	}
 
 	if (switchCooldownRemaing <= 0.f) {
@@ -212,6 +215,27 @@ MovementDirection PlayerController::GetInputMovementDirection() const{
 	return md;
 }
 
+int PlayerController::GetMouseDirectionState(MovementDirection input){
+	float3 inputDirection = GetDirection(input);
+	float dot = Dot(inputDirection.Normalized() , facePointDir.Normalized());
+	Debug::Log(std::to_string(sin(acos(dot))).c_str());
+	if(sin(acos(dot)) >= 0){
+		if(cos(7 * PI/4) < dot && dot <= cos(PI/4)){
+			return 2; //RunForward
+		}else if(cos(PI/4) < dot && dot <= cos(3 * PI/4)){
+			return 4; //RunRight  V
+		}
+	}else 
+	{
+		if(cos(3 * PI/4) < dot && dot <= cos(5 * PI/4)){
+			return 1; //RunBackward V
+		}else if(cos(5 * PI/4) < dot && dot <= cos(7 * PI/4)){
+			return 3; //RunLeft
+		}
+	}
+	return 0;
+}
+
 void PlayerController::PlayAnimation(MovementDirection md, bool isFang){
 	
 	ComponentAnimation* animation = nullptr;
@@ -227,22 +251,26 @@ void PlayerController::PlayAnimation(MovementDirection md, bool isFang){
 	if (currentState != animation->GetCurrentState()){
 		currentState = animation->GetCurrentState();
 	}
-	
+	int dashAnimation = 0;
+	if (dashing){
+		dashAnimation = 4;
+		md = dashMovementDirection;
+	}
 	switch(md){
 		case MovementDirection::NONE:
 			animation->SendTrigger(currentState->name + PlayerController::states[0]);
 			break;
 		case MovementDirection::LEFT:
-			animation->SendTrigger(currentState->name + PlayerController::states[1]);
+			animation->SendTrigger(currentState->name + PlayerController::states[GetMouseDirectionState(md) + dashAnimation]);
 			break;
 		case MovementDirection::RIGHT:
-			animation->SendTrigger(currentState->name + PlayerController::states[2]);
+			animation->SendTrigger(currentState->name + PlayerController::states[GetMouseDirectionState(md) + dashAnimation]);
 			break;
 		case MovementDirection::UP:
-			animation->SendTrigger(currentState->name + PlayerController::states[3]);
+			animation->SendTrigger(currentState->name + PlayerController::states[GetMouseDirectionState(md) + dashAnimation]);
 			break;
 		case MovementDirection::DOWN:
-			animation->SendTrigger(currentState->name + PlayerController::states[4]);
+			animation->SendTrigger(currentState->name + PlayerController::states[GetMouseDirectionState(md) + dashAnimation]);
 			break;
 	}
 
@@ -252,16 +280,21 @@ void PlayerController::Update() {
 	if (!gameObject) return;
 	if (!camera) return;
 	if (!transform) return;
+
 	CheckCoolDowns();
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
 	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y + cameraOffsetY, (transform->GetGlobalPosition().z + cameraOffsetZ)));
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
+		md = GetInputMovementDirection();
+		if (CanDash() && Input::GetKeyCode(Input::KEYCODE::KEY_SPACE)) {
+			InitDash(md);
+		}
+		Dash();
+
 		if (!dashing) {
-			md = GetInputMovementDirection();
 			LookAtMouse();
-			PlayAnimation(md,fang);
 			if (md != MovementDirection::NONE) {
 				MoveTo(md);
 			}
@@ -269,9 +302,7 @@ void PlayerController::Update() {
 				SwitchCharacter();
 			}
 		}
-		if (CanDash() && Input::GetKeyCode(Input::KEYCODE::KEY_SPACE)) {
-			InitDash(md);
-		}
-		Dash();
+		PlayAnimation(md,fang);
+
 	}
 }
