@@ -205,12 +205,9 @@ float Screen::GetScreenHeight() {
 
 	return static_cast<float>(App->window->GetHeight());
 }
-<<<<<<< HEAD
-=======
 
 // --------- Camera --------- //
 
 bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
 	return App->renderer->ObjectInsideFrustum(gameObject);
 }
->>>>>>> feature/CU-hk6hva-AIMovementScript

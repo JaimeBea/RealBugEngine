@@ -21,6 +21,7 @@ public:
 	void Update() override;
 
 public:
+
 	GameObject* gameObject = nullptr;
 	GameObject* camera = nullptr;
 	GameObject* fang = nullptr;
@@ -38,6 +39,7 @@ public:
 	float dashDistance = 10.f;
 	float cameraOffsetZ = 20.f;
 	float cameraOffsetY = 10.f;
+
 private:
 
 	void MoveTo(MovementDirection md);
@@ -53,13 +55,12 @@ private:
 private:
 
 	float dashError = 2.f;
-
-	bool dashInCooldown = false;
 	float dashCooldownRemaing = 0.f;
+	bool dashInCooldown = false;
 	bool dashing = false;
 
-	bool switchInCooldown = false;
 	float switchCooldownRemaing = 0.f;
+	bool switchInCooldown = false;
 
 	float3 initialPosition = float3(0, 0, 0);
 	float3 dashDestination = float3(0, 0, 0);
