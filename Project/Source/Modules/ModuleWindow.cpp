@@ -3,6 +3,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "Utils/Logging.h"
+#include "Modules/ModuleEvents.h"
 
 #include "SDL.h"
 
@@ -52,7 +53,9 @@ bool ModuleWindow::Init() {
 
 	// Set the current display mode to the first one
 	SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
-
+#if GAME
+	SetResolutionPreset(1);
+#endif
 	return true;
 }
 
@@ -79,7 +82,8 @@ void ModuleWindow::SetWindowMode(WindowMode mode) {
 		break;
 	case WindowMode::FULLSCREEN:
 		SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+		SDL_SetWindowBordered(window, SDL_FALSE);
+		SDL_SetWindowFullscreen(window, SDL_TRUE);
 		break;
 	case WindowMode::FULLSCREEN_DESKTOP:
 		SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
@@ -106,6 +110,9 @@ void ModuleWindow::SetSize(int width, int height) {
 	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_SetWindowSize(window, width, height);
 	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex));
+	TesseractEvent resizeEvent(TesseractEventType::SCREEN_RESIZED);
+	resizeEvent.Set<ViewportResizedStruct>(width, height);
+	App->events->AddEvent(resizeEvent);
 }
 
 void ModuleWindow::SetBrightness(float brightness) {
@@ -163,4 +170,23 @@ float ModuleWindow::GetBrightness() const {
 
 const char* ModuleWindow::GetTitle() const {
 	return SDL_GetWindowTitle(window);
+}
+
+void ModuleWindow::SetResolutionPreset(int resolutionPreset_) {
+	switch ((RESOLUTION_PRESET) resolutionPreset_) {
+	case RESOLUTION_PRESET::m_1920x1080:
+		SetSize(1920, 1080);
+		break;
+	case RESOLUTION_PRESET::m_1280x720:
+		SetSize(1080, 720);
+		break;
+	case RESOLUTION_PRESET::m_720x480:
+		SetSize(720, 480);
+		break;
+	}
+	currentResolutionPreset = resolutionPreset_;
+}
+
+int ModuleWindow::GetResolutionPreset() const {
+	return currentResolutionPreset;
 }

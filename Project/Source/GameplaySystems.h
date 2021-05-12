@@ -391,6 +391,19 @@ namespace Input {
 namespace Screen {
 	TESSERACT_ENGINE_API float GetScreenWitdh();
 	TESSERACT_ENGINE_API float GetScreenHeight();
+	TESSERACT_ENGINE_API void SetResolution(int width_, int height_);
+	TESSERACT_ENGINE_API float2 GetResolution();
+
+	enum RESOLUTION_PRESET {
+		m_720x480,
+		m_1280x720,
+		m_1920x1080,
+		MAX
+	};
+
+	TESSERACT_ENGINE_API int GetResolutionPreset();
+	TESSERACT_ENGINE_API void SetResolutionPreset(int resolutionPreset_);
+
 	TESSERACT_ENGINE_API bool IsFullScreenOn();
 	TESSERACT_ENGINE_API void SetFullScreen(bool fullscreen_);
 }; // namespace Screen
