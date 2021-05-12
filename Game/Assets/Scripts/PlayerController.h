@@ -30,34 +30,36 @@ public:
 	UID robotUID = 0;
 	UID mainNodeUID = 0;
 	UID cameraUID = 0;
+
+	float dashCooldown = 5.f; //seconds
+	float switchCooldown = 5.f;
+	float movementSpeed = 5.f;
+	float dashSpeed = 100.f;
+	float dashDistance = 10.f;
+	float cameraOffsetZ = 20.f;
+	float cameraOffsetY = 10.f;
 private:
+
 	void MoveTo(MovementDirection md);
 	void InitDash(MovementDirection md);
 	void Dash();
 	void LookAtMouse();
+	void CheckCoolDowns();
+	void SwitchCharacter();
 	bool const CanDash() const;
 	bool const CanSwitch() const;
-	void CheckCoolDowns();
 	float3 GetDirection(MovementDirection md) const;
-	void SwitchCharacter();
+
 private:
-	float dashSpeed = 100.f;
-	float dashDistance = 10.f;
+
 	float dashError = 2.f;
 
-	float dashCooldown = 5.f; //seconds
+	bool dashInCooldown = false;
 	float dashCooldownRemaing = 0.f;
-	bool  dashInCooldown = false;
-
-	float offset = 0.f;
-	float movementSpeed = 5.f;
-	float rotationSpeed = 2.f;
 	bool dashing = false;
 
 	bool switchInCooldown = false;
-	float switchCooldown = 5.f;
 	float switchCooldownRemaing = 0.f;
-
 
 	float3 initialPosition = float3(0, 0, 0);
 	float3 dashDestination = float3(0, 0, 0);

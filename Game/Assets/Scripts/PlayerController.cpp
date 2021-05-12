@@ -15,8 +15,22 @@ EXPOSE_MEMBERS(PlayerController) {
 	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
 		MEMBER(MemberType::GAME_OBJECT_UID, robotUID),
 		MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
-		MEMBER(MemberType::GAME_OBJECT_UID, cameraUID)
+		MEMBER(MemberType::GAME_OBJECT_UID, cameraUID),
+		MEMBER(MemberType::FLOAT, switchCooldown),
+		MEMBER(MemberType::FLOAT, dashCooldown),
+		MEMBER(MemberType::FLOAT, dashSpeed),
+		MEMBER(MemberType::FLOAT, dashDistance),
+		MEMBER(MemberType::FLOAT, cameraOffsetZ),
+		MEMBER(MemberType::FLOAT, cameraOffsetY),
+		MEMBER(MemberType::FLOAT, movementSpeed)
 };
+
+float dashCooldown = 5.f; //seconds
+float switchCooldown = 5.f;
+float movementSpeed = 5.f;
+float dashSpeed = 100.f;
+float dashDistance = 10.f;
+float cameraOffsetZ = 20.f;
 
 GENERATE_BODY_IMPL(PlayerController);
 
@@ -61,11 +75,10 @@ void PlayerController::LookAtMouse() {
 	LineSegment ray = compCamera->frustum.UnProjectLineSegment(mousePos.x, mousePos.y);
 	float3 cameraGlobalPos = camera->GetComponent<ComponentTransform>()->GetGlobalPosition();
 	Plane p = Plane(transform->GetGlobalPosition(), float3(0, 1, 0));
-	float dist;
 	float3 facePoint = float3(0, 0, 0);
 	cameraGlobalPos.z = 0;
 	facePoint = p.ClosestPoint(ray) - (transform->GetGlobalPosition());
-	Debug::Log((" x: " + std::to_string(facePoint.x) + " y: " + std::to_string(facePoint.y) + " z: " + std::to_string(facePoint.z)).c_str());
+	//Debug::Log((" x: " + std::to_string(facePoint.x) + " y: " + std::to_string(facePoint.y) + " z: " + std::to_string(facePoint.z)).c_str());
 	Quat quat = transform->GetRotation();
 	float angle = Atan2(facePoint.x, facePoint.z);
 	Quat rotation = quat.RotateAxisAngle(float3(0, 1, 0), angle);
@@ -174,7 +187,7 @@ void PlayerController::Update() {
 	CheckCoolDowns();
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
-	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, cameraTransform->GetGlobalPosition().y, (transform->GetGlobalPosition().z + 20.0f)));
+	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, cameraTransform->GetGlobalPosition().y, (transform->GetGlobalPosition().z + cameraOffsetZ)));
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		if (!dashing) {
