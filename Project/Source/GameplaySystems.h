@@ -391,6 +391,8 @@ namespace Input {
 namespace Screen {
 	TESSERACT_ENGINE_API float GetScreenWitdh();
 	TESSERACT_ENGINE_API float GetScreenHeight();
+	TESSERACT_ENGINE_API bool IsFullScreenOn();
+	TESSERACT_ENGINE_API void SetFullScreen(bool fullscreen_);
 }; // namespace Screen
 
 namespace SceneManager {
