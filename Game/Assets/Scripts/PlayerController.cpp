@@ -25,13 +25,6 @@ EXPOSE_MEMBERS(PlayerController) {
 		MEMBER(MemberType::FLOAT, movementSpeed)
 };
 
-float dashCooldown = 5.f; //seconds
-float switchCooldown = 5.f;
-float movementSpeed = 5.f;
-float dashSpeed = 100.f;
-float dashDistance = 10.f;
-float cameraOffsetZ = 20.f;
-
 GENERATE_BODY_IMPL(PlayerController);
 
 void PlayerController::Start() {
