@@ -38,10 +38,10 @@ public:
 	UID playerUID;
 	GameObject* player = nullptr;
 	int maxSpeed = 8;
-	int fallingSpeed = 15;
-	float searchRadius = 50.f;
+	int fallingSpeed = 30;
+	float searchRadius = 40.f;
 	float meleeRange = 5.f;
-	int lifePoints = 3;
+	int lifePoints = 5;
 	float timeToDie = 5.f;
 	bool dead = false;
 

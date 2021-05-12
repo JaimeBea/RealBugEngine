@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 #include "TesseractEvent.h"
+//#include "PlayerController.h"
 
 EXPOSE_MEMBERS(AIMovement) {
     // Add members here to expose them to the engine. Example:
@@ -73,7 +74,6 @@ void AIMovement::Update() {
     case AIState::HURT:                
         break;
     case AIState::ATTACK:
-        //throws event for protagonist to listen?        
         break;
     case AIState::DEATH:
         break;
@@ -107,6 +107,8 @@ void AIMovement::ReceiveEvent(TesseractEvent& e)
 
         else if(state == AIState::ATTACK)
         {
+            //PlayerController* playerController = static_cast<PlayerController*>(player->GetComponent<ComponentScript>()->GetInstanceScript());
+            //playerController->HitDetected();
             animation->SendTrigger("AttackIdle");
             state = AIState::IDLE;
         }

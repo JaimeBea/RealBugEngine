@@ -7,7 +7,7 @@
     ],
     "QuadtreeMaxDepth": 4,
     "QuadtreeElementsPerNode": 200,
-    "GameCamera": 5405921732797911707,
+    "GameCamera": 73437931147117860,
     "AmbientLight": [
         0.25,
         0.25,
@@ -19,6 +19,7 @@
         "Active": true,
         "ActiveHierarchy": true,
         "RootBoneId": 0,
+        "Mask": 0,
         "Components": [
             {
                 "Type": "Transform",
@@ -54,6 +55,7 @@
                 "Active": true,
                 "ActiveHierarchy": true,
                 "RootBoneId": 0,
+                "Mask": 0,
                 "Components": [
                     {
                         "Type": "Transform",
@@ -106,6 +108,7 @@
                 "Active": true,
                 "ActiveHierarchy": true,
                 "RootBoneId": 0,
+                "Mask": 0,
                 "Components": [
                     {
                         "Type": "Transform",
@@ -181,6 +184,7 @@
                 "Active": true,
                 "ActiveHierarchy": true,
                 "RootBoneId": 4311612257837703062,
+                "Mask": 0,
                 "Components": [
                     {
                         "Type": "Transform",
@@ -223,6 +227,7 @@
                         "Active": true,
                         "ActiveHierarchy": true,
                         "RootBoneId": 0,
+                        "Mask": 0,
                         "Components": [
                             {
                                 "Type": "Transform",
@@ -274,10 +279,10 @@
                                 "Type": "Script",
                                 "Id": 12170785522959435296,
                                 "Active": true,
-                                "Script": 17040513400893414892,
+                                "Script": 6803541990823883369,
                                 "Values": [
                                     {
-                                        "Name": "fangUID",
+                                        "Name": "playerUID",
                                         "Type": "GameObjectUID",
                                         "Value": 4023464245362792029
                                     }
@@ -292,6 +297,7 @@
                         "Active": true,
                         "ActiveHierarchy": true,
                         "RootBoneId": 0,
+                        "Mask": 0,
                         "Components": [
                             {
                                 "Type": "Transform",
@@ -327,6 +333,7 @@
                                 "Active": true,
                                 "ActiveHierarchy": true,
                                 "RootBoneId": 0,
+                                "Mask": 0,
                                 "Components": [
                                     {
                                         "Type": "Transform",
@@ -362,6 +369,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -397,6 +405,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -432,6 +441,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -467,6 +477,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -505,6 +516,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -543,6 +555,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -581,6 +594,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -616,6 +630,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -651,6 +666,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -686,6 +702,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -721,6 +738,7 @@
                                                                         "Active": true,
                                                                         "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
+                                                                        "Mask": 0,
                                                                         "Components": [
                                                                             {
                                                                                 "Type": "Transform",
@@ -756,6 +774,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -791,6 +810,7 @@
                                                                                         "Active": true,
                                                                                         "ActiveHierarchy": true,
                                                                                         "RootBoneId": 0,
+                                                                                        "Mask": 0,
                                                                                         "Components": [
                                                                                             {
                                                                                                 "Type": "Transform",
@@ -826,6 +846,7 @@
                                                                                                 "Active": true,
                                                                                                 "ActiveHierarchy": true,
                                                                                                 "RootBoneId": 0,
+                                                                                                "Mask": 0,
                                                                                                 "Components": [
                                                                                                     {
                                                                                                         "Type": "Transform",
@@ -866,6 +887,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -902,6 +924,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -942,6 +965,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -977,6 +1001,7 @@
                                                                         "Active": true,
                                                                         "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
+                                                                        "Mask": 0,
                                                                         "Components": [
                                                                             {
                                                                                 "Type": "Transform",
@@ -1012,6 +1037,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -1047,6 +1073,7 @@
                                                                                         "Active": true,
                                                                                         "ActiveHierarchy": true,
                                                                                         "RootBoneId": 0,
+                                                                                        "Mask": 0,
                                                                                         "Components": [
                                                                                             {
                                                                                                 "Type": "Transform",
@@ -1089,6 +1116,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -1125,6 +1153,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -1161,6 +1190,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -1197,6 +1227,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -1233,6 +1264,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -1268,6 +1300,7 @@
                                                                         "Active": true,
                                                                         "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
+                                                                        "Mask": 0,
                                                                         "Components": [
                                                                             {
                                                                                 "Type": "Transform",
@@ -1303,6 +1336,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -1338,6 +1372,7 @@
                                                                                         "Active": true,
                                                                                         "ActiveHierarchy": true,
                                                                                         "RootBoneId": 0,
+                                                                                        "Mask": 0,
                                                                                         "Components": [
                                                                                             {
                                                                                                 "Type": "Transform",
@@ -1373,6 +1408,7 @@
                                                                                                 "Active": true,
                                                                                                 "ActiveHierarchy": true,
                                                                                                 "RootBoneId": 0,
+                                                                                                "Mask": 0,
                                                                                                 "Components": [
                                                                                                     {
                                                                                                         "Type": "Transform",
@@ -1413,6 +1449,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -1449,6 +1486,7 @@
                                                                                 "Active": true,
                                                                                 "ActiveHierarchy": true,
                                                                                 "RootBoneId": 0,
+                                                                                "Mask": 0,
                                                                                 "Components": [
                                                                                     {
                                                                                         "Type": "Transform",
@@ -1495,6 +1533,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -1530,6 +1569,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -1565,6 +1605,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -1600,6 +1641,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -1638,6 +1680,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -1676,6 +1719,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -1714,6 +1758,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -1756,6 +1801,7 @@
                 "Active": true,
                 "ActiveHierarchy": true,
                 "RootBoneId": 13371854499377706005,
+                "Mask": 0,
                 "Components": [
                     {
                         "Type": "Transform",
@@ -1809,6 +1855,7 @@
                         "Active": true,
                         "ActiveHierarchy": true,
                         "RootBoneId": 0,
+                        "Mask": 0,
                         "Components": [
                             {
                                 "Type": "Transform",
@@ -1845,6 +1892,7 @@
                         "Active": true,
                         "ActiveHierarchy": true,
                         "RootBoneId": 0,
+                        "Mask": 0,
                         "Components": [
                             {
                                 "Type": "Transform",
@@ -1901,6 +1949,7 @@
                         "Active": true,
                         "ActiveHierarchy": true,
                         "RootBoneId": 0,
+                        "Mask": 0,
                         "Components": [
                             {
                                 "Type": "Transform",
@@ -1936,6 +1985,7 @@
                                 "Active": true,
                                 "ActiveHierarchy": true,
                                 "RootBoneId": 0,
+                                "Mask": 0,
                                 "Components": [
                                     {
                                         "Type": "Transform",
@@ -1971,6 +2021,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -2006,6 +2057,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -2044,6 +2096,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -2079,6 +2132,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -2114,6 +2168,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -2149,6 +2204,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -2191,6 +2247,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -2226,6 +2283,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -2261,6 +2319,7 @@
                                                         "Active": true,
                                                         "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
+                                                        "Mask": 0,
                                                         "Components": [
                                                             {
                                                                 "Type": "Transform",
@@ -2296,6 +2355,7 @@
                                                                 "Active": true,
                                                                 "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
+                                                                "Mask": 0,
                                                                 "Components": [
                                                                     {
                                                                         "Type": "Transform",
@@ -2340,6 +2400,7 @@
                                 "Active": true,
                                 "ActiveHierarchy": true,
                                 "RootBoneId": 0,
+                                "Mask": 0,
                                 "Components": [
                                     {
                                         "Type": "Transform",
@@ -2375,6 +2436,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -2410,6 +2472,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
@@ -2450,6 +2513,7 @@
                                 "Active": true,
                                 "ActiveHierarchy": true,
                                 "RootBoneId": 0,
+                                "Mask": 0,
                                 "Components": [
                                     {
                                         "Type": "Transform",
@@ -2485,6 +2549,7 @@
                                         "Active": true,
                                         "ActiveHierarchy": true,
                                         "RootBoneId": 0,
+                                        "Mask": 0,
                                         "Components": [
                                             {
                                                 "Type": "Transform",
@@ -2520,6 +2585,7 @@
                                                 "Active": true,
                                                 "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
+                                                "Mask": 0,
                                                 "Components": [
                                                     {
                                                         "Type": "Transform",
