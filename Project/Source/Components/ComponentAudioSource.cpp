@@ -269,4 +269,8 @@ void ComponentAudioSource::Load(JsonValue jComponent) {
 	innerAngle = jComponent[JSON_TAG_INNER_ANGLE];
 	outerAngle = jComponent[JSON_TAG_OUTER_ANGLE];
 	outerGain = jComponent[JSON_TAG_OUTER_GAIN];
+
+	if (audioClipId) {
+		App->resources->IncreaseReferenceCount(audioClipId);
+	}
 }
