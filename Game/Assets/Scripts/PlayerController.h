@@ -7,28 +7,32 @@ class GameObject;
 class ComponentTransform;
 class ComponentCamera;
 
+class ComponentAnimation;
+class State;
+struct TesseractEvent;
+
+enum class MovementDirection {
+		NONE = 0, UP = 1, UP_LEFT = 2, LEFT = 3, DOWN_LEFT = 4, DOWN = 5, DOWN_RIGHT = 6, RIGHT = 7, UP_RIGHT = 8
+};
+
 class PlayerController : public Script
 {
 	GENERATE_BODY(PlayerController);
 
 public:
 
-	enum class MovementDirection {
-		NONE = 0, UP = 1, UP_LEFT = 2, LEFT = 3, DOWN_LEFT = 4, DOWN = 5, DOWN_RIGHT = 6, RIGHT = 7, UP_RIGHT = 8
-	};
-
 	void Start() override;
 	void Update() override;
-
+	void ReceiveEvent(TesseractEvent& e) override;
 public:
 
 	GameObject* gameObject = nullptr;
 	GameObject* camera = nullptr;
 	GameObject* fang = nullptr;
-	GameObject* robot = nullptr;
+	GameObject* onimaru = nullptr;
 
 	UID fangUID = 0;
-	UID robotUID = 0;
+	UID onimaruUID = 0;
 	UID mainNodeUID = 0;
 	UID cameraUID = 0;
 
@@ -48,10 +52,11 @@ private:
 	void LookAtMouse();
 	void CheckCoolDowns();
 	void SwitchCharacter();
-	bool const CanDash() const;
-	bool const CanSwitch() const;
-	float3 GetDirection(MovementDirection md) const;
-
+	const bool CanDash() const;
+	const bool CanSwitch() const;
+	float3 GetDirection(MovementDirection md,, bool isFang = true) const;
+	MovementDirection GetInputMovementDirection() const;
+	
 private:
 
 	float dashError = 2.f;
@@ -68,5 +73,12 @@ private:
 
 	ComponentTransform* transform = nullptr;
 	ComponentCamera* compCamera = nullptr;
+	
+	//Animation
+	ComponentAnimation* fangAnimation = nullptr;
+	State* fangCurrentState = nullptr;
+	ComponentAnimation* onimaruAnimation = nullptr;
+	State* onimaruCurrentState = nullptr;
+
 };
 

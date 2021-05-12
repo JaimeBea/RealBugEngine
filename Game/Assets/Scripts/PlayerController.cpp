@@ -1,6 +1,7 @@
 #include "PlayerController.h"
 #include "GameObject.h"
 #include "GameplaySystems.h"
+#include "TesseractEvent.h"
 #include "Math/Quat.h"
 #include "Geometry/Plane.h"
 #include "Geometry/Frustum.h"
@@ -13,7 +14,7 @@
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
 	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
-		MEMBER(MemberType::GAME_OBJECT_UID, robotUID),
+		MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID),
 		MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
 		MEMBER(MemberType::GAME_OBJECT_UID, cameraUID),
 		MEMBER(MemberType::FLOAT, switchCooldown),
@@ -30,7 +31,7 @@ GENERATE_BODY_IMPL(PlayerController);
 void PlayerController::Start() {
 	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
 	fang = GameplaySystems::GetGameObject(fangUID);
-	robot = GameplaySystems::GetGameObject(robotUID);
+	onimaru = GameplaySystems::GetGameObject(onimaruUID);
 	camera = GameplaySystems::GetGameObject(cameraUID);
 
 	if (gameObject) {
@@ -45,9 +46,19 @@ void PlayerController::Start() {
 	}
 	if (fang) {
 		fang->Enable();
+		fangAnimation = fang->GetComponent<ComponentAnimation>();
+		if(fangAnimation){
+			fangCurrentState = fangAnimation->GetCurrentState();
+			fangAnimation->SendTrigger("RunBackwardHurt");
+		}
 	}
-	if (robot) {
-		robot->Disable();
+	if (onimaru) {
+		onimaru->Disable();
+		onimaruAnimation = onimaru->GetComponent<ComponentAnimation>();
+		if(onimaruAnimation){
+			onimaruCurrentState = onimaruAnimation->GetCurrentState();
+			onimaruAnimation->SendTrigger("");
+		}
 	}
 }
 
@@ -133,7 +144,7 @@ void PlayerController::Dash() {
 	}
 }
 
-bool const PlayerController::CanDash() const {
+const bool PlayerController::CanDash() const {
 	return !dashing && !dashInCooldown;
 }
 
@@ -152,27 +163,69 @@ void PlayerController::CheckCoolDowns() {
 	}
 }
 
-bool const PlayerController::CanSwitch() const {
+const bool PlayerController::CanSwitch() const {
 	return !switchInCooldown;
 }
 
 void PlayerController::SwitchCharacter() {
 	if (!fang) return;
-	if (!robot) return;
+	if (!onimaru) return;
 	if (CanSwitch()) {
 		switchInCooldown = true;
 		if (fang->IsActive()) {
-			Debug::Log("Swaping to robot...");
+			Debug::Log("Swaping to onimaru...");
 			fang->Disable();
-			robot->Enable();
+			onimaru->Enable();
 		}
 		else {
 			Debug::Log("Swaping to fang...");
-			robot->Disable();
+			onimaru->Disable();
 			fang->Enable();
 		}
 		switchCooldownRemaing = switchCooldown;
 	}
+}
+
+void PlayerController::ReceiveEvent(TesseractEvent& e){
+
+}
+
+MovementDirection PlayerController::GetInputMovementDirection() const{
+	
+	MovementDirection md = MovementDirection::NONE;
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
+		md = MovementDirection::UP;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
+		md = MovementDirection::DOWN;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
+		if (md == MovementDirection::UP) md = MovementDirection::UP_LEFT;
+		else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
+		else md = MovementDirection::LEFT;
+	}
+	if (Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
+		if (md == MovementDirection::UP) md = MovementDirection::UP_RIGHT;
+		else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_RIGHT;
+		else md = MovementDirection::RIGHT;
+	}
+	return md;
+}
+
+void PlayerController::PlayAnimation(MovementDirection md, bool isFang){
+	
+	ComponentAnimation* animation = nullptr;
+	State* currentState = nullptr;
+
+	if(isFang){
+		animation = fangAnimation;
+		currentState = fangCurrentState;
+	}else{
+		animation = onimaruAnimation;
+		currentState = onimaruCurrentState;
+	}
+	
+
 }
 
 void PlayerController::Update() {
@@ -186,23 +239,9 @@ void PlayerController::Update() {
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		if (!dashing) {
-			if (Input::GetKeyCode(Input::KEYCODE::KEY_W)) {
-				md = MovementDirection::UP;
-			}
-			if (Input::GetKeyCode(Input::KEYCODE::KEY_S)) {
-				md = MovementDirection::DOWN;
-			}
-			if (Input::GetKeyCode(Input::KEYCODE::KEY_A)) {
-				if (md == MovementDirection::UP) md = MovementDirection::UP_LEFT;
-				else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_LEFT;
-				else md = MovementDirection::LEFT;
-			}
-			if (Input::GetKeyCode(Input::KEYCODE::KEY_D)) {
-				if (md == MovementDirection::UP) md = MovementDirection::UP_RIGHT;
-				else if (md == MovementDirection::DOWN) md = MovementDirection::DOWN_RIGHT;
-				else md = MovementDirection::RIGHT;
-			}
+			md = GetInputMovementDirection();
 			LookAtMouse();
+			PlayAnimation(md,fang);
 			if (md != MovementDirection::NONE) {
 				MoveTo(md);
 			}
