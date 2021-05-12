@@ -12,7 +12,9 @@ GENERATE_BODY_IMPL(FullScreenSetter);
 void FullScreenSetter::Start() {
 	ComponentToggle* toggle = GetOwner().GetComponent< ComponentToggle>();
 	if (toggle) {
-		toggle->SetChecked(Screen::IsFullScreenOn());
+		if (toggle->IsActive()) {
+			toggle->SetChecked(Screen::IsFullScreenOn());
+		}
 	}
 }
 
