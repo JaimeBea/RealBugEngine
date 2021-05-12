@@ -187,7 +187,7 @@ void PlayerController::Update() {
 	CheckCoolDowns();
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
-	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, cameraTransform->GetGlobalPosition().y + cameraOffsetY, (transform->GetGlobalPosition().z + cameraOffsetZ)));
+	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y + cameraOffsetY, (transform->GetGlobalPosition().z + cameraOffsetZ)));
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		if (!dashing) {
