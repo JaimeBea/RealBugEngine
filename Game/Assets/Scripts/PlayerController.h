@@ -48,8 +48,8 @@ private:
 	void LookAtMouse();
 	void CheckCoolDowns();
 	void SwitchCharacter();
-	bool const CanDash() const;
-	bool const CanSwitch() const;
+	bool CanDash();
+	bool CanSwitch();
 	float3 GetDirection(MovementDirection md) const;
 
 private:
