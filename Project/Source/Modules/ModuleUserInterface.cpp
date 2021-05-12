@@ -70,20 +70,12 @@ UpdateStatus ModuleUserInterface::Update() {
 	return UpdateStatus::CONTINUE;
 }
 
+//This is done like this because receiving a WINDOW RESIZE event from SDL takes one frame to take effect, so instead of directly calling OnViewportResized,
+//The behaviour implemented sets viewportWasResized to True, and the next PostUpdate iteration, when SDL event has taken effect, OnViewportResized is called
 UpdateStatus ModuleUserInterface::PostUpdate() {
 	if (viewportWasResized) {
 		viewportWasResized = false;
-		for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
-			canvas.Invalidate();
-		}
-
-		for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
-			transform.Invalidate();
-		}
-
-		for (ComponentText& text : App->scene->scene->textComponents) {
-			text.RecalculcateVertices();
-		}
+		OnViewportResized();
 	}
 	return UpdateStatus::CONTINUE;
 }
@@ -247,4 +239,18 @@ bool ModuleUserInterface::IsUsing2D() const {
 
 float4 ModuleUserInterface::GetErrorColor() {
 	return errorColor;
+}
+
+void ModuleUserInterface::OnViewportResized() {
+	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
+		canvas.Invalidate();
+	}
+
+	for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
+		transform.Invalidate();
+	}
+
+	for (ComponentText& text : App->scene->scene->textComponents) {
+		text.RecalculcateVertices();
+	}
 }

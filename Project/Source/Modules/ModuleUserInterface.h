@@ -39,7 +39,8 @@ public:
 	float4 GetErrorColor(); // Gets the representation of the color
 
 private:
-	void CreateQuadVBO(); // Creates a vbo made by two triangles centered that form a Quad
+	void CreateQuadVBO();	  // Creates a vbo made by two triangles centered that form a Quad
+	void OnViewportResized(); // Sets all bool dirty required to recalculate ScreenFactors
 
 private:
 	UID currentEvSys = 0;						// Module's Event System UID

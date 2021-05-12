@@ -4,9 +4,10 @@
 
 class ComponentText;
 
-
-
-class ScreenResolutionSetter : public Script {
+ /// <summary>
+ /// This class is meant to modify externs delcared inside ScreenResolution confirmer whenever Button is pressed, as well as setting the text (if found)
+ /// </summary>
+ class ScreenResolutionSetter : public Script {
 	GENERATE_BODY(ScreenResolutionSetter);
 
 public:

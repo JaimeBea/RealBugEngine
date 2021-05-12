@@ -47,8 +47,9 @@ void ScreenResolutionSetter::OnButtonClick() {
 void ScreenResolutionSetter::IncreaseResolution(int multiplier) {
 	preSelectedScreenResolutionPreset = preSelectedScreenResolutionPreset + multiplier;
 
+	//Avoid getting out of bounds
 	if (preSelectedScreenResolutionPreset < 0) {
-		preSelectedScreenResolutionPreset = Screen::RESOLUTION_PRESET::m_720x480;
+		preSelectedScreenResolutionPreset = 0;
 	} else if (preSelectedScreenResolutionPreset >= Screen::RESOLUTION_PRESET::MAX) {
 		preSelectedScreenResolutionPreset = Screen::RESOLUTION_PRESET::MAX - 1;
 	}
