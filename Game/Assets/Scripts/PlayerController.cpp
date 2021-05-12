@@ -164,6 +164,8 @@ bool const PlayerController::CanSwitch() const {
 }
 
 void PlayerController::SwitchCharacter() {
+	if (!fang) return;
+	if (!robot) return;
 	if (CanSwitch()) {
 		switchInCooldown = true;
 		if (fang->IsActive()) {
