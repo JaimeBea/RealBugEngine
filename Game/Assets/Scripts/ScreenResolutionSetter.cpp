@@ -67,8 +67,8 @@ int ScreenResolutionSetter::GetPreSelectedWidth() {
 	switch (preSelectedScreenResolutionPreset) {
 	case Screen::RESOLUTION_PRESET::m_1920x1080:
 		return 1920;
-	case Screen::RESOLUTION_PRESET::m_1080x720:
-		return 1080;
+	case Screen::RESOLUTION_PRESET::m_1280x720:
+		return 1280;
 	case Screen::RESOLUTION_PRESET::m_720x480:
 		return 720;
 	}
@@ -79,7 +79,7 @@ int ScreenResolutionSetter::GetPreSelectedHeight() {
 	switch (preSelectedScreenResolutionPreset) {
 	case Screen::RESOLUTION_PRESET::m_1920x1080:
 		return 1080;
-	case Screen::RESOLUTION_PRESET::m_1080x720:
+	case Screen::RESOLUTION_PRESET::m_1280x720:
 		return 720;
 	case Screen::RESOLUTION_PRESET::m_720x480:
 		return 480;

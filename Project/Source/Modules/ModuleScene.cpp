@@ -93,8 +93,7 @@ bool ModuleScene::Start() {
 
 #if GAME
 	App->events->AddEvent(TesseractEventType::PRESSED_PLAY);
-	//SceneImporter::LoadScene("Assets/Scenes/Level1-34.scene");
-	SceneImporter::LoadScene("Assets/Scenes/ScreenSizeTest.scene");
+	SceneImporter::LoadScene("Assets/Scenes/Level1-34.scene");
 	App->renderer->SetVSync(false);
 	App->time->limitFramerate = false;
 #else

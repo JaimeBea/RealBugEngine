@@ -168,12 +168,11 @@ const char* ModuleWindow::GetTitle() const {
 }
 
 void ModuleWindow::SetResolutionPreset(int resolutionPreset_) {
-	//currentResolution is now == preSelectedResolution, so we can use that instead of making a call to the engine method, less readable, more optimal
 	switch ((RESOLUTION_PRESET) resolutionPreset_) {
 	case RESOLUTION_PRESET::m_1920x1080:
 		SetSize(1920, 1080);
 		break;
-	case RESOLUTION_PRESET::m_1080x720:
+	case RESOLUTION_PRESET::m_1280x720:
 		SetSize(1080, 720);
 		break;
 	case RESOLUTION_PRESET::m_720x480:

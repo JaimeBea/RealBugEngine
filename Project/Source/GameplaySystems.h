@@ -396,7 +396,7 @@ namespace Screen {
 
 	enum RESOLUTION_PRESET {
 		m_720x480 = 0,
-		m_1080x720,
+		m_1280x720,
 		m_1920x1080,
 		MAX
 	};
