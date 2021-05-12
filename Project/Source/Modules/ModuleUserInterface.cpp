@@ -42,6 +42,7 @@ bool ModuleUserInterface::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::SCREEN_RESIZED, this);
 	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
 	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PLAY, this);
 	ViewportResized();
 	return true;
 }
@@ -112,7 +113,10 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 				lastHoveredSelectable->OnDeselect();
 			}
 		}
-
+		break;
+	case TesseractEventType::PRESSED_PLAY:
+		//This is done to prevent the fact that (in editor) disabling internal 2D and pressing play generates a visual error
+		ViewportResized();
 		break;
 	default:
 		break;

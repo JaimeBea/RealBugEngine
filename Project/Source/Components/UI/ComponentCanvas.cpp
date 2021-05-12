@@ -17,7 +17,7 @@ void ComponentCanvas::Save(JsonValue jComponent) const {
 }
 
 void ComponentCanvas::Load(JsonValue jComponent) {
-	dirty = true;
+	Invalidate();
 }
 
 bool ComponentCanvas::CanBeRemoved() const {
@@ -38,6 +38,7 @@ void ComponentCanvas::Invalidate() {
 
 void ComponentCanvas::SetScreenReferenceSize(float2 screenReferenceSize_) {
 	screenReferenceSize = screenReferenceSize_;
+	Invalidate();
 }
 
 float2 ComponentCanvas::GetScreenReferenceSize() const {

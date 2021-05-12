@@ -258,12 +258,10 @@ void ModuleRender::ViewportResized(int width, int height) {
 	viewportUpdated = true;
 }
 
-void ModuleRender::ReceiveEvent(TesseractEvent& e) {
-	switch (e.type) {
+void ModuleRender::ReceiveEvent(TesseractEvent& ev) {
+	switch (ev.type) {
 	case TesseractEventType::SCREEN_RESIZED:
-#if GAME
-		ViewportResized(App->window->GetWidth(), App->window->GetHeight());
-#endif
+		ViewportResized(ev.Get<ViewportResizedStruct>().newWidth, ev.Get<ViewportResizedStruct>().newHeight);
 		break;
 	default:
 		break;

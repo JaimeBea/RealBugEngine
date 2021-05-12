@@ -107,7 +107,9 @@ void ModuleWindow::SetSize(int width, int height) {
 	int displayIndex = SDL_GetWindowDisplayIndex(window);
 	SDL_SetWindowSize(window, width, height);
 	SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex));
-	App->events->AddEvent(TesseractEvent(TesseractEventType::SCREEN_RESIZED));
+	TesseractEvent resizeEvent(TesseractEventType::SCREEN_RESIZED);
+	resizeEvent.Set<ViewportResizedStruct>(width, height);
+	App->events->AddEvent(resizeEvent);
 }
 
 void ModuleWindow::SetBrightness(float brightness) {
