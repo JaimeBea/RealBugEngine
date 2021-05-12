@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GameplaySystems.h"
 #include "Resources/ResourceMaterial.h"
+#include "AIMovement.h"
 
 EXPOSE_MEMBERS(FangMovement) {
 	// Add members here to expose them to the engine. Example:
@@ -46,6 +47,9 @@ void FangMovement::Update() {
 					ResourceMaterial* material = GameplaySystems::GetResource<ResourceMaterial>(meshRenderer->materialId);
 					material->diffuseColor = float4(Colors::Red(), 1.0);
 				}
+				AIMovement* enemyScript = static_cast<AIMovement*>hitGo->GetComponent<ComponentScript>()->GetScriptInstance();
+				enemyScript->HitDetected();
+
 			} else {
 				hitGOUID = 0;
 			}

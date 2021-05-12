@@ -9,8 +9,7 @@ EXPOSE_MEMBERS(AIMovement) {
     // MEMBER(MemberType::BOOL, exampleMember1),
     // MEMBER(MemberType::PREFAB_RESOURCE_UID, exampleMember2),
     // MEMBER(MemberType::GAME_OBJECT_UID, exampleMember3)
-    MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
-    MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID),
+    MEMBER(MemberType::GAME_OBJECT_UID, playerUID),
     MEMBER(MemberType::INT, maxSpeed),
     MEMBER(MemberType::INT, lifePoints),
     MEMBER(MemberType::FLOAT, searchRadius),
@@ -22,16 +21,13 @@ EXPOSE_MEMBERS(AIMovement) {
 GENERATE_BODY_IMPL(AIMovement);
 
 void AIMovement::Start() {
-    fang = GameplaySystems::GetGameObject(fangUID);
-    onimaru = GameplaySystems::GetGameObject(onimaruUID);
+    player = GameplaySystems::GetGameObject(playerUID);
     animation = GetOwner().GetParent()->GetComponent<ComponentAnimation>();   
     parentTransform = GetOwner().GetParent()->GetComponent<ComponentTransform>();
 }
 
 void AIMovement::Update() {
     if (!GetOwner().IsActive()) return;
-
-    //hitTaken = HitDetected();
 
     if (hitTaken && lifePoints > 0) {
         if (state == AIState::IDLE || state == AIState::HURT) {
@@ -62,20 +58,14 @@ void AIMovement::Update() {
     case AIState::SPAWN:                
         break;
     case AIState::IDLE:
-        if (CharacterInSight(fang)) {
-            currentTarget = fang;
+        if (CharacterInSight(player)) {
             animation->SendTrigger("IdleRun");
             state = AIState::RUN;
         }
-        /*else if (CharacterInSight(onimaru)) {
-            currentTarget = onimaru;
-            animation->SendTrigger("IdleRun");
-            state = AIState::RUN;
-        }*/
         break;
     case AIState::RUN:
-        Seek(currentTarget->GetComponent<ComponentTransform>()->GetGlobalPosition(), maxSpeed);
-        if (CharacterInMeleeRange(currentTarget)) {
+        Seek(player->GetComponent<ComponentTransform>()->GetGlobalPosition(), maxSpeed);
+        if (CharacterInMeleeRange(player)) {
             animation->SendTrigger("RunAttack");
             state = AIState::ATTACK;
         }
@@ -176,8 +166,8 @@ void AIMovement::Seek(const float3& newPosition, int speed)
     }
 }
 
-bool AIMovement::HitDetected()
+void AIMovement::HitDetected()
 {
     //Listens for an event to signal this enemy has taken a hit
-    return false;
+    hitTaken = true;
 }

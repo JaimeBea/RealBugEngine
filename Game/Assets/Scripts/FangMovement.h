@@ -4,6 +4,7 @@
 #include "Character.h"
 
 class GameObject;
+class AIMovement;
 
 class FangMovement : public Script
 {

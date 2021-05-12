@@ -243,7 +243,6 @@ float3 Colors::Orange() {
 float3 Colors::Green() {
 	return dd::colors::Green;
 }
-}
 
 // --------- Camera --------- //
 
