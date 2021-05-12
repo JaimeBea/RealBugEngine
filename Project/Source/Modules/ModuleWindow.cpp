@@ -28,7 +28,7 @@ bool ModuleWindow::Init() {
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
 #if GAME
-	flags |= SDL_WINDOW_MAXIMIZED;
+	flags |= SDL_WINDOW_BORDERLESS;
 #else
 	flags |= SDL_WINDOW_RESIZABLE;
 #endif
@@ -53,9 +53,11 @@ bool ModuleWindow::Init() {
 
 	// Set the current display mode to the first one
 	SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
+
 #if GAME
-	SetResolutionPreset(1);
+	SetResolutionPreset(static_cast<int>(RESOLUTION_PRESET::m_1920x1080));
 #endif
+
 	return true;
 }
 
@@ -178,10 +180,10 @@ void ModuleWindow::SetResolutionPreset(int resolutionPreset_) {
 		SetSize(1920, 1080);
 		break;
 	case RESOLUTION_PRESET::m_1280x720:
-		SetSize(1080, 720);
+		SetSize(1280, 720);
 		break;
-	case RESOLUTION_PRESET::m_720x480:
-		SetSize(720, 480);
+	case RESOLUTION_PRESET::m_1024x576:
+		SetSize(1024, 576);
 		break;
 	}
 	currentResolutionPreset = resolutionPreset_;
