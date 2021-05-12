@@ -44,6 +44,8 @@ public:
 	float searchRadius = 50.f;
 	float meleeRange = 5.f;
 	int lifePoints = 3;
+	float timeToDie = 5.f;
+	bool dead = false;
 
 
 private:

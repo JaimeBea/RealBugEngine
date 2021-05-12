@@ -14,7 +14,8 @@ EXPOSE_MEMBERS(AIMovement) {
     MEMBER(MemberType::INT, maxSpeed),
     MEMBER(MemberType::INT, lifePoints),
     MEMBER(MemberType::FLOAT, searchRadius),
-    MEMBER(MemberType::FLOAT, meleeRange)
+    MEMBER(MemberType::FLOAT, meleeRange),
+    MEMBER(MemberType::FLOAT, timeToDie)
 
 };
 
@@ -86,6 +87,15 @@ void AIMovement::Update() {
     case AIState::DEATH:
         break;
     }
+
+    if(dead){
+        if (timeToDie > 0) {
+            timeToDie -= Time::GetDeltaTime();
+        }
+        else {
+            GameplaySystems::DestroyGameObject(&GetOwner());
+        }
+    }
     	
 }
 
@@ -115,7 +125,7 @@ void AIMovement::ReceiveEvent(TesseractEvent& e)
             state = AIState::DEATH;
         }
         else if (state == AIState::DEATH) {
-            GameplaySystems::DestroyGameObject(&GetOwner());
+            dead = true;
         }
         break;
     }
