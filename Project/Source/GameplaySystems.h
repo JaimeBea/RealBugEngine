@@ -392,6 +392,20 @@ namespace SceneManager {
 	TESSERACT_ENGINE_API void ExitGame();
 }; // namespace SceneManager
 
+namespace Physics {
+	TESSERACT_ENGINE_API GameObject* Raycast(const float3& start, const float3& end,const int mask);
+}
+
+namespace Colors {
+
+	TESSERACT_ENGINE_API float3 Red();
+	TESSERACT_ENGINE_API float3 White();
+	TESSERACT_ENGINE_API float3 Blue();
+	TESSERACT_ENGINE_API float3 Orange();
+	TESSERACT_ENGINE_API float3 Green();
+
+}
+
 namespace Camera {
 	TESSERACT_ENGINE_API bool CheckObjectInsideFrustum(GameObject* gameObject);
 }; // namespace Camera

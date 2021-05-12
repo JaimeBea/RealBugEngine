@@ -15,11 +15,14 @@
 #include "Modules/ModuleRender.h"
 #include "Modules/ModuleCamera.h"
 #include "Resources/ResourcePrefab.h"
+#include "Resources/ResourceMaterial.h"
 #include "FileSystem/SceneImporter.h"
 #include "Utils/Logging.h"
 #include "TesseractEvent.h"
 
+#include "debugdraw.h"
 #include "Geometry/Frustum.h"
+#include "Geometry/LineSegment.h"
 #include "SDL_events.h"
 
 #include "Utils/Leaks.h"
@@ -41,6 +44,7 @@ T* GameplaySystems::GetResource(UID id) {
 }
 
 template TESSERACT_ENGINE_API ResourcePrefab* GameplaySystems::GetResource<ResourcePrefab>(UID id);
+template TESSERACT_ENGINE_API ResourceMaterial* GameplaySystems::GetResource<ResourceMaterial>(UID id);
 
 void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeActiveCamera(camera, true);
@@ -187,6 +191,58 @@ float Screen::GetScreenWitdh() {
 
 float Screen::GetScreenHeight() {
 	return static_cast<float>(App->window->GetHeight());
+}
+
+GameObject* Physics::Raycast(const float3& start, const float3& end, const int mask) {
+	LineSegment ray = LineSegment(start, end);
+
+	Scene* scene = App->scene->scene;
+
+	GameObject* closestGo = nullptr;
+	float closestNear = FLT_MAX;
+	float closestFar = FLT_MIN;
+
+	for (GameObject& go : scene->gameObjects) {
+		if ((go.GetMask().bitMask & mask) == 0) continue;
+		ComponentBoundingBox* componentBBox = go.GetComponent<ComponentBoundingBox>();
+		if (componentBBox == nullptr) continue;
+		const AABB& bbox = componentBBox->GetWorldAABB();
+
+		float dNear, dFar;
+
+		if (ray.Intersects(bbox, dNear, dFar)) {
+			if (closestGo == nullptr) {
+				closestGo = &go;
+			} else {
+				if (dNear < closestFar) {
+					closestGo = &go;
+				}
+			}
+		}
+	}
+
+	return closestGo;
+}
+
+float3 Colors::Red() {
+	return dd::colors::Red;
+}
+
+float3 Colors::White() {
+	return dd::colors::White;
+}
+
+float3 Colors::Blue() {
+	return dd::colors::Blue;
+}
+
+float3 Colors::Orange() {
+	return dd::colors::Orange;
+}
+
+float3 Colors::Green() {
+	return dd::colors::Green;
+}
 }
 
 // --------- Camera --------- //
