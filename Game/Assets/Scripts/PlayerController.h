@@ -52,11 +52,10 @@ private:
 	void LookAtMouse();
 	void CheckCoolDowns();
 	void SwitchCharacter();
-	const bool CanDash() const;
-	const bool CanSwitch() const;
-	float3 GetDirection(MovementDirection md,, bool isFang = true) const;
-	MovementDirection GetInputMovementDirection() const;
-	
+	bool CanDash();
+	bool CanSwitch();
+	float3 GetDirection(MovementDirection md) const;
+
 private:
 
 	float dashError = 2.f;
