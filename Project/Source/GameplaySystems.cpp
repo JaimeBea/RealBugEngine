@@ -47,6 +47,10 @@ void GameplaySystems::SetRenderCamera(ComponentCamera* camera) {
 	App->camera->ChangeCullingCamera(camera, true);
 }
 
+void GameplaySystems::DestroyGameObject(GameObject* gameObject) {
+	App->scene->DestroyGameObjectDeferred(gameObject);
+}
+
 // ------------- DEBUG ------------- //
 
 void Debug::Log(const char* fmt, ...) {
@@ -217,4 +221,9 @@ int Screen::GetResolutionPreset() {
 
 void Screen::SetResolutionPreset(int resolutionPreset_) {
 	App->window->SetResolutionPreset(resolutionPreset_);
+}
+// --------- Camera --------- //
+
+bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
+	return App->renderer->ObjectInsideFrustum(gameObject);
 }

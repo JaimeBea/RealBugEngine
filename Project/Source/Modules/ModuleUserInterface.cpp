@@ -251,6 +251,6 @@ void ModuleUserInterface::OnViewportResized() {
 	}
 
 	for (ComponentText& text : App->scene->scene->textComponents) {
-		text.RecalculcateVertices();
+		text.Invalidate();
 	}
 }
