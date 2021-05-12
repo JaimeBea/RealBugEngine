@@ -19,7 +19,7 @@ EXPOSE_MEMBERS(GameController) {
 	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera4UID),
 	MEMBER(MemberType::GAME_OBJECT_UID, playerUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, pauseUID),
-
+	MEMBER(MemberType::GAME_OBJECT_UID, enemySpawnPointsUID),
 	MEMBER(MemberType::FLOAT, speed),
 	MEMBER(MemberType::FLOAT, rotationSpeedX),
 	MEMBER(MemberType::FLOAT, rotationSpeedY),
@@ -212,6 +212,10 @@ void GameController::Update() {
 				skybox->Enable();
 			}
 		}
+		// --- Spawn Enemies
+		if(Input::GetKeyCodeDown(Input::KEYCODE::KEY_L)) {
+			SpawnEnemies();
+		}
 	}
 }
 
@@ -236,3 +240,9 @@ void GameController::DoTransition() {
 	}
 }
 
+void GameController::SpawnEnemies() {
+	GameObject* spawnGO = GameplaySystems::GetGameObject(enemySpawnPointsUID);
+	for (auto& child : spawnGO->GetChildren()) {
+		if(!child->IsActive()) child->Enable();
+	}
+}

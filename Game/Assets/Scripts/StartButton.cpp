@@ -22,5 +22,5 @@ void StartButton::Update() {
 
 void StartButton::OnButtonClick() {
 	checkpoint = checkpointNum;
-	SceneManager::ChangeScene("Assets/Scenes/Level1-34.scene");
+	SceneManager::ChangeScene("Assets/Scenes/Level1.scene");
 }
