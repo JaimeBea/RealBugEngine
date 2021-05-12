@@ -27,7 +27,8 @@ bool ModuleWindow::Init() {
 	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
 
 #if GAME
-	flags |= SDL_WINDOW_MAXIMIZED;
+	//flags |= SDL_WINDOW_MAXIMIZED;
+	flags |= SDL_WINDOW_BORDERLESS;
 #else
 	flags |= SDL_WINDOW_RESIZABLE;
 #endif
@@ -52,6 +53,10 @@ bool ModuleWindow::Init() {
 
 	// Set the current display mode to the first one
 	SDL_SetWindowDisplayMode(window, &displayModes[currentDisplayMode]);
+
+#if GAME
+	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+#endif
 
 	return true;
 }
