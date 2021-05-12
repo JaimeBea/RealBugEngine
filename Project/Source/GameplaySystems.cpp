@@ -212,6 +212,7 @@ bool Screen::IsFullScreenOn() {
 }
 void Screen::SetFullScreen(bool fullscreen_) {
 	App->window->SetWindowMode(fullscreen_ ? WindowMode::FULLSCREEN : WindowMode::WINDOWED);
+}
 // --------- Camera --------- //
 
 bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
