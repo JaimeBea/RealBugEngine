@@ -144,7 +144,7 @@ void PlayerController::Dash() {
 	}
 }
 
-const bool PlayerController::CanDash() const {
+bool PlayerController::CanDash() {
 	return !dashing && !dashInCooldown;
 }
 
@@ -163,7 +163,7 @@ void PlayerController::CheckCoolDowns() {
 	}
 }
 
-const bool PlayerController::CanSwitch() const {
+bool PlayerController::CanSwitch() {
 	return !switchInCooldown;
 }
 
@@ -224,7 +224,27 @@ void PlayerController::PlayAnimation(MovementDirection md, bool isFang){
 		animation = onimaruAnimation;
 		currentState = onimaruCurrentState;
 	}
+	if (currentState != animation->GetCurrentState()){
+		currentState = animation->GetCurrentState();
+	}
 	
+	switch(md){
+		case MovementDirection::NONE:
+			animation->SendTrigger(currentState->name + PlayerController::states[0]);
+			break;
+		case MovementDirection::LEFT:
+			animation->SendTrigger(currentState->name + PlayerController::states[1]);
+			break;
+		case MovementDirection::RIGHT:
+			animation->SendTrigger(currentState->name + PlayerController::states[2]);
+			break;
+		case MovementDirection::UP:
+			animation->SendTrigger(currentState->name + PlayerController::states[3]);
+			break;
+		case MovementDirection::DOWN:
+			animation->SendTrigger(currentState->name + PlayerController::states[4]);
+			break;
+	}
 
 }
 

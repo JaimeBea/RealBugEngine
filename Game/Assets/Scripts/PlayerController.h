@@ -2,7 +2,7 @@
 
 #include "Scripting/Script.h"
 #include "Math/float3.h"
-
+#include <vector>
 class GameObject;
 class ComponentTransform;
 class ComponentCamera;
@@ -24,6 +24,7 @@ public:
 	void Start() override;
 	void Update() override;
 	void ReceiveEvent(TesseractEvent& e) override;
+	
 public:
 
 	GameObject* gameObject = nullptr;
@@ -44,8 +45,15 @@ public:
 	float cameraOffsetZ = 20.f;
 	float cameraOffsetY = 10.f;
 
+	std::vector<std::string> states {"Idle" , 
+								"RunBackward" , "RunForward" , "RunLeft" , "RunRight" , 
+								"DashBackward", "DashForward" , "DashLeft" , "DashRight" , 
+								"Death" , "Hurt" , "LeftShot" , "RightShot"  
+	};
+
 private:
 
+	void PlayAnimation(MovementDirection md, bool isFang);
 	void MoveTo(MovementDirection md);
 	void InitDash(MovementDirection md);
 	void Dash();
@@ -55,6 +63,7 @@ private:
 	bool CanDash();
 	bool CanSwitch();
 	float3 GetDirection(MovementDirection md) const;
+	MovementDirection GetInputMovementDirection() const;
 
 private:
 
