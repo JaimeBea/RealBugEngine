@@ -342,6 +342,21 @@ void PlayerController::Shoot() {
 	else {
 		onimaruCompParticle->Play();
 	}
+
+	float3 start = transform->GetPosition();
+	float3 end = transform->GetGlobalRotation() * float3(0, 0, 1);
+	end.Normalize();
+	end *= distanceRayCast;
+	int mask = static_cast<int>(MaskType::ENEMY);
+	GameObject* hitGo = Physics::Raycast(start, start + end, mask);
+	if (hitGo) {
+
+		AIMovement* enemyScript = GET_SCRIPT(hitGo, AIMovement);
+		if (fang->IsActive()) enemyScript->HitDetected(3);
+		else enemyScript->HitDetected();
+
+	}
+
 }
 
 void PlayerController::Update() {
@@ -381,23 +396,10 @@ void PlayerController::Update() {
 				SwitchCharacter();
 			}
 		}
-		PlayAnimation(md, fang);
+		PlayAnimation(md, fang->IsActive());
 	}
 	if (CanShoot() && Input::GetMouseButtonRepeat(0)) {
 		Shoot();
-		float3 start = transform->GetPosition();
-		float3 end = transform->GetGlobalRotation() * float3(0, 0, 1);
-		end.Normalize();
-		end *= distanceRayCast;
-		int mask = static_cast<int>(MaskType::ENEMY);
-		GameObject* hitGo = Physics::Raycast(start, start + end, mask);
-		if (hitGo) {
-				
-			AIMovement* enemyScript = GET_SCRIPT(hitGo, AIMovement);
-			if (fang->IsActive()) enemyScript->HitDetected(3);
-			else enemyScript->HitDetected();
-
-		}
 	}
 
 }
