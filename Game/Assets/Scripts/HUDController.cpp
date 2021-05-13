@@ -42,6 +42,13 @@ GameObject* HUDController::swapingSkillCanvas = nullptr;
 
 std::array<float, Cooldowns::TOTAL> HUDController::cooldowns;
 
+
+const float4 HUDController::colorMagenta = float4(236, 60, 137, 255) / 255;
+const float4 HUDController::colorWhite = float4(255, 255, 255, 255) / 255;
+
+const float4 HUDController::colorMagentaDarkened = float4(236, 60, 137, 128) / 255;
+const float4 HUDController::colorWhiteDarkened = float4(255, 255, 255, 128) / 255;
+
 void HUDController::Start() {
 
     fangCanvas = GameplaySystems::GetGameObject(fangMainCanvasUID);
@@ -110,6 +117,17 @@ void HUDController::UpdateCooldowns(float onimaruCooldown1, float onimaruCooldow
     cooldowns[Cooldowns::SWITCH_SKILL] = switchCooldown;
     
     UpdateComponents();
+}
+
+void HUDController::UpdateHP(float currentHp, float altHp) {
+    if (fang->IsActive()) {
+        UpdateCanvasHP(fangHealthMainCanvas, currentHp, false);
+        UpdateCanvasHP(onimaruHealthSecondCanvas, altHp, true);
+    }
+    else {
+        UpdateCanvasHP(onimaruHealthMainCanvas, altHp, false);
+        UpdateCanvasHP(fangHealthSecondCanvas, currentHp, true);
+    }
 }
 
 void HUDController::UpdateComponents() {
@@ -198,5 +216,23 @@ void HUDController::UpdateOnimaruCooldowns(GameObject* onimaruSkillCanvas) {
             }
         }
         ++skill;
+    }
+}
+
+void HUDController::UpdateCanvasHP(GameObject* targetCanvas, int health, bool darkened)
+{
+    float4 magentaToSet = darkened ? colorMagentaDarkened : colorMagenta;
+    float4 whiteToSet = darkened ? colorWhiteDarkened : colorWhite;
+
+    int i = 0;
+    for (GameObject* hpGameObject : targetCanvas->GetChildren()) {
+        ComponentImage* hpComponent = hpGameObject->GetComponent<ComponentImage>();
+        if (i < health) {
+            hpComponent->SetColor(magentaToSet);
+        }
+        else {
+            hpComponent->SetColor(whiteToSet);
+        }
+        i++;
     }
 }

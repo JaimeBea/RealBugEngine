@@ -49,6 +49,8 @@ public:
 		float fangCooldown1, float fangCooldown2, float fangCooldown3,
 		float switchCooldown);
 
+	static void UpdateHP(float currentHp, float altHp);
+
 	static void ChangePlayerHUD();
 
 private:
@@ -56,6 +58,7 @@ private:
 	static void UpdateCommonSkill();
 	static void UpdateFangCooldowns(GameObject* fangSkillCanvas);
 	static void UpdateOnimaruCooldowns(GameObject* onimaruSkillCanvas);
+	static void UpdateCanvasHP(GameObject* targetCanvas, int health, bool darkened);
 
 private:
 	static GameObject* fang;
@@ -78,5 +81,12 @@ private:
 
 	static std::array<float, Cooldowns::TOTAL> cooldowns;
 
+	/* COLORS */
+
+	static const float4 colorMagenta;
+	static const float4 colorWhite;
+	
+	static const float4 colorMagentaDarkened;
+	static const float4 colorWhiteDarkened;
 };
 
