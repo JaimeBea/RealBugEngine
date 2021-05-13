@@ -410,7 +410,7 @@ void PlayerController::Update() {
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		md = GetInputMovementDirection();
-		if (CanDash() && Input::GetKeyCode(Input::KEYCODE::KEY_SPACE)) {
+		if (CanDash() && Input::GetMouseButtonDown(2)) {
 			InitDash(md);
 		}
 		Dash();
@@ -419,7 +419,7 @@ void PlayerController::Update() {
 			if (md != MovementDirection::NONE) {
 				MoveTo(md);
 			}
-			if (CanSwitch() && Input::GetKeyCode(Input::KEYCODE::KEY_T)) {
+			if (CanSwitch() && Input::GetKeyCode(Input::KEYCODE::KEY_R)) {
 				SwitchCharacter();
 				hudControllerScript->ChangePlayerHUD();
 			}
