@@ -21,6 +21,8 @@ EXPOSE_MEMBERS(PlayerController) {
 	MEMBER(MemberType::GAME_OBJECT_UID, cameraUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, fangParticleUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, onimaruParticleUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, switchAudioSourceUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, dashAudioSourceUID),
 	MEMBER(MemberType::FLOAT, switchCooldown),
 	MEMBER(MemberType::FLOAT, dashCooldown),
 	MEMBER(MemberType::FLOAT, dashSpeed),
@@ -28,7 +30,8 @@ EXPOSE_MEMBERS(PlayerController) {
 	MEMBER(MemberType::FLOAT, cameraOffsetZ),
 	MEMBER(MemberType::FLOAT, cameraOffsetY),
 	MEMBER(MemberType::FLOAT, movementSpeed),
-	MEMBER(MemberType::FLOAT, timeToShoot)
+	MEMBER(MemberType::FLOAT, shootCooldown)
+
 };
 
 GENERATE_BODY_IMPL(PlayerController);
@@ -44,7 +47,7 @@ void PlayerController::Start() {
 
 	if (gameObject) {
 		transform = gameObject->GetComponent<ComponentTransform>();
-		audioSource = gameObject->GetComponent<ComponentAudioSource>();
+		shootAudioSource = gameObject->GetComponent<ComponentAudioSource>();
 	}
 	if (camera) {
 		compCamera = camera->GetComponent<ComponentCamera>();
@@ -74,6 +77,14 @@ void PlayerController::Start() {
 	}
 	if(onimaruParticle){
 		onimaruCompParticle = onimaruParticle->GetComponent<ComponentParticleSystem>();
+	}
+	if(switchAudioSourceUID){
+		GameObject*	aux = GameplaySystems::GetGameObject(switchAudioSourceUID);
+		switchAudioSource = aux->GetComponent<ComponentAudioSource>();
+	}
+	if(dashAudioSourceUID){
+		GameObject*	aux = GameplaySystems::GetGameObject(dashAudioSourceUID);
+		dashAudioSource = aux->GetComponent<ComponentAudioSource>();
 	}
 
 }
@@ -146,6 +157,7 @@ void PlayerController::InitDash(MovementDirection md) {
 	dashCooldownRemaing = dashCooldown;
 	dashInCooldown = true;
 	dashing = true;
+	dashAudioSource->Play();
 }
 
 void PlayerController::Dash() {
@@ -165,18 +177,27 @@ bool PlayerController::CanDash() {
 }
 
 void PlayerController::CheckCoolDowns() {
-	dashCooldownRemaing -= Time::GetDeltaTime();
-	switchCooldownRemaing -= Time::GetDeltaTime();
-
+	
 	if (dashCooldownRemaing <= 0.f) {
 		dashCooldownRemaing = 0.f;
 		dashInCooldown = false;
 		dashMovementDirection = MovementDirection::NONE;
+	}else{
+		dashCooldownRemaing -= Time::GetDeltaTime();
 	}
 
 	if (switchCooldownRemaing <= 0.f) {
 		switchCooldownRemaing = 0.f;
 		switchInCooldown = false;
+	}else{
+		switchCooldownRemaing -= Time::GetDeltaTime();
+	}
+
+	if (shootCooldownRemaing <= 0.f){
+		shootCooldownRemaing = 0.f;
+		shooting = false;
+	}else{
+		shootCooldownRemaing -= Time::GetDeltaTime();
 	}
 }
 
@@ -189,6 +210,7 @@ void PlayerController::SwitchCharacter() {
 	if (!onimaru) return;
 	if (CanSwitch()) {
 		switchInCooldown = true;
+		switchAudioSource->Play();
 		if (fang->IsActive()) {
 			Debug::Log("Swaping to onimaru...");
 			fang->Disable();
@@ -232,20 +254,16 @@ MovementDirection PlayerController::GetInputMovementDirection() const{
 int PlayerController::GetMouseDirectionState(MovementDirection input){
 	float3 inputDirection = GetDirection(input);
 	float dot = Dot(inputDirection.Normalized() , facePointDir.Normalized());
-	Debug::Log(std::to_string(sin(acos(dot))).c_str());
-	if(sin(acos(dot)) >= 0){
-		if(cos(7 * PI/4) < dot && dot <= cos(PI/4)){
-			return 2; //RunForward
-		}else if(cos(PI/4) < dot && dot <= cos(3 * PI/4)){
-			return 4; //RunRight  V
-		}
-	}else 
-	{
-		if(cos(3 * PI/4) < dot && dot <= cos(5 * PI/4)){
-			return 1; //RunBackward V
-		}else if(cos(5 * PI/4) < dot && dot <= cos(7 * PI/4)){
-			return 3; //RunLeft
-		}
+	float3 cross = Cross(inputDirection.Normalized() , facePointDir.Normalized());
+	
+	if(dot > 0.707){
+		return 2; //RunForward
+	}else if(dot < -0.707){
+		return 1; //RunBackward
+	}else if(cross.y > 0){
+		return 4; //RunRight
+	}else{
+		return 3; //RunLeft
 	}
 	return 0;
 }
@@ -290,6 +308,22 @@ void PlayerController::PlayAnimation(MovementDirection md, bool isFang){
 
 }
 
+bool PlayerController::CanShoot(){
+	return !shooting;
+}
+
+void PlayerController::Shoot(){
+
+	shootAudioSource->Play();
+	shootCooldownRemaing = shootCooldown;
+	shooting = true;
+	if(fang->IsActive()){
+		fangCompParticle->Play();
+	}else{
+		onimaruCompParticle->Play();
+	}
+}
+
 void PlayerController::Update() {
 	if (!gameObject) return;
 	if (!camera) return;
@@ -298,14 +332,15 @@ void PlayerController::Update() {
 	if (!onimaruCompParticle) return;
 	if (!fangParticle) return;
 	if (!onimaruParticle) return;
-	if (!audioSource) return;
+	if (!shootAudioSource) return;
 
-	CheckCoolDowns();
+	
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
 	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, 
 										transform->GetGlobalPosition().y + cameraOffsetY, 
 									   (transform->GetGlobalPosition().z + cameraOffsetZ)));
+	CheckCoolDowns();
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		md = GetInputMovementDirection();
@@ -313,7 +348,6 @@ void PlayerController::Update() {
 			InitDash(md);
 		}
 		Dash();
-
 		if (!dashing) {
 			LookAtMouse();
 			if (md != MovementDirection::NONE) {
@@ -325,18 +359,9 @@ void PlayerController::Update() {
 		}
 		PlayAnimation(md,fang);
 	}
-	if(timeRestToShoot <= 0){
-		if(Input::GetMouseButtonRepeat(0)){
-			audioSource->Play();
-			timeRestToShoot = timeToShoot;
-			if(fang->IsActive()){
-				fangCompParticle->Play();
-			}else{
-				onimaruCompParticle->Play();
-			}
-		}
-	}else{
-		timeRestToShoot -= Time::GetDeltaTime();
+	if(CanShoot() && Input::GetMouseButtonRepeat(0)){
+		Shoot();
 	}
+
 
 }

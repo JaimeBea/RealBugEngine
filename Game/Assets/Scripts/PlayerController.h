@@ -48,6 +48,9 @@ public:
 	UID mainNodeUID = 0;
 	UID cameraUID = 0;
 
+	UID switchAudioSourceUID = 0;
+	UID dashAudioSourceUID = 0;
+
 	float dashCooldown = 5.f; //seconds
 	float switchCooldown = 5.f;
 	float movementSpeed = 5.f;
@@ -55,7 +58,7 @@ public:
 	float dashDistance = 10.f;
 	float cameraOffsetZ = 20.f;
 	float cameraOffsetY = 10.f;
-	float timeToShoot = 0.1f;
+	float shootCooldown = 0.1f;
 
 	std::vector<std::string> states {"Idle" , 
 								"RunBackward" , "RunForward" , "RunLeft" , "RunRight" , 
@@ -72,8 +75,11 @@ private:
 	void LookAtMouse();
 	void CheckCoolDowns();
 	void SwitchCharacter();
+	void Shoot();
 	bool CanDash();
 	bool CanSwitch();
+	bool CanShoot();
+
 	float3 GetDirection(MovementDirection md) const;
 	MovementDirection GetInputMovementDirection() const;
 	int GetMouseDirectionState(MovementDirection input);
@@ -88,7 +94,8 @@ private:
 	float switchCooldownRemaing = 0.f;
 	bool switchInCooldown = false;
 
-	float timeRestToShoot = 0.f;
+	float shootCooldownRemaing = 0.f;
+	bool shooting = false;
 
 	float3 initialPosition = float3(0, 0, 0);
 	float3 dashDestination = float3(0, 0, 0);
@@ -109,6 +116,8 @@ private:
 	ComponentParticleSystem* onimaruCompParticle = nullptr;
 	
 	//Audio
-	ComponentAudioSource* audioSource = nullptr;
+	ComponentAudioSource* shootAudioSource = nullptr;
+	ComponentAudioSource* dashAudioSource = nullptr;
+	ComponentAudioSource* switchAudioSource = nullptr;
 };
 
