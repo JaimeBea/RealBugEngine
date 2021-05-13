@@ -47,7 +47,7 @@ void AIMovement::Update() {
     case AIState::START:
         if (Camera::CheckObjectInsideFrustum(&GetOwner())) {
             Seek(float3(parentTransform->GetGlobalPosition().x, 0, parentTransform->GetGlobalPosition().z), fallingSpeed);
-            if (parentTransform->GetGlobalPosition().y < 0e-5f) {
+            if (parentTransform->GetGlobalPosition().y < 2.7 + 0e-5f) {
                 animation->SendTrigger("StartSpawn");
                 state = AIState::SPAWN;
             }
