@@ -16,16 +16,19 @@
 EXPOSE_MEMBERS(PlayerController) {
 	// Add members here to expose them to the engine. Example:
 	MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
-		MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID),
-		MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
-		MEMBER(MemberType::GAME_OBJECT_UID, cameraUID),
-		MEMBER(MemberType::FLOAT, switchCooldown),
-		MEMBER(MemberType::FLOAT, dashCooldown),
-		MEMBER(MemberType::FLOAT, dashSpeed),
-		MEMBER(MemberType::FLOAT, dashDistance),
-		MEMBER(MemberType::FLOAT, cameraOffsetZ),
-		MEMBER(MemberType::FLOAT, cameraOffsetY),
-		MEMBER(MemberType::FLOAT, movementSpeed)
+	MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, mainNodeUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, cameraUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, fangParticleUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, onimaruParticleUID),
+	MEMBER(MemberType::FLOAT, switchCooldown),
+	MEMBER(MemberType::FLOAT, dashCooldown),
+	MEMBER(MemberType::FLOAT, dashSpeed),
+	MEMBER(MemberType::FLOAT, dashDistance),
+	MEMBER(MemberType::FLOAT, cameraOffsetZ),
+	MEMBER(MemberType::FLOAT, cameraOffsetY),
+	MEMBER(MemberType::FLOAT, movementSpeed),
+	MEMBER(MemberType::FLOAT, timeToShoot)
 };
 
 GENERATE_BODY_IMPL(PlayerController);
@@ -35,9 +38,13 @@ void PlayerController::Start() {
 	fang = GameplaySystems::GetGameObject(fangUID);
 	onimaru = GameplaySystems::GetGameObject(onimaruUID);
 	camera = GameplaySystems::GetGameObject(cameraUID);
+	//animation
+	fangParticle = GameplaySystems::GetGameObject(fangParticleUID);
+	onimaruParticle = GameplaySystems::GetGameObject(onimaruParticleUID);
 
 	if (gameObject) {
 		transform = gameObject->GetComponent<ComponentTransform>();
+		audioSource = gameObject->GetComponent<ComponentAudioSource>();
 	}
 	if (camera) {
 		compCamera = camera->GetComponent<ComponentCamera>();
@@ -62,6 +69,13 @@ void PlayerController::Start() {
 			onimaruAnimation->SendTrigger("");
 		}
 	}
+	if(fangParticle){
+		fangCompParticle = fangParticle->GetComponent<ComponentParticleSystem>();
+	}
+	if(onimaruParticle){
+		onimaruCompParticle = onimaruParticle->GetComponent<ComponentParticleSystem>();
+	}
+
 }
 
 void PlayerController::MoveTo(MovementDirection md) {
@@ -280,11 +294,18 @@ void PlayerController::Update() {
 	if (!gameObject) return;
 	if (!camera) return;
 	if (!transform) return;
+	if (!fangCompParticle) return;
+	if (!onimaruCompParticle) return;
+	if (!fangParticle) return;
+	if (!onimaruParticle) return;
+	if (!audioSource) return;
 
 	CheckCoolDowns();
 	ComponentTransform* cameraTransform = camera->GetComponent<ComponentTransform>();
 	gameObject = GameplaySystems::GetGameObject(mainNodeUID);
-	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, transform->GetGlobalPosition().y + cameraOffsetY, (transform->GetGlobalPosition().z + cameraOffsetZ)));
+	cameraTransform->SetPosition(float3(transform->GetGlobalPosition().x, 
+										transform->GetGlobalPosition().y + cameraOffsetY, 
+									   (transform->GetGlobalPosition().z + cameraOffsetZ)));
 	if (cameraTransform) {
 		MovementDirection md = MovementDirection::NONE;
 		md = GetInputMovementDirection();
@@ -303,6 +324,19 @@ void PlayerController::Update() {
 			}
 		}
 		PlayAnimation(md,fang);
-
 	}
+	if(timeRestToShoot <= 0){
+		if(Input::GetMouseButtonRepeat(0)){
+			audioSource->Play();
+			timeRestToShoot = timeToShoot;
+			if(fang->IsActive()){
+				fangCompParticle->Play();
+			}else{
+				onimaruCompParticle->Play();
+			}
+		}
+	}else{
+		timeRestToShoot -= Time::GetDeltaTime();
+	}
+
 }
