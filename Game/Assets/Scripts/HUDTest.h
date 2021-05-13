@@ -19,5 +19,8 @@ public:
 	float cooldown5 = 0;
 	float cooldown6 = 0;
 	float cooldown7 = 0;
+
+	int fangHP = 6;
+	int onimaruHP = 4;
 };
 
