@@ -186,8 +186,18 @@ float2 Input::GetMousePosition() {
 	return App->input->GetMousePosition(true);
 }
 
-const float2& Input::GetMousePositionNormalized() {
+const float2 Input::GetMousePositionNormalized() {
+#if GAME
+	float2 mouseInput = App->input->GetMousePosition(true);
+	int width = App->window->GetWidth();
+	int height = App->window->GetHeight();
+	float2 mouseNormalized;
+	mouseNormalized.x = -1 + 2 * std::max(-1.0f, std::min((mouseInput.x) / (width), 1.0f));
+	mouseNormalized.y = 1 - 2 * std::max(-1.0f, std::min((mouseInput.y) / (height), 1.0f));
+	return mouseNormalized;
+#else
 	return App->editor->panelScene.GetMousePosOnSceneNormalized();
+#endif
 }
 
 bool Input::GetKeyCodeDown(KEYCODE keycode) {
