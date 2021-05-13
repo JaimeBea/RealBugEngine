@@ -381,7 +381,7 @@ void PlayerController::Update() {
 				SwitchCharacter();
 			}
 		}
-		PlayAnimation(md, fang);
+		PlayAnimation(md, fang->IsActive());
 	}
 	if (CanShoot() && Input::GetMouseButtonRepeat(0)) {
 		Shoot();
