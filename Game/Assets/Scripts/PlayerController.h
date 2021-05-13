@@ -14,10 +14,6 @@ class ComponentAnimation;
 class State;
 struct TesseractEvent;
 
-
-
-
-
 enum class MovementDirection {
 		NONE = 0, UP = 1, UP_LEFT = 2, LEFT = 3, DOWN_LEFT = 4, DOWN = 5, DOWN_RIGHT = 6, RIGHT = 7, UP_RIGHT = 8
 };
@@ -31,6 +27,8 @@ public:
 	void Start() override;
 	void Update() override;
 	void ReceiveEvent(TesseractEvent& e) override;
+
+	void HitDetected();
 	
 public:
 
@@ -51,6 +49,10 @@ public:
 	UID switchAudioSourceUID = 0;
 	UID dashAudioSourceUID = 0;
 
+	bool hitTaken = false;
+	int lifePoints = 5;
+
+	float distanceRayCast = 2.f;
 	float dashCooldown = 5.f; //seconds
 	float switchCooldown = 5.f;
 	float movementSpeed = 5.f;
