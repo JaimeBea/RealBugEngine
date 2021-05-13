@@ -28,6 +28,7 @@ public:
 	UID staticCamera4UID;
 	UID playerUID;
 	UID pauseUID;
+	UID hudUID;
 	UID enemySpawnPointsUID;
 
 	float speed = 50.f;
@@ -50,6 +51,7 @@ private:
 	ComponentCamera* staticCamera4 = nullptr;
 	GameObject* player = nullptr;
 	GameObject* pauseCanvas = nullptr;
+	GameObject* hudCanvas = nullptr;
 
 	float yaw = 0.f;
 	float pitch = 0.f;

@@ -14,8 +14,10 @@ public:
 
 public:
 	UID pauseUID;
+	UID hudUID;
 
 private:
 	GameObject* pauseCanvas = nullptr;
+	GameObject* hudCanvas = nullptr;
 };
 

@@ -19,6 +19,7 @@ EXPOSE_MEMBERS(GameController) {
 	MEMBER(MemberType::GAME_OBJECT_UID, staticCamera4UID),
 	MEMBER(MemberType::GAME_OBJECT_UID, playerUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, pauseUID),
+	MEMBER(MemberType::GAME_OBJECT_UID, hudUID),
 	MEMBER(MemberType::GAME_OBJECT_UID, enemySpawnPointsUID),
 	MEMBER(MemberType::FLOAT, speed),
 	MEMBER(MemberType::FLOAT, rotationSpeedX),
@@ -45,6 +46,7 @@ void GameController::Start() {
 	player = GameplaySystems::GetGameObject(playerUID);
 
 	pauseCanvas = GameplaySystems::GetGameObject(pauseUID);
+	hudCanvas = GameplaySystems::GetGameObject(hudUID);
 
 	if (gameCamera) {
 		camera = gameCamera->GetComponent<ComponentCamera>();
@@ -84,9 +86,11 @@ void GameController::Update() {
 		if (pauseCanvas) {
 			if (!isPaused) {
 				Time::PauseGame();
+				if (hudCanvas) hudCanvas->Disable();
 				pauseCanvas->Enable();
 			} else {
 				Time::ResumeGame();
+				if (hudCanvas) hudCanvas->Enable();
 				pauseCanvas->Disable();
 			}
 		}

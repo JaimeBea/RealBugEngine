@@ -20,5 +20,6 @@ void ReturnMenu::Update() {
 }
 
 void ReturnMenu::OnButtonClick() {
-	SceneManager::ChangeScene("Assets/Scenes/StartScene34.scene");
+	SceneManager::ChangeScene("Assets/Scenes/StartScene.scene");
+	if (Time::GetDeltaTime() == 0.f) Time::ResumeGame();
 }
