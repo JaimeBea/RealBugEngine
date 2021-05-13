@@ -155,7 +155,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.3608986139297486,
+                            "HorizontalFov": 1.5723497867584229,
                             "VerticalFov": 1.0
                         }
                     },
@@ -225,7 +225,7 @@
                 "Children": null
             },
             {
-                "Id": 970374872082651482,
+                "Id": 1877317986166432410,
                 "Name": "Canvas",
                 "Active": true,
                 "ActiveHierarchy": true,
@@ -233,7 +233,7 @@
                 "Components": [
                     {
                         "Type": "Transform",
-                        "Id": 14012176283040813109,
+                        "Id": 4694185697173723396,
                         "Active": true,
                         "Position": [
                             0.0,
@@ -258,8 +258,57 @@
                         ]
                     },
                     {
+                        "Type": "Transform2D",
+                        "Id": 494577084905735674,
+                        "Active": true,
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Rotation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "LocalEulerAngles": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "PivotPosition": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "Size": [
+                            200.0,
+                            200.0
+                        ],
+                        "AnchorMin": [
+                            0.5,
+                            0.5
+                        ],
+                        "AnchorMax": [
+                            0.5,
+                            0.5
+                        ],
+                        "AnchorSelected": 5,
+                        "IsCustomAnchor": false
+                    },
+                    {
                         "Type": "Canvas",
-                        "Id": 12246853266475675936,
+                        "Id": 722560770252847020,
                         "Active": true
                     }
                 ],
@@ -292,9 +341,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -335,14 +384,16 @@
                                     2200.0,
                                     1238.0
                                 ],
-                                "AnchorX": [
-                                    0.0,
-                                    0.0
+                                "AnchorMin": [
+                                    0.5,
+                                    0.5
                                 ],
-                                "AnchorY": [
-                                    0.0,
-                                    0.0
-                                ]
+                                "AnchorMax": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "AnchorSelected": 5,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -360,7 +411,9 @@
                                     1.0,
                                     1.0
                                 ],
-                                "AlphaTransparency": false
+                                "AlphaTransparency": false,
+                                "IsFill": false,
+                                "FillValue": 0.0
                             },
                             {
                                 "Type": "Script",
@@ -371,49 +424,7 @@
                             }
                         ],
                         "Children": null
-                    }
-                ]
-            },
-            {
-                "Id": 18095672743356305134,
-                "Name": "Canvas",
-                "Active": true,
-                "ActiveHierarchy": true,
-                "RootBoneId": 0,
-                "Components": [
-                    {
-                        "Type": "Transform",
-                        "Id": 14897984629683826342,
-                        "Active": true,
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "Rotation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "LocalEulerAngles": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
                     },
-                    {
-                        "Type": "Canvas",
-                        "Id": 4177967945025684497,
-                        "Active": true
-                    }
-                ],
-                "Children": [
                     {
                         "Id": 8518242787381405817,
                         "Name": "RetryButton",
@@ -442,9 +453,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -485,14 +496,16 @@
                                     711.0,
                                     180.0
                                 ],
-                                "AnchorX": [
-                                    0.0,
-                                    0.0
+                                "AnchorMin": [
+                                    0.5,
+                                    0.5
                                 ],
-                                "AnchorY": [
-                                    0.0,
-                                    0.0
-                                ]
+                                "AnchorMax": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "AnchorSelected": 5,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -521,7 +534,9 @@
                                     1.0,
                                     1.0
                                 ],
-                                "AlphaTransparency": true
+                                "AlphaTransparency": true,
+                                "IsFill": false,
+                                "FillValue": 0.0
                             },
                             {
                                 "Type": "Button",
@@ -569,49 +584,7 @@
                             }
                         ],
                         "Children": null
-                    }
-                ]
-            },
-            {
-                "Id": 14737886719263861153,
-                "Name": "Canvas",
-                "Active": true,
-                "ActiveHierarchy": true,
-                "RootBoneId": 0,
-                "Components": [
-                    {
-                        "Type": "Transform",
-                        "Id": 7917346744535437630,
-                        "Active": true,
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "Rotation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "LocalEulerAngles": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
                     },
-                    {
-                        "Type": "Canvas",
-                        "Id": 3586383841911003989,
-                        "Active": true
-                    }
-                ],
-                "Children": [
                     {
                         "Id": 656647871624026947,
                         "Name": "Exit",
@@ -640,9 +613,9 @@
                                     1.0
                                 ],
                                 "LocalEulerAngles": [
+                                    -0.0,
                                     0.0,
-                                    0.0,
-                                    0.0
+                                    -0.0
                                 ]
                             },
                             {
@@ -651,7 +624,7 @@
                                 "Active": true,
                                 "Position": [
                                     0.0,
-                                    0.0,
+                                    200.0,
                                     0.0
                                 ],
                                 "Rotation": [
@@ -676,21 +649,23 @@
                                 ],
                                 "PivotPosition": [
                                     0.0,
-                                    0.0,
+                                    200.0,
                                     0.0
                                 ],
                                 "Size": [
                                     711.0,
                                     180.0
                                 ],
-                                "AnchorX": [
-                                    0.0,
+                                "AnchorMin": [
+                                    0.5,
                                     0.0
                                 ],
-                                "AnchorY": [
-                                    0.0,
+                                "AnchorMax": [
+                                    0.5,
                                     0.0
-                                ]
+                                ],
+                                "AnchorSelected": 9,
+                                "IsCustomAnchor": false
                             },
                             {
                                 "Type": "CanvasRenderer",
@@ -719,7 +694,9 @@
                                     1.0,
                                     1.0
                                 ],
-                                "AlphaTransparency": true
+                                "AlphaTransparency": true,
+                                "IsFill": false,
+                                "FillValue": 0.0
                             },
                             {
                                 "Type": "Button",
