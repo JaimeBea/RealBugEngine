@@ -208,12 +208,39 @@ float Screen::GetScreenHeight() {
 	return static_cast<float>(App->window->GetHeight());
 }
 
+void Screen::SetResolution(int width_, int height_) {
+	App->window->SetSize(width_, height_);
+}
+
+float2 Screen::GetResolution() {
+	return float2(App->window->GetWidth(), App->window->GetHeight());
+}
+
+int Screen::GetResolutionPreset() {
+	return App->window->GetResolutionPreset();
+}
+
+void Screen::SetResolutionPreset(int resolutionPreset_) {
+	App->window->SetResolutionPreset(resolutionPreset_);
+}
+
+
 bool Screen::IsFullScreenOn() {
 	return App->window->GetWindowMode() == WindowMode::FULLSCREEN;
 }
+
 void Screen::SetFullScreen(bool fullscreen_) {
 	App->window->SetWindowMode(fullscreen_ ? WindowMode::FULLSCREEN : WindowMode::WINDOWED);
 }
+
+bool Screen::IsBorderless() {
+	return App->window->GetWindowMode() == WindowMode::BORDERLESS;
+}
+
+void Screen::SetBorderless(bool borderless_) {
+	App->window->SetWindowMode(borderless_ ? WindowMode::BORDERLESS : WindowMode::WINDOWED);
+}
+
 // --------- Camera --------- //
 
 bool Camera::CheckObjectInsideFrustum(GameObject* gameObject) {
