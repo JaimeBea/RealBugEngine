@@ -397,6 +397,10 @@ void PlayerController::Update() {
 		hitTaken = false;
 	}
 
+	if (lifePointsFang <= 0 || lifePointsOni <= 0) {
+		SceneManager::ChangeScene("Assets/Scenes/LoseScene.scene");
+	}
+
 	float realDashCooldown = 1.0f - (dashCooldownRemaing / dashCooldown);
 	float realSwitchCooldown = 1.0f - (switchCooldownRemaing / switchCooldown);
 	hudControllerScript->UpdateCooldowns(0.0f, 0.0f, 0.0f, realDashCooldown, 0.0f, 0.0f, realSwitchCooldown);
@@ -429,5 +433,6 @@ void PlayerController::Update() {
 	if (CanShoot() && Input::GetMouseButtonRepeat(0)) {
 		Shoot();
 	}
+
 
 }

@@ -31,7 +31,7 @@ void EnemySpawnPoint::Update() {
 				}
 			}
 			if (goTransform && goBounds) {
-				float3 newPosition = gameObject->GetComponent<ComponentTransform>()->GetPosition();
+				float3 newPosition = goTransform->GetPosition();
 				float newXval = goBounds->GetLocalMaxPointAABB().x - abs(goBounds->GetLocalMinPointAABB().x);
 				newXval = newXval < 1.f ? 1.f : newXval;
 				newPosition.x += iterator * offset * newXval;
