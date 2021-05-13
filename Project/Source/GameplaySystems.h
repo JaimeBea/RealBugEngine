@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Globals.h"
+#include "GameObject.h"
 #include "Application.h"
 #include "Modules/ModuleResources.h"
 #include "Components/ComponentCamera.h"
+#include "Components/ComponentScript.h"
 #include "Utils/Logging.h"
 #include "Utils/UID.h"
 
@@ -15,6 +17,8 @@
 #define TESSERACT_ENGINE_API __declspec(dllexport)
 #endif
 
+#define GET_SCRIPT(gameObject, _class_) GameplaySystems::GetScript<_class_>(gameObject, #_class_)
+
 class GameObject;
 class ResourcePrefab;
 
@@ -24,6 +28,21 @@ namespace GameplaySystems {
 	template<typename T> TESSERACT_ENGINE_API T* GetResource(UID id);
 	TESSERACT_ENGINE_API void SetRenderCamera(ComponentCamera* camera);
 	TESSERACT_ENGINE_API void DestroyGameObject(GameObject* gameObject);
+
+	template<class T>
+	TESSERACT_ENGINE_API T* GetScript(const GameObject* go, const char* className) {
+		ComponentView scripts = go->GetComponents<ComponentScript>();
+
+		for (ComponentScript& compScripts : scripts) {
+			const char* scriptName = compScripts.GetScriptName();
+			if (strcmp(className, scriptName) == 0) {
+				return static_cast<T*>(compScripts.GetScriptInstance());
+			}
+		}
+
+		return nullptr;
+	}
+
 }; // namespace GameplaySystems
 
 namespace Debug {
