@@ -262,8 +262,8 @@
                     {
                         "Id": 5330883967110963743,
                         "Name": "CanvasMainMenu",
-                        "Active": true,
-                        "ActiveHierarchy": true,
+                        "Active": false,
+                        "ActiveHierarchy": false,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -352,7 +352,7 @@
                                 "Id": 1149246748242145639,
                                 "Name": "CanvasBackground",
                                 "Active": true,
-                                "ActiveHierarchy": true,
+                                "ActiveHierarchy": false,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -441,7 +441,7 @@
                                         "Id": 4463050003908254195,
                                         "Name": "Background",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -546,7 +546,7 @@
                                         "Id": 3428339755575845310,
                                         "Name": "BackgroundLeft",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -651,7 +651,7 @@
                                         "Id": 3977710151417696307,
                                         "Name": "BackgroundRight",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -758,7 +758,7 @@
                                 "Id": 2349511295773514418,
                                 "Name": "TitleImage",
                                 "Active": true,
-                                "ActiveHierarchy": true,
+                                "ActiveHierarchy": false,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -863,7 +863,7 @@
                                 "Id": 14669291529436515708,
                                 "Name": "Canvas",
                                 "Active": true,
-                                "ActiveHierarchy": true,
+                                "ActiveHierarchy": false,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -952,7 +952,7 @@
                                         "Id": 16626893154254101793,
                                         "Name": "CanvasButtonPlay",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -1041,7 +1041,7 @@
                                                 "Id": 7491420689186152131,
                                                 "Name": "Button",
                                                 "Active": true,
-                                                "ActiveHierarchy": true,
+                                                "ActiveHierarchy": false,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -1211,7 +1211,7 @@
                                                         "Id": 2611773067301683703,
                                                         "Name": "ButtonStroke",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -1316,7 +1316,7 @@
                                                         "Id": 718800567643586462,
                                                         "Name": "ButtonText",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -1426,7 +1426,7 @@
                                         "Id": 17327549018532538355,
                                         "Name": "CanvasButtonSettings",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -1515,7 +1515,7 @@
                                                 "Id": 4350496057787619139,
                                                 "Name": "Button",
                                                 "Active": true,
-                                                "ActiveHierarchy": true,
+                                                "ActiveHierarchy": false,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -1685,7 +1685,7 @@
                                                         "Id": 12694612679038811613,
                                                         "Name": "ButtonStroke",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -1790,7 +1790,7 @@
                                                         "Id": 16663509895134420899,
                                                         "Name": "ButtonText",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -1900,7 +1900,7 @@
                                         "Id": 4246834134227431547,
                                         "Name": "CanvasButtonCredits",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -1989,7 +1989,7 @@
                                                 "Id": 9522717709241811787,
                                                 "Name": "Button",
                                                 "Active": true,
-                                                "ActiveHierarchy": true,
+                                                "ActiveHierarchy": false,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -2159,7 +2159,7 @@
                                                         "Id": 14542028453724340435,
                                                         "Name": "ButtonStroke",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -2264,7 +2264,7 @@
                                                         "Id": 5255240448463627848,
                                                         "Name": "ButtonText",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -2374,7 +2374,7 @@
                                         "Id": 3118660121871191132,
                                         "Name": "CanvasButtonExit",
                                         "Active": true,
-                                        "ActiveHierarchy": true,
+                                        "ActiveHierarchy": false,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -2463,7 +2463,7 @@
                                                 "Id": 1374933056629919156,
                                                 "Name": "Button",
                                                 "Active": true,
-                                                "ActiveHierarchy": true,
+                                                "ActiveHierarchy": false,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -2622,7 +2622,7 @@
                                                         "Id": 12566239061271899315,
                                                         "Name": "ButtonStroke",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -2727,7 +2727,7 @@
                                                         "Id": 13571365053433037872,
                                                         "Name": "ButtonText",
                                                         "Active": true,
-                                                        "ActiveHierarchy": true,
+                                                        "ActiveHierarchy": false,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -8072,8 +8072,8 @@
                     {
                         "Id": 7587688989899718172,
                         "Name": "CanvasControls",
-                        "Active": false,
-                        "ActiveHierarchy": false,
+                        "Active": true,
+                        "ActiveHierarchy": true,
                         "RootBoneId": 0,
                         "Components": [
                             {
@@ -8162,7 +8162,7 @@
                                 "Id": 2975927573175375632,
                                 "Name": "CanvasBackground",
                                 "Active": true,
-                                "ActiveHierarchy": false,
+                                "ActiveHierarchy": true,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -8251,7 +8251,7 @@
                                         "Id": 5633700867534131271,
                                         "Name": "Background",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -8356,7 +8356,7 @@
                                         "Id": 11028982724231770996,
                                         "Name": "BackgroundMask",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -8461,7 +8461,7 @@
                                         "Id": 14702694144085269781,
                                         "Name": "BackgroundLeft",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -8566,7 +8566,7 @@
                                         "Id": 12163277665282132532,
                                         "Name": "BackgroundRight",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -8673,7 +8673,7 @@
                                 "Id": 3634614695079947376,
                                 "Name": "HeaderMenu",
                                 "Active": true,
-                                "ActiveHierarchy": false,
+                                "ActiveHierarchy": true,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -8762,7 +8762,7 @@
                                         "Id": 15458327539804989733,
                                         "Name": "HeaderTitle",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -8868,7 +8868,7 @@
                                         "Id": 14152619437083846953,
                                         "Name": "HeaderStroke",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -8975,7 +8975,7 @@
                                 "Id": 13208969519715007337,
                                 "Name": "CanvasButtonBack",
                                 "Active": true,
-                                "ActiveHierarchy": false,
+                                "ActiveHierarchy": true,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -9064,7 +9064,7 @@
                                         "Id": 13175779698559895484,
                                         "Name": "Button",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -9234,7 +9234,7 @@
                                                 "Id": 7878229462801783350,
                                                 "Name": "ButtonStroke",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -9339,7 +9339,7 @@
                                                 "Id": 17556778053825247724,
                                                 "Name": "ButtonText",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -9449,7 +9449,7 @@
                                 "Id": 17454826930389473187,
                                 "Name": "CanvasKeys",
                                 "Active": true,
-                                "ActiveHierarchy": false,
+                                "ActiveHierarchy": true,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -9538,7 +9538,7 @@
                                         "Id": 2912098711894525851,
                                         "Name": "Text",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -9644,7 +9644,7 @@
                                         "Id": 796766954519387347,
                                         "Name": "Keys",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -9733,7 +9733,7 @@
                                                 "Id": 11199934341762941579,
                                                 "Name": "Background",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -9837,7 +9837,7 @@
                                                         "Id": 14834403961549692261,
                                                         "Name": "Text",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -9943,7 +9943,7 @@
                                                         "Id": 271349503120215950,
                                                         "Name": "Mouse",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -10048,7 +10048,7 @@
                                                         "Id": 14835222653925771176,
                                                         "Name": "Keyboard",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -10153,7 +10153,7 @@
                                                         "Id": 17594662634424924526,
                                                         "Name": "Stroke",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -10260,7 +10260,7 @@
                                                 "Id": 7280022940452258340,
                                                 "Name": "KeysDistribution",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -10349,7 +10349,7 @@
                                                         "Id": 6305870449296971861,
                                                         "Name": "ESC",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -10455,7 +10455,7 @@
                                                         "Id": 17080645550208045239,
                                                         "Name": "KeysKeyboard",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -10544,7 +10544,7 @@
                                                                 "Id": 7331109078003983246,
                                                                 "Name": "Q",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -10650,7 +10650,7 @@
                                                                 "Id": 3934797869689580119,
                                                                 "Name": "W",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -10756,7 +10756,7 @@
                                                                 "Id": 5437466313443364884,
                                                                 "Name": "E",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -10862,7 +10862,7 @@
                                                                 "Id": 16424136163662621149,
                                                                 "Name": "R",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -10968,7 +10968,7 @@
                                                                 "Id": 9207078276089188455,
                                                                 "Name": "A",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -11074,7 +11074,7 @@
                                                                 "Id": 14355552483119050269,
                                                                 "Name": "S",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -11180,7 +11180,7 @@
                                                                 "Id": 8140816631562053861,
                                                                 "Name": "D",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -11288,7 +11288,7 @@
                                                         "Id": 2445118954533054007,
                                                         "Name": "KeysMouse",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -11377,7 +11377,7 @@
                                                                 "Id": 14005870226158441837,
                                                                 "Name": "LMB",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -11483,7 +11483,7 @@
                                                                 "Id": 10667020407306043744,
                                                                 "Name": "RMB",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -11593,7 +11593,7 @@
                                                 "Id": 5729216780502826687,
                                                 "Name": "KeysDescription",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -11682,7 +11682,7 @@
                                                         "Id": 501177064653443688,
                                                         "Name": "Background",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -11774,7 +11774,7 @@
                                                                     0.0,
                                                                     0.3450980484485626,
                                                                     0.4588235318660736,
-                                                                    0.501960813999176
+                                                                    0.7019608020782471
                                                                 ],
                                                                 "AlphaTransparency": true,
                                                                 "IsFill": false,
@@ -11786,7 +11786,7 @@
                                                                 "Id": 4147437669358572953,
                                                                 "Name": "Stroke",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -11893,7 +11893,7 @@
                                                         "Id": 17666939603941265677,
                                                         "Name": "KeysGroupLeft",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -11982,7 +11982,7 @@
                                                                 "Id": 12917459148365674658,
                                                                 "Name": "KeysGroupLeftType",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -12071,7 +12071,7 @@
                                                                         "Id": 10135103561439345571,
                                                                         "Name": "WASD",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12177,7 +12177,7 @@
                                                                         "Id": 12346340289955319442,
                                                                         "Name": "Mouse",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12283,7 +12283,7 @@
                                                                         "Id": 1428669408167883045,
                                                                         "Name": "LMB",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12389,7 +12389,7 @@
                                                                         "Id": 60982997121638951,
                                                                         "Name": "R",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12497,7 +12497,7 @@
                                                                 "Id": 15211119240299512167,
                                                                 "Name": "KeysGroupLeftDescription",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -12586,7 +12586,7 @@
                                                                         "Id": 13011507351937634876,
                                                                         "Name": "Pink",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12692,7 +12692,7 @@
                                                                         "Id": 4866024559206528130,
                                                                         "Name": "Pink",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12798,7 +12798,7 @@
                                                                         "Id": 12805552496115013052,
                                                                         "Name": "Pink",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -12904,7 +12904,7 @@
                                                                         "Id": 1380948206099366076,
                                                                         "Name": "Pink",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13014,7 +13014,7 @@
                                                         "Id": 17054636508035262362,
                                                         "Name": "KeysGroupRight",
                                                         "Active": true,
-                                                        "ActiveHierarchy": false,
+                                                        "ActiveHierarchy": true,
                                                         "RootBoneId": 0,
                                                         "Components": [
                                                             {
@@ -13103,7 +13103,7 @@
                                                                 "Id": 4117039981660712741,
                                                                 "Name": "KeysGroupRightType",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -13192,7 +13192,7 @@
                                                                         "Id": 17989540101632369104,
                                                                         "Name": "WASD",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13298,7 +13298,7 @@
                                                                         "Id": 3905875236823435394,
                                                                         "Name": "Mouse",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13404,7 +13404,7 @@
                                                                         "Id": 8255400014556141287,
                                                                         "Name": "LMB",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13510,7 +13510,7 @@
                                                                         "Id": 16683536838138595679,
                                                                         "Name": "R",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13618,7 +13618,7 @@
                                                                 "Id": 12158889285329594918,
                                                                 "Name": "KeysGroupRightDescription",
                                                                 "Active": true,
-                                                                "ActiveHierarchy": false,
+                                                                "ActiveHierarchy": true,
                                                                 "RootBoneId": 0,
                                                                 "Components": [
                                                                     {
@@ -13707,7 +13707,7 @@
                                                                         "Id": 16276469788826127286,
                                                                         "Name": "RMB",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13813,7 +13813,7 @@
                                                                         "Id": 2015583623896755439,
                                                                         "Name": "Q",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -13919,7 +13919,7 @@
                                                                         "Id": 16685862625022707796,
                                                                         "Name": "E",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -14025,7 +14025,7 @@
                                                                         "Id": 9683096202897100946,
                                                                         "Name": "Pink",
                                                                         "Active": true,
-                                                                        "ActiveHierarchy": false,
+                                                                        "ActiveHierarchy": true,
                                                                         "RootBoneId": 0,
                                                                         "Components": [
                                                                             {
@@ -14141,7 +14141,7 @@
                                 "Id": 8931808235044547941,
                                 "Name": "CanvasButtonDevelopment",
                                 "Active": true,
-                                "ActiveHierarchy": false,
+                                "ActiveHierarchy": true,
                                 "RootBoneId": 0,
                                 "Components": [
                                     {
@@ -14230,7 +14230,7 @@
                                         "Id": 14804528237011454023,
                                         "Name": "Button",
                                         "Active": true,
-                                        "ActiveHierarchy": false,
+                                        "ActiveHierarchy": true,
                                         "RootBoneId": 0,
                                         "Components": [
                                             {
@@ -14400,7 +14400,7 @@
                                                 "Id": 8365899456098344268,
                                                 "Name": "ButtonStroke",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
@@ -14505,7 +14505,7 @@
                                                 "Id": 18418242150474376869,
                                                 "Name": "ButtonText",
                                                 "Active": true,
-                                                "ActiveHierarchy": false,
+                                                "ActiveHierarchy": true,
                                                 "RootBoneId": 0,
                                                 "Components": [
                                                     {
