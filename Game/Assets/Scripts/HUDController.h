@@ -3,6 +3,7 @@
 #include "Scripting/Script.h"
 
 class GameObject;
+class ComponentText;
 
 static enum Cooldowns {
 	FANG_SKILL_1,
@@ -45,6 +46,8 @@ public:
 
 	UID swapingSkillCanvasUID = 0;
 
+	UID scoreTextUID = 0;
+
 	static void UpdateCooldowns(float onimaruCooldown1, float onimaruCooldown2, float onimaruCooldown3,
 		float fangCooldown1, float fangCooldown2, float fangCooldown3,
 		float switchCooldown);
@@ -52,6 +55,8 @@ public:
 	static void UpdateHP(float currentHp, float altHp);
 
 	static void ChangePlayerHUD();
+
+	void UpdateScore(int score_);
 
 private:
 	static void UpdateComponents();
@@ -88,5 +93,9 @@ private:
 	
 	static const float4 colorMagentaDarkened;
 	static const float4 colorWhiteDarkened;
+
+	ComponentText* scoreText = nullptr;
+
+	int score = 0;
 };
 

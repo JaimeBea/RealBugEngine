@@ -19,6 +19,7 @@ EXPOSE_MEMBERS(HUDController) {
     MEMBER(MemberType::GAME_OBJECT_UID, swapingSkillCanvasUID),
     MEMBER(MemberType::GAME_OBJECT_UID, fangUID),
     MEMBER(MemberType::GAME_OBJECT_UID, onimaruUID),
+    MEMBER(MemberType::GAME_OBJECT_UID, scoreTextUID)
 };
 
 GENERATE_BODY_IMPL(HUDController);
@@ -67,7 +68,10 @@ void HUDController::Start() {
 
     fang = GameplaySystems::GetGameObject(fangUID);
     onimaru = GameplaySystems::GetGameObject(onimaruUID);
-    
+
+    GameObject* text = GameplaySystems::GetGameObject(scoreTextUID);
+    if (text) scoreText = text->GetComponent<ComponentText>();
+
     if (onimaru && onimaruCanvas && fangCanvas && fang) {
         onimaru->Disable();
         onimaruCanvas->Disable();
@@ -92,22 +96,23 @@ void HUDController::Update() {
 void HUDController::ChangePlayerHUD() {
     if (!fang || !onimaru) return;
 
-    if (fang->IsActive()) {
-        fang->Disable();
-        onimaru->Enable();
+    if (!fang->IsActive()) {
         fangCanvas->Disable();
         onimaruCanvas->Enable();
     }
     else {
-        onimaru->Disable();
-        fang->Enable();
         onimaruCanvas->Disable();
         fangCanvas->Enable();
     }
 }
 
+void HUDController::UpdateScore(int score_) {
+    score += score_;
+    if(scoreText) scoreText->SetText(std::to_string(score));
+}
+
 void HUDController::UpdateCooldowns(float onimaruCooldown1, float onimaruCooldown2, float onimaruCooldown3, float fangCooldown1, float fangCooldown2, float fangCooldown3, float switchCooldown) {
-    
+
     cooldowns[Cooldowns::FANG_SKILL_1] = fangCooldown1;
     cooldowns[Cooldowns::FANG_SKILL_2] = fangCooldown2;
     cooldowns[Cooldowns::FANG_SKILL_3] = fangCooldown3;
@@ -115,11 +120,12 @@ void HUDController::UpdateCooldowns(float onimaruCooldown1, float onimaruCooldow
     cooldowns[Cooldowns::ONIMARU_SKILL_2] = onimaruCooldown2;
     cooldowns[Cooldowns::ONIMARU_SKILL_3] = onimaruCooldown3;
     cooldowns[Cooldowns::SWITCH_SKILL] = switchCooldown;
-    
+
     UpdateComponents();
 }
 
 void HUDController::UpdateHP(float currentHp, float altHp) {
+    if (!fang || !onimaru) return;
     if (fang->IsActive()) {
         UpdateCanvasHP(fangHealthMainCanvas, currentHp, false);
         UpdateCanvasHP(onimaruHealthSecondCanvas, altHp, true);
