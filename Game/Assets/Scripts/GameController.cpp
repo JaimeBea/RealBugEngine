@@ -56,9 +56,6 @@ void GameController::Start() {
 }
 
 void GameController::Update() {
-	if (!transitionFinished) {
-		DoTransition();
-	}
 
 	if (Input::GetKeyCodeDown(Input::KEYCODE::KEY_G) && !isPaused) {
 		if (godModeAvailable) {

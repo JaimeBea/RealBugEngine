@@ -182,14 +182,14 @@
                         "Script": 992608944476897018,
                         "Values": [
                             {
-                                "Name": "pauseUID",
-                                "Type": "GameObjectUID",
-                                "Value": 504404671385079168
-                            },
-                            {
                                 "Name": "staticCamera3UID",
                                 "Type": "GameObjectUID",
                                 "Value": 16730460715818442581
+                            },
+                            {
+                                "Name": "pauseUID",
+                                "Type": "GameObjectUID",
+                                "Value": 504404671385079168
                             },
                             {
                                 "Name": "staticCamera1UID",
@@ -202,9 +202,9 @@
                                 "Value": 3685415630762953669
                             },
                             {
-                                "Name": "staticCamera4UID",
+                                "Name": "gameCameraUID",
                                 "Type": "GameObjectUID",
-                                "Value": 2655070040425404295
+                                "Value": 680618938873982628
                             },
                             {
                                 "Name": "playerUID",
@@ -212,9 +212,9 @@
                                 "Value": 16946159852043739972
                             },
                             {
-                                "Name": "gameCameraUID",
+                                "Name": "staticCamera4UID",
                                 "Type": "GameObjectUID",
-                                "Value": 680618938873982628
+                                "Value": 2655070040425404295
                             },
                             {
                                 "Name": "godCameraUID",
@@ -227,24 +227,8 @@
                         "Type": "Script",
                         "Id": 7171011586092336427,
                         "Active": true,
-                        "Script": 4240581393573860681,
-                        "Values": [
-                            {
-                                "Name": "winUID",
-                                "Type": "GameObjectUID",
-                                "Value": 3640826057516209614
-                            },
-                            {
-                                "Name": "loseUID",
-                                "Type": "GameObjectUID",
-                                "Value": 1108990954059139989
-                            },
-                            {
-                                "Name": "playerUID",
-                                "Type": "GameObjectUID",
-                                "Value": 16946159852043739972
-                            }
-                        ]
+                        "Script": 992608944476897018,
+                        "Values": null
                     }
                 ],
                 "Children": null
@@ -304,7 +288,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 2000.0,
-                            "HorizontalFov": 1.8549830913543702,
+                            "HorizontalFov": 1.9038573503494263,
                             "VerticalFov": 1.3113912343978882
                         }
                     }
@@ -1829,7 +1813,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.8549830913543702,
+                                    "HorizontalFov": 1.9038573503494263,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -1891,7 +1875,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.8549830913543702,
+                                    "HorizontalFov": 1.9038573503494263,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -1953,7 +1937,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.8549830913543702,
+                                    "HorizontalFov": 1.9038573503494263,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -2015,7 +1999,7 @@
                                     ],
                                     "NearPlaneDistance": 0.10000000149011612,
                                     "FarPlaneDistance": 200.0,
-                                    "HorizontalFov": 1.8549830913543702,
+                                    "HorizontalFov": 1.9038573503494263,
                                     "VerticalFov": 1.3113912343978882
                                 }
                             }
@@ -25797,6 +25781,62 @@
                                     }
                                 ],
                                 "Children": null
+                            },
+                            {
+                                "Id": 7293091320273526489,
+                                "Name": "OilStains",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 4341905882347623211,
+                                        "Active": true,
+                                        "Position": [
+                                            -1.02227783203125,
+                                            2.5970687866210939,
+                                            0.7547178268432617
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0000001192092896,
+                                            1.0000001192092896
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 9087477591426752701,
+                                        "Active": true,
+                                        "MeshID": 2444237296390418017,
+                                        "MaterialID": 8657479489265990065
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 8981052203052400291,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -22.152442932128908,
+                                            -16.810997009277345,
+                                            -0.43453121185302737,
+                                            22.152446746826173,
+                                            16.810997009277345,
+                                            0.43453168869018557
+                                        ]
+                                    }
+                                ],
+                                "Children": null
                             }
                         ]
                     },
@@ -26222,6 +26262,454 @@
                                             15.61834716796875,
                                             19.988746643066408,
                                             2.0600876808166506
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 3928561329831757387,
+                                "Name": "SecurityZoneGround1",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 12135873158038776709,
+                                        "Active": true,
+                                        "Position": [
+                                            30.025100708007814,
+                                            1.9999979734420777,
+                                            0.4999866485595703
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 13889908227823952086,
+                                        "Active": true,
+                                        "MeshID": 2785315412827067637,
+                                        "MaterialID": 14438688101770792157
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 10912155584066170903,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -27.000045776367189,
+                                            -20.499998092651368,
+                                            -2.000009536743164,
+                                            27.000030517578126,
+                                            20.499996185302736,
+                                            2.000009536743164
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 15588311396068144418,
+                                "Name": "SecurityZoneProps",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 11168062074370060069,
+                                        "Active": true,
+                                        "Position": [
+                                            34.573455810546878,
+                                            2.2488083839416506,
+                                            0.48879432678222659
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0000001192092896,
+                                            1.0000001192092896
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 9735421491493455930,
+                                        "Active": true,
+                                        "MeshID": 2671994735050975105,
+                                        "MaterialID": 14438688101770792157
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 1039759136442839417,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -19.07083511352539,
+                                            -25.285137176513673,
+                                            -4.751557350158691,
+                                            19.070846557617189,
+                                            25.285137176513673,
+                                            4.751556873321533
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 15745444985229444406,
+                                "Name": "SecurityZoneGround2",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 6350109171573167679,
+                                        "Active": true,
+                                        "Position": [
+                                            33.02507019042969,
+                                            2.1694374084472658,
+                                            0.4999723434448242
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0000001192092896,
+                                            1.0000001192092896
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 7605883779564669408,
+                                        "Active": true,
+                                        "MeshID": 15571273889292877890,
+                                        "MaterialID": 14438688101770792157
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 10330913851996972410,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -24.000022888183595,
+                                            -19.485000610351564,
+                                            -0.8553773164749146,
+                                            24.000015258789064,
+                                            19.484989166259767,
+                                            0.855377197265625
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 1261723621666589236,
+                                "Name": "Factory",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 17906287645859137036,
+                                        "Active": true,
+                                        "Position": [
+                                            86.27305603027344,
+                                            -101.67557525634766,
+                                            0.11429573595523834
+                                        ],
+                                        "Rotation": [
+                                            0.5,
+                                            0.5,
+                                            0.5000000596046448,
+                                            -0.4999999403953552
+                                        ],
+                                        "Scale": [
+                                            0.9921979904174805,
+                                            0.9921979904174805,
+                                            0.9921979904174805
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.0,
+                                            0.000006830189249740215,
+                                            -90.00000762939453
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 8812641740980724725,
+                                        "Active": true,
+                                        "MeshID": 11284577360239241853,
+                                        "MaterialID": 14438688101770792157
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 3287685305547506428,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -31.499998092651368,
+                                            -29.894357681274415,
+                                            0.0,
+                                            31.5,
+                                            29.5,
+                                            200.0
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 10329339800489377020,
+                                "Name": "RailWallBridge4",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 14514168805871110711,
+                                        "Active": true,
+                                        "Position": [
+                                            -35.83250427246094,
+                                            4.057520389556885,
+                                            0.49968814849853518
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0000001192092896,
+                                            1.0000001192092896
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 13804026656981158162,
+                                        "Active": true,
+                                        "MeshID": 6499598926978325027,
+                                        "MaterialID": 4310530935043537892
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 6747946792987776217,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -38.87405776977539,
+                                            -8.316198348999024,
+                                            -0.9126834869384766,
+                                            38.874061584472659,
+                                            8.316205978393555,
+                                            0.9126834869384766
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 16442698738983863190,
+                                "Name": "PylonsBridge4",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 6576259957447690927,
+                                        "Active": true,
+                                        "Position": [
+                                            -35.81494140625,
+                                            4.131551742553711,
+                                            0.7314596176147461
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0000001192092896,
+                                            1.0000001192092896
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 6816887736892963560,
+                                        "Active": true,
+                                        "MeshID": 7399866691275200684,
+                                        "MaterialID": 4372419076879280666
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 12202154887231170035,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -39.30016326904297,
+                                            -8.205717086791993,
+                                            -1.0092825889587403,
+                                            39.259674072265628,
+                                            8.66864013671875,
+                                            1.0092825889587403
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 3670970233848060940,
+                                "Name": "BridgeBaseSecurity",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 3154220167224414285,
+                                        "Active": true,
+                                        "Position": [
+                                            -35.97489929199219,
+                                            1.06333589553833,
+                                            0.49994659423828127
+                                        ],
+                                        "Rotation": [
+                                            -0.7071068286895752,
+                                            0.0,
+                                            0.0,
+                                            0.7071067094802856
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0000001192092896,
+                                            1.0000001192092896
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.00000762939453,
+                                            0.0,
+                                            0.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 12340782290981528190,
+                                        "Active": true,
+                                        "MeshID": 6646744383918453863,
+                                        "MaterialID": 14438688101770792157
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 14538196270173582032,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -38.99995422363281,
+                                            -8.500016212463379,
+                                            -2.160045623779297,
+                                            38.999969482421878,
+                                            8.500019073486329,
+                                            2.160045623779297
+                                        ]
+                                    }
+                                ],
+                                "Children": null
+                            },
+                            {
+                                "Id": 8942456445871870196,
+                                "Name": "TileConnectorsBridge3",
+                                "Active": true,
+                                "ActiveHierarchy": true,
+                                "RootBoneId": 0,
+                                "Components": [
+                                    {
+                                        "Type": "Transform",
+                                        "Id": 16108743122708795112,
+                                        "Active": true,
+                                        "Position": [
+                                            13.530899047851563,
+                                            0.08835506439208985,
+                                            0.5000001192092896
+                                        ],
+                                        "Rotation": [
+                                            0.5,
+                                            0.5,
+                                            0.5,
+                                            -0.5
+                                        ],
+                                        "Scale": [
+                                            1.0,
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "LocalEulerAngles": [
+                                            -90.0,
+                                            0.0,
+                                            -90.0
+                                        ]
+                                    },
+                                    {
+                                        "Type": "MeshRenderer",
+                                        "Id": 16132762756136819861,
+                                        "Active": true,
+                                        "MeshID": 15311115259730078216,
+                                        "MaterialID": 1110610571077198197
+                                    },
+                                    {
+                                        "Type": "BoundingBox",
+                                        "Id": 1056078803803550831,
+                                        "Active": true,
+                                        "LocalBoundingBox": [
+                                            -1.5000017881393433,
+                                            -10.501396179199219,
+                                            1.3232898712158204,
+                                            1.5000003576278687,
+                                            43.505332946777347,
+                                            3.0
                                         ]
                                     }
                                 ],
@@ -29064,9 +29552,9 @@
                         "Id": 16163437627642280464,
                         "Active": true,
                         "Position": [
-                            359.1827087402344,
+                            -14.2559175491333,
                             27.033466339111329,
-                            67.12889862060547
+                            60.786468505859378
                         ],
                         "Rotation": [
                             0.06666173785924912,
@@ -29091,9 +29579,9 @@
                         "Active": true,
                         "Frustum": {
                             "Pos": [
-                                359.1827087402344,
+                                -14.2559175491333,
                                 27.033466339111329,
-                                67.12889862060547
+                                60.786468505859378
                             ],
                             "Up": [
                                 0.24258309602737428,
@@ -29107,7 +29595,7 @@
                             ],
                             "NearPlaneDistance": 0.10000000149011612,
                             "FarPlaneDistance": 200.0,
-                            "HorizontalFov": 1.8549830913543702,
+                            "HorizontalFov": 1.9038573503494263,
                             "VerticalFov": 1.3113912343978882
                         }
                     },
