@@ -23,8 +23,6 @@ public:
 private:
 	void IncreaseResolution(int multiplier);
 	void UpdateText();
-	int GetPreSelectedWidth();
-	int GetPreSelectedHeight();
 private:
 
 	ComponentText* text = nullptr;
