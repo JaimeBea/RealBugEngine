@@ -15,7 +15,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <thread>
-#include <mutex>
 
 class ModuleResources : public Module {
 public:
