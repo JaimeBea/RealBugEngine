@@ -208,10 +208,15 @@ void ComponentImage::SetFillValue(float val) {
 		fillVal = 1.0f;
 	} else
 		fillVal = val;
+	RebuildFillQuadVBO();
 }
 
 void ComponentImage::SetIsFill(bool b) {
 	isFill = b;
+}
+
+bool ComponentImage::IsFill() const {
+	return isFill;
 }
 
 void ComponentImage::RebuildFillQuadVBO() {
