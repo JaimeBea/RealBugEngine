@@ -367,13 +367,13 @@ void ResourceMaterial::OnEditorUpdate() {
 	ImGui::EndColumns();
 	ImGui::NewLine();
 
-	// Tiling Settings
+	// Tiling Settingsextension
 	ImGui::DragFloat2("Tiling", tiling.ptr(), App->editor->dragSpeed1f, 1, inf);
 	ImGui::DragFloat2("Offset", offset.ptr(), App->editor->dragSpeed3f, -inf, inf);
 
 	ImGui::NewLine();
 	if (ImGui::Button("Save##material")) {
-		if (FileDialog::GetFileExtension(GetAssetFilePath().c_str()) != DEFAULT_MODEL_EXTENSION) {
+		if (FileDialog::GetFileExtension(GetAssetFilePath().c_str()) != MODEL_EXTENSION) {
 			SaveToFile(GetAssetFilePath().c_str());
 		}
 	}
