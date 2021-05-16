@@ -412,7 +412,7 @@ namespace Input {
 }; // namespace Input
 
 namespace Screen {
-	TESSERACT_ENGINE_API struct DisplayMode {
+	struct TESSERACT_ENGINE_API DisplayMode {
 		DisplayMode(const SDL_DisplayMode& sdlDisplayMode)
 			: width(sdlDisplayMode.w)
 			, height(sdlDisplayMode.h)
