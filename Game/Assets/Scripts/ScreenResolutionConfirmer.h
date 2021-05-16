@@ -3,7 +3,7 @@
 #include "Scripting/Script.h"
 
 extern bool screenResolutionChangeConfirmationWasRequested;
-extern int preSelectedScreenResolutionPreset;
+extern unsigned preSelectedScreenResolutionPreset;
 
 class ScreenResolutionConfirmer : public Script {
 	GENERATE_BODY(ScreenResolutionConfirmer);
