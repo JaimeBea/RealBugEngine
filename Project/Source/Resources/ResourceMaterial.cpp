@@ -8,6 +8,7 @@
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleEditor.h"
 #include "ResourceTexture.h"
+#include "Utils/FileDialog.h"
 #include "Utils/Logging.h"
 #include "Utils/Buffer.h"
 #include "Utils/ImGuiUtils.h"
@@ -300,7 +301,7 @@ void ResourceMaterial::OnEditorUpdate() {
 
 	ImGui::NewLine();
 
-	// Tiling Settings
+	// Tiling Settingsextension
 	ImGui::DragFloat2("Tiling", tiling.ptr(), App->editor->dragSpeed1f, 1, inf);
 	ImGui::DragFloat2("Offset", offset.ptr(), App->editor->dragSpeed3f, -inf, inf);
 }
