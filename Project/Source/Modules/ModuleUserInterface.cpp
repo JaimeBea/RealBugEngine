@@ -5,12 +5,16 @@
 #include "Components/UI/ComponentSelectable.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentEventSystem.h"
+#include "Components/UI/ComponentCanvasRenderer.h"
 #include "Components/ComponentBoundingBox2D.h"
 #include "Application.h"
 #include "ModuleFiles.h"
 #include "ModuleEvents.h"
 #include "Modules/ModuleResources.h"
 #include "Modules/ModuleTime.h"
+#include "Modules/ModuleInput.h"
+#include "Modules/ModuleEditor.h"
+#include "Panels/PanelScene.h"
 #include "ModuleScene.h"
 #include "UI/Interfaces/IPointerEnterHandler.h"
 #include "UI/Interfaces/IPointerExitHandler.h"
@@ -27,32 +31,30 @@
 #include "Utils/Leaks.h"
 
 bool ModuleUserInterface::Init() {
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_UPDATE, this);
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
-	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
-
+#if GAME
+	view2DInternal = true;
+#endif
 	return true;
 }
 
 bool ModuleUserInterface::Start() {
 	CreateQuadVBO();
+	App->events->AddObserverToEvent(TesseractEventType::SCREEN_RESIZED, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_CLICKED, this);
+	App->events->AddObserverToEvent(TesseractEventType::MOUSE_RELEASED, this);
+	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PLAY, this);
+	ViewportResized();
 	return true;
 }
 
-bool ModuleUserInterface::CleanUp() {
-	glDeleteBuffers(1, &quadVBO);
-	return true;
-}
+UpdateStatus ModuleUserInterface::Update() {
+	float2 mousePos = App->input->GetMousePosition(true);
 
-void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
-	float2 mousePos = float2(e.mouseUpdate.mouseX, e.mouseUpdate.mouseY);
+	if (currentEvSys) {
+		for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
+			ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
 
-	switch (e.type) {
-	case TesseractEventType::MOUSE_UPDATE:
-		if (currentEvSys) {
-			for (ComponentSelectable& selectable : App->scene->scene->selectableComponents) {
-				ComponentBoundingBox2D* bb = selectable.GetOwner().GetComponent<ComponentBoundingBox2D>();
-
+			if (bb) {
 				if (!selectable.IsHovered()) {
 					if (bb->GetWorldAABB().Contains(mousePos)) {
 						selectable.OnPointerEnter();
@@ -64,33 +66,57 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 				}
 			}
 		}
+	}
+
+	return UpdateStatus::CONTINUE;
+}
+
+//This is done like this because receiving a WINDOW RESIZE event from SDL takes one frame to take effect, so instead of directly calling OnViewportResized,
+//The behaviour implemented sets viewportWasResized to True, and the next PostUpdate iteration, when SDL event has taken effect, OnViewportResized is called
+UpdateStatus ModuleUserInterface::PostUpdate() {
+	if (viewportWasResized) {
+		viewportWasResized = false;
+		OnViewportResized();
+	}
+	return UpdateStatus::CONTINUE;
+}
+
+bool ModuleUserInterface::CleanUp() {
+	glDeleteBuffers(1, &quadVBO);
+	return true;
+}
+
+void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
+	ComponentEventSystem* eventSystem = GetCurrentEventSystem();
+	switch (e.type) {
+	case TesseractEventType::SCREEN_RESIZED:
+		ViewportResized();
 		break;
 
 	case TesseractEventType::MOUSE_CLICKED:
-		if (!App->time->IsGameRunning()) break;
-		if (currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+		if (eventSystem != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				if (lastHoveredSelectable->IsInteractable()) {
-					IMouseClickHandler* mouseClickHandler = dynamic_cast<IMouseClickHandler*>(lastHoveredSelectable->GetSelectableComponent());
-
-					if (mouseClickHandler != nullptr) {
-						mouseClickHandler->OnClicked();
-					}
+					lastHoveredSelectable->TryToClickOn();
 				}
+			} else {
+				eventSystem->SetSelected(0);
 			}
 		}
 		break;
 
 	case TesseractEventType::MOUSE_RELEASED:
-		if (!App->time->IsGameRunning()) break;
-		if (currentEvSys != nullptr) {
-			ComponentSelectable* lastHoveredSelectable = currentEvSys->GetCurrentlyHovered();
+		if (eventSystem != nullptr) {
+			ComponentSelectable* lastHoveredSelectable = eventSystem->GetCurrentlyHovered();
 			if (lastHoveredSelectable != nullptr) {
 				lastHoveredSelectable->OnDeselect();
 			}
 		}
-
+		break;
+	case TesseractEventType::PRESSED_PLAY:
+		//This is done to prevent the fact that (in editor) disabling internal 2D and pressing play generates a visual error
+		ViewportResized();
 		break;
 	default:
 		break;
@@ -98,7 +124,7 @@ void ModuleUserInterface::ReceiveEvent(TesseractEvent& e) {
 }
 
 Character ModuleUserInterface::GetCharacter(UID font, char c) {
-	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
+	ResourceFont* fontResource = App->resources->GetResource<ResourceFont>(font);
 
 	if (fontResource == nullptr) {
 		return Character();
@@ -107,7 +133,7 @@ Character ModuleUserInterface::GetCharacter(UID font, char c) {
 }
 
 void ModuleUserInterface::GetCharactersInString(UID font, const std::string& sentence, std::vector<Character>& charsInSentence) {
-	ResourceFont* fontResource = (ResourceFont*) App->resources->GetResource(font);
+	ResourceFont* fontResource = App->resources->GetResource<ResourceFont>(font);
 
 	if (fontResource == nullptr) {
 		return;
@@ -118,19 +144,25 @@ void ModuleUserInterface::GetCharactersInString(UID font, const std::string& sen
 	}
 }
 
-void ModuleUserInterface::Render() {
-	Scene* scene = App->scene->scene;
-	if (scene != nullptr) {
-		for (ComponentCanvasRenderer canvasRenderer : scene->canvasRendererComponents) {
-			if (canvasRenderer.GetOwner().IsActiveInHierarchy()) {
-				canvasRenderer.Render(&canvasRenderer.GetOwner());
-			}
+void ModuleUserInterface::RecursiveRender(const GameObject* obj) {
+	ComponentCanvasRenderer* renderer = obj->GetComponent<ComponentCanvasRenderer>();
+
+	if (obj->IsActive()) {
+		if (renderer && renderer->IsActive()) {
+			renderer->Render(obj);
+		}
+
+		for (const GameObject* child : obj->GetChildren()) {
+			RecursiveRender(child);
 		}
 	}
 }
 
-GameObject* ModuleUserInterface::GetCanvas() const {
-	return canvas;
+void ModuleUserInterface::Render() {
+	Scene* scene = App->scene->scene;
+	if (scene != nullptr) {
+		RecursiveRender(scene->root);
+	}
 }
 
 unsigned int ModuleUserInterface::GetQuadVBO() {
@@ -187,10 +219,42 @@ void ModuleUserInterface::CreateQuadVBO() {
 	glBufferData(GL_ARRAY_BUFFER, sizeof(buffer_data), buffer_data, GL_STATIC_DRAW);
 }
 
-void ModuleUserInterface::SetCurrentEventSystem(ComponentEventSystem* ev) {
-	currentEvSys = ev;
+void ModuleUserInterface::SetCurrentEventSystem(UID id_) {
+	currentEvSys = id_;
 }
 
 ComponentEventSystem* ModuleUserInterface::GetCurrentEventSystem() {
-	return currentEvSys;
+	if (currentEvSys == 0) {
+		if (App->scene->scene->eventSystemComponents.Count() > 0) {
+			currentEvSys = (*App->scene->scene->eventSystemComponents.begin()).GetID();
+		}
+	}
+
+	return currentEvSys == 0 ? nullptr : (ComponentEventSystem*) App->scene->scene->GetComponentByTypeAndId(ComponentType::EVENT_SYSTEM, currentEvSys);
+}
+
+void ModuleUserInterface::ViewportResized() {
+	viewportWasResized = true;
+}
+
+bool ModuleUserInterface::IsUsing2D() const {
+	return view2DInternal || App->time->HasGameStarted();
+}
+
+float4 ModuleUserInterface::GetErrorColor() {
+	return errorColor;
+}
+
+void ModuleUserInterface::OnViewportResized() {
+	for (ComponentCanvas& canvas : App->scene->scene->canvasComponents) {
+		canvas.Invalidate();
+	}
+
+	for (ComponentTransform2D& transform : App->scene->scene->transform2DComponents) {
+		transform.Invalidate();
+	}
+
+	for (ComponentText& text : App->scene->scene->textComponents) {
+		text.Invalidate();
+	}
 }

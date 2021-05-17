@@ -11,7 +11,7 @@
 class ModuleTime : public Module {
 public:
 	ModuleTime();
-	bool Init() override;
+	bool Start() override;
 	UpdateStatus PreUpdate() override;
 	void ReceiveEvent(TesseractEvent& e) override;
 
@@ -36,8 +36,8 @@ public:
 	// They are also in charge to serialise and load the scene on play, pause and stops.
 	void StartGame();
 	void StopGame();
-	void PauseGame();
-	void ResumeGame();
+	TESSERACT_ENGINE_API void PauseGame();
+	TESSERACT_ENGINE_API void ResumeGame();
 	void StepGame();
 	UpdateStatus ExitGame();
 

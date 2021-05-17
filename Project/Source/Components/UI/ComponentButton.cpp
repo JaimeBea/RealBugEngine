@@ -4,10 +4,15 @@
 #include "imgui.h"
 #include "GameObject.h"
 #include "Modules/ModuleInput.h"
+#include "Modules/ModuleResources.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Components/ComponentScript.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentEventSystem.h"
 #include "Resources/ResourceScript.h"
 #include "Utils/Logging.h"
+#include "Scripting/Script.h"
+
 #include "Utils/Leaks.h"
 
 #define JSON_TAG_COLOR_HOVER "ColorHover"
@@ -19,6 +24,17 @@ void ComponentButton::Init() {
 }
 
 void ComponentButton::OnEditorUpdate() {
+	if (ImGui::Checkbox("Active", &active)) {
+		if (GetOwner().IsActive()) {
+			if (active) {
+				Enable();
+			} else {
+				Disable();
+			}
+		}
+	}
+	ImGui::Separator();
+
 	ImGui::ColorEdit4("Click Color##", colorClicked.ptr());
 }
 
@@ -43,14 +59,10 @@ void ComponentButton::OnClicked() {
 	clicked = true;
 	App->userInterface->GetCurrentEventSystem()->SetSelected(GetOwner().GetComponent<ComponentSelectable>()->GetID());
 
-	std::vector<ComponentScript*> scriptComponents = GetOwner().GetComponents<ComponentScript>();
-	for (ComponentScript* scriptComponent : scriptComponents) {
-		Resource* scriptResource = App->resources->GetResource(scriptComponent->GetScriptID());
-		if (scriptResource != nullptr) {
-			Script* script = ((ResourceScript*) scriptResource)->script;
-			if (script != nullptr) {
-				script->OnButtonClick();
-			}
+	for (ComponentScript& scriptComponent : GetOwner().GetComponents<ComponentScript>()) {
+		Script* script = scriptComponent.GetScriptInstance();
+		if (script != nullptr) {
+			script->OnButtonClick();
 		}
 	}
 }
@@ -63,16 +75,16 @@ void ComponentButton::SetClicked(bool clicked_) {
 	clicked = clicked_;
 }
 
-const float4& ComponentButton::GetClickColor() const {
+float4 ComponentButton::GetClickColor() const {
 	return colorClicked;
 }
 
-const float4& ComponentButton::GetTintColor() const {
-	if (!IsActive()) return float4::one;
+float4 ComponentButton::GetTintColor() const {
+	if (!IsActive()) return App->userInterface->GetErrorColor();
 
 	ComponentSelectable* sel = GetOwner().GetComponent<ComponentSelectable>();
 
-	if (!sel) return float4::one;
+	if (!sel) return App->userInterface->GetErrorColor();
 
 	if (sel->GetTransitionType() == ComponentSelectable::TransitionType::COLOR_CHANGE) {
 		if (!sel->IsInteractable()) {
@@ -86,12 +98,7 @@ const float4& ComponentButton::GetTintColor() const {
 		}
 	}
 
-	return float4::one;
-}
-
-void ComponentButton::DuplicateComponent(GameObject& owner) {
-	ComponentButton* component = owner.CreateComponentDeferred<ComponentButton>();
-	component->colorClicked = colorClicked;
+	return App->userInterface->GetErrorColor();
 }
 
 void ComponentButton::Update() {

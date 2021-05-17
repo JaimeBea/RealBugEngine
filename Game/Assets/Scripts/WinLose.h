@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
 
 class GameObject;
 
@@ -12,13 +12,17 @@ public:
 
 	void Start() override;
 	void Update() override;
-public:
-
-	GameObject* winCon = nullptr;
-	GameObject* loseCon = nullptr;
-	GameObject* player = nullptr;
 
 public:
+	UID winUID;
+	UID playerUID;
+
 	float LoseOffsetX = 2.0f;
 	float LoseOffsetZ = 2.0f;
+
+private:
+	GameObject* winCon = nullptr;
+	GameObject* player = nullptr;
+
+
 };

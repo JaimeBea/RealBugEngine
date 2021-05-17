@@ -4,27 +4,29 @@
 #include "Application.h"
 #include "Utils/Logging.h"
 #include "FileSystem/SceneImporter.h"
+#include "Modules/ModuleCamera.h"
 #include "Modules/ModuleScene.h"
 #include "Modules/ModuleFiles.h"
 #include "Modules/ModuleEvents.h"
+#include "Modules/ModuleAudio.h"
+#include "Scene.h"
 #include "SDL_timer.h"
 #include "Brofiler.h"
 #include <ctime>
 
 #include "Utils/Leaks.h"
 
-#define TEMP_SCENE_FILE_NAME "_scene_snapshot.temp"
-
 ModuleTime::ModuleTime() {
 	timer.Start();
 }
 
-bool ModuleTime::Init() {
+bool ModuleTime::Start() {
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PAUSE, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_PLAY, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_RESUME, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STEP, this);
 	App->events->AddObserverToEvent(TesseractEventType::PRESSED_STOP, this);
+
 	return true;
 }
 
@@ -49,7 +51,7 @@ UpdateStatus ModuleTime::PreUpdate() {
 		timeDeltaMs = 0;
 	}
 
-	LogDeltaMS((float) realTimeDeltaMs);
+	logger->LogDeltaMS((float) realTimeDeltaMs);
 
 	return UpdateStatus::CONTINUE;
 }
@@ -109,11 +111,11 @@ float ModuleTime::GetRealTimeDeltaTime() const {
 }
 
 float ModuleTime::GetFPS() const {
-	return fpsLog[fpsLogIndex];
+	return logger->fpsLog[logger->fpsLogIndex];
 }
 
 float ModuleTime::GetMS() const {
-	return msLog[fpsLogIndex];
+	return logger->msLog[logger->fpsLogIndex];
 }
 
 float ModuleTime::GetTimeSinceStartup() const {
@@ -135,7 +137,18 @@ unsigned int ModuleTime::GetFrameCount() const {
 void ModuleTime::StartGame() {
 	if (gameStarted) return;
 
+#if !GAME
 	SceneImporter::SaveScene(TEMP_SCENE_FILE_NAME);
+	App->scene->scene->sceneLoaded = false;
+#endif // !GAME
+
+	if (App->camera->GetGameCamera()) {
+		// Set the Game Camera as active
+		App->camera->ChangeActiveCamera(App->camera->GetGameCamera(), true);
+		App->camera->ChangeCullingCamera(App->camera->GetGameCamera(), true);
+	} else {
+		// TODO: Modal window. Warning - camera not set.
+	}
 
 	gameStarted = true;
 	gameRunning = true;
@@ -144,11 +157,20 @@ void ModuleTime::StartGame() {
 void ModuleTime::StopGame() {
 	if (!gameStarted) return;
 
-	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
-	App->files->Erase(TEMP_SCENE_FILE_NAME);
-
 	gameStarted = false;
 	gameRunning = false;
+
+	// Stop all audio sources
+	App->audio->StopAllSources();
+
+#if !GAME
+	SceneImporter::LoadScene(TEMP_SCENE_FILE_NAME);
+	App->files->Erase(TEMP_SCENE_FILE_NAME);
+#endif
+
+	// Reset to the Engine camera
+	App->camera->ChangeActiveCamera(nullptr, false);
+	App->camera->ChangeCullingCamera(nullptr, false);
 
 	timeLastMs = 0;
 }

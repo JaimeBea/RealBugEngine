@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "Components/UI/ComponentEventSystem.h"
 #include "Components/UI/ComponentSelectable.h"
+#include "Components/UI/ComponentButton.h"
+#include "Components/UI/ComponentToggle.h"
+#include "Components/UI/ComponentTransform2D.h"
 #include "Application.h"
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleInput.h"
@@ -28,7 +31,12 @@
 #define JSON_TAG_SELECTABLE_TYPE "SelectableType"
 
 ComponentSelectable::~ComponentSelectable() {
-	//TODO IF SELECTED SET SELECTED TO NULL
+	ComponentEventSystem* eventSystem = App->userInterface->GetCurrentEventSystem();
+	if (eventSystem) {
+		if (eventSystem->GetCurrentSelected() == this) {
+			App->userInterface->GetCurrentEventSystem()->SetSelected(0);
+		}
+	}
 }
 
 bool ComponentSelectable::IsInteractable() const {
@@ -169,19 +177,23 @@ void ComponentSelectable::OnEnable() {
 }
 
 void ComponentSelectable::OnDisable() {
-	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+	ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem();
+	if (evSys != nullptr) {
 		if (selected) {
 			evSys->SetSelected(0);
+		}
+		if (hovered) {
+			hovered = false;
+			evSys->ExitedPointerOnSelectable(this);
 		}
 	}
 }
 
 void ComponentSelectable::OnPointerEnter() {
-	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+	ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem();
+	if (evSys != nullptr && GetOwner().IsActive()) {
 		hovered = true;
-		if (evSys != nullptr) {
-			evSys->EnteredPointerOnSelectable(this);
-		}
+		evSys->EnteredPointerOnSelectable(this);
 	}
 }
 
@@ -190,27 +202,11 @@ const float4 ComponentSelectable::GetDisabledColor() const {
 }
 
 void ComponentSelectable::OnPointerExit() {
-	if (ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem()) {
+	ComponentEventSystem* evSys = App->userInterface->GetCurrentEventSystem();
+	if (evSys != nullptr && GetOwner().IsActive()) {
 		hovered = false;
-		if (evSys != nullptr) {
-			evSys->ExitedPointerOnSelectable(this);
-		}
+		evSys->ExitedPointerOnSelectable(this);
 	}
-}
-
-void ComponentSelectable::DuplicateComponent(GameObject& owner) {
-	ComponentSelectable* component = owner.CreateComponentDeferred<ComponentSelectable>();
-	component->interactable = interactable;
-	component->colorDisabled = colorDisabled;
-	component->colorHovered = colorHovered;
-	component->colorSelected = colorSelected;
-	component->onAxisDown = onAxisDown;
-	component->onAxisUp = onAxisUp;
-	component->onAxisRight = onAxisRight;
-	component->onAxisLeft = onAxisLeft;
-	component->selectableType = selectableType;
-	component->navigationType = navigationType;
-	component->transitionType = transitionType;
 }
 
 bool ComponentSelectable::IsHovered() const {
@@ -305,12 +301,50 @@ ComponentSelectable::TransitionType ComponentSelectable::GetTransitionType() con
 	return transitionType;
 }
 
+void ComponentSelectable::TryToClickOn() const {
+	UID toBeClicked = 0;
+	ComponentType typeToPress = ComponentType::UNKNOWN;
+
+	std::vector<Component*>::const_iterator it = GetOwner().components.begin();
+	while (toBeClicked == 0 && it != GetOwner().components.end()) {
+		if ((*it)->GetType() == ComponentType::BUTTON || (*it)->GetType() == ComponentType::TOGGLE || (*it)->GetType() == ComponentType::SLIDER) {
+			toBeClicked = (*it)->GetID();
+			typeToPress = (*it)->GetType();
+		} else {
+			++it;
+		}
+	}
+
+	if (toBeClicked != 0) {
+		Component* componentToPress = nullptr;
+		switch (typeToPress) {
+		case ComponentType::BUTTON:
+			componentToPress = GetOwner().GetComponent<ComponentButton>();
+			((ComponentButton*) componentToPress)->OnClicked();
+			break;
+		case ComponentType::TOGGLE:
+			componentToPress = GetOwner().GetComponent<ComponentToggle>();
+			((ComponentToggle*) componentToPress)->OnClicked();
+			break;
+		case ComponentType::SLIDER:
+			componentToPress = GetOwner().GetComponent<ComponentSlider>();
+			((ComponentSlider*) componentToPress)->OnClicked();
+			break;
+		default:
+			assert("This is not supposed to ever happen");
+			break;
+		}
+	}
+}
+
 Component* ComponentSelectable::GetSelectableComponent() {
 	switch (selectableType) {
 	case ComponentType::BUTTON:
 		return GetOwner().GetComponent<ComponentButton>();
 	case ComponentType::TOGGLE:
 		return GetOwner().GetComponent<ComponentToggle>();
+	case ComponentType::SLIDER:
+		return GetOwner().GetComponent<ComponentSlider>();
 	default:
 		return nullptr;
 	}
@@ -318,4 +352,8 @@ Component* ComponentSelectable::GetSelectableComponent() {
 
 void ComponentSelectable::SetSelectableType(ComponentType type_) {
 	selectableType = type_;
+}
+
+bool ComponentSelectable::CanBeRemoved() const {
+	return !(GetOwner().GetComponent<ComponentButton>() || GetOwner().GetComponent<ComponentToggle>() || GetOwner().GetComponent<ComponentSlider>());
 }

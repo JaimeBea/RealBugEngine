@@ -1,26 +1,11 @@
 #pragma once
 
 #include "Modules/Module.h"
-#include "Scene.h"
-#include "GameObject.h"
-#include "Utils/Logging.h"
-#include "Utils/UID.h"
-#include "Utils/Pool.h"
-#include "Utils/Quadtree.h"
-#include "Utils/VectorMap.h"
-#include "Components/ComponentTransform.h"
-#include "Components/ComponentMeshRenderer.h"
-#include "Components/ComponentBoundingBox.h"
-#include "Components/ComponentCamera.h"
-#include "Components/ComponentLight.h"
-#include <Components/ComponentSkyBox.h>
 
-#include <unordered_map>
 #include <string>
 
-class CubeMap;
-struct aiScene;
-struct aiNode;
+class Scene;
+class GameObject;
 
 class ModuleScene : public Module {
 public:
@@ -38,5 +23,7 @@ public:
 public:
 	std::string fileName = ""; // REVIEW. This can be removed? Is it even used for anything?
 	Scene* scene = nullptr;
-	bool sceneLoaded = false;
+
+	//Temporary hardcoded solution
+	bool godModeOn = false;
 };

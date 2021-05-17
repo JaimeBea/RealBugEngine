@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Script.h"
+#include "Scripting/Script.h"
+
+class GameObject;
 
 class StartButton : public Script
 {
@@ -11,4 +13,10 @@ public:
 	void Start() override;
 	void Update() override;
 	void OnButtonClick() override;
+
+public:
+	int checkpointNum;
+
+private:
+	GameObject* player = nullptr;
 };

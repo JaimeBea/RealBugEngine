@@ -8,6 +8,7 @@
 #include "Modules/ModuleEditor.h"
 #include "Modules/ModuleEvents.h"
 #include "Modules/ModuleUserInterface.h"
+#include "Panels/PanelScene.h"
 #include "Utils/Logging.h"
 
 #include "imgui_impl_sdl.h"
@@ -76,6 +77,13 @@ UpdateStatus ModuleInput::PreUpdate() {
 				switch (event.window.event) {
 				case SDL_WINDOWEVENT_CLOSE:
 					return UpdateStatus::STOP;
+				case SDL_WINDOWEVENT_RESIZED:
+
+					TesseractEvent resizeEvent(TesseractEventType::SCREEN_RESIZED);
+					resizeEvent.Set<ViewportResizedStruct>(event.window.data1, event.window.data2);
+					App->events->AddEvent(resizeEvent);
+
+					break;
 				}
 			}
 			break;
@@ -101,8 +109,6 @@ UpdateStatus ModuleInput::PreUpdate() {
 				App->editor->OnMouseClicked();
 #else
 				TesseractEvent e(TesseractEventType::MOUSE_CLICKED);
-				e.mouseClicked.mouseX = auxMouseX;
-				e.mouseClicked.mouseY = auxMouseY;
 				App->events->AddEvent(e);
 #endif
 			}
@@ -124,16 +130,6 @@ UpdateStatus ModuleInput::PreUpdate() {
 
 		case SDL_KEYUP:
 			keyboard[event.key.keysym.scancode] = KS_UP;
-			break;
-		case SDL_MOUSEMOTION:
-#if !GAME
-			App->editor->OnMouseMoved();
-#else
-			TesseractEvent e(TesseractEventType::MOUSE_UPDATE);
-			e.mouseUpdate.mouseX = auxMouseX;
-			e.mouseUpdate.mouseY = auxMouseY;
-			App->events->AddEvent(e);
-#endif
 			break;
 		}
 	}
@@ -208,8 +204,15 @@ const float2& ModuleInput::GetMouseMotion() const {
 	return mouseMotion;
 }
 
-const float2& ModuleInput::GetMousePosition() const {
+const float2& ModuleInput::GetMousePosition(bool sceneSensitive) const {
+	if (!sceneSensitive) {
+		return mouse;
+	}
+#if !GAME
+	return App->editor->panelScene.GetMousePosOnScene();
+#else
 	return mouse;
+#endif
 }
 
 KeyState* ModuleInput::GetMouseButtons() {
